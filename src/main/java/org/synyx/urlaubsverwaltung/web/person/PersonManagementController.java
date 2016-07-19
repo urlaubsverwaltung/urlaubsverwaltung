@@ -39,7 +39,7 @@ public class PersonManagementController {
     private PersonService personService;
 
     @Autowired
-    private PersonDataValidator dataValidator;
+    private PersonValidator validator;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -64,7 +64,7 @@ public class PersonManagementController {
     public String newPerson(@ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
         RedirectAttributes redirectAttributes) {
 
-        dataValidator.validate(person, errors);
+        validator.validate(person, errors);
 
         if (errors.hasErrors()) {
             return PersonConstants.PERSON_DATA_JSP;
@@ -97,7 +97,7 @@ public class PersonManagementController {
         @ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
         RedirectAttributes redirectAttributes) {
 
-        dataValidator.validate(person, errors);
+        validator.validate(person, errors);
 
         if (errors.hasErrors()) {
             return PersonConstants.PERSON_DATA_JSP;

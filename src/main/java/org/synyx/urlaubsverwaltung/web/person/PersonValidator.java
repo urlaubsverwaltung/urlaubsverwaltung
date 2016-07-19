@@ -26,7 +26,7 @@ import java.util.Optional;
  * @author  Aljona Murygina
  */
 @Component
-public class PersonDataValidator implements Validator {
+class PersonValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
@@ -49,7 +49,7 @@ public class PersonDataValidator implements Validator {
     private final PersonService personService;
 
     @Autowired
-    public PersonDataValidator(PersonService personService) {
+    PersonValidator(PersonService personService) {
 
         this.personService = personService;
     }

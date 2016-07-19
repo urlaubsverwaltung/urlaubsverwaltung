@@ -26,9 +26,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class PersonDataValidatorTest {
+public class PersonValidatorTest {
 
-    private PersonDataValidator validator;
+    private PersonValidator validator;
 
     private PersonService personService;
 
@@ -40,7 +40,7 @@ public class PersonDataValidatorTest {
 
         personService = Mockito.mock(PersonService.class);
 
-        validator = new PersonDataValidator(personService);
+        validator = new PersonValidator(personService);
 
         errors = Mockito.mock(Errors.class);
 
