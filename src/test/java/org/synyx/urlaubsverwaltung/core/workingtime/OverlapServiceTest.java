@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
@@ -25,7 +25,7 @@ import java.util.Date;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.OverlapService}.
+ * Unit test for {@link OverlapService}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

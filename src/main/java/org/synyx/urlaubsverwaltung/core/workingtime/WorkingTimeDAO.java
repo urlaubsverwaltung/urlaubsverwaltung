@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public interface WorkingTimeDAO extends JpaRepository<WorkingTime, Integer> {
+interface WorkingTimeDAO extends JpaRepository<WorkingTime, Integer> {
 
     @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 ORDER BY x.validFrom")
     List<WorkingTime> findByPerson(Person person);

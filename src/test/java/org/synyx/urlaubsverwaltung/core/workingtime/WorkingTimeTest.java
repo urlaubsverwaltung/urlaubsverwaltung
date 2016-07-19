@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateTimeConstants;
 

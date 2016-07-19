@@ -20,13 +20,16 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -66,6 +69,9 @@ public class PersonController {
     private WorkingTimeService workingTimeService;
 
     @Autowired
+    private SettingsService settingsService;
+
+    @Autowired
     private SessionService sessionService;
 
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
@@ -90,14 +96,25 @@ public class PersonController {
         model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
             departmentService.getAssignedDepartmentsOfMember(person));
 
-        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
+        Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
+        Optional<FederalState> optionalFederalState = Optional.empty();
+
+        if (workingTime.isPresent()) {
+            model.addAttribute("workingTime", workingTime.get());
+            optionalFederalState = workingTime.get().getFederalStateOverride();
+        }
+
+        if (optionalFederalState.isPresent()) {
+            model.addAttribute("federalState", optionalFederalState.get());
+        } else {
+            model.addAttribute("federalState",
+                settingsService.getSettings().getWorkingTimeSettings().getFederalState());
+        }
 
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
         if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
             model.addAttribute("account", account.get());
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
         return PersonConstants.PERSON_DETAIL_JSP;

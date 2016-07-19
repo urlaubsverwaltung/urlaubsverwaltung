@@ -11,14 +11,27 @@
     border: 1px solid #D5D5D5;
     font-size: 12px;
     background-color: #FAFAFA;
-    display: table;
     margin-bottom: 27px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .box-text {
+  /* Fallback for browsers not supporting flex */
   display: table-cell;
-  width: 80%;
   vertical-align: middle;
+  flex-grow: 1;
+}
+
+.box-text ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.box-text ul > li:last-child > p {
+  margin-bottom: 0;
 }
 
 .box-icon {
@@ -27,6 +40,8 @@
   border-radius: 50%;
   font-size: 35px;
   text-align: center;
+  /* Box icons should always have the same height and width */
+  flex-shrink: 0;
 }
 
 .box-icon,

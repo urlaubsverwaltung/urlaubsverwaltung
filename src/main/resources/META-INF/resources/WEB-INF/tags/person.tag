@@ -3,6 +3,7 @@
 
 <%@attribute name="person" type="org.synyx.urlaubsverwaltung.core.person.Person" required="true" %>
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
+<%@attribute name="nameIsNoLink" type="java.lang.Boolean" required="false" %>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -11,13 +12,23 @@
     <span class="box-text">
         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
         <h4>
-            <a class="hidden-print" href="${URL_PREFIX}/staff/${person.id}/overview">
-                <c:out value="${person.niceName}"/>
-            </a>
+            <c:choose>
+                <c:when test="${nameIsNoLink}">
+                    <span class="hidden-print"><c:out value="${person.niceName}"/></span>
+                </c:when>
+                <c:otherwise>
+                    <a class="hidden-print" href="${URL_PREFIX}/staff/${person.id}/overview">
+                        <c:out value="${person.niceName}"/>
+                    </a>
+                </c:otherwise>
+            </c:choose>
             <span class="visible-print">
                 <c:out value="${person.niceName}"/>
             </span>
         </h4>
-        <i class="fa fa-envelope-o"></i> <c:out value="${person.email}"/>
+        <i class="fa fa-envelope-o"></i>
+        <a href="mailto:<c:out value='${person.email}'/>">
+            <span class="hidden-print"><c:out value="${person.email}"/></span>
+        </a>
     </span>
 </div>

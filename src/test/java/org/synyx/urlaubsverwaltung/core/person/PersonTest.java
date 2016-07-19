@@ -131,42 +131,4 @@ public class PersonTest {
             // Expected
         }
     }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfSettingPermissionsContainingInactiveRoleAndAnyOtherRole() {
-
-        Person person = TestDataCreator.createPerson();
-
-        person.setPermissions(Arrays.asList(Role.INACTIVE, Role.BOSS));
-    }
-
-
-    @Test
-    public void ensureSettingPermissionsContainingOnlyInactiveRoleIsPossible() {
-
-        Person person = TestDataCreator.createPerson();
-
-        person.setPermissions(Collections.singletonList(Role.INACTIVE));
-
-        Collection<Role> permissions = person.getPermissions();
-
-        Assert.assertEquals("Wrong number of permissions", 1, permissions.size());
-        Assert.assertTrue("Should contain role", permissions.contains(Role.INACTIVE));
-    }
-
-
-    @Test
-    public void ensureSettingPermissionsContainingMultipleRolesIsPossible() {
-
-        Person person = TestDataCreator.createPerson();
-
-        person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
-
-        Collection<Role> permissions = person.getPermissions();
-
-        Assert.assertEquals("Wrong number of permissions", 2, permissions.size());
-        Assert.assertTrue("Should contain role", permissions.contains(Role.USER));
-        Assert.assertTrue("Should contain role", permissions.contains(Role.BOSS));
-    }
 }

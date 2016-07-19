@@ -8,13 +8,13 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 

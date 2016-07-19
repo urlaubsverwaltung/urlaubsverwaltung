@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -60,8 +60,8 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     private Date validFrom;
 
     /**
-     * If set, override the system-wide FederalState setting for this person.
-     * TODO: Maybe we should embed the whole WorkingTimeSettings to allow overriding all of them?
+     * If set, override the system-wide FederalState setting for this person. TODO: Maybe we should embed the whole
+     * WorkingTimeSettings to allow overriding all of them?
      */
     @Enumerated(EnumType.STRING)
     private FederalState federalStateOverride;

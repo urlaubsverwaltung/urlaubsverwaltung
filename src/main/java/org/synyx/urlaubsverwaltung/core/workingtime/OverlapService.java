@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;

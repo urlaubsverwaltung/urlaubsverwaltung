@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 /**
  * Exception that is thrown when no valid {@link WorkingTime} can be found for a period.
