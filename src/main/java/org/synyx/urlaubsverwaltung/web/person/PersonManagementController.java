@@ -55,7 +55,7 @@ public class PersonManagementController {
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, new Person());
 
-        return PersonConstants.PERSON_DATA_JSP;
+        return PersonConstants.PERSON_FORM_JSP;
     }
 
 
@@ -67,7 +67,7 @@ public class PersonManagementController {
         validator.validate(person, errors);
 
         if (errors.hasErrors()) {
-            return PersonConstants.PERSON_DATA_JSP;
+            return PersonConstants.PERSON_FORM_JSP;
         }
 
         Person createdPerson = personService.create(person);
@@ -87,7 +87,7 @@ public class PersonManagementController {
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
 
-        return PersonConstants.PERSON_DATA_JSP;
+        return PersonConstants.PERSON_FORM_JSP;
     }
 
 
@@ -100,7 +100,7 @@ public class PersonManagementController {
         validator.validate(person, errors);
 
         if (errors.hasErrors()) {
-            return PersonConstants.PERSON_DATA_JSP;
+            return PersonConstants.PERSON_FORM_JSP;
         }
 
         personService.update(person);
