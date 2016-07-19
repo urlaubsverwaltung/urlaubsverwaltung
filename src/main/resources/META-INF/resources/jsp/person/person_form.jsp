@@ -23,13 +23,15 @@
 <c:choose>
     <c:when test="${person.id == null}">
         <c:set var="ACTION" value="${URL_PREFIX}/staff"/>
+        <c:set var="METHOD" value="POST"/>
     </c:when>
     <c:otherwise>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}/data"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}"/>
+        <c:set var="METHOD" value="PUT"/>
     </c:otherwise>
 </c:choose>
 
-<form:form method="POST" action="${ACTION}" modelAttribute="person" class="form-horizontal">
+<form:form method="${METHOD}" action="${ACTION}" modelAttribute="person" class="form-horizontal">
 <form:hidden path="id" />
 <form:hidden path="password" />
 <form:hidden path="privateKey" />

@@ -38,7 +38,7 @@
                 <legend>
                     <spring:message code="person.details.masterData.title"/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                    <a href="${URL_PREFIX}/staff/${person.id}/data" class="fa-action pull-right"
+                    <a href="${URL_PREFIX}/staff/${person.id}/edit" class="fa-action pull-right"
                        data-title="<spring:message code="action.edit"/>">
                         <i class="fa fa-pencil"></i>
                     </a>

@@ -79,8 +79,8 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/data", method = RequestMethod.GET)
-    public String editPersonData(@PathVariable("personId") Integer personId, Model model)
+    @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.GET)
+    public String editPersonForm(@PathVariable("personId") Integer personId, Model model)
         throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -92,8 +92,8 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/data", method = RequestMethod.POST)
-    public String editPersonData(@PathVariable("personId") Integer personId,
+    @RequestMapping(value = "/staff/{personId}", method = RequestMethod.PUT)
+    public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
         RedirectAttributes redirectAttributes) {
 

@@ -130,7 +130,7 @@
                 </c:choose>
             </td>
             <td class="hidden-print hidden-xs">
-              <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}/"
+              <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}"
                   data-title="<spring:message code="action.details" />">
                 <i class="fa fa-fw fa-list-alt"></i>
               </a>
