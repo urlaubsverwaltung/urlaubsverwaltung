@@ -104,7 +104,7 @@ Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system
 
 Die Anwendung ist nun erreichbar unter
 
-`<servername>:8080/urlaubsverwaltung`
+`<servername>:8080/`
 
 #### Anwendung als Service
 
