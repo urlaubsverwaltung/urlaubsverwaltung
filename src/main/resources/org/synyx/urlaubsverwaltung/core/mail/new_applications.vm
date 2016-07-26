@@ -1,4 +1,4 @@
-Hallo Chefs,
+Hallo ${recipientName},
 
 es liegt ein neuer zu genehmigender Antrag vor: ${link}
 

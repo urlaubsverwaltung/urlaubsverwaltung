@@ -158,29 +158,36 @@ public class MailServiceIntegrationTest {
 
         // was email sent to boss?
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
-        assertTrue("Boss should get the email", inboxOfBoss.size() > 0);
+        assertTrue("Boss should get the email", inboxOfBoss.size() == 1);
 
         // was email sent to department head?
         List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
-        assertTrue("Department head should get the email", inboxOfDepartmentHead.size() > 0);
+        assertTrue("Department head should get the email", inboxOfDepartmentHead.size() == 1);
 
         // get email
-        Message msg = inboxOfDepartmentHead.get(0);
+        Message msgBoss = inboxOfBoss.get(0);
+        Message msgDepartmentHead = inboxOfDepartmentHead.get(0);
+
+        verifyNotificationAboutNewApplication(boss, msgBoss, comment);
+        verifyNotificationAboutNewApplication(departmentHead, msgDepartmentHead, comment);
+    }
+
+    private void verifyNotificationAboutNewApplication(Person recipient, Message msg, ApplicationComment comment) throws MessagingException, IOException {
 
         // check subject
         assertEquals("Neuer Urlaubsantrag", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress(boss.getEmail()), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(recipient.getEmail()), msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Chefs"));
-        assertTrue(content.contains("Lieschen Müller"));
-        assertTrue(content.contains("es liegt ein neuer zu genehmigender Antrag vor"));
-        assertTrue(content.contains("http://urlaubsverwaltung/web/application/"));
-        assertTrue("No comment in mail content", content.contains(comment.getText()));
-        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
+        String contentDepartmentHead = (String) msg.getContent();
+        assertTrue(contentDepartmentHead.contains("Hallo " + recipient.getNiceName()));
+        assertTrue(contentDepartmentHead.contains("Lieschen Müller"));
+        assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
+        assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/"));
+        assertTrue("No comment in mail content", contentDepartmentHead.contains(comment.getText()));
+        assertTrue("Wrong comment author", contentDepartmentHead.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -292,10 +299,10 @@ public class MailServiceIntegrationTest {
 
         // were both emails sent?
         List<Message> inboxSecondStage = Mailbox.get(secondStage.getEmail());
-        assertTrue(inboxSecondStage.size() > 0);
+        assertTrue(inboxSecondStage.size() == 1);
 
         List<Message> inboxUser = Mailbox.get(person.getEmail());
-        assertTrue(inboxUser.size() > 0);
+        assertTrue(inboxUser.size() == 1);
 
         // get email user
         Message msg = inboxUser.get(0);
@@ -731,11 +738,11 @@ public class MailServiceIntegrationTest {
 
         // was email sent to boss?
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
-        assertTrue("Boss should get the email", inboxOfBoss.size() > 0);
+        assertTrue("Boss should get exactly one email", inboxOfBoss.size() == 1);
 
         // was email sent to department head?
         List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
-        assertTrue("Department head should get the email", inboxOfDepartmentHead.size() > 0);
+        assertTrue("Department head should get exactly one email", inboxOfDepartmentHead.size() == 1);
 
         // has mail correct attributes?
         Message msg = inboxOfBoss.get(0);
@@ -748,7 +755,7 @@ public class MailServiceIntegrationTest {
 
         // check content of email
         String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo liebe Chefs"));
+        assertTrue(content.contains("Hallo Hugo Boss"));
     }
 
 
@@ -811,7 +818,7 @@ public class MailServiceIntegrationTest {
 
         // check content of email
         String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Lieschen Müller, hallo Office"));
+        assertTrue(content.contains("Hallo Lieschen Müller,\r\nHallo Office,"));
         assertTrue(content.contains(
                 "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal sechs Wochen"));
     }

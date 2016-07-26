@@ -102,8 +102,18 @@ class MailServiceImpl implements MailService {
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
 
-        String text = buildMailBody("new_applications", model);
-        sendEmail(mailSettings, getBossesAndDepartmentHeads(application), "subject.application.applied.boss", text);
+        List<Person> recipients = getBossesAndDepartmentHeads(application);
+        sendMailToEachRecipient(model, recipients, "new_applications", "subject.application.applied.boss");
+    }
+
+    private void sendMailToEachRecipient(Map<String, Object> model, List<Person> recipients, String template, String subject) {
+        MailSettings mailSettings = getMailSettings();
+
+        for (Person recipient : recipients) {
+            model.put("recipientName", recipient.getNiceName());
+            String text = buildMailBody(template, model);
+            sendEmail(mailSettings, Arrays.asList(recipient), subject, text);
+        }
     }
 
 
@@ -242,9 +252,10 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.<ApplicationComment>empty());
-        String text = buildMailBody("remind", model);
-        sendEmail(mailSettings, getBossesAndDepartmentHeads(application), "subject.application.remind", text);
+                Optional.empty());
+
+        List<Person> recipients = getBossesAndDepartmentHeads(application);
+        sendMailToEachRecipient(model, recipients, "remind", "subject.application.remind");
     }
 
 
@@ -259,16 +270,13 @@ class MailServiceImpl implements MailService {
                 application.getStartDate(), application.getEndDate()));
 
         // Inform user that the application for leave has been allowed temporary
-
         String textUser = buildMailBody("temporary_allowed_user", model);
         sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.temporaryAllowed.user",
             textUser);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
-
-        String textSecondStageAuthority = buildMailBody("temporary_allowed_second_stage_authority", model);
-        sendEmail(mailSettings, getSecondStageAuthorities(application),
-            "subject.application.temporaryAllowed.secondStage", textSecondStageAuthority);
+        List<Person> recipients = getSecondStageAuthorities(application);
+        sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority", "subject.application.temporaryAllowed.secondStage");
     }
 
 
