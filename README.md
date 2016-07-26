@@ -31,13 +31,13 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 Zum Ausprobieren der Anwendung gibt es ein [Demo System](http://urlaubsverwaltung-demo.synyx.de) mit Testbenutzern für
 die unterschiedlichen Rollen:
 
-| Rolle                     | Benutzername  | Passwort |
-| ------------------------- | ------------- | -------- |
-| Office                    | test          | secret   |
-| Chef                      | testBoss      | secret   |
-| Freigabe Verantwortlicher | testManager   | secret   |
-| Abteilungsleiter          | testHead      | secret   |
-| Benutzer                  | testUser      | secret   |
+| Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
+| ------------------------- | ------------- | -------- | ----------------- |
+| Office                    | test          | secret   | Marlene Muster    |
+| Chef                      | testBoss      | secret   | Max Muster        |
+| Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       | 
+| Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
+| Benutzer                  | testUser      | secret   | Klaus Müller      |
 
 #### Blog Posts
 
