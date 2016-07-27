@@ -41,6 +41,8 @@ import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
 import java.io.IOException;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -595,5 +597,43 @@ class MailServiceImpl implements MailService {
                 MailNotification.OVERTIME_NOTIFICATION_OFFICE);
 
         sendEmail(mailSettings, recipients, "subject.overtime.created", textOffice);
+    }
+
+    @Override
+    public void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
+
+        /**
+         * whats happening here?
+         *
+         * application a
+         * person p
+         *
+         * map application to list of boss/department head
+         * a_1 -> (p_1, p_2); a_2 -> (p_1, p_3)
+         *
+         * collect list of application grouped by boss/department head
+         * p_1 -> (a_1, a_2); p_2 -> (a_1); (p_3 -> a_2)
+         *
+         * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
+         */
+        Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
+                .flatMap(application -> getBossesAndDepartmentHeads(application).stream()
+                        .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+
+        for (Person recipient : applicationsPerRecipient.keySet()) {
+            MailSettings mailSettings = getMailSettings();
+
+            List<Application> applications = applicationsPerRecipient.get(recipient);
+
+            Map<String, Object> model = new HashMap<>();
+            model.put("applicationList", applications);
+            model.put("recipient", recipient);
+            model.put("baseUrl", mailSettings.getBaseLinkURL() + "web/application/");
+
+            String msg = buildMailBody("cron_remind", model);
+
+            sendEmail(getMailSettings(), Arrays.asList(recipient), "subject.application.cronRemind", msg);
+        }
     }
 }
