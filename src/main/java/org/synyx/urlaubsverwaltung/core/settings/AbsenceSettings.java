@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 
@@ -31,7 +32,16 @@ public class AbsenceSettings {
      * of days before the end of sick pay)
      */
     private Integer daysBeforeEndOfSickPayNotification = 7; // NOSONAR
-    private boolean remindForWaitingApplications;
+
+    /**
+     * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications
+     */
+    private boolean remindForWaitingApplications = false;
+
+    /**
+     * After this number of days a reminder notification for waiting applications will be sent
+     */
+    private Integer daysBeforeWaitingApplicationsReminderNotification = 2;
 
     public Integer getMaximumAnnualVacationDays() {
 
@@ -81,14 +91,20 @@ public class AbsenceSettings {
     }
 
     public boolean getRemindForWaitingApplications() {
-        return remindForWaitingApplications;
-    }
 
-    public boolean isRemindForWaitingApplications() {
         return remindForWaitingApplications;
     }
 
     public void setRemindForWaitingApplications(boolean remindForWaitingApplications) {
         this.remindForWaitingApplications = remindForWaitingApplications;
     }
+
+    public Integer getDaysBeforeWaitingApplicationsReminderNotification() {
+        return daysBeforeWaitingApplicationsReminderNotification;
+    }
+
+    public void setDaysBeforeWaitingApplicationsReminderNotification(Integer daysBeforeWaitingApplicationsReminderNotification) {
+        this.daysBeforeWaitingApplicationsReminderNotification = daysBeforeWaitingApplicationsReminderNotification;
+    }
+
 }

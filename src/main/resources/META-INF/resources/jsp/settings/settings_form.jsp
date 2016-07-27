@@ -122,6 +122,30 @@
                                 <span class="help-inline"><form:errors path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance" cssClass="error"/></span>
                             </div>
                         </div>
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="absenceSettings.remindForWaitingApplications">
+                                <spring:message code='settings.vacation.remindForWaitingApplications'/>:
+                            </label>
+                            <div class="col-md-8 radio">
+                                <label class="halves">
+                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications" path="absenceSettings.remindForWaitingApplications" value="true"/>
+                                    <spring:message code="settings.vacation.remindForWaitingApplications.true"/>
+                                </label>
+                                <label class="halves">
+                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications" path="absenceSettings.remindForWaitingApplications" value="false"/>
+                                    <spring:message code="settings.vacation.remindForWaitingApplications.false"/>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="absenceSettings.daysBeforeWaitingApplicationsReminderNotification">
+                                <spring:message code='settings.vacation.daysBeforeWaitingApplicationsReminderNotification'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="absenceSettings.daysBeforeWaitingApplicationsReminderNotification" path="absenceSettings.daysBeforeWaitingApplicationsReminderNotification" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="absenceSettings.daysBeforeWaitingApplicationsReminderNotification" cssClass="error"/></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
