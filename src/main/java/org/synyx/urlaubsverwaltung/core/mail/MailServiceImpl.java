@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.core.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -41,6 +42,7 @@ import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import java.io.IOException;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +104,7 @@ class MailServiceImpl implements MailService {
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
 
-        List<Person> recipients = getBossesAndDepartmentHeads(application);
+        List<Person> recipients = getRecipientsForAllowAndRemind(application);
         sendMailToEachRecipient(model, recipients, "new_applications", "subject.application.applied.boss");
     }
 
@@ -168,16 +170,32 @@ class MailServiceImpl implements MailService {
     }
 
 
-    private List<Person> getBossesAndDepartmentHeads(Application application) {
+    /**
+     * Depening on application issuer role the recipients for allow/remind mail are generated.
+     * USER -> DEPARTMENT_HEAD
+     * DEPARTMENT_HEAD -> SECOND_STAGE_AUTHORITY, BOSS
+     * SECOND_STAGE_AUTHORITY -> BOSS
+     *
+     * @param application
+     * @return List of recipients for given application allow/remind request
+     */
+    private List<Person> getRecipientsForAllowAndRemind(Application application) {
 
         List<Person> bosses = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
 
-        List<Person> allDepartmentHeads = personService.getPersonsWithNotificationType(
-                MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
+        Person applicationPerson = application.getPerson();
+        if (applicationPerson.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+            return bosses;
+        }
 
-        List<Person> departmentHeads = allDepartmentHeads.stream()
-            .filter(person -> departmentService.isDepartmentHeadOfPerson(person, application.getPerson()))
-            .collect(Collectors.toList());
+        if (applicationPerson.hasRole(Role.DEPARTMENT_HEAD)) {
+
+            List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)
+                    .stream().filter(person -> departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
+                    .collect(Collectors.toList());
+
+            return Stream.concat(bosses.stream(), secondStageAuthorities.stream()).collect(Collectors.toList());
+        }
 
         /**
          * NOTE:
@@ -188,6 +206,9 @@ class MailServiceImpl implements MailService {
          *
          * Thus no need to use a {@link java.util.Set} to avoid person duplicates within the returned list.
          */
+        List<Person> departmentHeads = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)
+                .stream().filter(person -> departmentService.isDepartmentHeadOfPerson(person, application.getPerson()))
+                .collect(Collectors.toList());
         return Stream.concat(bosses.stream(), departmentHeads.stream()).collect(Collectors.toList());
     }
 
@@ -254,7 +275,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.empty());
 
-        List<Person> recipients = getBossesAndDepartmentHeads(application);
+        List<Person> recipients = getRecipientsForAllowAndRemind(application);
         sendMailToEachRecipient(model, recipients, "remind", "subject.application.remind");
     }
 

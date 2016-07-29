@@ -60,7 +60,7 @@
 
 <%-- REJECT ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-  <c:if test="${CAN_ALLOW && application.person.id != signedInUser.id}">
+  <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
     <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
        onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
       <i class="fa fa-ban"></i>
@@ -70,7 +70,7 @@
 
 <%-- REFER ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-  <c:if test="${CAN_ALLOW && application.person.id != signedInUser.id}">
+  <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
     <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.refer'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
       <i class="fa fa-share-alt"></i>
@@ -80,7 +80,7 @@
 
 <%-- ALLOW ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-  <c:if test="${CAN_ALLOW}">
+  <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
     <a href="#" class="fa-action positive pull-right" data-title="<spring:message code='action.allow'/>"
        onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
       <i class="fa fa-check"></i>

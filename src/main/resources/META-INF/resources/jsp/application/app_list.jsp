@@ -6,6 +6,27 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<sec:authorize access="hasAuthority('USER')">
+    <c:set var="IS_USER" value="${true}"/>
+</sec:authorize>
+
+<sec:authorize access="hasAuthority('BOSS')">
+    <c:set var="IS_BOSS" value="${true}"/>
+</sec:authorize>
+
+<sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
+    <c:set var="IS_DEPARTMENT_HEAD" value="${true}"/>
+</sec:authorize>
+
+<sec:authorize access="hasAuthority('SECOND_STAGE_AUTHORITY')">
+    <c:set var="IS_SECOND_STAGE_AUTHORITY" value="${true}"/>
+</sec:authorize>
+
+<sec:authorize access="hasAuthority('OFFICE')">
+    <c:set var="IS_OFFICE" value="${true}"/>
+</sec:authorize>
+
+<c:set var="CAN_ALLOW" value="${IS_BOSS || IS_DEPARTMENT_HEAD || IS_SECOND_STAGE_AUTHORITY}"/>
 
 <!DOCTYPE html>
 <html>
@@ -68,15 +89,15 @@
                         </div>
 
                         <c:choose>
-  
+
                           <c:when test="${empty applications}">
-  
+
                             <spring:message code="applications.none"/>
-  
+
                           </c:when>
-  
+
                           <c:otherwise>
-  
+
                             <table class="list-table bordered-table selectable-table" cellspacing="0">
                               <tbody>
                               <c:forEach items="${applications}" var="application" varStatus="loopStatus">
@@ -144,18 +165,18 @@
                                     </p>
                                   </td>
                                   <td class="hidden-xs hidden-sm text-right">
-                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
+                                      <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
                                           <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
                                              data-title="<spring:message code='action.allow'/>">
                                               <i class="fa fa-check"></i>
                                           </a>
-                                      </sec:authorize>
-                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
+                                      </c:if>
+                                      <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
                                           <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                              data-title="<spring:message code='action.reject'/>">
                                               <i class="fa fa-ban"></i>
                                           </a>
-                                      </sec:authorize>
+                                      </c:if>
                                   </td>
                                 </tr>
                               </c:forEach>
@@ -168,7 +189,7 @@
 
                 </div>
             </div>
-        </div>            
+        </div>
 
     </body>
 

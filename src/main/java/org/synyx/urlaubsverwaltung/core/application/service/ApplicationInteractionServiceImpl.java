@@ -132,7 +132,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         return application;
     }
 
-
     @Override
     public Application allow(Application application, Person privilegedUser, Optional<String> comment) {
 
@@ -141,12 +140,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             return allowFinally(application, privilegedUser, comment);
         }
 
-        // Second stage authority has almost the same power
-        boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
-        boolean responsibleForDepartment = departmentService.isSecondStageAuthorityOfPerson(privilegedUser,
-                application.getPerson());
+        // Second stage authority has almost the same power (except on own applications)
+        boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
+                && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
 
-        if (isSecondStageAuthority && responsibleForDepartment) {
+        boolean isOwnApplication = application.getPerson() == privilegedUser;
+
+        if (isSecondStageAuthority && !isOwnApplication) {
             return allowFinally(application, privilegedUser, comment);
         }
 
@@ -154,7 +154,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         boolean isDepartmentHead = privilegedUser.hasRole(Role.DEPARTMENT_HEAD)
             && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
 
-        if (isDepartmentHead) {
+        if (isDepartmentHead && !isOwnApplication) {
             if (application.isTwoStageApproval()) {
                 return allowTemporary(application, privilegedUser, comment);
             }
