@@ -75,16 +75,16 @@ public class TestDataCreationService {
 
         // Users to be able to sign in with
         Person user = personDataProvider.createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller",
-                "mueller@muster.de", TestUser.USER.getRoles());
+                "user@muster.de", TestUser.USER.getRoles());
         Person departmentHead = personDataProvider.createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD,
-                "Thorsten", "Krüger", "krueger@muster.de", TestUser.DEPARTMENT_HEAD.getRoles());
+                "Thorsten", "Krüger", "departmentHead@muster.de", TestUser.DEPARTMENT_HEAD.getRoles());
         boss = personDataProvider.createTestPerson(TestUser.BOSS.getLogin(), PASSWORD, "Max", "Mustermann",
-                "maxMuster@muster.de", TestUser.BOSS.getRoles());
+                "boss@muster.de", TestUser.BOSS.getRoles());
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
-                "mmuster@muster.de", TestUser.OFFICE.getRoles());
+                "office@muster.de", TestUser.OFFICE.getRoles());
 
         Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
-                "Peter", "Huber", "huber@muster.de", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
+                "Peter", "Huber", "secondStageAuthority@muster.de", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
 
         // Users
         Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@muster.de",
