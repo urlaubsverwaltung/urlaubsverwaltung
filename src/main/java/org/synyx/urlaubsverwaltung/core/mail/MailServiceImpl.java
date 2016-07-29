@@ -260,6 +260,11 @@ class MailServiceImpl implements MailService {
                     LOG.info("No email configuration to send email to " + recipient);
                 }
             }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("To=" + Arrays.toString(message.getTo()) + "\n\n" +
+                          "Subject=" + message.getSubject() + "\n\n" +
+                          "Text=" + message.getText());
+            }
         } catch (MailException ex) {
             for (String recipient : message.getTo()) {
                 LOG.error("Sending email to " + recipient + " failed", ex);
