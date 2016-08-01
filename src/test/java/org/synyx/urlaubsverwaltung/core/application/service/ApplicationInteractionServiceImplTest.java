@@ -512,6 +512,80 @@ public class ApplicationInteractionServiceImplTest {
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
+    @Test
+    public void ensureDepartmentHeadCanBeAllowedBySecondStageAuthority() {
+
+        Person departmentHead = TestDataCreator.createPerson("departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Person secondStageAuthority = TestDataCreator.createPerson("secondStageAuthority");
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(secondStageAuthority))).thenReturn(true);
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(departmentHead);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.allow(applicationForLeave, secondStageAuthority, comment);
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureSecondStageAuthorityCanNotBeAllowedByDepartmentHead() {
+
+        Person departmentHead = TestDataCreator.createPerson("departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Person secondStageAuthority = TestDataCreator.createPerson("secondStageAuthority");
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(secondStageAuthority))).thenReturn(true);
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(secondStageAuthority);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setTwoStageApproval(true);
+
+        service.allow(applicationForLeave, departmentHead, comment);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureSecondStageAuthorityCanNotAllowHimself() {
+
+        Person secondStageAuthority = TestDataCreator.createPerson("secondStageAuthority");
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(secondStageAuthority))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(secondStageAuthority);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.allow(applicationForLeave, secondStageAuthority, comment);
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureDepartmentHeadCanNotAllowHimself() {
+
+        Person departmentHead = TestDataCreator.createPerson("departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(departmentHead))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(departmentHead);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.allow(applicationForLeave, departmentHead, comment);
+    }
 
     // ALLOWING - HOLIDAY REPLACEMENT NOTIFICATION
 
