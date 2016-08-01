@@ -42,7 +42,6 @@ import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import java.io.IOException;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +170,7 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * Depening on application issuer role the recipients for allow/remind mail are generated.
+     * Depending on application issuer role the recipients for allow/remind mail are generated.
      * USER -> DEPARTMENT_HEAD
      * DEPARTMENT_HEAD -> SECOND_STAGE_AUTHORITY, BOSS
      * SECOND_STAGE_AUTHORITY -> BOSS
