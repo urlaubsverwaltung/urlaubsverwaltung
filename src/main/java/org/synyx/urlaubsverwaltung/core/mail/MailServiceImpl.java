@@ -617,7 +617,7 @@ class MailServiceImpl implements MailService {
          * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
          */
         Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
-                .flatMap(application -> getBossesAndDepartmentHeads(application).stream()
+                .flatMap(application -> getRecipientsForAllowAndRemind(application).stream()
                         .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
                 .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 

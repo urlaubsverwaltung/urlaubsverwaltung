@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 
@@ -37,11 +36,6 @@ public class AbsenceSettings {
      * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications
      */
     private boolean remindForWaitingApplications = false;
-
-    /**
-     * After this number of days a reminder notification for waiting applications will be sent
-     */
-    private Integer daysBeforeWaitingApplicationsReminderNotification = 2;
 
     public Integer getMaximumAnnualVacationDays() {
 
@@ -97,14 +91,6 @@ public class AbsenceSettings {
 
     public void setRemindForWaitingApplications(boolean remindForWaitingApplications) {
         this.remindForWaitingApplications = remindForWaitingApplications;
-    }
-
-    public Integer getDaysBeforeWaitingApplicationsReminderNotification() {
-        return daysBeforeWaitingApplicationsReminderNotification;
-    }
-
-    public void setDaysBeforeWaitingApplicationsReminderNotification(Integer daysBeforeWaitingApplicationsReminderNotification) {
-        this.daysBeforeWaitingApplicationsReminderNotification = daysBeforeWaitingApplicationsReminderNotification;
     }
 
 }

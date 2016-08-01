@@ -13,7 +13,6 @@
             <column name="remindForWaitingApplications" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="daysBeforeWaitingApplicationsReminderNotification" type="INT(10)" valueNumeric="2"/>
         </addColumn>
 
     </changeSet>
