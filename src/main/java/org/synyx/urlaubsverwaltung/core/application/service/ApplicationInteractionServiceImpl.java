@@ -154,7 +154,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         boolean isDepartmentHead = privilegedUser.hasRole(Role.DEPARTMENT_HEAD)
             && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
 
-        if (isDepartmentHead && !isOwnApplication) {
+        // DEPARTMENT_HEAD can _not_ allow SECOND_STAGE_AUTHORITY
+        boolean isSecondStageAuthorityApplication =
+                application.getPerson().hasRole(Role.SECOND_STAGE_AUTHORITY);
+
+        if (isDepartmentHead && !isOwnApplication && !isSecondStageAuthorityApplication) {
             if (application.isTwoStageApproval()) {
                 return allowTemporary(application, privilegedUser, comment);
             }

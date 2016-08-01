@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -110,12 +111,14 @@ public class MailServiceIntegrationTest {
 
         // BOSS
         boss = TestDataCreator.createPerson("boss", "Hugo", "Boss", "boss@muster.de");
+        boss.setPermissions(Collections.singletonList(Role.BOSS));
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(Collections.singletonList(boss));
 
         // DEPARTMENT HEAD
         departmentHead = TestDataCreator.createPerson("head", "Michel", "Mustermann", "head@muster.de");
+        departmentHead.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Collections.singletonList(departmentHead));
@@ -125,6 +128,7 @@ public class MailServiceIntegrationTest {
 
         // SECOND STAGE AUTHORITY
         secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@muster.de");
+        secondStage.setPermissions(Collections.singletonList(Role.SECOND_STAGE_AUTHORITY));
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY))
             .thenReturn(Collections.singletonList(secondStage));
@@ -135,6 +139,7 @@ public class MailServiceIntegrationTest {
 
         // OFFICE
         office = TestDataCreator.createPerson("office", "Marlene", "Muster", "office@muster.de");
+        office.setPermissions(Collections.singletonList(Role.OFFICE));
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
             .thenReturn(Collections.singletonList(office));
@@ -168,11 +173,65 @@ public class MailServiceIntegrationTest {
         Message msgBoss = inboxOfBoss.get(0);
         Message msgDepartmentHead = inboxOfDepartmentHead.get(0);
 
-        verifyNotificationAboutNewApplication(boss, msgBoss, comment);
-        verifyNotificationAboutNewApplication(departmentHead, msgDepartmentHead, comment);
+        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
+        verifyNotificationAboutNewApplication(departmentHead, msgDepartmentHead, application.getPerson().getNiceName(), comment);
     }
 
-    private void verifyNotificationAboutNewApplication(Person recipient, Message msg, ApplicationComment comment) throws MessagingException, IOException {
+    @Test
+    public void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondStageAuthorities() throws MessagingException,
+    IOException {
+
+    }
+
+    @Test
+    public void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException,
+            IOException {
+
+        ApplicationComment comment = createDummyComment(secondStage, "Hätte gerne Urlaub");
+        application.setPerson(secondStage);
+
+        mailService.sendNewApplicationNotification(application, comment);
+
+        // was email sent to boss?
+        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
+        assertTrue("Boss should get the email", inboxOfBoss.size() == 1);
+
+        // no email sent to department head
+        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
+        assertTrue("Department head should get no email", inboxOfDepartmentHead.size() == 0);
+
+        // get email
+        Message msgBoss = inboxOfBoss.get(0);
+
+        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
+    }
+
+    @Test
+    public void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority() throws MessagingException,
+            IOException {
+
+        ApplicationComment comment = createDummyComment(departmentHead, "Hätte gerne Urlaub");
+        application.setPerson(departmentHead);
+
+        mailService.sendNewApplicationNotification(application, comment);
+
+        // was email sent to boss?
+        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
+        assertTrue("Boss should get the email", inboxOfBoss.size() == 1);
+
+        // was email sent to secondary stage?
+        List<Message> inboxOfSecondaryStage = Mailbox.get(secondStage.getEmail());
+        assertTrue("Secondary stage should get the email", inboxOfSecondaryStage.size() == 1);
+
+        // get email
+        Message msgBoss = inboxOfBoss.get(0);
+        Message msgSecondaryStage = inboxOfSecondaryStage.get(0);
+
+        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
+        verifyNotificationAboutNewApplication(secondStage, msgSecondaryStage, application.getPerson().getNiceName(), comment);
+    }
+
+    private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName, ApplicationComment comment) throws MessagingException, IOException {
 
         // check subject
         assertEquals("Neuer Urlaubsantrag", msg.getSubject());
@@ -183,7 +242,7 @@ public class MailServiceIntegrationTest {
         // check content of email
         String contentDepartmentHead = (String) msg.getContent();
         assertTrue(contentDepartmentHead.contains("Hallo " + recipient.getNiceName()));
-        assertTrue(contentDepartmentHead.contains("Lieschen Müller"));
+        assertTrue(contentDepartmentHead.contains(niceName));
         assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
         assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/"));
         assertTrue("No comment in mail content", contentDepartmentHead.contains(comment.getText()));
