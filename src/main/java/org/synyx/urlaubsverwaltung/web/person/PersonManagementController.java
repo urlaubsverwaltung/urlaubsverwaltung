@@ -92,7 +92,7 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.POST)
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
         RedirectAttributes redirectAttributes) {
