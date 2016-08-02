@@ -215,4 +215,6 @@ public interface MailService {
      * @param  overtimeComment  may contain further information
      */
     void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment);
+
+    void sendRemindForWaitingApplicationsReminderNotification(List<Application> application);
 }
