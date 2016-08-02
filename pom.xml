@@ -37,6 +37,7 @@
     </parent>
 
     <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <joda.time.version>2.7</joda.time.version>
