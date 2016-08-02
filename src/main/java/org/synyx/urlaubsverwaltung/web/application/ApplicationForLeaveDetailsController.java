@@ -283,7 +283,7 @@ public class ApplicationForLeaveDetailsController {
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
         boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
-        if (isBoss || isDepartmentHead | isSecondStageAuthority) {
+        if (isBoss || isDepartmentHead || isSecondStageAuthority) {
             comment.setMandatory(true);
             commentValidator.validate(comment, errors);
 
