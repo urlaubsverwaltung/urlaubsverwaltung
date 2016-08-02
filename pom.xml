@@ -43,8 +43,8 @@
     </properties>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/synyx/urlaubsverwaltung</developerConnection>
-        <connection>scm:git:https://github.com/synyx/urlaubsverwaltung</connection>
+        <developerConnection>scm:git:ssh://git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
+        <connection>scm:git:ssh://git@github.com:synyx/urlaubsverwaltung.git</connection>
     </scm>
 
     <distributionManagement>
