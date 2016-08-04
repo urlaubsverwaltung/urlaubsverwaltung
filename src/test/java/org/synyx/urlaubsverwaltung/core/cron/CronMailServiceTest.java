@@ -33,6 +33,8 @@ import static org.mockito.Mockito.when;
 
 public class CronMailServiceTest {
 
+    private static final int DAYS_BEFORE_WAITING_APPLICATIONS_REMINDER_NOTIFICATION = 2;
+
     private CronMailService sut;
     private ApplicationService applicationService;
     private SettingsService settingsService;
@@ -47,7 +49,7 @@ public class CronMailServiceTest {
         sickNoteService = mock(SickNoteService.class);
         mailService = mock(MailService.class);
 
-        sut = new CronMailService(applicationService, settingsService, sickNoteService, mailService);
+        sut = new CronMailService(applicationService, settingsService, sickNoteService, mailService, DAYS_BEFORE_WAITING_APPLICATIONS_REMINDER_NOTIFICATION);
     }
 
     @Test
@@ -95,7 +97,6 @@ public class CronMailServiceTest {
 
         when(applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING)).thenReturn(waitingApplications);
 
-        sut.daysBeforeWaitingApplicationsReminderNotification = 2;
         sut.sendWaitingApplicationsReminderNotification();
 
         verify(mailService).sendRemindForWaitingApplicationsReminderNotification(Arrays.asList(longWaitingApplicationA, longWaitingApplicationB, longWaitingApplicationAlreadyRemindedEalier));

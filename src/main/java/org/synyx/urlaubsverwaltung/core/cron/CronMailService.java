@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class CronMailService {
 
-    @Value("${uv.cron.daysBeforeWaitingApplicationsReminderNotification}")
-    Integer daysBeforeWaitingApplicationsReminderNotification;
+    private final Integer daysBeforeWaitingApplicationsReminderNotification;
 
     private final ApplicationService applicationService;
     private final SettingsService settingsService;
@@ -39,12 +38,18 @@ public class CronMailService {
     private final MailService mailService;
 
     @Autowired
-    public CronMailService(ApplicationService applicationService, SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
+    public CronMailService(ApplicationService applicationService,
+                           SettingsService settingsService,
+                           SickNoteService sickNoteService,
+                           MailService mailService,
+                           @Value("${uv.cron.daysBeforeWaitingApplicationsReminderNotification}")
+                                       Integer daysBeforeWaitingApplicationsReminderNotification) {
 
         this.applicationService = applicationService;
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
+        this.daysBeforeWaitingApplicationsReminderNotification = daysBeforeWaitingApplicationsReminderNotification;
     }
 
     @Scheduled(cron = "${uv.cron.endOfSickPayNotification}")
