@@ -161,7 +161,7 @@ public class ApplicationForLeaveController {
     }
 
     private Predicate<Application> withoutOwnApplications(Person head) {
-        return application -> application.getPerson() != head;
+        return application -> !application.getPerson().equals(head);
     }
 
     private Predicate<Application> withoutSecondStageAuthorityApplications() {

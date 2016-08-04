@@ -177,7 +177,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
     }
 
 
-    private void fillAppointment(Absence absence, Appointment appointment) throws Exception {
+    private void fillAppointment(Absence absence, Appointment appointment) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         Person person = absence.getPerson();
 

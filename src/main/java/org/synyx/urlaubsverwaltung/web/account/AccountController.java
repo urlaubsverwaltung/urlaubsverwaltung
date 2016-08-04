@@ -13,7 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -66,7 +72,8 @@ public class AccountController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/{personId}/account", method = RequestMethod.GET)
     public String editAccount(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
+                              @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year,
+                              Model model)
         throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -86,8 +93,10 @@ public class AccountController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/{personId}/account", method = RequestMethod.POST)
     public String updateAccount(@PathVariable("personId") Integer personId,
-        @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
-        RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                @ModelAttribute("account") AccountForm accountForm,
+                                Model model,
+                                Errors errors,
+                                RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 

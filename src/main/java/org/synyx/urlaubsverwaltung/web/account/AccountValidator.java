@@ -120,12 +120,12 @@ class AccountValidator implements Validator {
     private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
 
         // is number of days < 0 ?
-        if (days.compareTo(BigDecimal.ZERO) == -1) {
+        if (days.compareTo(BigDecimal.ZERO) < 0) {
             errors.rejectValue(field, ERROR_ENTRY);
         }
 
         // is number of days unrealistic?
-        if (days.compareTo(maximumDays) == 1) {
+        if (days.compareTo(maximumDays) > 0) {
             errors.rejectValue(field, ERROR_ENTRY);
         }
     }

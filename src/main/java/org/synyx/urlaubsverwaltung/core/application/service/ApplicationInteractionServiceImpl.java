@@ -101,14 +101,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 applier);
 
         // EMAILS
-
-        // person himself applies for leave
         if (person.equals(applier)) {
+            // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
             mailService.sendConfirmation(application, createdComment);
-        }
-        // someone else (normally the office) applies for leave on behalf of the person
-        else {
+        } else {
+            // someone else (normally the office) applies for leave on behalf of the person
             // person gets an email that someone else has applied for leave on behalf
             mailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
         }
@@ -144,7 +142,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
                 && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
 
-        boolean isOwnApplication = application.getPerson() == privilegedUser;
+        boolean isOwnApplication = application.getPerson().equals(privilegedUser);
 
         if (isSecondStageAuthority && !isOwnApplication) {
             return allowFinally(application, privilegedUser, comment);

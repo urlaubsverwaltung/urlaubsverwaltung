@@ -13,7 +13,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
@@ -99,8 +103,10 @@ public class WorkingTimeController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/{personId}/workingtime", method = RequestMethod.POST)
     public String updateWorkingTime(@PathVariable("personId") Integer personId,
-        @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm, Model model, Errors errors,
-        RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                    @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm,
+                                    Model model,
+                                    Errors errors,
+                                    RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
