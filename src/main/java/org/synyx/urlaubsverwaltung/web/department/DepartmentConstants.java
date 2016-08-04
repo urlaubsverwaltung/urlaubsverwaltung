@@ -15,6 +15,7 @@ public final class DepartmentConstants {
     // Attributes
     public static final String DEPARTMENTS_ATTRIBUTE = "departments";
     public static final String DEPARTMENT_ATTRIBUTE = "department";
+    public static final String SECOND_STAGE_DEPARTMENTS_ATTRIBUTE = "secondStageDepartments";
 
     private DepartmentConstants() {
 

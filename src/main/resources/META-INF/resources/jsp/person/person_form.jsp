@@ -171,15 +171,16 @@
                         <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
                         <spring:message code="person.form.notifications.DEPARTMENT_HEAD"/>
                     </label>
-                    <label>
+                    <label class="${!empty departments ? 'info' : ''}">
+                        <i class="fa fa-fw fa-info-circle"></i>
                         <c:choose>
-                            <c:when test="${empty headOfDepartments}">
+                            <c:when test="${empty departments}">
                                 <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD.departments.none"/>
                             </c:when>
                             <c:otherwise>
                                 <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD.departments"/>
-                                <c:forEach items="${headOfDepartments}" var="department">
-                                    <c:out value="${department.name}"/>
+                                <c:forEach items="${departments}" var="department" varStatus="loop">
+                                    <c:out value="${department.name}${!loop.last ? ',' : ''}"/>
                                 </c:forEach>
                             </c:otherwise>
                         </c:choose>
@@ -194,15 +195,16 @@
                         <form:checkbox path="notifications" value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
                         <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
                     </label>
-                    <label>
+                    <label class="${!empty secondStageDepartments ? 'info' : ''}">
+                        <i class="fa fa-fw fa-info-circle"></i>
                         <c:choose>
                             <c:when test="${empty secondStageDepartments}">
                                 <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none"/>
                             </c:when>
                             <c:otherwise>
                                 <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments"/>
-                                <c:forEach items="${secondStageDepartments}" var="department">
-                                    <c:out value="${department.name}"/>
+                                <c:forEach items="${secondStageDepartments}" var="department" varStatus="loop">
+                                    <c:out value="${department.name}${!loop.last ? ',' : ''}"/>
                                 </c:forEach>
                             </c:otherwise>
                         </c:choose>

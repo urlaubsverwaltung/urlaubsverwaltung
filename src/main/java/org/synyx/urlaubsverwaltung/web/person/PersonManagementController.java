@@ -17,11 +17,13 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
 
 import java.math.BigDecimal;
 
@@ -37,6 +39,9 @@ public class PersonManagementController {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    DepartmentService departmentService;
 
     @Autowired
     private PersonValidator validator;
@@ -86,6 +91,10 @@ public class PersonManagementController {
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
+                                departmentService.getManagedDepartmentsOfDepartmentHead(person));
+        model.addAttribute(DepartmentConstants.SECOND_STAGE_DEPARTMENTS_ATTRIBUTE,
+                departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
         return PersonConstants.PERSON_FORM_JSP;
     }
