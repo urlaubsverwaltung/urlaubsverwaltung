@@ -39,7 +39,7 @@
         </sec:authorize>
     </c:if>
 
-    <c:if test="${application.status == 'ALLOWED'}">
+    <c:if test="${application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED'}">
         <c:if test="${IS_OFFICE || (IS_USER && application.person.id == signedInUser.id)}">
             <jsp:include page="actions/cancel_form.jsp"/>
         </c:if>
