@@ -286,7 +286,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
-        if (application.hasStatus(ApplicationStatus.ALLOWED)) {
+        if (application.hasStatus(ApplicationStatus.ALLOWED) ||
+                application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
             cancelApplication(application, canceller, comment);
         } else {
             revokeApplication(application, canceller, comment);

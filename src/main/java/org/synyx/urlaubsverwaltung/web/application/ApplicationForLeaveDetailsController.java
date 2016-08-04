@@ -329,6 +329,7 @@ public class ApplicationForLeaveDetailsController {
 
         boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
+        boolean isTemporaryAllowed = application.hasStatus((ApplicationStatus.TEMPORARY_ALLOWED));
 
         // security check: only two cases where cancelling is possible
         // 1: user can cancel her own applications for leave if it has not been allowed yet
@@ -337,7 +338,7 @@ public class ApplicationForLeaveDetailsController {
         if (signedInUser.equals(application.getPerson())) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed)) {
+        } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
