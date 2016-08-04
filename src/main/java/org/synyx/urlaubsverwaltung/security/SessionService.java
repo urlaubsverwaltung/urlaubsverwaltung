@@ -79,7 +79,7 @@ public class SessionService {
         // signedInUser is not allowed to access persons data cause of lower level role
         // (DEPARTMENT_HEAD < SECOND_STAGE_AUTHORITY)
         boolean isDepartmentHeadOfSecondStageAuthority =
-                (person.hasRole(Role.SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(Role.DEPARTMENT_HEAD));
+                person.hasRole(Role.SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(Role.DEPARTMENT_HEAD);
 
         return isOwnData || (isPrivilegedUser && !isDepartmentHeadOfSecondStageAuthority);
     }

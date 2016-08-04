@@ -83,7 +83,7 @@ public class SickNote extends AbstractPersistable<Integer> {
         this.lastEdited = DateTime.now().withTimeAtStartOfDay().toDate();
     }
 
-    public Person getPerson() {
+    public final Person getPerson() {
 
         return person;
     }
@@ -107,7 +107,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getStartDate() {
+    public final DateMidnight getStartDate() {
 
         if (this.startDate == null) {
             return null;
@@ -127,7 +127,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getEndDate() {
+    public final DateMidnight getEndDate() {
 
         if (this.endDate == null) {
             return null;
@@ -147,7 +147,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public DayLength getDayLength() {
+    public final DayLength getDayLength() {
 
         return dayLength;
     }

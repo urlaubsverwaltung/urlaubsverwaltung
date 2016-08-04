@@ -288,7 +288,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
         }
     }
 
-    private class RedirectionUrlCallback implements IAutodiscoverRedirectionUrl {
+    private static class RedirectionUrlCallback implements IAutodiscoverRedirectionUrl {
 
         @Override
         public boolean autodiscoverRedirectionUrlValidationCallback(String redirectionUrl) {
