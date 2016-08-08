@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 
 
 /**
- * Settings to sync absences with a Microsoft Exchange Calendar.
+ * Settings to sync absences with a Microsoft Exchange calendar.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

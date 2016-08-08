@@ -1,18 +1,18 @@
-package org.synyx.urlaubsverwaltung.core.sync;
+package org.synyx.urlaubsverwaltung.core.sync.providers;
 
 /**
  * Represent the supported calendar providers to sync the absences.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public enum CalendarType {
+public enum CalendarProviderType {
 
     EWS("Exchange"),
     GOOGLE("Google");
 
     private String name;
 
-    CalendarType(String name) {
+    CalendarProviderType(String name) {
 
         this.name = name;
     }

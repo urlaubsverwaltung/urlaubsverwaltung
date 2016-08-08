@@ -47,6 +47,7 @@
     <include file="dbchangelogs/changelog-2.18.0-add_federal_state_override.xml"/>
     <include file="dbchangelogs/changelog-2.21.0-add_remind_waiting_application_settings.xml"/>
     <include file="dbchangelogs/changelog-2.21.1-add_days_before_remind_for_waiting_applications.xml"/>
+    <include file="dbchangelogs/changelog-2.22.0-add-google-calendar-settings.xml"/>
     <include file="dbchangelogs/changelog-2.23.0-add-comment-for-account.xml"/>
     <include file="dbchangelogs/changelog-2.26.0-remove-signature-columns-from-application-table.xml"/>
     <include file="dbchangelogs/changelog-2.26.0-remove-key-columns-from-person-table.xml"/>

@@ -1,0 +1,22 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="murygina" id="add_google_calendar_settings">
+
+        <preConditions>
+            <tableExists tableName="Settings"/>
+        </preConditions>
+
+        <addColumn tableName="Settings">
+            <column name="calendar_google_active" type="BIT(1)"/>
+            <column name="calendar_google_calendar" type="VARCHAR(255)"/>
+            <column name="calendar_google_application" type="VARCHAR(255)"/>
+            <column name="calendar_google_dataStoreDir" type="VARCHAR(255)"/>
+            <column name="calendar_google_clientSecret" type="VARCHAR(255)"/>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

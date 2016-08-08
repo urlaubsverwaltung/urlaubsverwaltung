@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.sync;
+package org.synyx.urlaubsverwaltung.core.sync.providers.exchange;
 
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.core.ExchangeService;
@@ -29,6 +29,8 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarNotCreatedException;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProviderService;
 
 import java.util.Optional;
 
@@ -40,7 +42,7 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-class ExchangeCalendarProviderService implements CalendarProviderService {
+public class ExchangeCalendarProviderService implements CalendarProviderService {
 
     private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
 
@@ -58,7 +60,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
     }
 
     @Override
-    public Optional<String> addAbsence(Absence absence, CalendarSettings calendarSettings) {
+    public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
         ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         String calendarName = exchangeCalendarSettings.getCalendar();
@@ -229,7 +231,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
 
 
     @Override
-    public void deleteAbsence(String eventId, CalendarSettings calendarSettings) {
+    public void delete(String eventId, CalendarSettings calendarSettings) {
 
         ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         String calendarName = exchangeCalendarSettings.getCalendar();
