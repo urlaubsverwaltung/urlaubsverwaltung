@@ -12,6 +12,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class CalendarSettings {
 
+    private GoogleCalendarSettings googleCalendarSettings;
+
     private ExchangeCalendarSettings exchangeCalendarSettings;
 
     @Column(name = "calendar_workDayBeginHour")
@@ -33,6 +35,22 @@ public class CalendarSettings {
     public void setExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings) {
 
         this.exchangeCalendarSettings = exchangeCalendarSettings;
+    }
+
+
+    public GoogleCalendarSettings getGoogleCalendarSettings() {
+
+        if (googleCalendarSettings == null) {
+            googleCalendarSettings = new GoogleCalendarSettings();
+        }
+
+        return googleCalendarSettings;
+    }
+
+
+    public void setGoogleCalendarSettings(GoogleCalendarSettings googleCalendarSettings) {
+
+        this.googleCalendarSettings = googleCalendarSettings;
     }
 
 
