@@ -121,7 +121,7 @@ public class GoogleCalendarSettings {
     }
 
 
-    public String getPkcs12KeyFile() {
+    public String getClientSecretFile() {
 
         return pkcs12KeyFile;
     }
