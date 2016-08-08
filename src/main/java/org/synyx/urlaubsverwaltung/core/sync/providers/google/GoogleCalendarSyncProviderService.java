@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sync.providers.google;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
@@ -18,12 +19,14 @@ import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProviderService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProviderService;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -43,7 +46,6 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
     private static final Set<String> CALENDAR_SCOPES = CalendarScopes.all();
     private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static HttpTransport HTTP_TRANSPORT;
-    private final MailService mailService;
 
     static {
         try {
@@ -53,17 +55,14 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
         }
     }
 
+    private final MailService mailService;
     private String calendarName;
-
     // something@resource.calendar.google.com
     private String calendarId;
-
     // something@applicationname.iam.gserviceaccount.com
     private String serviceAccount;
-
-    // the filename of the PKCS#12 (.p12) archive in user.home/urlaubsverwaltung
-    private String pkcs12File;
-
+    // the filename of the client secret in user.home/urlaubsverwaltung
+    private String clientSecretFile;
 
     @Autowired
     public GoogleCalendarSyncProviderService(MailService mailService, SettingsService settingsService) {
@@ -72,10 +71,22 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
         this.calendarName = settings.getCalendar();
         this.calendarId = settings.getCalendarId();
         this.serviceAccount = settings.getServiceAccount();
-        this.pkcs12File = settings.getPkcs12KeyFile();
+        this.clientSecretFile = settings.getClientSecretFile();
         this.mailService = mailService;
     }
 
+    private static GoogleClientSecrets loadClientSecrets(String clientSecretsLocation) {
+        GoogleClientSecrets clientSecrets = null;
+        try {
+            BufferedReader reader = Files.newBufferedReader(Paths.get(clientSecretsLocation));
+            clientSecrets = GoogleClientSecrets.load(new JacksonFactory(),
+                    reader);
+        } catch (Exception e) {
+            System.out.println("Could not load client_secrets.json");
+            e.printStackTrace();
+        }
+        return clientSecrets;
+    }
 
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
@@ -103,28 +114,20 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
 
     /**
      * Build and return an authorized Calendar client service.
-     * @return an authorized Calendar client service
      *
-     * @throws IOException
+     * @return an authorized Calendar client service
      */
-    public com.google.api.services.calendar.Calendar getCalendarService() throws IOException {
+    public com.google.api.services.calendar.Calendar getCalendarService() {
 
-        GoogleCredential credential = null;
-        try {
+        String pathname = DATA_STORE_DIR.getPath() + "/" + this.clientSecretFile;
 
-            File p12_key = new File(DATA_STORE_DIR.getPath() + "/" + this.pkcs12File);
-
-            credential = new GoogleCredential.Builder()
-                    .setTransport(HTTP_TRANSPORT)
-                    .setJsonFactory(JSON_FACTORY)
-                    .setServiceAccountPrivateKeyFromP12File(p12_key)
-                    .setServiceAccountScopes(CALENDAR_SCOPES)
-                    .setServiceAccountId(this.serviceAccount)
-                    .build();
-
-        } catch (GeneralSecurityException e) {
-            LOG.error(e.getMessage(), e);
-        }
+        GoogleCredential credential = new GoogleCredential.Builder()
+                .setTransport(HTTP_TRANSPORT)
+                .setJsonFactory(JSON_FACTORY)
+                .setClientSecrets(loadClientSecrets(pathname))
+                .setServiceAccountScopes(CALENDAR_SCOPES)
+                .setServiceAccountId(this.serviceAccount)
+                .build();
 
         com.google.api.services.calendar.Calendar calendar = new com.google.api.services.calendar.Calendar.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, credential).build();
