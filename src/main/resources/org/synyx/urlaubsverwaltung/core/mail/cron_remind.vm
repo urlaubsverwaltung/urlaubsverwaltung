@@ -6,4 +6,4 @@ Die folgenden gestellten Urlaubsanträge warten auf ihre Bearbeitung:
 Antrag von ${application.person.niceName} vom ${application.applicationDate.toString("dd.MM.yyyy")}: ${baseUrl}${application.id}
 #end
 
-Ohne eine Bearbeitung kann es passieren, dass ihr weitere Erinnerungen erhaltet ;-)
+Ohne eine Bearbeitung kann es passieren, dass weitere Erinnerungen folgen ;-)
