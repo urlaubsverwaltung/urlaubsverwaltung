@@ -132,7 +132,7 @@
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
                             <i class="fa fa-fw fa-info-circle"></i>
-                            <spring:message code="settings.vacation.daysBeforeWaitingApplicationsReminderNotification.descripton"/>
+                            <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
@@ -154,12 +154,12 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="absenceSettings.daysBeforeWaitingApplicationsReminderNotification">
-                                <spring:message code='settings.vacation.daysBeforeWaitingApplicationsReminderNotification'/>:
+                            <label class="control-label col-md-4" for="absenceSettings.daysBeforeRemindForWaitingApplications">
+                                <spring:message code='settings.vacation.daysBeforeRemindForWaitingApplications'/>:
                             </label>
                             <div class="col-md-8">
-                                <spring:eval var="daysBeforeWaitingApplicationsReminderNotification" expression="@environment.getProperty('uv.cron.daysBeforeWaitingApplicationsReminderNotification')" />
-                                <input value="${daysBeforeWaitingApplicationsReminderNotification}" class="form-control" disabled="true" />
+                                <form:input id="absenceSettings.daysBeforeRemindForWaitingApplications" path="absenceSettings.daysBeforeRemindForWaitingApplications" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="absenceSettings.daysBeforeRemindForWaitingApplications" cssClass="error"/></span>
                             </div>
                         </div>
 

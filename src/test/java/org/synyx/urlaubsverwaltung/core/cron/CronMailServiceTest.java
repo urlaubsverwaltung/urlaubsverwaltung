@@ -26,14 +26,14 @@ import java.util.List;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 public class CronMailServiceTest {
-
-    private static final int DAYS_BEFORE_WAITING_APPLICATIONS_REMINDER_NOTIFICATION = 2;
 
     private CronMailService sut;
     private ApplicationService applicationService;
@@ -49,7 +49,7 @@ public class CronMailServiceTest {
         sickNoteService = mock(SickNoteService.class);
         mailService = mock(MailService.class);
 
-        sut = new CronMailService(applicationService, settingsService, sickNoteService, mailService, DAYS_BEFORE_WAITING_APPLICATIONS_REMINDER_NOTIFICATION);
+        sut = new CronMailService(applicationService, settingsService, sickNoteService, mailService);
     }
 
     @Test
@@ -66,9 +66,20 @@ public class CronMailServiceTest {
     }
 
     @Test
+    public void ensureNoSendWhenDeactivated() throws Exception {
+
+        boolean isInactive = false;
+        prepareSettingsWithRemindForWaitingApplications(isInactive);
+
+        sut.sendEndOfSickPayNotification();
+        verifyZeroInteractions(mailService);
+    }
+
+    @Test
     public void ensureSendWaitingApplicationsReminderNotification() throws Exception {
 
-        prepareSettingsWithActiveRemindForWaitingApplications();
+        boolean isActive = true;
+        prepareSettingsWithRemindForWaitingApplications(isActive);
 
         Application shortWaitingApplication = TestDataCreator.createApplication(TestDataCreator.createPerson("leo"), TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         shortWaitingApplication.setApplicationDate(DateMidnight.now());
@@ -107,10 +118,10 @@ public class CronMailServiceTest {
         assertTrue(longWaitingApplicationAlreadyRemindedToday.getRemindDate().isEqual(today));
     }
 
-    private void prepareSettingsWithActiveRemindForWaitingApplications() {
+    private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = new AbsenceSettings();
-        absenceSettings.setRemindForWaitingApplications(true);
+        absenceSettings.setRemindForWaitingApplications(isActive);
         settings.setAbsenceSettings(absenceSettings);
         when(settingsService.getSettings()).thenReturn(settings);
     }

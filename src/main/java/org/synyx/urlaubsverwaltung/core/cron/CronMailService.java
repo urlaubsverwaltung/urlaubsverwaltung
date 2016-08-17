@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 @Service
 public class CronMailService {
 
-    private final Integer daysBeforeWaitingApplicationsReminderNotification;
-
     private final ApplicationService applicationService;
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
@@ -41,15 +39,12 @@ public class CronMailService {
     public CronMailService(ApplicationService applicationService,
                            SettingsService settingsService,
                            SickNoteService sickNoteService,
-                           MailService mailService,
-                           @Value("${uv.cron.daysBeforeWaitingApplicationsReminderNotification}")
-                                       Integer daysBeforeWaitingApplicationsReminderNotification) {
+                           MailService mailService) {
 
         this.applicationService = applicationService;
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
-        this.daysBeforeWaitingApplicationsReminderNotification = daysBeforeWaitingApplicationsReminderNotification;
     }
 
     @Scheduled(cron = "${uv.cron.endOfSickPayNotification}")
@@ -62,15 +57,15 @@ public class CronMailService {
         }
     }
 
-    @Scheduled(cron = "0 7 */${uv.cron.daysBeforeWaitingApplicationsReminderNotification} * * ?")
+    @Scheduled(cron = "${uv.cron.daysBeforeWaitingApplicationsReminderNotification}")
     public void sendWaitingApplicationsReminderNotification() {
 
-        boolean isRemindForWaitingApplicationsActive = settingsService.getSettings().getAbsenceSettings()
-                .getRemindForWaitingApplications();
+        boolean isRemindForWaitingApplicationsActive =
+                settingsService.getSettings().getAbsenceSettings().getRemindForWaitingApplications();
 
         if (isRemindForWaitingApplicationsActive) {
-            List<Application> allWaitingApplications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
-
+            List<Application> allWaitingApplications =
+                    applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
 
             List<Application> longWaitingApplications = allWaitingApplications.stream()
                     .filter(isLongWaitingApplications())
@@ -91,18 +86,18 @@ public class CronMailService {
         return application -> {
 
             DateMidnight remindDate = application.getRemindDate();
-
             if (remindDate == null) {
+                Integer daysBeforeRemindForWaitingApplications =
+                        settingsService.getSettings().getAbsenceSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
                 DateMidnight minDateForNotification = application.getApplicationDate()
-                        .plusDays(daysBeforeWaitingApplicationsReminderNotification);
+                        .plusDays(daysBeforeRemindForWaitingApplications);
 
                 // true -> remind!
                 // false -> to early for notification
                 return minDateForNotification.isBeforeNow();
             } else {
-
                 // true -> not reminded today
                 // false -> allready remined today
                 return !remindDate.isEqual(DateMidnight.now());

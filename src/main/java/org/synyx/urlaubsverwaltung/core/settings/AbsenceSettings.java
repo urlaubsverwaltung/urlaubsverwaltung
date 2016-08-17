@@ -37,6 +37,12 @@ public class AbsenceSettings {
      */
     private boolean remindForWaitingApplications = false;
 
+    /**
+     * Specifies when a reminder for waiting application should be send to boss / department head /
+     * secondary stage authority
+     */
+    private Integer daysBeforeRemindForWaitingApplications = 2;
+
     public Integer getMaximumAnnualVacationDays() {
 
         return maximumAnnualVacationDays;
@@ -91,6 +97,14 @@ public class AbsenceSettings {
 
     public void setRemindForWaitingApplications(boolean remindForWaitingApplications) {
         this.remindForWaitingApplications = remindForWaitingApplications;
+    }
+
+    public Integer getDaysBeforeRemindForWaitingApplications() {
+        return daysBeforeRemindForWaitingApplications;
+    }
+
+    public void setDaysBeforeRemindForWaitingApplications(Integer daysBeforeRemindForWaitingApplications) {
+        this.daysBeforeRemindForWaitingApplications = daysBeforeRemindForWaitingApplications;
     }
 
 }
