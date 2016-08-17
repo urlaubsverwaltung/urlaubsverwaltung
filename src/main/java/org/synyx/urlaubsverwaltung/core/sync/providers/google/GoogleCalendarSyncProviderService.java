@@ -117,7 +117,7 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
      *
      * @return an authorized Calendar client service
      */
-    public com.google.api.services.calendar.Calendar getCalendarService() {
+    private com.google.api.services.calendar.Calendar getCalendarService() {
 
         String pathname = DATA_STORE_DIR.getPath() + "/" + this.clientSecretFile;
 

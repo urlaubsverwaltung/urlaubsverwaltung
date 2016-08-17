@@ -33,8 +33,8 @@ public class GoogleCalendarSettings {
     @Column(name = "calendar_google_calendarId")
     private String calendarId;
 
-    @Column(name = "calendar_google_pkcs12KeyFile")
-    private String pkcs12KeyFile;
+    @Column(name = "calendar_google_clientSecretFile")
+    private String clientSecretFile;
 
 
     public boolean isActive() {
@@ -123,13 +123,13 @@ public class GoogleCalendarSettings {
 
     public String getClientSecretFile() {
 
-        return pkcs12KeyFile;
+        return clientSecretFile;
     }
 
 
-    public void setPkcs12KeyFile(String pkcs12KeyFile) {
+    public void setClientSecretFile(String clientSecretFile) {
 
-        this.pkcs12KeyFile = pkcs12KeyFile;
+        this.clientSecretFile = clientSecretFile;
     }
 
 }
