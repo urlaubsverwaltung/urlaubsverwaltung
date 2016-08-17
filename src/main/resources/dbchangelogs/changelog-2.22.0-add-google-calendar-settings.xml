@@ -15,6 +15,9 @@
             <column name="calendar_google_application" type="VARCHAR(255)"/>
             <column name="calendar_google_dataStoreDir" type="VARCHAR(255)"/>
             <column name="calendar_google_clientSecret" type="VARCHAR(255)"/>
+            <column name="calendar_google_serviceAccount" type="VARCHAR(255)"/>
+            <column name="calendar_google_calendarId" type="VARCHAR(255)"/>
+            <column name="calendar_google_clientSecretFile" type="VARCHAR(255)"/>
         </addColumn>
 
     </changeSet>

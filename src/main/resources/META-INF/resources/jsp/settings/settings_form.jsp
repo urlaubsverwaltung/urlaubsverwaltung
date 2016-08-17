@@ -496,6 +496,73 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="form-section">
+                    <div class="col-xs-12">
+                        <legend><spring:message code="settings.calendar.google.title" /></legend>
+                    </div>
+                    <div class="col-md-4 col-md-push-8">
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle"></i>
+                            <spring:message code="settings.calendar.google.description"/>
+                        </span>
+                    </div>
+                    <div class="col-md-8 col-md-pull-4">
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.active">
+                                <spring:message code='settings.calendar.google.active'/>:
+                            </label>
+                            <div class="col-md-8 radio">
+                                <label class="halves">
+                                    <form:radiobutton id="calendarSettings.exchangeCalendarSettings.active" path="calendarSettings.exchangeCalendarSettings.active" value="true"/>
+                                    <spring:message code="settings.calendar.google.active.true"/>
+                                </label>
+                                <label class="halves">
+                                    <form:radiobutton id="calendarSettings.exchangeCalendarSettings.active" path="calendarSettings.exchangeCalendarSettings.active" value="false"/>
+                                    <spring:message code="settings.calendar.google.active.false"/>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.email">
+                                <spring:message code='settings.calendar.google.email'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="calendarSettings.exchangeCalendarSettings.email" path="calendarSettings.exchangeCalendarSettings.email" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.email" cssClass="error"/></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.password">
+                                <spring:message code='settings.calendar.google.password'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:password showPassword="true" id="calendarSettings.exchangeCalendarSettings.password" path="calendarSettings.exchangeCalendarSettings.password" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.password" cssClass="error"/></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.calendar">
+                                <spring:message code='settings.calendar.google.calendar'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="calendarSettings.exchangeCalendarSettings.calendar" path="calendarSettings.exchangeCalendarSettings.calendar" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.calendar" cssClass="error"/></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.sendInvitationActive">
+                                <spring:message code='settings.calendar.google.notification'/>:
+                            </label>
+                            <div class="col-md-8 checkbox">
+                                <label>
+                                    <form:checkbox id="calendarSettings.exchangeCalendarSettings.sendInvitationActive" path="calendarSettings.exchangeCalendarSettings.sendInvitationActive" value="true"/>
+                                    <spring:message code="settings.calendar.google.notification.true"/>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="form-section">
