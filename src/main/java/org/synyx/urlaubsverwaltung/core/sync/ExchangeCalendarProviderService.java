@@ -96,30 +96,39 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
 
         String email = settings.getEmail();
         String password = settings.getPassword();
-
         String username = email.split("[@._]")[0];
 
         if (!email.equals(credentialsMailAddress) || !password.equals(credentialsPassword)) {
             try {
-                String domain = email.split("[@._]")[1];
-                exchangeService.setCredentials(new WebCredentials(username, password, domain));
+                exchangeService.setCredentials(new WebCredentials(username, password));
                 exchangeService.setTraceEnabled(true);
                 exchangeService.setEnableScpLookup(true);
                 exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
-            } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
+            } catch (Exception usernameException) { // NOSONAR - EWS Java API throws Exception, that's life
                 LOG.info(String.format(
                         "No connection could be established to the Exchange calendar for username=%s, cause=%s",
-                        username, ex.getMessage()));
-
+                        username, usernameException.getMessage()));
+                String domain = email.split("[@._]")[1];
                 try {
-                    exchangeService.setCredentials(new WebCredentials(email, password));
+                    exchangeService.setCredentials(new WebCredentials(username, password, domain));
                     exchangeService.setTraceEnabled(true);
                     exchangeService.setEnableScpLookup(true);
                     exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
-                } catch (Exception e) { // NOSONAR - EWS Java API throws Exception, that's life
-                    LOG.warn(String.format(
-                            "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
-                            ex.getMessage()));
+                } catch (Exception usernameDomainException) { // NOSONAR - EWS Java API throws Exception, that's life
+                    LOG.info(String.format(
+                            "No connection could be established to the Exchange calendar for username=%s and domain=%s, cause=%s",
+                            username, domain, usernameDomainException.getMessage()));
+
+                    try {
+                        exchangeService.setCredentials(new WebCredentials(email, password));
+                        exchangeService.setTraceEnabled(true);
+                        exchangeService.setEnableScpLookup(true);
+                        exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
+                    } catch (Exception emailException) { // NOSONAR - EWS Java API throws Exception, that's life
+                        LOG.warn(String.format(
+                                "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
+                                emailException.getMessage()));
+                    }
                 }
             }
 
