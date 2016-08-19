@@ -10,7 +10,7 @@
     * [Berechtigungen](#berechtigungen)
 * [Installation](#installation)
 * [Entwicklung](#entwicklung)
-* [Hinweise zu Versionen](#hinweise-zu-versionen)
+* [Changelog](CHANGELOG.md)
 * [Technologien](#technologien)
 * [Lizenz](#lizenz)
 
@@ -287,10 +287,8 @@ tun kann.](UV_WITH_DOCKER.md)
 
 ## Hinweise zu Versionen
 
-#### Version 2.12.0
-
-Ab dieser Version ist die Anwendung eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung, d.h. sie wird
-nicht mehr als WAR in einem Tomcat installiert, sondern als JAR ausgeführt.
+## Changelog
+Das Changelog kann hier gefunden werden: [Changelog](CHANGELOG.md)
 
 ---
 
