@@ -287,8 +287,7 @@ tun kann.](UV_WITH_DOCKER.md)
 
 ## Hinweise zu Versionen
 
-## Changelog
-Das Changelog kann hier gefunden werden: [Changelog](CHANGELOG.md)
+Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
 
 ---
 
