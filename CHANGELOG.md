@@ -118,7 +118,7 @@ Mini Fix in Personenformular: Label fixen
 * Bug Fix: Exchange 2013 Kalender Anbindung #117
 
 ### [urlaubsverwaltung-2.12.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.0)
-* Technisches Feature: Umbau der Urlaubsverwaltung zu einer Spring Boot Anwendung
+* Technisches Feature: Umbau der Urlaubsverwaltung zu einer Spring Boot Anwendung. Ab dieser Version ist die Anwendung eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung, d.h. sie wird nicht mehr als WAR in einem Tomcat installiert, sondern als JAR ausgeführt.
 
 ### [urlaubsverwaltung-2.11.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.4)
 * Bug Fix: (Teilweise) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang #137
