@@ -175,6 +175,13 @@ Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in
 
 <pre>auth=activeDirectory</pre>
 
+##### Synchronisation der User-Datenbank
+
+Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
+Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync` bzw. `uv.security.activeDirectory.sync` auf `true` gesetzt wird:
+
+<pre>uv.security.ldap.sync=true</pre> bzw. <pre>uv.security.activeDirectory.sync=true</pre>
+
 ---
 
 ## Entwicklung
