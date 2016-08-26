@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
@@ -159,9 +159,11 @@ public interface MailService {
 
 
     /**
-     * Sends mail to the tool's manager if settings has been updated to ensure that the mail configuration works.
+     * Sends mail to the tool's manager if mail settings have been updated to ensure that the mail configuration works.
+     *
+     * @param  mailSettings  that have been updated
      */
-    void sendSuccessfullyUpdatedSettingsNotification(Settings settings);
+    void sendSuccessfullyUpdatedSettingsNotification(MailSettings mailSettings);
 
 
     /**
@@ -215,6 +217,7 @@ public interface MailService {
      * @param  overtimeComment  may contain further information
      */
     void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment);
+
 
     void sendRemindForWaitingApplicationsReminderNotification(List<Application> application);
 }

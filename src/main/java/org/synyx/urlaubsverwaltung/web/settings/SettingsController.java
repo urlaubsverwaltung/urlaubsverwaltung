@@ -17,12 +17,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
+import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 
 /**
@@ -49,38 +51,135 @@ public class SettingsController {
     public String settingsDetails(Model model) {
 
         model.addAttribute("settings", settingsService.getSettings());
-        model.addAttribute("federalStateTypes", FederalState.values());
-        model.addAttribute("dayLengthTypes", DayLength.values());
 
-        return "settings/settings_form";
+        return "settings/settings_details";
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/settings", method = RequestMethod.POST)
-    public String settingsSaved(@ModelAttribute("settings") Settings settings, Errors errors, Model model,
-        RedirectAttributes redirectAttributes) {
+    @RequestMapping(value = "/settings/absence", method = RequestMethod.GET)
+    public String absenceSettings(Model model) {
 
-        settingsValidator.validate(settings, errors);
+        model.addAttribute("settings", settingsService.getSettings().getAbsenceSettings());
+
+        return "settings/absence_settings_form";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/settings/absence", method = RequestMethod.POST)
+    public String absenceSettings(@ModelAttribute("settings") AbsenceSettings absenceSettings, Errors errors,
+        Model model, RedirectAttributes redirectAttributes) {
+
+        // TODO: Validation
+//        settingsValidator.validate(settings, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute("settings", settings);
-            model.addAttribute("federalStateTypes", FederalState.values());
-            model.addAttribute("dayLengthTypes", DayLength.values());
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-
-            return "settings/settings_form";
+            return "settings/absence_settings_form";
         }
 
-        settingsService.save(settings.getAbsenceSettings());
-        settingsService.save(settings.getWorkingTimeSettings());
-        settingsService.save(settings.getMailSettings());
-        settingsService.save(settings.getCalendarSettings());
+        settingsService.save(absenceSettings);
 
-        mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
+        redirectAttributes.addFlashAttribute("updateSuccess", true);
+
+        return "redirect:/web/settings";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/settings/workingtime", method = RequestMethod.GET)
+    public String workingTimeSettings(Model model) {
+
+        model.addAttribute("settings", settingsService.getSettings().getWorkingTimeSettings());
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("dayLengthTypes", DayLength.values());
+
+        return "settings/workingtime_settings_form";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/settings/workingtime", method = RequestMethod.POST)
+    public String workingTimeSettings(@ModelAttribute("settings") WorkingTimeSettings workingTimeSettings,
+        Errors errors, Model model, RedirectAttributes redirectAttributes) {
+
+        // TODO: Validation
+//        settingsValidator.validate(settings, errors);
+
+        if (errors.hasErrors()) {
+            model.addAttribute("federalStateTypes", FederalState.values());
+            model.addAttribute("dayLengthTypes", DayLength.values());
+
+            return "settings/workingtime_settings_form";
+        }
+
+        settingsService.save(workingTimeSettings);
+
+        redirectAttributes.addFlashAttribute("updateSuccess", true);
+
+        return "redirect:/web/settings";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/settings/mail", method = RequestMethod.GET)
+    public String mailSettings(Model model) {
+
+        model.addAttribute("settings", settingsService.getSettings().getMailSettings());
+
+        return "settings/mail_settings_form";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/settings/mail", method = RequestMethod.POST)
+    public String mailSettings(@ModelAttribute("settings") MailSettings mailSettings, Errors errors, Model model,
+        RedirectAttributes redirectAttributes) {
+
+        // TODO: Validation
+//        settingsValidator.validate(settings, errors);
+
+        if (errors.hasErrors()) {
+            return "settings/mail_settings_form";
+        }
+
+        settingsService.save(mailSettings);
+
+        mailService.sendSuccessfullyUpdatedSettingsNotification(mailSettings);
+
+        redirectAttributes.addFlashAttribute("updateSuccess", true);
+
+        return "redirect:/web/settings";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/settings/calendar", method = RequestMethod.GET)
+    public String calendarSettings(Model model) {
+
+        model.addAttribute("settings", settingsService.getSettings().getCalendarSettings());
+
+        return "settings/calendar_settings_form";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/settings/calendar", method = RequestMethod.POST)
+    public String calendarSettings(@ModelAttribute("settings") CalendarSettings calendarSettings, Errors errors,
+        Model model, RedirectAttributes redirectAttributes) {
+
+        // TODO: Validation
+//        settingsValidator.validate(settings, errors);
+
+        if (errors.hasErrors()) {
+            return "settings/calendar_settings_form";
+        }
+
+        settingsService.save(calendarSettings);
+
         calendarSyncService.checkCalendarSyncSettings();
 
-        redirectAttributes.addFlashAttribute("success", true);
+        redirectAttributes.addFlashAttribute("updateSuccess", true);
 
         return "redirect:/web/settings";
     }

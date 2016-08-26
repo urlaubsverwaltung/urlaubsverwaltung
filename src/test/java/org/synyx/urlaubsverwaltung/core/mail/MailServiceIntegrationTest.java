@@ -702,7 +702,7 @@ public class MailServiceIntegrationTest {
     @Test
     public void ensureAdministratorGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
 
-        mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
+        mailService.sendSuccessfullyUpdatedSettingsNotification(settings.getMailSettings());
 
         List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
         assertTrue(inbox.size() > 0);

@@ -500,10 +500,10 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
+    public void sendSuccessfullyUpdatedSettingsNotification(MailSettings mailSettings) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("settings", settings);
+        model.put("mailSettings", mailSettings);
 
         String text = buildMailBody("updated_settings", model);
         sendTechnicalNotification("subject.settings.updated", text);
