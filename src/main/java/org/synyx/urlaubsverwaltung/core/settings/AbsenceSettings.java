@@ -36,13 +36,13 @@ public class AbsenceSettings {
     private Integer daysBeforeEndOfSickPayNotification = 7; // NOSONAR
 
     /**
-     * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications
+     * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications.
      */
     private boolean remindForWaitingApplications = false;
 
     /**
-     * Specifies when a reminder for waiting application should be send to boss / department head /
-     * secondary stage authority
+     * Specifies when a reminder for waiting application should be send to boss / department head / secondary stage
+     * authority.
      */
     private Integer daysBeforeRemindForWaitingApplications = 2;
 
@@ -93,20 +93,27 @@ public class AbsenceSettings {
         this.daysBeforeEndOfSickPayNotification = daysBeforeEndOfSickPayNotification;
     }
 
+
     public boolean getRemindForWaitingApplications() {
 
         return remindForWaitingApplications;
     }
 
+
     public void setRemindForWaitingApplications(boolean remindForWaitingApplications) {
+
         this.remindForWaitingApplications = remindForWaitingApplications;
     }
 
+
     public Integer getDaysBeforeRemindForWaitingApplications() {
+
         return daysBeforeRemindForWaitingApplications;
     }
 
+
     public void setDaysBeforeRemindForWaitingApplications(Integer daysBeforeRemindForWaitingApplications) {
+
         this.daysBeforeRemindForWaitingApplications = daysBeforeRemindForWaitingApplications;
     }
 
