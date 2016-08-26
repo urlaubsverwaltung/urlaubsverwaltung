@@ -28,7 +28,10 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 
 /**
- * Daniel Hammann - <hammann@synyx.de>.
+ * Controller to manage the application's {@link org.synyx.urlaubsverwaltung.core.settings.Settings}.
+ *
+ * @author  Daniel Hammann - hammann@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
@@ -44,7 +47,16 @@ public class SettingsController {
     private MailService mailService;
 
     @Autowired
-    private SettingsValidator settingsValidator;
+    private AbsenceSettingsValidator absenceSettingsValidator;
+
+    @Autowired
+    private CalendarSettingsValidator calendarSettingsValidator;
+
+    @Autowired
+    private MailSettingsValidator mailSettingsValidator;
+
+    @Autowired
+    private WorkingTimeSettingsValidator workingTimeSettingsValidator;
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
@@ -71,8 +83,7 @@ public class SettingsController {
     public String absenceSettings(@ModelAttribute("settings") AbsenceSettings absenceSettings, Errors errors,
         Model model, RedirectAttributes redirectAttributes) {
 
-        // TODO: Validation
-//        settingsValidator.validate(settings, errors);
+        absenceSettingsValidator.validate(absenceSettings, errors);
 
         if (errors.hasErrors()) {
             return "settings/absence_settings_form";
@@ -103,8 +114,7 @@ public class SettingsController {
     public String workingTimeSettings(@ModelAttribute("settings") WorkingTimeSettings workingTimeSettings,
         Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
-        // TODO: Validation
-//        settingsValidator.validate(settings, errors);
+        workingTimeSettingsValidator.validate(workingTimeSettings, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute("federalStateTypes", FederalState.values());
@@ -136,8 +146,7 @@ public class SettingsController {
     public String mailSettings(@ModelAttribute("settings") MailSettings mailSettings, Errors errors, Model model,
         RedirectAttributes redirectAttributes) {
 
-        // TODO: Validation
-//        settingsValidator.validate(settings, errors);
+        mailSettingsValidator.validate(mailSettings, errors);
 
         if (errors.hasErrors()) {
             return "settings/mail_settings_form";
@@ -168,8 +177,7 @@ public class SettingsController {
     public String calendarSettings(@ModelAttribute("settings") CalendarSettings calendarSettings, Errors errors,
         Model model, RedirectAttributes redirectAttributes) {
 
-        // TODO: Validation
-//        settingsValidator.validate(settings, errors);
+        calendarSettingsValidator.validate(calendarSettings, errors);
 
         if (errors.hasErrors()) {
             return "settings/calendar_settings_form";
