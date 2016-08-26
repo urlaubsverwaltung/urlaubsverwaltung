@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
 import javax.persistence.Column;
@@ -129,5 +132,12 @@ public class WorkingTimeSettings {
     public void setMinimumOvertime(Integer minimumOvertime) {
 
         this.minimumOvertime = minimumOvertime;
+    }
+
+
+    @Override
+    public String toString() {
+
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

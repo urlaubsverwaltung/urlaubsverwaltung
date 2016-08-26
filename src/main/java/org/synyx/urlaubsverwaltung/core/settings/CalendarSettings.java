@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -57,5 +60,12 @@ public class CalendarSettings {
     public void setWorkDayEndHour(Integer workDayEndHour) {
 
         this.workDayEndHour = workDayEndHour;
+    }
+
+
+    @Override
+    public String toString() {
+
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }
