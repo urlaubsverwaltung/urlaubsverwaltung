@@ -26,11 +26,54 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void save(Settings settings) {
+    public void save(AbsenceSettings absenceSettings) {
+
+        Settings settings = getSettings();
+
+        settings.setAbsenceSettings(absenceSettings);
+
+        save(settings);
+    }
+
+
+    private void save(Settings settings) {
 
         settingsDAO.save(settings);
 
         LOG.info("Updated settings: " + settings.toString());
+    }
+
+
+    @Override
+    public void save(WorkingTimeSettings workingTimeSettings) {
+
+        Settings settings = getSettings();
+
+        settings.setWorkingTimeSettings(workingTimeSettings);
+
+        save(settings);
+    }
+
+
+    @Override
+    public void save(MailSettings mailSettings) {
+
+        Settings settings = getSettings();
+
+        settings.setMailSettings(mailSettings);
+
+        save(settings);
+    }
+
+
+    @Override
+    public void save(CalendarSettings calendarSettings) {
+
+        Settings settings = getSettings();
+
+        settings.setCalendarSettings(calendarSettings);
+
+        save(settings);
     }
 
 

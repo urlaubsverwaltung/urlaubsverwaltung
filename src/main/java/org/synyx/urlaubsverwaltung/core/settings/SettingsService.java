@@ -8,11 +8,35 @@ package org.synyx.urlaubsverwaltung.core.settings;
 public interface SettingsService {
 
     /**
-     * Persists the given settings.
+     * Persists the given absence settings.
      *
-     * @param  settings  to be persisted
+     * @param  absenceSettings  to be persisted
      */
-    void save(Settings settings);
+    void save(AbsenceSettings absenceSettings);
+
+
+    /**
+     * Persists the given working time settings.
+     *
+     * @param  workingTimeSettings  to be persisted
+     */
+    void save(WorkingTimeSettings workingTimeSettings);
+
+
+    /**
+     * Persists the given mail settings.
+     *
+     * @param  mailSettings  to be persisted
+     */
+    void save(MailSettings mailSettings);
+
+
+    /**
+     * Persists the given calendar settings.
+     *
+     * @param  calendarSettings  to be persisted
+     */
+    void save(CalendarSettings calendarSettings);
 
 
     /**

@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 
 import java.math.BigDecimal;
 
@@ -37,8 +38,9 @@ class OvertimeRecordDataProvider {
 
         // Activate overtime management for development purpose
         Settings settings = settingsService.getSettings();
-        settings.getWorkingTimeSettings().setOvertimeActive(true);
-        settingsService.save(settings);
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        workingTimeSettings.setOvertimeActive(true);
+        settingsService.save(workingTimeSettings);
     }
 
     Overtime createOvertimeRecord(Person person, DateMidnight startDate, DateMidnight endDate, BigDecimal hours) {

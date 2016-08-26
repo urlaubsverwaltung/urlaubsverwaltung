@@ -72,7 +72,11 @@ public class SettingsController {
             return "settings/settings_form";
         }
 
-        settingsService.save(settings);
+        settingsService.save(settings.getAbsenceSettings());
+        settingsService.save(settings.getWorkingTimeSettings());
+        settingsService.save(settings.getMailSettings());
+        settingsService.save(settings.getCalendarSettings());
+
         mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
         calendarSyncService.checkCalendarSyncSettings();
 
