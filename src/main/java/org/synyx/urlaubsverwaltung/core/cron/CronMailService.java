@@ -2,6 +2,8 @@
 package org.synyx.urlaubsverwaltung.core.cron;
 
 import org.joda.time.DateMidnight;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 @Service
 public class CronMailService {
 
+    private static final Logger LOG = Logger.getLogger(CronMailService.class);
+
     private final ApplicationService applicationService;
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
@@ -52,6 +56,8 @@ public class CronMailService {
 
         List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 
+        LOG.info("Found " + sickNotes.size() + " sick notes reaching end of sick pay");
+
         for (SickNote sickNote : sickNotes) {
             mailService.sendEndOfSickPayNotification(sickNote);
         }
@@ -70,6 +76,8 @@ public class CronMailService {
             List<Application> longWaitingApplications = allWaitingApplications.stream()
                     .filter(isLongWaitingApplications())
                     .collect(Collectors.toList());
+
+            LOG.info("Found " + longWaitingApplications.size() + " applications for leave waiting longer already");
 
             mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 
