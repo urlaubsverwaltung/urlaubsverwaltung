@@ -42,7 +42,6 @@ import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import java.io.IOException;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -633,7 +632,7 @@ class MailServiceImpl implements MailService {
 
             String msg = buildMailBody("cron_remind", model);
 
-            sendEmail(getMailSettings(), Arrays.asList(recipient), "subject.application.cronRemind", msg);
+            sendEmail(mailSettings, Arrays.asList(recipient), "subject.application.cronRemind", msg);
         }
     }
 }
