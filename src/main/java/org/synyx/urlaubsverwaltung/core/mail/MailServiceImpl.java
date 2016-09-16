@@ -11,6 +11,8 @@ import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import org.springframework.context.MessageSource;
+
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -36,18 +38,14 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
-import org.synyx.urlaubsverwaltung.core.util.DateFormat;
-import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
-
-import java.io.IOException;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,32 +63,26 @@ class MailServiceImpl implements MailService {
 
     private static final String TEMPLATE_PATH = "/org/synyx/urlaubsverwaltung/core/mail/";
     private static final String TEMPLATE_TYPE = ".vm";
-    private static final String PROPERTIES_FILE = "messages.properties";
+    private static final Locale LOCALE = Locale.GERMAN;
 
+    private final MessageSource messageSource;
     private final JavaMailSenderImpl mailSender;
     private final VelocityEngine velocityEngine;
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
 
-    private Properties properties;
-
     @Autowired
-    MailServiceImpl(@Qualifier("mailSender") JavaMailSenderImpl mailSender, VelocityEngine velocityEngine,
+    MailServiceImpl(MessageSource messageSource,
+        @Qualifier("mailSender") JavaMailSenderImpl mailSender, VelocityEngine velocityEngine,
         PersonService personService, DepartmentService departmentService, SettingsService settingsService) {
 
+        this.messageSource = messageSource;
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
         this.personService = personService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
-
-        try {
-            this.properties = PropertiesUtil.load(PROPERTIES_FILE);
-        } catch (IOException ex) {
-            LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + "No properties file found.");
-            LOG.error(ex.getMessage(), ex);
-        }
     }
 
     @Override
@@ -108,11 +100,15 @@ class MailServiceImpl implements MailService {
         sendMailToEachRecipient(model, recipients, "new_applications", "subject.application.applied.boss");
     }
 
-    private void sendMailToEachRecipient(Map<String, Object> model, List<Person> recipients, String template, String subject) {
+
+    private void sendMailToEachRecipient(Map<String, Object> model, List<Person> recipients, String template,
+        String subject) {
+
         MailSettings mailSettings = getMailSettings();
 
         for (Person recipient : recipients) {
             model.put("recipientName", recipient.getNiceName());
+
             String text = buildMailBody(template, model);
             sendEmail(mailSettings, Arrays.asList(recipient), subject, text);
         }
@@ -130,7 +126,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("dayLength", properties.getProperty(application.getDayLength().name()));
+        model.put("dayLength", messageSource.getMessage(application.getDayLength().name(), null, LOCALE));
         model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
         if (optionalComment.isPresent()) {
@@ -171,27 +167,29 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * Depending on application issuer role the recipients for allow/remind mail are generated.
-     * USER -> DEPARTMENT_HEAD
-     * DEPARTMENT_HEAD -> SECOND_STAGE_AUTHORITY, BOSS
-     * SECOND_STAGE_AUTHORITY -> BOSS
+     * Depending on application issuer role the recipients for allow/remind mail are generated. USER -> DEPARTMENT_HEAD
+     * DEPARTMENT_HEAD -> SECOND_STAGE_AUTHORITY, BOSS SECOND_STAGE_AUTHORITY -> BOSS
      *
-     * @param application
-     * @return List of recipients for given application allow/remind request
+     * @param  application
+     *
+     * @return  List of recipients for given application allow/remind request
      */
     private List<Person> getRecipientsForAllowAndRemind(Application application) {
 
         List<Person> bosses = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
 
         Person applicationPerson = application.getPerson();
+
         if (applicationPerson.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
             return bosses;
         }
 
         if (applicationPerson.hasRole(Role.DEPARTMENT_HEAD)) {
-
-            List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)
-                    .stream().filter(person -> departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
+            List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(
+                        MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)
+                    .stream()
+                    .filter(person ->
+                                departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
                     .collect(Collectors.toList());
 
             return Stream.concat(bosses.stream(), secondStageAuthorities.stream()).collect(Collectors.toList());
@@ -206,9 +204,12 @@ class MailServiceImpl implements MailService {
          *
          * Thus no need to use a {@link java.util.Set} to avoid person duplicates within the returned list.
          */
-        List<Person> departmentHeads = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)
-                .stream().filter(person -> departmentService.isDepartmentHeadOfPerson(person, application.getPerson()))
+        List<Person> departmentHeads = personService.getPersonsWithNotificationType(
+                    MailNotification.NOTIFICATION_DEPARTMENT_HEAD)
+                .stream()
+                .filter(person -> departmentService.isDepartmentHeadOfPerson(person, application.getPerson()))
                 .collect(Collectors.toList());
+
         return Stream.concat(bosses.stream(), departmentHeads.stream()).collect(Collectors.toList());
     }
 
@@ -216,7 +217,7 @@ class MailServiceImpl implements MailService {
     protected void sendEmail(final MailSettings mailSettings, final List<Person> recipients, final String subject,
         final String text) {
 
-        final String internationalizedSubject = properties.getProperty(subject);
+        final String internationalizedSubject = messageSource.getMessage(subject, null, LOCALE);
 
         final List<Person> recipientsWithMailAddress = recipients.stream().filter(person ->
                     StringUtils.hasText(person.getEmail())).collect(Collectors.toList());
@@ -260,10 +261,11 @@ class MailServiceImpl implements MailService {
                     LOG.info("No email configuration to send email to " + recipient);
                 }
             }
+
             if (LOG.isDebugEnabled()) {
-                LOG.debug("To=" + Arrays.toString(message.getTo()) + "\n\n" +
-                          "Subject=" + message.getSubject() + "\n\n" +
-                          "Text=" + message.getText());
+                LOG.debug("To=" + Arrays.toString(message.getTo()) + "\n\n"
+                    + "Subject=" + message.getSubject() + "\n\n"
+                    + "Text=" + message.getText());
             }
         } catch (MailException ex) {
             for (String recipient : message.getTo()) {
@@ -302,7 +304,8 @@ class MailServiceImpl implements MailService {
 
         // Inform second stage authorities that there is an application for leave that must be allowed
         List<Person> recipients = getSecondStageAuthorities(application);
-        sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority", "subject.application.temporaryAllowed.secondStage");
+        sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority",
+            "subject.application.temporaryAllowed.secondStage");
     }
 
 
@@ -417,7 +420,7 @@ class MailServiceImpl implements MailService {
 
         mailMessage.setFrom(mailSettings.getFrom());
         mailMessage.setTo(mailSettings.getAdministrator());
-        mailMessage.setSubject(properties.getProperty(subject));
+        mailMessage.setSubject(messageSource.getMessage(subject, null, LOCALE));
         mailMessage.setText(text);
 
         sendMail(mailMessage, mailSettings);
@@ -541,7 +544,8 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("dayLength", properties.getProperty(application.getDayLength().name()));
+
+        model.put("dayLength", messageSource.getMessage(application.getDayLength().name(), null, LOCALE));
 
         String text = buildMailBody("notify_holiday_replacement", model);
 
@@ -598,6 +602,7 @@ class MailServiceImpl implements MailService {
         sendEmail(mailSettings, recipients, "subject.overtime.created", textOffice);
     }
 
+
     @Override
     public void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
@@ -616,9 +621,11 @@ class MailServiceImpl implements MailService {
          * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
          */
         Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
-                .flatMap(application -> getRecipientsForAllowAndRemind(application).stream()
-                        .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
-                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+                .flatMap(application ->
+                            getRecipientsForAllowAndRemind(application).stream().map(person ->
+                                    new AbstractMap.SimpleEntry<>(person, application)))
+                .collect(Collectors.groupingBy(Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
         for (Person recipient : applicationsPerRecipient.keySet()) {
             MailSettings mailSettings = getMailSettings();

@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import org.springframework.context.MessageSource;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -26,6 +28,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
 import static org.mockito.Mockito.times;
 
@@ -37,6 +40,7 @@ public class MailServiceImplTest {
 
     private MailServiceImpl mailService;
 
+    private MessageSource messageSource;
     private JavaMailSenderImpl mailSender;
     private PersonService personService;
     private DepartmentService departmentService;
@@ -48,13 +52,14 @@ public class MailServiceImplTest {
     public void setUp() throws Exception {
 
         VelocityEngine velocityEngine = Mockito.mock(VelocityEngine.class);
+        messageSource = Mockito.mock(MessageSource.class);
         mailSender = Mockito.mock(JavaMailSenderImpl.class);
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
 
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService,
+        mailService = new MailServiceImpl(messageSource, mailSender, velocityEngine, personService, departmentService,
                 settingsService);
 
         Person person = TestDataCreator.createPerson();
@@ -66,6 +71,7 @@ public class MailServiceImplTest {
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
     }
+
 
     private Application createApplication(Person person) {
 
@@ -116,8 +122,12 @@ public class MailServiceImplTest {
 
         ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
 
-        String subject = "subject.application.applied.boss";
+        String subject = "Mail Subject";
         String body = "Mail Body";
+
+        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any(Locale.class)))
+            .thenReturn(subject);
+
         mailService.sendEmail(settings.getMailSettings(),
             Arrays.asList(person, anotherPerson, personWithoutMailAddress), subject, body);
 
@@ -127,7 +137,7 @@ public class MailServiceImplTest {
 
         Assert.assertNotNull("There must be recipients", mailMessage.getTo());
         Assert.assertEquals("Wrong number of recipients", 2, mailMessage.getTo().length);
-        Assert.assertEquals("Wrong subject", "Neuer Urlaubsantrag", mailMessage.getSubject());
+        Assert.assertEquals("Wrong subject", subject, mailMessage.getSubject());
         Assert.assertEquals("Wrong body", body, mailMessage.getText());
     }
 
@@ -202,8 +212,10 @@ public class MailServiceImplTest {
             .isDepartmentHeadOfPerson(Mockito.eq(departmentHead), Mockito.eq(application.getPerson()));
     }
 
+
     @Test
     public void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
+
         Person boss = TestDataCreator.createPerson("boss");
         Person departmentHeadAC = TestDataCreator.createPerson("departmentHeadAC");
         Person departmentHeadB = TestDataCreator.createPerson("departmentHeadB");
@@ -217,26 +229,29 @@ public class MailServiceImplTest {
         Application applicationC = createApplication(personDepartmentC);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-                .thenReturn(Collections.singletonList(boss));
+            .thenReturn(Collections.singletonList(boss));
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
-                .thenReturn(Arrays.asList(departmentHeadAC, departmentHeadB));
+            .thenReturn(Arrays.asList(departmentHeadAC, departmentHeadB));
 
         Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentA)).thenReturn(true);
         Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHeadB, personDepartmentB)).thenReturn(true);
         Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentC)).thenReturn(true);
 
-        mailService.sendRemindForWaitingApplicationsReminderNotification(Arrays.asList(applicationA, applicationB, applicationC));
+        mailService.sendRemindForWaitingApplicationsReminderNotification(Arrays.asList(applicationA, applicationB,
+                applicationC));
 
-        Mockito.verify(personService, times(3)).getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
+        Mockito.verify(personService, times(3))
+            .getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         Mockito.verify(personService, times(3)).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
         Mockito.verify(departmentService)
-                .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadAC), Mockito.eq(applicationA.getPerson()));
+            .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadAC), Mockito.eq(applicationA.getPerson()));
         Mockito.verify(departmentService)
-                .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadB), Mockito.eq(applicationB.getPerson()));
+            .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadB), Mockito.eq(applicationB.getPerson()));
         Mockito.verify(departmentService)
-                .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadAC), Mockito.eq(applicationC.getPerson()));
+            .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadAC), Mockito.eq(applicationC.getPerson()));
     }
+
 
     @Test
     public void ensureSendsAllowedNotificationToOffice() {
