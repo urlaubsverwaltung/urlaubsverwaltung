@@ -103,14 +103,17 @@ public class MailServiceIntegrationTest {
         velocityProperties.put("runtime.log.logsystem.log4j.logger", MailServiceIntegrationTest.class.getName());
 
         VelocityEngine velocityEngine = new VelocityEngine(velocityProperties);
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        MailBuilder mailBuilder = new MailBuilder(velocityEngine);
+
+        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        MailSender mailSender = new MailSender(javaMailSender);
 
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
 
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
-        mailService = new MailServiceImpl(MESSAGE_SOURCE, mailSender, velocityEngine, personService, departmentService,
+        mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, personService, departmentService,
                 settingsService);
 
         person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@muster.de");

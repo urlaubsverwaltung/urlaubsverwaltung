@@ -1,25 +1,12 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import org.apache.commons.lang.CharEncoding;
-
-import org.apache.log4j.Logger;
-
-import org.apache.velocity.app.VelocityEngine;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.context.MessageSource;
 
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import org.springframework.stereotype.Service;
-
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import org.springframework.util.StringUtils;
 
@@ -41,6 +28,7 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -59,27 +47,22 @@ import java.util.stream.Stream;
 @Service("mailService")
 class MailServiceImpl implements MailService {
 
-    private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
-
-    private static final String TEMPLATE_PATH = "/org/synyx/urlaubsverwaltung/core/mail/";
-    private static final String TEMPLATE_TYPE = ".vm";
     private static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
-    private final JavaMailSenderImpl mailSender;
-    private final VelocityEngine velocityEngine;
+    private final MailBuilder mailBuilder;
+    private final MailSender mailSender;
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
 
     @Autowired
-    MailServiceImpl(MessageSource messageSource,
-        @Qualifier("mailSender") JavaMailSenderImpl mailSender, VelocityEngine velocityEngine,
+    MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
         PersonService personService, DepartmentService departmentService, SettingsService settingsService) {
 
         this.messageSource = messageSource;
+        this.mailBuilder = mailBuilder;
         this.mailSender = mailSender;
-        this.velocityEngine = velocityEngine;
         this.personService = personService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
@@ -97,7 +80,14 @@ class MailServiceImpl implements MailService {
                 application.getStartDate(), application.getEndDate()));
 
         List<Person> recipients = getRecipientsForAllowAndRemind(application);
-        sendMailToEachRecipient(model, recipients, "new_applications", "subject.application.applied.boss");
+        sendMailToEachRecipient(model, recipients, "new_applications",
+            getTranslation("subject.application.applied.boss"));
+    }
+
+
+    private String getTranslation(String key, Object... args) {
+
+        return messageSource.getMessage(key, args, LOCALE);
     }
 
 
@@ -109,9 +99,22 @@ class MailServiceImpl implements MailService {
         for (Person recipient : recipients) {
             model.put("recipientName", recipient.getNiceName());
 
-            String text = buildMailBody(template, model);
-            sendEmail(mailSettings, Arrays.asList(recipient), subject, text);
+            String text = mailBuilder.buildMailBody(template, model);
+            mailSender.sendEmail(mailSettings, getMailAddresses(recipient), subject, text);
         }
+    }
+
+
+    private List<String> getMailAddresses(Person... persons) {
+
+        return getMailAddresses(Arrays.asList(persons));
+    }
+
+
+    private List<String> getMailAddresses(List<Person> persons) {
+
+        return persons.stream().filter(person -> StringUtils.hasText(person.getEmail())).map(person ->
+                    person.getEmail()).collect(Collectors.toList());
     }
 
 
@@ -126,7 +129,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("dayLength", messageSource.getMessage(application.getDayLength().name(), null, LOCALE));
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
         model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
         if (optionalComment.isPresent()) {
@@ -134,35 +137,6 @@ class MailServiceImpl implements MailService {
         }
 
         return model;
-    }
-
-
-    /**
-     * Build text that can be set as mail body using the given model to fill the template with the given name.
-     *
-     * @param  templateName  of the template to be used
-     * @param  model  to fill the template
-     *
-     * @return  the text representation of the filled template
-     */
-    private String buildMailBody(String templateName, Map<String, Object> model) {
-
-        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, getFullyQualifiedTemplateName(templateName),
-                CharEncoding.UTF_8, model);
-    }
-
-
-    /**
-     * Get fully qualified template name including path and file extension of the given template name.
-     *
-     * @param  templateName  to get the fully qualified template name of
-     *
-     * @return  the fully qualified template name using {@value #TEMPLATE_PATH} as path and {@value #TEMPLATE_TYPE} as
-     *          file extension
-     */
-    private String getFullyQualifiedTemplateName(String templateName) {
-
-        return TEMPLATE_PATH + templateName + TEMPLATE_TYPE;
     }
 
 
@@ -214,67 +188,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    protected void sendEmail(final MailSettings mailSettings, final List<Person> recipients, final String subject,
-        final String text) {
-
-        final String internationalizedSubject = messageSource.getMessage(subject, null, LOCALE);
-
-        final List<Person> recipientsWithMailAddress = recipients.stream().filter(person ->
-                    StringUtils.hasText(person.getEmail())).collect(Collectors.toList());
-
-        if (!recipientsWithMailAddress.isEmpty()) {
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-            String[] addressTo = new String[recipientsWithMailAddress.size()];
-
-            for (int i = 0; i < recipientsWithMailAddress.size(); i++) {
-                Person recipient = recipientsWithMailAddress.get(i);
-                addressTo[i] = recipient.getEmail();
-            }
-
-            mailMessage.setFrom(mailSettings.getFrom());
-            mailMessage.setTo(addressTo);
-            mailMessage.setSubject(internationalizedSubject);
-            mailMessage.setText(text);
-
-            sendMail(mailMessage, mailSettings);
-        }
-    }
-
-
-    private void sendMail(SimpleMailMessage message, MailSettings mailSettings) {
-
-        try {
-            if (mailSettings.isActive()) {
-                this.mailSender.setHost(mailSettings.getHost());
-                this.mailSender.setPort(mailSettings.getPort());
-                this.mailSender.setUsername(mailSettings.getUsername());
-                this.mailSender.setPassword(mailSettings.getPassword());
-
-                this.mailSender.send(message);
-
-                for (String recipient : message.getTo()) {
-                    LOG.info("Sent email to " + recipient);
-                }
-            } else {
-                for (String recipient : message.getTo()) {
-                    LOG.info("No email configuration to send email to " + recipient);
-                }
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("To=" + Arrays.toString(message.getTo()) + "\n\n"
-                    + "Subject=" + message.getSubject() + "\n\n"
-                    + "Text=" + message.getText());
-            }
-        } catch (MailException ex) {
-            for (String recipient : message.getTo()) {
-                LOG.error("Sending email to " + recipient + " failed", ex);
-            }
-        }
-    }
-
-
     @Override
     public void sendRemindBossNotification(Application application) {
 
@@ -283,7 +196,7 @@ class MailServiceImpl implements MailService {
                 Optional.empty());
 
         List<Person> recipients = getRecipientsForAllowAndRemind(application);
-        sendMailToEachRecipient(model, recipients, "remind", "subject.application.remind");
+        sendMailToEachRecipient(model, recipients, "remind", getTranslation("subject.application.remind"));
     }
 
 
@@ -298,14 +211,14 @@ class MailServiceImpl implements MailService {
                 application.getStartDate(), application.getEndDate()));
 
         // Inform user that the application for leave has been allowed temporary
-        String textUser = buildMailBody("temporary_allowed_user", model);
-        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.temporaryAllowed.user",
-            textUser);
+        String textUser = mailBuilder.buildMailBody("temporary_allowed_user", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+            getTranslation("subject.application.temporaryAllowed.user"), textUser);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
         List<Person> recipients = getSecondStageAuthorities(application);
         sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority",
-            "subject.application.temporaryAllowed.secondStage");
+            getTranslation("subject.application.temporaryAllowed.secondStage"));
     }
 
 
@@ -328,13 +241,15 @@ class MailServiceImpl implements MailService {
                 Optional.ofNullable(comment));
 
         // Inform user that the application for leave has been allowed
-        String textUser = buildMailBody("allowed_user", model);
-        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
+        String textUser = mailBuilder.buildMailBody("allowed_user", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+            getTranslation("subject.application.allowed.user"), textUser);
 
         // Inform office that there is a new allowed application for leave
 
-        String textOffice = buildMailBody("allowed_office", model);
-        sendEmail(mailSettings, getOfficeMembers(), "subject.application.allowed.office", textOffice);
+        String textOffice = mailBuilder.buildMailBody("allowed_office", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(getOfficeMembers()),
+            getTranslation("subject.application.allowed.office"), textOffice);
     }
 
 
@@ -350,8 +265,9 @@ class MailServiceImpl implements MailService {
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
-        String text = buildMailBody("rejected", model);
-        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.rejected", text);
+        String text = mailBuilder.buildMailBody("rejected", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+            getTranslation("subject.application.rejected"), text);
     }
 
 
@@ -366,8 +282,9 @@ class MailServiceImpl implements MailService {
         model.put("recipient", recipient);
         model.put("sender", sender);
 
-        String text = buildMailBody("refer", model);
-        sendEmail(mailSettings, Arrays.asList(recipient), "subject.application.refer", text);
+        String text = mailBuilder.buildMailBody("refer", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(recipient), getTranslation("subject.application.refer"),
+            text);
     }
 
 
@@ -377,8 +294,9 @@ class MailServiceImpl implements MailService {
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
-        String text = buildMailBody("confirm", model);
-        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.applied.user", text);
+        String text = mailBuilder.buildMailBody("confirm", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+            getTranslation("subject.application.applied.user"), text);
     }
 
 
@@ -388,8 +306,9 @@ class MailServiceImpl implements MailService {
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
-        String text = buildMailBody("new_application_by_office", model);
-        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.appliedByOffice", text);
+        String text = mailBuilder.buildMailBody("new_application_by_office", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+            getTranslation("subject.application.appliedByOffice"), text);
     }
 
 
@@ -400,9 +319,10 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
 
-        String text = buildMailBody("cancelled_by_office", model);
+        String text = mailBuilder.buildMailBody("cancelled_by_office", model);
 
-        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
+        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+            getTranslation("subject.application.cancelled.user"), text);
     }
 
 
@@ -416,14 +336,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = settingsService.getSettings().getMailSettings();
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-        mailMessage.setFrom(mailSettings.getFrom());
-        mailMessage.setTo(mailSettings.getAdministrator());
-        mailMessage.setSubject(messageSource.getMessage(subject, null, LOCALE));
-        mailMessage.setText(text);
-
-        sendMail(mailMessage, mailSettings);
+        mailSender.sendEmail(mailSettings, Collections.singletonList(mailSettings.getAdministrator()), subject, text);
     }
 
 
@@ -434,9 +347,9 @@ class MailServiceImpl implements MailService {
         model.put("applicationId", applicationId);
         model.put("exception", exception);
 
-        String text = buildMailBody("error_sign_application", model);
+        String text = mailBuilder.buildMailBody("error_sign_application", model);
 
-        sendTechnicalNotification("subject.error.keys.sign", text);
+        sendTechnicalNotification(getTranslation("subject.error.keys.sign"), text);
     }
 
 
@@ -448,9 +361,9 @@ class MailServiceImpl implements MailService {
         model.put("absence", absence);
         model.put("exception", exception);
 
-        String text = buildMailBody("error_calendar_sync", model);
+        String text = mailBuilder.buildMailBody("error_calendar_sync", model);
 
-        sendTechnicalNotification("subject.error.calendar.sync", text);
+        sendTechnicalNotification(getTranslation("subject.error.calendar.sync"), text);
     }
 
 
@@ -464,9 +377,9 @@ class MailServiceImpl implements MailService {
         model.put("eventId", eventId);
         model.put("exception", exception);
 
-        String text = buildMailBody("error_calendar_update", model);
+        String text = mailBuilder.buildMailBody("error_calendar_update", model);
 
-        sendTechnicalNotification("subject.error.calendar.update", text);
+        sendTechnicalNotification(getTranslation("subject.error.calendar.update"), text);
     }
 
 
@@ -478,9 +391,9 @@ class MailServiceImpl implements MailService {
         model.put("eventId", eventId);
         model.put("exception", exception);
 
-        String text = buildMailBody("error_calendar_delete", model);
+        String text = mailBuilder.buildMailBody("error_calendar_delete", model);
 
-        sendTechnicalNotification("subject.error.calendar.delete", text);
+        sendTechnicalNotification(getTranslation("subject.error.calendar.delete"), text);
     }
 
 
@@ -491,13 +404,14 @@ class MailServiceImpl implements MailService {
         model.put("accounts", updatedAccounts);
         model.put("year", DateMidnight.now().getYear());
 
-        String text = buildMailBody("updated_accounts", model);
+        String text = mailBuilder.buildMailBody("updated_accounts", model);
 
         // send email to office for printing statistic
-        sendEmail(getMailSettings(), getOfficeMembers(), "subject.account.updatedRemainingDays", text);
+        mailSender.sendEmail(getMailSettings(), getMailAddresses(getOfficeMembers()),
+            getTranslation("subject.account.updatedRemainingDays"), text);
 
         // send email to manager to notify about update of accounts
-        sendTechnicalNotification("subject.account.updatedRemainingDays", text);
+        sendTechnicalNotification(getTranslation("subject.account.updatedRemainingDays"), text);
     }
 
 
@@ -507,8 +421,8 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("settings", settings);
 
-        String text = buildMailBody("updated_settings", model);
-        sendTechnicalNotification("subject.settings.updated", text);
+        String text = mailBuilder.buildMailBody("updated_settings", model);
+        sendTechnicalNotification(getTranslation("subject.settings.updated"), text);
     }
 
 
@@ -521,8 +435,9 @@ class MailServiceImpl implements MailService {
         model.put("application", application);
         model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
-        String text = buildMailBody("sicknote_converted", model);
-        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.sicknote.converted", text);
+        String text = mailBuilder.buildMailBody("sicknote_converted", model);
+        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+            getTranslation("subject.sicknote.converted"), text);
     }
 
 
@@ -532,10 +447,12 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("sickNote", sickNote);
 
-        String text = buildMailBody("sicknote_end_of_sick_pay", model);
+        String text = mailBuilder.buildMailBody("sicknote_end_of_sick_pay", model);
 
-        sendEmail(getMailSettings(), Arrays.asList(sickNote.getPerson()), "subject.sicknote.endOfSickPay", text);
-        sendEmail(getMailSettings(), getOfficeMembers(), "subject.sicknote.endOfSickPay", text);
+        mailSender.sendEmail(getMailSettings(), getMailAddresses(sickNote.getPerson()),
+            getTranslation("subject.sicknote.endOfSickPay"), text);
+        mailSender.sendEmail(getMailSettings(), getMailAddresses(getOfficeMembers()),
+            getTranslation("subject.sicknote.endOfSickPay"), text);
     }
 
 
@@ -547,10 +464,10 @@ class MailServiceImpl implements MailService {
 
         model.put("dayLength", messageSource.getMessage(application.getDayLength().name(), null, LOCALE));
 
-        String text = buildMailBody("notify_holiday_replacement", model);
+        String text = mailBuilder.buildMailBody("notify_holiday_replacement", model);
 
-        sendEmail(getMailSettings(), Arrays.asList(application.getHolidayReplacement()),
-            "subject.application.holidayReplacement", text);
+        mailSender.sendEmail(getMailSettings(), getMailAddresses(application.getHolidayReplacement()),
+            getTranslation("subject.application.holidayReplacement"), text);
     }
 
 
@@ -562,9 +479,9 @@ class MailServiceImpl implements MailService {
         model.put("rawPassword", rawPassword);
         model.put("applicationUrl", "");
 
-        String text = buildMailBody("user_creation", model);
+        String text = mailBuilder.buildMailBody("user_creation", model);
 
-        sendEmail(getMailSettings(), Arrays.asList(person), "subject.userCreation", text);
+        mailSender.sendEmail(getMailSettings(), getMailAddresses(person), getTranslation("subject.userCreation"), text);
     }
 
 
@@ -578,9 +495,10 @@ class MailServiceImpl implements MailService {
         model.put("comment", createdComment);
         model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
-        String text = buildMailBody("application_cancellation_request", model);
+        String text = mailBuilder.buildMailBody("application_cancellation_request", model);
 
-        sendEmail(mailSettings, getOfficeMembers(), "subject.application.cancellationRequest", text);
+        mailSender.sendEmail(mailSettings, getMailAddresses(getOfficeMembers()),
+            getTranslation("subject.application.cancellationRequest"), text);
     }
 
 
@@ -594,12 +512,13 @@ class MailServiceImpl implements MailService {
         model.put("comment", overtimeComment);
         model.put("link", mailSettings.getBaseLinkURL() + "web/overtime/" + overtime.getId());
 
-        String textOffice = buildMailBody("overtime_office", model);
+        String textOffice = mailBuilder.buildMailBody("overtime_office", model);
 
         List<Person> recipients = personService.getPersonsWithNotificationType(
                 MailNotification.OVERTIME_NOTIFICATION_OFFICE);
 
-        sendEmail(mailSettings, recipients, "subject.overtime.created", textOffice);
+        mailSender.sendEmail(mailSettings, getMailAddresses(recipients), getTranslation("subject.overtime.created"),
+            textOffice);
     }
 
 
@@ -637,9 +556,10 @@ class MailServiceImpl implements MailService {
             model.put("recipient", recipient);
             model.put("baseUrl", mailSettings.getBaseLinkURL() + "web/application/");
 
-            String msg = buildMailBody("cron_remind", model);
+            String msg = mailBuilder.buildMailBody("cron_remind", model);
 
-            sendEmail(mailSettings, Arrays.asList(recipient), "subject.application.cronRemind", msg);
+            mailSender.sendEmail(mailSettings, getMailAddresses(recipient),
+                getTranslation("subject.application.cronRemind"), msg);
         }
     }
 }

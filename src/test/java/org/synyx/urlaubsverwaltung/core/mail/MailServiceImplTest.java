@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import org.apache.velocity.app.VelocityEngine;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +9,6 @@ import org.mockito.Mockito;
 
 import org.springframework.context.MessageSource;
 
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -21,14 +16,13 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Locale;
+import java.util.List;
 
 import static org.mockito.Mockito.times;
 
@@ -41,7 +35,8 @@ public class MailServiceImplTest {
     private MailServiceImpl mailService;
 
     private MessageSource messageSource;
-    private JavaMailSenderImpl mailSender;
+    private MailBuilder mailBuilder;
+    private MailSender mailSender;
     private PersonService personService;
     private DepartmentService departmentService;
 
@@ -51,15 +46,15 @@ public class MailServiceImplTest {
     @Before
     public void setUp() throws Exception {
 
-        VelocityEngine velocityEngine = Mockito.mock(VelocityEngine.class);
         messageSource = Mockito.mock(MessageSource.class);
-        mailSender = Mockito.mock(JavaMailSenderImpl.class);
+        mailBuilder = Mockito.mock(MailBuilder.class);
+        mailSender = Mockito.mock(MailSender.class);
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
 
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
-        mailService = new MailServiceImpl(messageSource, mailSender, velocityEngine, personService, departmentService,
+        mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, personService, departmentService,
                 settingsService);
 
         Person person = TestDataCreator.createPerson();
@@ -85,73 +80,25 @@ public class MailServiceImplTest {
 
 
     @Test
-    public void ensureNoMailSentIfSendingMailsIsDeactivated() {
-
-        settings.getMailSettings().setActive(false);
-
-        Person person = TestDataCreator.createPerson();
-
-        mailService.sendEmail(settings.getMailSettings(), Collections.singletonList(person), "subject", "text");
-
-        Mockito.verifyZeroInteractions(mailSender);
-    }
-
-
-    @Test
-    public void ensureMailSenderAttributesAreUpdatedWhenSendingMails() {
-
-        MailSettings mailSettings = settings.getMailSettings();
-
-        Person person = TestDataCreator.createPerson();
-
-        mailService.sendEmail(mailSettings, Collections.singletonList(person), "subject", "text");
-
-        Mockito.verify(mailSender).setHost(mailSettings.getHost());
-        Mockito.verify(mailSender).setPort(mailSettings.getPort());
-        Mockito.verify(mailSender).setUsername(mailSettings.getUsername());
-        Mockito.verify(mailSender).setPassword(mailSettings.getPassword());
-    }
-
-
-    @Test
     public void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
         Person person = TestDataCreator.createPerson("muster", "Max", "Mustermann", "max@muster.de");
         Person anotherPerson = TestDataCreator.createPerson("mmuster", "Marlene", "Muster", "max@muster.de");
         Person personWithoutMailAddress = TestDataCreator.createPerson("nomail", "No", "Mail", null);
 
-        ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
+            .thenReturn(Arrays.asList(person, anotherPerson, personWithoutMailAddress));
 
-        String subject = "Mail Subject";
-        String body = "Mail Body";
+        ArgumentCaptor<List> recipientsArgumentCaptor = ArgumentCaptor.forClass(List.class);
 
-        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any(Locale.class)))
-            .thenReturn(subject);
+        mailService.sendCancellationRequest(application, null);
 
-        mailService.sendEmail(settings.getMailSettings(),
-            Arrays.asList(person, anotherPerson, personWithoutMailAddress), subject, body);
+        Mockito.verify(mailSender)
+            .sendEmail(Mockito.eq(settings.getMailSettings()), recipientsArgumentCaptor.capture(), Mockito.anyString(),
+                Mockito.anyString());
 
-        Mockito.verify(mailSender).send(mailMessageArgumentCaptor.capture());
-
-        SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
-
-        Assert.assertNotNull("There must be recipients", mailMessage.getTo());
-        Assert.assertEquals("Wrong number of recipients", 2, mailMessage.getTo().length);
-        Assert.assertEquals("Wrong subject", subject, mailMessage.getSubject());
-        Assert.assertEquals("Wrong body", body, mailMessage.getText());
-    }
-
-
-    @Test
-    public void ensureNoMailIsSentIfTheRecipientsHaveNoMailAddress() {
-
-        Person person = TestDataCreator.createPerson();
-        person.setEmail(null);
-
-        mailService.sendEmail(settings.getMailSettings(), Collections.singletonList(person), "Mail Subject",
-            "Mail Body");
-
-        Mockito.verifyZeroInteractions(mailSender);
+        List value = recipientsArgumentCaptor.getValue();
+        Assert.assertEquals("Wrong number of recipients", 2, value.size());
     }
 
 
