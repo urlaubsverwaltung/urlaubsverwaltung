@@ -1,4 +1,4 @@
-Hallo ${recipientName},
+Hallo ${recipient.niceName},
 
 es liegt ein neuer zu genehmigender Antrag vor: ${link}
 

@@ -91,7 +91,7 @@ class MailServiceImpl implements MailService {
         MailSettings mailSettings = getMailSettings();
 
         for (Person recipient : recipients) {
-            model.put("recipientName", recipient.getNiceName());
+            model.put("recipient", recipient);
 
             String text = mailBuilder.buildMailBody(template, model);
             mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient), subject, text);
