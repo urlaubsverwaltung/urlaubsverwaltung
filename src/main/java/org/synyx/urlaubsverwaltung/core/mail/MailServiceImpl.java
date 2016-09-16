@@ -111,7 +111,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
+        model.put("settings", mailSettings);
 
         if (optionalComment.isPresent()) {
             model.put("comment", optionalComment.get());
@@ -196,7 +196,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
+        model.put("settings", mailSettings);
         model.put("recipient", recipient);
         model.put("sender", sender);
 
@@ -353,7 +353,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
+        model.put("settings", mailSettings);
 
         String text = mailBuilder.buildMailBody("sicknote_converted", model);
         mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
@@ -383,7 +383,6 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-
         model.put("dayLength", messageSource.getMessage(application.getDayLength().name(), null, LOCALE));
 
         String text = mailBuilder.buildMailBody("notify_holiday_replacement", model);
@@ -416,7 +415,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("comment", createdComment);
-        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
+        model.put("settings", mailSettings);
 
         String text = mailBuilder.buildMailBody("application_cancellation_request", model);
 
@@ -435,7 +434,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
-        model.put("link", mailSettings.getBaseLinkURL() + "web/overtime/" + overtime.getId());
+        model.put("settings", mailSettings);
 
         String textOffice = mailBuilder.buildMailBody("overtime_office", model);
 
@@ -480,7 +479,7 @@ class MailServiceImpl implements MailService {
             Map<String, Object> model = new HashMap<>();
             model.put("applicationList", applications);
             model.put("recipient", recipient);
-            model.put("baseUrl", mailSettings.getBaseLinkURL() + "web/application/");
+            model.put("settings", mailSettings);
 
             String msg = mailBuilder.buildMailBody("cron_remind", model);
 

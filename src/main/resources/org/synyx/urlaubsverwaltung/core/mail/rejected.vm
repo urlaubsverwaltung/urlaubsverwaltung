@@ -6,4 +6,4 @@ dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag 
 Begründung: ${comment.text}
 
 #end
-Link zum Antrag: ${link}
+Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id}
