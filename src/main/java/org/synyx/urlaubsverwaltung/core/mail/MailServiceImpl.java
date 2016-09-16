@@ -8,8 +8,6 @@ import org.springframework.context.MessageSource;
 
 import org.springframework.stereotype.Service;
 
-import org.springframework.util.StringUtils;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
@@ -25,7 +23,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -97,21 +94,8 @@ class MailServiceImpl implements MailService {
             model.put("recipientName", recipient.getNiceName());
 
             String text = mailBuilder.buildMailBody(template, model);
-            mailSender.sendEmail(mailSettings, getMailAddresses(recipient), subject, text);
+            mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient), subject, text);
         }
-    }
-
-
-    private List<String> getMailAddresses(Person... persons) {
-
-        return getMailAddresses(Arrays.asList(persons));
-    }
-
-
-    private List<String> getMailAddresses(List<Person> persons) {
-
-        return persons.stream().filter(person -> StringUtils.hasText(person.getEmail())).map(person ->
-                    person.getEmail()).collect(Collectors.toList());
     }
 
 
@@ -161,7 +145,7 @@ class MailServiceImpl implements MailService {
 
         // Inform user that the application for leave has been allowed temporary
         String textUser = mailBuilder.buildMailBody("temporary_allowed_user", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.temporaryAllowed.user"), textUser);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
@@ -180,14 +164,15 @@ class MailServiceImpl implements MailService {
 
         // Inform user that the application for leave has been allowed
         String textUser = mailBuilder.buildMailBody("allowed_user", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.allowed.user"), textUser);
 
         // Inform office that there is a new allowed application for leave
 
         String textOffice = mailBuilder.buildMailBody("allowed_office", model);
         mailSender.sendEmail(mailSettings,
-            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+            RecipientUtil.getMailAddresses(
+                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.application.allowed.office"), textOffice);
     }
 
@@ -199,7 +184,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         String text = mailBuilder.buildMailBody("rejected", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.rejected"), text);
     }
 
@@ -216,8 +201,8 @@ class MailServiceImpl implements MailService {
         model.put("sender", sender);
 
         String text = mailBuilder.buildMailBody("refer", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(recipient), getTranslation("subject.application.refer"),
-            text);
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient),
+            getTranslation("subject.application.refer"), text);
     }
 
 
@@ -228,7 +213,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         String text = mailBuilder.buildMailBody("confirm", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.applied.user"), text);
     }
 
@@ -240,7 +225,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         String text = mailBuilder.buildMailBody("new_application_by_office", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.appliedByOffice"), text);
     }
 
@@ -254,7 +239,7 @@ class MailServiceImpl implements MailService {
 
         String text = mailBuilder.buildMailBody("cancelled_by_office", model);
 
-        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.cancelled.user"), text);
     }
 
@@ -341,7 +326,8 @@ class MailServiceImpl implements MailService {
 
         // send email to office for printing statistic
         mailSender.sendEmail(getMailSettings(),
-            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+            RecipientUtil.getMailAddresses(
+                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.account.updatedRemainingDays"), text);
 
         // send email to manager to notify about update of accounts
@@ -370,7 +356,7 @@ class MailServiceImpl implements MailService {
         model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
         String text = mailBuilder.buildMailBody("sicknote_converted", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(application.getPerson()),
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.sicknote.converted"), text);
     }
 
@@ -383,10 +369,11 @@ class MailServiceImpl implements MailService {
 
         String text = mailBuilder.buildMailBody("sicknote_end_of_sick_pay", model);
 
-        mailSender.sendEmail(getMailSettings(), getMailAddresses(sickNote.getPerson()),
+        mailSender.sendEmail(getMailSettings(), RecipientUtil.getMailAddresses(sickNote.getPerson()),
             getTranslation("subject.sicknote.endOfSickPay"), text);
         mailSender.sendEmail(getMailSettings(),
-            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+            RecipientUtil.getMailAddresses(
+                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.sicknote.endOfSickPay"), text);
     }
 
@@ -401,7 +388,7 @@ class MailServiceImpl implements MailService {
 
         String text = mailBuilder.buildMailBody("notify_holiday_replacement", model);
 
-        mailSender.sendEmail(getMailSettings(), getMailAddresses(application.getHolidayReplacement()),
+        mailSender.sendEmail(getMailSettings(), RecipientUtil.getMailAddresses(application.getHolidayReplacement()),
             getTranslation("subject.application.holidayReplacement"), text);
     }
 
@@ -416,7 +403,8 @@ class MailServiceImpl implements MailService {
 
         String text = mailBuilder.buildMailBody("user_creation", model);
 
-        mailSender.sendEmail(getMailSettings(), getMailAddresses(person), getTranslation("subject.userCreation"), text);
+        mailSender.sendEmail(getMailSettings(), RecipientUtil.getMailAddresses(person),
+            getTranslation("subject.userCreation"), text);
     }
 
 
@@ -433,7 +421,8 @@ class MailServiceImpl implements MailService {
         String text = mailBuilder.buildMailBody("application_cancellation_request", model);
 
         mailSender.sendEmail(mailSettings,
-            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+            RecipientUtil.getMailAddresses(
+                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.application.cancellationRequest"), text);
     }
 
@@ -453,8 +442,8 @@ class MailServiceImpl implements MailService {
         List<Person> recipients = recipientsService.getRecipientsWithNotificationType(
                 MailNotification.OVERTIME_NOTIFICATION_OFFICE);
 
-        mailSender.sendEmail(mailSettings, getMailAddresses(recipients), getTranslation("subject.overtime.created"),
-            textOffice);
+        mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipients),
+            getTranslation("subject.overtime.created"), textOffice);
     }
 
 
@@ -495,7 +484,7 @@ class MailServiceImpl implements MailService {
 
             String msg = mailBuilder.buildMailBody("cron_remind", model);
 
-            mailSender.sendEmail(mailSettings, getMailAddresses(recipient),
+            mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient),
                 getTranslation("subject.application.cronRemind"), msg);
         }
     }
