@@ -111,9 +111,11 @@ public class MailServiceIntegrationTest {
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
 
+        RecipientsService recipientsService = new RecipientsService(personService, departmentService);
+
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
-        mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, personService, departmentService,
+        mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, recipientsService, departmentService,
                 settingsService);
 
         person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@muster.de");

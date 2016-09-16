@@ -18,8 +18,6 @@ import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -35,7 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**
@@ -52,18 +49,18 @@ class MailServiceImpl implements MailService {
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
     private final MailSender mailSender;
-    private final PersonService personService;
+    private final RecipientsService recipientsService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
-        PersonService personService, DepartmentService departmentService, SettingsService settingsService) {
+        RecipientsService recipientsService, DepartmentService departmentService, SettingsService settingsService) {
 
         this.messageSource = messageSource;
         this.mailBuilder = mailBuilder;
         this.mailSender = mailSender;
-        this.personService = personService;
+        this.recipientsService = recipientsService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
     }
@@ -79,7 +76,7 @@ class MailServiceImpl implements MailService {
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
 
-        List<Person> recipients = getRecipientsForAllowAndRemind(application);
+        List<Person> recipients = recipientsService.getRecipientsForAllowAndRemind(application);
         sendMailToEachRecipient(model, recipients, "new_applications",
             getTranslation("subject.application.applied.boss"));
     }
@@ -140,54 +137,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * Depending on application issuer role the recipients for allow/remind mail are generated. USER -> DEPARTMENT_HEAD
-     * DEPARTMENT_HEAD -> SECOND_STAGE_AUTHORITY, BOSS SECOND_STAGE_AUTHORITY -> BOSS
-     *
-     * @param  application
-     *
-     * @return  List of recipients for given application allow/remind request
-     */
-    private List<Person> getRecipientsForAllowAndRemind(Application application) {
-
-        List<Person> bosses = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
-
-        Person applicationPerson = application.getPerson();
-
-        if (applicationPerson.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            return bosses;
-        }
-
-        if (applicationPerson.hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(
-                        MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)
-                    .stream()
-                    .filter(person ->
-                                departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
-                    .collect(Collectors.toList());
-
-            return Stream.concat(bosses.stream(), secondStageAuthorities.stream()).collect(Collectors.toList());
-        }
-
-        /**
-         * NOTE:
-         *
-         * It's not possible that someone has both roles,
-         * {@link Role.BOSS} and
-         * {@link Role.DEPARTMENT_HEAD}.
-         *
-         * Thus no need to use a {@link java.util.Set} to avoid person duplicates within the returned list.
-         */
-        List<Person> departmentHeads = personService.getPersonsWithNotificationType(
-                    MailNotification.NOTIFICATION_DEPARTMENT_HEAD)
-                .stream()
-                .filter(person -> departmentService.isDepartmentHeadOfPerson(person, application.getPerson()))
-                .collect(Collectors.toList());
-
-        return Stream.concat(bosses.stream(), departmentHeads.stream()).collect(Collectors.toList());
-    }
-
-
     @Override
     public void sendRemindBossNotification(Application application) {
 
@@ -195,7 +144,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.empty());
 
-        List<Person> recipients = getRecipientsForAllowAndRemind(application);
+        List<Person> recipients = recipientsService.getRecipientsForAllowAndRemind(application);
         sendMailToEachRecipient(model, recipients, "remind", getTranslation("subject.application.remind"));
     }
 
@@ -216,20 +165,9 @@ class MailServiceImpl implements MailService {
             getTranslation("subject.application.temporaryAllowed.user"), textUser);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
-        List<Person> recipients = getSecondStageAuthorities(application);
+        List<Person> recipients = recipientsService.getRecipientsForTemporaryAllow(application);
         sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority",
             getTranslation("subject.application.temporaryAllowed.secondStage"));
-    }
-
-
-    private List<Person> getSecondStageAuthorities(Application application) {
-
-        List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(
-                MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY);
-
-        return secondStageAuthorities.stream()
-            .filter(person -> departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
-            .collect(Collectors.toList());
     }
 
 
@@ -248,14 +186,9 @@ class MailServiceImpl implements MailService {
         // Inform office that there is a new allowed application for leave
 
         String textOffice = mailBuilder.buildMailBody("allowed_office", model);
-        mailSender.sendEmail(mailSettings, getMailAddresses(getOfficeMembers()),
+        mailSender.sendEmail(mailSettings,
+            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.application.allowed.office"), textOffice);
-    }
-
-
-    private List<Person> getOfficeMembers() {
-
-        return personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE);
     }
 
 
@@ -407,7 +340,8 @@ class MailServiceImpl implements MailService {
         String text = mailBuilder.buildMailBody("updated_accounts", model);
 
         // send email to office for printing statistic
-        mailSender.sendEmail(getMailSettings(), getMailAddresses(getOfficeMembers()),
+        mailSender.sendEmail(getMailSettings(),
+            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.account.updatedRemainingDays"), text);
 
         // send email to manager to notify about update of accounts
@@ -451,7 +385,8 @@ class MailServiceImpl implements MailService {
 
         mailSender.sendEmail(getMailSettings(), getMailAddresses(sickNote.getPerson()),
             getTranslation("subject.sicknote.endOfSickPay"), text);
-        mailSender.sendEmail(getMailSettings(), getMailAddresses(getOfficeMembers()),
+        mailSender.sendEmail(getMailSettings(),
+            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.sicknote.endOfSickPay"), text);
     }
 
@@ -497,7 +432,8 @@ class MailServiceImpl implements MailService {
 
         String text = mailBuilder.buildMailBody("application_cancellation_request", model);
 
-        mailSender.sendEmail(mailSettings, getMailAddresses(getOfficeMembers()),
+        mailSender.sendEmail(mailSettings,
+            getMailAddresses(recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.application.cancellationRequest"), text);
     }
 
@@ -514,7 +450,7 @@ class MailServiceImpl implements MailService {
 
         String textOffice = mailBuilder.buildMailBody("overtime_office", model);
 
-        List<Person> recipients = personService.getPersonsWithNotificationType(
+        List<Person> recipients = recipientsService.getRecipientsWithNotificationType(
                 MailNotification.OVERTIME_NOTIFICATION_OFFICE);
 
         mailSender.sendEmail(mailSettings, getMailAddresses(recipients), getTranslation("subject.overtime.created"),
@@ -541,8 +477,9 @@ class MailServiceImpl implements MailService {
          */
         Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
                 .flatMap(application ->
-                            getRecipientsForAllowAndRemind(application).stream().map(person ->
-                                    new AbstractMap.SimpleEntry<>(person, application)))
+                            recipientsService.getRecipientsForAllowAndRemind(application)
+                            .stream()
+                            .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
                 .collect(Collectors.groupingBy(Map.Entry::getKey,
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
