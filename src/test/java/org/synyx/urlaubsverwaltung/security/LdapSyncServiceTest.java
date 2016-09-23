@@ -82,7 +82,7 @@ public class LdapSyncServiceTest {
     @Test
     public void ensureSyncedPersonHasCorrectAttributes() {
 
-        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de");
+        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@firma.test");
 
         Person syncedPerson = ldapSyncService.syncPerson(person, Optional.of("Aljona"), Optional.of("Murygina"),
                 Optional.of("murygina@synyx.de"));
@@ -104,7 +104,7 @@ public class LdapSyncServiceTest {
     @Test
     public void ensureSyncDoesNotEmptyAttributes() {
 
-        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de");
+        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@firma.test");
 
         Person syncedPerson = ldapSyncService.syncPerson(person, Optional.empty(), Optional.empty(), Optional.empty());
 
@@ -113,7 +113,7 @@ public class LdapSyncServiceTest {
         Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
         Assert.assertEquals("Wrong first name", "Marlene", syncedPerson.getFirstName());
         Assert.assertEquals("Wrong last name", "Muster", syncedPerson.getLastName());
-        Assert.assertEquals("Wrong mail address", "marlene@muster.de", syncedPerson.getEmail());
+        Assert.assertEquals("Wrong mail address", "marlene@firma.test", syncedPerson.getEmail());
     }
 
 

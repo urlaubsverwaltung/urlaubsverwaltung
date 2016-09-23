@@ -78,7 +78,7 @@ public class MailSenderTest {
         String subject = "subject";
         String body = "text";
 
-        mailSender.sendEmail(mailSettings, Arrays.asList("max@muster.de", "marlene@muster.de"), subject, body);
+        mailSender.sendEmail(mailSettings, Arrays.asList("max@firma.test", "marlene@firma.test"), subject, body);
 
         Mockito.verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
 

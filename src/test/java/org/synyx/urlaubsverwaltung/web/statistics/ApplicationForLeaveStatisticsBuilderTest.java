@@ -101,7 +101,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Person person = Mockito.mock(Person.class);
         Account account = Mockito.mock(Account.class);
 
-        Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
+        Mockito.when(person.getEmail()).thenReturn("muster@firma.test");
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
             .thenReturn(BigDecimal.TEN);
@@ -197,7 +197,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Person person = Mockito.mock(Person.class);
         Account account = Mockito.mock(Account.class);
 
-        Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
+        Mockito.when(person.getEmail()).thenReturn("muster@firma.test");
         Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
             .thenReturn(BigDecimal.TEN);
