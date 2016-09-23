@@ -85,8 +85,8 @@ public class MailServiceImplTest {
     @Test
     public void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
-        Person person = TestDataCreator.createPerson("muster", "Max", "Mustermann", "max@muster.de");
-        Person anotherPerson = TestDataCreator.createPerson("mmuster", "Marlene", "Muster", "max@muster.de");
+        Person person = TestDataCreator.createPerson("muster", "Max", "Mustermann", "max@firma.test");
+        Person anotherPerson = TestDataCreator.createPerson("mmuster", "Marlene", "Muster", "max@firma.test");
         Person personWithoutMailAddress = TestDataCreator.createPerson("nomail", "No", "Mail", null);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))

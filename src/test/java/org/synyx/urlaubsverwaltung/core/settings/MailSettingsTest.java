@@ -30,8 +30,8 @@ public class MailSettingsTest {
         Assert.assertFalse("Should be inactive", mailSettings.isActive());
         Assert.assertEquals("Wrong host", "localhost", mailSettings.getHost());
         Assert.assertEquals("Wrong port", (Integer) 25, mailSettings.getPort());
-        Assert.assertEquals("Wrong admin mail address", "admin@uv.de", mailSettings.getAdministrator());
-        Assert.assertEquals("Wrong from mail address", "absender@uv.de", mailSettings.getFrom());
+        Assert.assertEquals("Wrong admin mail address", "admin@urlaubsverwaltung.test", mailSettings.getAdministrator());
+        Assert.assertEquals("Wrong from mail address", "absender@urlaubsverwaltung.test", mailSettings.getFrom());
         Assert.assertEquals("Wrong base link URL", "http://localhost:8080/", mailSettings.getBaseLinkURL());
     }
 }

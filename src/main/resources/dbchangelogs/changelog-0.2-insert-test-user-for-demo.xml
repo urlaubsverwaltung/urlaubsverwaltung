@@ -11,7 +11,7 @@
         <insert tableName="Person">
             <column name="id" valueNumeric="1" />
             <column name="active" valueBoolean="true" />
-            <column name="email" value="mustermann@muster.de" />
+            <column name="email" value="mustermann@firma.test" />
             <column name="firstName" value="Max" />
             <column name="lastName" value="Mustermann" />
             <column name="loginName" value="test" />
