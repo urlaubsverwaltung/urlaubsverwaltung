@@ -214,9 +214,7 @@ public class TestDataCreationService {
             sickNoteTypeStandard, true);
 
         // CHILD SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(15), now.minusDays(13), // NOSONAR
-            sickNoteTypeChild, true);
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(20), now.minusDays(19), // NOSONAR
+        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(40), now.minusDays(38), // NOSONAR
             sickNoteTypeChild, false);
     }
 
