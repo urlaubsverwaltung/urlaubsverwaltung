@@ -4,13 +4,13 @@ import java.util.List;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Marc Kannegiesser - kannegiesser@synyx.de
  */
 class AvailabilityList {
 
     private final List<DayAvailability> availabilities;
     private final Integer personId;
-        
+
     public AvailabilityList(List<DayAvailability> availabilities, Integer personId) {
         this.availabilities = availabilities;
         this.personId = personId;
