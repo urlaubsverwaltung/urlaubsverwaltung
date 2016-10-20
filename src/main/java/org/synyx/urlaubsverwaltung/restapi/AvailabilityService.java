@@ -1,9 +1,13 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import de.jollyday.Holiday;
+
 import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -17,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,36 +29,44 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 /**
- * @author Marc Kannegiesser - kannegiesser@synyx.de
+ * @author  Marc Kannegiesser - kannegiesser@synyx.de
  */
 @Service
 public class AvailabilityService {
-
 
     private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
 
-
     @Autowired
-    public AvailabilityService(ApplicationService applicationService, SickNoteService sickNoteService, PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
+    public AvailabilityService(ApplicationService applicationService, SickNoteService sickNoteService,
+        PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
+
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
     }
 
-    public AvailabilityList getPersonsAvailabilities(Integer personId, DateMidnight startDate, DateMidnight endDate, Person person) {
+    /**
+     * Fetch an {@link AvailabilityList} for the given person on all days in the given period of time.
+     */
+    public AvailabilityList getPersonsAvailabilities(Integer personId, DateMidnight startDate, DateMidnight endDate,
+        Person person) {
+
         Map<DateMidnight, DayAbsence> vacations = getVacations(startDate, endDate, person);
         Map<DateMidnight, DayAbsence> sickNotes = getSickNotes(startDate, endDate, person);
-        Map<DateMidnight, Holiday> holidays = getHolidays(startDate, endDate, getFederalState(startDate, endDate, person));
+        Map<DateMidnight, Holiday> holidays = getHolidays(startDate, endDate,
+                getFederalState(startDate, endDate, person));
 
         List<DayAvailability> availabilities = new ArrayList<>();
 
         DateMidnight currentDay = startDate;
-        while(! currentDay.isAfter(endDate)) {
+
+        while (!currentDay.isAfter(endDate)) {
             availabilities.add(getAvailabilityfor(currentDay, person, vacations, sickNotes, holidays));
 
             currentDay = currentDay.plusDays(1);
@@ -62,7 +75,11 @@ public class AvailabilityService {
         return new AvailabilityList(availabilities, personId);
     }
 
-    private DayAvailability getAvailabilityfor(DateMidnight currentDay, Person person, Map<DateMidnight, DayAbsence> vacations, Map<DateMidnight, DayAbsence> sickNotes, Map<DateMidnight, Holiday> holidays) {
+
+    private DayAvailability getAvailabilityfor(DateMidnight currentDay, Person person,
+        Map<DateMidnight, DayAbsence> vacations, Map<DateMidnight, DayAbsence> sickNotes,
+        Map<DateMidnight, Holiday> holidays) {
+
         // todo this should be configurable!
         BigDecimal regularWorkHours = new BigDecimal(8);
 
@@ -83,21 +100,25 @@ public class AvailabilityService {
         List<DayAvailability.Absence> spans = new ArrayList<>();
 
         BigDecimal hoursOfAbsence = BigDecimal.ZERO;
+
         if (vacation != null) {
             BigDecimal hours = vacation.getDayLength().multiply(regularWorkHours);
-            DayAvailability.Absence span = new DayAvailability.TimedAbsence(hours, DayAvailability.Absence.Type.VACATION );
+            DayAvailability.Absence span = new DayAvailability.TimedAbsence(hours,
+                    DayAvailability.Absence.Type.VACATION);
             spans.add(span);
             hoursOfAbsence = hoursOfAbsence.add(hours);
         }
 
         if (sick != null) {
             BigDecimal hours = sick.getDayLength().multiply(regularWorkHours);
-            DayAvailability.Absence span = new DayAvailability.TimedAbsence(hours, DayAvailability.Absence.Type.SICK_NOTE );
+            DayAvailability.Absence span = new DayAvailability.TimedAbsence(hours,
+                    DayAvailability.Absence.Type.SICK_NOTE);
             spans.add(span);
             hoursOfAbsence = hoursOfAbsence.add(hours);
         }
 
         BigDecimal presenceHours;
+
         if (expectedHoursToWork.compareTo(hoursOfAbsence) > 0) {
             presenceHours = expectedHoursToWork.subtract(hoursOfAbsence);
         } else {
@@ -114,25 +135,35 @@ public class AvailabilityService {
         return new DayAvailability(presenceHours, currentDay.toString("yyyy-MM-dd"), spans);
     }
 
+
     private BigDecimal getExpectedWorktimeFor(Person person, DateMidnight currentDay) {
-        Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, currentDay);
-        if (! workingTimeOrNot.isPresent()) {
+
+        Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
+                currentDay);
+
+        if (!workingTimeOrNot.isPresent()) {
             throw new IllegalStateException("Person " + person + " does not have workingTime configured");
         }
+
         WorkingTime workingTime = workingTimeOrNot.get();
 
         DayLength dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek());
+
         return dayLengthForWeekDay.getDuration();
     }
 
 
     private FederalState getFederalState(DateMidnight startDate, DateMidnight endDate, Person person) {
+
         return workingTimeService.getFederalStateForPerson(person, startDate);
     }
 
-    private Map<DateMidnight, Holiday> getHolidays(DateMidnight startDate, DateMidnight endDate, FederalState federalState) {
+
+    private Map<DateMidnight, Holiday> getHolidays(DateMidnight startDate, DateMidnight endDate,
+        FederalState federalState) {
 
         Map<DateMidnight, Holiday> holidayMap = new HashMap<>();
+
         for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
             for (Holiday holiday : publicHolidaysService.getHolidays(startDate.getYear(), federalState)) {
                 DateMidnight date = holiday.getDate().toDateMidnight();
@@ -140,20 +171,21 @@ public class AvailabilityService {
             }
         }
 
-        return  holidayMap;
+        return holidayMap;
     }
+
 
     private Map<DateMidnight, DayAbsence> getVacations(DateMidnight start, DateMidnight end, Person person) {
 
         Map<DateMidnight, DayAbsence> absenceMap = new HashMap<>();
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end,
-                person)
+                    person)
                 .stream()
                 .filter(application ->
-                        application.hasStatus(ApplicationStatus.WAITING)
-                                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-                                || application.hasStatus(ApplicationStatus.ALLOWED))
+                            application.hasStatus(ApplicationStatus.WAITING)
+                            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
+                            || application.hasStatus(ApplicationStatus.ALLOWED))
                 .collect(Collectors.toList());
 
         for (Application application : applications) {
@@ -164,7 +196,8 @@ public class AvailabilityService {
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
-                    absenceMap.put(day,new DayAbsence(day, application.getDayLength(), DayAbsence.Type.VACATION,
+                    absenceMap.put(day,
+                        new DayAbsence(day, application.getDayLength(), DayAbsence.Type.VACATION,
                             application.getStatus().name(), application.getId()));
                 }
 
@@ -180,7 +213,6 @@ public class AvailabilityService {
 
         Map<DateMidnight, DayAbsence> absenceMap = new HashMap<>();
 
-
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, start, end)
                 .stream()
                 .filter(SickNote::isActive)
@@ -194,7 +226,8 @@ public class AvailabilityService {
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
-                    absenceMap.put(day,new DayAbsence(day, sickNote.getDayLength(), DayAbsence.Type.SICK_NOTE, "ACTIVE",
+                    absenceMap.put(day,
+                        new DayAbsence(day, sickNote.getDayLength(), DayAbsence.Type.SICK_NOTE, "ACTIVE",
                             sickNote.getId()));
                 }
 
@@ -204,5 +237,4 @@ public class AvailabilityService {
 
         return absenceMap;
     }
-
 }

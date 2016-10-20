@@ -5,12 +5,12 @@ import java.util.List;
 
 
 /**
- * Represents an absence for a day.
+ * Represents the availability for a person on a given day. Also contains the reason for being absent.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Marc Kannegiesser - kannegiesser@synyx.de
  */
 class DayAvailability {
-    
+
 
     static class TimedAbsence extends Absence {
         private final BigDecimal hours;
@@ -24,28 +24,28 @@ class DayAvailability {
             return hours;
         }
     }
-    
+
     static class Absence {
         enum Type {
             VACATION,
             SICK_NOTE,
-            WORK, 
-            FREETIME, 
+            WORK,
+            FREETIME,
             HOLIDAY
         }
-        
+
         private final Type type;
 
         public Absence(Type type) {
             this.type = type;
         }
-        
+
         public Type getType() {
             return type;
         }
     }
-    
-   
+
+
     private final String date;
     private final BigDecimal hoursAvailable;
     private final List<Absence> spans;

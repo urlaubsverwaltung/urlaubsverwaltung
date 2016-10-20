@@ -16,7 +16,7 @@ import java.util.Optional;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Marc Kannegiesser - kannegiesser@synyx.de
  */
 @Api(value = "Availabilities", description = "Get all availabilities for a certain period")
 @RestController("restApiAvailabilityController")
@@ -24,7 +24,6 @@ import java.util.Optional;
 public class AvailabilityController {
 
     private final PersonService personService;
-   
 
     private final AvailabilityService availabilityService;
 
@@ -35,8 +34,8 @@ public class AvailabilityController {
     }
 
     @ApiOperation(
-        value = "Get all absences for a certain period and person",
-        notes = "Get all absences for a certain period and person"
+            value = "Get all absences for a certain period and person",
+            notes = "Get all absences for a certain period and person"
     )
     @RequestMapping(value = "/availabiliy", method = RequestMethod.GET)
     public AvailabilityList personsAvailabilities(
