@@ -105,6 +105,7 @@ public class AvailabilityService {
         }
 
         // if there was no work expected it is either freetime or an holiday
+        // FIXME this has to be done only when presenceHours == 0
         if (spans.isEmpty()) {
             DayAvailability.Absence span = new DayAvailability.Absence(freeType);
             spans.add(span);
