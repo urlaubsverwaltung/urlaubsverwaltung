@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.restapi;
 import de.jollyday.Holiday;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 /**
  * @author Marc Kannegiesser - kannegiesser@synyx.de
  */
+@Service
 public class AvailabilityService {
 
 
