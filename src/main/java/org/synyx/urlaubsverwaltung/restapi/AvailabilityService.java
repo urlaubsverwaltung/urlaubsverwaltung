@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import de.jollyday.Holiday;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +9,11 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
@@ -26,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -59,15 +54,13 @@ public class AvailabilityService {
 
         Map<DateMidnight, DayAbsence> vacations = getVacations(startDate, endDate, person);
         Map<DateMidnight, DayAbsence> sickNotes = getSickNotes(startDate, endDate, person);
-        Map<DateMidnight, Holiday> holidays = getHolidays(startDate, endDate,
-                getFederalState(startDate, endDate, person));
 
         List<DayAvailability> availabilities = new ArrayList<>();
 
         DateMidnight currentDay = startDate;
 
         while (!currentDay.isAfter(endDate)) {
-            availabilities.add(getAvailabilityfor(currentDay, person, vacations, sickNotes, holidays));
+            availabilities.add(getAvailabilityfor(currentDay, person, vacations, sickNotes));
 
             currentDay = currentDay.plusDays(1);
         }
@@ -77,20 +70,17 @@ public class AvailabilityService {
 
 
     private DayAvailability getAvailabilityfor(DateMidnight currentDay, Person person,
-        Map<DateMidnight, DayAbsence> vacations, Map<DateMidnight, DayAbsence> sickNotes,
-        Map<DateMidnight, Holiday> holidays) {
+        Map<DateMidnight, DayAbsence> vacations, Map<DateMidnight, DayAbsence> sickNotes) {
 
         // todo this should be configurable!
         BigDecimal regularWorkHours = new BigDecimal(8);
 
-        Holiday holiday = holidays.get(currentDay);
-        BigDecimal expectedHoursToWork;
         DayAvailability.Absence.Type freeType = DayAvailability.Absence.Type.FREETIME;
 
-        if (holiday == null) {
-            expectedHoursToWork = regularWorkHours.multiply(getExpectedWorktimeFor(person, currentDay));
-        } else {
-            expectedHoursToWork = BigDecimal.ZERO;
+        BigDecimal expectedHoursToWork = publicHolidaysService.getWorkingDurationOfDate(currentDay,
+                getFederalState(currentDay, person));
+
+        if (BigDecimal.ZERO.equals(expectedHoursToWork)) {
             freeType = DayAvailability.Absence.Type.HOLIDAY;
         }
 
@@ -136,42 +126,9 @@ public class AvailabilityService {
     }
 
 
-    private BigDecimal getExpectedWorktimeFor(Person person, DateMidnight currentDay) {
+    private FederalState getFederalState(DateMidnight date, Person person) {
 
-        Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
-                currentDay);
-
-        if (!workingTimeOrNot.isPresent()) {
-            throw new IllegalStateException("Person " + person + " does not have workingTime configured");
-        }
-
-        WorkingTime workingTime = workingTimeOrNot.get();
-
-        DayLength dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek());
-
-        return dayLengthForWeekDay.getDuration();
-    }
-
-
-    private FederalState getFederalState(DateMidnight startDate, DateMidnight endDate, Person person) {
-
-        return workingTimeService.getFederalStateForPerson(person, startDate);
-    }
-
-
-    private Map<DateMidnight, Holiday> getHolidays(DateMidnight startDate, DateMidnight endDate,
-        FederalState federalState) {
-
-        Map<DateMidnight, Holiday> holidayMap = new HashMap<>();
-
-        for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
-            for (Holiday holiday : publicHolidaysService.getHolidays(startDate.getYear(), federalState)) {
-                DateMidnight date = holiday.getDate().toDateMidnight();
-                holidayMap.put(date, holiday);
-            }
-        }
-
-        return holidayMap;
+        return workingTimeService.getFederalStateForPerson(person, date);
     }
 
 
