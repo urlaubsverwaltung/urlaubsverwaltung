@@ -8,9 +8,12 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
@@ -19,6 +22,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import java.util.Collections;
 import java.util.Optional;
 
 
@@ -26,6 +30,8 @@ import java.util.Optional;
  * @author  Timo Eifler - eifler@synyx.de
  */
 public class AvailabilityServiceTest {
+
+    private static final int DAYS_IN_TEST_DATE_RANGE = 8;
 
     private AvailabilityService availabilityService;
     private ApplicationService applicationService;
@@ -46,8 +52,8 @@ public class AvailabilityServiceTest {
         setupDefaultWorkingTimeService();
 
         testPerson = TestDataCreator.createPerson();
-        testDateRangeStart = DateMidnight.now().withDayOfYear(1);
-        testDateRangeEnd = DateMidnight.now().withDayOfYear(5);
+        testDateRangeStart = new DateMidnight(2016, 1, 1);
+        testDateRangeEnd = new DateMidnight(2016, 1, DAYS_IN_TEST_DATE_RANGE);
 
         availabilityService = new AvailabilityService(applicationService, this.sickNoteService, publicHolidaysService,
                 workingTimeService);
@@ -59,7 +65,7 @@ public class AvailabilityServiceTest {
         publicHolidaysService = Mockito.mock(PublicHolidaysService.class);
         Mockito.when(publicHolidaysService.getWorkingDurationOfDate(Mockito.any(DateMidnight.class),
                     Mockito.any(FederalState.class)))
-            .thenReturn(new BigDecimal(8));
+            .thenReturn(new BigDecimal(1));
     }
 
 
@@ -83,7 +89,7 @@ public class AvailabilityServiceTest {
         AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
                 testDateRangeEnd, testPerson);
 
-        Assert.assertEquals(5, personsAvailabilities.getAvailabilities().size());
+        Assert.assertEquals(8, personsAvailabilities.getAvailabilities().size());
     }
 
 
@@ -98,10 +104,62 @@ public class AvailabilityServiceTest {
                 testDateRangeEnd, testPerson);
         DayAvailability availabilityOnFirstDayOfTheYear = personsAvailabilities.getAvailabilities().get(0);
 
-        BigDecimal hoursAvailableOnFirstDayOfTheYear = availabilityOnFirstDayOfTheYear.getHoursAvailable();
-        Assert.assertEquals("Wrong number of hours available", new BigDecimal(0), hoursAvailableOnFirstDayOfTheYear);
+        BigDecimal hoursAvailableOnFirstDayOfTheYear = availabilityOnFirstDayOfTheYear.getAvailabilityRatio();
+        Assert.assertEquals("Wrong ratio of availability", new BigDecimal(0), hoursAvailableOnFirstDayOfTheYear);
 
-        DayAvailability.Absence.Type absenceType = availabilityOnFirstDayOfTheYear.getAbsenceSpans().get(0).getType();
-        Assert.assertEquals("Wrong absence type", DayAvailability.Absence.Type.HOLIDAY, absenceType);
+        DayAvailability.TimedAbsence.Type absenceType = availabilityOnFirstDayOfTheYear.getAbsenceSpans()
+                .get(0)
+                .getType();
+        Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.HOLIDAY, absenceType);
+    }
+
+
+    @Test
+    public void ensurePersonIsNotAvailableOnVacation() {
+
+        Application application = TestDataCreator.createApplication(testPerson, new DateMidnight(2016, 1, 4),
+                new DateMidnight(2016, 1, 5), DayLength.FULL);
+
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(Collections.singletonList(application));
+
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
+                testDateRangeEnd, testPerson);
+
+        DayAvailability availabilityOnSecondDayOfVacation = personsAvailabilities.getAvailabilities().get(4);
+
+        BigDecimal hoursAvailableOnFirstDayOfTheYear = availabilityOnSecondDayOfVacation.getAvailabilityRatio();
+        Assert.assertEquals("Wrong ratio of availability", new BigDecimal(0), hoursAvailableOnFirstDayOfTheYear);
+
+        DayAvailability.TimedAbsence.Type absenceType = availabilityOnSecondDayOfVacation.getAbsenceSpans()
+                .get(0)
+                .getType();
+        Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.VACATION, absenceType);
+    }
+
+
+    @Test
+    public void ensurePersonIsNotAvailableOnSickDay() {
+
+        SickNote sickNote = TestDataCreator.createSickNote(testPerson, new DateMidnight(2016, 1, 4),
+                new DateMidnight(2016, 1, 5), DayLength.FULL);
+
+        Mockito.when(sickNoteService.getByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Collections.singletonList(sickNote));
+
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
+                testDateRangeEnd, testPerson);
+
+        DayAvailability availabilityOnSecondDayOfVacation = personsAvailabilities.getAvailabilities().get(4);
+
+        BigDecimal hoursAvailableOnFirstDayOfTheYear = availabilityOnSecondDayOfVacation.getAvailabilityRatio();
+        Assert.assertEquals("Wrong ratio of availability", new BigDecimal(0), hoursAvailableOnFirstDayOfTheYear);
+
+        DayAvailability.TimedAbsence.Type absenceType = availabilityOnSecondDayOfVacation.getAbsenceSpans()
+                .get(0)
+                .getType();
+        Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.SICK_NOTE, absenceType);
     }
 }

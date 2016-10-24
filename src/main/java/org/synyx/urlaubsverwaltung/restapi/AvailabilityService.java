@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -52,8 +53,8 @@ public class AvailabilityService {
     public AvailabilityList getPersonsAvailabilities(Integer personId, DateMidnight startDate, DateMidnight endDate,
         Person person) {
 
-        Map<DateMidnight, DayAbsence> vacations = getVacations(startDate, endDate, person);
-        Map<DateMidnight, DayAbsence> sickNotes = getSickNotes(startDate, endDate, person);
+        Map<DateMidnight, Application> vacations = getVacations(startDate, endDate, person);
+        Map<DateMidnight, SickNote> sickNotes = getSickNotes(startDate, endDate, person);
 
         List<DayAvailability> availabilities = new ArrayList<>();
 
@@ -70,59 +71,58 @@ public class AvailabilityService {
 
 
     private DayAvailability getAvailabilityfor(DateMidnight currentDay, Person person,
-        Map<DateMidnight, DayAbsence> vacations, Map<DateMidnight, DayAbsence> sickNotes) {
+        Map<DateMidnight, Application> vacations, Map<DateMidnight, SickNote> sickNotes) {
 
-        // todo this should be configurable!
-        BigDecimal regularWorkHours = new BigDecimal(8);
+        DayAvailability.TimedAbsence.Type freeType = DayAvailability.TimedAbsence.Type.FREETIME;
 
-        DayAvailability.Absence.Type freeType = DayAvailability.Absence.Type.FREETIME;
-
-        BigDecimal expectedHoursToWork = publicHolidaysService.getWorkingDurationOfDate(currentDay,
+        BigDecimal expectedRatioToWork = publicHolidaysService.getWorkingDurationOfDate(currentDay,
                 getFederalState(currentDay, person));
 
-        if (BigDecimal.ZERO.equals(expectedHoursToWork)) {
-            freeType = DayAvailability.Absence.Type.HOLIDAY;
+        if (BigDecimal.ZERO.equals(expectedRatioToWork)) {
+            freeType = DayAvailability.TimedAbsence.Type.HOLIDAY;
         }
 
-        DayAbsence vacation = vacations.get(currentDay);
-        DayAbsence sick = sickNotes.get(currentDay);
+        Application vacation = vacations.get(currentDay);
+        SickNote sick = sickNotes.get(currentDay);
 
-        List<DayAvailability.Absence> spans = new ArrayList<>();
+        List<DayAvailability.TimedAbsence> spans = new ArrayList<>();
 
-        BigDecimal hoursOfAbsence = BigDecimal.ZERO;
+        BigDecimal ratioOfAbsence = BigDecimal.ZERO;
 
         if (vacation != null) {
-            BigDecimal hours = vacation.getDayLength().multiply(regularWorkHours);
-            DayAvailability.Absence span = new DayAvailability.TimedAbsence(hours,
-                    DayAvailability.Absence.Type.VACATION);
+            DayAvailability.TimedAbsence span = new DayAvailability.TimedAbsence(vacation.getDayLength(),
+                    DayAvailability.TimedAbsence.Type.VACATION);
             spans.add(span);
-            hoursOfAbsence = hoursOfAbsence.add(hours);
+
+            BigDecimal availabilityRatio = vacation.getDayLength().getDuration();
+            ratioOfAbsence = ratioOfAbsence.add(availabilityRatio);
         }
 
         if (sick != null) {
-            BigDecimal hours = sick.getDayLength().multiply(regularWorkHours);
-            DayAvailability.Absence span = new DayAvailability.TimedAbsence(hours,
-                    DayAvailability.Absence.Type.SICK_NOTE);
+            DayAvailability.TimedAbsence span = new DayAvailability.TimedAbsence(sick.getDayLength(),
+                    DayAvailability.TimedAbsence.Type.SICK_NOTE);
             spans.add(span);
-            hoursOfAbsence = hoursOfAbsence.add(hours);
+
+            BigDecimal availabilityRatio = sick.getDayLength().getDuration();
+            ratioOfAbsence = ratioOfAbsence.add(availabilityRatio);
         }
 
-        BigDecimal presenceHours;
+        BigDecimal presenceRatio;
 
-        if (expectedHoursToWork.compareTo(hoursOfAbsence) > 0) {
-            presenceHours = expectedHoursToWork.subtract(hoursOfAbsence);
+        if (expectedRatioToWork.compareTo(ratioOfAbsence) > 0) {
+            presenceRatio = expectedRatioToWork.subtract(ratioOfAbsence);
         } else {
-            presenceHours = BigDecimal.ZERO;
+            presenceRatio = BigDecimal.ZERO;
         }
 
         // if there was no work expected it is either freetime or an holiday
-        // FIXME this has to be done only when presenceHours == 0
+        // FIXME this has to be done only when presenceRatio == 0
         if (spans.isEmpty()) {
-            DayAvailability.Absence span = new DayAvailability.Absence(freeType);
+            DayAvailability.TimedAbsence span = new DayAvailability.TimedAbsence(DayLength.FULL, freeType);
             spans.add(span);
         }
 
-        return new DayAvailability(presenceHours, currentDay.toString("yyyy-MM-dd"), spans);
+        return new DayAvailability(presenceRatio, currentDay.toString("yyyy-MM-dd"), spans);
     }
 
 
@@ -132,9 +132,9 @@ public class AvailabilityService {
     }
 
 
-    private Map<DateMidnight, DayAbsence> getVacations(DateMidnight start, DateMidnight end, Person person) {
+    private Map<DateMidnight, Application> getVacations(DateMidnight start, DateMidnight end, Person person) {
 
-        Map<DateMidnight, DayAbsence> absenceMap = new HashMap<>();
+        Map<DateMidnight, Application> vacationsMap = new HashMap<>();
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end,
                     person)
@@ -153,22 +153,20 @@ public class AvailabilityService {
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
-                    absenceMap.put(day,
-                        new DayAbsence(day, application.getDayLength(), DayAbsence.Type.VACATION,
-                            application.getStatus().name(), application.getId()));
+                    vacationsMap.put(day, application);
                 }
 
                 day = day.plusDays(1);
             }
         }
 
-        return absenceMap;
+        return vacationsMap;
     }
 
 
-    private Map<DateMidnight, DayAbsence> getSickNotes(DateMidnight start, DateMidnight end, Person person) {
+    private Map<DateMidnight, SickNote> getSickNotes(DateMidnight start, DateMidnight end, Person person) {
 
-        Map<DateMidnight, DayAbsence> absenceMap = new HashMap<>();
+        Map<DateMidnight, SickNote> sickNotesMap = new HashMap<>();
 
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, start, end)
                 .stream()
@@ -183,15 +181,13 @@ public class AvailabilityService {
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
-                    absenceMap.put(day,
-                        new DayAbsence(day, sickNote.getDayLength(), DayAbsence.Type.SICK_NOTE, "ACTIVE",
-                            sickNote.getId()));
+                    sickNotesMap.put(day, sickNote);
                 }
 
                 day = day.plusDays(1);
             }
         }
 
-        return absenceMap;
+        return sickNotesMap;
     }
 }
