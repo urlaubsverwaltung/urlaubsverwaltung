@@ -235,4 +235,23 @@ public class ApplicationForLeaveForm {
 
         return applicationForLeave;
     }
+
+    @Override
+    public String toString() {
+        return "ApplicationForLeaveForm{" +
+                "person=" + person +
+                ", startDate=" + startDate +
+                ", startTime=" + startTime +
+                ", endDate=" + endDate +
+                ", endTime=" + endTime +
+                ", vacationType=" + vacationType +
+                ", dayLength=" + dayLength +
+                ", hours=" + hours +
+                ", reason='" + reason + '\'' +
+                ", holidayReplacement=" + holidayReplacement +
+                ", address='" + address + '\'' +
+                ", teamInformed=" + teamInformed +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
 }
