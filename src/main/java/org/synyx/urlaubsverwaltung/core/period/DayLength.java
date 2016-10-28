@@ -24,4 +24,29 @@ public enum DayLength {
 
         return this.duration;
     }
+
+
+    /**
+     * Pairs of enum members can be added to get a full day.
+     *
+     * @return  the matching enum member which represents the rest of the day.
+     */
+    public DayLength getInverse() {
+
+        switch (this) {
+            case FULL:
+                return ZERO;
+
+            case MORNING:
+                return NOON;
+
+            case NOON:
+                return MORNING;
+
+            case ZERO:
+                return FULL;
+        }
+
+        return null;
+    }
 }

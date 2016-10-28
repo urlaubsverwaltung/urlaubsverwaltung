@@ -15,46 +15,6 @@ import java.util.List;
  */
 class DayAvailability {
 
-    static class TimedAbsence {
-
-        enum Type {
-
-            VACATION,
-            SICK_NOTE,
-            WORK,
-            FREETIME,
-            HOLIDAY
-        }
-
-        private final Type type;
-        private final BigDecimal availabilityRatio;
-        private final String partOfDay;
-
-        public TimedAbsence(DayLength dayLength, Type type) {
-
-            this.type = type;
-            this.availabilityRatio = dayLength.getDuration();
-            this.partOfDay = dayLength.name();
-        }
-
-        public Type getType() {
-
-            return type;
-        }
-
-
-        public BigDecimal getAvailabilityRatio() {
-
-            return availabilityRatio;
-        }
-
-
-        public String getPartOfDay() {
-
-            return partOfDay;
-        }
-    }
-
     private final String date;
     private final BigDecimal availabilityRatio;
     private final List<TimedAbsence> spans;
@@ -81,5 +41,45 @@ class DayAvailability {
     public BigDecimal getAvailabilityRatio() {
 
         return availabilityRatio;
+    }
+
+    static class TimedAbsence {
+
+        enum Type {
+
+            VACATION,
+            SICK_NOTE,
+            WORK,
+            FREETIME,
+            HOLIDAY
+        }
+
+        private final Type type;
+        private final BigDecimal ratio;
+        private final String partOfDay;
+
+        public TimedAbsence(DayLength dayLength, Type type) {
+
+            this.type = type;
+            this.ratio = dayLength.getDuration();
+            this.partOfDay = dayLength.name();
+        }
+
+        public Type getType() {
+
+            return type;
+        }
+
+
+        public BigDecimal getRatio() {
+
+            return ratio;
+        }
+
+
+        public String getPartOfDay() {
+
+            return partOfDay;
+        }
     }
 }
