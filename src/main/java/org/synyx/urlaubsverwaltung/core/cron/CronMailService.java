@@ -1,6 +1,7 @@
 
 package org.synyx.urlaubsverwaltung.core.cron;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 
 import org.apache.log4j.Logger;
@@ -76,13 +77,19 @@ public class CronMailService {
                     .filter(isLongWaitingApplications())
                     .collect(Collectors.toList());
 
-            LOG.info("Found " + longWaitingApplications.size() + " applications for leave waiting longer already");
+            if (longWaitingApplications.size() > 0) {
+                LOG.info(String.format("%d long waiting applications found. Sending Notification...", longWaitingApplications.size()));
 
-            mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
+                mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 
-            for (Application longWaitingApplication : longWaitingApplications) {
-                longWaitingApplication.setRemindDate(DateMidnight.now());
-                applicationService.save(longWaitingApplication);
+                for (Application longWaitingApplication : longWaitingApplications) {
+                    longWaitingApplication.setRemindDate(DateMidnight.now());
+                    applicationService.save(longWaitingApplication);
+                }
+
+                LOG.info("Sending Notification for waiting applications finished.");
+            } else {
+                LOG.info("No long waiting application found.");
             }
 
         }
