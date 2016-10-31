@@ -118,15 +118,13 @@ public class AvailabilityServiceTest {
 
         AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
                 testDateRangeEnd, testPerson);
-        DayAvailability availabilityOnFirstDayOfTheYear = personsAvailabilities.getAvailabilities().get(0);
+        DayAvailability availability = personsAvailabilities.getAvailabilities().get(0);
 
-        BigDecimal hoursAvailableOnFirstDayOfTheYear = availabilityOnFirstDayOfTheYear.getAvailabilityRatio();
+        BigDecimal ratioAvailableOnFirstDayOfTheYear = availability.getAvailabilityRatio();
         Assert.assertTrue("Wrong ratio of availability",
-            BigDecimal.ZERO.compareTo(hoursAvailableOnFirstDayOfTheYear) == 0);
+            BigDecimal.ZERO.compareTo(ratioAvailableOnFirstDayOfTheYear) == 0);
 
-        DayAvailability.TimedAbsence.Type absenceType = availabilityOnFirstDayOfTheYear.getAbsenceSpans()
-                .get(0)
-                .getType();
+        DayAvailability.TimedAbsence.Type absenceType = availability.getAbsenceSpans().get(0).getType();
         Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.HOLIDAY, absenceType);
     }
 
@@ -144,15 +142,13 @@ public class AvailabilityServiceTest {
         AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
                 testDateRangeEnd, testPerson);
 
-        DayAvailability availabilityOnSecondDayOfVacation = personsAvailabilities.getAvailabilities().get(4);
+        DayAvailability availability = personsAvailabilities.getAvailabilities().get(4);
 
-        BigDecimal hoursAvailableOnFirstDayOfTheYear = availabilityOnSecondDayOfVacation.getAvailabilityRatio();
+        BigDecimal ratioAvailableOnFirstDayOfTheYear = availability.getAvailabilityRatio();
         Assert.assertTrue("Wrong ratio of availability",
-            BigDecimal.ZERO.compareTo(hoursAvailableOnFirstDayOfTheYear) == 0);
+            BigDecimal.ZERO.compareTo(ratioAvailableOnFirstDayOfTheYear) == 0);
 
-        DayAvailability.TimedAbsence.Type absenceType = availabilityOnSecondDayOfVacation.getAbsenceSpans()
-                .get(0)
-                .getType();
+        DayAvailability.TimedAbsence.Type absenceType = availability.getAbsenceSpans().get(0).getType();
         Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.VACATION, absenceType);
     }
 
@@ -170,15 +166,72 @@ public class AvailabilityServiceTest {
         AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
                 testDateRangeEnd, testPerson);
 
-        DayAvailability availabilityOnSecondDayOfVacation = personsAvailabilities.getAvailabilities().get(4);
+        DayAvailability availability = personsAvailabilities.getAvailabilities().get(4);
 
-        BigDecimal hoursAvailableOnFirstDayOfTheYear = availabilityOnSecondDayOfVacation.getAvailabilityRatio();
+        BigDecimal ratioAvailableOnFirstDayOfTheYear = availability.getAvailabilityRatio();
         Assert.assertTrue("Wrong ratio of availability",
-            BigDecimal.ZERO.compareTo(hoursAvailableOnFirstDayOfTheYear) == 0);
+            BigDecimal.ZERO.compareTo(ratioAvailableOnFirstDayOfTheYear) == 0);
 
-        DayAvailability.TimedAbsence.Type absenceType = availabilityOnSecondDayOfVacation.getAbsenceSpans()
-                .get(0)
-                .getType();
+        DayAvailability.TimedAbsence.Type absenceType = availability.getAbsenceSpans().get(0).getType();
         Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.SICK_NOTE, absenceType);
+    }
+
+
+    @Test
+    public void ensureHalfDayAbsencesAreAddedCorrectly() {
+
+        DateMidnight dayWithMorningSickAndNoonVacation = new DateMidnight(2016, 1, 4);
+        SickNote sickNote = TestDataCreator.createSickNote(testPerson, dayWithMorningSickAndNoonVacation,
+                dayWithMorningSickAndNoonVacation, DayLength.MORNING);
+
+        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, dayWithMorningSickAndNoonVacation,
+                    dayWithMorningSickAndNoonVacation))
+            .thenReturn(Collections.singletonList(sickNote));
+
+        Application application = TestDataCreator.createApplication(testPerson, dayWithMorningSickAndNoonVacation,
+                dayWithMorningSickAndNoonVacation, DayLength.NOON);
+
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(dayWithMorningSickAndNoonVacation,
+                    dayWithMorningSickAndNoonVacation, testPerson))
+            .thenReturn(Collections.singletonList(application));
+
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1,
+                dayWithMorningSickAndNoonVacation, dayWithMorningSickAndNoonVacation, testPerson);
+
+        DayAvailability availability = personsAvailabilities.getAvailabilities().get(0);
+
+        BigDecimal ratioAvailableOnFirstDayOfTheYear = availability.getAvailabilityRatio();
+        Assert.assertTrue("Wrong ratio of availability",
+            BigDecimal.ZERO.compareTo(ratioAvailableOnFirstDayOfTheYear) == 0);
+
+        Assert.assertEquals("Wrong number of absence spans", 2, availability.getAbsenceSpans().size());
+    }
+
+
+    @Test
+    public void ensureAvailabilityRatioIsNotNegative() {
+
+        DateMidnight sickOnVacationDay = new DateMidnight(2016, 1, 4);
+        SickNote sickNote = TestDataCreator.createSickNote(testPerson, sickOnVacationDay, sickOnVacationDay,
+                DayLength.FULL);
+
+        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, sickOnVacationDay, sickOnVacationDay))
+            .thenReturn(Collections.singletonList(sickNote));
+
+        Application application = TestDataCreator.createApplication(testPerson, sickOnVacationDay, sickOnVacationDay,
+                DayLength.FULL);
+
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(sickOnVacationDay, sickOnVacationDay,
+                    testPerson))
+            .thenReturn(Collections.singletonList(application));
+
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, sickOnVacationDay,
+                sickOnVacationDay, testPerson);
+
+        DayAvailability availability = personsAvailabilities.getAvailabilities().get(0);
+
+        BigDecimal ratioAvailableOnFirstDayOfTheYear = availability.getAvailabilityRatio();
+        Assert.assertTrue("Wrong ratio of availability",
+            BigDecimal.ZERO.compareTo(ratioAvailableOnFirstDayOfTheYear) == 0);
     }
 }
