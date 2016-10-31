@@ -72,6 +72,66 @@ public class AvailabilityService {
     }
 
 
+    private Map<DateMidnight, Application> getVacations(DateMidnight start, DateMidnight end, Person person) {
+
+        Map<DateMidnight, Application> vacationsMap = new HashMap<>();
+
+        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end,
+                    person)
+                .stream()
+                .filter(application ->
+                            application.hasStatus(ApplicationStatus.WAITING)
+                            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
+                            || application.hasStatus(ApplicationStatus.ALLOWED))
+                .collect(Collectors.toList());
+
+        for (Application application : applications) {
+            DateMidnight startDate = application.getStartDate();
+            DateMidnight endDate = application.getEndDate();
+
+            DateMidnight day = startDate;
+
+            while (!day.isAfter(endDate)) {
+                if (!day.isBefore(start) && !day.isAfter(end)) {
+                    vacationsMap.put(day, application);
+                }
+
+                day = day.plusDays(1);
+            }
+        }
+
+        return vacationsMap;
+    }
+
+
+    private Map<DateMidnight, SickNote> getSickNotes(DateMidnight start, DateMidnight end, Person person) {
+
+        Map<DateMidnight, SickNote> sickNotesMap = new HashMap<>();
+
+        List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, start, end)
+                .stream()
+                .filter(SickNote::isActive)
+                .collect(Collectors.toList());
+
+        for (SickNote sickNote : sickNotes) {
+            DateMidnight startDate = sickNote.getStartDate();
+            DateMidnight endDate = sickNote.getEndDate();
+
+            DateMidnight day = startDate;
+
+            while (!day.isAfter(endDate)) {
+                if (!day.isBefore(start) && !day.isAfter(end)) {
+                    sickNotesMap.put(day, sickNote);
+                }
+
+                day = day.plusDays(1);
+            }
+        }
+
+        return sickNotesMap;
+    }
+
+
     private DayAvailability getAvailabilityfor(DateMidnight currentDay, Person person,
         Map<DateMidnight, Application> vacations, Map<DateMidnight, SickNote> sickNotes) {
 
@@ -88,16 +148,16 @@ public class AvailabilityService {
             absenceSpans.add(holidayAbsence.get());
         }
 
-        Optional<DayAvailability.TimedAbsence> vacationAbsence = checkForVacations(currentDay, person, vacations);
-
-        if (vacationAbsence.isPresent()) {
-            absenceSpans.add(vacationAbsence.get());
-        }
-
         Optional<DayAvailability.TimedAbsence> sickNoteAbsence = checkForSickNote(currentDay, person, sickNotes);
 
         if (sickNoteAbsence.isPresent()) {
             absenceSpans.add(sickNoteAbsence.get());
+        }
+
+        Optional<DayAvailability.TimedAbsence> vacationAbsence = checkForVacations(currentDay, person, vacations);
+
+        if (vacationAbsence.isPresent()) {
+            absenceSpans.add(vacationAbsence.get());
         }
 
         BigDecimal presenceRatio = calculatePresenceRatio(absenceSpans);
@@ -210,65 +270,5 @@ public class AvailabilityService {
     private FederalState getFederalState(DateMidnight date, Person person) {
 
         return workingTimeService.getFederalStateForPerson(person, date);
-    }
-
-
-    private Map<DateMidnight, Application> getVacations(DateMidnight start, DateMidnight end, Person person) {
-
-        Map<DateMidnight, Application> vacationsMap = new HashMap<>();
-
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end,
-                    person)
-                .stream()
-                .filter(application ->
-                            application.hasStatus(ApplicationStatus.WAITING)
-                            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-                            || application.hasStatus(ApplicationStatus.ALLOWED))
-                .collect(Collectors.toList());
-
-        for (Application application : applications) {
-            DateMidnight startDate = application.getStartDate();
-            DateMidnight endDate = application.getEndDate();
-
-            DateMidnight day = startDate;
-
-            while (!day.isAfter(endDate)) {
-                if (!day.isBefore(start) && !day.isAfter(end)) {
-                    vacationsMap.put(day, application);
-                }
-
-                day = day.plusDays(1);
-            }
-        }
-
-        return vacationsMap;
-    }
-
-
-    private Map<DateMidnight, SickNote> getSickNotes(DateMidnight start, DateMidnight end, Person person) {
-
-        Map<DateMidnight, SickNote> sickNotesMap = new HashMap<>();
-
-        List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, start, end)
-                .stream()
-                .filter(SickNote::isActive)
-                .collect(Collectors.toList());
-
-        for (SickNote sickNote : sickNotes) {
-            DateMidnight startDate = sickNote.getStartDate();
-            DateMidnight endDate = sickNote.getEndDate();
-
-            DateMidnight day = startDate;
-
-            while (!day.isAfter(endDate)) {
-                if (!day.isBefore(start) && !day.isAfter(end)) {
-                    sickNotesMap.put(day, sickNote);
-                }
-
-                day = day.plusDays(1);
-            }
-        }
-
-        return sickNotesMap;
     }
 }
