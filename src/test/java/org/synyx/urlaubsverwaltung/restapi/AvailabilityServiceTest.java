@@ -86,7 +86,7 @@ public class AvailabilityServiceTest {
     @Test
     public void ensureFetchesAvailabilityListForEachDayInDateRange() {
 
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(testDateRangeStart,
                 testDateRangeEnd, testPerson);
 
         Assert.assertEquals(8, personsAvailabilities.getAvailabilities().size());
@@ -97,7 +97,7 @@ public class AvailabilityServiceTest {
     public void ensurePersonIsNotAvailableOnFreeDays() {
 
         DateMidnight firstSundayIn2016 = new DateMidnight(2016, 1, 3);
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, firstSundayIn2016,
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(firstSundayIn2016,
                 firstSundayIn2016, testPerson);
         DayAvailability availabilityOnSunday = personsAvailabilities.getAvailabilities().get(0);
 
@@ -116,7 +116,7 @@ public class AvailabilityServiceTest {
                     FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(new BigDecimal(0));
 
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(testDateRangeStart,
                 testDateRangeEnd, testPerson);
         DayAvailability availability = personsAvailabilities.getAvailabilities().get(0);
 
@@ -139,7 +139,7 @@ public class AvailabilityServiceTest {
                     Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
             .thenReturn(Collections.singletonList(application));
 
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(testDateRangeStart,
                 testDateRangeEnd, testPerson);
 
         DayAvailability availability = personsAvailabilities.getAvailabilities().get(4);
@@ -163,7 +163,7 @@ public class AvailabilityServiceTest {
                     Mockito.any(DateMidnight.class)))
             .thenReturn(Collections.singletonList(sickNote));
 
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, testDateRangeStart,
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(testDateRangeStart,
                 testDateRangeEnd, testPerson);
 
         DayAvailability availability = personsAvailabilities.getAvailabilities().get(4);
@@ -195,7 +195,7 @@ public class AvailabilityServiceTest {
                     dayWithMorningSickAndNoonVacation, testPerson))
             .thenReturn(Collections.singletonList(application));
 
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1,
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(
                 dayWithMorningSickAndNoonVacation, dayWithMorningSickAndNoonVacation, testPerson);
 
         DayAvailability availability = personsAvailabilities.getAvailabilities().get(0);
@@ -225,7 +225,7 @@ public class AvailabilityServiceTest {
                     testPerson))
             .thenReturn(Collections.singletonList(application));
 
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(1, sickOnVacationDay,
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(sickOnVacationDay,
                 sickOnVacationDay, testPerson);
 
         DayAvailability availability = personsAvailabilities.getAvailabilities().get(0);
