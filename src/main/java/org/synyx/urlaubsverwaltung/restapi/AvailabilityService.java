@@ -52,8 +52,7 @@ public class AvailabilityService {
     /**
      * Fetch an {@link AvailabilityList} for the given person on all days in the given period of time.
      */
-    public AvailabilityList getPersonsAvailabilities(Integer personId, DateMidnight startDate, DateMidnight endDate,
-        Person person) {
+    public AvailabilityList getPersonsAvailabilities(DateMidnight startDate, DateMidnight endDate, Person person) {
 
         Map<DateMidnight, Application> vacations = getVacations(startDate, endDate, person);
         Map<DateMidnight, SickNote> sickNotes = getSickNotes(startDate, endDate, person);
@@ -68,7 +67,7 @@ public class AvailabilityService {
             currentDay = currentDay.plusDays(1);
         }
 
-        return new AvailabilityList(availabilities, personId);
+        return new AvailabilityList(availabilities, person);
     }
 
 
