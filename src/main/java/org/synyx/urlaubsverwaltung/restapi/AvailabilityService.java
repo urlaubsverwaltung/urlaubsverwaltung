@@ -239,6 +239,8 @@ public class AvailabilityService {
 
         BigDecimal presenceRatio = BigDecimal.ONE.subtract(absenceRatio);
 
+        // TODO: Decide if multiple absences which sum up to more than a whole day are valid.
+        // Then also decide if this should be handled centralized in the business logic or if it is just a problem related to this API
         boolean negativePresenceRatio = presenceRatio.compareTo(BigDecimal.ZERO) < 0;
 
         if (negativePresenceRatio) {
