@@ -29,6 +29,9 @@ public class ExchangeCalendarSettings {
     @Column(name = "calendar_ews_sendInvitationActive")
     private boolean sendInvitationActive = false;
 
+    @Column(name = "calendar_ews_url")
+    private String ewsUrl;
+
     public boolean isActive() {
 
         return active;
@@ -94,5 +97,24 @@ public class ExchangeCalendarSettings {
     public void setSendInvitationActive(boolean sendInvitationActive) {
 
         this.sendInvitationActive = sendInvitationActive;
+    }
+
+    public String getEwsUrl() {
+
+        if (ewsUrl == null || ewsUrl.isEmpty()) {
+            return null;
+        }
+
+        return ewsUrl;
+    }
+
+
+    public void setEwsUrl(String ewsUrl) {
+
+        if (ewsUrl == null || ewsUrl.isEmpty()) {
+            this.ewsUrl = null;
+        } else {
+            this.ewsUrl = ewsUrl;
+        }
     }
 }
