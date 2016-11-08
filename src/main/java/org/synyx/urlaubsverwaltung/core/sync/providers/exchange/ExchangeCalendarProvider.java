@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
+import java.net.URI;
 
 
 /**
@@ -110,7 +111,11 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                 exchangeService.setCredentials(new WebCredentials(username, password));
                 exchangeService.setTraceEnabled(true);
                 exchangeService.setEnableScpLookup(true);
-                exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
+                if (settings.getEwsUrl() == null) {
+                    exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
+                } else {
+                    exchangeService.setUrl(new URI(settings.getEwsUrl()));
+                }
             } catch (Exception usernameException) { // NOSONAR - EWS Java API throws Exception, that's life
                 LOG.info("No connection could be established to the Exchange calendar for username={}, cause={}",
                         username, usernameException.getMessage());
