@@ -62,7 +62,10 @@ public class AvailabilityService {
         DateMidnight currentDay = startDate;
 
         while (!currentDay.isAfter(endDate)) {
-            availabilities.add(getAvailabilityfor(currentDay, person, vacations, sickNotes));
+            List<DayAvailability.TimedAbsence> absences = getAbsencesFor(currentDay, person, vacations, sickNotes);
+            BigDecimal presenceRatio = calculatePresenceRatio(absences);
+
+            availabilities.add(new DayAvailability(presenceRatio, currentDay.toString("yyyy-MM-dd"), absences));
 
             currentDay = currentDay.plusDays(1);
         }
@@ -131,7 +134,7 @@ public class AvailabilityService {
     }
 
 
-    private DayAvailability getAvailabilityfor(DateMidnight currentDay, Person person,
+    private List<DayAvailability.TimedAbsence> getAbsencesFor(DateMidnight currentDay, Person person,
         Map<DateMidnight, Application> vacations, Map<DateMidnight, SickNote> sickNotes) {
 
         List<DayAvailability.TimedAbsence> absenceSpans = new ArrayList<>();
@@ -139,18 +142,30 @@ public class AvailabilityService {
 
         if (freeTimeAbsence.isPresent()) {
             absenceSpans.add(freeTimeAbsence.get());
+
+            if (personIsAbsentForWholeDay(absenceSpans)) {
+                return absenceSpans;
+            }
         }
 
         Optional<DayAvailability.TimedAbsence> holidayAbsence = checkForHolidays(currentDay, person);
 
         if (holidayAbsence.isPresent()) {
             absenceSpans.add(holidayAbsence.get());
+
+            if (personIsAbsentForWholeDay(absenceSpans)) {
+                return absenceSpans;
+            }
         }
 
         Optional<DayAvailability.TimedAbsence> sickNoteAbsence = checkForSickNote(currentDay, person, sickNotes);
 
         if (sickNoteAbsence.isPresent()) {
             absenceSpans.add(sickNoteAbsence.get());
+
+            if (personIsAbsentForWholeDay(absenceSpans)) {
+                return absenceSpans;
+            }
         }
 
         Optional<DayAvailability.TimedAbsence> vacationAbsence = checkForVacations(currentDay, person, vacations);
@@ -159,9 +174,13 @@ public class AvailabilityService {
             absenceSpans.add(vacationAbsence.get());
         }
 
-        BigDecimal presenceRatio = calculatePresenceRatio(absenceSpans);
+        return absenceSpans;
+    }
 
-        return new DayAvailability(presenceRatio, currentDay.toString("yyyy-MM-dd"), absenceSpans);
+
+    private boolean personIsAbsentForWholeDay(List<DayAvailability.TimedAbsence> absenceSpans) {
+
+        return BigDecimal.ZERO.compareTo(calculatePresenceRatio(absenceSpans)) == 0;
     }
 
 
@@ -239,8 +258,6 @@ public class AvailabilityService {
 
         BigDecimal presenceRatio = BigDecimal.ONE.subtract(absenceRatio);
 
-        // TODO: Decide if multiple absences which sum up to more than a whole day are valid.
-        // Then also decide if this should be handled centralized in the business logic or if it is just a problem related to this API
         boolean negativePresenceRatio = presenceRatio.compareTo(BigDecimal.ZERO) < 0;
 
         if (negativePresenceRatio) {
