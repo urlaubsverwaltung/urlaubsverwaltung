@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi;
+package org.synyx.urlaubsverwaltung.restapi.availability;
 
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
