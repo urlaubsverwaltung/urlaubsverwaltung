@@ -1,6 +1,7 @@
-package org.synyx.urlaubsverwaltung.restapi;
+package org.synyx.urlaubsverwaltung.restapi.availability;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.restapi.PersonResponse;
 
 import java.util.List;
 

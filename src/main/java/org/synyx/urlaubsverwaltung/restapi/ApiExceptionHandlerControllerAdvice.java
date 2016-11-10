@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.restapi")
-class ApiExceptionHandlerControllerAdvice {
+public class ApiExceptionHandlerControllerAdvice {
 
     private static final Logger LOG = Logger.getLogger(ApiExceptionHandlerControllerAdvice.class);
 
