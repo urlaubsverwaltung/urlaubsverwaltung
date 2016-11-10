@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.math.BigDecimal;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -233,5 +234,61 @@ public class AvailabilityServiceTest {
         BigDecimal ratioAvailableOnFirstDayOfTheYear = availability.getAvailabilityRatio();
         Assert.assertTrue("Wrong ratio of availability",
             BigDecimal.ZERO.compareTo(ratioAvailableOnFirstDayOfTheYear) == 0);
+    }
+
+
+    @Test
+    public void ensureReturnsNoSickAbsenceOnHolidays() {
+
+        DateMidnight sickOnVacationDay = new DateMidnight(2016, 1, 1);
+
+        Application application = TestDataCreator.createApplication(testPerson, sickOnVacationDay, sickOnVacationDay,
+                DayLength.FULL);
+
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(Collections.singletonList(application));
+
+        SickNote sickNote = TestDataCreator.createSickNote(testPerson, sickOnVacationDay, sickOnVacationDay,
+                DayLength.FULL);
+
+        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, sickOnVacationDay, sickOnVacationDay))
+            .thenReturn(Collections.singletonList(sickNote));
+
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(sickOnVacationDay,
+                sickOnVacationDay, testPerson);
+
+        List<DayAvailability.TimedAbsence> absences = personsAvailabilities.getAvailabilities()
+                .get(0)
+                .getAbsenceSpans();
+
+        Assert.assertEquals("Wrong number of absences", 1, absences.size());
+        Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.SICK_NOTE,
+            absences.get(0).getType());
+    }
+
+
+    @Test
+    public void ensureReturnsNoVacationAbsenceOnSickDays() {
+
+        DateMidnight sickOnHoliday = new DateMidnight(2016, 1, 1);
+
+        Mockito.when(publicHolidaysService.getWorkingDurationOfDate(sickOnHoliday, FederalState.BADEN_WUERTTEMBERG))
+            .thenReturn(new BigDecimal(0));
+
+        SickNote sickNote = TestDataCreator.createSickNote(testPerson, sickOnHoliday, sickOnHoliday, DayLength.FULL);
+
+        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, sickOnHoliday, sickOnHoliday))
+            .thenReturn(Collections.singletonList(sickNote));
+
+        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(sickOnHoliday,
+                sickOnHoliday, testPerson);
+
+        List<DayAvailability.TimedAbsence> absences = personsAvailabilities.getAvailabilities()
+                .get(0)
+                .getAbsenceSpans();
+
+        Assert.assertEquals("Wrong number of absences", 1, absences.size());
+        Assert.assertEquals("Wrong absence type", DayAvailability.TimedAbsence.Type.HOLIDAY, absences.get(0).getType());
     }
 }
