@@ -1,10 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi.availability;
 
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-
 import java.math.BigDecimal;
-
-import java.util.List;
 
 
 /**
@@ -17,13 +13,13 @@ class DayAvailability {
 
     private final String date;
     private final BigDecimal availabilityRatio;
-    private final List<TimedAbsence> spans;
+    private final TimedAbsenceSpans timedAbsenceSpans;
 
-    public DayAvailability(BigDecimal availabilityRatio, String date, List<TimedAbsence> spans) {
+    public DayAvailability(BigDecimal availabilityRatio, String date, TimedAbsenceSpans timedAbsenceSpans) {
 
         this.availabilityRatio = availabilityRatio;
         this.date = date;
-        this.spans = spans;
+        this.timedAbsenceSpans = timedAbsenceSpans;
     }
 
     public String getDate() {
@@ -32,54 +28,14 @@ class DayAvailability {
     }
 
 
-    public List<TimedAbsence> getAbsenceSpans() {
+    public TimedAbsenceSpans getTimedAbsenceSpans() {
 
-        return spans;
+        return timedAbsenceSpans;
     }
 
 
     public BigDecimal getAvailabilityRatio() {
 
         return availabilityRatio;
-    }
-
-    static class TimedAbsence {
-
-        enum Type {
-
-            VACATION,
-            SICK_NOTE,
-            WORK,
-            FREETIME,
-            HOLIDAY
-        }
-
-        private final Type type;
-        private final BigDecimal ratio;
-        private final String partOfDay;
-
-        public TimedAbsence(DayLength dayLength, Type type) {
-
-            this.type = type;
-            this.ratio = dayLength.getDuration();
-            this.partOfDay = dayLength.name();
-        }
-
-        public Type getType() {
-
-            return type;
-        }
-
-
-        public BigDecimal getRatio() {
-
-            return ratio;
-        }
-
-
-        public String getPartOfDay() {
-
-            return partOfDay;
-        }
     }
 }
