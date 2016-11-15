@@ -10,8 +10,8 @@ import java.util.List;
  */
 class AvailabilityList {
 
-    private final List<DayAvailability> availabilities;
     private final String personId;
+    private final List<DayAvailability> availabilities;
 
     public AvailabilityList(List<DayAvailability> availabilities, Person person) {
 

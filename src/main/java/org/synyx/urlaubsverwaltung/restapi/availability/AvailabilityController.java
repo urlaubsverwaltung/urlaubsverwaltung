@@ -47,7 +47,7 @@ public class AvailabilityController {
         notes = "Get all availabilities for a certain period and person"
     )
     @RequestMapping(value = "/availabilities", method = RequestMethod.GET)
-    public AvailabilityListResponse personsAvailabilities(
+    public List<AvailabilityList> personsAvailabilities(
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = "2016-01-01")
         @RequestParam("from")
         String startDateString,
@@ -74,7 +74,7 @@ public class AvailabilityController {
             AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(startDate, endDate,
                     optionalPerson.get());
 
-            return new AvailabilityListResponse(Collections.singletonList(personsAvailabilities));
+            return Collections.singletonList(personsAvailabilities);
         } else {
             List<Person> activePersons = personService.getActivePersons();
 
@@ -86,21 +86,6 @@ public class AvailabilityController {
 
                 availabilitiesListedByPerson.add(personsAvailabilities);
             }
-
-            return new AvailabilityListResponse(availabilitiesListedByPerson);
-        }
-    }
-
-    private class AvailabilityListResponse {
-
-        private List<AvailabilityList> availabilitiesListedByPerson;
-
-        public AvailabilityListResponse(List<AvailabilityList> availabilities) {
-
-            this.availabilitiesListedByPerson = availabilities;
-        }
-
-        public List<AvailabilityList> getAvailabilitiesListedByPerson() {
 
             return availabilitiesListedByPerson;
         }
