@@ -43,10 +43,10 @@ public class AvailabilityController {
     }
 
     @ApiOperation(
-        value = "Get all absences for a certain period and person",
-        notes = "Get all absences for a certain period and person"
+        value = "Get all availabilities for a certain period and person",
+        notes = "Get all availabilities for a certain period and person"
     )
-    @RequestMapping(value = "/availability", method = RequestMethod.GET)
+    @RequestMapping(value = "/availabilities", method = RequestMethod.GET)
     public AvailabilityListResponse personsAvailabilities(
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = "2016-01-01")
         @RequestParam("from")
@@ -54,13 +54,16 @@ public class AvailabilityController {
         @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = "2016-12-31")
         @RequestParam("to")
         String endDateString,
-        @ApiParam(value = "ID of the person - if not provided availabilities for all active persons are fetched")
+        @ApiParam(
+            value = "login name of the person - if not provided availabilities for all active persons are fetched"
+        )
         @RequestParam(value = "person", required = false)
-        Integer personId) {
+        String personLoginName) {
 
         DateMidnight startDate = DateMidnight.parse(startDateString);
         DateMidnight endDate = DateMidnight.parse(endDateString);
-        Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
+        Optional<Person> optionalPerson = personLoginName == null ? Optional.empty()
+                                                                  : personService.getPersonByLogin(personLoginName);
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("startdate " + startDateString + " must not be after endDate "
