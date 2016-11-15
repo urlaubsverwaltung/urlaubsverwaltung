@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi.availability;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.restapi.PersonResponse;
 
 import java.util.List;
 
@@ -12,12 +11,12 @@ import java.util.List;
 class AvailabilityList {
 
     private final List<DayAvailability> availabilities;
-    private final PersonResponse personResponse;
+    private final String personId;
 
     public AvailabilityList(List<DayAvailability> availabilities, Person person) {
 
         this.availabilities = availabilities;
-        this.personResponse = new PersonResponse(person);
+        this.personId = person.getLoginName();
     }
 
     public List<DayAvailability> getAvailabilities() {
@@ -26,8 +25,8 @@ class AvailabilityList {
     }
 
 
-    public PersonResponse getPersonResponse() {
+    public String getPersonId() {
 
-        return personResponse;
+        return personId;
     }
 }
