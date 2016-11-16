@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -47,47 +44,33 @@ public class AvailabilityController {
         notes = "Get all availabilities for a certain period and person"
     )
     @RequestMapping(value = "/availabilities", method = RequestMethod.GET)
-    public List<AvailabilityList> personsAvailabilities(
+    public AvailabilityList personsAvailabilities(
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = "2016-01-01")
         @RequestParam("from")
         String startDateString,
         @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = "2016-12-31")
         @RequestParam("to")
         String endDateString,
-        @ApiParam(
-            value = "login name of the person - if not provided availabilities for all active persons are fetched"
-        )
-        @RequestParam(value = "person", required = false)
+        @ApiParam(value = "login name of the person", defaultValue = "testUser")
+        @RequestParam(value = "person")
         String personLoginName) {
 
         DateMidnight startDate = DateMidnight.parse(startDateString);
         DateMidnight endDate = DateMidnight.parse(endDateString);
-        Optional<Person> optionalPerson = personLoginName == null ? Optional.empty()
-                                                                  : personService.getPersonByLogin(personLoginName);
+        Optional<Person> optionalPerson = personService.getPersonByLogin(personLoginName);
+
+        if (!optionalPerson.isPresent()) {
+            throw new IllegalArgumentException("No person found for ID=" + personLoginName);
+        }
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("startdate " + startDateString + " must not be after endDate "
                 + endDateString);
         }
 
-        if (optionalPerson.isPresent()) {
-            AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(startDate, endDate,
-                    optionalPerson.get());
+        AvailabilityList availabilities = availabilityService.getPersonsAvailabilities(startDate, endDate,
+                optionalPerson.get());
 
-            return Collections.singletonList(personsAvailabilities);
-        } else {
-            List<Person> activePersons = personService.getActivePersons();
-
-            List<AvailabilityList> availabilitiesListedByPerson = new ArrayList<>();
-
-            for (Person activePerson : activePersons) {
-                AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(startDate,
-                        endDate, activePerson);
-
-                availabilitiesListedByPerson.add(personsAvailabilities);
-            }
-
-            return availabilitiesListedByPerson;
-        }
+        return availabilities;
     }
 }

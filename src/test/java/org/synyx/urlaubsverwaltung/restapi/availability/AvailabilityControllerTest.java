@@ -15,8 +15,6 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.restapi.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,11 +30,13 @@ public class AvailabilityControllerTest {
 
     private PersonService personServiceMock;
     private AvailabilityService availabilityServiceMock;
-    private List<Person> activePersons;
-    private Person testPerson1;
+    private Person testPerson;
+    private String loginName;
 
     @Before
     public void setUp() {
+
+        loginName = "login";
 
         preparePersonServiceMock();
 
@@ -51,35 +51,14 @@ public class AvailabilityControllerTest {
 
         personServiceMock = Mockito.mock(PersonService.class);
 
-        testPerson1 = TestDataCreator.createPerson("testPerson1");
+        testPerson = TestDataCreator.createPerson("testPerson");
 
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(testPerson1));
-
-        Person testPerson2 = TestDataCreator.createPerson("testPerson2");
-        activePersons = Arrays.asList(testPerson1, testPerson2);
-        Mockito.when(personServiceMock.getActivePersons()).thenReturn(activePersons);
-    }
-
-
-    @Test
-    public void ensureFetchesAvailabilitiesForAllActivePersonsIfNoPersonProvided() throws Exception {
-
-        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01").param("to", "2016-12-31"))
-            .andExpect(status().isOk());
-
-        Mockito.verify(personServiceMock).getActivePersons();
-
-        int numberOfActivePersons = activePersons.size();
-        Mockito.verify(availabilityServiceMock, Mockito.times(numberOfActivePersons))
-            .getPersonsAvailabilities(Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 12, 31)), Mockito.any(Person.class));
+        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(testPerson));
     }
 
 
     @Test
     public void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
-
-        String loginName = "login";
 
         mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
                 .param("to", "2016-12-31")
@@ -90,21 +69,32 @@ public class AvailabilityControllerTest {
 
         Mockito.verify(availabilityServiceMock)
             .getPersonsAvailabilities(Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 12, 31)), Mockito.eq(testPerson1));
+                Mockito.eq(new DateMidnight(2016, 12, 31)), Mockito.eq(testPerson));
+    }
+
+
+    @Test
+    public void ensureBadRequestForMissingPersonParameter() throws Exception {
+
+        mockMvc.perform(get("/api/availabilities").param("to", "2016-12-31").param("to", "2016-12-31"))
+            .andExpect(status().isBadRequest());
     }
 
 
     @Test
     public void ensureBadRequestForMissingFromParameter() throws Exception {
 
-        mockMvc.perform(get("/api/availabilities").param("to", "2016-12-31")).andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/availabilities").param("to", "2016-12-31").param("person", loginName))
+            .andExpect(status().isBadRequest());
     }
 
 
     @Test
     public void ensureBadRequestForInvalidFromParameter() throws Exception {
 
-        mockMvc.perform(get("/api/availabilities").param("from", "foo").param("to", "2016-12-31"))
+        mockMvc.perform(get("/api/availabilities").param("from", "foo")
+                .param("to", "2016-12-31")
+                .param("person", loginName))
             .andExpect(status().isBadRequest());
     }
 
@@ -112,14 +102,17 @@ public class AvailabilityControllerTest {
     @Test
     public void ensureBadRequestForMissingToParameter() throws Exception {
 
-        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")).andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01").param("person", loginName))
+            .andExpect(status().isBadRequest());
     }
 
 
     @Test
     public void ensureBadRequestForInvalidToParameter() throws Exception {
 
-        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01").param("to", "foo"))
+        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
+                .param("to", "foo")
+                .param("person", loginName))
             .andExpect(status().isBadRequest());
     }
 
@@ -127,7 +120,9 @@ public class AvailabilityControllerTest {
     @Test
     public void ensureBadRequestForInvalidPeriod() throws Exception {
 
-        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01").param("to", "2015-01-01"))
+        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
+                .param("to", "2015-01-01")
+                .param("person", loginName))
             .andExpect(status().isBadRequest());
     }
 }
