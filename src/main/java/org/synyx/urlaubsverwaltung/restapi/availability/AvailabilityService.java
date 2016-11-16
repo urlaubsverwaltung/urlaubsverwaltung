@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -42,7 +41,7 @@ public class AvailabilityService {
 
         while (!currentDay.isAfter(endDate)) {
             TimedAbsenceSpans absences = freeTimeAbsenceProvider.checkForAbsence(new TimedAbsenceSpans(
-                        Collections.emptyList()), person, currentDay);
+                        new ArrayList<>()), person, currentDay);
             BigDecimal presenceRatio = absences.calculatePresenceRatio();
 
             availabilities.add(new DayAvailability(presenceRatio, currentDay.toString("yyyy-MM-dd"), absences));

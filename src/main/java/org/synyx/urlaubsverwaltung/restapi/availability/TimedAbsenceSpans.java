@@ -20,7 +20,7 @@ class TimedAbsenceSpans {
         this.absencesList = absencesList;
     }
 
-    List<TimedAbsence> getAbsencesList() {
+    public List<TimedAbsence> getAbsencesList() {
 
         return absencesList;
     }
