@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,5 +44,20 @@ public class TimedAbsenceSpansTest {
 
         BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
         Assert.assertTrue(BigDecimal.ZERO.compareTo(presenceRatio) == 0);
+    }
+
+
+    @Test
+    public void ensurePresenceRatioIsCalculatedCorrectlyForEmptyList() {
+
+        BigDecimal presenceRatio = new TimedAbsenceSpans(new ArrayList<>()).calculatePresenceRatio();
+        Assert.assertTrue(BigDecimal.ONE.compareTo(presenceRatio) == 0);
+    }
+
+
+    @Test
+    public void ensureCalculationIsNullSave() {
+
+        new TimedAbsenceSpans(null).calculatePresenceRatio();
     }
 }

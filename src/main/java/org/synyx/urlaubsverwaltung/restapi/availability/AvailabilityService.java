@@ -40,8 +40,7 @@ public class AvailabilityService {
         DateMidnight currentDay = startDate;
 
         while (!currentDay.isAfter(endDate)) {
-            TimedAbsenceSpans absences = freeTimeAbsenceProvider.checkForAbsence(new TimedAbsenceSpans(
-                        new ArrayList<>()), person, currentDay);
+            TimedAbsenceSpans absences = freeTimeAbsenceProvider.checkForAbsence(person, currentDay);
             BigDecimal presenceRatio = absences.calculatePresenceRatio();
 
             availabilities.add(new DayAvailability(presenceRatio, currentDay.toString("yyyy-MM-dd"), absences));

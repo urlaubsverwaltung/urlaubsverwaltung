@@ -10,13 +10,13 @@ import java.util.List;
  */
 class AvailabilityList {
 
-    private final String personId;
+    private final String personLoginName;
     private final List<DayAvailability> availabilities;
 
     public AvailabilityList(List<DayAvailability> availabilities, Person person) {
 
         this.availabilities = availabilities;
-        this.personId = person.getLoginName();
+        this.personLoginName = person.getLoginName();
     }
 
     public List<DayAvailability> getAvailabilities() {
@@ -25,8 +25,8 @@ class AvailabilityList {
     }
 
 
-    public String getPersonId() {
+    public String getPersonLoginName() {
 
-        return personId;
+        return personLoginName;
     }
 }

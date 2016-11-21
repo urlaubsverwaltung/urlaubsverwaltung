@@ -60,7 +60,7 @@ public class AvailabilityController {
         Optional<Person> optionalPerson = personService.getPersonByLogin(personLoginName);
 
         if (!optionalPerson.isPresent()) {
-            throw new IllegalArgumentException("No person found for ID=" + personLoginName);
+            throw new IllegalArgumentException("No person found for loginName = " + personLoginName);
         }
 
         if (startDate.isAfter(endDate)) {

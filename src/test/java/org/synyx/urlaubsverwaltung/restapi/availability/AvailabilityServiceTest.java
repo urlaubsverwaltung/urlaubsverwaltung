@@ -55,7 +55,7 @@ public class AvailabilityServiceTest {
 
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
-        Mockito.verify(freeTimeAbsenceProvider, Mockito.times(8))
+        Mockito.verify(freeTimeAbsenceProvider, Mockito.times(DAYS_IN_TEST_DATE_RANGE))
             .checkForAbsence(Mockito.any(TimedAbsenceSpans.class), Mockito.eq(testPerson),
                 Mockito.any(DateMidnight.class));
     }
