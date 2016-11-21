@@ -61,7 +61,7 @@ public class AvailabilityControllerTest {
     public void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
 
         mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
-                .param("to", "2016-12-31")
+                .param("to", "2016-01-31")
                 .param("person", loginName))
             .andExpect(status().isOk());
 
@@ -69,7 +69,17 @@ public class AvailabilityControllerTest {
 
         Mockito.verify(availabilityServiceMock)
             .getPersonsAvailabilities(Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 12, 31)), Mockito.eq(testPerson));
+                Mockito.eq(new DateMidnight(2016, 01, 31)), Mockito.eq(testPerson));
+    }
+
+
+    @Test
+    public void ensureRequestsAreOnlyAllowedForADateRangeOfMaxOneMonth() throws Exception {
+
+        mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
+                .param("to", "2016-02-01")
+                .param("person", loginName))
+            .andExpect(status().isBadRequest());
     }
 
 
