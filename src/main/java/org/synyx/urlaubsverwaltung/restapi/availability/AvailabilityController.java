@@ -28,6 +28,8 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class AvailabilityController {
 
+    private static final int FIVE_WEEKS = 35;
+
     private final PersonService personService;
 
     private final AvailabilityService availabilityService;
@@ -41,14 +43,15 @@ public class AvailabilityController {
 
     @ApiOperation(
         value = "Get all availabilities for a certain period and person",
-        notes = "Get all availabilities for a certain period and person"
+        notes =
+            "Get all availabilities for a certain period and person. Maximum allowed period per request is one month."
     )
     @RequestMapping(value = "/availabilities", method = RequestMethod.GET)
     public AvailabilityList personsAvailabilities(
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = "2016-01-01")
         @RequestParam("from")
         String startDateString,
-        @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = "2016-12-31")
+        @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = "2016-01-31")
         @RequestParam("to")
         String endDateString,
         @ApiParam(value = "login name of the person", defaultValue = "testUser")
@@ -66,6 +69,12 @@ public class AvailabilityController {
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("startdate " + startDateString + " must not be after endDate "
                 + endDateString);
+        }
+
+        boolean requestedDateRangeIsMoreThanOneMonth = startDate.minusDays(1).isBefore(endDate.minusMonths(1));
+
+        if (requestedDateRangeIsMoreThanOneMonth) {
+            throw new IllegalArgumentException("Requested date range to large. Maximum allowed range is one month");
         }
 
         AvailabilityList availabilities = availabilityService.getPersonsAvailabilities(startDate, endDate,
