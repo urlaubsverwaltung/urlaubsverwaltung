@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author  Timo Eifler - eifler@synyx.de
  */
 @Service
-class VacationAbsenceProvider extends TimedAbsenceProvider {
+class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private ApplicationService applicationService;
 

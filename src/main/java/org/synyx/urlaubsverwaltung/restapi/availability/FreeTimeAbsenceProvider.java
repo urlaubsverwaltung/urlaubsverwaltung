@@ -21,7 +21,7 @@ import java.util.Optional;
  * @author  Timo Eifler - eifler@synyx.de
  */
 @Service
-class FreeTimeAbsenceProvider extends TimedAbsenceProvider {
+class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private final WorkingTimeService workingTimeService;
 

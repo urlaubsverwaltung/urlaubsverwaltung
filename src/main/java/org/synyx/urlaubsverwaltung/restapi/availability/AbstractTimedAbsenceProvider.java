@@ -6,21 +6,33 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
+
 
 /**
  * This class is used to build a chain of responsibility (https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern)
- * which defines in which order absences are to be checked.
+ * which defines in which order absences are to be checked. This ensures, that multiple overlapping absences for a
+ * certain date do not sum up to more than a full day. Priorities are: free time > holidays > sick > vacation
  *
  * @author  Timo Eifler - eifler@synyx.de
  */
-abstract class TimedAbsenceProvider {
+abstract class AbstractTimedAbsenceProvider {
 
-    protected final TimedAbsenceProvider nextPriorityAbsenceProvider;
+    protected final AbstractTimedAbsenceProvider nextPriorityAbsenceProvider;
 
-    public TimedAbsenceProvider(TimedAbsenceProvider nextPriorityAbsenceProvider) {
+    public AbstractTimedAbsenceProvider(AbstractTimedAbsenceProvider nextPriorityAbsenceProvider) {
 
         this.nextPriorityAbsenceProvider = nextPriorityAbsenceProvider;
     }
+
+    /**
+     * Convenience function for initial call, so that the caller does not have to create an empty list himself.
+     */
+    public TimedAbsenceSpans checkForAbsence(Person person, DateMidnight date) {
+
+        return checkForAbsence(new TimedAbsenceSpans(new ArrayList<>()), person, date);
+    }
+
 
     /**
      * Checks for absences for the given person on the given day. Recursively calls the next priority provider if the
@@ -30,7 +42,7 @@ abstract class TimedAbsenceProvider {
 
         TimedAbsenceSpans updatedAbsences = addAbsence(knownAbsences, person, date);
 
-        if (personIsAbsentForWholeDay(updatedAbsences) || isLastPriorityProvider()) {
+        if (isPersonAbsentForWholeDay(updatedAbsences) || isLastPriorityProvider()) {
             return updatedAbsences;
         } else {
             return nextPriorityAbsenceProvider.checkForAbsence(updatedAbsences, person, date);
@@ -52,7 +64,7 @@ abstract class TimedAbsenceProvider {
     abstract boolean isLastPriorityProvider();
 
 
-    private boolean personIsAbsentForWholeDay(TimedAbsenceSpans timedAbsenceSpans) {
+    private boolean isPersonAbsentForWholeDay(TimedAbsenceSpans timedAbsenceSpans) {
 
         return BigDecimal.ZERO.compareTo(timedAbsenceSpans.calculatePresenceRatio()) == 0;
     }

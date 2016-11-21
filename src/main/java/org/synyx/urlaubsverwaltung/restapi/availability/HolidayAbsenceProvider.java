@@ -22,7 +22,7 @@ import java.util.Optional;
  * @author  Timo Eifler - eifler@synyx.de
  */
 @Service
-class HolidayAbsenceProvider extends TimedAbsenceProvider {
+class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private final PublicHolidaysService publicHolidaysService;
     private WorkingTimeService workingTimeService;
