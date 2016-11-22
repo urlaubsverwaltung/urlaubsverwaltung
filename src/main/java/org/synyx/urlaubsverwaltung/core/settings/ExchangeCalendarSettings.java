@@ -20,7 +20,7 @@ public class ExchangeCalendarSettings {
     private String password;
 
     @Column(name = "calendar_ews_calendar")
-    private String calendar = "Urlaubsverwaltung";
+    private String calendar = "";
 
     @Column(name = "calendar_ews_sendInvitationActive")
     private boolean sendInvitationActive = false;
