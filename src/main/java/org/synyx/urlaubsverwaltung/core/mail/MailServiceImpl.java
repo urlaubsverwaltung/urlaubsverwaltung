@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Service("mailService")
 class MailServiceImpl implements MailService {
 
-    private static final Locale LOCALE = Locale.GERMAN;
+    static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
@@ -74,8 +74,9 @@ class MailServiceImpl implements MailService {
                 application.getStartDate(), application.getEndDate()));
 
         List<Person> recipients = recipientsService.getRecipientsForAllowAndRemind(application);
-        sendMailToEachRecipient(model, recipients, "new_applications",
-            getTranslation("subject.application.applied.boss"));
+        String subject = getTranslation("subject.application.applied.boss", application.getPerson().getNiceName());
+
+        sendMailToEachRecipient(model, recipients, "new_applications", subject);
     }
 
 
