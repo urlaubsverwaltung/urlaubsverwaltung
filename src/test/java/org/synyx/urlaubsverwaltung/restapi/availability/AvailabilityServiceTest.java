@@ -38,8 +38,9 @@ public class AvailabilityServiceTest {
         freeTimeAbsenceProvider = Mockito.mock(FreeTimeAbsenceProvider.class);
         timedAbsenceSpansMock = Mockito.mock(TimedAbsenceSpans.class);
 
-        Mockito.when(freeTimeAbsenceProvider.checkForAbsence(Mockito.any(TimedAbsenceSpans.class),
-                    Mockito.any(Person.class), Mockito.any(DateMidnight.class)))
+        Mockito.when(freeTimeAbsenceProvider.checkForAbsence(
+                Mockito.any(Person.class),
+                Mockito.any(DateMidnight.class)))
             .thenReturn(timedAbsenceSpansMock);
 
         availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
@@ -56,8 +57,7 @@ public class AvailabilityServiceTest {
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
         Mockito.verify(freeTimeAbsenceProvider, Mockito.times(DAYS_IN_TEST_DATE_RANGE))
-            .checkForAbsence(Mockito.any(TimedAbsenceSpans.class), Mockito.eq(testPerson),
-                Mockito.any(DateMidnight.class));
+            .checkForAbsence(Mockito.eq(testPerson), Mockito.any(DateMidnight.class));
     }
 
 
