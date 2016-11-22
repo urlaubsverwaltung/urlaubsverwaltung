@@ -1,3 +1,10 @@
+### [urlaubsverwaltung-2.22.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.0)
+* Verbessertes Logging für die Erinnerungsfunktion bei lange wartenden Urlaubsanträgen
+* Verbesserte Beschreibung der Office-Rolle
+* Update test-emailaddresses to reduce chance to send spam #253
+* Betreff in E-Mail bei neu beantragtem Urlaub sollte Namen enthalten #249
+* Erweiterung der REST-API um die Schnittstelle [`/availabilities`](http://urlaubsverwaltung-demo.synyx.de/api/index.html#!/availabilities) #208
+
 ### [urlaubsverwaltung-2.21.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.21.1)
 * Added additional exchange connection configuration (without domain)  #241 
 * crash on start urlaubsverwaltung-2.21.0.jar #239 
@@ -107,8 +114,8 @@ Mini Fix in Personenformular: Label fixen
 * Bug Fix: Validierung von deaktivierter Exchange Konfiguration #135
 
 ### [urlaubsverwaltung-2.13.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.13.0)
-* #133: Maximale Überstunden konfigurieren / Überstundenfunktion implizit deaktivieren
-* #124: Zeitraum für Urlaubsstatistik und Krankheitsübersicht kann nun tagesgenau ausgewählt werden
+* Maximale Überstunden konfigurieren / Überstundenfunktion implizit deaktivieren #133
+* Zeitraum für Urlaubsstatistik und Krankheitsübersicht kann nun tagesgenau ausgewählt werden #124
 
 ### [urlaubsverwaltung-2.12.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.2)
 * Exchange Anbindung erfolgt nun über E-Mail-Adresse statt Domäne und Benutzername
