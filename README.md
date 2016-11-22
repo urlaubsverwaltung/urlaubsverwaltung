@@ -69,7 +69,7 @@ beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
-#### Rest-Schnittstelle
+#### REST-Schnittstelle
 
 Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
 Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: http://urlaubsverwaltung-demo.synyx.de/api/index.html
