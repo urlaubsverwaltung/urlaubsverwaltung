@@ -64,8 +64,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         connectToExchange(exchangeCalendarSettings);
 
         try {
-            CalendarFolder calendarFolder = findOrCreateCalendar(calendarName);
-
             Appointment appointment = new Appointment(exchangeService);
 
             fillAppointment(absence, appointment);
@@ -76,7 +74,12 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                 invitationsMode = SendInvitationsMode.SendToAllAndSaveCopy;
             }
 
-            appointment.save(calendarFolder.getId(), invitationsMode);
+            if (calendarName.isEmpty()) {
+                appointment.save(invitationsMode);
+            } else {
+                CalendarFolder calendarFolder = findOrCreateCalendar(calendarName);
+                appointment.save(calendarFolder.getId(), invitationsMode);
+            }
 
             LOG.info("Appointment {} for '{}' added to exchange calendar '{}'.", appointment.getId(),
                     absence.getPerson().getNiceName(), calendarFolder.getDisplayName());
