@@ -54,7 +54,7 @@ public class AvailabilityController {
         @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = "2016-01-31")
         @RequestParam("to")
         String endDateString,
-        @ApiParam(value = "login name of the person", defaultValue = "testUser")
+        @ApiParam(value = "login name of the person")
         @RequestParam(value = "person")
         String personLoginName) {
 
