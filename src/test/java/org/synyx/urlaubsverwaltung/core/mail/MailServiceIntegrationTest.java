@@ -267,7 +267,7 @@ public class MailServiceIntegrationTest {
         ApplicationComment comment) throws MessagingException, IOException {
 
         // check subject
-        assertEquals("Neuer Urlaubsantrag", msg.getSubject());
+        assertEquals("Neuer Urlaubsantrag für " + niceName, msg.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress(recipient.getEmail()), msg.getAllRecipients()[0]);

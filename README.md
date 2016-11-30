@@ -8,6 +8,7 @@
     * [Blog Posts](#blog-posts)
     * [FAQ](#faq)
     * [Berechtigungen](#berechtigungen)
+    * [REST-Schnittstelle](#rest-schnittstelle)
 * [Installation](#installation)
 * [Entwicklung](#entwicklung)
 * [Changelog](CHANGELOG.md)
@@ -67,6 +68,11 @@ In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
+
+#### REST-Schnittstelle
+
+Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
+Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: http://urlaubsverwaltung-demo.synyx.de/api/index.html
 
 ---
 
