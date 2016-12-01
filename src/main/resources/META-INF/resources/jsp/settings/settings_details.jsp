@@ -29,25 +29,46 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <%-- TODO: Add new message property --%>
                 <legend><spring:message code="nav.settings.title"/></legend>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="box-icon bg-blue"><i class="fa fa-calendar-times-o"></i></span>
                     <span class="box-text">
-                        <a href="${URL_PREFIX}/settings/absence">
-                            <spring:message code="settings.tabs.absence"/>
-                        </a>
+                        <h5>
+                            <a href="${URL_PREFIX}/settings/absence">
+                                <spring:message code="settings.tabs.absence"/>
+                            </a>
+                        </h5>
+                        <c:choose>
+                            <c:when test="${settings.absenceSettings.remindForWaitingApplications}">
+                                <i class="fa fa-check positive"></i>
+                                <spring:message code="settings.tabs.absence.remindForWaitingApplications.active"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="settings.tabs.absence.remindForWaitingApplications.inactive"/>
+                            </c:otherwise>
+                        </c:choose>
                     </span>
                 </div>
 
                 <div class="box">
                     <span class="box-icon bg-blue"><i class="fa fa-clock-o"></i></span>
                     <span class="box-text">
-                        <a href="${URL_PREFIX}/settings/workingtime">
-                            <spring:message code="settings.tabs.workingTime"/>
-                        </a>
+                        <h5>
+                            <a href="${URL_PREFIX}/settings/workingtime">
+                                <spring:message code="settings.tabs.workingTime"/>
+                            </a>
+                        </h5>
+                        <c:choose>
+                            <c:when test="${settings.workingTimeSettings.overtimeActive}">
+                                <i class="fa fa-check positive"></i>
+                                <spring:message code="settings.tabs.workingTime.overtime.active"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="settings.tabs.workingTime.overtime.inactive"/>
+                            </c:otherwise>
+                        </c:choose>
                     </span>
                 </div>
             </div>
@@ -55,18 +76,40 @@
                 <div class="box">
                     <span class="box-icon bg-blue"><i class="fa fa-envelope-o"></i></span>
                     <span class="box-text">
-                        <a href="${URL_PREFIX}/settings/mail">
-                            <spring:message code="settings.tabs.mail"/>
-                        </a>
+                        <h5>
+                            <a href="${URL_PREFIX}/settings/mail">
+                                <spring:message code="settings.tabs.mail"/>
+                            </a>
+                        </h5>
+                        <c:choose>
+                            <c:when test="${settings.mailSettings.active}">
+                                <i class="fa fa-check positive"></i>
+                                <spring:message code="settings.tabs.mail.active"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="settings.tabs.mail.inactive"/>
+                            </c:otherwise>
+                        </c:choose>
                     </span>
                 </div>
 
                 <div class="box">
                     <span class="box-icon bg-blue"><i class="fa fa-refresh"></i></span>
                     <span class="box-text">
-                        <a href="${URL_PREFIX}/settings/calendar">
-                            <spring:message code="settings.tabs.calendar"/>
-                        </a>
+                        <h5>
+                            <a href="${URL_PREFIX}/settings/calendar">
+                                <spring:message code="settings.tabs.calendar"/>
+                            </a>
+                        </h5>
+                        <c:choose>
+                            <c:when test="${settings.calendarSettings.exchangeCalendarSettings.active}">
+                                <i class="fa fa-check positive"></i>
+                                <spring:message code="settings.tabs.calendar.active"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="settings.tabs.calendar.inactive"/>
+                            </c:otherwise>
+                        </c:choose>
                     </span>
                 </div>
             </div>
