@@ -61,7 +61,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
         DayLength expectedWorktime = getExpectedWorktimeFor(person, currentDay);
         BigDecimal expectedWorktimeDuration = expectedWorktime.getDuration();
 
-        boolean expectedWorktimeIsLessThanFullDay = expectedWorktimeDuration.compareTo(BigDecimal.ONE) == -1;
+        boolean expectedWorktimeIsLessThanFullDay = expectedWorktimeDuration.compareTo(BigDecimal.ONE) < 0;
 
         if (expectedWorktimeIsLessThanFullDay) {
             return Optional.of(new TimedAbsence(expectedWorktime.getInverse(), TimedAbsence.Type.FREETIME));

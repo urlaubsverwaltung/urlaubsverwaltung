@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Service("mailService")
 class MailServiceImpl implements MailService {
 
-    static final Locale LOCALE = Locale.GERMAN;
+    protected static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
@@ -472,10 +472,11 @@ class MailServiceImpl implements MailService {
                 .collect(Collectors.groupingBy(Map.Entry::getKey,
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
-        for (Person recipient : applicationsPerRecipient.keySet()) {
+        for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
             MailSettings mailSettings = getMailSettings();
 
-            List<Application> applications = applicationsPerRecipient.get(recipient);
+            List<Application> applications = entry.getValue();
+            Person recipient = entry.getKey();
 
             Map<String, Object> model = new HashMap<>();
             model.put("applicationList", applications);

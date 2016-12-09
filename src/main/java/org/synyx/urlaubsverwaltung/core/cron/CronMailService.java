@@ -77,7 +77,7 @@ public class CronMailService {
                     .filter(isLongWaitingApplications())
                     .collect(Collectors.toList());
 
-            if (longWaitingApplications.size() > 0) {
+            if (!longWaitingApplications.isEmpty()) {
                 LOG.info(String.format("%d long waiting applications found. Sending Notification...", longWaitingApplications.size()));
 
                 mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
