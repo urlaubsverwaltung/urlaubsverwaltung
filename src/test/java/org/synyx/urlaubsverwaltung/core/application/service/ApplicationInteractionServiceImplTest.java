@@ -26,6 +26,8 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -88,7 +90,13 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
 
-        service.apply(applicationForLeave, applier, comment);
+        try {
+            service.apply(applicationForLeave, applier, comment);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         Assert.assertEquals("Wrong state", ApplicationStatus.WAITING, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -126,7 +134,13 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
 
-        service.apply(applicationForLeave, applier, comment);
+        try {
+            service.apply(applicationForLeave, applier, comment);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(calendarSyncService).addAbsence(any(Absence.class));
         Mockito.verify(absenceMappingService).create(anyInt(), eq(AbsenceType.VACATION), anyString());
@@ -140,14 +154,26 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
 
-        service.apply(applicationForLeave, person, Optional.of("Foo"));
+        try {
+            service.apply(applicationForLeave, person, Optional.of("Foo"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(mailService).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
         Mockito.verify(mailService, Mockito.never())
             .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
 
-        Mockito.verify(mailService)
-            .sendNewApplicationNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        try {
+            Mockito.verify(mailService)
+                .sendNewApplicationNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -159,15 +185,27 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
 
-        service.apply(applicationForLeave, applier, Optional.of("Foo"));
+        try {
+            service.apply(applicationForLeave, applier, Optional.of("Foo"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(mailService, Mockito.never())
             .sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
         Mockito.verify(mailService)
             .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
 
-        Mockito.verify(mailService)
-            .sendNewApplicationNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        try {
+            Mockito.verify(mailService)
+                .sendNewApplicationNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -180,7 +218,13 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
 
-        service.apply(applicationForLeave, applier, comment);
+        try {
+            service.apply(applicationForLeave, applier, comment);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(accountInteractionService).updateRemainingVacationDays(2013, person);
     }

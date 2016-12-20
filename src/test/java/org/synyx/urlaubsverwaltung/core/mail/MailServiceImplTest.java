@@ -21,6 +21,8 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +45,7 @@ public class MailServiceImplTest {
 
     private MessageSource messageSource;
     private MailBuilder mailBuilder;
+    private MailSenderMime mailSenderMime;
     private MailSender mailSender;
     private PersonService personService;
     private DepartmentService departmentService;
@@ -55,6 +58,7 @@ public class MailServiceImplTest {
 
         messageSource = Mockito.mock(MessageSource.class);
         mailBuilder = Mockito.mock(MailBuilder.class);
+        mailSenderMime = Mockito.mock(MailSenderMime.class);
         mailSender = Mockito.mock(MailSender.class);
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
@@ -65,7 +69,7 @@ public class MailServiceImplTest {
         RecipientsService recipientsService = new RecipientsService(personService, departmentService);
 
         mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientsService, departmentService,
-                settingsService);
+                settingsService,mailSenderMime);
 
         Person person = TestDataCreator.createPerson();
 
@@ -115,7 +119,13 @@ public class MailServiceImplTest {
     @Test
     public void ensureSendsNewApplicationNotificationToBosses() {
 
-        mailService.sendNewApplicationNotification(application, null);
+        try {
+            mailService.sendNewApplicationNotification(application, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
     }
@@ -128,7 +138,13 @@ public class MailServiceImplTest {
                 .thenReturn(Collections.singletonList(boss));
         when(messageSource.getMessage("subject.application.applied.boss", new String[]{"Marlene Muster"}, LOCALE)).thenReturn("Neuer Urlaubsantrag für Marlene Muster");
 
-        mailService.sendNewApplicationNotification(application, null);
+        try {
+            mailService.sendNewApplicationNotification(application, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         verify(mailSender).sendEmail(any(MailSettings.class), any(List.class), eq("Neuer Urlaubsantrag für "+ application.getPerson().getNiceName()), anyString());
     }
@@ -145,7 +161,13 @@ public class MailServiceImplTest {
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Collections.singletonList(departmentHead));
 
-        mailService.sendNewApplicationNotification(application, null);
+        try {
+            mailService.sendNewApplicationNotification(application, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         Mockito.verify(departmentService)

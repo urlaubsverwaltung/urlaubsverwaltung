@@ -15,6 +15,8 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteracti
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import java.util.Optional;
@@ -70,7 +72,13 @@ class ApplicationForLeaveDataProvider {
                 }
             }
 
-            applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
+            try {
+                applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
         }
 
         return application;

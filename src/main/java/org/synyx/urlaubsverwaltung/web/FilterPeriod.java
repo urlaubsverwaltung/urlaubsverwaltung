@@ -17,7 +17,7 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class FilterPeriod {
+public class   FilterPeriod {
 
     private DateMidnight startDate;
     private DateMidnight endDate;

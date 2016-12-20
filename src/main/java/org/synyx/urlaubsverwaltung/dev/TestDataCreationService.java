@@ -77,9 +77,9 @@ public class TestDataCreationService {
         Person user = personDataProvider.createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller",
                 "user@firma.test", TestUser.USER.getRoles());
         Person departmentHead = personDataProvider.createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD,
-                "Thorsten", "Krüger", "departmentHead@firma.test", TestUser.DEPARTMENT_HEAD.getRoles());
+                "Thorsten", "Krüger", "rosum@synyx.de", TestUser.DEPARTMENT_HEAD.getRoles());
         boss = personDataProvider.createTestPerson(TestUser.BOSS.getLogin(), PASSWORD, "Max", "Mustermann",
-                "boss@firma.test", TestUser.BOSS.getRoles());
+                "rosum@synyx.de", TestUser.BOSS.getRoles());
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
                 "office@firma.test", TestUser.OFFICE.getRoles());
 

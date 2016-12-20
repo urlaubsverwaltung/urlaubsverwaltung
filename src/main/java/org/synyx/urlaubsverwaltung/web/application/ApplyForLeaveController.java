@@ -31,6 +31,8 @@ import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.List;
@@ -134,7 +136,7 @@ public class ApplyForLeaveController {
 
     @RequestMapping(value = "/application", method = RequestMethod.POST)
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
-        Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+        Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException, IOException, MessagingException {
 
         LOG.info("POST new application received: " + appForm.toString());
 

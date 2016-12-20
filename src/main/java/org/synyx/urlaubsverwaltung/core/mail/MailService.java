@@ -11,6 +11,8 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -48,7 +50,7 @@ public interface MailService {
      * @param  application
      * @param  comment
      */
-    void sendNewApplicationNotification(Application application, ApplicationComment comment);
+    void sendNewApplicationNotification(Application application, ApplicationComment comment) throws IOException, MessagingException;
 
 
     /**

@@ -32,6 +32,8 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.EventType;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +78,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
     @Override
-    public Application apply(Application application, Person applier, Optional<String> comment) {
+    public Application apply(Application application, Person applier, Optional<String> comment) throws IOException, MessagingException {
 
         Person person = application.getPerson();
 

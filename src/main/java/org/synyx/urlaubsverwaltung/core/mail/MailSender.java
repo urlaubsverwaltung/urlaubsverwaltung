@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 class MailSender {
 
-    private static final Logger LOG = Logger.getLogger(MailSender.class);
+    private static final Logger LOG = Logger.getLogger(MailSenderMime.class);
 
     private final JavaMailSenderImpl mailSender;
 
@@ -86,8 +86,8 @@ class MailSender {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("To=" + Arrays.toString(message.getTo()) + "\n\n"
-                    + "Subject=" + message.getSubject() + "\n\n"
-                    + "Text=" + message.getText());
+                        + "Subject=" + message.getSubject() + "\n\n"
+                        + "Text=" + message.getText());
             }
         } catch (MailException ex) {
             for (String recipient : message.getTo()) {

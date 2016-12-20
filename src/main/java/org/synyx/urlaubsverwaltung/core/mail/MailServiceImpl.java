@@ -22,6 +22,8 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
  *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
+ * @author  Jan Rosum rosum@synyx.de
  */
 @Service("mailService")
 class MailServiceImpl implements MailService {
@@ -46,13 +49,14 @@ class MailServiceImpl implements MailService {
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
     private final MailSender mailSender;
+    private final MailSenderMime mimeMailSender;
     private final RecipientsService recipientsService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
-        RecipientsService recipientsService, DepartmentService departmentService, SettingsService settingsService) {
+                    RecipientsService recipientsService, DepartmentService departmentService, SettingsService settingsService,MailSenderMime mimeMailSender) {
 
         this.messageSource = messageSource;
         this.mailBuilder = mailBuilder;
@@ -60,10 +64,11 @@ class MailServiceImpl implements MailService {
         this.recipientsService = recipientsService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
+        this.mimeMailSender = mimeMailSender;
     }
 
     @Override
-    public void sendNewApplicationNotification(Application application, ApplicationComment comment) {
+    public void sendNewApplicationNotification(Application application, ApplicationComment comment) throws IOException, MessagingException {
 
         MailSettings mailSettings = getMailSettings();
 
@@ -76,7 +81,7 @@ class MailServiceImpl implements MailService {
         List<Person> recipients = recipientsService.getRecipientsForAllowAndRemind(application);
         String subject = getTranslation("subject.application.applied.boss", application.getPerson().getNiceName());
 
-        sendMailToEachRecipient(model, recipients, "new_applications", subject);
+        sendMailToEachRecipient(model, recipients, "new_applications", subject, true);
     }
 
 
@@ -87,7 +92,7 @@ class MailServiceImpl implements MailService {
 
 
     private void sendMailToEachRecipient(Map<String, Object> model, List<Person> recipients, String template,
-        String subject) {
+                                         String subject, boolean withPdfAttachment)  {
 
         MailSettings mailSettings = getMailSettings();
 
@@ -95,7 +100,12 @@ class MailServiceImpl implements MailService {
             model.put("recipient", recipient);
 
             String text = mailBuilder.buildMailBody(template, model);
-            mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient), subject, text);
+            if(withPdfAttachment) {
+                mimeMailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient), subject, text);
+            }
+            else {
+                mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient), subject, text);
+            }
         }
     }
 
@@ -130,7 +140,7 @@ class MailServiceImpl implements MailService {
                 Optional.empty());
 
         List<Person> recipients = recipientsService.getRecipientsForAllowAndRemind(application);
-        sendMailToEachRecipient(model, recipients, "remind", getTranslation("subject.application.remind"));
+        sendMailToEachRecipient(model, recipients, "remind", getTranslation("subject.application.remind"), false);
     }
 
 
@@ -152,7 +162,7 @@ class MailServiceImpl implements MailService {
         // Inform second stage authorities that there is an application for leave that must be allowed
         List<Person> recipients = recipientsService.getRecipientsForTemporaryAllow(application);
         sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority",
-            getTranslation("subject.application.temporaryAllowed.secondStage"));
+            getTranslation("subject.application.temporaryAllowed.secondStage"), false);
     }
 
 

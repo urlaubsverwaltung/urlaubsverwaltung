@@ -5,6 +5,8 @@ import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientA
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.Optional;
 
 
@@ -26,7 +28,7 @@ public interface ApplicationInteractionService {
      *
      * @return  the saved application for leave
      */
-    Application apply(Application application, Person applier, Optional<String> comment);
+    Application apply(Application application, Person applier, Optional<String> comment) throws IOException, MessagingException;
 
 
     /**

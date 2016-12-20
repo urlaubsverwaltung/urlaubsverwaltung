@@ -107,6 +107,8 @@ public class MailServiceIntegrationTest {
 
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         MailSender mailSender = new MailSender(javaMailSender);
+        MailSenderMime mailSenderMime = new MailSenderMime(javaMailSender);
+
 
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
@@ -116,7 +118,7 @@ public class MailServiceIntegrationTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
         mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, recipientsService, departmentService,
-                settingsService);
+                settingsService, mailSenderMime);
 
         person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
