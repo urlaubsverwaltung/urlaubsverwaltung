@@ -207,6 +207,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         appointment.setEnd(absence.getEndDate());
         appointment.setIsAllDayEvent(absence.isAllDay());
         appointment.getRequiredAttendees().add(person.getEmail());
+        appointment.setIsReminderSet(false);
     }
 
 
