@@ -31,14 +31,14 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteracti
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -283,7 +283,7 @@ public class ApplicationForLeaveDetailsController {
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
         boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
-        if (isBoss || isDepartmentHead | isSecondStageAuthority) {
+        if (isBoss || isDepartmentHead || isSecondStageAuthority) {
             comment.setMandatory(true);
             commentValidator.validate(comment, errors);
 
@@ -329,6 +329,7 @@ public class ApplicationForLeaveDetailsController {
 
         boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
+        boolean isTemporaryAllowed = application.hasStatus((ApplicationStatus.TEMPORARY_ALLOWED));
 
         // security check: only two cases where cancelling is possible
         // 1: user can cancel her own applications for leave if it has not been allowed yet
@@ -337,7 +338,7 @@ public class ApplicationForLeaveDetailsController {
         if (signedInUser.equals(application.getPerson())) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed)) {
+        } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {

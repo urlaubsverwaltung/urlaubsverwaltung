@@ -124,6 +124,14 @@ public class SettingsValidator implements Validator {
         } else if (maximumMonthsToApplyForLeaveInAdvance <= 0) {
             errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
         }
+
+        Integer daysBeforeRemindForWaitingApplications = absenceSettings.getDaysBeforeRemindForWaitingApplications();
+
+        if (daysBeforeRemindForWaitingApplications == null) {
+            errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_MANDATORY_FIELD);
+        } else if (daysBeforeRemindForWaitingApplications <= 0) {
+            errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_INVALID_ENTRY);
+        }
     }
 
 

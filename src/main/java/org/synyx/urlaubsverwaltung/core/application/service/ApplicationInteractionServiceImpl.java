@@ -101,14 +101,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 applier);
 
         // EMAILS
-
-        // person himself applies for leave
         if (person.equals(applier)) {
+            // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
             mailService.sendConfirmation(application, createdComment);
-        }
-        // someone else (normally the office) applies for leave on behalf of the person
-        else {
+        } else {
+            // someone else (normally the office) applies for leave on behalf of the person
             // person gets an email that someone else has applied for leave on behalf
             mailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
         }
@@ -132,7 +130,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         return application;
     }
 
-
     @Override
     public Application allow(Application application, Person privilegedUser, Optional<String> comment) {
 
@@ -141,12 +138,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             return allowFinally(application, privilegedUser, comment);
         }
 
-        // Second stage authority has almost the same power
-        boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
-        boolean responsibleForDepartment = departmentService.isSecondStageAuthorityOfPerson(privilegedUser,
-                application.getPerson());
+        // Second stage authority has almost the same power (except on own applications)
+        boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
+                && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
 
-        if (isSecondStageAuthority && responsibleForDepartment) {
+        boolean isOwnApplication = application.getPerson().equals(privilegedUser);
+
+        if (isSecondStageAuthority && !isOwnApplication) {
             return allowFinally(application, privilegedUser, comment);
         }
 
@@ -154,7 +152,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         boolean isDepartmentHead = privilegedUser.hasRole(Role.DEPARTMENT_HEAD)
             && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
 
-        if (isDepartmentHead) {
+        // DEPARTMENT_HEAD can _not_ allow SECOND_STAGE_AUTHORITY
+        boolean isSecondStageAuthorityApplication =
+                application.getPerson().hasRole(Role.SECOND_STAGE_AUTHORITY);
+
+        if (isDepartmentHead && !isOwnApplication && !isSecondStageAuthorityApplication) {
             if (application.isTwoStageApproval()) {
                 return allowTemporary(application, privilegedUser, comment);
             }
@@ -282,7 +284,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
-        if (application.hasStatus(ApplicationStatus.ALLOWED)) {
+        if (application.hasStatus(ApplicationStatus.ALLOWED) ||
+                application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
             cancelApplication(application, canceller, comment);
         } else {
             revokeApplication(application, canceller, comment);

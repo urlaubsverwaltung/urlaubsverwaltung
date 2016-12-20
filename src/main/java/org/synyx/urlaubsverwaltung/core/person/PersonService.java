@@ -47,6 +47,26 @@ public interface PersonService {
 
 
     /**
+     * Creates a new person.
+     *
+     * @param  person  to be created
+     *
+     * @return  created person
+     */
+    Person create(Person person);
+
+
+    /**
+     * Updates the given person.
+     *
+     * @param  person  to be saved
+     *
+     * @return  updated person
+     */
+    Person update(Person person);
+
+
+    /**
      * saves a {@link Person}.
      *
      * @param  person  {@link Person}

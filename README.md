@@ -8,9 +8,10 @@
     * [Blog Posts](#blog-posts)
     * [FAQ](#faq)
     * [Berechtigungen](#berechtigungen)
+    * [REST-Schnittstelle](#rest-schnittstelle)
 * [Installation](#installation)
 * [Entwicklung](#entwicklung)
-* [Hinweise zu Versionen](#hinweise-zu-versionen)
+* [Changelog](CHANGELOG.md)
 * [Technologien](#technologien)
 * [Lizenz](#lizenz)
 
@@ -31,13 +32,13 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 Zum Ausprobieren der Anwendung gibt es ein [Demo System](http://urlaubsverwaltung-demo.synyx.de) mit Testbenutzern für
 die unterschiedlichen Rollen:
 
-| Rolle                     | Benutzername  | Passwort |
-| ------------------------- | ------------- | -------- |
-| Office                    | test          | secret   |
-| Chef                      | testBoss      | secret   |
-| Freigabe Verantwortlicher | testManager   | secret   |
-| Abteilungsleiter          | testHead      | secret   |
-| Benutzer                  | testUser      | secret   |
+| Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
+| ------------------------- | ------------- | -------- | ----------------- |
+| Office                    | test          | secret   | Marlene Muster    |
+| Chef                      | testBoss      | secret   | Max Muster        |
+| Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       | 
+| Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
+| Benutzer                  | testUser      | secret   | Klaus Müller      |
 
 #### Blog Posts
 
@@ -68,6 +69,11 @@ beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
+#### REST-Schnittstelle
+
+Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
+Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: http://urlaubsverwaltung-demo.synyx.de/api/index.html
+
 ---
 
 ## Installation
@@ -93,7 +99,9 @@ downloaden.
 Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Anwendung im Entwicklungsmodus
 zu starten:
 
-<pre>java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar</pre>
+```bash
+java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar
+```
 
 Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
 Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system) anmelden.
@@ -102,7 +110,7 @@ Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system
 
 Die Anwendung ist nun erreichbar unter
 
-`<servername>:8080/urlaubsverwaltung`
+`<servername>:8080/`
 
 #### Anwendung als Service
 
@@ -139,7 +147,9 @@ Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr im Entwicklungsmodus
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
 
-<pre>java -jar urlaubsverwaltung.jar</pre>
+```bash
+java -jar urlaubsverwaltung.jar
+```
 
 #### Authentifizierung
 
@@ -171,6 +181,13 @@ Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in
 
 <pre>auth=activeDirectory</pre>
 
+##### Synchronisation der User-Datenbank
+
+Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
+Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync` bzw. `uv.security.activeDirectory.sync` auf `true` gesetzt wird:
+
+<pre>uv.security.ldap.sync=true</pre> bzw. <pre>uv.security.activeDirectory.sync=true</pre>
+
 ---
 
 ## Entwicklung
@@ -179,20 +196,34 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 
 #### Repository clonen
 
-<pre>git clone git@github.com:synyx/urlaubsverwaltung.git</pre>
+```bash
+git clone git@github.com:synyx/urlaubsverwaltung.git
+```
 
 #### Anwendung starten
 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
 Plugin gestartet werden:
 
-<pre>mvn clean spring-boot:run</pre>
+```bash
+./mvnw clean spring-boot:run
+```
+
+bzw. für Windows Benutzer über:
+
+```cmd
+./mvnw.cmd clean spring-boot:run
+```
+
 <a name="mvn_profiles" />
 Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
 werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
 Maven Aufruf gestartet werden:
-<pre>mvn clean spring-boot:run -Drun.profiles=mariadb</pre>
-Einzelne Parameter lassen sich mit -D<parameterName>=<parameterWert> überschreiben.
+
+```bash
+./mvnw clean spring-boot:run -Drun.profiles=mariadb
+```
+Einzelne Parameter lassen sich mit `-D<parameterName>=<parameterWert>` überschreiben.
 
 #### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
@@ -239,7 +270,9 @@ Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständl
 
 Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
-<pre>mvn clean spring-boot:run -Dauth=ldap</pre>
+```bash
+./mvnw clean spring-boot:run -Dauth=ldap
+```
 
 Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
@@ -249,7 +282,9 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 
 Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
-<pre>mvn clean spring-boot:run -Dauth=activeDirectory</pre>
+```bash
+./mvnw clean spring-boot:run -Dauth=activeDirectory
+```
 
 Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
@@ -265,10 +300,7 @@ tun kann.](UV_WITH_DOCKER.md)
 
 ## Hinweise zu Versionen
 
-#### Version 2.12.0
-
-Ab dieser Version ist die Anwendung eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung, d.h. sie wird
-nicht mehr als WAR in einem Tomcat installiert, sondern als JAR ausgeführt.
+Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
 
 ---
 

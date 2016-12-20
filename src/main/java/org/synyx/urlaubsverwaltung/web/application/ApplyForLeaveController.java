@@ -1,25 +1,19 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.access.AccessDeniedException;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -38,9 +32,7 @@ import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 
 import java.math.BigDecimal;
-
 import java.sql.Time;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -54,6 +46,8 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/web")
 public class ApplyForLeaveController {
+
+    private static final Logger LOG = Logger.getLogger(ApplyForLeaveController.class);
 
     @Autowired
     private SessionService sessionService;
@@ -142,16 +136,19 @@ public class ApplyForLeaveController {
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
         Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
+        LOG.info("POST new application received: " + appForm.toString());
+
         Person applier = sessionService.getSignedInUser();
 
         applicationValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
             prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
-
             if (errors.hasGlobalErrors()) {
                 model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             }
+
+            LOG.info(String.format("new application (%s) has errors: %s", appForm.toString(), errors.toString()));
 
             return "application/app_form";
         }
@@ -160,6 +157,8 @@ public class ApplyForLeaveController {
 
         Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
                 Optional.ofNullable(appForm.getComment()));
+
+        LOG.info("new application with sucess applied" + savedApplicationForLeave.toString());
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 

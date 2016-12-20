@@ -72,6 +72,15 @@ public class SessionService {
         boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
         boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
 
-        return isOwnData || isPrivilegedUser;
+        // Note:
+        // signedInUser has role DEPARTMENT_HEAD
+        // person has role SECOND_STAGE_AUTHORITY
+        // signedInUser and person are in the same department
+        // signedInUser is not allowed to access persons data cause of lower level role
+        // (DEPARTMENT_HEAD < SECOND_STAGE_AUTHORITY)
+        boolean isDepartmentHeadOfSecondStageAuthority =
+                person.hasRole(Role.SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(Role.DEPARTMENT_HEAD);
+
+        return isOwnData || (isPrivilegedUser && !isDepartmentHeadOfSecondStageAuthority);
     }
 }

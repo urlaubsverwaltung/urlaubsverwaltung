@@ -76,7 +76,8 @@ public final class GravatarUtil {
                 }
 
                 halfByte = data[i] & 0x0F; // NOSONAR
-            } while (twoHalves++ < 1);
+                twoHalves++;
+            } while (twoHalves < 1);
         }
 
         return buf.toString();

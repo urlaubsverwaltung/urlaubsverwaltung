@@ -75,30 +75,30 @@ public class TestDataCreationService {
 
         // Users to be able to sign in with
         Person user = personDataProvider.createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller",
-                "mueller@muster.de", TestUser.USER.getRoles());
+                "user@firma.test", TestUser.USER.getRoles());
         Person departmentHead = personDataProvider.createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD,
-                "Thorsten", "Krüger", "krueger@muster.de", TestUser.DEPARTMENT_HEAD.getRoles());
+                "Thorsten", "Krüger", "departmentHead@firma.test", TestUser.DEPARTMENT_HEAD.getRoles());
         boss = personDataProvider.createTestPerson(TestUser.BOSS.getLogin(), PASSWORD, "Max", "Mustermann",
-                "maxMuster@muster.de", TestUser.BOSS.getRoles());
+                "boss@firma.test", TestUser.BOSS.getRoles());
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
-                "mmuster@muster.de", TestUser.OFFICE.getRoles());
+                "office@firma.test", TestUser.OFFICE.getRoles());
 
         Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
-                "Peter", "Huber", "huber@muster.de", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
+                "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
 
         // Users
-        Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@muster.de",
+        Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test",
                 Role.USER);
         Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier",
-                "baier@muster.de", Role.USER);
+                "baier@firma.test", Role.USER);
         Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider",
-                "schneider@muster.de", Role.USER);
+                "schneider@firma.test", Role.USER);
         Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel",
-                "haendel@muster.de", Role.USER);
+                "haendel@firma.test", Role.USER);
         Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt",
-                "schmidt@muster.de", Role.USER);
+                "schmidt@firma.test", Role.USER);
 
-        personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@muster.de",
+        personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@firma.test",
             Role.INACTIVE);
 
         // Departments
@@ -214,9 +214,7 @@ public class TestDataCreationService {
             sickNoteTypeStandard, true);
 
         // CHILD SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(15), now.minusDays(13), // NOSONAR
-            sickNoteTypeChild, true);
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(20), now.minusDays(19), // NOSONAR
+        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(40), now.minusDays(38), // NOSONAR
             sickNoteTypeChild, false);
     }
 

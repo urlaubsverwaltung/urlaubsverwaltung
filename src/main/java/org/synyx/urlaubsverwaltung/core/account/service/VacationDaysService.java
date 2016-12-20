@@ -13,10 +13,10 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.NowService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 
@@ -115,9 +115,10 @@ public class VacationDaysService {
 
         // filter them since only waiting and allowed applications for leave of type holiday are relevant
         List<Application> applicationsForLeave = allApplicationsForLeave.stream()
-            .filter(input ->
-                        VacationCategory.HOLIDAY.equals(input.getVacationType().getCategory())
-                        && (input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED)))
+                .filter(input ->
+                            VacationCategory.HOLIDAY.equals(input.getVacationType().getCategory())
+                            && (input.hasStatus(ApplicationStatus.WAITING)
+                                || input.hasStatus(ApplicationStatus.ALLOWED)))
                 .collect(Collectors.toList());
 
         BigDecimal usedDays = BigDecimal.ZERO;

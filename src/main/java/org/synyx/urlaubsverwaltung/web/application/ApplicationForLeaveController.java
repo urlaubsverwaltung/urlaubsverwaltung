@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -128,12 +129,13 @@ public class ApplicationForLeaveController {
         List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
 
         return waitingApplications.stream()
-            .filter(application -> members.contains(application.getPerson()))
+            .filter(includeDepartmentApplications(members))
+            .filter(withoutOwnApplications(head))
+            .filter(withoutSecondStageAuthorityApplications())
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
             .collect(Collectors.toList());
     }
-
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
 
@@ -151,9 +153,22 @@ public class ApplicationForLeaveController {
         List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
 
         return applications.stream()
-            .filter(application -> members.contains(application.getPerson()))
+            .filter(includeDepartmentApplications(members))
+            .filter(withoutOwnApplications(secondStage))
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
             .collect(Collectors.toList());
+    }
+
+    private Predicate<Application> withoutOwnApplications(Person head) {
+        return application -> !application.getPerson().equals(head);
+    }
+
+    private Predicate<Application> withoutSecondStageAuthorityApplications() {
+        return application -> !application.getPerson().getPermissions().contains(Role.SECOND_STAGE_AUTHORITY);
+    }
+
+    private Predicate<Application> includeDepartmentApplications(List<Person> members) {
+        return application -> members.contains(application.getPerson());
     }
 }

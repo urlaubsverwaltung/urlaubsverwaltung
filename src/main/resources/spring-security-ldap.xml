@@ -7,7 +7,10 @@
 
     <!-- AUTHENTICATION VIA LDAP -->
 
-    <security:ldap-server id="ldapAuthServer" url="${uv.security.ldap.url}/${uv.security.ldap.base}"/>
+    <security:ldap-server id="ldapAuthServer"
+                          url="${uv.security.ldap.url}/${uv.security.ldap.base}"
+                          manager-dn="${uv.security.ldap.managerDn}"
+                          manager-password="${uv.security.ldap.managerPassword}"/>
 
     <security:authentication-manager alias="authenticationManager">
 

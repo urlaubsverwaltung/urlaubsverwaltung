@@ -155,6 +155,7 @@ public class SettingsValidatorTest {
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
         absenceSettings.setMaximumSickPayDays(null);
         absenceSettings.setDaysBeforeEndOfSickPayNotification(null);
+        absenceSettings.setDaysBeforeRemindForWaitingApplications(null);
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
@@ -164,6 +165,8 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.mandatory");
+        Mockito.verify(mockError)
+                .rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
     }
 
 
@@ -177,6 +180,7 @@ public class SettingsValidatorTest {
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(-1);
         absenceSettings.setMaximumSickPayDays(-1);
         absenceSettings.setDaysBeforeEndOfSickPayNotification(-1);
+        absenceSettings.setDaysBeforeRemindForWaitingApplications(-1);
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
@@ -186,6 +190,8 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.invalid");
         Mockito.verify(mockError)
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
+        Mockito.verify(mockError)
+                .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
     }
 
 

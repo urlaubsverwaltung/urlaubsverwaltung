@@ -102,43 +102,8 @@
                     </legend>
 
                     <uv:person person="${application.person}"/>
-
-                    <div class="box">
-                        <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
-                        <span class="box-text">
-                            <c:choose>
-                                <c:when test="${account != null}">
-                                    <spring:message code="person.account.vacation.entitlement" arguments="${account.vacationDays}" />
-                                    <spring:message code="person.account.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code='person.account.vacation.noInformation'/>
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
-                    </div>
-
-                    <div class="box">
-                        <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
-                        <span class="box-text">
-                            <c:choose>
-                                <c:when test="${account != null}">
-                                  <spring:message code="person.account.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
-                                  <c:choose>
-                                    <c:when test="${beforeApril}">
-                                      <spring:message code="person.account.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
-                                    </c:when>
-                                    <c:otherwise>
-                                      <spring:message code="person.account.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
-                                    </c:otherwise>
-                                  </c:choose>
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code='person.account.vacation.noInformation'/>
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
-                    </div>
+                    <uv:account-entitlement account="${account}"/>
+                    <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}" beforeApril="${beforeApril}"/>
 
                 </div><!-- End of second column -->
 

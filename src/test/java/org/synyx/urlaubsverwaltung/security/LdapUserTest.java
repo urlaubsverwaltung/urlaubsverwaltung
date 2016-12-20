@@ -31,7 +31,7 @@ public class LdapUserTest {
     public void ensureCanBeInitializedWithAttributes() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@muster.de"));
+                Optional.of("max@firma.test"));
 
         Assert.assertEquals("Wrong username", "username", ldapUser.getUsername());
 
@@ -42,7 +42,7 @@ public class LdapUserTest {
 
         assertIsSet.accept(ldapUser.getFirstName(), "Max");
         assertIsSet.accept(ldapUser.getLastName(), "Mustermann");
-        assertIsSet.accept(ldapUser.getEmail(), "max@muster.de");
+        assertIsSet.accept(ldapUser.getEmail(), "max@firma.test");
     }
 
 
@@ -50,7 +50,7 @@ public class LdapUserTest {
     public void ensureMemberOfInformationIsOptional() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@muster.de"));
+                Optional.of("max@firma.test"));
 
         List<String> memberOf = ldapUser.getMemberOf();
 
@@ -63,7 +63,7 @@ public class LdapUserTest {
     public void ensureCanBeInitializedWithAttributesAndMemberOfInformation() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@muster.de"), "GroupA", "GroupB");
+                Optional.of("max@firma.test"), "GroupA", "GroupB");
 
         List<String> memberOf = ldapUser.getMemberOf();
 
@@ -78,7 +78,7 @@ public class LdapUserTest {
     public void ensureMemberOfListIsUnmodifiable() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@muster.de"), "GroupA", "GroupB");
+                Optional.of("max@firma.test"), "GroupA", "GroupB");
 
         List<String> memberOf = ldapUser.getMemberOf();
 

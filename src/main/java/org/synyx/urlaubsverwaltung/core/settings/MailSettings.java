@@ -28,10 +28,10 @@ public class MailSettings {
     private String password;
 
     @Column(name = "mail_from")
-    private String from = "absender@uv.de";
+    private String from = "absender@urlaubsverwaltung.test";
 
     @Column(name = "mail_administrator")
-    private String administrator = "admin@uv.de";
+    private String administrator = "admin@urlaubsverwaltung.test";
 
     /**
      * Is used as base URL for links within sent mails.

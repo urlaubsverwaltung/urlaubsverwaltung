@@ -129,15 +129,13 @@
                     </c:otherwise>
                 </c:choose>
             </td>
-            <sec:authorize access="hasAuthority('OFFICE')">
             <td class="hidden-print hidden-xs">
-              <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}/edit"
-                  data-title="<spring:message code="action.edit" />">
-                <i class="fa fa-fw fa-pencil"></i>
+              <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}"
+                  data-title="<spring:message code="action.details" />">
+                <i class="fa fa-fw fa-list-alt"></i>
               </a>
             </td>
-            </sec:authorize>
-        </tr>    
+        </tr>
     </c:forEach>
     </tbody>
 </table>

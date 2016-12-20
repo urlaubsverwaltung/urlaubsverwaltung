@@ -14,11 +14,6 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
-import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
-import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
@@ -26,6 +21,11 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.core.workingtime.OverlapCase;
+import org.synyx.urlaubsverwaltung.core.workingtime.OverlapService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 

@@ -157,6 +157,43 @@ public class SessionServiceTest {
             isAllowed);
     }
 
+    @Test
+    public void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData()
+            throws IllegalAccessException {
+
+        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHead, secondStageAuthority)).thenReturn(true);
+
+        boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
+
+        Mockito.verify(departmentService).isDepartmentHeadOfPerson(departmentHead, secondStageAuthority);
+        Assert.assertFalse("Department head - but not of secondStageAuthority - should not be able to access the secondStageAuthority's data",
+                isAllowed);
+    }
+
+    @Test
+    public void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData()
+            throws IllegalAccessException {
+
+        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead)).thenReturn(true);
+
+        boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(secondStageAuthority, departmentHead);
+
+        Mockito.verify(departmentService).isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead);
+        Assert.assertTrue("secondStageAuthority should be able to access the departmentHeads's data",
+                isAllowed);
+    }
 
     @Test
     public void ensureNotPrivilegedUserCanNotAccessPersonData() throws IllegalAccessException {

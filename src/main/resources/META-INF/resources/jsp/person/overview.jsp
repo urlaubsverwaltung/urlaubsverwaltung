@@ -43,60 +43,15 @@
         <div class="row">
 
             <div class="col-xs-12 col-sm-12 col-md-4">
-                <div class="box">
-                    <div class="box-image gravatar img-circle hidden-print" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
-                    <span class="box-text">
-                        <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
-                        <h4><c:out value="${person.niceName}"/></h4>
-                        <c:if test="${person.email != null}">
-                            <i class="fa fa-envelope-o"></i>
-                            <a href="mailto:<c:out value='${person.email}'/>">
-                                <span class="hidden-print"><c:out value="${person.email}"/></span>
-                            </a>
-                        </c:if>
-                    </span>
-                </div>
+                <uv:person person="${person}" nameIsNoLink="${true}"/>
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-4">
-                <div class="box">
-                    <span class="box-icon bg-green hidden-print"><i class="fa fa-calendar"></i></span>
-                    <span class="box-text">
-                        <c:choose>
-                            <c:when test="${account != null}">
-                                <spring:message code="person.account.vacation.entitlement" arguments="${account.vacationDays}" />
-                                <spring:message code="person.account.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code='person.account.vacation.noInformation'/>
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                </div>
+                <uv:account-entitlement account="${account}"/>
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-4">
-                <div class="box">
-                    <span class="box-icon bg-green hidden-print"><i class="fa fa-bar-chart"></i></span>
-                    <span class="box-text">
-                        <c:choose>
-                            <c:when test="${account != null}">
-                                <spring:message code="person.account.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
-                                <c:choose>
-                                    <c:when test="${beforeApril}">
-                                        <spring:message code="person.account.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <spring:message code="person.account.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code='person.account.vacation.noInformation'/>
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                </div>
+                <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}" beforeApril="${beforeApril}"/>
             </div>
 
         </div>

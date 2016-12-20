@@ -215,4 +215,11 @@ public interface MailService {
      * @param  overtimeComment  may contain further information
      */
     void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment);
+
+    /**
+     * Sends a mail as reminder to notify about applications for leave waiting longer already to be processed.
+     *
+     * @param applications waiting to be processed longer already
+     */
+    void sendRemindForWaitingApplicationsReminderNotification(List<Application> applications);
 }
