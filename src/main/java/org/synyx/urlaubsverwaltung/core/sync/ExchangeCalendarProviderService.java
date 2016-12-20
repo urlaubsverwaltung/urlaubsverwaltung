@@ -203,6 +203,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
         appointment.setStart(absence.getStartDate());
         appointment.setEnd(absence.getEndDate());
         appointment.getRequiredAttendees().add(person.getEmail());
+        appointment.setIsReminderSet(false);
     }
 
 
