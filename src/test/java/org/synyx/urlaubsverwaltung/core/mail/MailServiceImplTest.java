@@ -146,7 +146,7 @@ public class MailServiceImplTest {
             e.printStackTrace();
         }
 
-        verify(mailSender).sendEmail(any(MailSettings.class), any(List.class), eq("Neuer Urlaubsantrag für "+ application.getPerson().getNiceName()), anyString());
+        verify(mailSenderMime).sendEmail(any(MailSettings.class), any(List.class), eq("Neuer Urlaubsantrag für "+ application.getPerson().getNiceName()), anyString());
     }
 
     @Test

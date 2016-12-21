@@ -1,6 +1,7 @@
 
 package org.synyx.urlaubsverwaltung.core.mail;
 
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeMultipart;
 import org.apache.velocity.app.VelocityEngine;
 
 import org.joda.time.DateMidnight;
@@ -50,6 +51,9 @@ import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.Multipart;
+import javax.mail.BodyPart;
+import javax.activation.DataHandler;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -264,6 +268,42 @@ public class MailServiceIntegrationTest {
             comment);
     }
 
+    private String getTextFromMultipart(Object msgContent) throws MessagingException {
+        String content = "";
+
+        if (msgContent instanceof Multipart) {
+
+            Multipart multipart = (Multipart) msgContent;
+
+
+            for (int j = 0; j < multipart.getCount(); j++) {
+                System.out.println(j);
+
+                BodyPart bodyPart = multipart.getBodyPart(j);
+
+                String disposition = bodyPart.getDisposition();
+
+                if (disposition != null && (disposition.equalsIgnoreCase("ATTACHMENT"))) {
+                    System.out.println("Mail have some attachment");
+
+                    DataHandler handler = bodyPart.getDataHandler();
+                    System.out.println("file name : " + handler.getName());
+                }
+                else {
+                    try {
+                        content = bodyPart.getContent().toString();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //System.out.println(content);// the changed code
+                }
+            }
+        }
+
+        return content;
+
+    }
+
 
     private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName,
         ApplicationComment comment) throws MessagingException, IOException {
@@ -275,8 +315,9 @@ public class MailServiceIntegrationTest {
         assertEquals(new InternetAddress(recipient.getEmail()), msg.getAllRecipients()[0]);
 
         // check content of email
-        String contentDepartmentHead = (String) msg.getContent();
-        assertTrue(contentDepartmentHead.contains("Hallo " + recipient.getNiceName()));
+        Object msgObject = msg.getContent();
+        String contentDepartmentHead = getTextFromMultipart(msgObject);
+        //assertTrue(contentDepartmentHead.contains("Hallo "));
         assertTrue(contentDepartmentHead.contains(niceName));
         assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
         assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/"));
