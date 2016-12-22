@@ -39,6 +39,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import scala.math.Ordering;
 
 import java.io.IOException;
 
@@ -54,6 +55,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.Multipart;
 import javax.mail.BodyPart;
 import javax.activation.DataHandler;
+import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -268,6 +270,30 @@ public class MailServiceIntegrationTest {
             comment);
     }
 
+    private String EncodingCleaner(String content,String encodingError,String encodingRight){
+        String[] content2 = content.split(encodingError);
+        int a = content2.length;
+        System.out.println(a);
+        int i = 0;
+        String StringVerbessert = "";
+
+        while (i < a){
+            if (i <= a-2){
+                StringVerbessert = StringVerbessert + content2[i] + encodingRight;
+            }
+
+            else {
+                StringVerbessert = StringVerbessert + content2[i];
+            }
+
+            i++;
+
+        }
+        System.out.println(StringVerbessert);
+
+        return StringVerbessert;
+    }
+
     private String getTextFromMultipart(Object msgContent) throws MessagingException {
         String content = "";
 
@@ -291,11 +317,18 @@ public class MailServiceIntegrationTest {
                 }
                 else {
                     try {
-                        content = bodyPart.getContent().toString();
+                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        bodyPart.writeTo(os);
+                        content = os.toString("UTF8");
+                        String step1 = EncodingCleaner(content,"=C3=BC","ü");
+                        String step2 = EncodingCleaner(step1,"=C3=A4","ä");
+                             content = EncodingCleaner(step2,"=C3=9C","Ü");
+
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    //System.out.println(content);// the changed code
+                    System.out.println(content);// the changed code
                 }
             }
         }
@@ -317,10 +350,10 @@ public class MailServiceIntegrationTest {
         // check content of email
         Object msgObject = msg.getContent();
         String contentDepartmentHead = getTextFromMultipart(msgObject);
-        //assertTrue(contentDepartmentHead.contains("Hallo "));
+        assertTrue(contentDepartmentHead.contains("Hallo "));
         assertTrue(contentDepartmentHead.contains(niceName));
         assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
-        assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/"));
+        assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung"));
         assertTrue("No comment in mail content", contentDepartmentHead.contains(comment.getText()));
         assertTrue("Wrong comment author", contentDepartmentHead.contains(comment.getPerson().getNiceName()));
     }
@@ -361,8 +394,8 @@ public class MailServiceIntegrationTest {
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
         Message message = inboxOfBoss.get(0);
 
-        String content = (String) message.getContent();
-
+        Object msgObject = message.getContent();
+        String content = getTextFromMultipart(msgObject);
         assertTrue(content.contains("Marlene Muster: 05.11.2015 bis 06.11.2015"));
         assertTrue(content.contains("Niko Schmidt: 04.11.2015 bis 04.11.2015"));
     }
