@@ -12,11 +12,13 @@ Dieses Dokument beschreibt wie man Docker Container für MariaDB und OpenLDAP f�
 ### Docker Installation
 #### Linux/Mac OS und Windows
  * Alternativ CoreOS VM mit Docker über Vagrant.
-    * Vagrant installieren https://www.vagrantup.com/downloads.html
-    * Vagrant CoreOS gibt es hier https://github.com/coreos/coreos-vagrant
+  * Vagrant installieren https://www.vagrantup.com/downloads.html
+  * Vagrant CoreOS gibt es hier https://github.com/coreos/coreos-vagrant
+    
 #### Mac OS
 Docker läuft zur Zeit nicht nativ auf Mac OS. Es wird zwingend eine Linux VM gebraucht. Die hier genannten Tools 
  * Auf Mac OS X gibt es ein feines Toolset mit GUI: https://docs.docker.com/engine/installation/mac/
+ 
 #### Linux
 Je nach Distribution ist Docker bereits im Paketmanager verfügbar.
 
