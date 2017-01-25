@@ -1,28 +1,21 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
 import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
-
 import java.util.Optional;
-
 
 /**
  * Implementation of interface {@link AccountInteractionService}.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional
@@ -43,10 +36,10 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     @Override
     public Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
         BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-        BigDecimal remainingDaysNotExpiring) {
+        BigDecimal remainingDaysNotExpiring, String comment) {
 
         Account account = new Account(person, validFrom.toDate(), validTo.toDate(), annualVacationDays, remainingDays,
-                remainingDaysNotExpiring);
+            remainingDaysNotExpiring, comment);
 
         account.setVacationDays(actualVacationDays);
 
@@ -57,11 +50,10 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         return account;
     }
 
-
     @Override
     public Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo,
         BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-        BigDecimal remainingDaysNotExpiring) {
+        BigDecimal remainingDaysNotExpiring, String comment) {
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
@@ -69,6 +61,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         account.setVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingDays);
         account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
+        account.setComment(comment);
 
         accountService.save(account);
 
@@ -76,7 +69,6 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         return account;
     }
-
 
     @Override
     public void updateRemainingVacationDays(int year, Person person) {
@@ -87,7 +79,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         while (hasNextAccount) {
             Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(startYear + 1,
-                    person);
+                person);
 
             if (nextYearsHolidaysAccountOptional.isPresent()) {
                 Account changedHolidaysAccount = accountService.getHolidaysAccount(startYear, person).get();
@@ -104,12 +96,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         }
     }
 
-
     /**
      * Updates the remaining vacation days of the given new account by using data of the given last account.
      *
-     * @param  newAccount  to calculate and update remaining vacation days for
-     * @param  lastAccount  as reference to be used for calculation of remaining vacation days
+     * @param newAccount
+     *            to calculate and update remaining vacation days for
+     * @param lastAccount
+     *            as reference to be used for calculation of remaining vacation days
      */
     private void updateRemainingVacationDays(Account newAccount, Account lastAccount) {
 
@@ -125,14 +118,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         accountService.save(newAccount);
     }
 
-
     @Override
     public Account autoCreateOrUpdateNextYearsHolidaysAccount(Account referenceAccount) {
 
         int nextYear = referenceAccount.getYear() + 1;
 
         Optional<Account> nextYearAccountOptional = accountService.getHolidaysAccount(nextYear,
-                referenceAccount.getPerson());
+            referenceAccount.getPerson());
 
         if (nextYearAccountOptional.isPresent()) {
             Account nextYearAccount = nextYearAccountOptional.get();
@@ -146,7 +138,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
 
         return createHolidaysAccount(referenceAccount.getPerson(), DateUtil.getFirstDayOfYear(nextYear),
-                DateUtil.getLastDayOfYear(nextYear), referenceAccount.getAnnualVacationDays(),
-                referenceAccount.getAnnualVacationDays(), leftVacationDays, BigDecimal.ZERO);
+            DateUtil.getLastDayOfYear(nextYear), referenceAccount.getAnnualVacationDays(),
+            referenceAccount.getAnnualVacationDays(), leftVacationDays, BigDecimal.ZERO, referenceAccount.getComment());
     }
 }

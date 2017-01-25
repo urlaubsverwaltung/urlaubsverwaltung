@@ -2,29 +2,23 @@ package org.synyx.urlaubsverwaltung.core.account.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
 import java.math.BigDecimal;
-
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
-
 /**
- * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom,
- * validTo).
+ * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Entity
 public class Account extends AbstractPersistable<Integer> {
@@ -52,14 +46,15 @@ public class Account extends AbstractPersistable<Integer> {
     private BigDecimal remainingVacationDays;
     private BigDecimal remainingVacationDaysNotExpiring;
 
+    private String comment;
+
     public Account() {
 
         /* OK */
     }
 
-
     public Account(Person person, Date validFrom, Date validTo, BigDecimal annualVacationDays,
-        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring) {
+        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
@@ -67,6 +62,7 @@ public class Account extends AbstractPersistable<Integer> {
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
+        this.comment = comment;
     }
 
     public Person getPerson() {
@@ -74,60 +70,50 @@ public class Account extends AbstractPersistable<Integer> {
         return person;
     }
 
-
     public void setPerson(Person person) {
 
         this.person = person;
     }
-
 
     public BigDecimal getAnnualVacationDays() {
 
         return annualVacationDays;
     }
 
-
     public void setAnnualVacationDays(BigDecimal annualVacationDays) {
 
         this.annualVacationDays = annualVacationDays;
     }
-
 
     public BigDecimal getRemainingVacationDays() {
 
         return remainingVacationDays;
     }
 
-
     public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
 
         this.remainingVacationDays = remainingVacationDays;
     }
-
 
     public BigDecimal getRemainingVacationDaysNotExpiring() {
 
         return remainingVacationDaysNotExpiring;
     }
 
-
     public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
 
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
-
 
     public BigDecimal getVacationDays() {
 
         return vacationDays;
     }
 
-
     public void setVacationDays(BigDecimal vacationDays) {
 
         this.vacationDays = vacationDays;
     }
-
 
     public DateMidnight getValidFrom() {
 
@@ -138,7 +124,6 @@ public class Account extends AbstractPersistable<Integer> {
         return new DateTime(this.validFrom).toDateMidnight();
     }
 
-
     public void setValidFrom(DateMidnight validFrom) {
 
         if (validFrom == null) {
@@ -147,7 +132,6 @@ public class Account extends AbstractPersistable<Integer> {
             this.validFrom = validFrom.toDate();
         }
     }
-
 
     public DateMidnight getValidTo() {
 
@@ -158,7 +142,6 @@ public class Account extends AbstractPersistable<Integer> {
         return new DateTime(this.validTo).toDateMidnight();
     }
 
-
     public void setValidTo(DateMidnight validTo) {
 
         if (validTo == null) {
@@ -168,24 +151,30 @@ public class Account extends AbstractPersistable<Integer> {
         }
     }
 
-
     public int getYear() {
 
         return new DateTime(this.validFrom).toDateMidnight().getYear();
     }
 
-
     @Override
     public String toString() {
 
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) // NOSONAR - Formatting issues
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            // NOSONAR - Formatting issues
             .append("person", getPerson().getLoginName())
             .append("validFrom", getValidFrom().toString(DateFormat.PATTERN))
             .append("validTo", getValidTo().toString(DateFormat.PATTERN))
-            .append("annualVacationDays", getAnnualVacationDays())
-            .append("vacationDays", getVacationDays())
+            .append("annualVacationDays", getAnnualVacationDays()).append("vacationDays", getVacationDays())
             .append("remainingVacationDays", getRemainingVacationDays())
             .append("remainingVacationDaysNotExpiring", getRemainingVacationDaysNotExpiring())
-            .toString();
+            .append("comment", getComment()).toString();
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
