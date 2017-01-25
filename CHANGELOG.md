@@ -1,3 +1,6 @@
+### [urlaubsverwaltung-2.23.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.23.0)
+* Kommentar zu Urlaubsanspruch in Urlaubsverwaltung pflegen #238
+
 ### [urlaubsverwaltung-2.22.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.0)
 * Verbessertes Logging für die Erinnerungsfunktion bei lange wartenden Urlaubsanträgen
 * Verbesserte Beschreibung der Office-Rolle

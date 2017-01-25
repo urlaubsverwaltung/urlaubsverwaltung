@@ -123,6 +123,20 @@
                 <span class="help-inline"><form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/></span>
             </div>
         </div>
+        
+        <div class="form-group">
+            <label class="control-label col-md-3" for="comment">
+                <spring:message code='person.form.annualVacation.comment'/>:
+            </label>
+            <div class="col-md-9">
+                <span id="text-comment"></span><spring:message code='action.comment.maxChars'/>
+                <form:textarea id="comment" rows="3" path="comment" class="form-control" cssErrorClass="form-control error"
+                      onkeyup="count(this.value, 'text-comment');"
+                      onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
+                <form:errors path="comment" cssClass="error"/>
+            </div>
+        </div>
+        
     </div>
 </div>
 
