@@ -1,14 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.account;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -260,4 +256,31 @@ public class AccountValidatorTest {
 
         Mockito.verifyZeroInteractions(errors);
     }
+
+    @Test
+    public void ensureCommentHasNoValidationError() {
+
+        form = new AccountForm(2017);
+        form.setComment("blabla");
+
+        validator.validateComment(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+    @Test
+    public void ensureCommentHasLengthValidationError() {
+
+        form = new AccountForm(2017);
+        form.setComment("blablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
+                "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
+                "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
+                "bla");
+
+        validator.validateComment(form, errors);
+
+        Mockito.verify(errors).rejectValue("comment","error.entry.commentTooLong");
+
+    }
+
 }
