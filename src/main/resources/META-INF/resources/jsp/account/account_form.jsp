@@ -5,7 +5,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,8 +16,13 @@
 <uv:menu />
 
 <spring:url var="URL_PREFIX" value="/web"/>
+
 <c:set var="DATE_PATTERN">
     <spring:message code="pattern.date"/>
+</c:set>
+
+<c:set var="COMMENT_PLACEHOLDER">
+    <spring:message code="person.form.annualVacation.comment.placeholder"/>
 </c:set>
 
 <div class="content">
@@ -132,7 +136,8 @@
                 <span id="text-comment"></span><spring:message code='action.comment.maxChars'/>
                 <form:textarea id="comment" rows="3" path="comment" class="form-control" cssErrorClass="form-control error"
                       onkeyup="count(this.value, 'text-comment');"
-                      onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
+                      onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
+                      placeholder="${COMMENT_PLACEHOLDER}"/>
                 <form:errors path="comment" cssClass="error"/>
             </div>
         </div>
