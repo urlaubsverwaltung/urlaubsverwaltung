@@ -60,7 +60,7 @@ class AccountValidator implements Validator {
         validateComment(form, errors);
     }
 
-    private void validateComment(AccountForm form, Errors errors) {
+    void validateComment(AccountForm form, Errors errors) {
 
         String comment = form.getComment();
 
