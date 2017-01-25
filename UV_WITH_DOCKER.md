@@ -31,16 +31,21 @@ $ docker pull mariadb
 
 Dann wird ein MariaDB Container mit dem folgenden Kommando gestartet:
 ```
-$ docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag
+$ docker run --name uv-mariadb -e MYSQL_ROOT_PASSWORD=secret -d mariadb:latest
 ```
 
 Der Datenbankserver ist nun über den Port, den Docker aufgamacht hat (oder den man beim Container-Start gesetzt hat), 
 und die IP der VM in der Docker läuft (oder localhost, falls der Docker-Daemon lokal läuft) ansprechbar.
 Jetzt kann man sich entweder direkt mit der Shell in den Container begeben und dort den mysql Client bedienen oder 
-ein externes DB Tool verwenden.
+ein externes DB Tool verwenden. Hier ein Beispiel zum direkten Verbinden via `mysql`.
+
+```
+$ mysql -uroot -psecret -h $(docker inspect --format '{{ .NetworkSettings.IPAddress }}' uv-mariadb)
+```
  
 Sobald die Verbindung mit dem root Benutzer aufgebaut ist, müssen die Datenbank und der Nutzer für die Urlaubsverwaltung
 angelegt werden.
+
 ``` sql
 CREATE DATABASE uvdb CHARACTER SET utf8;
 GRANT ALL ON uvdb.* TO 'uv'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
