@@ -29,13 +29,18 @@
 
         new List('users', options);
 
+        $('#search').keypress(function(event){
+
+            if (event.keyCode === 10 || event.keyCode === 13)
+                event.preventDefault();
+
+        });
     });
 </script>
 
-
 <div id="users">
 
-    <form class="form-inline">
+    <form class="form-inline" id="search">
         <div class="form-group">
             <div class="input-group search-field">
                 <%-- NOTE: class 'search' is needed for list.js --%>
