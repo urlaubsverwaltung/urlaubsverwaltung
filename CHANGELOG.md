@@ -1,5 +1,7 @@
 ### [urlaubsverwaltung-2.23.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.23.0)
 * Kommentar zu Urlaubsanspruch in Urlaubsverwaltung pflegen #238
+* Probleme beim Einrichten einer neuen Installation (Schemamigration) #264
+* Einmaligen Feiertag: Reformationstag #265
 
 ### [urlaubsverwaltung-2.22.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.0)
 * Verbessertes Logging für die Erinnerungsfunktion bei lange wartenden Urlaubsanträgen
