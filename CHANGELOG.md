@@ -2,6 +2,7 @@
 * Kommentar zu Urlaubsanspruch in Urlaubsverwaltung pflegen #238
 * Probleme beim Einrichten einer neuen Installation (Schemamigration) #264
 * Einmaligen Feiertag: Reformationstag #265
+* Depencency Updates: Spring Boot 1.4.3 [#301](https://github.com/synyx/urlaubsverwaltung/pull/301) and Swagger 1.0.2 #277
 
 ### [urlaubsverwaltung-2.22.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.0)
 * Verbessertes Logging für die Erinnerungsfunktion bei lange wartenden Urlaubsanträgen
