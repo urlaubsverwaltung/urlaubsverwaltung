@@ -23,7 +23,8 @@
         });
 
         var options = {
-            valueNames: [ 'firstname', 'lastname' ]
+            valueNames: [ 'firstname', 'lastname' ],
+            page: 500
         };
 
         new List('users', options);
