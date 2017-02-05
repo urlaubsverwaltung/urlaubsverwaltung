@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="status" type="java.lang.Integer"*/-->
+
+<head>
+    <div th:replace="fragments/head::head"></div>
+</head>
+
+<body>
+
+
+<div class="error-container container-fluid" th:with="URL_PREFIX='/web'">
+    <div class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="error-code"
+                    th:if="${status == 403 or status == 404}"
+                    th:title="${trace}"
+                    th:text="${status}">
+                </h1>
+                <h1 class="error-code"
+                    th:if="${status != 403 and  status != 404}"
+                    th:title="${trace}" >
+                        <i class="fa fa-frown-o"></i>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="error-description">
+                    <th:block th:switch="${status}">
+                        <p th:case="403" th:text="'Dir fehlen die Berechtigungen für die angeforderte Seite.'"></p>
+                        <p th:case="404" th:text="'Die angeforderte Seite existiert nicht.'"></p>
+                        <p th:case="*" th:text="'Hier hat sich ein Fehler eingeschlichen…'"></p>
+                    </th:block>
+                </h2>
+                <p class="error-link">
+                    <a href="${URL_PREFIX}/overview">Zurück zur Übersicht</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>
