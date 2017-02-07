@@ -5,6 +5,7 @@
     <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
     <tns:Fixed month="JUNE" day="17" validFrom="1954" validTo="1990" descriptionPropertiesKey="UNIFICATION"/>
     <tns:Fixed month="OCTOBER" day="3" validFrom="1990"  descriptionPropertiesKey="UNIFICATION"/>
+    <tns:Fixed month="OCTOBER" day="31" validFrom="2017" validTo="2017" descriptionPropertiesKey="REFORMATION_DAY"/>
     <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
     <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
     <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>

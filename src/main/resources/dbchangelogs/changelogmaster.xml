@@ -48,5 +48,6 @@
     <include file="dbchangelogs/changelog-2.21.0-add_remind_waiting_application_settings.xml"/>
     <include file="dbchangelogs/changelog-2.21.1-add_days_before_remind_for_waiting_applications.xml"/>
     <include file="dbchangelogs/changelog-2.21.2-add_ews_url_settings.xml"/>
+    <include file="dbchangelogs/changelog-2.23.0-add-comment-for-account.xml"/>
 
 </databaseChangeLog>

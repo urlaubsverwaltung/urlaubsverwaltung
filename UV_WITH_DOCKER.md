@@ -12,11 +12,13 @@ Dieses Dokument beschreibt wie man Docker Container f체r MariaDB und OpenLDAP f�
 ### Docker Installation
 #### Linux/Mac OS und Windows
  * Alternativ CoreOS VM mit Docker 체ber Vagrant.
-    * Vagrant installieren https://www.vagrantup.com/downloads.html
-    * Vagrant CoreOS gibt es hier https://github.com/coreos/coreos-vagrant
+  * Vagrant installieren https://www.vagrantup.com/downloads.html
+  * Vagrant CoreOS gibt es hier https://github.com/coreos/coreos-vagrant
+    
 #### Mac OS
 Docker l채uft zur Zeit nicht nativ auf Mac OS. Es wird zwingend eine Linux VM gebraucht. Die hier genannten Tools 
  * Auf Mac OS X gibt es ein feines Toolset mit GUI: https://docs.docker.com/engine/installation/mac/
+ 
 #### Linux
 Je nach Distribution ist Docker bereits im Paketmanager verf체gbar.
 
@@ -29,16 +31,21 @@ $ docker pull mariadb
 
 Dann wird ein MariaDB Container mit dem folgenden Kommando gestartet:
 ```
-$ docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag
+$ docker run --name uv-mariadb -e MYSQL_ROOT_PASSWORD=secret -d mariadb:latest
 ```
 
 Der Datenbankserver ist nun 체ber den Port, den Docker aufgamacht hat (oder den man beim Container-Start gesetzt hat), 
 und die IP der VM in der Docker l채uft (oder localhost, falls der Docker-Daemon lokal l채uft) ansprechbar.
 Jetzt kann man sich entweder direkt mit der Shell in den Container begeben und dort den mysql Client bedienen oder 
-ein externes DB Tool verwenden.
+ein externes DB Tool verwenden. Hier ein Beispiel zum direkten Verbinden via `mysql`.
+
+```
+$ mysql -uroot -psecret -h $(docker inspect --format '{{ .NetworkSettings.IPAddress }}' uv-mariadb)
+```
  
 Sobald die Verbindung mit dem root Benutzer aufgebaut ist, m체ssen die Datenbank und der Nutzer f체r die Urlaubsverwaltung
 angelegt werden.
+
 ``` sql
 CREATE DATABASE uvdb CHARACTER SET utf8;
 GRANT ALL ON uvdb.* TO 'uv'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;

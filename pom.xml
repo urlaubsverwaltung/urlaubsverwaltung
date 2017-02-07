@@ -4,7 +4,7 @@
 
     <groupId>org.synyx</groupId>
     <artifactId>urlaubsverwaltung</artifactId>
-    <version>2.22.3-SNAPSHOT</version>
+    <version>2.23.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Urlaubsverwaltung</name>
@@ -30,7 +30,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.3.5.RELEASE</version>
+        <version>1.4.2.RELEASE</version>
         <relativePath />
         <!-- lookup parent from repository -->
     </parent>
@@ -40,6 +40,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <joda.time.version>2.7</joda.time.version>
+        <spring-ldap-core.version>2.1.0.RELEASE</spring-ldap-core.version>
+        <mail.version>1.4.7</mail.version>
+        <mock-javamail.version>1.9</mock-javamail.version>
+        <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
+        <jollyday.version>0.4.7</jollyday.version>
+        <swagger-springmvc.version>1.0.2</swagger-springmvc.version>
+        <ews-java-api.version>2.0</ews-java-api.version>
+        <httpcore.version>4.4.1</httpcore.version>
+        <httpclient.version>4.5</httpclient.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <coveralls-maven-plugin.version>4.1.0</coveralls-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
     </properties>
 
     <scm>
@@ -98,7 +110,7 @@
         <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
-            <version>2.1.0.RELEASE</version>
+            <version>${spring-ldap-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -153,12 +165,12 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.7</version>
+            <version>${mail.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jvnet.mock-javamail</groupId>
             <artifactId>mock-javamail</artifactId>
-            <version>1.9</version>
+            <version>${mock-javamail.version}</version>
             <scope>test</scope>
             <exclusions>
                 <!-- Exclusions are included in the project already in the correct version -->
@@ -186,14 +198,14 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time-jsptags</artifactId>
-            <version>1.1.1</version>
+            <version>${joda-time-jsptags.version}</version>
         </dependency>
 
         <!-- PUBLIC HOLIDAYS INFORMATION -->
         <dependency>
             <groupId>de.jollyday</groupId>
             <artifactId>jollyday</artifactId>
-            <version>0.4.7</version>
+            <version>${jollyday.version}</version>
             <type>jar</type>
         </dependency>
 
@@ -201,24 +213,24 @@
         <dependency>
             <groupId>com.mangofactory</groupId>
             <artifactId>swagger-springmvc</artifactId>
-            <version>0.8.4</version>
+            <version>${swagger-springmvc.version}</version>
         </dependency>
 
         <!-- EXCHANGE SYNC -->
         <dependency>
             <groupId>com.microsoft.ews-java-api</groupId>
             <artifactId>ews-java-api</artifactId>
-            <version>2.0</version>
+            <version>${ews-java-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4.1</version>
+            <version>${httpcore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5</version>
+            <version>${httpclient.version}</version>
         </dependency>
     </dependencies>
 
@@ -235,18 +247,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>${maven-release-plugin.version}</version>
             </plugin>
             <!-- Coveralls.io -->
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.1.0</version>
+                <version>${coveralls-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
