@@ -28,8 +28,6 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class AvailabilityController {
 
-    private static final int FIVE_WEEKS = 35;
-
     private final PersonService personService;
 
     private final AvailabilityService availabilityService;
@@ -58,13 +56,14 @@ public class AvailabilityController {
         @RequestParam(value = "person")
         String personLoginName) {
 
-        DateMidnight startDate = DateMidnight.parse(startDateString);
-        DateMidnight endDate = DateMidnight.parse(endDateString);
         Optional<Person> optionalPerson = personService.getPersonByLogin(personLoginName);
 
         if (!optionalPerson.isPresent()) {
             throw new IllegalArgumentException("No person found for loginName = " + personLoginName);
         }
+
+        DateMidnight startDate = DateMidnight.parse(startDateString);
+        DateMidnight endDate = DateMidnight.parse(endDateString);
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("startdate " + startDateString + " must not be after endDate "
@@ -77,9 +76,6 @@ public class AvailabilityController {
             throw new IllegalArgumentException("Requested date range to large. Maximum allowed range is one month");
         }
 
-        AvailabilityList availabilities = availabilityService.getPersonsAvailabilities(startDate, endDate,
-                optionalPerson.get());
-
-        return availabilities;
+        return availabilityService.getPersonsAvailabilities(startDate, endDate, optionalPerson.get());
     }
 }
