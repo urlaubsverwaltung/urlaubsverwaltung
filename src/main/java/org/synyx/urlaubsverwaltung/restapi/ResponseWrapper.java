@@ -5,11 +5,11 @@ package org.synyx.urlaubsverwaltung.restapi;
  *
  * @author  David Schilling - schilling@synyx.de
  */
-class ResponseWrapper<T> {
+public class ResponseWrapper<T> {
 
     private final T response;
 
-    ResponseWrapper(T response) {
+    public ResponseWrapper(T response) {
 
         this.response = response;
     }
