@@ -69,8 +69,6 @@ public class AbsenceController {
         @RequestParam(value = "type", required = false)
         String type) {
 
-        DateMidnight startDate = getStartDate(year, Optional.ofNullable(month));
-        DateMidnight endDate = getEndDate(year, Optional.ofNullable(month));
 
         Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
@@ -80,6 +78,9 @@ public class AbsenceController {
 
         List<DayAbsence> absences = new ArrayList<>();
         Person person = optionalPerson.get();
+
+        DateMidnight startDate = getStartDate(year, Optional.ofNullable(month));
+        DateMidnight endDate = getEndDate(year, Optional.ofNullable(month));
 
         if (type == null || DayAbsence.Type.valueOf(type).equals(DayAbsence.Type.VACATION)) {
             absences.addAll(getVacations(startDate, endDate, person));
@@ -93,7 +94,7 @@ public class AbsenceController {
     }
 
 
-    private DateMidnight getStartDate(String year, Optional<String> optionalMonth) throws NumberFormatException {
+    private static DateMidnight getStartDate(String year, Optional<String> optionalMonth) {
 
         if (optionalMonth.isPresent()) {
             return DateUtil.getFirstDayOfMonth(Integer.parseInt(year), Integer.parseInt(optionalMonth.get()));
@@ -103,7 +104,7 @@ public class AbsenceController {
     }
 
 
-    private DateMidnight getEndDate(String year, Optional<String> optionalMonth) throws NumberFormatException {
+    private static DateMidnight getEndDate(String year, Optional<String> optionalMonth) {
 
         if (optionalMonth.isPresent()) {
             return DateUtil.getLastDayOfMonth(Integer.parseInt(year), Integer.parseInt(optionalMonth.get()));

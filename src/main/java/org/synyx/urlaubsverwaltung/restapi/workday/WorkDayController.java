@@ -82,13 +82,13 @@ public class WorkDayController {
             throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        DayLength howLong = DayLength.valueOf(length);
         Optional<Person> person = personService.getPersonByID(personId);
 
         if (!person.isPresent()) {
             throw new IllegalArgumentException("No person found for ID=" + personId);
         }
 
+        DayLength howLong = DayLength.valueOf(length);
         BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
 
         return new ResponseWrapper<>(new WorkDayResponse(days.toString()));

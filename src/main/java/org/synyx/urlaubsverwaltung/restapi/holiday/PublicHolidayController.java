@@ -100,7 +100,7 @@ public class PublicHolidayController {
     }
 
 
-    private DateMidnight getValidFrom(String year, Optional<String> optionalMonth) {
+    private static DateMidnight getValidFrom(String year, Optional<String> optionalMonth) {
 
         int holidaysYear = Integer.parseInt(year);
 
