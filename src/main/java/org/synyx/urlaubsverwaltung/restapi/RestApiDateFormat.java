@@ -3,9 +3,9 @@ package org.synyx.urlaubsverwaltung.restapi;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-final class RestApiDateFormat {
+public final class RestApiDateFormat {
 
-    static final String PATTERN = "yyyy-MM-dd";
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
 
     private RestApiDateFormat() {
 
