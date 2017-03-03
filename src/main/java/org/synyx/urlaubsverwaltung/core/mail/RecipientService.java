@@ -22,13 +22,13 @@ import java.util.stream.Stream;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-class RecipientsService {
+class RecipientService {
 
     private final PersonService personService;
     private final DepartmentService departmentService;
 
     @Autowired
-    RecipientsService(PersonService personService, DepartmentService departmentService) {
+    RecipientService(PersonService personService, DepartmentService departmentService) {
 
         this.personService = personService;
         this.departmentService = departmentService;

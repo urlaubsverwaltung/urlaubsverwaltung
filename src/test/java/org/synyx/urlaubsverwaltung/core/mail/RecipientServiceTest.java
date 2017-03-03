@@ -19,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RecipientsServiceTest {
+public class RecipientServiceTest {
 
-    RecipientsService sut;
+    RecipientService sut;
     private PersonService personService;
     private DepartmentService departmentService;
 
@@ -29,7 +29,7 @@ public class RecipientsServiceTest {
     public void setUp() throws Exception {
         personService = mock(PersonService.class);
         departmentService = mock(DepartmentService.class);
-        sut = new RecipientsService(personService, departmentService);
+        sut = new RecipientService(personService, departmentService);
     }
 
     @Test
