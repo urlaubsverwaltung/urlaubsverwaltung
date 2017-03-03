@@ -62,9 +62,9 @@ public class MailServiceImplTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
         // TODO: Would be better to mock this service directly
-        RecipientsService recipientsService = new RecipientsService(personService, departmentService);
+        RecipientService recipientService = new RecipientService(personService, departmentService);
 
-        mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientsService, departmentService,
+        mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, departmentService,
                 settingsService);
 
         Person person = TestDataCreator.createPerson();
