@@ -70,8 +70,8 @@ class RecipientService {
             List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(
                         MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)
                     .stream()
-                    .filter(person ->
-                                departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
+                    .filter(secondStageAuthority ->
+                            departmentService.isSecondStageAuthorityOfPerson(secondStageAuthority, applicationPerson))
                     .collect(Collectors.toList());
 
             return Stream.concat(bosses.stream(), secondStageAuthorities.stream()).collect(Collectors.toList());
@@ -89,7 +89,7 @@ class RecipientService {
         List<Person> departmentHeads = personService.getPersonsWithNotificationType(
                     MailNotification.NOTIFICATION_DEPARTMENT_HEAD)
                 .stream()
-                .filter(person -> departmentService.isDepartmentHeadOfPerson(person, application.getPerson()))
+                .filter(departmentHead -> departmentService.isDepartmentHeadOfPerson(departmentHead, applicationPerson))
                 .collect(Collectors.toList());
 
         return Stream.concat(bosses.stream(), departmentHeads.stream()).collect(Collectors.toList());
