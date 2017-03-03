@@ -174,6 +174,27 @@ public class RecipientServiceTest {
         assertThat(recipientsForAllowAndRemind).contains(head2, secondStage);
     }
 
+    @Test
+    public void testTemporaryAllowUserApplicationWithSecondStageDepartment() throws Exception {
+        // given user application
+        Person normalUser = TestDataCreator.createPerson("normalUser", Role.USER);
+        Application application = getHolidayApplication(normalUser);
+
+        // given department head
+        Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(departmentHead));
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, normalUser)).thenReturn(true);
+
+        // given second stage
+        Person secondStage = TestDataCreator.createPerson("secondStage", Role.SECOND_STAGE_AUTHORITY);
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(Arrays.asList(secondStage));
+        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, normalUser)).thenReturn(true);
+
+        List<Person> recipientsForTemporaryAllow = sut.getRecipientsForTemporaryAllow(application);
+
+        assertThat(recipientsForTemporaryAllow).contains(secondStage).doesNotContain(departmentHead);
+    }
+
     private Application getHolidayApplication(Person normalUser) {
         VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub");
         return TestDataCreator.createApplication(normalUser, vacationType);

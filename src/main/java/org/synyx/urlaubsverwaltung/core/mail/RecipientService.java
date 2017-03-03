@@ -47,6 +47,17 @@ class RecipientService {
         return personService.getPersonsWithNotificationType(notification);
     }
 
+    /**
+     * Get all second stage authorities that must be notified about the given temporary allowed application.
+     *
+     * @param  application  that has been allowed temporary
+     *
+     * @return  list of recipients for the given temporary allowed application
+     */
+    List<Person> getRecipientsForTemporaryAllow(Application application) {
+        return getResponsibleSecondStageAuthorities(application.getPerson());
+    }
+
 
     /**
      * Depending on application issuer role the recipients for allow/remind mail are generated.
