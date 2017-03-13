@@ -257,6 +257,135 @@
             </div>
 
         </c:if>
+        
+         <div class="row">
+         	<div class="col-xs-12">
+                <legend id="vacation">
+                	Urlaubsübersicht
+                
+                </legend>
+         	</div>
+         </div>
+         <select name="top5" size="1">
+           <option selected>2017</option>
+           </select>
+          <select name="top5" size="1">
+           <option selected>März</option>
+           </select>
+           <select name="top5" size="1">
+           <option selected>Marketing</option>
+           </select>
+          <table cellspacing="0" class="list-table selectable-table sortable tablesorter">
+		    <thead class="hidden-xs hidden-sm">
+		    <tr>
+		        <th>Mitarbeiter/Tag</th>
+		        <th>1</th>
+		        <th>2</th>
+		        <th>3</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">4</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">5</th>
+		        <th>6</th>
+		        <th>7</th>
+		        <th>8</th>
+		        <th>9</th>
+		        <th>10</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">11</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">12</th>
+		        <th>13</th>
+		        <th>14</th>
+		        <th>15</th>
+		        <th>16</th>
+		        <th>17</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">18</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">19</th>
+		        <th>20</th>
+		        <th>21</th>
+		        <th>22</th>
+		        <th>23</th>
+		        <th>24</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">25</th>
+		        <th title="Wochenende" style="background-color: #DCDCDC;">26</th>
+		        <th>27</th>
+		        <th>28</th>
+		        <th>29</th>
+		        <th>30</th>
+		        <th>31</th>
+		    </tr>
+		    </thead>
+		    <tbody class="list">
+		    	<tr>
+		    		<td>Mitarbeiter 1</td>
+		    		<td></td>
+			        <td></td>
+			        <td></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Urlaub" style="background-color: #90EE90;"></td>
+			        <td title="Urlaub" style="background-color: #90EE90;"></td>
+			        <td title="Urlaub" style="background-color: #90EE90;"></td>
+			        <td title="Urlaub" style="background-color: #90EE90;"></td>
+			        <td title="Urlaub" style="background-color: #90EE90;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+		    	</tr>
+		    		<tr>
+		    		<td>Mitarbeiter 2</td>
+		    		<td></td>
+			        <td></td>
+			        <td></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Krankmeldung" style="background-color: #FFA07A;"></td>
+			        <td title="Krankmeldung" style="background-color: #FFA07A;"></td>
+			        <td title="Krankmeldung" style="background-color: #FFA07A;"></td>
+			        <td title="Krankmeldung" style="background-color: #FFA07A;"></td>
+			        <td title="Krankmeldung" style="background-color: #FFA07A;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td title="Wochenende" style="background-color: #DCDCDC;"></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+		    	</tr>
+		    		<tr>
+		    		<td>...</td>
+		    	</tr>
+		    </tbody>
+		    </table>
 
     </div>
 </div>
