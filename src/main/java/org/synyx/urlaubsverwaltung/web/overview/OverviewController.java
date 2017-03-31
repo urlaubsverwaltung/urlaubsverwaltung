@@ -1,34 +1,26 @@
 package org.synyx.urlaubsverwaltung.web.overview;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.access.AccessDeniedException;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
@@ -46,6 +38,9 @@ import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+
 
 /**
  * Controller to display the personal overview page with basic information about overtime, applications for leave and
@@ -56,10 +51,13 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/web")
 public class OverviewController {
-
+	
     @Autowired
     private PersonService personService;
-
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
     @Autowired
     private AccountService accountService;
 
@@ -83,7 +81,9 @@ public class OverviewController {
 
     @Autowired
     private SettingsService settingsService;
+       
 
+    
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
     public String showOverview(
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
@@ -119,8 +119,11 @@ public class OverviewController {
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
-
+        prepareDepartments(person, model);
+        
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
+        model.addAttribute("currentYear", DateMidnight.now().getYear());
+        model.addAttribute("currentMonth",DateMidnight.now().getMonthOfYear());
 
         return "person/overview";
     }
@@ -188,5 +191,16 @@ public class OverviewController {
     private void prepareSettings(Model model) {
 
         model.addAttribute("settings", settingsService.getSettings());
+    }
+    private void prepareDepartments(Person person, Model model) {
+    	if (person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE)) {
+    		model.addAttribute("departments", departmentService.getAllDepartments());
+    	}else if (person.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+    		model.addAttribute("departments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
+    	}else if ( person.hasRole(Role.DEPARTMENT_HEAD)) {
+    		model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
+    	}else{
+    		model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
+    	}
     }
 }
