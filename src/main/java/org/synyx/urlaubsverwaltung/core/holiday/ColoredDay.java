@@ -5,6 +5,7 @@ public class ColoredDay {
 	private int intValue;
 	private String day;
 	private String colorCode;
+	private String cssClass;
 
 	public String getColorCode() {
 		return colorCode;
@@ -28,5 +29,13 @@ public class ColoredDay {
 
 	public void setIntValue(int intValue) {
 		this.intValue = intValue;
+	}
+
+	public String getCssClass() {
+		return cssClass;
+	}
+
+	public void setCssClass(String cssClass) {
+		this.cssClass = cssClass;
 	}
 }
