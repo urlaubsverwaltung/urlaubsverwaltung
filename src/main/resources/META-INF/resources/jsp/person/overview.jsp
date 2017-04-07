@@ -359,7 +359,6 @@
 																			cV,
 																			index,
 																			arr) {
-																		if (cV.colorCode === '#FFFFFF;') {
 																			if (response.response.absences
 																					.find(
 																							function(
@@ -368,13 +367,31 @@
 																									arr) {
 																								if (this == currentValue.date
 																										&& currentValue.status === "WAITING"
-																										&& currentValue.type === 'VACATION') {
+																										&& currentValue.type === 'VACATION'
+																										&& currentValue.length === 1) {
 																									return "test";
 																								}
 																							},
 																							cV.day)) {
-																				cV.colorCode = '#fd7e00;';
+																				cV.cssClass = 'vacationOverview-day-personal-holiday-status-WAITING ';
 																			}
+																			if (response.response.absences
+																					.find(
+																							function(
+																									currentValue,
+																									index,
+																									arr) {
+																								if (this == currentValue.date
+																										&& currentValue.status === "WAITING"
+																										&& currentValue.type === 'VACATION'
+																										&& currentValue.length === 1) {
+																									return "test";
+																								}
+																							},
+																							cV.day)) {
+																				cV.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-WAITING ';
+																			}
+
 																			if (response.response.absences
 																					.find(
 																							function(
@@ -389,7 +406,7 @@
 																								}
 																							},
 																							cV.day)) {
-																				cV.colorCode = '#f8b816;';
+																				cV.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-ALLOWED ';
 																			}
 																			if (response.response.absences
 																					.find(
@@ -405,7 +422,7 @@
 																								}
 																							},
 																							cV.day)) {
-																				cV.colorCode = '#0581f9;';
+																				cV.cssClass = ' vacationOverview-day-personal-holiday-status-ALLOWED ';
 																			}
 																			if (response.response.absences
 																					.find(
@@ -414,14 +431,29 @@
 																									index,
 																									arr) {
 																								if (this == currentValue.date
-																										&& currentValue.type === 'SICK_NOTE') {
+																										&& currentValue.type === 'SICK_NOTE'
+																											&& currentValue.dayLength === 1) {
 																									return "test";
 																								}
 																							},
 																							cV.day)) {
-																				cV.colorCode = '#990000';
+																				cV.cssClass = ' vacationOverview-day-sick-note ';
 																			}
-																		}
+																			if (response.response.absences
+																					.find(
+																							function(
+																									currentValue,
+																									index,
+																									arr) {
+																								if (this == currentValue.date
+																										&& currentValue.type === 'SICK_NOTE'
+																											&& currentValue.dayLength < 1) {
+																									return "test";
+																								}
+																							},
+																							cV.day)) {
+																				cV.cssClass = ' vacationOverview-day-sick-note-half-day ';
+																			}
 																	}, this);
 												}
 											});
@@ -434,7 +466,7 @@
 									overViewList[0].days
 											.forEach(
 													function(item, index, arr) {
-														if (item.colorCode === "#DCDCDC;") {
+														if (item.colorCode != "") {
 															outputTable += "<th style='background-color: " + item.colorCode + "'>"
 																	+ item.intValue
 																	+ "</th>";
@@ -457,7 +489,7 @@
 																				dayItem,
 																				idx,
 																				dayarr) {
-																			outputTable += "<td style='background-color: " + dayItem.colorCode + "'></td>";
+																			outputTable += "<td class='" + dayItem.cssClass + "'></td>";
 																		},
 																		outputTable);
 														outputTable += "</tr>";
@@ -500,19 +532,16 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td style='background-color: #DCDCDC;'><spring:message code="overview.vacationOverview.weekend" /></td>
+							<td class='vacationOverview-day-weekend'><spring:message code="overview.vacationOverview.weekend" /></td>
 						</tr>
 						<tr>
-							<td style='background-color: #0581f9;'><spring:message code="overview.vacationOverview.allowed" /></td>
+							<td class='vacationOverview-day-personal-holiday-status-ALLOWED'><spring:message code="overview.vacationOverview.allowed" /></td>
 						</tr>
 						<tr>
-							<td style='background-color: #fd7e00;'><spring:message code="overview.vacationOverview.vacation" /></td>
+							<td class='vacationOverview-day-personal-holiday-status-WAITING'><spring:message code="overview.vacationOverview.vacation" /></td>
 						</tr>
 						<tr>
-							<td style='background-color: #f8b816;'><spring:message code="overview.vacationOverview.halfDayVacation" /></td>
-						</tr>
-						<tr>
-							<td style='color: #FFFFFF; background-color: #990000;'><spring:message code="overview.vacationOverview.sick" /></td>
+							<td class='vacationOverview-day-sick-note'><spring:message code="overview.vacationOverview.sick" /></td>
 						</tr>
 
 					</tbody>
