@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +20,6 @@ import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -31,7 +31,7 @@ public class VacationOverviewService {
 	private DepartmentService departmentService;
 	private WorkingTimeService workingTimeService;
 	private PublicHolidaysService publicHolidayService;
-    private SessionService sessionService;
+	private SessionService sessionService;
 
 	@Autowired
 	VacationOverviewService(DepartmentService departmentService, WorkingTimeService workingTimeService,
@@ -43,19 +43,15 @@ public class VacationOverviewService {
 		this.sessionService = sessionService;
 	}
 
-    @ApiOperation(value = "Get Vacation-Overview Metadata", notes = "Get Vacation-Overview metadata for all members of a department")
-    @RequestMapping(value = "/vacationoverview", method = RequestMethod.GET)
+	@ApiOperation(value = "Get Vacation-Overview Metadata", notes = "Get Vacation-Overview metadata for all members of a department")
+	@RequestMapping(value = "/vacationoverview", method = RequestMethod.GET)
 	public ResponseWrapper<VacationOverviewResponse> getHolydayOverview(
-			@RequestParam("selectedDepartment")
-			String selectedDepartment,
-			@RequestParam("selectedYear")
-			Integer selectedYear,
-			@RequestParam("selectedMonth")
-			Integer selectedMonth) {
+			@RequestParam("selectedDepartment") String selectedDepartment,
+			@RequestParam("selectedYear") Integer selectedYear, @RequestParam("selectedMonth") Integer selectedMonth) {
 
 		Department department = null;
 		Person user = sessionService.getSignedInUser();
-		
+
 		List<VacationOverview> holydayOverviewList = new ArrayList<VacationOverview>();
 		for (Department item : departmentService.getAllDepartments()) {
 			if (item.getName().equals(selectedDepartment)) {
@@ -84,32 +80,15 @@ public class VacationOverviewService {
 					FederalState state = workingTimeService.getFederalStateForPerson(person2, currentDay);
 					if (DateUtil.isWorkDay(currentDay)
 							&& (publicHolidayService.getWorkingDurationOfDate(currentDay, state).longValue() > 0)) {
-						coloredDay.setColorCode("#FFFFFF;");
+						coloredDay.setCssClass("vacationOverview-day ");
 					} else {
+						coloredDay.setCssClass(" vacationOverview-day-weekend ");
 						coloredDay.setColorCode("#DCDCDC;");
 
 					}
 					holydayOverview.getDays().add(coloredDay);
 				}
 				holydayOverviewList.add(holydayOverview);
-			}
-
-			DateMidnight date = new DateMidnight();
-			DateMidnight firstDay = DateUtil.getFirstDayOfMonth(date.getYear(), date.getMonthOfYear());
-			DateMidnight lastDay = DateUtil.getLastDayOfMonth(date.getYear(), date.getMonthOfYear());
-			List<ColoredDay> headerDayList = new ArrayList<ColoredDay>();
-			for (int i = 1; i <= lastDay.toDate().getDate(); i++) {
-				ColoredDay coloredDay = new ColoredDay();
-				coloredDay.setIntValue(i);
-				DateMidnight d = new DateMidnight(lastDay.getYear(), lastDay.getMonthOfYear(), i);
-				FederalState state = workingTimeService.getFederalStateForPerson(user, d);
-				if (DateUtil.isWorkDay(d)
-						&& (publicHolidayService.getWorkingDurationOfDate(d, state).longValue() > 0)) {
-					coloredDay.setColorCode("#FFFFFF;");
-				} else {
-					coloredDay.setColorCode("#DCDCDC;");
-				}
-				headerDayList.add(coloredDay);
 			}
 		}
 
