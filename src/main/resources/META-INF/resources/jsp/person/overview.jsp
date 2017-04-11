@@ -367,8 +367,8 @@
 																									arr) {
 																								if (this == currentValue.date
 																										&& currentValue.status === "WAITING"
-																										&& currentValue.type === 'VACATION'
-																										&& currentValue.length === 1) {
+																										&& currentValue.type === "VACATION"
+																										&& currentValue.dayLength === 1) {
 																									return "test";
 																								}
 																							},
@@ -383,8 +383,8 @@
 																									arr) {
 																								if (this == currentValue.date
 																										&& currentValue.status === "WAITING"
-																										&& currentValue.type === 'VACATION'
-																										&& currentValue.length === 1) {
+																										&& currentValue.type === "VACATION"
+																										&& currentValue.dayLength < 1) {
 																									return "test";
 																								}
 																							},
@@ -401,7 +401,7 @@
 																								if (this == currentValue.date
 																										&& currentValue.status === "ALLOWED"
 																										&& currentValue.dayLength < 1
-																										&& currentValue.type === 'VACATION') {
+																										&& currentValue.type === "VACATION") {
 																									return "test";
 																								}
 																							},
@@ -417,7 +417,7 @@
 																								if (this == currentValue.date
 																										&& currentValue.status === "ALLOWED"
 																										&& currentValue.dayLength === 1
-																										&& currentValue.type === 'VACATION') {
+																										&& currentValue.type === "VACATION") {
 																									return "test";
 																								}
 																							},
