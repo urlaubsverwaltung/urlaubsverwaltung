@@ -1,13 +1,17 @@
 package org.synyx.urlaubsverwaltung.test;
 
-import org.apache.velocity.util.StringUtils;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import org.apache.velocity.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-
 import org.springframework.util.ReflectionUtils;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -26,20 +30,10 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 
-import java.lang.reflect.Field;
-
-import java.math.BigDecimal;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-
 /**
  * Util class to create data for tests.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 public final class TestDataCreator {
 
@@ -62,14 +56,12 @@ public final class TestDataCreator {
         return person;
     }
 
-
     public static Person createPerson(String username) {
 
         String name = StringUtils.capitalizeFirstLetter(username);
 
         return TestDataCreator.createPerson(username, name, name, username + "@test.de");
     }
-
 
     public static Person createPerson(String username, Role... roles) {
 
@@ -82,12 +74,10 @@ public final class TestDataCreator {
         return person;
     }
 
-
     public static Person createPerson() {
 
         return TestDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
     }
-
 
     public static Person createPerson(String username, String firstName, String lastName, String email) {
 
@@ -97,7 +87,6 @@ public final class TestDataCreator {
 
         return person;
     }
-
 
     // Overtime record -------------------------------------------------------------------------------------------------
 
@@ -109,7 +98,6 @@ public final class TestDataCreator {
         return new Overtime(createPerson(), startDate, endDate, BigDecimal.ONE);
     }
 
-
     public static Overtime createOvertimeRecord(Person person) {
 
         DateMidnight startDate = DateMidnight.now();
@@ -118,15 +106,13 @@ public final class TestDataCreator {
         return new Overtime(person, startDate, endDate, BigDecimal.ONE);
     }
 
-
     // Application for leave -------------------------------------------------------------------------------------------
 
     public static Application createApplication(Person person, VacationType vacationType) {
 
         return createApplication(person, vacationType, DateMidnight.now(), DateMidnight.now().plusDays(3),
-                DayLength.FULL);
+            DayLength.FULL);
     }
-
 
     public static Application createApplication(Person person, DateMidnight startDate, DateMidnight endDate,
         DayLength dayLength) {
@@ -144,7 +130,6 @@ public final class TestDataCreator {
         return application;
     }
 
-
     public static Application createApplication(Person person, VacationType vacationType, DateMidnight startDate,
         DateMidnight endDate, DayLength dayLength) {
 
@@ -159,14 +144,12 @@ public final class TestDataCreator {
         return application;
     }
 
-
     // Sick note -------------------------------------------------------------------------------------------------------
 
     public static SickNote createSickNote(Person person) {
 
         return createSickNote(person, DateMidnight.now(), DateMidnight.now().plusDays(3), DayLength.FULL);
     }
-
 
     public static SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate,
         DayLength dayLength) {
@@ -186,7 +169,6 @@ public final class TestDataCreator {
         return sickNote;
     }
 
-
     // Department ------------------------------------------------------------------------------------------------------
 
     public static Department createDepartment() {
@@ -194,12 +176,10 @@ public final class TestDataCreator {
         return createDepartment("Abteilung");
     }
 
-
     public static Department createDepartment(String name) {
 
         return createDepartment(name, "Dies ist eine Abteilung");
     }
-
 
     public static Department createDepartment(String name, String description) {
 
@@ -210,7 +190,6 @@ public final class TestDataCreator {
         return department;
     }
 
-
     // Holidays account ------------------------------------------------------------------------------------------------
 
     public static Account createHolidaysAccount(Person person) {
@@ -218,23 +197,21 @@ public final class TestDataCreator {
         return createHolidaysAccount(person, DateTime.now().getYear());
     }
 
-
     public static Account createHolidaysAccount(Person person, int year) {
 
-        return createHolidaysAccount(person, year, new BigDecimal("30"), new BigDecimal("3"), BigDecimal.ZERO);
+        return createHolidaysAccount(person, year, new BigDecimal("30"), new BigDecimal("3"), BigDecimal.ZERO,
+            "comment");
     }
 
-
     public static Account createHolidaysAccount(Person person, int year, BigDecimal annualVacationDays,
-        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring) {
+        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         DateMidnight firstDayOfYear = DateUtil.getFirstDayOfYear(year);
         DateMidnight lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
         return new Account(person, firstDayOfYear.toDate(), lastDayOfYear.toDate(), annualVacationDays,
-                remainingVacationDays, remainingVacationDaysNotExpiring);
+            remainingVacationDays, remainingVacationDaysNotExpiring, comment);
     }
-
 
     // Working time ----------------------------------------------------------------------------------------------------
 
@@ -243,18 +220,16 @@ public final class TestDataCreator {
         WorkingTime workingTime = new WorkingTime();
 
         List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+            DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         return workingTime;
     }
 
-
     public static VacationType createVacationType(VacationCategory category) {
 
         return createVacationType(category, category.toString());
     }
-
 
     public static VacationType createVacationType(VacationCategory category, String displayName) {
 
@@ -265,7 +240,6 @@ public final class TestDataCreator {
 
         return vacationType;
     }
-
 
     public static List<VacationType> createVacationTypes() {
 

@@ -1,17 +1,14 @@
 package org.synyx.urlaubsverwaltung.web.account;
 
-import org.joda.time.DateMidnight;
+import java.math.BigDecimal;
+import java.util.Optional;
 
+import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
-import java.math.BigDecimal;
-
-import java.util.Optional;
-
-
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 class AccountForm {
 
@@ -29,11 +26,12 @@ class AccountForm {
 
     private BigDecimal remainingVacationDaysNotExpiring;
 
+    private String comment;
+
     AccountForm() {
 
         this(DateMidnight.now().getYear());
     }
-
 
     AccountForm(int year) {
 
@@ -41,7 +39,6 @@ class AccountForm {
         this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
         this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
     }
-
 
     AccountForm(int year, Optional<Account> holidaysAccountOptional) {
 
@@ -55,6 +52,7 @@ class AccountForm {
             this.actualVacationDays = holidaysAccount.getVacationDays();
             this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
             this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
+            this.comment = holidaysAccount.getComment();
         } else {
             this.holidaysAccountYear = year;
             this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
@@ -67,81 +65,76 @@ class AccountForm {
         return holidaysAccountYear;
     }
 
-
     public void setHolidaysAccountYear(int holidaysAccountYear) {
 
         this.holidaysAccountYear = holidaysAccountYear;
     }
-
 
     public DateMidnight getHolidaysAccountValidFrom() {
 
         return holidaysAccountValidFrom;
     }
 
-
     public void setHolidaysAccountValidFrom(DateMidnight holidaysAccountValidFrom) {
 
         this.holidaysAccountValidFrom = holidaysAccountValidFrom;
     }
-
 
     public DateMidnight getHolidaysAccountValidTo() {
 
         return holidaysAccountValidTo;
     }
 
-
     public void setHolidaysAccountValidTo(DateMidnight holidaysAccountValidTo) {
 
         this.holidaysAccountValidTo = holidaysAccountValidTo;
     }
-
 
     public BigDecimal getAnnualVacationDays() {
 
         return annualVacationDays;
     }
 
-
     public void setAnnualVacationDays(BigDecimal annualVacationDays) {
 
         this.annualVacationDays = annualVacationDays;
     }
-
 
     public BigDecimal getActualVacationDays() {
 
         return actualVacationDays;
     }
 
-
     public void setActualVacationDays(BigDecimal actualVacationDays) {
 
         this.actualVacationDays = actualVacationDays;
     }
-
 
     public BigDecimal getRemainingVacationDays() {
 
         return remainingVacationDays;
     }
 
-
     public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
 
         this.remainingVacationDays = remainingVacationDays;
     }
-
 
     public BigDecimal getRemainingVacationDaysNotExpiring() {
 
         return remainingVacationDaysNotExpiring;
     }
 
-
     public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
 
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
