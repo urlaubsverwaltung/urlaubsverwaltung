@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <constraint id="my-rules:coreClassesMustNotUseWebClasses">
+        <description>classes from core package must not use classes from web packages</description>
+        <cypher><![CDATA[
+MATCH
+  (p:Package)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)
+WHERE
+    t1.fqn CONTAINS "org.synyx.urlaubsverwaltung.core" AND t2.fqn CONTAINS "org.synyx.urlaubsverwaltung.web"
+RETURN
+   p.fqn, t1.fqn AS DeclaringType, t2.fqn AS DependencyType, count(t2) AS violationCount
+        ]]></cypher>
+    </constraint>
+
+    <group id="default">
+        <includeConstraint refId="my-rules:coreClassesMustNotUseWebClasses" />
+    </group>
+
+</jqa:jqassistant-rules>
