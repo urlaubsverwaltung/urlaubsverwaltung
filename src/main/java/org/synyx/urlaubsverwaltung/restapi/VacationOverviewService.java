@@ -1,8 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +17,11 @@ import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
+import java.util.List;
 
 @Api(value = "VacationOverview", description = "Get Vacation-Overview Metadata")
 @RestController("restApiVacationOverview")
