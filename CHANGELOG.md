@@ -1,3 +1,7 @@
+### [urlaubsverwaltung-2.24.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.0)
+* Erweiterung der Benachrichtigung bei vorläufiger Genehmigung von Urlaubsanträgen: Hier werden jetzt auch mehrere Abteilungen beachtet.
+* Kleiner Refactorings (Paketstruktur und Sonar Issues)
+
 ### [urlaubsverwaltung-2.23.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.23.0)
 * Kommentar zu Urlaubsanspruch in Urlaubsverwaltung pflegen [#238](https://github.com/synyx/urlaubsverwaltung/issues/238)
 * Probleme beim Einrichten einer neuen Installation (Schemamigration) [#264](https://github.com/synyx/urlaubsverwaltung/issues/264)
