@@ -1,3 +1,6 @@
+### [urlaubsverwaltung-2.24.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.1)
+* Bug: Fix H2 Konfiguration für Entwicklungsumgebung
+
 ### [urlaubsverwaltung-2.24.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.0)
 * Erweiterung der Benachrichtigung bei vorläufiger Genehmigung von Urlaubsanträgen: Hier werden jetzt auch mehrere Abteilungen beachtet.
 * Kleiner Refactorings (Paketstruktur und Sonar Issues)
