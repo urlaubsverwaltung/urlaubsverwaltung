@@ -30,7 +30,7 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 
 #### Demo System
 
-Zum Ausprobieren der Anwendung gibt es ein [Demo System](http://urlaubsverwaltung-demo.synyx.de) mit Testbenutzern für
+Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung-demo.synyx.de) mit Testbenutzern für
 die unterschiedlichen Rollen:
 
 | Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
@@ -44,11 +44,12 @@ die unterschiedlichen Rollen:
 #### Blog Posts
 
 Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung findet man im
-[synyx Blog](http://blog.synyx.de):
+[synyx Blog](https://www.synyx.de/blog/):
 
-* [Stand November 2011](http://blog.synyx.de/2011/11/elektronische-urlaubsverwaltung-made-by-youngsters/)
-* [Stand November 2012](http://blog.synyx.de/2012/11/urlaubsverwaltung-was-hat-sich-getan/)
-* [Stand Oktober 2014](http://blog.synyx.de/2014/10/urlaubsverwaltung-goes-mobile/)
+* [Stand November 2011](https://www.synyx.de/blog/elektronische-urlaubsverwaltung-made-by-youngsters/)
+* [Stand November 2012](https://www.synyx.de/blog/urlaubsverwaltung-was-hat-sich-getan/)
+* [Stand Oktober 2014](https://www.synyx.de/blog/urlaubsverwaltung-goes-mobile/)
+* [Stand April 2017](https://synyx.de/blog/urlaubsverwaltung-die-geschichte-eines-open-source-projekts/)
 
 #### FAQ
 
@@ -73,7 +74,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 #### REST-Schnittstelle
 
 Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
-Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: http://urlaubsverwaltung-demo.synyx.de/api/index.html
+Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverwaltung-demo.synyx.de/api/index.html
 
 ---
 
@@ -321,4 +322,4 @@ Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Microsoft Ex
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 Alle Logos, Marken- und Warenzeichen unterliegen **nicht** der Apache License 2.0 und dürfen nur mit schriftlicher
-Genehmigung von [synyx](http://www.synyx.de/) weiterverwendet werden.
+Genehmigung von [synyx](https://www.synyx.de/) weiterverwendet werden.
