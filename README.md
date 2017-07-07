@@ -249,7 +249,7 @@ in den `application-dev.properties` auf `false` setzen.
 Die Standardkonfiguration sorgt dafür, dass eine H2 Web Konsole aktiv ist. Diese kann standardmäßig erreicht werden
 unter:
 
-<pre>localhost:11115</pre>
+<pre>localhost:8080/h2-console/</pre>
 
 Die H2 Konfigurationen können in der `application-dev.properties` überschrieben werden.
 
