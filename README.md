@@ -25,7 +25,8 @@ Die Anwendung bietet eine Übersicht über die bestehenden Urlaubsanträge und e
 von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusätzlich können Krankmeldungen erfasst und
 überblickt werden.
 
-![Screenshot Urlaubsverwaltung](http://synyx.de/images/opensource/screen_01.jpg)
+![Screenshot Urlaubsverwaltung](docs/uv-01.png)
+![Screenshot Urlaubsverwaltung](docs/uv-02.png)
 
 #### Demo System
 
@@ -81,7 +82,7 @@ Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: http://urlaubsverwa
 Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgende Anleitung befolgen.
 
 Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet hier, können Details zur Installation und
-Konfiguration [hier](INSTALLATION_AS_WAR.md) nachgelesen werden.
+Konfiguration [hier](docs/INSTALLATION_AS_WAR.md) nachgelesen werden.
 
 #### Systemvoraussetzungen
 
@@ -294,7 +295,7 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 
 Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die extenen
 Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gezeigt, wie man das mit Docker
-tun kann.](UV_WITH_DOCKER.md)
+tun kann.](docs/UV_WITH_DOCKER.md)
 
 ---
 
