@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Configuration
-@ConditionalOnProperty("h2.db.console")
+@ConditionalOnProperty("spring.h2.console.enabled")
 public class H2ServerConfig {
 
     @Value("${h2.db.tcpPort}")
