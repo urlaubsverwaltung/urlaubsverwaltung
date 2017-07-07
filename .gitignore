@@ -20,3 +20,4 @@ velocity.log*
 
 # Ignore vim swap files
 *.sw[o|p]
+*.sdsrc
