@@ -6,19 +6,17 @@ import java.util.List;
 
 public class VacationOverviewResponse {
 
- public VacationOverviewResponse(List<VacationOverview> list) {
-		super();
-		this.list = list;
-	}
+    private List<VacationOverview> list;
 
-private List<VacationOverview> list;
+    public VacationOverviewResponse(List<VacationOverview> list) {
+        this.list = list;
+    }
 
-public List<VacationOverview> getList() {
-	return list;
-}
+    public List<VacationOverview> getList() {
+        return list;
+    }
 
-public void setList(List<VacationOverview> list) {
-	this.list = list;
-}
- 
+    public void setList(List<VacationOverview> list) {
+        this.list = list;
+    }
 }

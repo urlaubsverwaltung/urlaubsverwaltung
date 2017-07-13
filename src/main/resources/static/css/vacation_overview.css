@@ -1,5 +1,5 @@
 .vacationOverview-day {
-    background-color: #FFFFFF;
+    background: #FFFFFF;
     color: #6F6F6F;
 }
 
@@ -29,4 +29,18 @@
 
 .vacationOverview-day-sick-note-half-day {
     background: linear-gradient(-56deg, #FFC5BF 50%, #FFFFFF 50%);
+}
+
+.vactionOverview-day-item {
+    padding: 12px;
+    cursor: default;
+    color: #6F6F6F;
+}
+
+.vacationOverview-table td {
+    border: 1px solid #FFF;
+}
+
+.vacationOverview-tbody tbody {
+    border: 1px solid #000;
 }
