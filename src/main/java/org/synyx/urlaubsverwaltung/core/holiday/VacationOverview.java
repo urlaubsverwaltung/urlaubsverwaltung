@@ -8,7 +8,7 @@ public class VacationOverview {
 
 	private PersonResponse person;
 	private Integer personID;
-	private List<ColoredDay> days;
+	private List<DayOfMonth> days;
 
 	public PersonResponse getPerson() {
 		return person;
@@ -18,11 +18,11 @@ public class VacationOverview {
 		this.person = person;
 	}
 
-	public List<ColoredDay> getDays() {
+	public List<DayOfMonth> getDays() {
 		return days;
 	}
 
-	public void setDays(List<ColoredDay> days) {
+	public void setDays(List<DayOfMonth> days) {
 		this.days = days;
 	}
 
