@@ -11,7 +11,6 @@
 <sec:authorize access="hasAuthority('USER')">
 	<c:set var="IS_USER" value="${true}" />
 </sec:authorize>
-
 <sec:authorize access="hasAuthority('BOSS')">
 	<c:set var="IS_BOSS" value="${true}" />
 </sec:authorize>
@@ -21,12 +20,12 @@
 <sec:authorize access="hasAuthority('OFFICE')">
 	<c:set var="IS_OFFICE" value="${true}" />
 </sec:authorize>
-<c:set var="IS_ALLOWED" value="${IS_BOSS || IS_USER || IS_DEPARTNER }" />
+<c:set var="IS_ALLOWED" value="${IS_USER || IS_BOSS || IS_DEPARTMENT_HEAD || IS_OFFICE }" />
 <html>
 
 <head>
 <uv:head />
-
+<%@include file="include/app-detail-elements/vacation_overview_js.jsp"%>
 </head>
 
 <body>
@@ -40,307 +39,127 @@
 
 	<div class="content print--only-portrait">
 		<div class="container">
-		
+
 			<c:if test="${IS_ALLOWED}">
+			
 				<div class="row">
 					<div class="col-xs-12">
-						<legend id="vacation"><spring:message code="overview.vacationOverview.title" /></legend>
+						<legend id="vacation">
+							<spring:message code="overview.vacationOverview.title" />
+						</legend>
 					</div>
 				</div>
-				<script>
-					$(function() {
-
-						function selectedItemChange() {
-							var selectedYear = document
-									.getElementById('yearSelect');
-							var selectedMonth = document
-									.getElementById('monthSelect');
-							var selectedDepartment = document
-									.getElementById('departmentSelect');
-							var selectedDepartmentValue = selectedDepartment.options[selectedDepartment.selectedIndex].text;
-							var selectedYearValue = selectedYear.options[selectedYear.selectedIndex].text;
-							var selectedMonthValue = selectedMonth.options[selectedMonth.selectedIndex].text;
-							if (selectedYearValue != null
-									&& selectedMonthValue != null
-									&& selectedDepartmentValue != null) {
-								var url = location.protocol + "//"
-										+ location.host
-										+ "/api/vacationoverview?selectedYear="
-										+ selectedYearValue + "&selectedMonth="
-										+ selectedMonthValue
-										+ "&selectedDepartment="
-										+ selectedDepartmentValue;
-
-								var xhttp = new XMLHttpRequest();
-								xhttp.open("GET", url, false);
-								xhttp.setRequestHeader("Content-type",
-										"application/json");
-								xhttp.send();
-								var holyDayOverviewResponse = JSON
-										.parse(xhttp.responseText);
-								if (holyDayOverviewResponse != null
-										&& holyDayOverviewResponse != undefined
-										&& holyDayOverviewResponse.response != null
-										&& holyDayOverviewResponse.response != undefined) {
-
-									var overViewList = holyDayOverviewResponse.response.list;
-									overViewList
-											.forEach(function(listItem, index,
-													arr) {
-												var personId = listItem.personID;
-												var personFullName = listItem.person.niceName;
-												var url = location.protocol
-														+ "//" + location.host
-														+ "/api/absences?year="
-														+ selectedYearValue
-														+ "&month="
-														+ selectedMonthValue
-														+ "&person=" + personId;
-												var xhttp = new XMLHttpRequest();
-												xhttp.open("GET", url, false);
-												xhttp.setRequestHeader(
-														"Content-type",
-														"application/json");
-												xhttp.send();
-												var response = JSON
-														.parse(xhttp.responseText);
-												if (response != null
-														&& response != undefined) {
-
-													listItem.days
-															.forEach(
-																	function(
-																			cV,
-																			index,
-																			arr) {
-																			if (response.response.absences
-																					.find(
-																							function(
-																									currentValue,
-																									index,
-																									arr) {
-																								if (this == currentValue.date
-																										&& currentValue.status === "WAITING"
-																										&& currentValue.type === "VACATION"
-																										&& currentValue.dayLength === 1) {
-																									return "test";
-																								}
-																							},
-																							cV.day)) {
-																				cV.cssClass = 'vacationOverview-day-personal-holiday-status-WAITING ';
-																			}
-																			if (response.response.absences
-																					.find(
-																							function(
-																									currentValue,
-																									index,
-																									arr) {
-																								if (this == currentValue.date
-																										&& currentValue.status === "WAITING"
-																										&& currentValue.type === "VACATION"
-																										&& currentValue.dayLength < 1) {
-																									return "test";
-																								}
-																							},
-																							cV.day)) {
-																				cV.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-WAITING ';
-																			}
-
-																			if (response.response.absences
-																					.find(
-																							function(
-																									currentValue,
-																									index,
-																									arr) {
-																								if (this == currentValue.date
-																										&& currentValue.status === "ALLOWED"
-																										&& currentValue.dayLength < 1
-																										&& currentValue.type === "VACATION") {
-																									return "test";
-																								}
-																							},
-																							cV.day)) {
-																				cV.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-ALLOWED ';
-																			}
-																			if (response.response.absences
-																					.find(
-																							function(
-																									currentValue,
-																									index,
-																									arr) {
-																								if (this == currentValue.date
-																										&& currentValue.status === "ALLOWED"
-																										&& currentValue.dayLength === 1
-																										&& currentValue.type === "VACATION") {
-																									return "test";
-																								}
-																							},
-																							cV.day)) {
-																				cV.cssClass = ' vacationOverview-day-personal-holiday-status-ALLOWED ';
-																			}
-																			if (response.response.absences
-																					.find(
-																							function(
-																									currentValue,
-																									index,
-																									arr) {
-																								if (this == currentValue.date
-																										&& currentValue.type === 'SICK_NOTE'
-																											&& currentValue.dayLength === 1) {
-																									return "test";
-																								}
-																							},
-																							cV.day)) {
-																				cV.cssClass = ' vacationOverview-day-sick-note ';
-																			}
-																			if (response.response.absences
-																					.find(
-																							function(
-																									currentValue,
-																									index,
-																									arr) {
-																								if (this == currentValue.date
-																										&& currentValue.type === 'SICK_NOTE'
-																											&& currentValue.dayLength < 1) {
-																									return "test";
-																								}
-																							},
-																							cV.day)) {
-																				cV.cssClass = ' vacationOverview-day-sick-note-half-day ';
-																			}
-																	}, this);
-												}
-											});
-
-									//--------------------------------------------------------------------- generate Outout;
-
-									var outputTable = "<table cellspacing='0' class='list-table selectable-table sortable tablesorter'>";
-									outputTable += "<thead class='hidden-xs hidden-sm'>";
-									outputTable += "<tr><th><spring:message code='overview.vacationOverview.tableTitle' /></th>";
-									overViewList[0].days
-											.forEach(
-													function(item, index, arr) {
-														if (item.colorCode != "") {
-															outputTable += "<th style='background-color: " + item.colorCode + "'>"
-																	+ item.intValue
-																	+ "</th>";
-														} else {
-															outputTable += "<th>"
-																	+ item.intValue
-																	+ "</th>";
-														}
-													}, outputTable);
-									outputTable += "</tr></thead><tbody class='list'>";
-									overViewList
-											.forEach(
-													function(item, index, arr) {
-														outputTable += "<tr><td>"
-																+ item.person.niceName
-																+ "</td>";
-														item.days
-																.forEach(
-																		function(
-																				dayItem,
-																				idx,
-																				dayarr) {
-																			outputTable += "<td class='" + dayItem.cssClass + "'></td>";
-																		},
-																		outputTable);
-														outputTable += "</tr>";
-													}, outputTable);
-
-									outputTable += "</tbody></table>";
-									var element = document
-											.getElementById("vacationOverview");
-									element.innerHTML = outputTable
-								}
-							}
-						}
-						var selectedYear = document
-								.getElementById('yearSelect');
-						var selectedMonth = document
-								.getElementById('monthSelect');
-						var selectedDepartment = document
-								.getElementById('departmentSelect');
-						selectedYear.addEventListener("change", function() {
-							selectedItemChange();
-						});
-						selectedMonth.addEventListener("change", function() {
-							selectedItemChange();
-						});
-						selectedDepartment.addEventListener("change",
-								function() {
-									selectedItemChange();
-								});
-						var event = new Event("change");
-						selectedYear.dispatchEvent(event);
-					}
-
-					);
-				</script>
-				<table cellspacing='0' width="300px">
-					<thead class='hidden-xs hidden-sm'>
-						<tr>
-							<th><spring:message code="overview.vacationOverview.legendTitle" /></th>
-						<tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td class='vacationOverview-day-weekend'><spring:message code="overview.vacationOverview.weekend" /></td>
-						</tr>
-						<tr>
-							<td class='vacationOverview-day-personal-holiday-status-ALLOWED'><spring:message code="overview.vacationOverview.allowed" /></td>
-						</tr>
-						<tr>
-							<td class='vacationOverview-day-personal-holiday-status-WAITING'><spring:message code="overview.vacationOverview.vacation" /></td>
-						</tr>
-						<tr>
-							<td class='vacationOverview-day-sick-note'><spring:message code="overview.vacationOverview.sick" /></td>
-						</tr>
-
-					</tbody>
-				</table>
-				<p style='margin-top: 1cm; margin-bottom: 1cm;' />
-				<select id="yearSelect" name="yearSelect" size="1" path="">
-					<option value="${currentYear}" selected="${currentYear}">
-						<c:out value="${currentYear}" />
-					</option>
-					<option value="${currentYear +1}">
-						<c:out value="${currentYear +1}" />
-					</option>
-					<c:forEach var="i" begin="1" end="10">
-						<option value="${currentYear - i}">
-							<c:out value="${currentYear - i}" />
-						</option>
-					</c:forEach>
-				</select>
-				<select id="monthSelect" name="monthSelect" size="1" path="">
-					<c:forEach var="i" begin="1" end="12">
-						<c:if test="${currentMonth == i }">
-							<option value="${i}" selected="${i}">
-								<c:out value="${i}" />
-							</option>
-
-						</c:if>
-						<c:if test="${currentMonth != i }">
-							<option value="${i}">
-								<c:out value="${i}" />
-							</option>
-						</c:if>
-					</c:forEach>
-				</select>
-				<select id="departmentSelect" name="departmentSelect" size="1"
-					path="">
-					<c:forEach items="${departments}" var="department">
-						<option value="${department}">
-							<c:out value="${department.name}" />
-						</option>
-					</c:forEach>
-				</select>
-				<div id="vacationOverview"></div>
+				
+				<div class="col-md-8">
+        			<div class="box">
+        				<label class="control-label col-md-3">
+                			<spring:message	code="overview.vacationOverview.legendTitle" />
+            			</label>
+						<div class="col-md-9">
+							<table>
+								<tr>
+									<td style="padding:2px;" class='vacationOverview-day-weekend'>&nbsp;&nbsp;</td>
+									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.weekend" /></td>
+								</tr>
+							</table>
+							<table>
+								<tr>
+									<td style="padding:2px;" class='vacationOverview-day-personal-holiday-status-ALLOWED'>&nbsp;&nbsp;</td>
+									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.allowed" /></td>
+								</tr>
+							</table>
+							<table>
+								<tr>
+									<td style="padding:2px;" class='vacationOverview-day-personal-holiday-status-WAITING'>&nbsp;&nbsp;</td>
+									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.vacation" /></td>
+								</tr>
+							</table>
+							<table>
+								<tr>
+									<td style="padding:2px;" class='vacationOverview-day-sick-note'>&nbsp;&nbsp;</td>
+									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.sick" /></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-8">
+        			<div class="form-group">
+            			<label class="control-label col-md-3" for="yearSelect">
+                			Jahr:
+            			</label>
+						<div class="col-md-9">
+							<select id="yearSelect" name="yearSelect" size="1" path="" class="form-control">
+								<c:forEach var="i" begin="1" end="10">
+									<option value="${currentYear - i}">
+										<c:out value="${currentYear - i}" />
+									</option>
+								</c:forEach>
+								<option value="${currentYear}" selected="${currentYear}">
+									<c:out value="${currentYear}" />
+								</option>
+								<option value="${currentYear +1}">
+									<c:out value="${currentYear +1}" />
+								</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-8">
+        			<div class="form-group">
+            			<label class="control-label col-md-3" for="monthSelect">
+                			Monat:
+            			</label>
+						<div class="col-md-9">
+							<select id="monthSelect" name="monthSelect" size="1" path="" class="form-control">
+								<c:forEach var="i" begin="1" end="12">
+									<c:if test="${currentMonth == i }">
+										<option value="${i}" selected="${i}">
+											<spring:eval expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)" var="month" />
+											<c:out value="${month}" />
+										</option>
+									</c:if>
+									<c:if test="${currentMonth != i }">
+										<option value="${i}">
+											<spring:eval expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)" var="month" />
+											<c:out value="${month}" />
+										</option>
+									</c:if>
+								</c:forEach>
+							</select>
+						</div>
+					</div>
+				</div>	
+							
+				<div class="col-md-8">
+        			<div class="form-group">
+            			<label class="control-label col-md-3" for="departmentSelect">
+                			Abteilung:
+            			</label>
+						<div class="col-md-9">			
+							<select id="departmentSelect" name="departmentSelect" size="1" path="" class="form-control">
+								<c:forEach items="${departments}" var="department">
+									<option value="${department}">
+										<c:out value="${department.name}" />
+									</option>
+								</c:forEach>
+							</select>
+						</div>
+					</div>
+				</div>	
+				
+				 <div class="row">
+           			<div class="col-xs-12">
+                		<hr/>
+						<div id="vacationOverview"></div>
+					</div>
+				</div>				
+			
 			</c:if>
 		</div>
-		
+
 	</div>
 
 </body>
