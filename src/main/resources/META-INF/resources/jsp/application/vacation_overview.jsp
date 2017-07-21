@@ -91,9 +91,9 @@
             			</label>
 						<div class="col-md-9">
 							<select id="yearSelect" name="yearSelect" size="1" path="" class="form-control">
-								<c:forEach var="i" begin="1" end="10">
-									<option value="${currentYear - i}">
-										<c:out value="${currentYear - i}" />
+								<c:forEach var="i" begin="1" end="9">
+									<option value="${currentYear - 10 + i}">
+										<c:out value="${currentYear - 10 + i}" />
 									</option>
 								</c:forEach>
 								<option value="${currentYear}" selected="${currentYear}">
