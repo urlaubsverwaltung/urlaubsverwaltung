@@ -1,0 +1,46 @@
+.vacationOverview-day {
+    background: #FFFFFF;
+    color: #6F6F6F;
+}
+
+.vacationOverview-day-public-holiday,
+.vacationOverview-day-weekend {
+    color: #FFF;
+    background: #DCDCDC;
+    
+}
+
+.vacationOverview-day-personal-holiday-status-ALLOWED {
+    background: linear-gradient(-56deg, #FFEDA0 50%, #FFEDA0 50%);
+}
+.vacationOverview-day-personal-holiday-status-WAITING {
+    background: linear-gradient(-56deg, #B5D0DF 50%, #B5D0DF 50%);
+}
+.vacationOverview-day-sick-note {
+    background: linear-gradient(-56deg, #FFC5BF 50%, #FFC5BF 50%);
+}
+
+.vacationOverview-day-personal-holiday-half-day-status-ALLOWED {
+    background: linear-gradient(-56deg, #FFEDA0 50%, #FFFFFF 50%);
+}
+.vacationOverview-day-personal-holiday-half-day-status-WAITING {
+    background: linear-gradient(-56deg, #B5D0DF 50%, #FFFFFF 50%);
+}
+
+.vacationOverview-day-sick-note-half-day {
+    background: linear-gradient(-56deg, #FFC5BF 50%, #FFFFFF 50%);
+}
+
+.vactionOverview-day-item {
+    padding: 12px;
+    cursor: default;
+    color: #6F6F6F;
+}
+
+.vacationOverview-table td {
+    border: 1px solid #FFF;
+}
+
+.vacationOverview-tbody tbody {
+    border: 1px solid #000;
+}
