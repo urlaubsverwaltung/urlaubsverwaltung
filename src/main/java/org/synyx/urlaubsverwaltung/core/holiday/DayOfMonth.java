@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.core.holiday;
 public class DayOfMonth {
 
     public enum TypeOfDay {
-        WORKDAY, WEEKEND;
+        WORKDAY, WEEKEND
     }
 
     private Integer dayNumber;

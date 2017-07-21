@@ -30,10 +30,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @RequestMapping("/api")
 public class VacationOverviewService {
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
     private DepartmentService departmentService;
     private WorkingTimeService workingTimeService;
     private PublicHolidaysService publicHolidayService;
-    private SessionService sessionService;
 
     @Autowired
     VacationOverviewService(DepartmentService departmentService, WorkingTimeService workingTimeService,
@@ -42,56 +42,67 @@ public class VacationOverviewService {
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.publicHolidayService = publicHolidayService;
-        this.sessionService = sessionService;
     }
 
     @ApiOperation(value = "Get Vacation-Overview Metadata", notes = "Get Vacation-Overview metadata for all members of a department")
     @RequestMapping(value = "/vacationoverview", method = RequestMethod.GET)
-    public ResponseWrapper<VacationOverviewResponse> getHolydayOverview(
-        @RequestParam("selectedDepartment") String selectedDepartment,
-        @RequestParam("selectedYear") Integer selectedYear, @RequestParam("selectedMonth") Integer selectedMonth) {
+    public ResponseWrapper<VacationOverviewResponse> getHolydayOverview(@RequestParam("selectedDepartment") String selectedDepartment,
+                                                                        @RequestParam("selectedYear") Integer selectedYear,
+                                                                        @RequestParam("selectedMonth") Integer selectedMonth) {
 
         Department department = null;
 
-        List<VacationOverview> holydayOverviewList = new ArrayList<VacationOverview>();
+        List<VacationOverview> holidayOverviewList = new ArrayList();
+
         for (Department item : departmentService.getAllDepartments()) {
             if (item.getName().equals(selectedDepartment)) {
                 department = item;
                 break;
             }
         }
+
         if (department != null) {
 
             List<Person> members = department.getMembers();
-            for (Person person2 : members) {
+            for (Person person : members) {
+
                 DateMidnight date = new DateMidnight();
                 int year = selectedYear != null ? selectedYear : date.getYear();
                 int month = selectedMonth != null ? selectedMonth : date.getMonthOfYear();
-                DateMidnight firstDay = DateUtil.getFirstDayOfMonth(year, month);
                 DateMidnight lastDay = DateUtil.getLastDayOfMonth(year, month);
-                VacationOverview holydayOverview = new VacationOverview();
-                holydayOverview.setDays(new ArrayList<DayOfMonth>());
-                holydayOverview.setPerson(new PersonResponse(person2));
-                holydayOverview.setPersonID(person2.getId());
+
+                VacationOverview holidayOverview = getVacationOverview(person);
+
                 for (int i = 1; i <= lastDay.toDate().getDate(); i++) {
+
                     DayOfMonth dayOfMonth = new DayOfMonth();
                     DateMidnight currentDay = new DateMidnight(year, month, i);
-                    dayOfMonth.setDayText(currentDay.toString("yyyy-MM-dd"));
+                    dayOfMonth.setDayText(currentDay.toString(DATE_FORMAT));
                     dayOfMonth.setDayNumber(i);
-                    FederalState state = workingTimeService.getFederalStateForPerson(person2, currentDay);
+
+                    FederalState state = workingTimeService.getFederalStateForPerson(person, currentDay);
                     if (DateUtil.isWorkDay(currentDay)
                         && (publicHolidayService.getWorkingDurationOfDate(currentDay, state).longValue() > 0)) {
+
                         dayOfMonth.setTypeOfDay(TypeOfDay.WORKDAY);
                     } else {
                         dayOfMonth.setTypeOfDay(TypeOfDay.WEEKEND);
 
                     }
-                    holydayOverview.getDays().add(dayOfMonth);
+                    holidayOverview.getDays().add(dayOfMonth);
                 }
-                holydayOverviewList.add(holydayOverview);
+                holidayOverviewList.add(holidayOverview);
             }
         }
 
-        return new ResponseWrapper<>(new VacationOverviewResponse(holydayOverviewList));
+        return new ResponseWrapper<>(new VacationOverviewResponse(holidayOverviewList));
+    }
+
+    private VacationOverview getVacationOverview(Person person) {
+        VacationOverview vacationOverview = new VacationOverview();
+        vacationOverview.setDays(new ArrayList<>());
+        vacationOverview.setPerson(new PersonResponse(person));
+        vacationOverview.setPersonID(person.getId());
+        return vacationOverview;
     }
 }
