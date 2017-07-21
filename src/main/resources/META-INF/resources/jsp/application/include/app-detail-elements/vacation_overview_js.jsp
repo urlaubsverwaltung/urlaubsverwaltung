@@ -154,10 +154,10 @@
 							.forEach(
 									function(item, index, array) {
 										if (item.typeOfDay === "WEEKEND") {
-											outputTable += "<th style='background-color: #DCDCDC;'>"
+											outputTable += "<th class='vacationOverview-day-weekend vactionOverview-day-item'>"
 													+ item.dayNumber + "</th>";
 										} else {
-											outputTable += "<th>"
+											outputTable += "<th class='vactionOverview-day-item'>"
 													+ item.dayNumber + "</th>";
 										}
 									}, outputTable);
