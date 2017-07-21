@@ -149,7 +149,6 @@
 							});
 
 					var outputTable = "<table cellspacing='0' class='list-table sortable tablesorter vacationOverview-table'>";
-					outputTable += "<thead class='hidden-xs hidden-sm'>";
 					outputTable += "<tr><th><spring:message code='overview.vacationOverview.tableTitle' /></th>";
 					overViewList[0].days
 							.forEach(
@@ -162,7 +161,7 @@
 													+ item.dayNumber + "</th>";
 										}
 									}, outputTable);
-					outputTable += "</tr></thead><tbody class='vacationOverview-tbody'>";
+					outputTable += "</tr><tbody class='vacationOverview-tbody'>";
 					overViewList
 							.forEach(
 									function(item, index, array) {
