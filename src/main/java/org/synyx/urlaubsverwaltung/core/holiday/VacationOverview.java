@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.holiday;
 
-import org.synyx.urlaubsverwaltung.restapi.PersonResponse;
+import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 
 import java.util.List;
 

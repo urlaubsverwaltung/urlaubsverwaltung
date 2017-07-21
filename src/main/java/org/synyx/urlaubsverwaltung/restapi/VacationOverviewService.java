@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.ArrayList;
