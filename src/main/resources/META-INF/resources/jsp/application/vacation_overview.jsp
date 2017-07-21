@@ -51,7 +51,8 @@
 				</div>
 
                 <div class="col-md-8">
-                    <div class="form-group row">
+                    <div class="form-group">
+                    <div class="row">
                         <label class="control-label col-md-3" for="yearSelect">
 								Jahr:
                         </label>
@@ -70,8 +71,10 @@
 								</option>
 							</select>
 						</div>
+						</div>
 					</div>
-                    <div class="form-group row">
+                    <div class="form-group">
+                    <div class="row">
 						<label class="control-label col-md-3" for="monthSelect">
 							Monat:
 						</label>
@@ -93,8 +96,10 @@
 								</c:forEach>
 							</select>
 						</div>
+						</div>
 					</div>
-                    <div class="form-group row">
+                    <div class="form-group">
+                    <div class="row">
                         <label class="control-label col-md-3" for="departmentSelect">
 								Abteilung:
                         </label>
@@ -107,6 +112,7 @@
 								</c:forEach>
 							</select>
 						</div>
+					</div>
 					</div>
 				</div>
 
