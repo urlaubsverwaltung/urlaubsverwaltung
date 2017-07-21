@@ -7,7 +7,15 @@
 .vacationOverview-day-weekend {
     color: #FFF;
     background: #DCDCDC;
-    
+}
+
+.vacationOverview-legend-colorbox {
+    padding: 2px;
+}
+
+.vacationOverview-legend-text {
+    font-size: 12px;
+    padding:2px 10px;
 }
 
 .vacationOverview-day-personal-holiday-status-ALLOWED {
