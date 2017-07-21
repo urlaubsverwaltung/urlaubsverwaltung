@@ -83,13 +83,13 @@
 						</div>
 					</div>
 				</div>
-				
-				<div class="col-md-8">
-        			<div class="form-group">
-            			<label class="control-label col-md-3" for="yearSelect">
-                			Jahr:
-            			</label>
-						<div class="col-md-9">
+
+                <div class="col-md-8">
+                    <div class="form-group row">
+                        <label class="control-label col-md-3" for="yearSelect">
+								Jahr:
+                        </label>
+						<div class="col-md-6">
 							<select id="yearSelect" name="yearSelect" size="1" path="" class="form-control">
 								<c:forEach var="i" begin="1" end="9">
 									<option value="${currentYear - 10 + i}">
@@ -105,14 +105,11 @@
 							</select>
 						</div>
 					</div>
-				</div>
-				
-				<div class="col-md-8">
-        			<div class="form-group">
-            			<label class="control-label col-md-3" for="monthSelect">
-                			Monat:
-            			</label>
-						<div class="col-md-9">
+                    <div class="form-group row">
+						<label class="control-label col-md-3" for="monthSelect">
+							Monat:
+						</label>
+						<div class="col-md-6">
 							<select id="monthSelect" name="monthSelect" size="1" path="" class="form-control">
 								<c:forEach var="i" begin="1" end="12">
 									<c:if test="${currentMonth == i }">
@@ -131,14 +128,11 @@
 							</select>
 						</div>
 					</div>
-				</div>	
-							
-				<div class="col-md-8">
-        			<div class="form-group">
-            			<label class="control-label col-md-3" for="departmentSelect">
-                			Abteilung:
-            			</label>
-						<div class="col-md-9">			
+                    <div class="form-group row">
+                        <label class="control-label col-md-3" for="departmentSelect">
+								Abteilung:
+                        </label>
+                        <div class="col-md-6">
 							<select id="departmentSelect" name="departmentSelect" size="1" path="" class="form-control">
 								<c:forEach items="${departments}" var="department">
 									<option value="${department}">
@@ -148,15 +142,14 @@
 							</select>
 						</div>
 					</div>
-				</div>	
-				
+				</div>
+
 				 <div class="row">
            			<div class="col-xs-12">
                 		<hr/>
 						<div id="vacationOverview"></div>
 					</div>
-				</div>				
-			
+				</div>
 			</c:if>
 		</div>
 
