@@ -124,19 +124,19 @@
                      <div class="col-md-3">
                          <table>
                              <tr>
-                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-weekend'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-weekend'></td>
                                  <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.weekend" /></td>
                              </tr>
                              <tr>
-                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-ALLOWED'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-ALLOWED'></td>
                                  <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.allowed" /></td>
                              </tr>
                              <tr>
-                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-WAITING'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-WAITING'></td>
                                  <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.vacation" /></td>
                              </tr>
                              <tr>
-                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-sick-note'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-sick-note'></td>
                                  <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.sick" /></td>
                              </tr>
                          </table>
