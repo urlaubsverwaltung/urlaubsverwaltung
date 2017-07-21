@@ -41,46 +41,12 @@
 		<div class="container">
 
 			<c:if test="${IS_ALLOWED}">
-			
+
 				<div class="row">
 					<div class="col-xs-12">
 						<legend id="vacation">
 							<spring:message code="overview.vacationOverview.title" />
 						</legend>
-					</div>
-				</div>
-				
-				<div class="col-md-8">
-        			<div class="box">
-        				<label class="control-label col-md-3">
-                			<spring:message	code="overview.vacationOverview.legendTitle" />
-            			</label>
-						<div class="col-md-9">
-							<table>
-								<tr>
-									<td style="padding:2px;" class='vacationOverview-day-weekend'>&nbsp;&nbsp;</td>
-									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.weekend" /></td>
-								</tr>
-							</table>
-							<table>
-								<tr>
-									<td style="padding:2px;" class='vacationOverview-day-personal-holiday-status-ALLOWED'>&nbsp;&nbsp;</td>
-									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.allowed" /></td>
-								</tr>
-							</table>
-							<table>
-								<tr>
-									<td style="padding:2px;" class='vacationOverview-day-personal-holiday-status-WAITING'>&nbsp;&nbsp;</td>
-									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.vacation" /></td>
-								</tr>
-							</table>
-							<table>
-								<tr>
-									<td style="padding:2px;" class='vacationOverview-day-sick-note'>&nbsp;&nbsp;</td>
-									<td style="font-size: 12;padding:2px;">&nbsp;<spring:message code="overview.vacationOverview.sick" /></td>
-								</tr>
-							</table>
-						</div>
 					</div>
 				</div>
 
@@ -150,6 +116,33 @@
 						<div id="vacationOverview"></div>
 					</div>
 				</div>
+
+                <div class="row">
+                     <label class="col-md-1">
+                         <spring:message code="overview.vacationOverview.legendTitle" />
+                     </label>
+                     <div class="col-md-3">
+                         <table>
+                             <tr>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-weekend'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.weekend" /></td>
+                             </tr>
+                             <tr>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-ALLOWED'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.allowed" /></td>
+                             </tr>
+                             <tr>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-WAITING'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.vacation" /></td>
+                             </tr>
+                             <tr>
+                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-sick-note'>&nbsp;&nbsp;&nbsp;</td>
+                                 <td class='vacationOverview-legend-text'><spring:message code="overview.vacationOverview.sick" /></td>
+                             </tr>
+                         </table>
+                     </div>
+                </div>
+
 			</c:if>
 		</div>
 
