@@ -45,6 +45,10 @@
     color: #6F6F6F;
 }
 
+.list-table th {
+    border: 1px solid #FFF;
+}
+
 .vacationOverview-table td {
     border: 1px solid #FFF;
 }
