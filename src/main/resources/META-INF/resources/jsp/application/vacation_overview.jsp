@@ -123,8 +123,8 @@
 					</div>
 				</div>
 
-                <div class="row">
-                     <label class="col-md-1">
+                <div id="vacationOverviewLegend" class="row">
+					<label class="col-md-1">
                          <spring:message code="overview.vacationOverview.legendTitle" />
                      </label>
                      <div class="col-md-3">
