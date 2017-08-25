@@ -49,6 +49,14 @@
     border: 1px solid #FFF;
 }
 
+.vacationOverviewLegend{
+    margin-top: 15px;
+}
+
+.vacationOverview-table {
+    font-size: 12px;
+}
+
 .vacationOverview-table td {
     border: 1px solid #FFF;
 }
