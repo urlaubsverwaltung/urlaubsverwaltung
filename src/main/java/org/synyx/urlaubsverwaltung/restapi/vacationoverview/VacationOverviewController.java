@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi;
+package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
@@ -27,7 +28,7 @@ import java.util.List;
 @Api(value = "VacationOverview", description = "Get Vacation-Overview Metadata")
 @RestController("restApiVacationOverview")
 @RequestMapping("/api")
-public class VacationOverviewService {
+public class VacationOverviewController {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     private DepartmentService departmentService;
@@ -35,8 +36,8 @@ public class VacationOverviewService {
     private PublicHolidaysService publicHolidayService;
 
     @Autowired
-    VacationOverviewService(DepartmentService departmentService, WorkingTimeService workingTimeService,
-                            PublicHolidaysService publicHolidayService, SessionService sessionService) {
+    VacationOverviewController(DepartmentService departmentService, WorkingTimeService workingTimeService,
+                               PublicHolidaysService publicHolidayService, SessionService sessionService) {
 
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
