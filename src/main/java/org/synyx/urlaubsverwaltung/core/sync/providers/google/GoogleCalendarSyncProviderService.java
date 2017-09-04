@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.sync.providers.google;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -7,6 +11,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
+import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
@@ -22,13 +27,12 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProviderService;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,14 +46,30 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
 
     private static final Logger LOG = Logger.getLogger(GoogleCalendarSyncProviderService.class);
 
+    /** Global instance of the {@link FileDataStoreFactory}. */
+    private static FileDataStoreFactory DATA_STORE_FACTORY;
+
     private static final File DATA_STORE_DIR = new File(System.getProperty("user.home"), "urlaubsverwaltung");
-    private static final Set<String> CALENDAR_SCOPES = CalendarScopes.all();
+    //private static final Set<String> CALENDAR_SCOPES = CalendarScopes.all();
+    private static final Set<String> CALENDAR_SCOPES = null;
+
+    /** Global instance of the scopes required by this quickstart.
+     *
+     * If modifying these scopes, delete your previously saved credentials
+     * at ~/.credentials/calendar-java-quickstart
+     */
+//    private static final List<String> SCOPES = Arrays.asList(CalendarScopes.CALENDAR_READONLY);
+    private static final List<String> SCOPES = Arrays.asList(CalendarScopes.CALENDAR);
+
+    private static final String APPLICATION_NAME = "Google Calendar API Java Quickstart";
+
     private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static HttpTransport HTTP_TRANSPORT;
 
     static {
         try {
             HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+            DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
         } catch (Throwable t) {
             LOG.warn(t.getMessage(), t);
         }
@@ -76,6 +96,8 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
     }
 
     private static GoogleClientSecrets loadClientSecrets(String clientSecretsLocation) {
+        System.out.println("clientSecretLocation: " + clientSecretsLocation);
+
         GoogleClientSecrets clientSecrets = null;
         try {
             BufferedReader reader = Files.newBufferedReader(Paths.get(clientSecretsLocation));
@@ -111,6 +133,44 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
         return Optional.empty();
     }
 
+    /**
+     * Creates an authorized Credential object.
+     * @return an authorized Credential object.
+     * @throws IOException
+     */
+    public Credential authorize() throws IOException {
+
+        System.out.println("clientSecretLocation: " + this.clientSecretFile);
+
+        if (this.clientSecretFile == null) {
+            this.clientSecretFile = "client_secret.json";
+        }
+
+        String pathname = DATA_STORE_DIR.getPath() + "/" + this.clientSecretFile;
+
+        System.out.println("pathname: " + pathname);
+
+        File file = new File(pathname);
+
+        // Load client secrets.
+        InputStream in = new FileInputStream(file);
+        GoogleClientSecrets clientSecrets =
+                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+        // Build flow and trigger user authorization request.
+        GoogleAuthorizationCodeFlow flow =
+                new GoogleAuthorizationCodeFlow.Builder(
+                        HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                        .setDataStoreFactory(DATA_STORE_FACTORY)
+                        .setAccessType("offline")
+                        .build();
+        Credential credential = new AuthorizationCodeInstalledApp(
+                flow, new LocalServerReceiver()).authorize("user");
+        System.out.println(
+                "Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+        return credential;
+    }
+
 
     /**
      * Build and return an authorized Calendar client service.
@@ -118,6 +178,13 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
      * @return an authorized Calendar client service
      */
     private com.google.api.services.calendar.Calendar getCalendarService() {
+
+        /*
+        System.out.println("clientSecretLocation: " + this.clientSecretFile);
+
+        if (this.clientSecretFile == null) {
+            this.clientSecretFile = "client_secret.json";
+        }
 
         String pathname = DATA_STORE_DIR.getPath() + "/" + this.clientSecretFile;
 
@@ -135,8 +202,18 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
         if (LOG.isDebugEnabled()) {
             debugCalendar(calendar);
         }
+        */
 
-        return calendar;
+        try {
+            Credential credential = this.authorize();
+            return new com.google.api.services.calendar.Calendar.Builder(
+                    HTTP_TRANSPORT, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
