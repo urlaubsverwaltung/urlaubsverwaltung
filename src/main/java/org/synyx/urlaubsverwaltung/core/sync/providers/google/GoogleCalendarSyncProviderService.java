@@ -48,8 +48,6 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
     private final Calendar calendarService;
     private final MailService mailService;
 
-    @Value("${uv.calendar.google.servicekeyfile}")
-    private String serviceKeyFile;
     private String calendarId;
     private GoogleCredential googleCredential = null;
 
@@ -61,13 +59,6 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
 
         this.calendarId = settings.getCalendarId();
         this.mailService = mailService;
-
-        try {
-            googleCredential = GoogleCredential.fromStream(new FileInputStream(serviceKeyFile))
-                    .createScoped(Collections.singleton(CalendarScopes.CALENDAR));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         calendarService = getCalendarService();
     }

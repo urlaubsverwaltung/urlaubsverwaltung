@@ -525,13 +525,40 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.clientId">
+                                <spring:message code='settings.calendar.google.clientid'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="calendarSettings.googleCalendarSettings.clientId" path="calendarSettings.googleCalendarSettings.clientId" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.clientId" cssClass="error"/></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.clientSecret">
-                                <spring:message code='settings.calendar.google.clientSecretFile'/>:
+                                <spring:message code='settings.calendar.google.clientsecret'/>:
                             </label>
                             <div class="col-md-8">
                                 <form:input id="calendarSettings.googleCalendarSettings.clientSecret" path="calendarSettings.googleCalendarSettings.clientSecret" class="form-control" cssErrorClass="form-control error" />
                                 <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.clientSecret" cssClass="error"/></span>
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.calendarId">
+                                <spring:message code='settings.calendar.google.calendarid'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="calendarSettings.googleCalendarSettings.calendarId" path="calendarSettings.googleCalendarSettings.calendarId" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.calendarId" cssClass="error"/></span>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <p class="help-block"><spring:message code="settings.calendar.google.action.authenticate.description"/></p>
+                            <button type="submit" class="btn btn-primary">
+                                <spring:message code='settings.calendar.google.action.authenticate'/>
+                            </button>
                         </div>
                     </div>
                 </div>
