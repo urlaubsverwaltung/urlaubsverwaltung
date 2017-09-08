@@ -556,9 +556,9 @@
 
                         <div class="form-section">
                             <p class="help-block"><spring:message code="settings.calendar.google.action.authenticate.description"/></p>
-                            <button type="submit" class="btn btn-primary">
+                            <a href="google-api-handshake" class="btn btn-primary" role="button">
                                 <spring:message code='settings.calendar.google.action.authenticate'/>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
