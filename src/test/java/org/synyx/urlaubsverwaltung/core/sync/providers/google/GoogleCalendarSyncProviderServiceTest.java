@@ -1,6 +1,18 @@
 package org.synyx.urlaubsverwaltung.core.sync.providers.google;
 
+import com.google.api.client.auth.oauth2.BearerToken;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.*;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.Event;
 import org.joda.time.DateMidnight;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -15,8 +27,11 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.core.sync.absence.EventType;
 
+import java.io.*;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -24,7 +39,91 @@ import static org.junit.Assert.assertTrue;
 
 public class GoogleCalendarSyncProviderServiceTest {
 
+    private static String CLIENT_ID;
+    private static String CLIENT_SECRET;
+    private static String CALENDAR_ID;
+    private static String REFRESH_TOKEN;
+
+    @BeforeClass
+    public static void setUp() throws IOException {
+        Properties prop = new Properties();
+        File file = new File("src/test/resources/google_oauth.properties");
+
+        Assume.assumeTrue("file should exist (do not store in git): " + file.getAbsolutePath(), file.isFile());
+
+        prop.load(new FileInputStream(file));
+        CLIENT_ID = prop.getProperty("clientId");
+        CLIENT_SECRET = prop.getProperty("clientSecret");
+        CALENDAR_ID = prop.getProperty("calendarId");
+        REFRESH_TOKEN = prop.getProperty("refreshToken");
+
+        Assume.assumeTrue("clientId for testing should be defined", CLIENT_ID != null);
+        Assume.assumeTrue("clientSecret for testing should be defined", CLIENT_SECRET != null);
+        Assume.assumeTrue("calendarId for testing should be defined", CALENDAR_ID != null);
+        Assume.assumeTrue("refreshToken for testing should be defined", REFRESH_TOKEN != null);
+    }
+
     GoogleCalendarSyncProviderService cut;
+
+    public static HttpResponse executeGet(HttpTransport transport, JsonFactory jsonFactory, String accessToken, GenericUrl url)
+            throws IOException {
+        Credential credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
+        HttpRequestFactory requestFactory = transport.createRequestFactory(credential);
+        return requestFactory.buildGetRequest(url).execute();
+    }
+
+    public static Credential createCredentialWithRefreshToken(
+            HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse) {
+
+        return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
+                transport)
+                .setJsonFactory(jsonFactory)
+                .setTokenServerUrl(
+                        new GenericUrl("https://www.googleapis.com/oauth2/v4/token"))
+                .setClientAuthentication(new BasicAuthentication(
+                        CLIENT_ID,
+                        CLIENT_SECRET))
+                .build()
+                .setFromTokenResponse(tokenResponse);
+    }
+
+    @Test
+    public void createCredentialWithRefreshToken() throws GeneralSecurityException, IOException {
+        NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        GenericUrl url = new GenericUrl("https://www.googleapis.com/oauth2/v4/token");
+
+        //executeGet(httpTransport, jsonFactory, refreshToken, url);
+
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setRefreshToken(REFRESH_TOKEN);
+        createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse);
+    }
+
+    @Test
+    public void getCalendar() throws GeneralSecurityException, IOException {
+        NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setRefreshToken(REFRESH_TOKEN);
+        Credential credential = createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse);
+
+        System.out.println("refresh token: " + credential.getRefreshToken());
+        System.out.println("access token: " + credential.getAccessToken());
+
+        String APPLICATION_NAME = "testing";
+
+        Calendar calendar = new com.google.api.services.calendar.Calendar.Builder(
+                httpTransport, jsonFactory, credential).setApplicationName(APPLICATION_NAME).build();
+
+        Calendar.Events.List events = calendar.events().list(CALENDAR_ID);
+
+        System.out.println("events: " + events.execute().getSummary());
+        System.out.println("events: " + events.execute().getDescription());
+        System.out.println("events: " + events.execute().getItems().size());
+    }
+
 
     @Test
     public void init() {
@@ -40,8 +139,6 @@ public class GoogleCalendarSyncProviderServiceTest {
         Mockito.when(gcSet.getCalendarId()).thenReturn("calenderId");
 
         cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
-
-        System.out.println("hello world");
     }
 
     @Test
@@ -55,7 +152,11 @@ public class GoogleCalendarSyncProviderServiceTest {
         Mockito.when(settingsService.getSettings()).thenReturn(set);
         Mockito.when(set.getCalendarSettings()).thenReturn(cSet);
         Mockito.when(cSet.getGoogleCalendarSettings()).thenReturn(gcSet);
-        Mockito.when(gcSet.getCalendarId()).thenReturn("lange@synyx.de");
+
+        Mockito.when(gcSet.getClientId()).thenReturn(CLIENT_ID);
+        Mockito.when(gcSet.getClientSecret()).thenReturn(CLIENT_SECRET);
+        Mockito.when(gcSet.getCalendarId()).thenReturn(CALENDAR_ID);
+        Mockito.when(gcSet.getRefreshToken()).thenReturn(REFRESH_TOKEN);
 
         cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
         Person person = new Person();
@@ -67,6 +168,5 @@ public class GoogleCalendarSyncProviderServiceTest {
         Optional opt = cut.add(absence, cSet);
 
         assertTrue(opt.isPresent());
-        System.out.println("hello world");
     }
 }
