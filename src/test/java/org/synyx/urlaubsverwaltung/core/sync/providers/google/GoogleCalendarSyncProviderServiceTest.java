@@ -37,10 +37,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Mockito.when(settingsService.getSettings()).thenReturn(set);
         Mockito.when(set.getCalendarSettings()).thenReturn(cSet);
         Mockito.when(cSet.getGoogleCalendarSettings()).thenReturn(gcSet);
-        Mockito.when(gcSet.getCalendar()).thenReturn("calendarName");
         Mockito.when(gcSet.getCalendarId()).thenReturn("calenderId");
-        Mockito.when(gcSet.getServiceAccount()).thenReturn("serviceAccount");
-        Mockito.when(gcSet.getClientSecretFile()).thenReturn("clientSecretFile.json");
 
         cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
 
@@ -58,10 +55,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Mockito.when(settingsService.getSettings()).thenReturn(set);
         Mockito.when(set.getCalendarSettings()).thenReturn(cSet);
         Mockito.when(cSet.getGoogleCalendarSettings()).thenReturn(gcSet);
-        Mockito.when(gcSet.getCalendar()).thenReturn("calendarName");
         Mockito.when(gcSet.getCalendarId()).thenReturn("lange@synyx.de");
-        Mockito.when(gcSet.getServiceAccount()).thenReturn(null);
-        Mockito.when(gcSet.getClientSecretFile()).thenReturn("client_secret.json");
 
         cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
         Person person = new Person();
