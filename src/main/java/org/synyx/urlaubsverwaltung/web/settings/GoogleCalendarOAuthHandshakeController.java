@@ -23,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
 import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -40,7 +39,7 @@ public class GoogleCalendarOAuthHandshakeController {
     private final static Log logger = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
     private static final String REDIRECT_REL = "/google-api-handshake";
-    private static final String REDIRECT_URL = "http://localhost:8080" + REDIRECT_REL;
+    private static final String REDIRECT_URL = "http://localhost:8080/web" + REDIRECT_REL;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private static HttpTransport httpTransport;
@@ -56,8 +55,8 @@ public class GoogleCalendarOAuthHandshakeController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping(REDIRECT_REL)
-    public RedirectView googleConnectionStatus(HttpServletRequest request) throws Exception {
-        return new RedirectView(authorize());
+    public String googleConnectionStatus(HttpServletRequest request) throws Exception {
+        return "redirect:" + authorize();
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
@@ -74,7 +73,7 @@ public class GoogleCalendarOAuthHandshakeController {
             HttpResponse httpResponse = checkGoogleCalendar(client, settings);
 
             if (httpResponse.getStatusCode() == 200) {
-                logger.info("OAuth Handshake was successfull!");
+                logger.info("OAuth Handshake was successful!");
                 settings.getCalendarSettings().getGoogleCalendarSettings()
                         .setRefreshToken(credential.getRefreshToken());
                 settingsService.save(settings);
