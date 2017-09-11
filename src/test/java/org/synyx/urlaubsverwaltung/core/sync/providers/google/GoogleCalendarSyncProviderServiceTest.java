@@ -158,7 +158,7 @@ public class GoogleCalendarSyncProviderServiceTest {
 
         cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
         Person person = new Person();
-        Period period = new Period(new DateMidnight(0), new DateMidnight(1), DayLength.MORNING);
+        Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.MORNING);
 
         CalendarSettings cSet2 = Mockito.mock(CalendarSettings.class);
         AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(cSet2);
@@ -180,6 +180,4 @@ public class GoogleCalendarSyncProviderServiceTest {
         assertEquals(eventsAfterAdd, eventsAfterUpdate);
         assertEquals(eventsAfterDelete, eventsBeforeAdd);
     }
-
-
 }
