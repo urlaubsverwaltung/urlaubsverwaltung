@@ -9,8 +9,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.Event;
 import org.joda.time.DateMidnight;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,12 +29,9 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.EventType;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class GoogleCalendarSyncProviderServiceTest {
@@ -63,7 +60,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Assume.assumeTrue("refreshToken for testing should be defined", REFRESH_TOKEN != null);
     }
 
-    GoogleCalendarSyncProviderService cut;
+    private GoogleCalendarSyncProviderService cut;
 
     public static HttpResponse executeGet(HttpTransport transport, JsonFactory jsonFactory, String accessToken, GenericUrl url)
             throws IOException {
@@ -72,7 +69,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         return requestFactory.buildGetRequest(url).execute();
     }
 
-    public static Credential createCredentialWithRefreshToken(
+    private static Credential createCredentialWithRefreshToken(
             HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse) {
 
         return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
@@ -100,17 +97,13 @@ public class GoogleCalendarSyncProviderServiceTest {
         createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse);
     }
 
-    @Test
-    public void getCalendar() throws GeneralSecurityException, IOException {
+    private int getCalendarEventCount() throws GeneralSecurityException, IOException {
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setRefreshToken(REFRESH_TOKEN);
         Credential credential = createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse);
-
-        System.out.println("refresh token: " + credential.getRefreshToken());
-        System.out.println("access token: " + credential.getAccessToken());
 
         String APPLICATION_NAME = "testing";
 
@@ -119,9 +112,14 @@ public class GoogleCalendarSyncProviderServiceTest {
 
         Calendar.Events.List events = calendar.events().list(CALENDAR_ID);
 
-        System.out.println("events: " + events.execute().getSummary());
-        System.out.println("events: " + events.execute().getDescription());
-        System.out.println("events: " + events.execute().getItems().size());
+        return events.execute().getItems().size();
+    }
+
+    @Test
+    public void testCalendarEventCount() throws GeneralSecurityException, IOException {
+        int events = getCalendarEventCount();
+
+        Assert.assertTrue(events >= 0);
     }
 
 
@@ -142,7 +140,7 @@ public class GoogleCalendarSyncProviderServiceTest {
     }
 
     @Test
-    public void addAbsence() {
+    public void addUpdateDeleteAbsence() throws GeneralSecurityException, IOException {
         MailService mailService = Mockito.mock(MailService.class);
 
         SettingsService settingsService = Mockito.mock(SettingsService.class);
@@ -161,12 +159,27 @@ public class GoogleCalendarSyncProviderServiceTest {
         cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
         Person person = new Person();
         Period period = new Period(new DateMidnight(0), new DateMidnight(1), DayLength.MORNING);
-        EventType type = EventType.SICKNOTE;
+
         CalendarSettings cSet2 = Mockito.mock(CalendarSettings.class);
         AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(cSet2);
-        Absence absence = new Absence(person, period, type, config);
-        Optional opt = cut.add(absence, cSet);
+        Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, config);
 
-        assertTrue(opt.isPresent());
+        int eventsBeforeAdd = getCalendarEventCount();
+        String eventId = cut.add(absence, cSet).get();
+        int eventsAfterAdd = getCalendarEventCount();
+
+        Absence absenceUpdate = new Absence(person, period, EventType.SICKNOTE, config);
+        cut.update(absenceUpdate, eventId, cSet);
+        int eventsAfterUpdate = getCalendarEventCount();
+
+        cut.delete(eventId, cSet);
+        int eventsAfterDelete = getCalendarEventCount();
+
+        assertTrue(!eventId.isEmpty());
+        assertEquals(eventsBeforeAdd + 1, eventsAfterAdd);
+        assertEquals(eventsAfterAdd, eventsAfterUpdate);
+        assertEquals(eventsAfterDelete, eventsBeforeAdd);
     }
+
+
 }
