@@ -49,12 +49,12 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
     private Calendar calendarService;
     private final MailService mailService;
 
-    private final GoogleCalendarSettings settings;
+    SettingsService settingsService;
 
     @Autowired
     public GoogleCalendarSyncProviderService(MailService mailService, SettingsService settingsService) {
 
-        settings = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
+        this.settingsService = settingsService;
 
         this.mailService = mailService;
     }
@@ -96,7 +96,7 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
      */
     private com.google.api.services.calendar.Calendar getCalendarService() {
 
-        String refreshToken = settings.getRefreshToken();
+        String refreshToken = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
 
         try {
             NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -121,6 +121,8 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
             HttpTransport transport,
             JsonFactory jsonFactory,
             TokenResponse tokenResponse) {
+
+        GoogleCalendarSettings settings = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
 
         return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
                 transport)
