@@ -181,9 +181,11 @@ public class OverlapService {
                             boolean isWaitingOrAllowed = input.hasStatus(ApplicationStatus.WAITING)
                                 || input.hasStatus(ApplicationStatus.ALLOWED);
 
-                            // if only half day, then only the same time of day is relevant
+                            // if only half day, then only the same time of day and full day is relevant
                             if (!DayLength.FULL.equals(dayLength)) {
-                                return isWaitingOrAllowed && input.getDayLength().equals(dayLength);
+                                boolean isOverlappingDayLength = input.getDayLength().equals(dayLength)
+                                        || input.getDayLength().equals(DayLength.FULL);
+                                return isWaitingOrAllowed && isOverlappingDayLength;
                             }
 
                             return isWaitingOrAllowed;
