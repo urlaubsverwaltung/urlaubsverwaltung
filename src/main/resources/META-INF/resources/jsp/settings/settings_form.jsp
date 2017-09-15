@@ -578,10 +578,17 @@
                         </div>
 
                         <div class="form-section">
-                            <p class="help-block"><spring:message code="settings.calendar.google.action.authenticate.description"/></p>
-                            <a href="google-api-handshake" class="btn btn-primary" role="button">
-                                <spring:message code='settings.calendar.google.action.authenticate'/>
-                            </a>
+                            <c:choose>
+                                <c:when test="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
+                                    <p class="help-block"><spring:message code="settings.calendar.google.action.authenticate.description"/></p>
+                                    <form:button id="googleOAuthButton" value="oauth" name="googleOAuthButton">
+                                        <spring:message code='settings.calendar.google.action.authenticate'/>
+                                    </form:button>
+                                </c:when>
+                                <c:otherwise>
+                                    <label><spring:message code="settings.calendar.google.action.authenticate.success"/></label>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
