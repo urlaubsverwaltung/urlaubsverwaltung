@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -60,6 +61,8 @@ public class GoogleCalendarOAuthHandshakeController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping(value = REDIRECT_REL, params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code) {
+        String error = null;
+
         try {
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(REDIRECT_URL).execute();
             Credential credential = flow.createAndStoreCredential(response, "userID");
@@ -76,14 +79,27 @@ public class GoogleCalendarOAuthHandshakeController {
                         .setRefreshToken(credential.getRefreshToken());
                 settingsService.save(settings);
             } else {
-                logger.warn("OAuth handshake error " + httpResponse.getStatusMessage());
+                error = "OAuth handshake error " + httpResponse.getStatusMessage();
+                logger.warn(error);
             }
 
         } catch (Exception e) {
-            logger.error("Exception while handling OAuth2 callback (" + e.getMessage() + ")."
-                    + " Redirecting to google connection status page.");
+            error = "Exception while handling OAuth2 callback (" + e.getMessage() + ")."
+                    + " Redirecting to google connection status page.";
+            logger.error(error);
         }
-        return "redirect:/web/settings#calendar";
+
+        StringBuilder buf = new StringBuilder();
+        buf.append("redirect:/web/settings");
+        if (error != null) {
+            buf.append("?");
+            buf.append(ControllerConstants.OAUTH_ERROR_ATTRIBUTE);
+            buf.append("=");
+            buf.append(error);
+        }
+        buf.append("#calendar");
+
+        return buf.toString();
     }
 
     private HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
