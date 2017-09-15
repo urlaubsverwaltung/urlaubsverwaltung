@@ -578,6 +578,12 @@
                         </div>
 
                         <div class="form-group">
+                            <c:if test="${not empty oautherrors}">
+                                <p class="text-danger col-md-8 col-md-push-4">
+                                    ${oautherrors}
+                                </p>
+                            </c:if>
+
                             <c:choose>
                                 <c:when test="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
                                     <p class="text-danger col-md-5 col-md-push-4"><spring:message code="settings.calendar.google.action.authenticate.description"/></p>

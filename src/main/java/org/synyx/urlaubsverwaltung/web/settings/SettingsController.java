@@ -48,11 +48,19 @@ public class SettingsController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
-    public String settingsDetails(Model model) {
+    public String settingsDetails(Model model,
+                                  @RequestParam(value = ControllerConstants.OAUTH_ERROR_ATTRIBUTE, required = false) String googleOAuthError) {
 
-        model.addAttribute("settings", settingsService.getSettings());
+        Settings settings = settingsService.getSettings();
+
+        model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
+
+        if (shouldShowOAuthError(googleOAuthError, settings)) {
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, googleOAuthError);
+            model.addAttribute(ControllerConstants.OAUTH_ERROR_ATTRIBUTE, googleOAuthError);
+        }
 
         return "settings/settings_form";
     }
@@ -115,5 +123,11 @@ public class SettingsController {
             || !oldSettings.getCalendarId().equals(newSettings.getCalendarId());
 
         return changed;
+    }
+
+    private boolean shouldShowOAuthError(String googleOAuthError, Settings settings) {
+        return googleOAuthError != null
+                && !googleOAuthError.isEmpty()
+                && settings.getCalendarSettings().getGoogleCalendarSettings().getRefreshToken() == null;
     }
 }
