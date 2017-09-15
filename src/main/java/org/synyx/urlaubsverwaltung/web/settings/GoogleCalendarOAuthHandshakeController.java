@@ -16,8 +16,6 @@ import com.google.api.services.calendar.CalendarScopes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,7 +59,7 @@ public class GoogleCalendarOAuthHandshakeController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping(value = REDIRECT_REL, params = "code")
-    public ResponseEntity<String> oauth2Callback(@RequestParam(value = "code") String code) {
+    public String oauth2Callback(@RequestParam(value = "code") String code) {
         try {
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(REDIRECT_URL).execute();
             Credential credential = flow.createAndStoreCredential(response, "userID");
@@ -85,8 +83,7 @@ public class GoogleCalendarOAuthHandshakeController {
             logger.error("Exception while handling OAuth2 callback (" + e.getMessage() + ")."
                     + " Redirecting to google connection status page.");
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return "redirect:/web/settings";
     }
 
     private HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
