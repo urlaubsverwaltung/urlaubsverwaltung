@@ -95,22 +95,20 @@ public class GoogleCalendarOAuthHandshakeController {
     private String authorize() throws Exception {
         AuthorizationCodeRequestUrl authorizationUrl;
 
-        if (flow == null) {
-            Details web = new Details();
-            GoogleCalendarSettings googleCalendarSettings =
-                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
+        Details web = new Details();
+        GoogleCalendarSettings googleCalendarSettings =
+                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
 
-            web.setClientId(googleCalendarSettings.getClientId());
-            web.setClientSecret(googleCalendarSettings.getClientSecret());
+        web.setClientId(googleCalendarSettings.getClientId());
+        web.setClientSecret(googleCalendarSettings.getClientSecret());
 
-            GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
+        GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
 
-            clientSecrets.setWeb(web);
-            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        clientSecrets.setWeb(web);
+        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-            flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
-                    Collections.singleton(CalendarScopes.CALENDAR)).build();
-        }
+        flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
+                Collections.singleton(CalendarScopes.CALENDAR)).build();
 
         authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URL);
 
