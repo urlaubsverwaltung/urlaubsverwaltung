@@ -577,16 +577,16 @@
                             </div>
                         </div>
 
-                        <div class="form-group col-md-8 col-md-push-4">
+                        <div class="form-group">
                             <c:choose>
                                 <c:when test="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
-                                    <label class="alert-danger"><spring:message code="settings.calendar.google.action.authenticate.description"/></label>
-                                    <form:button id="googleOAuthButton" value="oauth" name="googleOAuthButton">
+                                    <p class="text-danger col-md-5 col-md-push-4"><spring:message code="settings.calendar.google.action.authenticate.description"/></p>
+                                    <button id="googleOAuthButton" value="oauth" name="googleOAuthButton" type="submit" class="btn btn-primary col-md-3 col-md-push-4">
                                         <spring:message code='settings.calendar.google.action.authenticate'/>
-                                    </form:button>
+                                    </button>
                                 </c:when>
                                 <c:otherwise>
-                                    <label class="alert-success"><spring:message code="settings.calendar.google.action.authenticate.success"/></label>
+                                    <p class="text-success col-md-8 col-md-push-4"><spring:message code="settings.calendar.google.action.authenticate.success"/></p>
                                 </c:otherwise>
                             </c:choose>
                         </div>
