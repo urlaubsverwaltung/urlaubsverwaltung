@@ -48,9 +48,9 @@ public class LdapUserDataImporter {
         this.personService = personService;
     }
 
-    // Sync LDAP/AD data during startup and every night at 01:00 am
+    // Sync LDAP/AD data during startup and on uv.cron.ldapSync
     @PostConstruct
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "${uv.cron.ldapSync}")
     public void sync() {
 
         LOG.info("STARTING LDAP SYNC --------------------------------------------------------------------------------");
