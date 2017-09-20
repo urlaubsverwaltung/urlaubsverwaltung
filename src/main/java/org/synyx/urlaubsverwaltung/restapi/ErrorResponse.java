@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 
 
@@ -8,13 +9,14 @@ import org.springframework.http.HttpStatus;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Value
 class ErrorResponse {
 
-    private final long timestamp;
-    private final int status;
-    private final String error;
-    private final String exception;
-    private final String message;
+    long timestamp;
+    int status;
+    String error;
+    String exception;
+    String message;
 
     ErrorResponse(HttpStatus status, Exception exception) {
 
@@ -25,32 +27,4 @@ class ErrorResponse {
         this.message = exception.getMessage();
     }
 
-    public long getTimestamp() {
-
-        return timestamp;
-    }
-
-
-    public int getStatus() {
-
-        return status;
-    }
-
-
-    public String getError() {
-
-        return error;
-    }
-
-
-    public String getException() {
-
-        return exception;
-    }
-
-
-    public String getMessage() {
-
-        return message;
-    }
 }

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.account.domain;
 
+import lombok.Value;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 
 import java.math.BigDecimal;
@@ -10,41 +11,16 @@ import java.math.BigDecimal;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public final class VacationDaysLeft {
+@Value
+public class VacationDaysLeft {
 
-    private final BigDecimal vacationDays;
-    private final BigDecimal remainingVacationDays;
-    private final BigDecimal remainingVacationDaysNotExpiring;
-
-    private VacationDaysLeft(BigDecimal vacationDays, BigDecimal remainingVacationDays,
-        BigDecimal remainingVacationDaysNotExpiring) {
-
-        this.vacationDays = vacationDays;
-        this.remainingVacationDays = remainingVacationDays;
-        this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
-    }
+    BigDecimal vacationDays;
+    BigDecimal remainingVacationDays;
+    BigDecimal remainingVacationDaysNotExpiring;
 
     public static Builder builder() {
 
         return new Builder();
-    }
-
-
-    public BigDecimal getVacationDays() {
-
-        return vacationDays;
-    }
-
-
-    public BigDecimal getRemainingVacationDays() {
-
-        return remainingVacationDays;
-    }
-
-
-    public BigDecimal getRemainingVacationDaysNotExpiring() {
-
-        return remainingVacationDaysNotExpiring;
     }
 
     /**

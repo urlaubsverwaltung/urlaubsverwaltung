@@ -1,32 +1,21 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
-
 import java.sql.Time;
-
 import java.util.Arrays;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -36,6 +25,7 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina
  */
 @Entity
+@Data
 public class Application extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 1234589209309L;
@@ -180,17 +170,6 @@ public class Application extends AbstractPersistable<Integer> {
      */
     private BigDecimal hours;
 
-    public String getAddress() {
-
-        return address;
-    }
-
-
-    public void setAddress(String address) {
-
-        this.address = address;
-    }
-
 
     public DateMidnight getApplicationDate() {
 
@@ -252,54 +231,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Person getApplier() {
-
-        return applier;
-    }
-
-
-    public void setApplier(Person applier) {
-
-        this.applier = applier;
-    }
-
-
-    public Person getBoss() {
-
-        return boss;
-    }
-
-
-    public void setBoss(Person boss) {
-
-        this.boss = boss;
-    }
-
-
-    public Person getCanceller() {
-
-        return canceller;
-    }
-
-
-    public void setCanceller(Person canceller) {
-
-        this.canceller = canceller;
-    }
-
-
-    public boolean isTwoStageApproval() {
-
-        return twoStageApproval;
-    }
-
-
-    public void setTwoStageApproval(boolean twoStageApproval) {
-
-        this.twoStageApproval = twoStageApproval;
-    }
-
-
     public DateMidnight getEndDate() {
 
         if (this.endDate == null) {
@@ -317,78 +248,6 @@ public class Application extends AbstractPersistable<Integer> {
         } else {
             this.endDate = endDate.toDate();
         }
-    }
-
-
-    public Time getStartTime() {
-
-        return startTime;
-    }
-
-
-    public void setStartTime(Time startTime) {
-
-        this.startTime = startTime;
-    }
-
-
-    public Time getEndTime() {
-
-        return endTime;
-    }
-
-
-    public void setEndTime(Time endTime) {
-
-        this.endTime = endTime;
-    }
-
-
-    public DayLength getDayLength() {
-
-        return dayLength;
-    }
-
-
-    public void setDayLength(DayLength dayLength) {
-
-        this.dayLength = dayLength;
-    }
-
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public String getReason() {
-
-        return reason;
-    }
-
-
-    public void setReason(String reason) {
-
-        this.reason = reason;
-    }
-
-
-    public Person getHolidayReplacement() {
-
-        return holidayReplacement;
-    }
-
-
-    public void setHolidayReplacement(Person holidayReplacement) {
-
-        this.holidayReplacement = holidayReplacement;
     }
 
 
@@ -451,36 +310,10 @@ public class Application extends AbstractPersistable<Integer> {
         }
     }
 
-
-    public ApplicationStatus getStatus() {
-
-        return status;
-    }
-
-
-    public void setStatus(ApplicationStatus status) {
-
-        this.status = status;
-    }
-
-
-    public VacationType getVacationType() {
-
-        return vacationType;
-    }
-
-
-    public void setVacationType(VacationType vacationType) {
-
-        this.vacationType = vacationType;
-    }
-
-
     public boolean isFormerlyAllowed() {
 
         return hasStatus(ApplicationStatus.CANCELLED);
     }
-
 
     public DateMidnight getRemindDate() {
 

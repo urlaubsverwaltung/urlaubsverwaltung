@@ -1,15 +1,8 @@
 package org.synyx.urlaubsverwaltung.test;
 
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import lombok.experimental.UtilityClass;
 import org.apache.velocity.util.StringUtils;
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -30,19 +23,20 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Util class to create data for tests.
  *
  * @author Aljona Murygina - murygina@synyx.de
  */
+@UtilityClass
 public final class TestDataCreator {
-
-    private TestDataCreator() {
-
-        // Hide constructor for util class
-    }
-
-    // Person ----------------------------------------------------------------------------------------------------------
 
     // Person ----------------------------------------------------------------------------------------------------------
     public static Person createPerson(Integer id, String username) throws IllegalAccessException {
@@ -191,11 +185,6 @@ public final class TestDataCreator {
     }
 
     // Holidays account ------------------------------------------------------------------------------------------------
-
-    public static Account createHolidaysAccount(Person person) {
-
-        return createHolidaysAccount(person, DateTime.now().getYear());
-    }
 
     public static Account createHolidaysAccount(Person person, int year) {
 

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
+import lombok.Data;
 import org.synyx.urlaubsverwaltung.core.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -16,6 +17,7 @@ import javax.persistence.ManyToOne;
  * @author  Aljona Murygina
  */
 @Entity
+@Data
 public class ApplicationComment extends AbstractComment {
 
     private static final long serialVersionUID = 8908423789423089L;
@@ -35,28 +37,5 @@ public class ApplicationComment extends AbstractComment {
     public ApplicationComment(Person person) {
 
         super.setPerson(person);
-    }
-
-    public Application getApplication() {
-
-        return application;
-    }
-
-
-    public void setApplication(Application application) {
-
-        this.application = application;
-    }
-
-
-    public ApplicationAction getAction() {
-
-        return action;
-    }
-
-
-    public void setAction(ApplicationAction action) {
-
-        this.action = action;
     }
 }

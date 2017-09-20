@@ -1,14 +1,13 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public final class RestApiDateFormat {
+@UtilityClass
+public class RestApiDateFormat {
 
-    public static final String DATE_PATTERN = "yyyy-MM-dd";
+    public final String DATE_PATTERN = "yyyy-MM-dd";
 
-    private RestApiDateFormat() {
-
-        // Hide constructor for util classes
-    }
 }

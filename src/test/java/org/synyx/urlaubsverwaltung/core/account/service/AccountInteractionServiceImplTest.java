@@ -1,9 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Optional;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
@@ -12,10 +8,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionServiceImpl}.
@@ -36,10 +33,6 @@ public class AccountInteractionServiceImplTest {
     public void setup() throws IOException {
 
         accountService = Mockito.mock(AccountService.class);
-
-        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
         vacationDaysService = Mockito.mock(VacationDaysService.class);
 
