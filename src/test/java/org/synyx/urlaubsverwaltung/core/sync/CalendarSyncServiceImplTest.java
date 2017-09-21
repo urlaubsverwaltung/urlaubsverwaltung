@@ -23,7 +23,7 @@ import java.util.Optional;
 public class CalendarSyncServiceImplTest {
 
     private SettingsService settingsService;
-    private ExchangeCalendarProviderService exchangeCalendarProviderService;
+    private CalendarProviderService exchangeCalendarProviderService;
 
     private CalendarSyncService calendarSyncService;
 
