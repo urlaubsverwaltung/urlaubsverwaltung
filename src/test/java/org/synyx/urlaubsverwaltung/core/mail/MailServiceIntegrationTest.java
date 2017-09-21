@@ -2,22 +2,15 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.apache.velocity.app.VelocityEngine;
-
 import org.joda.time.DateMidnight;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.jvnet.mock_javamail.Mailbox;
-
 import org.mockito.Mockito;
-
 import org.springframework.context.support.StaticMessageSource;
-
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
@@ -39,21 +32,17 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
-import java.io.IOException;
-
-import java.math.BigDecimal;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Matchers.eq;
 
 
@@ -516,27 +505,6 @@ public class MailServiceIntegrationTest {
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
-
-
-    @Test
-    public void ensureAdministratorGetsANotificationIfASignErrorOccurred() throws MessagingException, IOException {
-
-        mailService.sendSignErrorNotification(5, "Message of exception");
-
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Fehler beim Signieren eines Antrags", msg.getSubject());
-
-        String content = (String) msg.getContent();
-
-        assertTrue(content.contains(
-                "Beim Versuch den Urlaubsantrag mit der ID '5' zu signieren, ist ein Fehler aufgetreten."));
-        assertTrue(content.contains("Message of exception"));
-    }
-
 
     @Test
     public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,

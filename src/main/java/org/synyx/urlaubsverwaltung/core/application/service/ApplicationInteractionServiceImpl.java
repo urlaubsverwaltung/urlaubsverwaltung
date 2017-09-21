@@ -49,7 +49,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     private final ApplicationService applicationService;
     private final AccountInteractionService accountInteractionService;
-    private final SignService signService;
     private final ApplicationCommentService commentService;
     private final MailService mailService;
     private final CalendarSyncService calendarSyncService;
@@ -59,15 +58,17 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService,
-        ApplicationCommentService commentService, AccountInteractionService accountInteractionService,
-        SignService signService, MailService mailService, CalendarSyncService calendarSyncService,
-        AbsenceMappingService absenceMappingService, SettingsService settingsService,
-        DepartmentService departmentService) {
+                                             ApplicationCommentService commentService,
+                                             AccountInteractionService accountInteractionService,
+                                             MailService mailService,
+                                             CalendarSyncService calendarSyncService,
+                                             AbsenceMappingService absenceMappingService,
+                                             SettingsService settingsService,
+                                             DepartmentService departmentService) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
-        this.signService = signService;
         this.mailService = mailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
@@ -89,8 +90,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setStatus(ApplicationStatus.WAITING);
         application.setApplier(applier);
         application.setApplicationDate(DateMidnight.now());
-
-        signService.signApplicationByUser(application, applier);
 
         applicationService.save(application);
 
@@ -187,8 +186,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(DateMidnight.now());
 
-        signService.signApplicationByBoss(applicationForLeave, privilegedUser);
-
         applicationService.save(applicationForLeave);
 
         LOG.info("Temporary allowed application for leave: " + applicationForLeave.toString());
@@ -216,8 +213,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(DateMidnight.now());
-
-        signService.signApplicationByBoss(applicationForLeave, privilegedUser);
 
         applicationService.save(applicationForLeave);
 
@@ -252,8 +247,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setStatus(ApplicationStatus.REJECTED);
         application.setBoss(privilegedUser);
         application.setEditedDate(DateMidnight.now());
-
-        signService.signApplicationByBoss(application, privilegedUser);
 
         applicationService.save(application);
 
@@ -372,7 +365,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setApplier(creator);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        signService.signApplicationByBoss(application, creator);
         applicationService.save(application);
 
         commentService.create(application, ApplicationAction.CONVERTED, Optional.<String>empty(), creator);

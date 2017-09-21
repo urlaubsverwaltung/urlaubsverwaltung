@@ -46,7 +46,6 @@ public class ApplicationInteractionServiceImplTest {
     private ApplicationService applicationService;
     private ApplicationCommentService commentService;
     private AccountInteractionService accountInteractionService;
-    private SignService signService;
     private MailService mailService;
     private CalendarSyncService calendarSyncService;
     private AbsenceMappingService absenceMappingService;
@@ -59,7 +58,6 @@ public class ApplicationInteractionServiceImplTest {
         applicationService = Mockito.mock(ApplicationService.class);
         commentService = Mockito.mock(ApplicationCommentService.class);
         accountInteractionService = Mockito.mock(AccountInteractionService.class);
-        signService = Mockito.mock(SignService.class);
         mailService = Mockito.mock(MailService.class);
         calendarSyncService = Mockito.mock(CalendarSyncService.class);
         absenceMappingService = Mockito.mock(AbsenceMappingService.class);
@@ -71,8 +69,7 @@ public class ApplicationInteractionServiceImplTest {
             .thenReturn(Optional.of(new AbsenceMapping(1, AbsenceType.VACATION, "42")));
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
-        service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-                signService, mailService, calendarSyncService, absenceMappingService, settingsService,
+        service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService, mailService, calendarSyncService, absenceMappingService, settingsService,
                 departmentService);
     }
 
@@ -96,8 +93,6 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong application date", DateMidnight.now(), applicationForLeave.getApplicationDate());
 
         Mockito.verify(applicationService).save(applicationForLeave);
-
-        Mockito.verify(signService).signApplicationByUser(eq(applicationForLeave), eq(applier));
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), eq(comment), eq(applier));
@@ -222,8 +217,6 @@ public class ApplicationInteractionServiceImplTest {
         Optional<String> optionalComment, Person privilegedUser) {
 
         Mockito.verify(applicationService).save(applicationForLeave);
-
-        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(privilegedUser));
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(action), eq(optionalComment), eq(privilegedUser));
@@ -663,8 +656,6 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(boss));
-
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.REJECTED), eq(comment), eq(boss));
     }
@@ -900,7 +891,6 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.CONVERTED), eq(Optional.<String>empty()),
                 eq(creator));
-        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(creator));
         Mockito.verify(mailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
 
         Assert.assertNotNull("Status should be set", applicationForLeave.getStatus());
