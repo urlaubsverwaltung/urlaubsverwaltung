@@ -109,16 +109,6 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to the tool's manager to inform if an error occurred while signing an application with
-     * the given id.
-     *
-     * @param  applicationId
-     * @param  exception
-     */
-    void sendSignErrorNotification(Integer applicationId, String exception);
-
-
-    /**
      * Send an email to the tool's manager if an error occurs during adding calendar event.
      *
      * @param  calendarName  that is used for syncing
