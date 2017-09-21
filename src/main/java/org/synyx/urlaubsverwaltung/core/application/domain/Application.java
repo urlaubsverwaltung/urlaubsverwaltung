@@ -157,18 +157,6 @@ public class Application extends AbstractPersistable<Integer> {
     private ApplicationStatus status;
 
     /**
-     * Signature that identifies the applicant.
-     */
-    @Column(columnDefinition = "longblob")
-    private byte[] signaturePerson;
-
-    /**
-     * Signature that identifies the person that processed (allowed/rejected) the application for leave.
-     */
-    @Column(columnDefinition = "longblob")
-    private byte[] signatureBoss;
-
-    /**
      * Flag if team is informed about vacation or not.
      */
     private boolean teamInformed;
@@ -389,46 +377,6 @@ public class Application extends AbstractPersistable<Integer> {
     public void setHolidayReplacement(Person holidayReplacement) {
 
         this.holidayReplacement = holidayReplacement;
-    }
-
-
-    public byte[] getSignatureBoss() {
-
-        if (signatureBoss == null) {
-            return null;
-        }
-
-        return Arrays.copyOf(signatureBoss, signatureBoss.length);
-    }
-
-
-    public void setSignatureBoss(byte[] signatureBoss) {
-
-        if (signatureBoss != null) {
-            this.signatureBoss = Arrays.copyOf(signatureBoss, signatureBoss.length);
-        } else {
-            this.signatureBoss = null;
-        }
-    }
-
-
-    public byte[] getSignaturePerson() {
-
-        if (signaturePerson == null) {
-            return null;
-        }
-
-        return Arrays.copyOf(signaturePerson, signaturePerson.length);
-    }
-
-
-    public void setSignaturePerson(byte[] signaturePerson) {
-
-        if (signaturePerson != null) {
-            this.signaturePerson = Arrays.copyOf(signaturePerson, signaturePerson.length);
-        } else {
-            this.signaturePerson = null;
-        }
     }
 
 

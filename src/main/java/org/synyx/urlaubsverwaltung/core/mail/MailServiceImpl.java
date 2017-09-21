@@ -260,19 +260,6 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendSignErrorNotification(Integer applicationId, String exception) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("applicationId", applicationId);
-        model.put("exception", exception);
-
-        String text = mailBuilder.buildMailBody("error_sign_application", model);
-
-        sendTechnicalNotification(getTranslation("subject.error.keys.sign"), text);
-    }
-
-
-    @Override
     public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
 
         Map<String, Object> model = new HashMap<>();
