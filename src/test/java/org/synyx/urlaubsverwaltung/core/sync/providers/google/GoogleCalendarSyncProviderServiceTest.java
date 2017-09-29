@@ -60,7 +60,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Assume.assumeTrue("refreshToken for testing should be defined", REFRESH_TOKEN != null);
     }
 
-    private GoogleCalendarSyncProviderService cut;
+    private GoogleCalendarSyncProvider sut;
 
     public static HttpResponse executeGet(HttpTransport transport, JsonFactory jsonFactory, String accessToken, GenericUrl url)
             throws IOException {
@@ -136,7 +136,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Mockito.when(cSet.getGoogleCalendarSettings()).thenReturn(gcSet);
         Mockito.when(gcSet.getCalendarId()).thenReturn("calenderId");
 
-        cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
+        sut = new GoogleCalendarSyncProvider(mailService, settingsService);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Mockito.when(gcSet.getCalendarId()).thenReturn(CALENDAR_ID);
         Mockito.when(gcSet.getRefreshToken()).thenReturn(REFRESH_TOKEN);
 
-        cut = new GoogleCalendarSyncProviderService(mailService, settingsService);
+        sut = new GoogleCalendarSyncProvider(mailService, settingsService);
         Person person = new Person();
         Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.MORNING);
 
@@ -165,14 +165,14 @@ public class GoogleCalendarSyncProviderServiceTest {
         Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, config);
 
         int eventsBeforeAdd = getCalendarEventCount();
-        String eventId = cut.add(absence, cSet).get();
+        String eventId = sut.add(absence, cSet).get();
         int eventsAfterAdd = getCalendarEventCount();
 
         Absence absenceUpdate = new Absence(person, period, EventType.SICKNOTE, config);
-        cut.update(absenceUpdate, eventId, cSet);
+        sut.update(absenceUpdate, eventId, cSet);
         int eventsAfterUpdate = getCalendarEventCount();
 
-        cut.delete(eventId, cSet);
+        sut.delete(eventId, cSet);
         int eventsAfterDelete = getCalendarEventCount();
 
         assertTrue(!eventId.isEmpty());

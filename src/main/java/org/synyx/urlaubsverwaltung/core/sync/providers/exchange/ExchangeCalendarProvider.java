@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -30,7 +31,7 @@ import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarNotCreatedException;
-import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProviderService;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
 
@@ -41,10 +42,11 @@ import java.util.Optional;
  * @author  Daniel Hammann - <hammann@synyx.de>
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@ConditionalOnProperty(prefix = "uv.calendar", name = "provider", havingValue = "exchange")
 @Service
-public class ExchangeCalendarProviderService implements CalendarProviderService {
+public class ExchangeCalendarProvider implements CalendarProvider {
 
-    private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
+    private static final Logger LOG = Logger.getLogger(ExchangeCalendarProvider.class);
 
     private final MailService mailService;
     private final ExchangeService exchangeService;
@@ -53,7 +55,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private String credentialsPassword;
 
     @Autowired
-    ExchangeCalendarProviderService(MailService mailService) {
+    ExchangeCalendarProvider(MailService mailService) {
 
         this.mailService = mailService;
         this.exchangeService = new ExchangeService();
