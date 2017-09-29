@@ -11,7 +11,7 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public interface CalendarProviderService {
+public interface CalendarProvider {
 
     /**
      * Add a person's absence to calendar.

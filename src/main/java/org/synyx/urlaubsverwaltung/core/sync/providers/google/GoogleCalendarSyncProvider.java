@@ -18,13 +18,14 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
-import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProviderService;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -37,11 +38,12 @@ import java.util.Optional;
  * @author Daniel Hammann - hammann@synyx.de
  * @author Marc Sommer - sommer@synyx.de
  */
+@ConditionalOnProperty(prefix = "uv.calendar", name = "provider", havingValue = "google")
 @Service
-public class GoogleCalendarSyncProviderService implements CalendarProviderService {
+public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     public static final String APPLICATION_NAME = "Urlaubsverwaltung";
-    private static final Logger LOG = Logger.getLogger(GoogleCalendarSyncProviderService.class);
+    private static final Logger LOG = Logger.getLogger(GoogleCalendarSyncProvider.class);
     /**
      * Global instance of the JSON factory.
      */
@@ -52,7 +54,7 @@ public class GoogleCalendarSyncProviderService implements CalendarProviderServic
     SettingsService settingsService;
 
     @Autowired
-    public GoogleCalendarSyncProviderService(MailService mailService, SettingsService settingsService) {
+    public GoogleCalendarSyncProvider(MailService mailService, SettingsService settingsService) {
 
         this.settingsService = settingsService;
 

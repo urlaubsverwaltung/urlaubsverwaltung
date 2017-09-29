@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,10 +10,8 @@ import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
-import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProviderService;
-import org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProviderService;
-
-import java.util.Optional;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 
 
 /**
@@ -25,8 +22,7 @@ import java.util.Optional;
 public class CalendarSyncServiceImplTest {
 
     private SettingsService settingsService;
-    private ExchangeCalendarProviderService exchangeCalendarProviderService;
-    private GoogleCalendarSyncProviderService googleCalendarProviderService;
+    private CalendarProvider calendarProvider;
 
     private CalendarSyncService calendarSyncService;
     private Settings settings;
@@ -35,13 +31,14 @@ public class CalendarSyncServiceImplTest {
     public void setUp() {
 
         settingsService = Mockito.mock(SettingsService.class);
-        exchangeCalendarProviderService = Mockito.mock(ExchangeCalendarProviderService.class);
-        googleCalendarProviderService = Mockito.mock(GoogleCalendarSyncProviderService.class);
-
-        calendarSyncService = new CalendarSyncServiceImpl(settingsService, exchangeCalendarProviderService, googleCalendarProviderService);
-
         settings = new Settings();
+        settings.setCalendarSettings(new CalendarSettings());
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
+        calendarProvider = Mockito.mock(ExchangeCalendarProvider.class);
+
+        calendarSyncService = new CalendarSyncServiceImpl(settingsService, calendarProvider);
+
     }
 
 
@@ -55,24 +52,8 @@ public class CalendarSyncServiceImplTest {
 
         calendarSyncService.addAbsence(absence);
 
-        Mockito.verify(exchangeCalendarProviderService)
+        Mockito.verify(calendarProvider)
             .add(Mockito.eq(absence), Mockito.eq(settings.getCalendarSettings()));
-    }
-
-
-    @Test
-    public void ensureDoesNotAddAbsenceToExchangeCalendarIfDeactivated() {
-
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(false);
-
-        Absence absence = Mockito.mock(Absence.class);
-
-        Optional<String> optionalEventId = calendarSyncService.addAbsence(absence);
-
-        Mockito.verifyZeroInteractions(exchangeCalendarProviderService);
-
-        Assert.assertFalse("Should be empty", optionalEventId.isPresent());
     }
 
 
@@ -87,23 +68,8 @@ public class CalendarSyncServiceImplTest {
 
         calendarSyncService.update(absence, eventId);
 
-        Mockito.verify(exchangeCalendarProviderService)
+        Mockito.verify(calendarProvider)
             .update(Mockito.eq(absence), Mockito.eq(eventId), Mockito.eq(settings.getCalendarSettings()));
-    }
-
-
-    @Test
-    public void ensureDoesNotUpdateAbsenceInExchangeCalendarIfDeactivated() {
-
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(false);
-
-        Absence absence = Mockito.mock(Absence.class);
-        String eventId = "event-1";
-
-        calendarSyncService.update(absence, eventId);
-
-        Mockito.verifyZeroInteractions(exchangeCalendarProviderService);
     }
 
 
@@ -117,22 +83,8 @@ public class CalendarSyncServiceImplTest {
 
         calendarSyncService.deleteAbsence(eventId);
 
-        Mockito.verify(exchangeCalendarProviderService)
+        Mockito.verify(calendarProvider)
             .delete(Mockito.eq(eventId), Mockito.eq(settings.getCalendarSettings()));
-    }
-
-
-    @Test
-    public void ensureDoesNotDeleteAbsenceInExchangeCalendarIfDeactivated() {
-
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(false);
-
-        String eventId = "event-1";
-
-        calendarSyncService.deleteAbsence(eventId);
-
-        Mockito.verifyZeroInteractions(exchangeCalendarProviderService);
     }
 
 
@@ -144,18 +96,8 @@ public class CalendarSyncServiceImplTest {
 
         calendarSyncService.checkCalendarSyncSettings();
 
-        Mockito.verify(exchangeCalendarProviderService).checkCalendarSyncSettings(Mockito.any(CalendarSettings.class));
+        Mockito.verify(calendarProvider).checkCalendarSyncSettings(Mockito.any(CalendarSettings.class));
     }
 
 
-    @Test
-    public void ensureDoesNotCheckExchangeCalendarSettingsIfNotActivated() {
-
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(false);
-
-        calendarSyncService.checkCalendarSyncSettings();
-
-        Mockito.verifyZeroInteractions(exchangeCalendarProviderService);
-    }
 }
