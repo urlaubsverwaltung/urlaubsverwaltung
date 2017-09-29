@@ -32,8 +32,6 @@
 <form:form method="POST" action="${ACTION}" modelAttribute="person" class="form-horizontal">
 <form:hidden path="id" />
 <form:hidden path="password" />
-<form:hidden path="privateKey" />
-<form:hidden path="publicKey" />
 
 <div class="row">
 

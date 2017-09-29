@@ -43,17 +43,6 @@ public class Person extends AbstractPersistable<Integer> {
 
     private String email;
 
-    // private key of person - RSA
-    // private key has to be saved as byte[] in database
-    // when retrieved from database, byte[] have to be transformed back to private key
-    @Column(columnDefinition = "longblob")
-    private byte[] privateKey;
-
-    // public key of person
-    // saving like private key
-    @Column(columnDefinition = "longblob")
-    private byte[] publicKey;
-
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     @Enumerated(EnumType.STRING)
@@ -136,47 +125,6 @@ public class Person extends AbstractPersistable<Integer> {
 
         this.password = password;
     }
-
-
-    public byte[] getPrivateKey() {
-
-        if (privateKey == null) {
-            return null;
-        }
-
-        return Arrays.copyOf(privateKey, privateKey.length);
-    }
-
-
-    public void setPrivateKey(byte[] privateKey) {
-
-        if (privateKey != null) {
-            this.privateKey = Arrays.copyOf(privateKey, privateKey.length);
-        } else {
-            this.privateKey = null;
-        }
-    }
-
-
-    public byte[] getPublicKey() {
-
-        if (publicKey == null) {
-            return null;
-        }
-
-        return Arrays.copyOf(publicKey, publicKey.length);
-    }
-
-
-    public void setPublicKey(byte[] publicKey) {
-
-        if (publicKey != null) {
-            this.publicKey = Arrays.copyOf(publicKey, publicKey.length);
-        } else {
-            this.publicKey = null;
-        }
-    }
-
 
     public void setPermissions(Collection<Role> permissions) {
 
