@@ -49,7 +49,7 @@ public class VacationOverviewServiceTest {
         String email = "muster@firma.test";
         Person person = new Person("test", "Muster", "Max", email);
         department.setMembers(Arrays.asList(person));
-        DateMidnight now = DateMidnight.now();
+        DateMidnight testDate = DateMidnight.parse("2017-09-01");
         FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
         when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(department));
@@ -57,7 +57,7 @@ public class VacationOverviewServiceTest {
         when(publicHolidayService.getWorkingDurationOfDate(any(DateMidnight.class), any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 
         List<VacationOverview> vacationOverviews =
-                sut.getVacationOverviews(departmentName, now.getYear(), now.getMonthOfYear());
+                sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthOfYear());
 
         assertThat(vacationOverviews, hasSize(1));
         assertThat(vacationOverviews.get(0).getPerson().getEmail(), is(email));
