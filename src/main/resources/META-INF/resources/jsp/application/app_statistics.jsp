@@ -61,6 +61,7 @@
                 <legend class="is-sticky">
                     <spring:message code="applications.statistics"/>
                     <uv:print/>
+                    <uv:export/>
                 </legend>
 
                 <p class="is-inline-block">
