@@ -9,11 +9,11 @@ import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
 
-@ConditionalOnProperty(prefix = "uv.calendar", name = "provider", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "uv.calendar", name = "provider", havingValue = "noop")
 @Service
-public class NoopCalendarProvider implements CalendarProvider {
+public class NoopCalendarSyncProvider implements CalendarProvider {
 
-    private static final Logger LOG = Logger.getLogger(NoopCalendarProvider.class);
+    private static final Logger LOG = Logger.getLogger(NoopCalendarSyncProvider.class);
 
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
@@ -36,6 +36,6 @@ public class NoopCalendarProvider implements CalendarProvider {
 
     @Override
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
-
+        LOG.info(String.format("No calendar provider configured to check calendarSettings '%s'", calendarSettings));
     }
 }
