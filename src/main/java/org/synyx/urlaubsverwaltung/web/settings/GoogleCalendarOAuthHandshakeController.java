@@ -15,6 +15,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 
 import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
@@ -37,7 +39,8 @@ import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalen
 @RequestMapping("/web")
 public class GoogleCalendarOAuthHandshakeController {
 
-    private final static Log logger = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
+    private static final Log LOG = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
+
     private static final String REDIRECT_REL = "/google-api-handshake";
     private static final String REDIRECT_URL = "http://localhost:8080/web" + REDIRECT_REL;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -49,13 +52,16 @@ public class GoogleCalendarOAuthHandshakeController {
     private GoogleAuthorizationCodeFlow flow;
 
     @Autowired
-    public GoogleCalendarOAuthHandshakeController(SettingsService settingsService) {
+    public GoogleCalendarOAuthHandshakeController(SettingsService settingsService)
+            throws GeneralSecurityException, IOException {
+
         this.settingsService = settingsService;
+        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping(REDIRECT_REL)
-    public String googleConnectionStatus(HttpServletRequest request) throws Exception {
+    public String googleConnectionStatus(HttpServletRequest request) {
         return "redirect:" + authorize();
     }
 
@@ -74,20 +80,20 @@ public class GoogleCalendarOAuthHandshakeController {
             Settings settings = settingsService.getSettings();
             HttpResponse httpResponse = checkGoogleCalendar(client, settings);
 
-            if (httpResponse.getStatusCode() == 200) {
-                logger.info("OAuth Handshake was successful!");
+            if (httpResponse.getStatusCode() == HttpStatus.SC_OK) {
+                LOG.info("OAuth Handshake was successful!");
                 settings.getCalendarSettings().getGoogleCalendarSettings()
                         .setRefreshToken(credential.getRefreshToken());
                 settingsService.save(settings);
             } else {
                 error = "OAuth handshake error " + httpResponse.getStatusMessage();
-                logger.warn(error);
+                LOG.warn(error);
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             error = "Exception while handling OAuth2 callback (" + e.getMessage() + ")."
                     + " Redirecting to google connection status page.";
-            logger.error(error);
+            LOG.error(error, e);
         }
 
         StringBuilder buf = new StringBuilder();
@@ -103,13 +109,13 @@ public class GoogleCalendarOAuthHandshakeController {
         return buf.toString();
     }
 
-    private HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
+    private static HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
         String calendarId = settings.getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
         Calendar.Calendars.Get metadata = client.calendars().get(calendarId);
         return metadata.buildHttpRequestUsingHead().execute();
     }
 
-    private String authorize() throws Exception {
+    private String authorize() {
         AuthorizationCodeRequestUrl authorizationUrl;
 
         Details web = new Details();
@@ -122,14 +128,13 @@ public class GoogleCalendarOAuthHandshakeController {
         GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
 
         clientSecrets.setWeb(web);
-        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
         flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR)).build();
 
         authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URL);
 
-        logger.info("using authorizationUrl " + authorizationUrl);
+        LOG.info("using authorizationUrl " + authorizationUrl);
         return authorizationUrl.build();
     }
 }
