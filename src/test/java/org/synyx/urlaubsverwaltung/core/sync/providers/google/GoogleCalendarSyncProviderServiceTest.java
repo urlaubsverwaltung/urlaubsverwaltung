@@ -36,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
 import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider.GOOGLEAPIS_OAUTH2_V4_TOKEN;
 
 public class GoogleCalendarSyncProviderServiceTest {
@@ -97,8 +98,6 @@ public class GoogleCalendarSyncProviderServiceTest {
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setRefreshToken(REFRESH_TOKEN);
         Credential credential = createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse);
-
-        String APPLICATION_NAME = "testing";
 
         Calendar calendar = new com.google.api.services.calendar.Calendar.Builder(
                 httpTransport, jsonFactory, credential).setApplicationName(APPLICATION_NAME).build();

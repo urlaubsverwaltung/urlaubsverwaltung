@@ -18,6 +18,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -47,7 +48,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
      */
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final Logger LOG = Logger.getLogger(GoogleCalendarSyncProvider.class);
-    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
+
+    public static final String APPLICATION_NAME = "Urlaubsverwaltung";
     static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
     private final Calendar googleCalendarClient;
