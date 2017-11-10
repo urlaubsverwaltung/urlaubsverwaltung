@@ -12,6 +12,7 @@ import com.google.api.services.calendar.Calendar;
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -33,6 +34,9 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider.GOOGLEAPIS_OAUTH2_V4_TOKEN;
 
 public class GoogleCalendarSyncProviderServiceTest {
 
@@ -41,8 +45,12 @@ public class GoogleCalendarSyncProviderServiceTest {
     private static String CALENDAR_ID;
     private static String REFRESH_TOKEN;
 
+    private SettingsService settingsService;
+    private MailService mailService;
+    private GoogleCalendarSyncProvider googleCalendarSyncProvider;
+
     @BeforeClass
-    public static void setUp() throws IOException {
+    public static void setUpProperties() throws IOException {
         Properties prop = new Properties();
         File file = new File("src/test/resources/google_oauth.properties");
 
@@ -60,13 +68,11 @@ public class GoogleCalendarSyncProviderServiceTest {
         Assume.assumeTrue("refreshToken for testing should be defined", REFRESH_TOKEN != null);
     }
 
-    private GoogleCalendarSyncProvider sut;
-
-    public static HttpResponse executeGet(HttpTransport transport, JsonFactory jsonFactory, String accessToken, GenericUrl url)
-            throws IOException {
-        Credential credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
-        HttpRequestFactory requestFactory = transport.createRequestFactory(credential);
-        return requestFactory.buildGetRequest(url).execute();
+    @Before
+    public void setUp() throws Exception {
+        settingsService = prepareSettingsServiceMock();
+        mailService = mock(MailService.class);
+        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(mailService, settingsService);
     }
 
     private static Credential createCredentialWithRefreshToken(
@@ -76,7 +82,7 @@ public class GoogleCalendarSyncProviderServiceTest {
                 transport)
                 .setJsonFactory(jsonFactory)
                 .setTokenServerUrl(
-                        new GenericUrl("https://www.googleapis.com/oauth2/v4/token"))
+                        new GenericUrl(GOOGLEAPIS_OAUTH2_V4_TOKEN))
                 .setClientAuthentication(new BasicAuthentication(
                         CLIENT_ID,
                         CLIENT_SECRET))
@@ -84,20 +90,7 @@ public class GoogleCalendarSyncProviderServiceTest {
                 .setFromTokenResponse(tokenResponse);
     }
 
-    @Test
-    public void createCredentialWithRefreshToken() throws GeneralSecurityException, IOException {
-        NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        GenericUrl url = new GenericUrl("https://www.googleapis.com/oauth2/v4/token");
-
-        //executeGet(httpTransport, jsonFactory, refreshToken, url);
-
-        TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setRefreshToken(REFRESH_TOKEN);
-        createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse);
-    }
-
-    private int getCalendarEventCount() throws GeneralSecurityException, IOException {
+    private Integer getCalendarEventCount() throws GeneralSecurityException, IOException {
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
@@ -117,62 +110,36 @@ public class GoogleCalendarSyncProviderServiceTest {
 
     @Test
     public void testCalendarEventCount() throws GeneralSecurityException, IOException {
-        int events = getCalendarEventCount();
-
-        Assert.assertTrue(events >= 0);
+        Integer eventCount = getCalendarEventCount();
+        Assert.assertTrue(eventCount >= 0);
     }
 
 
     @Test
     public void init() {
-        MailService mailService = Mockito.mock(MailService.class);
-
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
-        Settings set = Mockito.mock(Settings.class);
-        CalendarSettings cSet = Mockito.mock(CalendarSettings.class);
-        GoogleCalendarSettings gcSet = Mockito.mock(GoogleCalendarSettings.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(set);
-        Mockito.when(set.getCalendarSettings()).thenReturn(cSet);
-        Mockito.when(cSet.getGoogleCalendarSettings()).thenReturn(gcSet);
-        Mockito.when(gcSet.getCalendarId()).thenReturn("calenderId");
-
-        sut = new GoogleCalendarSyncProvider(mailService, settingsService);
+        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(mailService, settingsService);
     }
 
     @Test
     public void addUpdateDeleteAbsence() throws GeneralSecurityException, IOException {
-        MailService mailService = Mockito.mock(MailService.class);
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
-        Settings set = Mockito.mock(Settings.class);
-        CalendarSettings cSet = Mockito.mock(CalendarSettings.class);
-        GoogleCalendarSettings gcSet = Mockito.mock(GoogleCalendarSettings.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(set);
-        Mockito.when(set.getCalendarSettings()).thenReturn(cSet);
-        Mockito.when(cSet.getGoogleCalendarSettings()).thenReturn(gcSet);
+        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
 
-        Mockito.when(gcSet.getClientId()).thenReturn(CLIENT_ID);
-        Mockito.when(gcSet.getClientSecret()).thenReturn(CLIENT_SECRET);
-        Mockito.when(gcSet.getCalendarId()).thenReturn(CALENDAR_ID);
-        Mockito.when(gcSet.getRefreshToken()).thenReturn(REFRESH_TOKEN);
-
-        sut = new GoogleCalendarSyncProvider(mailService, settingsService);
-        Person person = new Person();
+        Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
         Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.MORNING);
 
-        CalendarSettings cSet2 = Mockito.mock(CalendarSettings.class);
-        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(cSet2);
+        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(Mockito.mock(CalendarSettings.class));
         Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, config);
 
         int eventsBeforeAdd = getCalendarEventCount();
-        String eventId = sut.add(absence, cSet).get();
+        String eventId = googleCalendarSyncProvider.add(absence, calendarSettings).get();
         int eventsAfterAdd = getCalendarEventCount();
 
         Absence absenceUpdate = new Absence(person, period, EventType.SICKNOTE, config);
-        sut.update(absenceUpdate, eventId, cSet);
+        googleCalendarSyncProvider.update(absenceUpdate, eventId, calendarSettings);
         int eventsAfterUpdate = getCalendarEventCount();
 
-        sut.delete(eventId, cSet);
+        googleCalendarSyncProvider.delete(eventId, calendarSettings);
         int eventsAfterDelete = getCalendarEventCount();
 
         assertTrue(!eventId.isEmpty());
@@ -180,4 +147,18 @@ public class GoogleCalendarSyncProviderServiceTest {
         assertEquals(eventsAfterAdd, eventsAfterUpdate);
         assertEquals(eventsAfterDelete, eventsBeforeAdd);
     }
-}
+
+    private SettingsService prepareSettingsServiceMock() {
+        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = new CalendarSettings();
+        GoogleCalendarSettings googleCalendarSettings = new GoogleCalendarSettings();
+        googleCalendarSettings.setCalendarId(CALENDAR_ID);
+        googleCalendarSettings.setClientId(CLIENT_ID);
+        googleCalendarSettings.setClientSecret(CLIENT_SECRET);
+        googleCalendarSettings.setRefreshToken(REFRESH_TOKEN);
+        calendarSettings.setGoogleCalendarSettings(googleCalendarSettings);
+        settings.setCalendarSettings(calendarSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        return settingsService;
+    }}
