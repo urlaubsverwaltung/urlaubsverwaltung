@@ -31,12 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collections;
 
+import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
+
 @Controller
 @RequestMapping("/web")
 public class GoogleCalendarOAuthHandshakeController {
 
     private final static Log logger = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
-    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
     private static final String REDIRECT_REL = "/google-api-handshake";
     private static final String REDIRECT_URL = "http://localhost:8080/web" + REDIRECT_REL;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
