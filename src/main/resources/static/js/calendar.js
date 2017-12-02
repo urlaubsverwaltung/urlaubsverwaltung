@@ -69,7 +69,7 @@ $(function() {
                 return holidayService.isSickDay(date);
             },
             isHalfDay: function(date) {
-              return holidayService.isHalfDay(date);
+              return !assert.isWeekend(date) && holidayService.isHalfDay(date);
             },
             title: function(date) {
               return holidayService.getDescription(date);
