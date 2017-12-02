@@ -63,7 +63,7 @@ $(function() {
                 return holidayService.isPublicHoliday(date);
             },
             isPersonalHoliday: function(date) {
-                return holidayService.isPersonalHoliday(date);
+                return !assert.isWeekend(date) && holidayService.isPersonalHoliday(date);
             },
             isSickDay: function(date) {
                 return holidayService.isSickDay(date);
