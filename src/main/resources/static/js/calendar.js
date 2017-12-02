@@ -175,6 +175,10 @@ $(function() {
             var year = date.year();
             var formattedDate = date.format('YYYY-MM-DD');
 
+            if (!_CACHE[type]) {
+                return false;
+            }
+
             if(_CACHE[type][year]) {
 
               var holiday = _.findWhere(_CACHE[type][year], {date: formattedDate});
@@ -203,6 +207,10 @@ $(function() {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
+
+              if (!_CACHE['publicHoliday']) {
+                  return false;
+              }
 
               if(_CACHE['publicHoliday'][year]) {
 
@@ -242,6 +250,10 @@ $(function() {
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
 
+              if (!_CACHE['publicHoliday']) {
+                  return '';
+              }
+
               if(_CACHE['publicHoliday'][year]) {
 
                 var publicHoliday = _.findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
@@ -260,6 +272,10 @@ $(function() {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
+
+              if (!_CACHE['holiday']) {
+                  return null;
+              }
 
               if(_CACHE['holiday'][year]) {
 
@@ -281,6 +297,10 @@ $(function() {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
+
+              if (!_CACHE['holiday']) {
+                  return '-1';
+              }
 
               if(_CACHE['holiday'][year]) {
 
@@ -310,6 +330,10 @@ $(function() {
 
                 var year = date.year();
                 var formattedDate = date.format('YYYY-MM-DD');
+
+                if (!_CACHE['holiday']) {
+                    return '';
+                }
 
                 if(_CACHE['holiday'][year]) {
 
