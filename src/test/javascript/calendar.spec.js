@@ -50,6 +50,23 @@ describe ('calendar', () => {
         expect(christmasEve.classList).not.toContain('datepicker-day-personal-holiday');
     });
 
+    it ('does not set datepicker-day-sick-note on weekend', () => {
+        // 01.12.2017
+        const referenceDate = new Date(1512130448379);
+
+        const webPrefix = 'webPrefix';
+        const apiPrefix = 'apiPrefix';
+        const personId = 'personId';
+        const holidayService = window.Urlaubsverwaltung.HolidayService.create();
+        jest.spyOn(holidayService, 'isSickDay').mockReturnValue(true);
+
+        window.Urlaubsverwaltung.Calendar.init(holidayService, referenceDate);
+
+        const christmasEve = document.body.querySelector('[data-datepicker-date="2017-12-24"]');
+        expect(christmasEve).not.toBeNull();
+        expect(christmasEve.classList).not.toContain('datepicker-day-sick-note');
+    });
+
     async function calendarTestSetup () {
         await setup();
 

@@ -66,7 +66,7 @@ $(function() {
                 return !assert.isWeekend(date) && holidayService.isPersonalHoliday(date);
             },
             isSickDay: function(date) {
-                return holidayService.isSickDay(date);
+                return !assert.isWeekend(date) && holidayService.isSickDay(date);
             },
             isHalfDay: function(date) {
               return !assert.isWeekend(date) && holidayService.isHalfDay(date);
