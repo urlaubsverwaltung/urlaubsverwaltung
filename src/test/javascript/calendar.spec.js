@@ -1,7 +1,8 @@
-import { setup } from './TestSetupHelper';
+import { setup, cleanup } from './TestSetupHelper';
 
 describe ('calendar', () => {
     beforeEach (calendarTestSetup);
+    afterEach (cleanup);
 
     it ('renders', () => {
         // 01.12.2017
