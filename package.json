@@ -20,7 +20,30 @@
     "url": "https://github.com/synyx/urlaubsverwaltung/issues"
   },
   "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
+  "dependencies": {},
   "devDependencies": {
-    "jest": "21.2.1"
+    "babel-core": "6.26.0",
+    "babel-plugin-dynamic-import-node": "1.2.0",
+    "babel-preset-env": "1.6.1",
+    "jest": "21.2.1",
+    "moment": "2.19.3"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "babel-plugin-dynamic-import-node"
+    ]
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   }
 }
