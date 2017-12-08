@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -145,7 +146,11 @@ public class ApplicationForLeaveStatisticsController {
             return "application/app_statistics";
         }
 
-        DecimalFormat decimalFormat = new DecimalFormat();
+        DecimalFormat decimalFormat = (DecimalFormat) DecimalFormat.getInstance(LOCALE);
+        DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
+        newSymbols.setDecimalSeparator(',');
+        newSymbols.setGroupingSeparator('.');
+        decimalFormat.setDecimalFormatSymbols(newSymbols);
 
         List<Person> persons = getRelevantPersons();
 
@@ -184,8 +189,10 @@ public class ApplicationForLeaveStatisticsController {
                     String[] csvRowVacationTypes = new String[csvHeader.length];
 
                     csvRowVacationTypes[2] = type.getDisplayName();
-                    csvRowVacationTypes[3] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays().get(type));
-                    csvRowVacationTypes[4] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays().get(type));
+                    csvRowVacationTypes[3] = decimalFormat
+                        .format(applicationForLeaveStatistics.getAllowedVacationDays().get(type));
+                    csvRowVacationTypes[4] = decimalFormat
+                        .format(applicationForLeaveStatistics.getWaitingVacationDays().get(type));
 
                     csvWriter.writeNext(csvRowVacationTypes);
                 }
