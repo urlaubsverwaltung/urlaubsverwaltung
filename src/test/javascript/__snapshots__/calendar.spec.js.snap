@@ -1789,11 +1789,11 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past     "
+                  class="datepicker-day datepicker-day-today       "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-01"
-                  data-datepicker-selectable="false"
+                  data-datepicker-selectable="true"
                   data-title=""
                 >
                   01
@@ -1801,7 +1801,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day datepicker-day-today datepicker-day-weekend      "
+                  class="datepicker-day  datepicker-day-weekend      "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-02"
