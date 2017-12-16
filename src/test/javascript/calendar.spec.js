@@ -50,8 +50,8 @@ describe ('calendar', () => {
     }
 
     function renderCalendar (holidayService) {
-        // 01.12.2017
-        const referenceDate = new Date(1512130448379);
+        // note: date.now is mocked in calendarTestSetup
+        const referenceDate = Date.now();
         window.Urlaubsverwaltung.Calendar.init(holidayService, referenceDate);
     }
 
@@ -60,6 +60,9 @@ describe ('calendar', () => {
 
         jest.spyOn(window.jQuery, 'ajax').mockReturnValue(Promise.reject());
         window.moment = await import('moment');
+
+        // 01.12.2017
+        jest.spyOn(Date, 'now').mockReturnValue(new Date(1512130448379));
 
         document.body.innerHTML = `<div id="datepicker"></div>`;
 
