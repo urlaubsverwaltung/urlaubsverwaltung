@@ -39,7 +39,6 @@ import java.util.Optional;
  * @author Daniel Hammann - hammann@synyx.de
  * @author Marc Sommer - sommer@synyx.de
  */
-@ConditionalOnProperty(prefix = "uv.calendar", name = "provider", havingValue = "google")
 @Service
 public class GoogleCalendarSyncProvider implements CalendarProvider {
 

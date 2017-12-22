@@ -450,6 +450,19 @@
                                 <span class="help-inline"><form:errors path="calendarSettings.workDayEndHour" cssClass="error"/></span>
                             </div>
                         </div>
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="calendarSettings.provider">
+                                <spring:message code='settings.calendar.provider'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:select id="calendarSettings.provider" path="calendarSettings.provider" class="form-control" cssErrorClass="form-control error">
+                                    <c:forEach items="${providers}" var="provider">
+                                        <form:option value="${provider}"><spring:message code="settings.calendar.provider.${provider}" /></form:option>
+                                    </c:forEach>
+                                </form:select>
+                                <span class="help-inline"><form:errors path="calendarSettings.provider" cssClass="error"/></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

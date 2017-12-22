@@ -23,8 +23,12 @@ import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -39,6 +43,9 @@ public class SettingsController {
 
     @Autowired
     private CalendarSyncService calendarSyncService;
+
+    @Autowired
+    private List<CalendarProvider> calendarProviders;
 
     @Autowired
     private MailService mailService;
@@ -56,6 +63,9 @@ public class SettingsController {
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
+
+        List<String> providers = calendarProviders.stream().map(provider -> provider.getClass().getSimpleName()).collect(Collectors.toList());
+        model.addAttribute("providers", providers);
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, googleOAuthError);
