@@ -477,21 +477,6 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
-                        <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.active">
-                                <spring:message code='settings.calendar.ews.active'/>:
-                            </label>
-                            <div class="col-md-8 radio">
-                                <label class="halves">
-                                    <form:radiobutton id="calendarSettings.exchangeCalendarSettings.active" path="calendarSettings.exchangeCalendarSettings.active" value="true"/>
-                                    <spring:message code="settings.calendar.ews.active.true"/>
-                                </label>
-                                <label class="halves">
-                                    <form:radiobutton id="calendarSettings.exchangeCalendarSettings.active" path="calendarSettings.exchangeCalendarSettings.active" value="false"/>
-                                    <spring:message code="settings.calendar.ews.active.false"/>
-                                </label>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.email">
                                 <spring:message code='settings.calendar.ews.email'/>:
@@ -544,22 +529,6 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
-                        <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.active">
-                                <spring:message code='settings.calendar.google.active'/>:
-                            </label>
-                            <div class="col-md-8 radio">
-                                <label class="halves">
-                                    <form:radiobutton id="calendarSettings.googleCalendarSettings.active" path="calendarSettings.googleCalendarSettings.active" value="true"/>
-                                    <spring:message code="settings.calendar.google.active.true"/>
-                                </label>
-                                <label class="halves">
-                                    <form:radiobutton id="calendarSettings.googleCalendarSettings.active" path="calendarSettings.googleCalendarSettings.active" value="false"/>
-                                    <spring:message code="settings.calendar.google.active.false"/>
-                                </label>
-                            </div>
-                        </div>
-
                         <div class="form-group">
                             <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.clientId">
                                 <spring:message code='settings.calendar.google.clientid'/>:

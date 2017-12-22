@@ -8,12 +8,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
-import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.core.settings.*;
+import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
+import org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 
@@ -295,7 +292,12 @@ public class SettingsValidator implements Validator {
 
         validateCalendarSettings(calendarSettings, errors);
 
-        validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
+        if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getName())) {
+            validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
+        }
+        if (calendarSettings.getProvider().equals(GoogleCalendarSyncProvider.class.getName())) {
+            validateGoogleCalendarSettings(calendarSettings.getGoogleCalendarSettings(), errors);
+        }
     }
 
 
@@ -339,12 +341,13 @@ public class SettingsValidator implements Validator {
 
 
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
+        validateExchangeEmail(exchangeCalendarSettings, errors);
+        validateExchangePassword(exchangeCalendarSettings, errors);
+        validateExchangeCalendarName(exchangeCalendarSettings, errors);
+    }
 
-        if (exchangeCalendarSettings.isActive()) {
-            validateExchangeEmail(exchangeCalendarSettings, errors);
-            validateExchangePassword(exchangeCalendarSettings, errors);
-            validateExchangeCalendarName(exchangeCalendarSettings, errors);
-        }
+    private void validateGoogleCalendarSettings(GoogleCalendarSettings googleCalendarSettings, Errors errors) {
+        // TODO: implement
     }
 
 

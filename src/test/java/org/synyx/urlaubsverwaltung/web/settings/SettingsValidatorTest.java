@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.settings.*;
+import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 
 
 /**
@@ -478,7 +479,6 @@ public class SettingsValidatorTest {
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
             .getExchangeCalendarSettings();
 
-        exchangeCalendarSettings.setActive(false);
         exchangeCalendarSettings.setEmail(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
@@ -491,13 +491,13 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureExchangeCalendarSettingsAreMandatoryIfActivated() {
+    public void ensureExchangeCalendarSettingsAreMandatory() {
 
         Settings settings = new Settings();
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
             .getExchangeCalendarSettings();
 
-        exchangeCalendarSettings.setActive(true);
+        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getName());
         exchangeCalendarSettings.setEmail(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
@@ -521,7 +521,7 @@ public class SettingsValidatorTest {
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
             .getExchangeCalendarSettings();
 
-        exchangeCalendarSettings.setActive(true);
+        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getName());
         exchangeCalendarSettings.setEmail("synyx");
         exchangeCalendarSettings.setPassword("top-secret");
         exchangeCalendarSettings.setCalendar("Urlaub");

@@ -12,9 +12,6 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class GoogleCalendarSettings {
 
-    @Column(name = "calendar_google_active")
-    private boolean active = false;
-
     @Column(name = "calendar_google_client_id")
     private String clientId;
 
@@ -49,14 +46,6 @@ public class GoogleCalendarSettings {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public String getCalendarId() {

@@ -14,9 +14,6 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class ExchangeCalendarSettings {
 
-    @Column(name = "calendar_ews_active")
-    private boolean active = false;
-
     @Column(name = "calendar_ews_email")
     private String email;
 
@@ -28,17 +25,6 @@ public class ExchangeCalendarSettings {
 
     @Column(name = "calendar_ews_sendInvitationActive")
     private boolean sendInvitationActive = false;
-
-    public boolean isActive() {
-
-        return active;
-    }
-
-
-    public void setActive(boolean active) {
-
-        this.active = active;
-    }
 
 
     public String getEmail() {

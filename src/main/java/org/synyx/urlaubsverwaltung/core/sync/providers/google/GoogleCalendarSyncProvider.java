@@ -94,29 +94,27 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
-        if (settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().isActive()) {
-            if (googleCalendarClient == null) {
-                googleCalendarClient = createGoogleCalendarClient();
-            }
-            if (googleCalendarClient != null) {
-                GoogleCalendarSettings googleCalendarSettings =
-                        settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
-                String calendarId = googleCalendarSettings.getCalendarId();
+        if (googleCalendarClient == null) {
+            googleCalendarClient = createGoogleCalendarClient();
+        }
+        if (googleCalendarClient != null) {
+            GoogleCalendarSettings googleCalendarSettings =
+                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
+            String calendarId = googleCalendarSettings.getCalendarId();
 
-                try {
-                    Event eventToCommit = new Event();
-                    fillEvent(absence, eventToCommit);
+            try {
+                Event eventToCommit = new Event();
+                fillEvent(absence, eventToCommit);
 
-                    Event eventInCalendar = googleCalendarClient.events().insert(calendarId, eventToCommit).execute();
+                Event eventInCalendar = googleCalendarClient.events().insert(calendarId, eventToCommit).execute();
 
-                    LOG.info(String.format("Event %s for '%s' added to google calendar '%s'.", eventInCalendar.getId(),
-                            absence.getPerson().getNiceName(), eventInCalendar.getSummary()));
-                    return Optional.of(eventInCalendar.getId());
+                LOG.info(String.format("Event %s for '%s' added to google calendar '%s'.", eventInCalendar.getId(),
+                        absence.getPerson().getNiceName(), eventInCalendar.getSummary()));
+                return Optional.of(eventInCalendar.getId());
 
-                } catch (IOException ex) {
-                    LOG.warn("An error occurred while trying to add appointment to Exchange calendar", ex);
-                    mailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
-                }
+            } catch (IOException ex) {
+                LOG.warn("An error occurred while trying to add appointment to Exchange calendar", ex);
+                mailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
         return Optional.empty();
@@ -126,31 +124,29 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
 
-        if (settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().isActive()) {
-            if (googleCalendarClient == null) {
-                googleCalendarClient = createGoogleCalendarClient();
-            }
+        if (googleCalendarClient == null) {
+            googleCalendarClient = createGoogleCalendarClient();
+        }
 
-            if (googleCalendarClient != null) {
+        if (googleCalendarClient != null) {
 
-                String calendarId =
-                        settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+            String calendarId =
+                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
 
-                try {
-                    // gather exiting event
-                    Event event = googleCalendarClient.events().get(calendarId, eventId).execute();
+            try {
+                // gather exiting event
+                Event event = googleCalendarClient.events().get(calendarId, eventId).execute();
 
-                    // update event with absence
-                    fillEvent(absence, event);
+                // update event with absence
+                fillEvent(absence, event);
 
-                    // sync event to calendar
-                    googleCalendarClient.events().patch(calendarId, eventId, event).execute();
+                // sync event to calendar
+                googleCalendarClient.events().patch(calendarId, eventId, event).execute();
 
-                    LOG.info(String.format("Event %s has been updated in google calendar '%s'.", eventId, calendarId));
-                } catch (IOException ex) {
-                    LOG.warn(String.format("Could not update event %s in google calendar '%s'.", eventId, calendarId), ex);
-                    mailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
-                }
+                LOG.info(String.format("Event %s has been updated in google calendar '%s'.", eventId, calendarId));
+            } catch (IOException ex) {
+                LOG.warn(String.format("Could not update event %s in google calendar '%s'.", eventId, calendarId), ex);
+                mailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
             }
         }
     }
@@ -159,24 +155,22 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public void delete(String eventId, CalendarSettings calendarSettings) {
 
-        if (settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().isActive()) {
-            if (googleCalendarClient == null) {
-                googleCalendarClient = createGoogleCalendarClient();
-            }
+        if (googleCalendarClient == null) {
+            googleCalendarClient = createGoogleCalendarClient();
+        }
 
-            if (googleCalendarClient != null) {
+        if (googleCalendarClient != null) {
 
-                String calendarId =
-                        settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+            String calendarId =
+                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
 
-                try {
-                    googleCalendarClient.events().delete(calendarId, eventId).execute();
+            try {
+                googleCalendarClient.events().delete(calendarId, eventId).execute();
 
-                    LOG.info(String.format("Event %s has been deleted in google calendar '%s'.", eventId, calendarId));
-                } catch (IOException ex) {
-                    LOG.warn(String.format("Could not delete event %s in google calendar '%s'", eventId, calendarId), ex);
-                    mailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
-                }
+                LOG.info(String.format("Event %s has been deleted in google calendar '%s'.", eventId, calendarId));
+            } catch (IOException ex) {
+                LOG.warn(String.format("Could not delete event %s in google calendar '%s'", eventId, calendarId), ex);
+                mailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
             }
         }
     }

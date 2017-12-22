@@ -152,7 +152,6 @@ public class GoogleCalendarSyncProviderServiceTest {
         Settings settings = new Settings();
         CalendarSettings calendarSettings = new CalendarSettings();
         GoogleCalendarSettings googleCalendarSettings = new GoogleCalendarSettings();
-        googleCalendarSettings.setActive(true);
         googleCalendarSettings.setCalendarId(CALENDAR_ID);
         googleCalendarSettings.setClientId(CLIENT_ID);
         googleCalendarSettings.setClientSecret(CLIENT_SECRET);
