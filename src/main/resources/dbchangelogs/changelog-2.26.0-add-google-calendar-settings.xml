@@ -10,7 +10,6 @@
         </preConditions>
 
         <addColumn tableName="Settings">
-            <column name="calendar_google_active" type="BIT(1)"/>
             <column name="calendar_google_client_id" type="VARCHAR(255)"/>
             <column name="calendar_google_client_secret" type="VARCHAR(255)"/>
             <column name="calendar_google_calendar_id" type="VARCHAR(255)"/>
