@@ -16,29 +16,6 @@
 
 <body>
 
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        activateTabFromAnchorLink();
-    });
-
-    /**
-     * when a anchor is defined in the url (#)
-     * then it will be opend.
-     */
-    function activateTabFromAnchorLink() {
-        var url = window.location.href;
-        var tabName = url.split('#')[1];
-        if (tabName) {
-            activaTab(tabName);
-        }
-    }
-
-    function activaTab(tab) {
-        $('.nav-tabs a[href="#' + tab + '"]').tab('show');
-    }
-</script>
-
 <uv:menu />
 
 <spring:url var="URL_PREFIX" value="/web"/>
@@ -466,7 +443,7 @@
                     </div>
                 </div>
 
-                <div class="form-section">
+                <div class="form-section" id="exchange-calendar">
                     <div class="col-xs-12">
                         <legend><spring:message code="settings.calendar.ews.title" /></legend>
                     </div>
@@ -518,7 +495,7 @@
                     </div>
                 </div>
 
-                <div class="form-section">
+                <div class="form-section" id="google-calendar">
                     <div class="col-xs-12">
                         <legend><spring:message code="settings.calendar.google.title" /></legend>
                     </div>
@@ -597,6 +574,48 @@
         </form:form>
     </div>
 </div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        activateTabFromAnchorLink();
+    });
+
+    /**
+     * when a anchor is defined in the url (#)
+     * then it will be opend.
+     */
+    function activateTabFromAnchorLink() {
+        var url = window.location.href;
+        var tabName = url.split('#')[1];
+        if (tabName) {
+            activaTab(tabName);
+        }
+    }
+
+    function activaTab(tab) {
+        $('.nav-tabs a[href="#' + tab + '"]').tab('show');
+    }
+
+
+    /**
+     * updates config section 'Kalendar Sync'
+     * shows dependent on Kalenderanbindung
+     *   * Anbindung an Google Kalender
+     *   * Anbindung an Microsoft Exchange Kalender
+     */
+    function updateVisibiltyCalendar() {
+        var value = document.getElementById('calendarSettings.provider').value;
+
+        document.getElementById('google-calendar').hidden = value !== 'GoogleCalendarSyncProvider';
+        document.getElementById('exchange-calendar').hidden = value !== 'ExchangeCalendarProvider';
+    }
+
+    // initial run to update view
+    updateVisibiltyCalendar();
+
+    document.getElementById('calendarSettings.provider').onchange = updateVisibiltyCalendar;
+</script>
 
 </body>
 
