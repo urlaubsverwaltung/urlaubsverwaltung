@@ -24,6 +24,9 @@ public class GoogleCalendarSettings {
     @Column(name = "calendar_google_refresh_token")
     private String refreshToken;
 
+    @Column(name = "calendar_google_redirect_base_url")
+    private String redirectBaseUrl;
+
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -54,5 +57,13 @@ public class GoogleCalendarSettings {
 
     public void setCalendarId(String calendarId) {
         this.calendarId = calendarId;
+    }
+
+    public String getRedirectBaseUrl() {
+        return redirectBaseUrl;
+    }
+
+    public void setRedirectBaseUrl(String redirectBaseUrl) {
+        this.redirectBaseUrl = redirectBaseUrl;
     }
 }
