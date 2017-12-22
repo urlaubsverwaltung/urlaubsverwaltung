@@ -46,10 +46,9 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureAddsAbsenceToExchangeCalendarIfActivated() {
+    public void ensureAddsAbsenceToExchangeCalendar() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(true);
 
         Absence absence = Mockito.mock(Absence.class);
 
@@ -61,10 +60,9 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureUpdatesAbsenceInExchangeCalendarIfActivated() {
+    public void ensureUpdatesAbsenceInExchangeCalendar() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(true);
 
         Absence absence = Mockito.mock(Absence.class);
         String eventId = "event-1";
@@ -77,10 +75,9 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureDeletedAbsenceInExchangeCalendarIfActivated() {
+    public void ensureDeletedAbsenceInExchangeCalendar() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(true);
 
         String eventId = "event-1";
 
@@ -92,10 +89,9 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureChecksExchangeCalendarSettingsIfActivated() {
+    public void ensureChecksExchangeCalendarSettings() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-        calendarSettings.setActive(true);
 
         calendarSyncService.checkCalendarSyncSettings();
 
