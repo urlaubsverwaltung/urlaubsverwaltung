@@ -22,39 +22,39 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
     private static final Logger LOG = Logger.getLogger(CalendarSyncServiceImpl.class);
 
     private final CalendarSettings calendarSettings;
-    private final CalendarProvider calendarProvider;
+    private final CalendarService calendarService;
 
     @Autowired
-    public CalendarSyncServiceImpl(SettingsService settingsService, CalendarProvider calendarProvider) {
+    public CalendarSyncServiceImpl(SettingsService settingsService, CalendarService calendarService) {
 
         this.calendarSettings = settingsService.getSettings().getCalendarSettings();
-        this.calendarProvider = calendarProvider;
+        this.calendarService = calendarService;
 
-        LOG.info("The following calendar provider is configured: " + calendarProvider.getClass());
+        LOG.info("The following calendar provider is configured: " + calendarService.getCalendarProvider().getClass());
     }
 
     @Override
     public Optional<String> addAbsence(Absence absence) {
 
-        return calendarProvider.add(absence, calendarSettings);
+        return calendarService.getCalendarProvider().add(absence, calendarSettings);
     }
 
 
     @Override
     public void update(Absence absence, String eventId) {
 
-        calendarProvider.update(absence, eventId, calendarSettings);
+        calendarService.getCalendarProvider().update(absence, eventId, calendarSettings);
     }
 
 
     @Override
     public void deleteAbsence(String eventId) {
 
-        calendarProvider.delete(eventId, calendarSettings);
+        calendarService.getCalendarProvider().delete(eventId, calendarSettings);
     }
 
     @Override
     public void checkCalendarSyncSettings() {
-        calendarProvider.checkCalendarSyncSettings(calendarSettings);
+        calendarService.getCalendarProvider().checkCalendarSyncSettings(calendarSettings);
     }
 }

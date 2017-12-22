@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
 
-@ConditionalOnProperty(prefix = "uv.calendar", name = "provider", havingValue = "noop", matchIfMissing = true)
 @Service
 public class NoopCalendarSyncProvider implements CalendarProvider {
 

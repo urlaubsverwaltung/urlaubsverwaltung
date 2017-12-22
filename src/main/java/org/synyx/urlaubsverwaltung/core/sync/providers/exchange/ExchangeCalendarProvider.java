@@ -42,7 +42,6 @@ import java.util.Optional;
  * @author  Daniel Hammann - <hammann@synyx.de>
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@ConditionalOnProperty(prefix = "uv.calendar", name = "provider", havingValue = "exchange")
 @Service
 public class ExchangeCalendarProvider implements CalendarProvider {
 
