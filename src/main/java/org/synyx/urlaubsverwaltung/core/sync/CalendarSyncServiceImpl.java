@@ -21,13 +21,14 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     private static final Logger LOG = Logger.getLogger(CalendarSyncServiceImpl.class);
 
-    private final CalendarSettings calendarSettings;
+    private SettingsService settingsService;
     private final CalendarService calendarService;
 
     @Autowired
     public CalendarSyncServiceImpl(SettingsService settingsService, CalendarService calendarService) {
+        this.settingsService = settingsService;
 
-        this.calendarSettings = settingsService.getSettings().getCalendarSettings();
+
         this.calendarService = calendarService;
 
         LOG.info("The following calendar provider is configured: " + calendarService.getCalendarProvider().getClass());
@@ -35,6 +36,7 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     @Override
     public Optional<String> addAbsence(Absence absence) {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
 
         return calendarService.getCalendarProvider().add(absence, calendarSettings);
     }
@@ -42,6 +44,7 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     @Override
     public void update(Absence absence, String eventId) {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
 
         calendarService.getCalendarProvider().update(absence, eventId, calendarSettings);
     }
@@ -49,12 +52,15 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     @Override
     public void deleteAbsence(String eventId) {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
 
         calendarService.getCalendarProvider().delete(eventId, calendarSettings);
     }
 
     @Override
     public void checkCalendarSyncSettings() {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
+
         calendarService.getCalendarProvider().checkCalendarSyncSettings(calendarSettings);
     }
 }
