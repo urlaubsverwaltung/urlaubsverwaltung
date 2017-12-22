@@ -54,7 +54,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     private String credentialsPassword;
 
     @Autowired
-    ExchangeCalendarProvider(MailService mailService) {
+    public ExchangeCalendarProvider(MailService mailService) {
 
         this.mailService = mailService;
         this.exchangeService = new ExchangeService();
