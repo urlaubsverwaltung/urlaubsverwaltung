@@ -17,7 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,9 +42,6 @@ public class GoogleCalendarOAuthHandshakeController {
     private static final Log LOG = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
 
     private static final String REDIRECT_REL = "/google-api-handshake";
-    @Value("${uv.calendar.google.redirectBaseUrl: http://localhost:8080}")
-    private String redirectBaseUrl = "http://localhost:8080";
-    private String redirectUrl= redirectBaseUrl + "/web" + REDIRECT_REL;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private static HttpTransport httpTransport;
@@ -74,6 +70,7 @@ public class GoogleCalendarOAuthHandshakeController {
         String error = null;
 
         try {
+            String redirectUrl = getRedirectUrl();
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUrl).execute();
             Credential credential = flow.createAndStoreCredential(response, "userID");
             com.google.api.services.calendar.Calendar client =
@@ -112,6 +109,11 @@ public class GoogleCalendarOAuthHandshakeController {
         return buf.toString();
     }
 
+    private String getRedirectUrl() {
+        String redirectBaseUrl = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRedirectBaseUrl();
+        return redirectBaseUrl + "/web" + REDIRECT_REL;
+    }
+
     private static HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
         String calendarId = settings.getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
         Calendar.Calendars.Get metadata = client.calendars().get(calendarId);
@@ -135,7 +137,7 @@ public class GoogleCalendarOAuthHandshakeController {
         flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR)).build();
 
-        authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUrl);
+        authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(getRedirectUrl());
 
         LOG.info("using authorizationUrl " + authorizationUrl);
         return authorizationUrl.build();

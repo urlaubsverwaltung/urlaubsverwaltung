@@ -537,6 +537,16 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.redirectBaseUrl">
+                                <spring:message code='settings.calendar.google.redirectbaseurl'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="calendarSettings.googleCalendarSettings.redirectBaseUrl" path="calendarSettings.googleCalendarSettings.redirectBaseUrl" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.redirectBaseUrl" cssClass="error"/></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <c:if test="${not empty oautherrors}">
                                 <p class="text-danger col-md-8 col-md-push-4">
                                     ${oautherrors}
