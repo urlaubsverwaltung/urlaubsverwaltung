@@ -99,7 +99,16 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
         String email = settings.getEmail();
         String password = settings.getPassword();
-        String username = email.split("[@._]")[0];
+
+        String[] emailPart = email.split("[@._]");
+        if (emailPart.length < 2) {
+            LOG.warn(String.format(
+                    "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
+                    "email-address is not valid (expected form: name@domain)"));
+            return;
+        }
+        String username = emailPart[0];
+        String domain = emailPart[1];
 
         if (!email.equals(credentialsMailAddress) || !password.equals(credentialsPassword)) {
             try {
@@ -111,7 +120,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                 LOG.info(String.format(
                         "No connection could be established to the Exchange calendar for username=%s, cause=%s",
                         username, usernameException.getMessage()));
-                String domain = email.split("[@._]")[1];
                 try {
                     exchangeService.setCredentials(new WebCredentials(username, password, domain));
                     exchangeService.setTraceEnabled(true);
