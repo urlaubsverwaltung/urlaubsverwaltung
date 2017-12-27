@@ -79,8 +79,12 @@ public class SettingsController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/settings", method = RequestMethod.POST)
     public String settingsSaved(@ModelAttribute("settings") Settings settings,
-                                Errors errors, Model model, RedirectAttributes redirectAttributes,
+                                Errors errors,
+                                Model model,
+                                RedirectAttributes redirectAttributes,
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton) {
+
+        settingsValidator.validate(settings, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute("settings", settings);
@@ -94,7 +98,6 @@ public class SettingsController {
         settingsService.save(processGoogleRefreshToken(settings));
         mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
         calendarSyncService.checkCalendarSyncSettings();
-
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
