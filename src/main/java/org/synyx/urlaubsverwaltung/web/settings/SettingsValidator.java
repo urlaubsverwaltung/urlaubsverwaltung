@@ -347,7 +347,15 @@ public class SettingsValidator implements Validator {
     }
 
     private void validateGoogleCalendarSettings(GoogleCalendarSettings googleCalendarSettings, Errors errors) {
-        // TODO: implement
+        String calendarId = googleCalendarSettings.getCalendarId();
+        String clientId = googleCalendarSettings.getClientId();
+        String clientSecret = googleCalendarSettings.getClientSecret();
+        String redirectBaseUrl = googleCalendarSettings.getRedirectBaseUrl();
+
+        validateMandatoryTextField(calendarId, "calendarSettings.googleCalendarSettings.calendarId", errors);
+        validateMandatoryTextField(clientId, "calendarSettings.googleCalendarSettings.clientId", errors);
+        validateMandatoryTextField(clientSecret, "calendarSettings.googleCalendarSettings.clientSecret", errors);
+        validateMandatoryTextField(redirectBaseUrl, "calendarSettings.googleCalendarSettings.redirectBaseUrl", errors);
     }
 
 
