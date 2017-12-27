@@ -12,14 +12,10 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.CalendarList;
-import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
@@ -32,7 +28,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -178,7 +173,19 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     @Override
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
-        //TODO: Implement me!
+        if (googleCalendarClient == null) {
+            googleCalendarClient = createGoogleCalendarClient();
+        }
+
+        if (googleCalendarClient != null) {
+            String calendarId =
+                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+            try {
+                googleCalendarClient.calendarList().get(calendarId);
+            } catch (IOException e) {
+                LOG.warn(String.format("Could not connect to google calendar with calendar id '%s'", calendarId), e);
+            }
+        }
     }
 
     private Credential createCredentialWithRefreshToken(
