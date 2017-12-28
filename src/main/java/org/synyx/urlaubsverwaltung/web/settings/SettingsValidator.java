@@ -292,10 +292,10 @@ public class SettingsValidator implements Validator {
 
         validateCalendarSettings(calendarSettings, errors);
 
-        if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getName())) {
+        if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getSimpleName())) {
             validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
         }
-        if (calendarSettings.getProvider().equals(GoogleCalendarSyncProvider.class.getName())) {
+        if (calendarSettings.getProvider().equals(GoogleCalendarSyncProvider.class.getSimpleName())) {
             validateGoogleCalendarSettings(calendarSettings.getGoogleCalendarSettings(), errors);
         }
     }
