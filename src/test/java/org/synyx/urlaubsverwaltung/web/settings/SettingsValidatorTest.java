@@ -497,7 +497,7 @@ public class SettingsValidatorTest {
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
             .getExchangeCalendarSettings();
 
-        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getName());
+        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getSimpleName());
         exchangeCalendarSettings.setEmail(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
@@ -520,7 +520,7 @@ public class SettingsValidatorTest {
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
             .getExchangeCalendarSettings();
 
-        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getName());
+        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getSimpleName());
         exchangeCalendarSettings.setEmail("synyx");
         exchangeCalendarSettings.setPassword("top-secret");
         exchangeCalendarSettings.setCalendar("Urlaub");
@@ -538,7 +538,7 @@ public class SettingsValidatorTest {
         GoogleCalendarSettings googleCalendarSettings = settings.getCalendarSettings()
                 .getGoogleCalendarSettings();
 
-        settings.getCalendarSettings().setProvider(GoogleCalendarSyncProvider.class.getName());
+        settings.getCalendarSettings().setProvider(GoogleCalendarSyncProvider.class.getSimpleName());
         googleCalendarSettings.setCalendarId(null);
         googleCalendarSettings.setClientId(null);
         googleCalendarSettings.setClientSecret(null);
