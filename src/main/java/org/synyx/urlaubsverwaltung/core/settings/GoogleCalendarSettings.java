@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.core.settings;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 
 /**
@@ -65,5 +66,22 @@ public class GoogleCalendarSettings {
 
     public void setRedirectBaseUrl(String redirectBaseUrl) {
         this.redirectBaseUrl = redirectBaseUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GoogleCalendarSettings that = (GoogleCalendarSettings) o;
+        return Objects.equals(getClientId(), that.getClientId()) &&
+                Objects.equals(getClientSecret(), that.getClientSecret()) &&
+                Objects.equals(getCalendarId(), that.getCalendarId()) &&
+                Objects.equals(getRefreshToken(), that.getRefreshToken()) &&
+                Objects.equals(getRedirectBaseUrl(), that.getRedirectBaseUrl());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getClientId(), getClientSecret(), getCalendarId(), getRefreshToken(), getRedirectBaseUrl());
     }
 }
