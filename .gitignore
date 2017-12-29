@@ -21,3 +21,6 @@ velocity.log*
 # Ignore vim swap files
 *.sw[o|p]
 *.sdsrc
+
+# ignore oauth-file with credentials for testing
+src/test/resources/google_oauth.properties
