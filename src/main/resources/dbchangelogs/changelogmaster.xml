@@ -50,5 +50,9 @@
     <include file="dbchangelogs/changelog-2.23.0-add-comment-for-account.xml"/>
     <include file="dbchangelogs/changelog-2.26.0-remove-signature-columns-from-application-table.xml"/>
     <include file="dbchangelogs/changelog-2.26.0-remove-key-columns-from-person-table.xml"/>
+    <include file="dbchangelogs/changelog-2.26.0-add-google-calendar-settings.xml"/>
+    <include file="dbchangelogs/changelog-2.26.0-add-calendar-provider.xml"/>
+    <include file="dbchangelogs/changelog-2.26.0-remove-exchange-active.xml"/>
+
 
 </databaseChangeLog>
