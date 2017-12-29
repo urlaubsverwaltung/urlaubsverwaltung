@@ -44,7 +44,7 @@ public class GoogleCalendarOAuthHandshakeController {
     private static final String REDIRECT_REL = "/google-api-handshake";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-    private static HttpTransport httpTransport;
+    private final HttpTransport httpTransport;
 
     private final SettingsService settingsService;
 
@@ -55,7 +55,7 @@ public class GoogleCalendarOAuthHandshakeController {
             throws GeneralSecurityException, IOException {
 
         this.settingsService = settingsService;
-        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
@@ -67,32 +67,51 @@ public class GoogleCalendarOAuthHandshakeController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping(value = REDIRECT_REL, params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code) {
+        LOG.debug("Authorization code: " + code);
         String error = null;
 
         try {
+            LOG.info("Starting OAuth 2.0 handshake...");
             String redirectUrl = getRedirectUrl();
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUrl).execute();
+            String refreshToken = response.getRefreshToken();
+            LOG.debug(String.format("Got token response with AccessToken=%s valid for %s seconds, RefreshToken=%s and Scope=%s and Type=%s",
+                    response.getAccessToken(), response.getExpiresInSeconds().toString(), refreshToken, response.getScope(), response.getTokenType()));
             Credential credential = flow.createAndStoreCredential(response, "userID");
-            com.google.api.services.calendar.Calendar client =
-                    new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential)
-                            .setApplicationName(APPLICATION_NAME).build();
+            LOG.info("Successfully finished OAuth 2.0 Handshake");
 
             Settings settings = settingsService.getSettings();
-            HttpResponse httpResponse = checkGoogleCalendar(client, settings);
-
-            if (httpResponse.getStatusCode() == HttpStatus.SC_OK) {
-                LOG.info("OAuth Handshake was successful!");
+            LOG.info("Save refresh token...");
+            if (refreshToken != null && !refreshToken.isEmpty()) {
                 settings.getCalendarSettings().getGoogleCalendarSettings()
                         .setRefreshToken(credential.getRefreshToken());
                 settingsService.save(settings);
+                LOG.info("Refresh token successfully saved.");
             } else {
-                error = "OAuth handshake error " + httpResponse.getStatusMessage();
+                error = "No refresh token found in OAuth 2.0 handshake response";
                 LOG.warn(error);
             }
 
+            if (error != null) {
+                String calendarId = settings.getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+                LOG.info(String.format("Try to connect to calendar %s ...", calendarId));
+                com.google.api.services.calendar.Calendar client =
+                        new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential)
+                                .setApplicationName(APPLICATION_NAME).build();
+                HttpResponse httpResponse = checkGoogleCalendar(client, calendarId);
+
+                if (httpResponse.getStatusCode() == HttpStatus.SC_OK) {
+                    LOG.info(String.format("Connection to calendar %s was successful established!", calendarId));
+                } else {
+                    error = String.format("Error while connecting to calendar %s: %d %s",
+                            calendarId, httpResponse.getStatusCode(), httpResponse.getStatusMessage());
+                    LOG.warn(error);
+                }
+            }
+
         } catch (IOException e) {
-            error = "Exception while handling OAuth2 callback (" + e.getMessage() + ")."
-                    + " Redirecting to google connection status page.";
+            error = String.format("Exception while handling OAuth2 callback (%s). Redirecting to calendar settings.",
+                    e.getMessage());
             LOG.error(error, e);
         }
 
@@ -114,9 +133,9 @@ public class GoogleCalendarOAuthHandshakeController {
         return redirectBaseUrl + "/web" + REDIRECT_REL;
     }
 
-    private static HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
-        String calendarId = settings.getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+    private static HttpResponse checkGoogleCalendar(Calendar client, String calendarId) throws IOException {
         Calendar.Calendars.Get metadata = client.calendars().get(calendarId);
+
         return metadata.buildHttpRequestUsingHead().execute();
     }
 

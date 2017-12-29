@@ -6,6 +6,7 @@ import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -30,6 +31,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
+import static org.apache.http.HttpStatus.SC_OK;
+
 /**
  * @author Daniel Hammann - hammann@synyx.de
  * @author Marc Sommer - sommer@synyx.de
@@ -46,7 +49,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     public static final String APPLICATION_NAME = "Urlaubsverwaltung";
     protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
-    private Calendar googleCalendarClient;
     private final MailService mailService;
     private final SettingsService settingsService;
 
@@ -74,6 +76,11 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             tokenResponse.setRefreshToken(refreshToken);
 
             Credential credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
+            if (credential.refreshToken()) {
+                LOG.info("Access token has been refreshed");
+            } else {
+                LOG.warn("Cannot refresh access token");
+            }
 
             return new com.google.api.services.calendar.Calendar.Builder(
                     httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
@@ -89,9 +96,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+        Calendar googleCalendarClient = createGoogleCalendarClient();
+
         if (googleCalendarClient != null) {
             GoogleCalendarSettings googleCalendarSettings =
                     settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
@@ -103,12 +109,12 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
                 Event eventInCalendar = googleCalendarClient.events().insert(calendarId, eventToCommit).execute();
 
-                LOG.info(String.format("Event %s for '%s' added to google calendar '%s'.", eventInCalendar.getId(),
+                LOG.info(String.format("Event %s for '%s' added to calendar '%s'.", eventInCalendar.getId(),
                         absence.getPerson().getNiceName(), eventInCalendar.getSummary()));
                 return Optional.of(eventInCalendar.getId());
 
             } catch (IOException ex) {
-                LOG.warn("An error occurred while trying to add appointment to Exchange calendar", ex);
+                LOG.warn(String.format("An error occurred while trying to add appointment to calendar %s", calendarId), ex);
                 mailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
@@ -119,9 +125,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
 
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+        Calendar googleCalendarClient = createGoogleCalendarClient();
 
         if (googleCalendarClient != null) {
 
@@ -138,9 +142,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 // sync event to calendar
                 googleCalendarClient.events().patch(calendarId, eventId, event).execute();
 
-                LOG.info(String.format("Event %s has been updated in google calendar '%s'.", eventId, calendarId));
+                LOG.info(String.format("Event %s has been updated in calendar '%s'.", eventId, calendarId));
             } catch (IOException ex) {
-                LOG.warn(String.format("Could not update event %s in google calendar '%s'.", eventId, calendarId), ex);
+                LOG.warn(String.format("Could not update event %s in calendar '%s'.", eventId, calendarId), ex);
                 mailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
             }
         }
@@ -150,9 +154,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public void delete(String eventId, CalendarSettings calendarSettings) {
 
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+        Calendar googleCalendarClient = createGoogleCalendarClient();
 
         if (googleCalendarClient != null) {
 
@@ -173,15 +175,16 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     @Override
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+        Calendar googleCalendarClient = createGoogleCalendarClient();
 
         if (googleCalendarClient != null) {
             String calendarId =
                     settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
             try {
-                googleCalendarClient.calendarList().get(calendarId);
+                HttpResponse httpResponse = googleCalendarClient.calendars().get(calendarId).executeUsingHead();
+                if (httpResponse.getStatusCode() != SC_OK) {
+                    throw new IOException(httpResponse.getStatusMessage());
+                }
             } catch (IOException e) {
                 LOG.warn(String.format("Could not connect to google calendar with calendar id '%s'", calendarId), e);
             }
