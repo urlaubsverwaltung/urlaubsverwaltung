@@ -4,7 +4,7 @@
 
     <groupId>org.synyx</groupId>
     <artifactId>urlaubsverwaltung</artifactId>
-    <version>2.25.1-SNAPSHOT</version>
+    <version>2.26.0</version>
     <packaging>jar</packaging>
 
     <name>Urlaubsverwaltung</name>
@@ -56,7 +56,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/synyx/urlaubsverwaltung.git</developerConnection>
         <connection>scm:git:ssh://git@github.com/synyx/urlaubsverwaltung.git</connection>
-      <tag>HEAD</tag>
+      <tag>urlaubsverwaltung-2.26.0</tag>
   </scm>
 
     <distributionManagement>
