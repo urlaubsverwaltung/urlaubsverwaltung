@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sync.providers.google;
 
-import com.google.api.client.auth.oauth2.BearerToken;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.auth.oauth2.*;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
@@ -29,6 +27,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.apache.http.HttpStatus.SC_OK;
@@ -48,9 +47,12 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     public static final String APPLICATION_NAME = "Urlaubsverwaltung";
     protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
+    private static final Long TEN_SECONDS = 10L;
+    private static final String DATE_PATTERN_YYYY_MM_DD = "yyyy-MM-dd";
 
     private final MailService mailService;
     private final SettingsService settingsService;
+    private Credential credential;
 
     @Autowired
     public GoogleCalendarSyncProvider(MailService mailService, SettingsService settingsService) {
@@ -66,20 +68,24 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
      */
     private com.google.api.services.calendar.Calendar createGoogleCalendarClient() {
 
-        String refreshToken =
-                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
-
         try {
-
             NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            TokenResponse tokenResponse = new TokenResponse();
-            tokenResponse.setRefreshToken(refreshToken);
 
-            Credential credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
-            if (credential.refreshToken()) {
-                LOG.info("Access token has been refreshed");
-            } else {
-                LOG.warn("Cannot refresh access token");
+            if (credential == null) {
+                String refreshToken =
+                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
+
+                TokenResponse tokenResponse = new TokenResponse();
+                tokenResponse.setRefreshToken(refreshToken);
+                credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
+            }
+
+            if (credential.getExpiresInSeconds() < TEN_SECONDS) {
+                if (credential.refreshToken()) {
+                    LOG.info("Access token has been refreshed");
+                } else {
+                    LOG.warn("Cannot refresh access token");
+                }
             }
 
             return new com.google.api.services.calendar.Calendar.Builder(
@@ -223,7 +229,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
         if (absence.isAllDay()) {
             // To create an all-day event, you must use setDate() having created DateTime objects using a String
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN_YYYY_MM_DD);
             String startDateStr = dateFormat.format(absence.getStartDate());
             String endDateStr = dateFormat.format(absence.getEndDate());
 
