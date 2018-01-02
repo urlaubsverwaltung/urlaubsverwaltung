@@ -209,6 +209,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 .setClientAuthentication(new BasicAuthentication(
                         clientId,
                         clientSecret))
+                .setRefreshListeners(Collections.singletonList(new LoggingCredentialRefreshListener()))
                 .build()
                 .setFromTokenResponse(tokenResponse);
     }
