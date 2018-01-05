@@ -13,6 +13,7 @@ public final class ControllerConstants {
     public static final String DEPARTMENT_ATTRIBUTE = "department";
     public static final String ERRORS_ATTRIBUTE = "errors";
     public static final String OAUTH_ERROR_ATTRIBUTE = "oautherrors";
+    public static final String OATUH_REDIRECT_REL = "/google-api-handshake";
 
     private ControllerConstants() {
 

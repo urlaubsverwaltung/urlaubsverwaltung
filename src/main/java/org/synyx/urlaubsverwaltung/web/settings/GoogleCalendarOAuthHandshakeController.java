@@ -41,7 +41,6 @@ public class GoogleCalendarOAuthHandshakeController {
 
     private static final Log LOG = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
 
-    private static final String REDIRECT_REL = "/google-api-handshake";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private static HttpTransport httpTransport;
@@ -59,7 +58,7 @@ public class GoogleCalendarOAuthHandshakeController {
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping(REDIRECT_REL)
+    @GetMapping(ControllerConstants.OATUH_REDIRECT_REL)
     public String googleConnectionStatus(HttpServletRequest request) {
         String redirectUrl = request.getRequestURL().toString();
 
@@ -67,7 +66,7 @@ public class GoogleCalendarOAuthHandshakeController {
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping(value = REDIRECT_REL, params = "code")
+    @GetMapping(value = ControllerConstants.OATUH_REDIRECT_REL, params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) {
 
         String redirectUrl = request.getRequestURL().toString();

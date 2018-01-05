@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,11 +52,15 @@ public class SettingsController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping
     public String settingsDetails(Model model,
-                                  @RequestParam(value = ControllerConstants.OAUTH_ERROR_ATTRIBUTE, required = false) String googleOAuthError) {
+                                  @RequestParam(value = ControllerConstants.OAUTH_ERROR_ATTRIBUTE, required = false) String googleOAuthError,
+                                  HttpServletRequest request) {
+
+        String authorizedRedirectUrl = getAuthorizedRedirectUrl(
+                request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
 
         Settings settings = settingsService.getSettings();
 
-        fillModel(model, settings);
+        fillModel(model, settings, authorizedRedirectUrl);
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, googleOAuthError);
@@ -65,7 +70,11 @@ public class SettingsController {
         return "settings/settings_form";
     }
 
-    private void fillModel(Model model, Settings settings) {
+    String getAuthorizedRedirectUrl(String requestURL, String redirectPath) {
+        return requestURL.replace("/settings", redirectPath);
+    }
+
+    private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
@@ -74,6 +83,7 @@ public class SettingsController {
                 .map(provider -> provider.getClass().getSimpleName())
                 .collect(Collectors.toList());
         model.addAttribute("providers", providers);
+        model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
     }
 
 
@@ -83,12 +93,16 @@ public class SettingsController {
                                 Errors errors,
                                 Model model,
                                 RedirectAttributes redirectAttributes,
-                                @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton) {
+                                @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
+                                HttpServletRequest request) {
+
+        String authorizedRedirectUrl = getAuthorizedRedirectUrl(
+                request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
 
         settingsValidator.validate(settings, errors);
 
         if (errors.hasErrors()) {
-            fillModel(model, settings);
+            fillModel(model, settings, authorizedRedirectUrl);
 
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
@@ -127,8 +141,7 @@ public class SettingsController {
     private boolean refreshTokenGotInvalid(GoogleCalendarSettings oldSettings, GoogleCalendarSettings newSettings) {
         if (oldSettings.getClientSecret() == null
                 || oldSettings.getClientId() == null
-                || oldSettings.getCalendarId() == null
-                || oldSettings.getRedirectBaseUrl() == null) {
+                || oldSettings.getCalendarId() == null) {
             return true;
         }
 

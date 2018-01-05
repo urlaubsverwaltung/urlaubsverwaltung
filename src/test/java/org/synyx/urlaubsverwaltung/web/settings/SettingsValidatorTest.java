@@ -542,7 +542,6 @@ public class SettingsValidatorTest {
         googleCalendarSettings.setCalendarId(null);
         googleCalendarSettings.setClientId(null);
         googleCalendarSettings.setClientSecret(null);
-        googleCalendarSettings.setRedirectBaseUrl(null);
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
@@ -553,7 +552,5 @@ public class SettingsValidatorTest {
                 .rejectValue("calendarSettings.googleCalendarSettings.clientId", "error.entry.mandatory");
         verify(mockError)
                 .rejectValue("calendarSettings.googleCalendarSettings.clientSecret", "error.entry.mandatory");
-        verify(mockError)
-                .rejectValue("calendarSettings.googleCalendarSettings.redirectBaseUrl", "error.entry.mandatory");
     }
 }
