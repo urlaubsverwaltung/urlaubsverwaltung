@@ -61,16 +61,19 @@ public class GoogleCalendarOAuthHandshakeController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping(REDIRECT_REL)
     public String googleConnectionStatus(HttpServletRequest request) {
-        return "redirect:" + authorize();
+        String redirectUrl = request.getRequestURL().toString();
+
+        return "redirect:" + authorize(redirectUrl);
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping(value = REDIRECT_REL, params = "code")
-    public String oauth2Callback(@RequestParam(value = "code") String code) {
+    public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) {
+
+        String redirectUrl = request.getRequestURL().toString();
         String error = null;
 
         try {
-            String redirectUrl = getRedirectUrl();
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUrl).execute();
             Credential credential = flow.createAndStoreCredential(response, "userID");
             com.google.api.services.calendar.Calendar client =
@@ -81,9 +84,14 @@ public class GoogleCalendarOAuthHandshakeController {
             HttpResponse httpResponse = checkGoogleCalendar(client, settings);
 
             if (httpResponse.getStatusCode() == HttpStatus.SC_OK) {
-                LOG.info("OAuth Handshake was successful!");
+                String refreshToken = credential.getRefreshToken();
+                if (refreshToken == null) {
+                    LOG.warn("OAuth Handshake was successful, but refresh token is null!");
+                } else {
+                    LOG.info("OAuth Handshake was successful!");
+                }
                 settings.getCalendarSettings().getGoogleCalendarSettings()
-                        .setRefreshToken(credential.getRefreshToken());
+                        .setRefreshToken(refreshToken);
                 settingsService.save(settings);
             } else {
                 error = "OAuth handshake error " + httpResponse.getStatusMessage();
@@ -109,18 +117,13 @@ public class GoogleCalendarOAuthHandshakeController {
         return buf.toString();
     }
 
-    private String getRedirectUrl() {
-        String redirectBaseUrl = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRedirectBaseUrl();
-        return redirectBaseUrl + "/web" + REDIRECT_REL;
-    }
-
     private static HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
         String calendarId = settings.getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
         Calendar.Calendars.Get metadata = client.calendars().get(calendarId);
         return metadata.buildHttpRequestUsingHead().execute();
     }
 
-    private String authorize() {
+    private String authorize(String redirectUri) {
         AuthorizationCodeRequestUrl authorizationUrl;
 
         Details web = new Details();
@@ -135,9 +138,13 @@ public class GoogleCalendarOAuthHandshakeController {
         clientSecrets.setWeb(web);
 
         flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
-                Collections.singleton(CalendarScopes.CALENDAR)).build();
+                Collections.singleton(CalendarScopes.CALENDAR))
+                .setApprovalPrompt("force")
+                .setAccessType("offline")
+                .build();
 
-        authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(getRedirectUrl());
+        authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri);
+
 
         LOG.info("using authorizationUrl " + authorizationUrl);
         return authorizationUrl.build();
