@@ -47,6 +47,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
     private Calendar googleCalendarClient;
+    private int refreshTokenHashCode;
     private final MailService mailService;
     private final SettingsService settingsService;
 
@@ -62,18 +63,31 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
      *
      * @return an authorized calendar client service
      */
-    private com.google.api.services.calendar.Calendar createGoogleCalendarClient() {
+    private com.google.api.services.calendar.Calendar getOrCreateGoogleCalendarClient() {
 
         String refreshToken =
                 settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
 
+        if (googleCalendarClient != null &&
+                refreshToken != null &&
+                refreshTokenHashCode == refreshToken.hashCode()) {
+            LOG.debug("use cached googleCalendarClient");
+            return googleCalendarClient;
+        }
         try {
+            LOG.info("create new googleCalendarClient");
+
+            if (refreshToken != null) {
+                refreshTokenHashCode = refreshToken.hashCode();
+            }
 
             NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
             TokenResponse tokenResponse = new TokenResponse();
             tokenResponse.setRefreshToken(refreshToken);
 
             Credential credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
+
+            LOG.info("credentials.getExpiresInSeconds(): " + credential.getExpiresInSeconds());
 
             return new com.google.api.services.calendar.Calendar.Builder(
                     httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
@@ -89,9 +103,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+        googleCalendarClient = getOrCreateGoogleCalendarClient();
+
         if (googleCalendarClient != null) {
             GoogleCalendarSettings googleCalendarSettings =
                     settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
@@ -119,9 +132,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
 
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+        googleCalendarClient = getOrCreateGoogleCalendarClient();
 
         if (googleCalendarClient != null) {
 
@@ -150,9 +161,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Override
     public void delete(String eventId, CalendarSettings calendarSettings) {
 
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+        googleCalendarClient = getOrCreateGoogleCalendarClient();
 
         if (googleCalendarClient != null) {
 
@@ -173,9 +182,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     @Override
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
-        if (googleCalendarClient == null) {
-            googleCalendarClient = createGoogleCalendarClient();
-        }
+
+        googleCalendarClient = getOrCreateGoogleCalendarClient();
 
         if (googleCalendarClient != null) {
             String calendarId =
