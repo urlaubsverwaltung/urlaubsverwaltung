@@ -113,7 +113,6 @@ public class SettingsController {
 
         settingsService.save(processGoogleRefreshToken(settings));
         mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
-        calendarSyncService.checkCalendarSyncSettings();
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";

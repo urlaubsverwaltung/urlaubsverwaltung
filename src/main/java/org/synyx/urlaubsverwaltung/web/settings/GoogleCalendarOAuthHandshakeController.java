@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
@@ -46,14 +47,16 @@ public class GoogleCalendarOAuthHandshakeController {
     private static HttpTransport httpTransport;
 
     private final SettingsService settingsService;
+    private final CalendarSyncService calendarSyncService;
 
     private GoogleAuthorizationCodeFlow flow;
 
     @Autowired
-    public GoogleCalendarOAuthHandshakeController(SettingsService settingsService)
+    public GoogleCalendarOAuthHandshakeController(SettingsService settingsService, CalendarSyncService calendarSyncService)
             throws GeneralSecurityException, IOException {
 
         this.settingsService = settingsService;
+        this.calendarSyncService = calendarSyncService;
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
 
@@ -92,6 +95,7 @@ public class GoogleCalendarOAuthHandshakeController {
                 settings.getCalendarSettings().getGoogleCalendarSettings()
                         .setRefreshToken(refreshToken);
                 settingsService.save(settings);
+                calendarSyncService.checkCalendarSyncSettings();
             } else {
                 error = "OAuth handshake error " + httpResponse.getStatusMessage();
                 LOG.warn(error);
