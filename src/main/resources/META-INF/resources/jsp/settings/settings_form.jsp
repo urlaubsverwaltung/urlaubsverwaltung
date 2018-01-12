@@ -541,7 +541,7 @@
                                 <spring:message code='settings.calendar.google.redirecturl'/>:
                             </label>
                             <div class="col-md-8">
-                                <span class="form-control">${authorizedRedirectUrl}</span>
+                                <input class="form-control" type="text" name="calendarSettings.googleCalendarSettings.authorizedRedirectUrl" value="${authorizedRedirectUrl}" readonly/>
                             </div>
                         </div>
 
