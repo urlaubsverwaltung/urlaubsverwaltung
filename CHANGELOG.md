@@ -1,5 +1,8 @@
+### [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1)
+* Bug: Google Calendar Synchronisation funktioniert nur mit localhost [#377](https://github.com/synyx/urlaubsverwaltung/pull/377) 
+
 ### [urlaubsverwaltung-2.26.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.0)
-* Anbindung an Google Kalendar [#8](https://github.com/synyx/urlaubsverwaltung/issues/8) 
+* Anbindung an Google Calendar [#8](https://github.com/synyx/urlaubsverwaltung/issues/8)
 * Bug: Urlaubsantrag für ganztägig und morgens/mittags an einem Tag möglich [#257](https://github.com/synyx/urlaubsverwaltung/issues/257)
 * Kleinere Refactorings (Entfernen von Unterschriftssystem)
 
