@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,6 +82,7 @@ public class SettingsController {
 
         List<String> providers = calendarProviders.stream()
                 .map(provider -> provider.getClass().getSimpleName())
+                .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
         model.addAttribute("providers", providers);
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
