@@ -45,6 +45,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     public static final String APPLICATION_NAME = "Urlaubsverwaltung";
     protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
+    public static final String DATE_PATTERN_YYYY_MM_DD = "yyyy-MM-dd";
 
     private Calendar googleCalendarClient;
     private int refreshTokenHashCode;
@@ -116,12 +117,12 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
                 Event eventInCalendar = googleCalendarClient.events().insert(calendarId, eventToCommit).execute();
 
-                LOG.info(String.format("Event %s for '%s' added to google calendar '%s'.", eventInCalendar.getId(),
+                LOG.info(String.format("Event %s for '%s' added to calendar '%s'.", eventInCalendar.getId(),
                         absence.getPerson().getNiceName(), eventInCalendar.getSummary()));
                 return Optional.of(eventInCalendar.getId());
 
             } catch (IOException ex) {
-                LOG.warn("An error occurred while trying to add appointment to Exchange calendar", ex);
+                LOG.warn(String.format("An error occurred while trying to add appointment to calendar %s", calendarId), ex);
                 mailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
@@ -149,9 +150,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 // sync event to calendar
                 googleCalendarClient.events().patch(calendarId, eventId, event).execute();
 
-                LOG.info(String.format("Event %s has been updated in google calendar '%s'.", eventId, calendarId));
+                LOG.info(String.format("Event %s has been updated in calendar '%s'.", eventId, calendarId));
             } catch (IOException ex) {
-                LOG.warn(String.format("Could not update event %s in google calendar '%s'.", eventId, calendarId), ex);
+                LOG.warn(String.format("Could not update event %s in calendar '%s'.", eventId, calendarId), ex);
                 mailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
             }
         }
@@ -171,9 +172,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             try {
                 googleCalendarClient.events().delete(calendarId, eventId).execute();
 
-                LOG.info(String.format("Event %s has been deleted in google calendar '%s'.", eventId, calendarId));
+                LOG.info(String.format("Event %s has been deleted in calendar '%s'.", eventId, calendarId));
             } catch (IOException ex) {
-                LOG.warn(String.format("Could not delete event %s in google calendar '%s'", eventId, calendarId), ex);
+                LOG.warn(String.format("Could not delete event %s in calendar '%s'", eventId, calendarId), ex);
                 mailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
             }
         }
@@ -191,7 +192,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             try {
                 googleCalendarClient.calendarList().get(calendarId);
             } catch (IOException e) {
-                LOG.warn(String.format("Could not connect to google calendar with calendar id '%s'", calendarId), e);
+                LOG.warn(String.format("Could not connect to calendar with calendar id '%s'", calendarId), e);
             }
         }
     }
@@ -227,7 +228,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
         if (absence.isAllDay()) {
             // To create an all-day event, you must use setDate() having created DateTime objects using a String
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN_YYYY_MM_DD);
             String startDateStr = dateFormat.format(absence.getStartDate());
             String endDateStr = dateFormat.format(absence.getEndDate());
 
