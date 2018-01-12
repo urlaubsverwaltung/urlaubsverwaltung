@@ -6,6 +6,7 @@ import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -29,6 +30,8 @@ import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
+
+import static org.apache.http.HttpStatus.SC_OK;
 
 /**
  * @author Daniel Hammann - hammann@synyx.de
@@ -190,7 +193,10 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             String calendarId =
                     settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
             try {
-                googleCalendarClient.calendarList().get(calendarId);
+                HttpResponse httpResponse = googleCalendarClient.calendarList().get(calendarId).executeUsingHead();
+                if (httpResponse.getStatusCode() != SC_OK) {
+                    throw new IOException(httpResponse.getStatusMessage());
+                }
             } catch (IOException e) {
                 LOG.warn(String.format("Could not connect to calendar with calendar id '%s'", calendarId), e);
             }
