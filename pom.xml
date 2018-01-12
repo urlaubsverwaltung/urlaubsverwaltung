@@ -52,7 +52,7 @@
         <coveralls-maven-plugin.version>4.1.0</coveralls-maven-plugin.version>
         <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
         <google-api-client.version>1.23.0</google-api-client.version>
-        <google-api-services-calendar.version>v3-rev276-1.23.0</google-api-services-calendar.version>
+        <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
     </properties>
 
     <scm>
