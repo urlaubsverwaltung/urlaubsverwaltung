@@ -1,0 +1,33 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="hammann" id="add-google-calendar-data">
+
+        <preConditions>
+            <tableExists tableName="Settings"/>
+            <columnExists tableName="Settings" columnName="calendar_provider"/>
+            <columnExists tableName="Settings" columnName="calendar_google_client_id"/>
+            <columnExists tableName="Settings" columnName="calendar_google_client_secret"/>
+            <columnExists tableName="Settings" columnName="calendar_google_calendar_id"/>
+            <columnExists tableName="Settings" columnName="calendar_google_refresh_token"/>
+            <columnExists tableName="Settings" columnName="calendar_google_redirect_base_url"/>
+        </preConditions>
+
+        <update tableName="Settings">
+            <column name="calendar_workDayBeginHour" value="8"/>
+            <column name="calendar_workDayEndHour" value="16"/>
+            <column name="calendar_provider" value="GoogleCalendarSyncProvider"/>
+            <column name="calendar_google_client_id" value="593911485646-hkocf7niq46hl0u9mu0ec66ddcvf1epo.apps.googleusercontent.com"/>
+            <column name="calendar_google_client_secret" value="oAYJCwnrog12bIm8mXWGt9LS"/>
+            <column name="calendar_google_calendar_id" value="synyx.de_e6cihc7tnurs1gs7nb5rv7jmmk@group.calendar.google.com"/>
+            <column name="calendar_google_refresh_token" value="1/dMMbnTxWBRmydQvHtbIC7XBIlyUTveqbzbcDUbZstsE"/>
+            <column name="calendar_google_redirect_base_url" value="http://localhost:8080"/>
+            <where>id=1</where>
+        </update>
+
+
+    </changeSet>
+
+</databaseChangeLog>
