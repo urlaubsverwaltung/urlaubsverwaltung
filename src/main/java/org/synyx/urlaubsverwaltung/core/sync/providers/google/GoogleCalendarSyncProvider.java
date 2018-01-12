@@ -40,6 +40,7 @@ import static org.apache.http.HttpStatus.SC_OK;
 @Service
 public class GoogleCalendarSyncProvider implements CalendarProvider {
 
+    public static final String DATE_PATTERN_YYYY_MM_DD = "yyyy-MM-dd";
     /**
      * Global instance of the JSON factory.
      */
@@ -48,7 +49,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     public static final String APPLICATION_NAME = "Urlaubsverwaltung";
     protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
-    public static final String DATE_PATTERN_YYYY_MM_DD = "yyyy-MM-dd";
 
     private Calendar googleCalendarClient;
     private int refreshTokenHashCode;
@@ -90,8 +90,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             tokenResponse.setRefreshToken(refreshToken);
 
             Credential credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
-
-            LOG.info("credentials.getExpiresInSeconds(): " + credential.getExpiresInSeconds());
 
             return new com.google.api.services.calendar.Calendar.Builder(
                     httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
@@ -194,7 +192,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                     settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
             try {
                 HttpResponse httpResponse = googleCalendarClient.calendarList().get(calendarId).executeUsingHead();
-                if (httpResponse.getStatusCode() != SC_OK) {
+                if (httpResponse.getStatusCode() == SC_OK) {
+                    LOG.info("Calendar sync successfully activated!");
+                } else {
                     throw new IOException(httpResponse.getStatusMessage());
                 }
             } catch (IOException e) {
