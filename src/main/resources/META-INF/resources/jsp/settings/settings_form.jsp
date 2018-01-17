@@ -537,12 +537,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.redirectBaseUrl">
-                                <spring:message code='settings.calendar.google.redirectbaseurl'/>:
+                            <label class="control-label col-md-4">
+                                <spring:message code='settings.calendar.google.redirecturl'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="calendarSettings.googleCalendarSettings.redirectBaseUrl" path="calendarSettings.googleCalendarSettings.redirectBaseUrl" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.redirectBaseUrl" cssClass="error"/></span>
+                                <input class="form-control" type="text" name="calendarSettings.googleCalendarSettings.authorizedRedirectUrl" value="${authorizedRedirectUrl}" readonly/>
                             </div>
                         </div>
 

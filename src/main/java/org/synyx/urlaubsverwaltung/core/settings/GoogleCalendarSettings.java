@@ -25,9 +25,6 @@ public class GoogleCalendarSettings {
     @Column(name = "calendar_google_refresh_token")
     private String refreshToken;
 
-    @Column(name = "calendar_google_redirect_base_url")
-    private String redirectBaseUrl;
-
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -60,14 +57,6 @@ public class GoogleCalendarSettings {
         this.calendarId = calendarId;
     }
 
-    public String getRedirectBaseUrl() {
-        return redirectBaseUrl;
-    }
-
-    public void setRedirectBaseUrl(String redirectBaseUrl) {
-        this.redirectBaseUrl = redirectBaseUrl;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,12 +65,11 @@ public class GoogleCalendarSettings {
         return Objects.equals(getClientId(), that.getClientId()) &&
                 Objects.equals(getClientSecret(), that.getClientSecret()) &&
                 Objects.equals(getCalendarId(), that.getCalendarId()) &&
-                Objects.equals(getRefreshToken(), that.getRefreshToken()) &&
-                Objects.equals(getRedirectBaseUrl(), that.getRedirectBaseUrl());
+                Objects.equals(getRefreshToken(), that.getRefreshToken());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getClientId(), getClientSecret(), getCalendarId(), getRefreshToken(), getRedirectBaseUrl());
+        return Objects.hash(getClientId(), getClientSecret(), getCalendarId(), getRefreshToken());
     }
 }

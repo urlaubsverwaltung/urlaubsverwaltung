@@ -227,15 +227,15 @@ Sobald alle Konfigurationsfelder wie unten beschrieben für die Synchronisation 
 ![Anlage eines OAuth 2.0 Clients](docs/google-create-oauth-client.png)
 
 Um einen solchen OAuth 2.0 Handshake durchführen zu können ist es zunächst notwendig die Urlaubsverwaltung als Anwendung bei Google bekannt zu machen.
-Dies geschieht über [APIs und Services](https://console.developers.google.com). Hier muss zunächst ein [Projekt angelegt](https://console.developers.google.com/projectcreate) werden. Sobald das geschehen ist kann die [Calendar API](https://console.developers.google.com/apis/library/calendar-json.googleapis.com/) aktiviert werden. Nach der Aktivierung müssen außerdem [OAuth 2.0 Client Zugangsdaten](https://console.developers.google.com/apis/credentials/oauthclient) erzeugt werden. Direkt nach der Erstellung werden **Client Id** und **Client Secret** angezeigt. Diese müssen dann in den Einstellungen der Urlaubsverwaltung entsprechend hinterlegt werden.
+Dies geschieht über [APIs und Services](https://console.developers.google.com). Hier muss zunächst ein [Projekt angelegt](https://console.developers.google.com/projectcreate) werden. Sobald das geschehen ist kann die [Calendar API](https://console.developers.google.com/apis/library/calendar-json.googleapis.com/) aktiviert werden. Nach der Aktivierung müssen außerdem [OAuth 2.0 Client Zugangsdaten](https://console.developers.google.com/apis/credentials/oauthclient) erzeugt werden. Es müssen außerdem die Autorisierte Weiterleitungs-URIs mit dem Wert gefüllt werden der in den Einstellungen unter Weiterleitungs-URL angezeigt wird. Direkt nach der Erstellung werden **Client Id** und **Client Secret** angezeigt. Diese müssen dann in den Einstellungen der Urlaubsverwaltung entsprechend hinterlegt werden.
 
 ##### Kalender anlegen/konfigurieren
 
 Eine weitere notwendige Information ist die **Kalender ID** welche später zur Synchronisation verwendet wird. Es kann dafür entweder ein bestehender Kalender verwendet werden oder ein [neuer Kalender angelegt](https://calendar.google.com/calendar/r/settings/createcalendar) werden. In Google Calendar kann man dann in den Kalendereinstellungen die **Kalendar ID** finden. Diese muss ebenfalls in der Urlaubsverwaltung gepflegt werden.
 
-##### Basis Url der Urlaubsverwaltung
+##### Urlaubsverwaltung Weiterleitungs-URL
 
-Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es außerdem notwendig die Basis URL der Urlaubsverwaltung anzugeben. Diese wäre z. Bsp für das Demo System der Urlaubsverwaltung `https://urlaubsverwaltung-demo.synyx.de`.
+Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es notwendig die die Weiterleitungs-URL bei der Konfiguration der Webanwendung bei Google anzugeben. Diese ist abhängig von der Installation und wird in den Einstellungen des Google Kalenders angezeigt, z.B. `http://localhost:8080/web/google-api-handshake` für ein Testsystem. Sie ist nur für die initiale Freigabe des Kalenders nötig.
 
 ---
 

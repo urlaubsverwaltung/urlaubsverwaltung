@@ -4,7 +4,7 @@
 
     <groupId>org.synyx</groupId>
     <artifactId>urlaubsverwaltung</artifactId>
-    <version>2.26.1-SNAPSHOT</version>
+    <version>2.26.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Urlaubsverwaltung</name>
@@ -51,6 +51,8 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <coveralls-maven-plugin.version>4.1.0</coveralls-maven-plugin.version>
         <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
+        <google-api-client.version>1.23.0</google-api-client.version>
+        <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
     </properties>
 
     <scm>
@@ -237,13 +239,13 @@
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
-            <version>1.22.0</version>
+            <version>${google-api-client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-calendar</artifactId>
-            <version>v3-rev254-1.22.0</version>
+            <version>${google-api-services-calendar.version}</version>
         </dependency>
     </dependencies>
 
