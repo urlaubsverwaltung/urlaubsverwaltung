@@ -14,6 +14,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.apache.http.HttpStatus.SC_OK;
@@ -228,6 +230,11 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     private static void fillEvent(Absence absence, Event event) {
 
         event.setSummary(absence.getEventSubject());
+
+        EventAttendee eventAttendee = new EventAttendee();
+        eventAttendee.setEmail(absence.getPerson().getEmail());
+        eventAttendee.setDisplayName(absence.getPerson().getNiceName());
+        event.setAttendees(Collections.singletonList(eventAttendee));
 
         EventDateTime startEventDateTime;
         EventDateTime endEventDateTime;
