@@ -12,12 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.statistics.ApplicationForLeaveStatisticsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -29,7 +25,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Controller to generate applications for leave statistics.
@@ -40,30 +35,20 @@ import java.util.stream.Collectors;
 @RequestMapping(ApplicationForLeaveStatisticsController.STATISTICS_REL)
 public class ApplicationForLeaveStatisticsController {
 
-    protected static final Locale LOCALE = Locale.GERMAN;
-    public static final String STATISTICS_REL = "/web/application/statistics";
+    private static final Locale LOCALE = Locale.GERMAN;
+    static final String STATISTICS_REL = "/web/application/statistics";
 
     @Autowired
     private MessageSource messageSource;
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private DepartmentService departmentService;
+    private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
 
     @Autowired
     private VacationTypeService vacationTypeService;
 
-    @Autowired
-    private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
-
     @InitBinder
     public void initBinder(DataBinder binder) {
-
         binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
     }
 
@@ -80,29 +65,23 @@ public class ApplicationForLeaveStatisticsController {
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping
     public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
-        @RequestParam(value = "to", required = false) String to, Model model) {
+                                                @RequestParam(value = "to", required = false) String to,
+                                                Model model) {
 
         FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
 
-        DateMidnight fromDate = period.getStartDate();
-        DateMidnight toDate = period.getEndDate();
-
         // NOTE: Not supported at the moment
-        if (fromDate.getYear() != toDate.getYear()) {
+        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
 
             return "application/app_statistics";
         }
 
-        List<Person> persons = getRelevantPersons();
+        List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
 
-        List<ApplicationForLeaveStatistics> statistics = persons.stream()
-            .map(person -> applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate))
-            .collect(Collectors.toList());
-
-        model.addAttribute("from", fromDate);
-        model.addAttribute("to", toDate);
+        model.addAttribute("from", period.getStartDate());
+        model.addAttribute("to", period.getEndDate());
         model.addAttribute("statistics", statistics);
         model.addAttribute("period", period);
         model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
@@ -113,7 +92,9 @@ public class ApplicationForLeaveStatisticsController {
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
     public String downloadCSV(@RequestParam(value = "from", required = false) String from,
-        @RequestParam(value = "to", required = false) String to, HttpServletResponse response, Model model)
+                              @RequestParam(value = "to", required = false) String to,
+                              HttpServletResponse response,
+                              Model model)
         throws IOException {
 
         FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
@@ -150,11 +131,7 @@ public class ApplicationForLeaveStatisticsController {
         newSymbols.setGroupingSeparator('.');
         decimalFormat.setDecimalFormatSymbols(newSymbols);
 
-        List<Person> persons = getRelevantPersons();
-
-        List<ApplicationForLeaveStatistics> statistics = persons.stream()
-            .map(person -> applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate))
-            .collect(Collectors.toList());
+        List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
 
         response.setContentType("text/csv");
         response.setCharacterEncoding("utf-8");
@@ -198,17 +175,6 @@ public class ApplicationForLeaveStatisticsController {
         }
 
         return "application/app_statistics";
-    }
-
-    private List<Person> getRelevantPersons() {
-
-        Person signedInUser = sessionService.getSignedInUser();
-
-        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
-            return departmentService.getManagedMembersOfDepartmentHead(signedInUser);
-        }
-
-        return personService.getActivePersons();
     }
 
     private String getTranslation(String key, Object... args) {
