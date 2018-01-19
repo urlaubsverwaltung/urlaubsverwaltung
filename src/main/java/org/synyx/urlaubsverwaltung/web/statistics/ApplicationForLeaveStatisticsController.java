@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import liquibase.util.csv.CSVWriter;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -7,11 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -24,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -32,20 +31,17 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletResponse;
-
-import liquibase.util.csv.CSVWriter;
-
 /**
  * Controller to generate applications for leave statistics.
  *
  * @author Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/web/application")
 @Controller
+@RequestMapping(ApplicationForLeaveStatisticsController.STATISTICS_REL)
 public class ApplicationForLeaveStatisticsController {
 
     protected static final Locale LOCALE = Locale.GERMAN;
+    public static final String STATISTICS_REL = "/web/application/statistics";
 
     @Autowired
     private MessageSource messageSource;
@@ -72,15 +68,17 @@ public class ApplicationForLeaveStatisticsController {
     }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/statistics", method = RequestMethod.POST)
+    @PostMapping
     public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period) {
 
-        return "redirect:/web/application/statistics?from=" + period.getStartDateAsString() + "&to="
-            + period.getEndDateAsString();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("redirect:" + STATISTICS_REL)
+                .queryParam("from", period.getStartDateAsString())
+                .queryParam("to", period.getEndDateAsString());
+        return builder.toUriString();
     }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    @GetMapping
     public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
         @RequestParam(value = "to", required = false) String to, Model model) {
 
@@ -113,7 +111,7 @@ public class ApplicationForLeaveStatisticsController {
     }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/statistics/download", method = RequestMethod.GET)
+    @GetMapping(value = "/download")
     public String downloadCSV(@RequestParam(value = "from", required = false) String from,
         @RequestParam(value = "to", required = false) String to, HttpServletResponse response, Model model)
         throws IOException {
