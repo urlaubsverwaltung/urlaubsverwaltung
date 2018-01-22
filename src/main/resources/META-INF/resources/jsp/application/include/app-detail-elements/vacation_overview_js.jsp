@@ -250,7 +250,7 @@
 		selectedDepartment.addEventListener("change", function() {
 			selectedItemChange();
 		});
-		if (typeof(Event) === "'function'") {
+		if (typeof(Event) === "function") {
 			var event = new Event("change");
 	    } else {
 	        var event = document.createEvent("Event");
