@@ -1,4 +1,6 @@
 ### urlaubsverwaltung-x.x.x
+* Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
+* Google Kalendar: Kalendereinträg enthält auch die betreffende Person als Teilnehmer
 * Aktualisierung der Javascript Abhängigkeiten
 
 ### [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1)
