@@ -8,11 +8,11 @@
 <link rel="stylesheet" href="<spring:url value='/lib/bootstrap/bootstrap.min.css' />">
 <link rel="stylesheet" href="<spring:url value='/lib/font-awesome/css/font-awesome.min.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
-<script src="<spring:url value='/lib/underscore.min.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/lib/underscore-1.8.3.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery-3.3.1.min.js' />" type="text/javascript" ></script>
-<script src="<spring:url value='/lib/jquery/js/jquery-ui.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/lib/jquery/js/jquery-ui-1.12.1.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery.tablesorter.js' />" type="text/javascript" ></script>
-<script src="<spring:url value='/lib/bootstrap/bootstrap.min.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/lib/bootstrap/bootstrap-3.3.2.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/custom.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/actions.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/back-button.js' />" type="text/javascript" ></script>
