@@ -138,16 +138,16 @@
                     <div class="col-md-8 col-md-pull-4">
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="absenceSettings.remindForWaitingApplications">
+                            <label class="control-label col-md-4" for="absenceSettings.remindForWaitingApplications.true">
                                 <spring:message code='settings.vacation.remindForWaitingApplications'/>:
                             </label>
                             <div class="col-md-8 radio">
                                 <label class="halves">
-                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications" path="absenceSettings.remindForWaitingApplications" value="true"/>
+                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications.true" path="absenceSettings.remindForWaitingApplications" value="true"/>
                                     <spring:message code="settings.vacation.remindForWaitingApplications.true"/>
                                 </label>
                                 <label class="halves">
-                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications" path="absenceSettings.remindForWaitingApplications" value="false"/>
+                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications.false" path="absenceSettings.remindForWaitingApplications" value="false"/>
                                     <spring:message code="settings.vacation.remindForWaitingApplications.false"/>
                                 </label>
                             </div>
@@ -217,7 +217,7 @@
                             </label>
 
                             <div class="col-md-8">
-                                <form:select path="workingTimeSettings.workingDurationForChristmasEve" id="dayLengthTypes" class="form-control" cssErrorClass="form-control error">
+                                <form:select path="workingTimeSettings.workingDurationForChristmasEve" id="dayLengthTypesChristmasEve" class="form-control" cssErrorClass="form-control error">
                                     <c:forEach items="${dayLengthTypes}" var="dayLengthType">
                                         <form:option value="${dayLengthType}"><spring:message code="${dayLengthType}" /></form:option>
                                     </c:forEach>
@@ -230,7 +230,7 @@
                             </label>
 
                             <div class="col-md-8">
-                                <form:select path="workingTimeSettings.workingDurationForNewYearsEve" id="dayLengthTypes" class="form-control" cssErrorClass="form-control error">
+                                <form:select path="workingTimeSettings.workingDurationForNewYearsEve" id="dayLengthTypesNewYearsEve" class="form-control" cssErrorClass="form-control error">
                                     <c:forEach items="${dayLengthTypes}" var="dayLengthType">
                                         <form:option value="${dayLengthType}"><spring:message code="${dayLengthType}" /></form:option>
                                     </c:forEach>
@@ -266,16 +266,16 @@
                     <div class="col-md-8 col-md-pull-4">
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="workingTimeSettings.overtimeActive">
+                            <label class="control-label col-md-4" for="workingTimeSettings.overtimeActive.true">
                                 <spring:message code='settings.overtime.overtimeActive'/>:
                             </label>
                             <div class="col-md-8 radio">
                                 <label class="halves">
-                                    <form:radiobutton id="workingTimeSettings.overtimeActive" path="workingTimeSettings.overtimeActive" value="true"/>
+                                    <form:radiobutton id="workingTimeSettings.overtimeActive.true" path="workingTimeSettings.overtimeActive" value="true"/>
                                     <spring:message code="settings.overtime.overtimeActive.true"/>
                                 </label>
                                 <label class="halves">
-                                    <form:radiobutton id="workingTimeSettings.overtimeActive" path="workingTimeSettings.overtimeActive" value="false"/>
+                                    <form:radiobutton id="workingTimeSettings.overtimeActive.false" path="workingTimeSettings.overtimeActive" value="false"/>
                                     <spring:message code="settings.overtime.overtimeActive.false"/>
                                 </label>
                             </div>
@@ -316,16 +316,16 @@
                     </div>
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="mailSettings.active">
+                            <label class="control-label col-md-4" for="mailSettings.active.true">
                                 <spring:message code='settings.mail.active'/>:
                             </label>
                             <div class="col-md-8 radio">
                                 <label class="halves">
-                                    <form:radiobutton id="mailSettings.active" path="mailSettings.active" value="true"/>
+                                    <form:radiobutton id="mailSettings.active.true" path="mailSettings.active" value="true"/>
                                     <spring:message code="settings.mail.active.true"/>
                                 </label>
                                 <label class="halves">
-                                    <form:radiobutton id="mailSettings.active" path="mailSettings.active" value="false"/>
+                                    <form:radiobutton id="mailSettings.active.false" path="mailSettings.active" value="false"/>
                                     <spring:message code="settings.mail.active.false"/>
                                 </label>
                             </div>
