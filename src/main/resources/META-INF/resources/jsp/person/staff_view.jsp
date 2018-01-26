@@ -35,7 +35,7 @@
                     <legend>
 
                         <div class="legend-dropdown dropdown">
-                            <a id="active-state" data-target="#" href="#" data-toggle="dropdown"
+                            <a id="active-state" href="#" data-toggle="dropdown"
                                aria-haspopup="true" role="button" aria-expanded="false">
                                 <c:choose>
                                     <c:when test="${param.active}">
