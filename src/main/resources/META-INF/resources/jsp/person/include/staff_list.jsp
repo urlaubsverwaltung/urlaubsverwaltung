@@ -29,7 +29,7 @@
 
         new List('users', options);
 
-        $('#search').keypress(function(event){
+        $('#search').on("keypress", function(event){
 
             if (event.keyCode === 10 || event.keyCode === 13)
                 event.preventDefault();
