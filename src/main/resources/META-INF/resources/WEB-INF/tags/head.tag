@@ -10,7 +10,6 @@
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
 <script src="<spring:url value='/lib/underscore-min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery-3.3.1.min.js' />" type="text/javascript" ></script>
-<script src="<spring:url value='/lib/jquery/js/jquery-migrate-3.0.1.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery-ui.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery.tablesorter.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/bootstrap/bootstrap.min.js' />" type="text/javascript" ></script>
