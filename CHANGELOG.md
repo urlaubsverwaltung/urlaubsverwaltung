@@ -1,3 +1,6 @@
+### urlaubsverwaltung-x.x.x
+* Aktualisierung der Javascript Abhängigkeiten
+
 ### [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1)
 * Bug: Google Calendar Synchronisation funktioniert nur mit localhost [#377](https://github.com/synyx/urlaubsverwaltung/pull/377) 
 
