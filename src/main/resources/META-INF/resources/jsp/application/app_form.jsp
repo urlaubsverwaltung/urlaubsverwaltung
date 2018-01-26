@@ -14,8 +14,8 @@
 
 <head>
     <uv:head/>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/timepicker.css' />" />
-    <script type="text/javascript" src="<spring:url value='/lib/jquery/js/timepicker.js' />"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/jquery.timepicker.min.css' />" />
+    <script type="text/javascript" src="<spring:url value='/lib/jquery/js/jquery.timepicker.min.js' />"></script>
     <script type="text/javascript" src="<spring:url value='/lib/moment/moment.min.js' />"></script>
     <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de.js' />"></script>
 
