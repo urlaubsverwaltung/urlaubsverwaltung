@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="<spring:url value='/lib/bootstrap/bootstrap.min.css' />">
 <link rel="stylesheet" href="<spring:url value='/lib/font-awesome/css/font-awesome.min.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
-<script src="<spring:url value='/lib/underscore-min.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/lib/underscore.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery-3.3.1.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery-ui.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery.tablesorter.js' />" type="text/javascript" ></script>
