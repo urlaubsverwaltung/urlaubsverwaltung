@@ -1,6 +1,6 @@
 .ui-timepicker-wrapper {
 	overflow-y: auto;
-	height: 150px;
+	max-height: 150px;
 	width: 6.5em;
 	background: #fff;
 	border: 1px solid #ddd;
@@ -8,7 +8,7 @@
 	-moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);
 	box-shadow:0 5px 10px rgba(0,0,0,0.2);
 	outline: none;
-	z-index: 10001;
+	z-index: 10052;
 	margin: 0;
 }
 
