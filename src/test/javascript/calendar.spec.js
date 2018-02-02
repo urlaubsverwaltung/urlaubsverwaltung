@@ -1,4 +1,4 @@
-import { setup, cleanup } from './TestSetupHelper';
+import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from './TestSetupHelper';
 
 describe ('calendar', () => {
     beforeEach (calendarTestSetup);
@@ -58,7 +58,9 @@ describe ('calendar', () => {
     async function calendarTestSetup () {
         await setup();
 
-        jest.spyOn(window.jQuery, 'ajax').mockReturnValue(Promise.reject());
+        // spying on jQuery.ajax breaks the promise chain. dunno why actually >.<
+        // jest.spyOn(window.jQuery, 'ajax').mockReturnValue(Promise.reject());
+
         window.moment = await import('moment');
 
         // 01.12.2017
@@ -66,6 +68,11 @@ describe ('calendar', () => {
 
         document.body.innerHTML = `<div id="datepicker"></div>`;
 
+        // loading calendar.js registers a jQuery ready callback
+        // which will be executed asynchronously
         await import('../../main/resources/static/js/calendar.js');
+
+        // therefore we have to wait till ready callbacks are invoked
+        return waitForFinishedJQueryReadyCallbacks();
     }
 });

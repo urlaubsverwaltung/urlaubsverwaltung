@@ -23,15 +23,50 @@ export async function setup () {
     // and we're able to attach additional custom stuff
 
     // importing jquery which is used in application
-    await import('../../main/resources/static/lib/jquery/js/jquery-1.9.1');
-    // trigger ready event
-    // so "modules" registered via $(function() { /* ... */ })
-    // are executed immediately on file import
-    window.jQuery.ready();
+    const $ = await import('../../main/resources/static/lib/jquery/js/jquery-3.3.1');
+    window.jQuery = window.$ = $;
 
     // defined in 'actions.js' as global function
     // setting as spy function to assert things in the tests
     window.tooltip = jest.fn();
+
+    // trigger ready event
+    // so "modules" registered via $(function() { /* ... */ }) are executed immediately on file import
+    window.jQuery.ready();
+}
+
+/**
+ * @example
+ * ```
+ * // myModule.js
+ * $(function() {
+ *   // ...
+ * });
+ * ```
+ *
+ * ```
+ * // myModule.spec.js
+ * import { setup, waitForFinishedJQueryReadyCallbacks } from './TestSetupHelper';
+ *
+ * beforeEach(async function() {
+ *   // setup jquery etc
+ *   await setup();
+ *
+ *   // import registers ready callback
+ *   await import('../../myModule');
+ *
+ *   // wait till callback has been invoked
+ *   await waitForFinishedJQueryReadyCallbacks();
+ * });
+ * ```
+ * @returns {Promise<any>}
+ */
+export function waitForFinishedJQueryReadyCallbacks() {
+    return new Promise(resolve => {
+        window.jQuery.fn.ready(function() {
+            resolve();
+        });
+    });
 }
 
 export async function cleanup () {
