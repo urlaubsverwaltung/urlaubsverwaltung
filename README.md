@@ -3,18 +3,32 @@
 
 ## Urlaubsverwaltung
 
-* [Übersicht](#übersicht)
-    * [Demo System](#demo-system)
-    * [Blog Posts](#blog-posts)
-    * [FAQ](#faq)
-    * [Berechtigungen](#berechtigungen)
-    * [REST-Schnittstelle](#rest-schnittstelle)
-* [Installation](#installation)
-* [Entwicklung](#entwicklung)
-* [Support und individuelle Anpassungen](#support-und-individuelle-anpassungen)
-* [Changelog](CHANGELOG.md)
-* [Technologien](#technologien)
-* [Lizenz](#lizenz)
+ * [Demo System](#demo-system)
+ * [Blog Posts](#blog-posts)
+ * [FAQ](#faq)
+ * [Berechtigungen](#berechtigungen)
+ * [REST-Schnittstelle](#rest-schnittstelle)
+ * [Installation](#installation)
+   * [Systemvoraussetzungen](#systemvoraussetzungen)
+   * [Download](#download)
+   * [Starten der Anwendung](#starten-der-anwendung)
+   * [Aufrufen der Anwendung](#aufrufen-der-anwendung)
+   * [Anwendung als Service](#anwendung-als-service)
+   * [Konfigurationsdatei](#konfigurationsdatei)
+   * [Datenbank](#datenbank)
+   * [Produktives Starten der Anwendung](#achtung-produktives-starten-der-anwendung)
+   * [Authentifizierung](#authentifizierung)
+    * [LDAP](#ldap)
+    * [Active Directory](#active-directory)
+    * [Synchronisation der User-Datenbank](#synchronisation-der-user-datenbank)
+   * [Synchronisation mit Kalender](#synchronisation-mit-kalender)
+    * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
+    * [Konfiguration Google Calendar](#konfiguration-google-calendar)
+ * [Entwicklung](#entwicklung)
+ * [Support und individuelle Anpassungen](#support-und-individuelle-anpassungen)
+ * [Changelog](CHANGELOG.md)
+ * [Technologien](#technologien)
+ * [Lizenz](#lizenz)
 
 ---
 
@@ -191,6 +205,38 @@ Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in
 
 <pre>uv.security.ldap.sync=true</pre> bzw. <pre>uv.security.activeDirectory.sync=true</pre>
 
+### Synchronisation mit Kalender
+
+Die Urlaubsverwaltung bietet die Möglichkeit alle Urlaube und Krankheitstage mit einem Kalender zu synchronisieren. Dafür werden Microsoft Exchange bzw. Office 356 und Google Calendar unterstützt.
+
+#### Konfiguration Microsoft Exchange
+
+![Einstellungsdialog für Microsoft Exchange als Kalenderanbindung](docs/exchange-calendar-settings.png)
+
+Anhand der zu konfigurierenden Email-Adresse wird per Autodiscovery die dazugehörige Exchange Server Adresse ermittelt, 
+welche für die synchronisation verwendet wird. Wichtig ist, dass der gewünschte Kalender bereits zuvor angelegt wurde.
+
+#### Konfiguration Google Calendar
+![Einstellungsdialog für Google Calendar als Kalenderanbindung](docs/google-calendar-settings.png)
+
+Die Anbindung von Google Calendar basiert auf einem OAuth 2.0 Handshake.
+Sobald alle Konfigurationsfelder wie unten beschrieben für die Synchronisation mit Google Calendar befüllt sind, kann mit dem Button "Zugriff erlauben..." der OAuth 2.0 Handshake durchgeführt werden. Sofern dieser Schritt erfolgreich war und die Synchronisation eingerichtet ist, steht neben dem Button "Verbindung zum Google-Kalender ist hergestellt."
+
+##### Client anlegen
+
+![Anlage eines OAuth 2.0 Clients](docs/google-create-oauth-client.png)
+
+Um einen solchen OAuth 2.0 Handshake durchführen zu können ist es zunächst notwendig die Urlaubsverwaltung als Anwendung bei Google bekannt zu machen.
+Dies geschieht über [APIs und Services](https://console.developers.google.com). Hier muss zunächst ein [Projekt angelegt](https://console.developers.google.com/projectcreate) werden. Sobald das geschehen ist kann die [Calendar API](https://console.developers.google.com/apis/library/calendar-json.googleapis.com/) aktiviert werden. Nach der Aktivierung müssen außerdem [OAuth 2.0 Client Zugangsdaten](https://console.developers.google.com/apis/credentials/oauthclient) erzeugt werden. Es müssen außerdem die Autorisierte Weiterleitungs-URIs mit dem Wert gefüllt werden der in den Einstellungen unter Weiterleitungs-URL angezeigt wird. Direkt nach der Erstellung werden **Client Id** und **Client Secret** angezeigt. Diese müssen dann in den Einstellungen der Urlaubsverwaltung entsprechend hinterlegt werden.
+
+##### Kalender anlegen/konfigurieren
+
+Eine weitere notwendige Information ist die **Kalender ID** welche später zur Synchronisation verwendet wird. Es kann dafür entweder ein bestehender Kalender verwendet werden oder ein [neuer Kalender angelegt](https://calendar.google.com/calendar/r/settings/createcalendar) werden. In Google Calendar kann man dann in den Kalendereinstellungen die **Kalendar ID** finden. Diese muss ebenfalls in der Urlaubsverwaltung gepflegt werden.
+
+##### Urlaubsverwaltung Weiterleitungs-URL
+
+Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es notwendig die die Weiterleitungs-URL bei der Konfiguration der Webanwendung bei Google anzugeben. Diese ist abhängig von der Installation und wird in den Einstellungen des Google Kalenders angezeigt, z.B. `http://localhost:8080/web/google-api-handshake` für ein Testsystem. Sie ist nur für die initiale Freigabe des Kalenders nötig.
+
 ---
 
 ## Entwicklung
@@ -315,13 +361,15 @@ Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHAN
 
 ## Technologien
 
-Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework.
-Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt.
-Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
+* Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework.
+* Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt.
+* Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
 [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
-Für die Darstellung der Benutzer Avatare wird [Gravatar](http://de.gravatar.com/) benutzt.
-Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Kalender wird die
+*Für die Darstellung der Benutzer Avatare wird [Gravatar](http://de.gravatar.com/) benutzt.
+* Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Kalender wird die
 [EWS JAVA API](https://github.com/OfficeDev/ews-java-api) genutzt.
+* Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Google Calendar wird der
+[Google API Client](https://github.com/google/google-api-java-client) verwendet.
 
 ## Lizenz
 

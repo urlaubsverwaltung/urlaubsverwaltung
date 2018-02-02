@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.sync;
+package org.synyx.urlaubsverwaltung.core.sync.providers.exchange;
 
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.core.ExchangeService;
@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -29,6 +30,8 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarNotCreatedException;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
 
@@ -40,9 +43,9 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-class ExchangeCalendarProviderService implements CalendarProviderService {
+public class ExchangeCalendarProvider implements CalendarProvider {
 
-    private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
+    private static final Logger LOG = Logger.getLogger(ExchangeCalendarProvider.class);
 
     private final MailService mailService;
     private final ExchangeService exchangeService;
@@ -51,14 +54,14 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
     private String credentialsPassword;
 
     @Autowired
-    ExchangeCalendarProviderService(MailService mailService) {
+    public ExchangeCalendarProvider(MailService mailService) {
 
         this.mailService = mailService;
         this.exchangeService = new ExchangeService();
     }
 
     @Override
-    public Optional<String> addAbsence(Absence absence, CalendarSettings calendarSettings) {
+    public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
         ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         String calendarName = exchangeCalendarSettings.getCalendar();
@@ -96,7 +99,16 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
 
         String email = settings.getEmail();
         String password = settings.getPassword();
-        String username = email.split("[@._]")[0];
+
+        String[] emailPart = email.split("[@._]");
+        if (emailPart.length < 2) {
+            LOG.warn(String.format(
+                    "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
+                    "email-address is not valid (expected form: name@domain)"));
+            return;
+        }
+        String username = emailPart[0];
+        String domain = emailPart[1];
 
         if (!email.equals(credentialsMailAddress) || !password.equals(credentialsPassword)) {
             try {
@@ -108,7 +120,6 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
                 LOG.info(String.format(
                         "No connection could be established to the Exchange calendar for username=%s, cause=%s",
                         username, usernameException.getMessage()));
-                String domain = email.split("[@._]")[1];
                 try {
                     exchangeService.setCredentials(new WebCredentials(username, password, domain));
                     exchangeService.setTraceEnabled(true);
@@ -194,6 +205,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
 
         appointment.setStart(absence.getStartDate());
         appointment.setEnd(absence.getEndDate());
+        appointment.setIsAllDayEvent(absence.isAllDay());
         appointment.getRequiredAttendees().add(person.getEmail());
     }
 
@@ -229,7 +241,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
 
 
     @Override
-    public void deleteAbsence(String eventId, CalendarSettings calendarSettings) {
+    public void delete(String eventId, CalendarSettings calendarSettings) {
 
         ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         String calendarName = exchangeCalendarSettings.getCalendar();

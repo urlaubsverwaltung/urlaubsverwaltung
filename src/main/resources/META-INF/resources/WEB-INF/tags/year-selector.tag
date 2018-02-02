@@ -24,7 +24,7 @@
 </script>
 
 <div id="year-selection" class="legend-dropdown dropdown">
-    <a id="dropdownLabel" data-target="#" href="#" data-toggle="dropdown"
+    <a id="dropdownLabel" href="#" data-toggle="dropdown"
        aria-haspopup="true" role="button" aria-expanded="false">
         <c:out value="${year}" /><span class="caret"></span>
     </a>

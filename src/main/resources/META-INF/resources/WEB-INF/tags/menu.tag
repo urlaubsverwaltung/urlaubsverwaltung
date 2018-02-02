@@ -7,7 +7,8 @@
 <script type="text/javascript">
 
   <%-- UGLY FIX BECAUSE BOOTSTRAP DROPDOWN IN NAVBAR NOT WORKING ON SOME MOBILE PHONES --%>
-  $('.dropdown-toggle').click(function (event) {
+
+  $('.dropdown-toggle').on("click", function (event) {
     event.preventDefault();
     setTimeout($.proxy(function () {
       if ('ontouchstart' in document.documentElement) {
