@@ -19,6 +19,7 @@
         <security:intercept-url pattern="/web/overtime/**" access="hasAuthority('USER')"/>
         <security:intercept-url pattern="/web/department/**" access="hasAnyAuthority('BOSS', 'OFFICE')"/>
         <security:intercept-url pattern="/web/settings/**" access="hasAuthority('OFFICE')"/>
+        <security:intercept-url pattern="/web/google-api-handshake/**" access="hasAuthority('OFFICE')"/>
         <!-- OPEN -->
         <security:intercept-url pattern="/login" access="permitAll"/>
         <security:form-login login-page="/login" always-use-default-target="false"

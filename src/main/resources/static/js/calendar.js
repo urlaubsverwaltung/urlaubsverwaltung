@@ -401,7 +401,7 @@ $(function() {
                 if (_CACHE['publicHoliday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/holidays', {year: year, person: personId}).success( cachePublicHoliday(year) );
+                    return fetch('/holidays', {year: year, person: personId}).done( cachePublicHoliday(year) );
                 }
             },
 
@@ -420,7 +420,7 @@ $(function() {
                 if (_CACHE['holiday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).success( cacheAbsences('holiday', year) );
+                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).done( cacheAbsences('holiday', year) );
                 }
             },
 
@@ -432,7 +432,7 @@ $(function() {
                 if (_CACHE['sick'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).success( cacheAbsences('sick', year) );
+                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).done( cacheAbsences('sick', year) );
                 }
             }
         };

@@ -1,3 +1,16 @@
+### urlaubsverwaltung-x.x.x
+* Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
+* Google Kalendar: Kalendereinträg enthält auch die betreffende Person als Teilnehmer
+* Aktualisierung der Javascript Abhängigkeiten
+
+### [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1)
+* Bug: Google Calendar Synchronisation funktioniert nur mit localhost [#377](https://github.com/synyx/urlaubsverwaltung/pull/377) 
+
+### [urlaubsverwaltung-2.26.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.0)
+* Anbindung an Google Calendar [#8](https://github.com/synyx/urlaubsverwaltung/issues/8)
+* Bug: Urlaubsantrag für ganztägig und morgens/mittags an einem Tag möglich [#257](https://github.com/synyx/urlaubsverwaltung/issues/257)
+* Kleinere Refactorings (Entfernen von Unterschriftssystem)
+
 ### [urlaubsverwaltung-2.25.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.25.0)
 * Übersicht über alle Abwesenheiten von [@ajanus](https://github.com/ajanus) hinzu [#350](https://github.com/synyx/urlaubsverwaltung/pull/350)
 
