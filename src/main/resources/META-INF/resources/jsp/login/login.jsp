@@ -53,29 +53,47 @@
 
                     <div class="login">
 
-                        <form method="post" class="login--form" action="/login">
+                        <c:choose>
+                            <c:when test="${auth == 'azure'}">
+                                <div class="login--form">
+                                    <div id="login--error" class="alert alert-danger"
+                                            style="display: none;">Der eingegebene Nutzername oder
+                                            das Passwort ist falsch.</div>
+                                    <a href="${loginUrl}">
+                                        <button class="btn btn-primary btn-block" type="submit">
+                                                <i class="fa fa-sign-in"></i> Login
+                                        </button>
+                                    </a>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <form method="post" class="login--form" action="/login">
+                                    <div id="login--error" class="alert alert-danger"
+                                        style="display: none;">Der eingegebene Nutzername oder
+                                        das Passwort ist falsch.</div>
 
-                            <div id="login--error" class="alert alert-danger" style="display: none;">
-                                Der eingegebene Nutzername oder das Passwort ist falsch.
-                            </div>
+                                    <div class="form-group">
+                                        <label for="username">Username</label> <input
+                                            class="form-control" type="text" name="username" id="username"
+                                            autofocus="autofocus">
+                                    </div>
 
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input class="form-control" type="text" name="username" id="username" autofocus="autofocus">
-                            </div>
+                                    <div class="form-group">
+                                        <label for="password">Passwort</label> <input
+                                            class="form-control" type="password" name="password"
+                                            id="password">
+                                    </div>
 
-                            <div class="form-group">
-                                <label for="password">Passwort</label>
-                                <input class="form-control" type="password" name="password" id="password">
-                            </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary btn-block" type="submit">
+                                            <i class="fa fa-sign-in"></i> Login
+                                        </button>
+                                    </div>
 
-                            <div class="form-group">
-                                <button class="btn btn-primary btn-block" type="submit">
-                                    <i class="fa fa-sign-in"></i> Login
-                                </button>
-                            </div>
 
-                        </form>
+                                </form>
+                            </c:otherwise>
+                        </c:choose>
 
                     </div>
 
