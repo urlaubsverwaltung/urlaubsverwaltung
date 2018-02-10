@@ -58,9 +58,6 @@ describe ('calendar', () => {
     async function calendarTestSetup () {
         await setup();
 
-        // spying on jQuery.ajax breaks the promise chain. dunno why actually >.<
-        // jest.spyOn(window.jQuery, 'ajax').mockReturnValue(Promise.reject());
-
         window.moment = await import('moment');
 
         // 01.12.2017
