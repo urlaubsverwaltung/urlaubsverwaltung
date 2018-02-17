@@ -103,7 +103,7 @@ public class ApplicationForLeaveStatisticsController {
         DateMidnight toDate = period.getEndDate();
 
         final String[] csvHeader = { getTranslation("person.data.firstName", "Vorname"),
-                getTranslation("person.data.lastName", "Vachname"), "",
+                getTranslation("person.data.lastName", "Nachname"), "",
                 getTranslation("applications.statistics.allowed", "genehmigt"),
                 getTranslation("applications.statistics.waiting", "noch nicht genehmigt"),
                 getTranslation("applications.statistics.left", "verbleibend") + " (" + fromDate.getYear() + ")", "" };
