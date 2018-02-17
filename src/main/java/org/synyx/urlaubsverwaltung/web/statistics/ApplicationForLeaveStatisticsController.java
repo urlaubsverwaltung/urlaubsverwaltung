@@ -174,6 +174,8 @@ public class ApplicationForLeaveStatisticsController {
             }
         }
 
+        model.addAttribute("period", period);
+
         return "application/app_statistics";
     }
 
