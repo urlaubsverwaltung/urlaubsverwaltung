@@ -3,15 +3,14 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 import liquibase.util.csv.CSVWriter;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.core.statistics.ApplicationForLeaveStatisticsCsvExportService;
 import org.synyx.urlaubsverwaltung.core.statistics.ApplicationForLeaveStatisticsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -20,10 +19,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -35,14 +31,13 @@ import java.util.Optional;
 @RequestMapping(ApplicationForLeaveStatisticsController.STATISTICS_REL)
 public class ApplicationForLeaveStatisticsController {
 
-    private static final Locale LOCALE = Locale.GERMAN;
     static final String STATISTICS_REL = "/web/application/statistics";
 
     @Autowired
-    private MessageSource messageSource;
+    private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
 
     @Autowired
-    private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
+    private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
 
     @Autowired
     private VacationTypeService vacationTypeService;
@@ -99,88 +94,27 @@ public class ApplicationForLeaveStatisticsController {
 
         FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
 
-        DateMidnight fromDate = period.getStartDate();
-        DateMidnight toDate = period.getEndDate();
-
-        final String[] csvHeader = { getTranslation("person.data.firstName", "Vorname"),
-                getTranslation("person.data.lastName", "Nachname"), "",
-                getTranslation("applications.statistics.allowed", "genehmigt"),
-                getTranslation("applications.statistics.waiting", "noch nicht genehmigt"),
-                getTranslation("applications.statistics.left", "verbleibend") + " (" + fromDate.getYear() + ")", "" };
-
-        final String[] csvSubHeader = { "", "", "", "", "", getTranslation("duration.vacationDays", "Urlaubstage"),
-                getTranslation("duration.overtime", "Überstunden") };
-
-        String fileName = getTranslation("applications.statistics", "Statistik") + "_"
-            + period.getStartDate().toString("ddMMyyyy") + "_" + period.getEndDate().toString("ddMMyyyy") + ".csv";
-
-        String headerNote = getTranslation("absence.period", "Zeitraum") + ": " + period.getStartDateAsString() + " - "
-            + period.getEndDateAsString();
-
         // NOTE: Not supported at the moment
-        if (fromDate.getYear() != toDate.getYear()) {
+        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
 
             return "application/app_statistics";
         }
 
-        DecimalFormat decimalFormat = (DecimalFormat) DecimalFormat.getInstance(LOCALE);
-        DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
-        newSymbols.setDecimalSeparator(',');
-        newSymbols.setGroupingSeparator('.');
-        decimalFormat.setDecimalFormatSymbols(newSymbols);
-
         List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
 
+        String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
         response.setContentType("text/csv");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 
         try (CSVWriter csvWriter = new CSVWriter(response.getWriter())) {
-
-            csvWriter.writeNext(new String[] { headerNote });
-            csvWriter.writeNext(csvHeader);
-            csvWriter.writeNext(csvSubHeader);
-
-            String translatedTextTotal = getTranslation("applications.statistics.total", "gesamt");
-
-            for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
-
-                String[] csvRow = new String[csvHeader.length];
-
-                csvRow[0] = applicationForLeaveStatistics.getPerson().getFirstName();
-                csvRow[1] = applicationForLeaveStatistics.getPerson().getLastName();
-                csvRow[2] = translatedTextTotal;
-                csvRow[3] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
-                csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
-                csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
-                csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftOvertime());
-
-                csvWriter.writeNext(csvRow);
-
-                for (VacationType type : vacationTypeService.getVacationTypes()) {
-
-                    String[] csvRowVacationTypes = new String[csvHeader.length];
-
-                    csvRowVacationTypes[2] = type.getDisplayName();
-                    csvRowVacationTypes[3] = decimalFormat
-                        .format(applicationForLeaveStatistics.getAllowedVacationDays().get(type));
-                    csvRowVacationTypes[4] = decimalFormat
-                        .format(applicationForLeaveStatistics.getWaitingVacationDays().get(type));
-
-                    csvWriter.writeNext(csvRowVacationTypes);
-                }
-            }
+            applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
         }
 
         model.addAttribute("period", period);
 
         return "application/app_statistics";
-    }
-
-    private String getTranslation(String key, Object... args) {
-
-        return messageSource.getMessage(key, args, LOCALE);
     }
 }
