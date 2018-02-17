@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveStatisticsService {
 
     @Autowired
-    private SessionService sessionService;
+    SessionService sessionService;
     @Autowired
-    private PersonService personService;
+    PersonService personService;
     @Autowired
-    private DepartmentService departmentService;
+    DepartmentService departmentService;
     @Autowired
-    private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
+    ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
 
     @Override
     public List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
