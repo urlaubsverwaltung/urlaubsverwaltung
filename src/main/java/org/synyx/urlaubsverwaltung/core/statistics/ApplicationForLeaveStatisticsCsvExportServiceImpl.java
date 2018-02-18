@@ -20,10 +20,10 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements Applic
     private static final Locale LOCALE = Locale.GERMAN;
 
     @Autowired
-    private MessageSource messageSource;
+    MessageSource messageSource;
 
     @Autowired
-    private VacationTypeService vacationTypeService;
+    VacationTypeService vacationTypeService;
 
     @Override
     public void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
