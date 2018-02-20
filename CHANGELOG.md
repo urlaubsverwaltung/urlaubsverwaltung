@@ -4,7 +4,7 @@
 * Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
 * Google Kalendar: Kalendereinträg enthält auch die betreffende Person als Teilnehmer
 * Aktualisierung der Javascript Abhängigkeiten
-* fixed calendar rendering public holiday on a Sunday
+* Korrektur der Kalenderanzeige für Feiertage die auf einen Sonntag fallen
 
 ### [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1)
 * Bug: Google Calendar Synchronisation funktioniert nur mit localhost [#377](https://github.com/synyx/urlaubsverwaltung/pull/377) 
