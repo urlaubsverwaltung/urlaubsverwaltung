@@ -1,4 +1,5 @@
 ### urlaubsverwaltung-x.x.x
+* CSV Export für Urlaubsstatistik hinzugefügt [#368](https://github.com/synyx/urlaubsverwaltung/pull/368)
 
 ### [urlaubsverwaltung-2.26.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.2)
 * Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
