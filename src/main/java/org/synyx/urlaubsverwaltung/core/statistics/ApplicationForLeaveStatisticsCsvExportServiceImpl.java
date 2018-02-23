@@ -18,7 +18,17 @@ import java.util.Locale;
 public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationForLeaveStatisticsCsvExportService {
 
     private static final Locale LOCALE = Locale.GERMAN;
+    private static final String DATE_FORMAT = "ddMMyyyy";
 
+    // made fields package private to enable testing
+    // normally it would be good to use private fields
+    // and constructor injection, but at the moment this
+    // is not possible in combination with the used spring
+    // version 1.4.2.RELEASE and the spring version is defined
+    // by the usage of JSPs (older spring versions does not
+    // support JSPs)
+    // So this is a workaround that should be removed as soon
+    // as the spring-version is updated.
     @Autowired
     MessageSource messageSource;
 
@@ -83,10 +93,10 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements Applic
 
     @Override
     public String getFileName(FilterPeriod period) {
-        String fileName = getTranslation("applications.statistics", "Statistik") + "_"
-                + period.getStartDate().toString("ddMMyyyy") + "_" + period.getEndDate().toString("ddMMyyyy") + ".csv";
-
-        return fileName;
+        return String.format("%s_%s_%s.csv",
+                getTranslation("applications.statistics", "Statistik"),
+                period.getStartDate().toString(DATE_FORMAT),
+                period.getEndDate().toString(DATE_FORMAT));
     }
 
     private String getTranslation(String key, Object... args) {
