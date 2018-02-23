@@ -1,5 +1,6 @@
 ### urlaubsverwaltung-x.x.x
 * CSV Export für Urlaubsstatistik hinzugefügt [#368](https://github.com/synyx/urlaubsverwaltung/pull/368)
+* Bug: Fix JavaScript-Probleme in der Urlaubsübersicht bei älteren Internet Explorer Versionen [#369](https://github.com/synyx/urlaubsverwaltung/issues/369)
 
 ### [urlaubsverwaltung-2.26.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.2)
 * Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
