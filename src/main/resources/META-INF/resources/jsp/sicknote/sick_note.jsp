@@ -38,7 +38,7 @@
                           <i class="fa fa-trash"></i>
                         </a>
                         <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
-                           data-title="<spring:message code="action.convert"/>">
+                           data-title="<spring:message code="action.convert_to_vacation"/>">
                           <i class="fa fa-retweet"></i>
                         </a>
                         <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
