@@ -103,4 +103,14 @@ public interface ApplicationInteractionService {
      * @return  the application for leave that is referred
      */
     Application refer(Application application, Person recipient, Person sender);
+
+    /**
+     * Converts the given application for leave into a sick note.
+     *
+     * @param  application  for leave to be referred
+     * @param  creator  who had created sick note from vacation
+     *
+     * @return  the application for leave that is converted
+     */
+    Application convert(Application application, Person creator);
 }

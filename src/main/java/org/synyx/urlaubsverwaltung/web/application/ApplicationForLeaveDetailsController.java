@@ -382,4 +382,21 @@ public class ApplicationForLeaveDetailsController {
 
         return "redirect:/web/application/" + applicationId;
     }
+
+    /**
+     * Convert the vacation application into a sick note.
+     */
+    @RequestMapping(value = "/{applicationId}/convert", method = RequestMethod.POST)
+    public String convertToSickNote(@PathVariable("applicationId") Integer applicationId,
+                             RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                new UnknownApplicationForLeaveException(applicationId));
+
+        Person signedInUser = sessionService.getSignedInUser();
+
+        applicationInteractionService.convert(application, signedInUser);
+
+        return "redirect:/web/application/" + applicationId;
+    }
 }

@@ -409,4 +409,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         return application;
     }
+
+    @Override
+    public Application convert(Application application, Person creator) {
+        LOG.info("Request convert of application for leave to sick note: " + application);
+
+        // TODO: add logic
+
+        return application;
+    }
 }

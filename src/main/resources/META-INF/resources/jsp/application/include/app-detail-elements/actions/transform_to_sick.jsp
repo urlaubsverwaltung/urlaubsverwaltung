@@ -21,11 +21,11 @@
 
 <c:choose>
       <c:when test="${shortcut == true}">
-        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow?redirect=/web/application/"/>
+        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/convert?redirect=/web/application/"/>
       </c:when>
 
       <c:otherwise>
-        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow"/>
+        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/convert"/>
       </c:otherwise>
 </c:choose>
 
