@@ -25,6 +25,7 @@
             <jsp:include page="actions/allow_form.jsp"/>
             <jsp:include page="actions/reject_form.jsp"/>
             <jsp:include page="actions/refer_form.jsp"/>
+            <jsp:include page="actions/transform_to_sick.jsp"/>
         </sec:authorize>
         <sec:authorize access="hasAuthority('USER')">
             <jsp:include page="actions/cancel_form.jsp"/>

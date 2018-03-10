@@ -48,7 +48,7 @@
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED'}">
   <c:if test="${(IS_USER && IS_OWN) || IS_OFFICE}">
     <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
-       onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
+       onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show(); $('#convert').hide();">
       <i class="fa fa-trash"></i>
     </a>
   </c:if>
@@ -68,7 +68,7 @@
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
   <c:if test="${CAN_ALLOW && (!IS_OWN || IS_BOSS)}">
     <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
-       onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
+       onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show(); $('#convert').hide();">
       <i class="fa fa-ban"></i>
     </a>
   </c:if>
@@ -78,7 +78,7 @@
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
   <c:if test="${CAN_ALLOW && (!IS_OWN || IS_BOSS)}">
     <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.refer'/>"
-       onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
+       onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show(); $('#convert').hide();">
       <i class="fa fa-share-alt"></i>
     </a>
   </c:if>
@@ -88,8 +88,18 @@
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
   <c:if test="${CAN_ALLOW &&(!IS_OWN || IS_BOSS) && !(IS_SECOND_STAGE_AUTHORITY_APPLICATION && IS_DEPARTMENT_HEAD)}">
     <a href="#" class="fa-action positive pull-right" data-title="<spring:message code='action.allow'/>"
-       onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
+       onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show(); $('#convert').hide();">
       <i class="fa fa-check"></i>
+    </a>
+  </c:if>
+</c:if>
+
+<%-- CONVERT ACTION --%>
+<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
+  <c:if test="${CAN_ALLOW &&(!IS_OWN || IS_BOSS) && !(IS_SECOND_STAGE_AUTHORITY_APPLICATION && IS_DEPARTMENT_HEAD)}">
+    <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.convert_to_sick'/>"
+       onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').hide(); $('#convert').show();">
+      <i class="fa fa-retweet"></i>
     </a>
   </c:if>
 </c:if>
