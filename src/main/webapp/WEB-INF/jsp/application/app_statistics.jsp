@@ -103,6 +103,7 @@
                                 <th class="sortable-field"><spring:message code="applications.statistics.left"/> (<c:out
                                     value="${from.year}"/>)
                                 </th>
+                                <th class="sortable-field"><spring:message code="applications.statistics.entitlement"/></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -165,6 +166,10 @@
                                         <br/>
                                         <strong><uv:number number="${statistic.leftOvertime}"/></strong>
                                         <spring:message code="duration.overtime"/>
+                                    </td>
+                                     <td class="hidden-xs">
+                                        <b class="sortable"><uv:number number="${statistic.entitlementVacationDays}"/></b>
+                                        <spring:message code="duration.vacationDays"/>
                                     </td>
                                 </tr>
                             </c:forEach>

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -254,5 +255,24 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         verify(overtimeService).getLeftOvertimeForPerson(person);
         verify(vacationDaysService).calculateTotalLeftVacationDays(account);
+    }
+
+
+    @Test
+    public void setAnnualVacationDaysForStatisticsFromAccount() {
+
+        DateMidnight from = new DateMidnight(2015, 1, 1);
+        DateMidnight to = new DateMidnight(2015, 12, 31);
+
+        Person person = mock(Person.class);
+        Account account = new Account();
+        account.setAnnualVacationDays(BigDecimal.TEN);
+
+        when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("6.5"));
+        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(new BigDecimal("8.5"));
+
+        ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
+        assertThat(statistics.getEntitlementVacationDays()).isSameAs(BigDecimal.TEN);
     }
 }
