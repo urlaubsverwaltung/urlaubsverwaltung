@@ -32,19 +32,18 @@
                         overViewList
                             .forEach(function (listItem, index, array) {
                                 var personId = listItem.personID;
-                                var personFullName = listItem.person.niceName;
                                 var url = location.protocol + "//"
-                                    + location.host + "/api/absences?year="
-                                    + encodeURIComponent(selectedYearValue) + "&month="
-                                    + encodeURIComponent(selectedMonthValue) + "&person="
-                                    + encodeURIComponent(personId);
-                                var xhttp = new XMLHttpRequest();
-                                xhttp.open("GET", url, false);
-                                xhttp.setRequestHeader("Content-type",
-                                    "application/json");
-                                xhttp.send();
-                                var response = JSON.parse(xhttp.responseText);
-                                if (response != null && response != undefined) {
+										+ location.host + "/api/absences?year="
+										+ encodeURIComponent(selectedYearValue) + "&month="
+										+ encodeURIComponent(selectedMonthValue) + "&person="
+										+ encodeURIComponent(personId);
+								var xhttp = new XMLHttpRequest();
+								xhttp.open("GET", url, false);
+								xhttp.setRequestHeader("Content-type",
+										"application/json");
+								xhttp.send();
+								var response = JSON.parse(xhttp.responseText);
+								if (response != null && response != undefined) {
 
                                     listItem.days
                                         .forEach(
@@ -149,8 +148,11 @@
                                 }
                             });
 
-                        var outputTable = "<table cellspacing='0' class='list-table sortable tablesorter vacationOverview-table'>";
-                        outputTable += "<tr><th><spring:message code='overview.vacationOverview.tableTitle' /></th>";
+                        var outputTable = "<table cellspacing='0' id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
+					outputTable += "<thead class='hidden-xs'>";
+                        outputTable += "<tr>";
+					outputTable += "<th class='sortable-field'><spring:message code='person.data.firstName'/></th>";
+					outputTable += "<th class='sortable-field'><spring:message code='person.data.lastName'/></th>";
                         overViewList[0].days
                             .forEach(
                                 function (item, index, array) {
@@ -166,8 +168,12 @@
                         overViewList
                             .forEach(
                                 function (item, index, array) {
-                                    outputTable += "<tr><td>"
-                                        + item.person.niceName
+                                    outputTable += "<tr>";
+										outputTable += "<td class='hidden-xs'>"
+                                        + item.person.firstName
+												+ "</td>";
+										outputTable += "<td class='hidden-xs'>"
+												+ item.person.lastName
                                         + "</td>";
                                     item.days
                                         .forEach(
@@ -186,16 +192,54 @@
                                     outputTable += "</tr>";
                                 }, outputTable);
 
-                        outputTable += "</tbody></table>";
-                        var element = document.getElementById("vacationOverview");
-                        element.innerHTML = outputTable;
-                    }
-                }
-            }
+					outputTable += "</tbody></table>";
+					var element = document.getElementById("vacationOverview");
+					element.innerHTML = outputTable;
+				}
+			}
 
-            var selectedYear = document.getElementById('yearSelect');
-            var selectedMonth = document.getElementById('monthSelect');
-            var selectedDepartment = document.getElementById('departmentSelect');
+			$("table.sortable").tablesorter({
+                sortList: [[1, 0]],
+                headers: {
+                    0: {sorter: true},
+                    1: {sorter: true},
+                    2: {sorter: false},
+                    3: {sorter: false},
+                    4: {sorter: false},
+                    5: {sorter: false},
+                    6: {sorter: false},
+                    7: {sorter: false},
+                    8: {sorter: false},
+                    9: {sorter: false},
+                    10: {sorter: false},
+                    11: {sorter: false},
+                    12: {sorter: false},
+                    13: {sorter: false},
+                    14: {sorter: false},
+                    15: {sorter: false},
+                    16: {sorter: false},
+                    17: {sorter: false},
+                    18: {sorter: false},
+                    19: {sorter: false},
+                    20: {sorter: false},
+                    21: {sorter: false},
+                    22: {sorter: false},
+                    23: {sorter: false},
+                    24: {sorter: false},
+                    25: {sorter: false},
+                    26: {sorter: false},
+                    27: {sorter: false},
+                    28: {sorter: false},
+                    29: {sorter: false},
+                    30: {sorter: false},
+                    31: {sorter: false},
+                    32: {sorter: false}
+                }
+            });
+		}
+		var selectedYear = document.getElementById('yearSelect');
+		var selectedMonth = document.getElementById('monthSelect');
+		var selectedDepartment = document.getElementById('departmentSelect');
 
             selectedYear.addEventListener("change", function () {
                 selectedItemChange();
