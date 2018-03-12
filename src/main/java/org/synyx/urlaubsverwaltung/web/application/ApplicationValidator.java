@@ -1,16 +1,12 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
@@ -28,17 +24,14 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
-
 import java.sql.Time;
-
 import java.util.Optional;
 
-
 /**
- * This class validate if an {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} is filled
- * correctly by the user, else it saves error messages in errors object.
+ * This class validate if an {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} is filled correctly by the user, else it saves error messages in errors
+ * object.
  *
- * @author  Aljona Murygina
+ * @author Aljona Murygina
  */
 @Component
 public class ApplicationValidator implements Validator {
@@ -74,10 +67,13 @@ public class ApplicationValidator implements Validator {
     private final SettingsService settingsService;
     private final OvertimeService overtimeService;
 
+    private boolean validateEnoughVacationDaysLeft;
+
     @Autowired
     public ApplicationValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
         OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-        OvertimeService overtimeService) {
+        OvertimeService overtimeService,
+        @Value("${uv.validation.validateEnoughVacationDaysLeft}") boolean validateEnoughVacationDaysLeft) {
 
         this.workingTimeService = workingTimeService;
         this.calendarService = calendarService;
@@ -85,6 +81,7 @@ public class ApplicationValidator implements Validator {
         this.calculationService = calculationService;
         this.settingsService = settingsService;
         this.overtimeService = overtimeService;
+        this.validateEnoughVacationDaysLeft = validateEnoughVacationDaysLeft;
     }
 
     @Override
@@ -92,7 +89,6 @@ public class ApplicationValidator implements Validator {
 
         return ApplicationForLeaveForm.class.equals(clazz);
     }
-
 
     @Override
     public void validate(Object target, Errors errors) {
@@ -109,7 +105,7 @@ public class ApplicationValidator implements Validator {
 
         // check if reason is not filled
         if (VacationCategory.SPECIALLEAVE.equals(applicationForm.getVacationType().getCategory())
-                && !StringUtils.hasText(applicationForm.getReason())) {
+            && !StringUtils.hasText(applicationForm.getReason())) {
             errors.rejectValue(ATTRIBUTE_REASON, ERROR_MISSING_REASON);
         }
 
@@ -125,7 +121,6 @@ public class ApplicationValidator implements Validator {
         }
     }
 
-
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
         DateMidnight startDate = applicationForLeave.getStartDate();
@@ -140,7 +135,6 @@ public class ApplicationValidator implements Validator {
         }
     }
 
-
     private void validateNotNull(DateMidnight date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
@@ -148,7 +142,6 @@ public class ApplicationValidator implements Validator {
             errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
     }
-
 
     private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, Settings settings,
         Errors errors) {
@@ -165,7 +158,6 @@ public class ApplicationValidator implements Validator {
         }
     }
 
-
     private void validateNotTooFarInTheFuture(DateMidnight date, AbsenceSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
@@ -175,7 +167,6 @@ public class ApplicationValidator implements Validator {
             errors.reject(ERROR_TOO_LONG, new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance() }, null);
         }
     }
-
 
     private void validateNotTooFarInThePast(DateMidnight date, AbsenceSettings settings, Errors errors) {
 
@@ -187,7 +178,6 @@ public class ApplicationValidator implements Validator {
         }
     }
 
-
     private void validateSameDayIfHalfDayPeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength,
         Errors errors) {
 
@@ -197,7 +187,6 @@ public class ApplicationValidator implements Validator {
             errors.reject(ERROR_HALF_DAY_PERIOD);
         }
     }
-
 
     private void validateTime(Time startTime, Time endTime, Errors errors) {
 
@@ -220,7 +209,6 @@ public class ApplicationValidator implements Validator {
         }
     }
 
-
     private void validateHours(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
         BigDecimal hours = applicationForLeave.getHours();
@@ -237,14 +225,12 @@ public class ApplicationValidator implements Validator {
         }
     }
 
-
     private void validateStringLength(String text, String field, Errors errors) {
 
         if (StringUtils.hasText(text) && text.length() > MAX_CHARS) {
             errors.rejectValue(field, ERROR_LENGTH);
         }
     }
-
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings,
         Errors errors) {
@@ -279,40 +265,35 @@ public class ApplicationValidator implements Validator {
         }
 
         /**
-         * Ensure that the person has enough vacation days left if the vacation type is
-         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.HOLIDAY}
+         * Ensure that the person has enough vacation days left if the vacation type is {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.HOLIDAY}
          */
         if (!enoughVacationDaysLeft(application)) {
             errors.reject(ERROR_NOT_ENOUGH_DAYS);
         }
 
         /**
-         * Ensure that the person has enough overtime hours left if the vacation type is
-         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.OVERTIME}
+         * Ensure that the person has enough overtime hours left if the vacation type is {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.OVERTIME}
          */
         if (!enoughOvertimeHoursLeft(application, settings)) {
             errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
         }
     }
 
-
     private boolean personHasWorkingTime(Application application) {
 
-        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-                application.getPerson(), application.getStartDate());
+        Optional<WorkingTime> workingTime = workingTimeService
+            .getByPersonAndValidityDateEqualsOrMinorDate(application.getPerson(), application.getStartDate());
 
         return workingTime.isPresent();
     }
 
-
     private boolean vacationOfZeroDays(Application application) {
 
         BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
-                application.getEndDate(), application.getPerson());
+            application.getEndDate(), application.getPerson());
 
         return CalcUtil.isZero(days);
     }
-
 
     private boolean vacationIsOverlapping(Application application) {
 
@@ -321,18 +302,16 @@ public class ApplicationValidator implements Validator {
         return overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
     }
 
-
     private boolean enoughVacationDaysLeft(Application application) {
 
         boolean isHoliday = VacationCategory.HOLIDAY.equals(application.getVacationType().getCategory());
 
-        if (isHoliday) {
+        if (isHoliday && validateEnoughVacationDaysLeft) {
             return calculationService.checkApplication(application);
         }
 
         return true;
     }
-
 
     private boolean enoughOvertimeHoursLeft(Application application, Settings settings) {
 
@@ -349,7 +328,6 @@ public class ApplicationValidator implements Validator {
 
         return true;
     }
-
 
     private boolean checkOvertimeHours(Application application, WorkingTimeSettings settings) {
 
