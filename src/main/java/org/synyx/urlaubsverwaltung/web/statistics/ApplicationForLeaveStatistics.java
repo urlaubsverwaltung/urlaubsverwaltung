@@ -1,22 +1,19 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
-
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
- * Encapsulates information about a person and the corresponding vacation days information (how many applications for
- * leave are waiting, how many are allowed, how many vacation days has the person left for using).
+ * Encapsulates information about a person and the corresponding vacation days information (how many applications for leave are waiting, how many are allowed, how many vacation
+ * days has the person left for using).
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationForLeaveStatistics {
 
@@ -27,6 +24,8 @@ public class ApplicationForLeaveStatistics {
 
     private BigDecimal leftVacationDays = BigDecimal.ZERO;
     private BigDecimal leftOvertime = BigDecimal.ZERO;
+
+    private BigDecimal entitlementVacationDays = BigDecimal.ZERO;
 
     public ApplicationForLeaveStatistics(Person person, VacationTypeService vacationTypeService) {
 
@@ -45,7 +44,6 @@ public class ApplicationForLeaveStatistics {
         return person;
     }
 
-
     public BigDecimal getTotalWaitingVacationDays() {
 
         BigDecimal total = BigDecimal.ZERO;
@@ -56,7 +54,6 @@ public class ApplicationForLeaveStatistics {
 
         return total;
     }
-
 
     public BigDecimal getTotalAllowedVacationDays() {
 
@@ -69,24 +66,20 @@ public class ApplicationForLeaveStatistics {
         return total;
     }
 
-
     public BigDecimal getLeftVacationDays() {
 
         return leftVacationDays;
     }
-
 
     public Map<VacationType, BigDecimal> getWaitingVacationDays() {
 
         return waitingVacationDays;
     }
 
-
     public Map<VacationType, BigDecimal> getAllowedVacationDays() {
 
         return allowedVacationDays;
     }
-
 
     public void setLeftVacationDays(BigDecimal leftVacationDays) {
 
@@ -94,7 +87,6 @@ public class ApplicationForLeaveStatistics {
 
         this.leftVacationDays = leftVacationDays;
     }
-
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
 
@@ -106,7 +98,6 @@ public class ApplicationForLeaveStatistics {
         getWaitingVacationDays().put(vacationType, currentWaitingVacationDays.add(waitingVacationDays));
     }
 
-
     public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
 
         Assert.notNull(vacationType, "Vacation type must be given.");
@@ -117,7 +108,6 @@ public class ApplicationForLeaveStatistics {
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
     }
 
-
     public void setLeftOvertime(BigDecimal hours) {
 
         Assert.notNull(hours, "Hours must be given.");
@@ -125,9 +115,16 @@ public class ApplicationForLeaveStatistics {
         this.leftOvertime = hours;
     }
 
-
     public BigDecimal getLeftOvertime() {
 
         return leftOvertime;
+    }
+
+    public BigDecimal getEntitlementVacationDays() {
+        return entitlementVacationDays;
+    }
+
+    public void setEntitlementVacationDays(BigDecimal entitlementVacationDays) {
+        this.entitlementVacationDays = entitlementVacationDays;
     }
 }

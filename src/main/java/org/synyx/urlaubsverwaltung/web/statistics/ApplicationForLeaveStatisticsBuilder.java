@@ -1,13 +1,9 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
@@ -22,16 +18,13 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
 
-
 /**
- * Builds a {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics} for the given
- * {@link org.synyx.urlaubsverwaltung.core.person.Person} and period.
+ * Builds a {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics} for the given {@link org.synyx.urlaubsverwaltung.core.person.Person} and period.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Component
 public class ApplicationForLeaveStatisticsBuilder {
@@ -71,13 +64,14 @@ public class ApplicationForLeaveStatisticsBuilder {
         if (account.isPresent()) {
             BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account.get());
             statistics.setLeftVacationDays(vacationDaysLeft);
+            statistics.setEntitlementVacationDays(account.get().getAnnualVacationDays());
         }
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person);
 
         for (Application application : applications) {
             if (application.hasStatus(ApplicationStatus.WAITING)
-                    || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 statistics.addWaitingVacationDays(application.getVacationType(),
                     getVacationDays(application, from.getYear()));
             } else if (application.hasStatus(ApplicationStatus.ALLOWED)) {
@@ -90,7 +84,6 @@ public class ApplicationForLeaveStatisticsBuilder {
 
         return statistics;
     }
-
 
     private BigDecimal getVacationDays(Application application, int relevantYear) {
 
@@ -110,7 +103,6 @@ public class ApplicationForLeaveStatisticsBuilder {
         return calendarService.getWorkDays(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
-
     private DateMidnight getStartDateForCalculation(Application application, int relevantYear) {
 
         if (application.getStartDate().getYear() != relevantYear) {
@@ -119,7 +111,6 @@ public class ApplicationForLeaveStatisticsBuilder {
 
         return application.getStartDate();
     }
-
 
     private DateMidnight getEndDateForCalculation(Application application, int relevantYear) {
 
