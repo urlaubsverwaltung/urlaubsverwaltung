@@ -17,8 +17,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Locale.GERMAN;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,128 +26,126 @@ import static org.mockito.Mockito.when;
 
 public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
-    private ApplicationForLeaveStatisticsCsvExportServiceImpl sut;
 
-    private MessageSource messageSource;
+	private ApplicationForLeaveStatisticsCsvExportServiceImpl sut;
 
-    @Before
-    public void setUp() {
-        messageSource = mock(MessageSource.class);
-        VacationTypeService vacationTypeService = mock(VacationTypeService.class);
+	private MessageSource messageSource;@Before
+	public void setUp() {
+		messageSource = mock(MessageSource.class);
+		VacationTypeService vacationTypeService = mock(VacationTypeService.class);
 
-        sut = new ApplicationForLeaveStatisticsCsvExportServiceImpl(messageSource, vacationTypeService);
-    }
+		sut = new ApplicationForLeaveStatisticsCsvExportServiceImpl(messageSource, vacationTypeService);
+	}
 
-    @Test
-    public void writeStatisticsForOnePersonFor2018() {
-        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
+	@Test
+	public void writeStatisticsForOnePersonFor2018() {
+		FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
 
-        List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
-        Person person = mock(Person.class);
-        when(person.getFirstName()).thenReturn("personOneFirstName");
-        when(person.getLastName()).thenReturn("personOneLastName");
+		List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
+		Person person = mock(Person.class);
+		when(person.getFirstName()).thenReturn("personOneFirstName");
+		when(person.getLastName()).thenReturn("personOneLastName");
 
-        VacationTypeService vts = mock(VacationTypeService.class);
-        when(vts.getVacationTypes()).thenReturn(emptyList());
+		VacationTypeService vts = mock(VacationTypeService.class);
+		when(vts.getVacationTypes()).thenReturn(emptyList());
 
-        statistics.add(new ApplicationForLeaveStatistics(person, vts));
 
-        CSVWriter csvWriter = mock(CSVWriter.class);
+		statistics.add(new ApplicationForLeaveStatistics(person, vts));
 
-        mockMessageSource("absence.period");
+		CSVWriter csvWriter = mock(CSVWriter.class);
 
-        mockMessageSource("person.data.firstName");
-        mockMessageSource("person.data.lastName");
-        mockMessageSource("applications.statistics.allowed");
-        mockMessageSource("applications.statistics.waiting");
-        mockMessageSource("applications.statistics.left");
+		mockMessageSource("absence.period");
 
-        mockMessageSource("duration.vacationDays");
-        mockMessageSource("duration.overtime");
+		mockMessageSource("person.data.firstName");
+		mockMessageSource("person.data.lastName");
+		mockMessageSource("applications.statistics.allowed");
+		mockMessageSource("applications.statistics.waiting");
+		mockMessageSource("applications.statistics.left");
+		mockMessageSource("applications.statistics.entitlement");
 
-        mockMessageSource("applications.statistics.total");
+		mockMessageSource("duration.vacationDays");
+		mockMessageSource("duration.overtime");
 
-        sut.writeStatistics(period, statistics, csvWriter);
+		mockMessageSource("applications.statistics.total");
 
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2018)", ""});
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
-    }
+		sut.writeStatistics(period, statistics, csvWriter);
 
-    @Test
-    public void writeStatisticsForTwoPersonsFor2019() {
-        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
+		verify(csvWriter, times(1)).writeNext(new String[] { "{absence.period}: 01.01.2018 - 31.12.2018" });
+		verify(csvWriter, times(1)).writeNext(new String[] { "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}",
+				"{applications.statistics.waiting}", "{applications.statistics.left} (2018)", "", "{applications.statistics.entitlement}" });
+		verify(csvWriter, times(1)).writeNext(new String[] { "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}" });
+		verify(csvWriter, times(1)).writeNext(new String[] { "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0", "0" });
+	}
 
-        List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
-        Person personOne = mock(Person.class);
-        when(personOne.getFirstName()).thenReturn("personOneFirstName");
-        when(personOne.getLastName()).thenReturn("personOneLastName");
+	@Test
+	public void writeStatisticsForTwoPersonsFor2019() {
+		FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
 
-        Person personTwo = mock(Person.class);
-        when(personTwo.getFirstName()).thenReturn("personTwoFirstName");
-        when(personTwo.getLastName()).thenReturn("personTwoLastName");
+		List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
+		Person personOne = mock(Person.class);
+		when(personOne.getFirstName()).thenReturn("personOneFirstName");
+		when(personOne.getLastName()).thenReturn("personOneLastName");
 
-        VacationTypeService vts = mock(VacationTypeService.class);
-        when(vts.getVacationTypes()).thenReturn(emptyList());
+		Person personTwo = mock(Person.class);
+		when(personTwo.getFirstName()).thenReturn("personTwoFirstName");
+		when(personTwo.getLastName()).thenReturn("personTwoLastName");
 
-        statistics.add(new ApplicationForLeaveStatistics(personOne, vts));
-        statistics.add(new ApplicationForLeaveStatistics(personTwo, vts));
+		VacationTypeService vts = mock(VacationTypeService.class);
+		when(vts.getVacationTypes()).thenReturn(emptyList());
 
-        CSVWriter csvWriter = mock(CSVWriter.class);
 
-        mockMessageSource("absence.period");
+		statistics.add(new ApplicationForLeaveStatistics(personOne, vts));
+		statistics.add(new ApplicationForLeaveStatistics(personTwo, vts));
 
-        mockMessageSource("person.data.firstName");
-        mockMessageSource("person.data.lastName");
-        mockMessageSource("applications.statistics.allowed");
-        mockMessageSource("applications.statistics.waiting");
-        mockMessageSource("applications.statistics.left");
+		CSVWriter csvWriter = mock(CSVWriter.class);
 
-        mockMessageSource("duration.vacationDays");
-        mockMessageSource("duration.overtime");
+		mockMessageSource("absence.period");
 
-        mockMessageSource("applications.statistics.total");
+		mockMessageSource("person.data.firstName");
+		mockMessageSource("person.data.lastName");
+		mockMessageSource("applications.statistics.allowed");
+		mockMessageSource("applications.statistics.waiting");
+		mockMessageSource("applications.statistics.left");
+		mockMessageSource("applications.statistics.entitlement");
 
-        sut.writeStatistics(period, statistics, csvWriter);
+		mockMessageSource("duration.vacationDays");
+		mockMessageSource("duration.overtime");
 
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"{absence.period}: 01.01.2019 - 31.12.2019"});
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2019)", ""});
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
-        verify(csvWriter, times(1))
-            .writeNext(new String[]{"personTwoFirstName", "personTwoLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
-    }
+		mockMessageSource("applications.statistics.total");
+
+		sut.writeStatistics(period, statistics, csvWriter);
+
+		verify(csvWriter, times(1)).writeNext(new String[] { "{absence.period}: 01.01.2019 - 31.12.2019" });
+		verify(csvWriter, times(1)).writeNext(new String[] { "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}",
+				"{applications.statistics.waiting}", "{applications.statistics.left} (2019)", "", "{applications.statistics.entitlement}" });
+		verify(csvWriter, times(1)).writeNext(new String[] { "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}" });
+		verify(csvWriter, times(1)).writeNext(new String[] { "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0", "0" });
+		verify(csvWriter, times(1)).writeNext(new String[] { "personTwoFirstName", "personTwoLastName", "{applications.statistics.total}", "0", "0", "0", "0", "0" });
+	}
 
     @Test
     public void getFileNameForComplete2018() {
         FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
 
-        when(messageSource.getMessage("applications.statistics", new String[]{"Statistik"}, GERMAN)).thenReturn("test");
+		when(messageSource.getMessage("applications.statistics", new String[] { "Statistik" }, GERMAN)).thenReturn("test");
 
-        String fileName = sut.getFileName(period);
-        assertThat(fileName, is("test_01012018_31122018.csv"));
-    }
+		String fileName = sut.getFileName(period);
 
-    @Test
-    public void getFileNameForComplete2019() {
-        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
+		assertThat(fileName, is("test_01012018_31122018.csv"));
+	}
 
-        when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
+	@Test
+	public void getFileNameForComplete2019() {
+		FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
 
-        String fileName = sut.getFileName(period);
-        assertThat(fileName, is("test_01012019_31122019.csv"));
-    }
+		when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
 
-    private void mockMessageSource(String key) {
+		String fileName = sut.getFileName(period);
+
+		assertThat(fileName, is("test_01012019_31122019.csv"));
+	}
+
+	private void mockMessageSource(String key) {
         when(messageSource.getMessage(eq(key), any(), any())).thenReturn(String.format("{%s}", key));
     }
 }
