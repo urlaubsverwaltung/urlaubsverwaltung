@@ -199,7 +199,7 @@
 			}
 
 			$("table.sortable").tablesorter({
-                sortList: [[1, 0]],
+                sortList: [[0, 0]],
                 headers: {
                     0: {sorter: true},
                     1: {sorter: true},
