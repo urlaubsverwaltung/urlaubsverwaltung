@@ -8,6 +8,7 @@
 	<uv:date date="${to}" />
 </c:set>
 <a
+	id="csvExportLink"
 	href="/web/application/statistics/download?from=${fromDate}&to=${toDate}"
 	class="fa-action pull-right hidden-xs hidden-sm"
 	data-title="<spring:message code='action.download' />"> <i
