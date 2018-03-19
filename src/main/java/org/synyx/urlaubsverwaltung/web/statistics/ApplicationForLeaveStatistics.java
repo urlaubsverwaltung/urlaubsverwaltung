@@ -1,17 +1,18 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * Encapsulates information about a person and the corresponding vacation days information (how many applications for leave are waiting, how many are allowed, how many vacation
- * days has the person left for using).
+ * Encapsulates information about a person and the corresponding vacation days
+ * information (how many applications for leave are waiting, how many are
+ * allowed, how many vacation days has the person left for using).
  */
 public class ApplicationForLeaveStatistics {
 
