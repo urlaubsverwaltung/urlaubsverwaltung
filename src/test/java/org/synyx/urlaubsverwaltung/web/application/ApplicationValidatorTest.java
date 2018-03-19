@@ -5,6 +5,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,11 +29,6 @@ import org.synyx.urlaubsverwaltung.core.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
-
-import java.math.BigDecimal;
-import java.sql.Time;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * Unit test for {@link ApplicationValidator}.
@@ -66,7 +66,7 @@ public class ApplicationValidatorTest {
         overtimeService = Mockito.mock(OvertimeService.class);
 
         validator = new ApplicationValidator(workingTimeService, calendarService, overlapService, calculationService,
-            settingsService, overtimeService, true);
+                        settingsService, overtimeService, true);
         errors = Mockito.mock(Errors.class);
 
         appForm = new ApplicationForLeaveForm();
@@ -80,15 +80,16 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(DateMidnight.class)))
-            .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
+                        .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
         when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
-            any(Person.class))).thenReturn(BigDecimal.ONE);
+                        any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.TEN);
     }
 
-    // Supports --------------------------------------------------------------------------------------------------------
+    // Supports
+    // --------------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureSupportsAppFormClass() {
@@ -108,7 +109,8 @@ public class ApplicationValidatorTest {
         assertFalse(validator.supports(Person.class));
     }
 
-    // Validate period (date) ------------------------------------------------------------------------------------------
+    // Validate period (date)
+    // ------------------------------------------------------------------------------------------
 
     @Test
     public void ensureStartDateIsMandatory() {
@@ -170,7 +172,8 @@ public class ApplicationValidatorTest {
         validator.validate(appForm, errors);
 
         Mockito.verify(errors).reject("application.error.tooFarInTheFuture",
-            new Object[] { settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance() }, null);
+                        new Object[] { settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance() },
+                        null);
     }
 
     @Test
@@ -239,7 +242,8 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
     }
 
-    // Validate period (time) ------------------------------------------------------------------------------------------
+    // Validate period (time)
+    // ------------------------------------------------------------------------------------------
 
     @Test
     public void ensureTimeIsNotMandatory() {
@@ -307,7 +311,8 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors).reject("error.entry.invalidPeriod");
     }
 
-    // Validate reason -------------------------------------------------------------------------------------------------
+    // Validate reason
+    // -------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureReasonIsNotMandatoryForHoliday() {
@@ -364,22 +369,24 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors).rejectValue("reason", "application.error.missingReasonForSpecialLeave");
     }
 
-    // Validate address ------------------------------------------------------------------------------------------------
+    // Validate address
+    // ------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureThereIsAMaximumCharLength() {
 
         appForm.setAddress(
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
-                + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
-                + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
+                        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
+                                        + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
+                                        + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
 
         validator.validate(appForm, errors);
 
         Mockito.verify(errors).rejectValue("address", "error.entry.tooManyChars");
     }
 
-    // Validate vacation days ------------------------------------------------------------------------------------------
+    // Validate vacation days
+    // ------------------------------------------------------------------------------------------
 
     @Test
     public void ensureApplicationForLeaveWithZeroVacationDaysIsNotValid() {
@@ -387,7 +394,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
-            any(Person.class))).thenReturn(BigDecimal.ZERO);
+                        any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         validator.validate(appForm, errors);
 
@@ -408,7 +415,7 @@ public class ApplicationValidatorTest {
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
-            any(Person.class))).thenReturn(BigDecimal.ONE);
+                        any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
 
@@ -430,7 +437,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         Mockito.when(calendarService.getWorkDays(Mockito.eq(appForm.getDayLength()), Mockito.eq(appForm.getStartDate()),
-            Mockito.eq(appForm.getEndDate()), Mockito.eq(appForm.getPerson()))).thenReturn(BigDecimal.ONE);
+                        Mockito.eq(appForm.getEndDate()), Mockito.eq(appForm.getPerson()))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
 
@@ -441,7 +448,8 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors).reject("application.error.notEnoughVacationDays");
     }
 
-    // Validate overlapping --------------------------------------------------------------------------------------------
+    // Validate overlapping
+    // --------------------------------------------------------------------------------------------
 
     @Test
     public void ensureOverlappingApplicationForLeaveIsNotValid() {
@@ -449,7 +457,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
-            any(Person.class))).thenReturn(BigDecimal.ONE);
+                        any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
 
@@ -460,7 +468,8 @@ public class ApplicationValidatorTest {
         Mockito.verifyZeroInteractions(calculationService);
     }
 
-    // Validate hours --------------------------------------------------------------------------------------------------
+    // Validate hours
+    // --------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureHoursIsMandatoryForOvertime() {
@@ -554,7 +563,8 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors, Mockito.never()).rejectValue("hours", "application.error.missingHoursForOvertime");
     }
 
-    // Validate working time exists ------------------------------------------------------------------------------------
+    // Validate working time exists
+    // ------------------------------------------------------------------------------------
 
     @Test
     public void ensureWorkingTimeConfigurationMustExistForPeriodOfApplicationForLeave() {
@@ -562,14 +572,14 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-            Mockito.eq(appForm.getStartDate()))).thenReturn(Optional.empty());
+                        Mockito.eq(appForm.getStartDate()))).thenReturn(Optional.empty());
 
         validator.validate(appForm, errors);
 
         Mockito.verify(errors).reject("application.error.noValidWorkingTime");
 
         Mockito.verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(),
-            appForm.getStartDate());
+                        appForm.getStartDate());
         Mockito.verifyZeroInteractions(calendarService);
         Mockito.verifyZeroInteractions(overlapService);
         Mockito.verifyZeroInteractions(calculationService);
@@ -589,23 +599,25 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-            Mockito.eq(appForm.getStartDate()))).thenReturn(Optional.empty());
+                        Mockito.eq(appForm.getStartDate()))).thenReturn(Optional.empty());
 
         validator.validate(appForm, errors);
 
         Mockito.verify(errors).reject("application.error.noValidWorkingTime");
 
         Mockito.verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(),
-            appForm.getStartDate());
+                        appForm.getStartDate());
         Mockito.verifyZeroInteractions(calendarService);
         Mockito.verifyZeroInteractions(overlapService);
         Mockito.verifyZeroInteractions(calculationService);
     }
 
-    // Validate maximal overtime reduction -----------------------------------------------------------------------------
+    // Validate maximal overtime reduction
+    // -----------------------------------------------------------------------------
 
     /**
-     * User tries to make an application (overtime reduction) but has not enough overtime left and minimum overtime is reached.
+     * User tries to make an application (overtime reduction) but has not enough
+     * overtime left and minimum overtime is reached.
      *
      * <p>
      * 0h overtime - 6h (application) < -5h overtime minimum
@@ -621,7 +633,9 @@ public class ApplicationValidatorTest {
     }
 
     /**
-     * User tries to make an application (overtime reduction) but has not enough overtime left and minimum overtime is reached exactly -> application is valid.
+     * User tries to make an application (overtime reduction) but has not enough
+     * overtime left and minimum overtime is reached exactly -> application is
+     * valid.
      *
      * <p>
      * 0h overtime - 5h (application) == -5h overtime minimum
