@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,12 +21,11 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-
 /**
- * Builds a {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics} for the given {@link org.synyx.urlaubsverwaltung.core.person.Person} and period.
+ * Builds a
+ * {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics}
+ * for the given {@link org.synyx.urlaubsverwaltung.core.person.Person} and
+ * period.
  *
  * @author Aljona Murygina - murygina@synyx.de
  */
@@ -38,8 +41,8 @@ public class ApplicationForLeaveStatisticsBuilder {
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-        WorkDaysService calendarService, VacationDaysService vacationDaysService, OvertimeService overtimeService,
-        VacationTypeService vacationTypeService) {
+                    WorkDaysService calendarService, VacationDaysService vacationDaysService,
+                    OvertimeService overtimeService, VacationTypeService vacationTypeService) {
 
         this.accountService = accountService;
         this.applicationService = applicationService;
@@ -71,12 +74,12 @@ public class ApplicationForLeaveStatisticsBuilder {
 
         for (Application application : applications) {
             if (application.hasStatus(ApplicationStatus.WAITING)
-                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+                            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 statistics.addWaitingVacationDays(application.getVacationType(),
-                    getVacationDays(application, from.getYear()));
+                                getVacationDays(application, from.getYear()));
             } else if (application.hasStatus(ApplicationStatus.ALLOWED)) {
                 statistics.addAllowedVacationDays(application.getVacationType(),
-                    getVacationDays(application, from.getYear()));
+                                getVacationDays(application, from.getYear()));
             }
         }
 
@@ -105,18 +108,16 @@ public class ApplicationForLeaveStatisticsBuilder {
 
     private DateMidnight getStartDateForCalculation(Application application, int relevantYear) {
 
-        if (application.getStartDate().getYear() != relevantYear) {
+        if (application.getStartDate().getYear() != relevantYear)
             return DateUtil.getFirstDayOfYear(application.getEndDate().getYear());
-        }
 
         return application.getStartDate();
     }
 
     private DateMidnight getEndDateForCalculation(Application application, int relevantYear) {
 
-        if (application.getEndDate().getYear() != relevantYear) {
+        if (application.getEndDate().getYear() != relevantYear)
             return DateUtil.getLastDayOfYear(application.getStartDate().getYear());
-        }
 
         return application.getEndDate();
     }
