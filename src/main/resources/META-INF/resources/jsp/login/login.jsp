@@ -61,7 +61,7 @@
                             </div>
 
                             <div class="form-group">
-                                <button class="btn btn-primary btn-block" type="submit">
+                                <button class="btn btn-primary btn-block" type="submit" id="submit">
                                     <i class="fa fa-sign-in"></i> Login
                                 </button>
                             </div>
