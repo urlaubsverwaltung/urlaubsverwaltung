@@ -19,6 +19,16 @@
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
         <script src="<spring:url value='/lib/jquery/js/jquery-3.3.1.min.js' />" type="text/javascript" ></script>
         <script src="<spring:url value='/lib/bootstrap/bootstrap-3.3.7.min.js' />" type="text/javascript" ></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+                var url = document.URL;
+
+                if(url.indexOf("login_error") != -1) {
+                    $('#login--error').show('drop', {direction: "up"});
+                }
+            });
+        </script>
     </head>
 
     <body>
