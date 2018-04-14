@@ -36,7 +36,7 @@
       <ul class="nav navbar-nav">
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="${URL_PREFIX}/overview">
+            <a href="${URL_PREFIX}/overview" id="menu_overview">
               <span class="img-circle gravatar gravatar--small hidden-print" data-gravatar="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"></span> <spring:message code="nav.home.title"/>
             </a>
           </li>
@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav navbar-right">
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="${URL_PREFIX}/application/new">
+            <a href="${URL_PREFIX}/application/new" id="menu_new">
               <i class="fa fa-fw fa-plus-circle"></i> <spring:message code="nav.apply.title"/>
             </a>
           </li>
@@ -53,7 +53,7 @@
 
         <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
-            <a href="${URL_PREFIX}/application">
+            <a href="${URL_PREFIX}/application" id="menu_application">
               <i class="fa fa-fw fa-calendar"></i> <spring:message code="nav.vacation.title"/>
             </a>
           </li>
@@ -61,7 +61,7 @@
 
         <sec:authorize access="hasAuthority('OFFICE')">
           <li>
-            <a href="${URL_PREFIX}/sicknote/">
+            <a href="${URL_PREFIX}/sicknote/" id="menu_sicknote">
               <i class="fa fa-fw fa-medkit"></i> <spring:message code="nav.sicknote.title"/>
             </a>
           </li>
@@ -69,7 +69,7 @@
 
         <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
-            <a href="${URL_PREFIX}/staff?active=true">
+            <a href="${URL_PREFIX}/staff?active=true" id="menu_staff">
               <i class="fa fa-fw fa-user"></i>
               <spring:message code="nav.staff.title"/>
             </a>
@@ -78,7 +78,7 @@
 
         <sec:authorize access="hasAnyAuthority('BOSS', 'OFFICE')">
           <li>
-            <a href="${URL_PREFIX}/department">
+            <a href="${URL_PREFIX}/department" id="menu_department">
               <i class="fa fa-fw fa-group"></i>
               <spring:message code="nav.department.title"/>
             </a>
@@ -87,7 +87,7 @@
 
         <sec:authorize access="hasAuthority('OFFICE')">
           <li>
-            <a href="${URL_PREFIX}/settings">
+            <a href="${URL_PREFIX}/settings" id="menu_settings">
               <i class="fa fa-fw fa-cog"></i>
               <spring:message code="nav.settings.title"/>
             </a>
@@ -96,7 +96,7 @@
 
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="<spring:url value='/logout' />">
+            <a href="<spring:url value='/logout' />" id="menu_logout">
               <i class="fa fa-fw fa-sign-out"></i> <spring:message code="nav.signout.title"/>
             </a>
           </li>

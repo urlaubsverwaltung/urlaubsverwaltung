@@ -156,7 +156,9 @@
                     <spring:message code="applications.title" />
                     <c:choose>
                         <c:when test="${person.id == signedInUser.id}">
-                            <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+                            <a class="fa-action pull-right" href="${URL_PREFIX}/application/new"
+                               data-title="<spring:message code="action.apply.vacation"/>"
+                               id="application_new">
                                 <i class="fa fa-plus-circle"></i>
                             </a>
                         </c:when>
