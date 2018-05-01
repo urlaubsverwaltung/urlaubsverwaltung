@@ -1,0 +1,12 @@
+{
+  "name": "urlaubsverwaltung-webtests",
+  "version": "0.1.0",
+  "description": "webtests for the urlaubsverwaltung application",
+  "scripts": {
+    "test": "testcafe chrome tests"
+  },
+  "author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
+  "devDependencies": {
+    "testcafe": "^0.19.2"
+  }
+}
