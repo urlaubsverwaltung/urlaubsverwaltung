@@ -7,6 +7,7 @@
   },
   "author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
   "devDependencies": {
+    "date-fns": "^1.29.0",
     "testcafe": "^0.19.2"
   }
 }

@@ -7,6 +7,14 @@ export const selectors = Object.freeze({
   userBoxUsername: Selector('.box '),
 });
 
+export const calendarSelectors = Object.freeze({
+  next: Selector('#datepicker .datepicker-next'),
+  prev: Selector('#datepicker .datepicker-prev'),
+  date: Selector(date =>
+    document.querySelector(`#datepicker [data-datepicker-date="${date}"]`)
+  ),
+});
+
 export function ensureYearPicker(t, { year }) {
   return t
     .expect(selectors.yearSelect.innerText).eql(year);
@@ -30,6 +38,7 @@ export async function ensureUserBox(t, { username, email }) {
 
 export default {
   selectors,
+  calendarSelectors,
   ensureYearPicker,
   ensureUserBox,
 };
