@@ -359,10 +359,10 @@
     <div class="form-section">
         <div class="col-xs-12">
             <hr/>
-            <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+            <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2" id="submit">
                 <spring:message code="action.apply.vacation"/>
             </button>
-            <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
+            <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" id="cancel">
                 <spring:message code="action.cancel"/>
             </button>
         </div>
