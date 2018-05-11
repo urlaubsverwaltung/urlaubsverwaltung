@@ -16,11 +16,10 @@ export const calendarSelectors = Object.freeze({
 });
 
 export function ensureYearPicker(t, { year }) {
-  return t
-    .expect(selectors.yearSelect.innerText).eql(year);
+  return t.expect(selectors.yearSelect.innerText).eql(year);
 }
 
-export async function ensureUserBox(t, { username, email }) {
+export function ensureUserBox(t, { username, email }) {
   const usernameElement = selectors.userBoxUsername;
 
   // a[href...] selector does not work in started chrome
@@ -31,7 +30,7 @@ export async function ensureUserBox(t, { username, email }) {
   // const emailExists = await emailElement.exists;
 
   return t
-    .expect(await usernameElement.innerText).contains(`${username}`)
+    .expect(usernameElement.innerText).contains(`${username}`)
     // .expect(emailExists).ok()
     // .expect(await emailElement.innerText).eql(email)
 }

@@ -21,7 +21,7 @@ test('ensure overview for current year after successful login', async t => {
 
   // ensure visible navigation
   //
-  await navigation.ensureVisiblity(t);
+  await navigation.ensureVisibility(t);
 
   // ensure some overview elements
   //

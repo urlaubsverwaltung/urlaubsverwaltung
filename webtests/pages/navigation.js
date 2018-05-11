@@ -2,6 +2,7 @@ import { Selector } from 'testcafe';
 
 export const selectors = Object.freeze({
   me: Selector('a[href="/web/overview"]'),
+  holidays: Selector('a[href="/web/application"]'),
   logout: Selector('a[href="/logout"]'),
   create: Selector('a[href="/web/application/new"]'),
   settings: Selector('a[href="/web/settings"]'),
@@ -12,7 +13,17 @@ export function ensureVisiblity(t) {
   return t.expect(selectors.logout.innerText).eql(' Logout');
 }
 
+export function doLogout (t) {
+  return t.click(selectors.logout);
+}
+
+export async function goToHolidayOverview(t) {
+  return t.click(selectors.holidays);
+}
+
 export default {
   selectors,
-  ensureVisiblity,
+  ensureVisibility: ensureVisiblity,
+  doLogout,
+  goToHolidayOverview,
 };

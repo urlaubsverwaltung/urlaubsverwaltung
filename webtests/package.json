@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "webtests for the urlaubsverwaltung application",
   "scripts": {
-    "test": "testcafe chrome tests"
+    "test": "testcafe $NODE_DEBUG_OPTION chrome tests"
   },
   "author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
   "devDependencies": {

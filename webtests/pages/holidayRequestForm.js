@@ -6,18 +6,16 @@ export const selectors = Object.freeze({
   submitButton: Selector('form#application [type="submit"]'),
 });
 
-export async function ensureFromInput(t, expectedValue) {
-  await t
-    .expect(selectors.fromDateInput.value).eql(expectedValue);
+export function ensureFromInput(t, expectedValue) {
+  return t.expect(selectors.fromDateInput.value).eql(expectedValue);
 }
 
-export async function ensureToInput(t, expectedValue) {
-  await t
-    .expect(selectors.toDateInput.value).eql(expectedValue);
+export function ensureToInput(t, expectedValue) {
+  return t.expect(selectors.toDateInput.value).eql(expectedValue);
 }
 
-export async function submit(t) {
-  await t.click(selectors.submitButton);
+export function submit(t) {
+  return t.click(selectors.submitButton);
 }
 
 export default {
