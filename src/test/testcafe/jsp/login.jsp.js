@@ -1,28 +1,27 @@
-import { Selector } from 'testcafe'; // first import testcafe selectors
+const Login = require('../html/login');
+const Browser = require('../html/browser');
 
-fixture `Login.jsp`// declare the fixture
-    .page `http://localhost:8080/login`;  // specify the start page
+fixture `Login.jsp`.page `http://localhost:8080/login`;
 
+test.only('wrong login', async t => {
+    const login = new Login(t);
 
-//then create a test and place your code there
-test('wrong login', async t => {
-    await t
-        .typeText('#username', 'test')
-        .typeText('#password', 'test')
-        .click('#submit')
-        // Use the assertion to check if the actual header text is equal to the expected one
-        .expect(Selector('#login--error').innerText).eql('Der eingegebene Nutzername oder das Passwort ist falsch.');
+    login.enterUser('test');
+    login.enterPass('test');
+    login.submit();
+
+    await t.expect(login.getErrorText()).eql('Der eingegebene Nutzername oder das Passwort ist falsch.');
 });
 
-test('correct login', async t => {
-    await t
-        .typeText('#username', 'test')
-        .typeText('#password', 'secret')
-        .click('#submit');
-    // Use the assertion to check if the actual header text is equal to the expected one
-    //.expect(Selector('#login--error').innerText).eql('Der eingegebene Nutzername oder das Passwort ist falsch.');
+test.only('correct login', async t => {
+    const login = new Login(t);
+    const browser = new Browser(t);
 
-    const location = await t.eval(() => window.location);
+    login.enterUser('test');
+    login.enterPass('secret');
+    await login.submit();
+
+    const location = await browser.getLocation();
 
     await t.expect(location.pathname).eql('/web/staff/4/overview');
 });
