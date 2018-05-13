@@ -20,4 +20,10 @@ Login.prototype.getErrorText = function() {
     return Selector('#login--error')().innerText;
 };
 
+Login.prototype.loginTestUser = async function() {
+    await this.enterUser('testUser');
+    await this.enterPass('secret');
+    await this.submit();
+};
+
 module.exports = Login;

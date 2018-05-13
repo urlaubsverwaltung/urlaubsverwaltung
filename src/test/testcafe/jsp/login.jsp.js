@@ -3,7 +3,7 @@ const Browser = require('../html/browser');
 
 fixture `Login.jsp`.page `http://localhost:8080/login`;
 
-test.only('wrong login', async t => {
+test('wrong login', async t => {
     const login = new Login(t);
 
     login.enterUser('test');
@@ -13,7 +13,7 @@ test.only('wrong login', async t => {
     await t.expect(login.getErrorText()).eql('Der eingegebene Nutzername oder das Passwort ist falsch.');
 });
 
-test.only('correct login', async t => {
+test('correct login', async t => {
     const login = new Login(t);
     const browser = new Browser(t);
 
