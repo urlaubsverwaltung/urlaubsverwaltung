@@ -1,13 +1,29 @@
 language: java
 
-script: ./mvnw verify
+dist: trusty
+sudo: required
 
-after_success:
-  - ./mvnw clean verify jacoco:report coveralls:report
+addons:
+  firefox: latest
+  apt:
+    sources:
+     - google-chrome
+    packages:
+     - google-chrome-stable fluxbox
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3
+  - fluxbox >/dev/null 2>&1 &
+
+script:
+  - ./mvnw verify jacoco:report coveralls:report
+  - ./runUiTests.sh
 
 jdk:
   - oraclejdk8
 
-branches:
-  only:
-    - master
+cache:
+  directories:
+    - $HOME/.m2
