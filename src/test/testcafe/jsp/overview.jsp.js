@@ -1,7 +1,7 @@
 import { Selector } from 'testcafe';
 
 fixture `overview.jsp`
-    .page `http://localhost:8080/login`
+    .page `http://localhost:${process.env.serverPort||8080}/login`
     .beforeEach(async t => {
         await t
             .maximizeWindow() // otherwise not all buttons are visible

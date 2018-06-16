@@ -6,7 +6,7 @@ const Application = require('../html/application');
 
 
 fixture `overview.jsp`
-    .page `http://localhost:8080/login`;
+    .page `http://localhost:${process.env.serverPort||8080}/login`;
 
 const today = new Date();
 const month = today.getMonth();
