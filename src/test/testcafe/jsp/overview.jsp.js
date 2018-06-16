@@ -1,7 +1,8 @@
+const {port} = require('../config');
 import { Selector } from 'testcafe';
 
 fixture `overview.jsp`
-    .page `http://localhost:${process.env.serverPort||8080}/login`
+    .page `http://localhost:${port}/login`
     .beforeEach(async t => {
         await t
             .maximizeWindow() // otherwise not all buttons are visible

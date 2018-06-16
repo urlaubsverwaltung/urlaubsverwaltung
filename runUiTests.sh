@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-serverPort=8181
-export serverPort
+uvServerPort=8181
+export uvServerPort
 
 echo "start server"
-./mvnw clean spring-boot:run -Drun.jvmArguments="-Dserver.port=$serverPort" >> /dev/null &
+./mvnw clean spring-boot:run -Drun.jvmArguments="-Dserver.port=$uvServerPort" >> /dev/null &
 
 pid=$!
 
 echo "waiting for server to be ready"
-until $(curl --output /dev/null --silent --head --fail http://localhost:$serverPort/login); do
+until $(curl --output /dev/null --silent --head --fail http://localhost:$uvServerPort/login); do
     printf '.'
     sleep 5
 done
 echo "server started"
 
-npm run test-cafe-headless
+./node/npm run test-cafe-headless
 
 errorlevel=$?
 

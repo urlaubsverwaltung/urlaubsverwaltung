@@ -1,7 +1,8 @@
+const {port} = require('../config');
 const Login = require('../html/login');
 const Browser = require('../html/browser');
 
-fixture `Login.jsp`.page `http://localhost:${process.env.serverPort||8080}/login`;
+fixture `Login.jsp`.page `http://localhost:${port}/login`;
 
 test('wrong login', async t => {
     const login = new Login(t);

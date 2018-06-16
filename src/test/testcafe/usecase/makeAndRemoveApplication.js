@@ -1,3 +1,4 @@
+const {port} = require('../config');
 const Browser = require('../html/browser');
 const Login = require('../html/login');
 const Overview = require('../html/overview');
@@ -6,7 +7,7 @@ const Application = require('../html/application');
 
 
 fixture `overview.jsp`
-    .page `http://localhost:${process.env.serverPort||8080}/login`;
+    .page `http://localhost:${port}/login`;
 
 const today = new Date();
 const month = today.getMonth();
