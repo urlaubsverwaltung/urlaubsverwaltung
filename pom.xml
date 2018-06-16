@@ -56,10 +56,10 @@
     </properties>
 
     <scm>
-        <developerConnection>scm:git:ssh://git@github.com/synyx/urlaubsverwaltung.git</developerConnection>
-        <connection>scm:git:ssh://git@github.com/synyx/urlaubsverwaltung.git</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <developerConnection>scm:git:git@github.com/synyx/urlaubsverwaltung.git</developerConnection>
+        <connection>scm:git:git@github.com/synyx/urlaubsverwaltung.git</connection>
+        <url>https://github.com/synyx/urlaubsverwaltung</url>
+    </scm>
 
     <distributionManagement>
         <repository>
@@ -334,4 +334,38 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>bintray-cy6ergn0m-maven</id>
+                    <name>bintray-plugins</name>
+                    <url>http://dl.bintray.com/cy6ergn0m/maven</url>
+                </pluginRepository>
+            </pluginRepositories>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>cy.github</groupId>
+                        <artifactId>github-release-plugin</artifactId>
+                        <version>0.5.1</version>
+                        <configuration>
+                            <tagName>${project.version}</tagName>
+                            <releaseTitle>${project.artifactId}-${project.version}</releaseTitle>
+                            <serverId>github</serverId>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>gh-upload</goal>
+                                </goals>
+                                <phase>deploy</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

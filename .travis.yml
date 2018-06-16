@@ -8,6 +8,11 @@ after_success:
 jdk:
   - oraclejdk8
 
-branches:
-  only:
-    - master
+deploy:
+   provider: script
+   script: .travis/release.sh
+   skip_cleanup: true
+   on:
+    repo: synyx/urlaubsverwaltung
+    tags: true
+    jdk: oraclejdk8
