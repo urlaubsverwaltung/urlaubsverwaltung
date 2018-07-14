@@ -9,9 +9,6 @@ jdk:
   - oraclejdk8
 
 before_deploy:
-  - ./mvnw org.codehaus.mojo:versions-maven-plugin:2.5:set -DnewVersion=$TRAVIS_TAG
-  - ./mvnw package -DskipTests=true --batch-mode --update-snapshots
-  - rm -f target/urlaubsverwaltung-*SNAPSHOT.jar
   - export JAR_FILE=$(ls target/urlaubsverwaltung-*.jar)
   - echo "deploying $JAR_FILE to GitHub releases"
   - export RELEASE_NOTES=$(node/node etc/getReleaseNotes.js)
@@ -23,10 +20,8 @@ deploy:
     secure: lEV9X4As9pSBZfJBWIvBzeqfOHGJojQHYYDkKqPb5TKwXjPcsWb/es+JeS6Yqx3hwxjpYL/p4FmczklaVqbABdrMAb+VkU504HwHdKz0qRl2o8Wkf2iCHrDAqTm/UYPPtfMr9RjRBNq8msCB6QChngnj3/C0moh/KUdgiMBPJEw=
   file: "${JAR_FILE}"
   body: "${RELEASE_NOTES}"
-  prerelease: true
   skip_cleanup: true
   on:
     repo: synyx/urlaubsverwaltung
-    branch: travis-release
     tags: true
     jdk: oraclejdk8
