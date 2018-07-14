@@ -14,9 +14,9 @@
 					&& selectedDepartmentValue != null) {
 				var url = location.protocol + "//" + location.host
 						+ "/api/vacationoverview?selectedYear="
-						+ selectedYearValue + "&selectedMonth="
-						+ selectedMonthValue + "&selectedDepartment="
-						+ selectedDepartmentValue;
+						+ encodeURIComponent(selectedYearValue) + "&selectedMonth="
+						+ encodeURIComponent(selectedMonthValue) + "&selectedDepartment="
+						+ encodeURIComponent(selectedDepartmentValue);
 
 				var xhttp = new XMLHttpRequest();
 				xhttp.open("GET", url, false);
@@ -35,9 +35,9 @@
 								var personFullName = listItem.person.niceName;
 								var url = location.protocol + "//"
 										+ location.host + "/api/absences?year="
-										+ selectedYearValue + "&month="
-										+ selectedMonthValue + "&person="
-										+ personId;
+										+ encodeURIComponent(selectedYearValue) + "&month="
+										+ encodeURIComponent(selectedMonthValue) + "&person="
+										+ encodeURIComponent(personId);
 								var xhttp = new XMLHttpRequest();
 								xhttp.open("GET", url, false);
 								xhttp.setRequestHeader("Content-type",
@@ -196,6 +196,7 @@
 		var selectedYear = document.getElementById('yearSelect');
 		var selectedMonth = document.getElementById('monthSelect');
 		var selectedDepartment = document.getElementById('departmentSelect');
+
 		selectedYear.addEventListener("change", function() {
 			selectedItemChange();
 		});
