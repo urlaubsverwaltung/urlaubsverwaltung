@@ -5,7 +5,7 @@
  */
 
 const fs = require('fs');
-const marked = require('marked')
+const marked = require('marked');
 
 const content = fs.readFileSync('CHANGELOG.md', 'utf-8');
 
