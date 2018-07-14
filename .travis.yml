@@ -14,12 +14,16 @@ before_deploy:
   - rm -f target/urlaubsverwaltung-*SNAPSHOT.jar
   - export JAR_FILE=$(ls target/urlaubsverwaltung-*.jar)
   - echo "deploying $JAR_FILE to GitHub releases"
+  - export RELEASE_NOTES=$(node/node etc/getReleaseNotes.js)
+  - echo "create release notes $RELEASE_NOTES"
 
 deploy:
   provider: releases
   api_key:
     secure: lEV9X4As9pSBZfJBWIvBzeqfOHGJojQHYYDkKqPb5TKwXjPcsWb/es+JeS6Yqx3hwxjpYL/p4FmczklaVqbABdrMAb+VkU504HwHdKz0qRl2o8Wkf2iCHrDAqTm/UYPPtfMr9RjRBNq8msCB6QChngnj3/C0moh/KUdgiMBPJEw=
   file: "${JAR_FILE}"
+  body: "${RELEASE_NOTES}"
+  prerelease: true
   skip_cleanup: true
   on:
     repo: synyx/urlaubsverwaltung

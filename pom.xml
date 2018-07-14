@@ -61,19 +61,6 @@
         <url>https://github.com/synyx/urlaubsverwaltung</url>
     </scm>
 
-    <distributionManagement>
-        <repository>
-            <id>releases.nexus.synyx.de</id>
-            <name>Synyx Nexus: Releases</name>
-            <url>https://nexus.synyx.de/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots.nexus.synyx.de</id>
-            <name>Synyx Nexus: Snapshots</name>
-            <url>https://nexus.synyx.de/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <repositories>
         <repository>
             <id>sonatype-snapshots</id>
@@ -334,38 +321,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>release</id>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>bintray-cy6ergn0m-maven</id>
-                    <name>bintray-plugins</name>
-                    <url>http://dl.bintray.com/cy6ergn0m/maven</url>
-                </pluginRepository>
-            </pluginRepositories>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>cy.github</groupId>
-                        <artifactId>github-release-plugin</artifactId>
-                        <version>0.5.1</version>
-                        <configuration>
-                            <tagName>${project.version}</tagName>
-                            <releaseTitle>${project.artifactId}-${project.version}</releaseTitle>
-                            <serverId>github</serverId>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>gh-upload</goal>
-                                </goals>
-                                <phase>deploy</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
