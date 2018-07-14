@@ -1,4 +1,5 @@
-### urlaubsverwaltung-2.26.3
+
+### [urlaubsverwaltung-2.26.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.3)
 * Abteilungsnamen mit Sonderzeichen sind nun möglich [#424](https://github.com/synyx/urlaubsverwaltung/issues/424) 
 * CSV Export für Urlaubsstatistik hinzugefügt 
 * Bug: Fix JavaScript-Probleme in der Urlaubsübersicht bei älteren Internet Explorer Versionen [#369](https://github.com/synyx/urlaubsverwaltung/issues/369)

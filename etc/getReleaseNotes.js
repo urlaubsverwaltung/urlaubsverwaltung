@@ -5,6 +5,7 @@
  */
 
 const fs = require('fs');
+const marked = require('marked')
 
 const content = fs.readFileSync('CHANGELOG.md', 'utf-8');
 
@@ -19,6 +20,8 @@ const notes = content.split('\n').filter(line => {
         }
     }
     return false
-}).join('&nbsp;');
+}).join('\n');
 
-console.log(notes);
+const singleLineNotes = marked(notes).replace(/\n/g, '');
+
+console.log(singleLineNotes);
