@@ -26,7 +26,8 @@
     * [Konfiguration Google Calendar](#konfiguration-google-calendar)
  * [Entwicklung](#entwicklung)
  * [Support und individuelle Anpassungen](#support-und-individuelle-anpassungen)
- * [Changelog](CHANGELOG.md)
+ * [Changelog](#hinweise-zu-versionen)
+ * [Release erstellen](#release erstellen)
  * [Technologien](#technologien)
  * [Lizenz](#lizenz)
 
@@ -352,6 +353,17 @@ tun kann.](docs/UV_WITH_DOCKER.md)
 Wer Support z.B. bei der Installation benötigt oder individuelle Anpassungen der Urlaubsverwaltung beauftragen möchte, kann sich an André Janus (Link: http://www.andre-janus.de/kontakt/) wenden. Man erhält ein unverbindliches Angebot mit einer Aufwands- und Kostenschätzung. Erscheinen die beauftragten Anpassungen für alle Benutzer der Urlaubsverwaltung sinnvoll, werden diese mittels eines Pull Requests in die Hauptversion einfließen. 
 
 ---
+
+## Release erstellen
+
+Für das Erstellen eines Releases müssen folgende Schritte vorgenommen werden.
+
+* ```CHANGELOG.md``` anpassen
+* ```node/node etc/makeRelease.js``` ausführen 
+* Travis macht dann
+  * ein release-build (erstellt das jar)
+  * aktualisiert aus der ```CHANGELOG.md``` heraus https://github.com/synyx/urlaubsverwaltung/releases 
+
 
 ## Hinweise zu Versionen
 
