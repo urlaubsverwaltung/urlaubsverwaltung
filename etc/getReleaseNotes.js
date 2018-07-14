@@ -10,7 +10,7 @@ const content = fs.readFileSync('CHANGELOG.md', 'utf-8');
 
 let headlineCounter = 0;
 
-content.split('\n').filter(line => {
+const notes = content.split('\n').filter(line => {
     if (line.startsWith('#')) {
         headlineCounter++;
     } else {
@@ -19,6 +19,6 @@ content.split('\n').filter(line => {
         }
     }
     return false
-}).forEach(filteredLine => {
-    console.log(filteredLine);
-});
+}).join('&nbsp;');
+
+console.log(notes);
