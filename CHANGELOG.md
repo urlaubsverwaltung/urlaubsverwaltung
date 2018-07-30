@@ -1,8 +1,8 @@
-### urlaubsverwaltung-x.x.x
+### urlaubsverwaltung-2.27.0
+* Sicherheitslücken in Tomcat [#428](https://github.com/synyx/urlaubsverwaltung/issues/428)
 * CSV Export für Urlaubsstatistik hinzugefügt 
 * Bug: Fix JavaScript-Probleme in der Urlaubsübersicht bei älteren Internet Explorer Versionen [#369](https://github.com/synyx/urlaubsverwaltung/issues/369)
 * LDAP-Synchronisationszeitpunkt kann konfigiert werden [#354](https://github.com/synyx/urlaubsverwaltung/pull/354)
-
 
 ### [urlaubsverwaltung-2.26.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.2)
 * Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
