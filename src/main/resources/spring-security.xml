@@ -20,6 +20,9 @@
         <security:intercept-url pattern="/web/department/**" access="hasAnyAuthority('BOSS', 'OFFICE')"/>
         <security:intercept-url pattern="/web/settings/**" access="hasAuthority('OFFICE')"/>
         <security:intercept-url pattern="/web/google-api-handshake/**" access="hasAuthority('OFFICE')"/>
+        <!-- spring boot actuator -->
+        <security:intercept-url pattern="${management.context-path}/health" access="permitAll" />
+        <security:intercept-url pattern="${management.context-path}/**" access="hasAnyAuthority('${management.security.roles}')"/>
         <!-- OPEN -->
         <security:intercept-url pattern="/login" access="permitAll"/>
         <security:form-login login-page="/login" always-use-default-target="false"
