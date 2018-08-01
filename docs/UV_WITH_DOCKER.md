@@ -63,16 +63,17 @@ $ docker pull osixia/openldap
 
 Nun kann der OpenLDAP Container mit entsprechenden parametern gestartet werden.
 ```
-$ docker run -p 389:389 --name openldap -e LDAP_TLS=false -e LDAP_ORGANISATION=acme -e LDAP_DOMAIN=corp -d osixia/openldap
+$ docker run -p 389:389 --name openldap -e LDAP_TLS=false -e LDAP_DOMAIN=example.org -e LDAP_ADMIN_PASSWORD=admin -d osixia/openldap
 ```
 Zu den Umgebungsvariablen:
 * "LDAP_TLS=false" - Deaktiviert TLS. Damit muss man sich nicht um Zertifikate usw. kümmern. 
-* "LDAP_ORGANISATION=example" - Die Firma oder Organisation für die der LDAP Server betrieben wird.
 * "LDAP_DOMAIN=example.org" - Die Domain der Firma.
 * "LDAP_ADMIN_PASSWORD" - das passwort für das Benutzerkonto "admin"
 
-Sowohl DOMAIN als auch ORGANISATION müssen zum Wert des Parameters uv.security.ldap.sync.userSearchBase in den
-application.properties passen.
+DOMAIN muss zum Wert des Parameters uv.security.ldap.sync.userSearchBase in den application.properties passen.
+In diesem fall ist es `uv.security.ldap.base=dc=example,dc=org`. Zusätzlich ist noch daraf zu achten, dass der OpenLDAP Container
+kein anonymous bind erlaubt. d.h. `uv.security.ldap.managerDn=cn=admin,dc=example,dc=org` und `uv.security.ldap.managerPassword=admin`
+sind auch noch in der application.properties zu setzen.
 Es empfiehlt sich, den Container-internen Port des OpenLDAD Servers auf einen festen externen Port zu mappen, da dieser
 sowohl vom phpLDAPadmin Tool als auch von der Urlaubsverwaltungs Applikation selbst angesprochen wird und stabil bleiben
 sollte.
@@ -96,7 +97,7 @@ docker run -p 6443:443 -e PHPLDAPADMIN_LDAP_HOSTS=<IP_OF_LDAP_SERVER> -d osixia/
 Beim nun kann das phpLDAPadmin UI über https://<DOCKER_VM_IP>:6443 aufgerufen werden. Als Loginname muss folgendes
 verwendet werden:
 ```
-cn=admin,dc=acme,dc=corp
+cn=admin,dc=example,dc=org
 ```
 
 Das Passwort ist admin.
