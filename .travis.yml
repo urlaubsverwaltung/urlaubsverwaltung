@@ -25,3 +25,8 @@ deploy:
     repo: synyx/urlaubsverwaltung
     tags: true
     jdk: oraclejdk8
+
+env:
+  global:
+  - secure: jXp0Pv5N97fkMihfIHwj8ko2jY0zLwMr/bo87MxH8PEt1orQIG4S5qkYM/3AVsqRPRc/IvpOSWdz1x9z1vbGlzEpeKQmqrDrlnA8oUbTcjLTq5eDq0Na4m1ZdhKCN35pXLzA4jeKpuDW0J7uAOwljfZ5FBSwyJaEaoZiHnMKRSo=
+  - secure: ZQDEV5TG6mMIaokbBZAdbyxaDGLHMrDD8Lf7HsK+BUbzuHFl8JY7b3d4IyEIV8NzC9sHanArjm4qrL31wm+iI9x3kU7hzec2lAM4B2aXmBNzSmOWKUvrkUVsEsjqKQAxbexjEwZDptxINBtJhZaGx5UrMcUBrZDRVIH34uUMf5E=
