@@ -1,9 +1,6 @@
 language: java
 
-script: ./mvnw verify
-
-after_success:
-- ./mvnw clean verify jacoco:report coveralls:report
+script: ./mvnw clean verify jacoco:report coveralls:report
 
 jdk:
 - oraclejdk8
