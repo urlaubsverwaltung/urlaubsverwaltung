@@ -3,16 +3,16 @@ language: java
 script: ./mvnw verify
 
 after_success:
-  - ./mvnw clean verify jacoco:report coveralls:report
+- ./mvnw clean verify jacoco:report coveralls:report
 
 jdk:
-  - oraclejdk8
+- oraclejdk8
 
 before_deploy:
-  - export JAR_FILE=$(ls target/urlaubsverwaltung-*.jar)
-  - echo "deploying $JAR_FILE to GitHub releases"
-  - export RELEASE_NOTES=$(node/node etc/getReleaseNotes.js)
-  - echo "create release notes $RELEASE_NOTES"
+- export JAR_FILE=$(ls target/urlaubsverwaltung-*.jar)
+- echo "deploying $JAR_FILE to GitHub releases"
+- export RELEASE_NOTES=$(node/node etc/getReleaseNotes.js)
+- echo "create release notes $RELEASE_NOTES"
 
 deploy:
   provider: releases
