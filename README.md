@@ -354,6 +354,20 @@ Wer Support z.B. bei der Installation benötigt oder individuelle Anpassungen de
 
 ---
 
+## Urlaubsverwaltung bauen
+
+#### jar-File erstellen
+
+Erstellen eines jar-Files unter target/urlaubsverwaltung-$VERSION.jar
+```bash
+./mvnw clean verify 
+```
+
+#### Docker Image erstellen 
+```bash
+./mvnw clean verify -P -PbuildDockerContainer -Ddocker.ports.1=8080:8080
+```
+
 ## Release erstellen
 
 Für das Erstellen eines Releases müssen folgende Schritte vorgenommen werden.
