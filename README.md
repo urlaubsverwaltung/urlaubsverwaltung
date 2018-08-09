@@ -107,8 +107,8 @@ Konfiguration [hier](docs/INSTALLATION_AS_WAR.md) nachgelesen werden.
 
 #### Download
 
-Die Anwendung steht auf Github bereits als deploybare JAR-Datei zum Download zur Verfügung.
-Einfach die JAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
+Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 downloaden.
 
 #### Starten der Anwendung
@@ -117,7 +117,7 @@ Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an 
 zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar
+java -jar -Dspring.profiles.active=dev urlaubsverwaltung.war
 ```
 
 Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
@@ -165,7 +165,7 @@ Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürli
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
 
 ```bash
-java -jar urlaubsverwaltung.jar
+java -jar urlaubsverwaltung.war
 ```
 
 #### Authentifizierung
