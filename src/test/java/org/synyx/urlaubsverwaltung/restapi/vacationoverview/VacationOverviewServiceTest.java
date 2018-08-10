@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -57,7 +58,8 @@ public class VacationOverviewServiceTest {
         this.sut = new VacationOverviewService(departmentService, workingTimeService, publicHolidayService);
 
         this.person = TestDataCreator.createPerson();
-        this.department = TestDataCreator.createDepartment();
+        this.department = TestDataCreator.createDepartment("Admins");
+        this.department.setMembers(Collections.singletonList(person));
 
         FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
