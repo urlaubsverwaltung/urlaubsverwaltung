@@ -88,9 +88,10 @@ public final class TestDataCreator {
     }
 
 
-    public static Person createPerson(String username, String firstName, String lastName, String email) {
+    public static Person createPerson(String loginName, String firstName, String lastName, String email) {
 
         Person person = new PersonBuilder().withName(firstName, lastName)
+                .withLoginName(loginName)
                 .withEmail(email)
                 .withPermissions(Collections.singletonList(Role.USER))
                 .withNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER))
@@ -204,9 +205,7 @@ public final class TestDataCreator {
 
     public static Department createDepartment(String name, String description) {
 
-        Department department = new Department();
-        department.setName(name);
-        department.setDescription(description);
+        Department department = new DepartmentBuilder().build().withName(name).withDescription(description).get();
 
         return department;
     }
