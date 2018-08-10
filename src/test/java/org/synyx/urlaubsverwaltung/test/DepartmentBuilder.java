@@ -37,6 +37,14 @@ public class DepartmentBuilder {
     }
 
 
+    public DepartmentBuilder withDescription(String description) {
+
+        department.setDescription(description);
+
+        return this;
+    }
+
+
     public Department get() {
 
         return department;
