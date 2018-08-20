@@ -16,8 +16,9 @@ import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
+import java.time.LocalDate;
+
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -27,7 +28,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -46,6 +46,7 @@ public class VacationOverviewServiceTest {
     private SettingsServiceImpl settingsServiceImpl;
     private Department department;
     private Person person;
+    private Person person2;
 
     @Before
     public void setUp() throws Exception {
@@ -58,13 +59,14 @@ public class VacationOverviewServiceTest {
         this.sut = new VacationOverviewService(departmentService, workingTimeService, publicHolidayService);
 
         this.person = TestDataCreator.createPerson();
+        this.person2 = TestDataCreator.createPerson("mamu", "Max", "Mustermann", "max@mustermann.de");
         this.department = TestDataCreator.createDepartment("Admins");
-        this.department.setMembers(Collections.singletonList(person));
+        this.department.setMembers(Arrays.asList(person, person2));
 
         FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
         when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(department));
-        when(workingTimeService.getFederalStateForPerson(eq(person), any(DateMidnight.class))).thenReturn(
+        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(DateMidnight.class))).thenReturn(
             federalState);
         when(settingsServiceImpl.getSettings()).thenReturn(new Settings());
     }
@@ -73,12 +75,12 @@ public class VacationOverviewServiceTest {
     @Test
     public void assertVacationOverviewsForExistingDepartment() throws Exception {
 
-        DateMidnight testDate = DateMidnight.parse("2017-09-01");
+        LocalDate testDate = LocalDate.parse("2017-09-01");
 
         List<VacationOverview> vacationOverviews = sut.getVacationOverviews(this.department.getName(),
-                testDate.getYear(), testDate.getMonthOfYear());
+                testDate.getYear(), testDate.getMonthValue());
 
-        assertThat(vacationOverviews, hasSize(1));
+        assertThat(vacationOverviews, hasSize(2));
         assertThat(vacationOverviews.get(0).getPerson().getEmail(), is(this.person.getEmail()));
         assertThat(vacationOverviews.get(0).getDays().get(0).getTypeOfDay(), is(WORKDAY));
     }
@@ -87,12 +89,12 @@ public class VacationOverviewServiceTest {
     @Test
     public void ensureHolidaysAreMarkedCorrectlyAsWeekend() throws Exception {
 
-        DateMidnight testDate = DateMidnight.parse("2017-12-01");
+        LocalDate testDate = LocalDate.parse("2017-12-01");
 
         List<VacationOverview> vacationOverviews = sut.getVacationOverviews(this.department.getName(),
-                testDate.getYear(), testDate.getMonthOfYear());
+                testDate.getYear(), testDate.getMonthValue());
 
-        assertThat(vacationOverviews, hasSize(1));
+        assertThat(vacationOverviews, hasSize(2));
         assertThat(vacationOverviews.get(0).getPerson().getEmail(), is(this.person.getEmail()));
         assertThat(vacationOverviews.get(0).getDays().get(25).getTypeOfDay(), is(WEEKEND));
     }

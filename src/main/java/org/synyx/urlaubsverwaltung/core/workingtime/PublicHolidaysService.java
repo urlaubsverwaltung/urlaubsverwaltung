@@ -59,6 +59,7 @@ public class PublicHolidaysService {
      */
     boolean isPublicHoliday(DateMidnight date, FederalState federalState) {
 
+//we should check here if the federal state is given. Or not? I dont know it.
         return manager.isHoliday(date.toLocalDate(), federalState.getCodes());
     }
 

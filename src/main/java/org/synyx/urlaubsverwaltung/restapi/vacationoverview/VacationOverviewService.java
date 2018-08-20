@@ -19,10 +19,14 @@ import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ValueRange;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WEEKEND;
 import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WORKDAY;
@@ -53,44 +57,59 @@ public class VacationOverviewService {
 
         Department department = getDepartmentByName(selectedDepartment);
 
-        Calendar calendar = new GregorianCalendar();
-        int year = selectedYear != null ? selectedYear : calendar.get(Calendar.YEAR);
-        int month = selectedMonth != null ? selectedMonth - 1 : calendar.get(Calendar.MONTH);
-        calendar.set(year, month, 1);
+        int year = selectedYear != null ? selectedYear : LocalDate.now().getYear();
+        int month = selectedMonth != null ? selectedMonth : LocalDate.now().getMonthValue();
 
-        int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        List<LocalDate> daysOfMonthList = getDaysOfMonth(year, month);
 
         if (department != null) {
-            for (Person person : department.getMembers()) {
-                VacationOverview holidayOverview = getVacationOverview(person);
-
-                for (int i = 1; i <= lastDay; i++) {
-                    DayOfMonth dayOfMonth = new DayOfMonth();
-                    DateMidnight currentDay = new DateMidnight(year, month + 1, i);
-
-                    dayOfMonth.setDayText(currentDay.toString(DATE_FORMAT));
-                    dayOfMonth.setDayNumber(i);
-                    dayOfMonth.setTypeOfDay(getTypeOfDay(person, currentDay));
-
-                    holidayOverview.getDays().add(dayOfMonth);
-                }
-
-                holidayOverviewList.add(holidayOverview);
-            }
+            (department.getMembers()).stream().forEach(person -> {
+                VacationOverview vacationOverviewForPerson = getVacationOverview(person);
+                daysOfMonthList.stream().forEach(day -> {
+                    DayOfMonth dayOfMonth = getDayOfMonth(person, day);
+                    vacationOverviewForPerson.getDays().add(dayOfMonth);
+                });
+                holidayOverviewList.add(vacationOverviewForPerson);
+            });
         }
 
         return holidayOverviewList;
     }
 
 
-    private DayOfMonth.TypeOfDay getTypeOfDay(Person person, DateMidnight currentDay) {
+    private DayOfMonth getDayOfMonth(Person person, LocalDate day) {
+
+        DayOfMonth dayOfMonth = new DayOfMonth();
+        dayOfMonth.setDayText(day.toString());
+        dayOfMonth.setDayNumber(day.getDayOfMonth());
+        dayOfMonth.setTypeOfDay(getTypeOfDay(person, day));
+
+        return dayOfMonth;
+    }
+
+
+    private List<LocalDate> getDaysOfMonth(int year, int month) {
+
+        LocalDate date = LocalDate.of(year, month, 1);
+        ValueRange rangeOfDaysOfMonth = date.range(ChronoField.DAY_OF_MONTH);
+
+        return IntStream.rangeClosed((int) rangeOfDaysOfMonth.getMinimum(), (int) rangeOfDaysOfMonth.getMaximum())
+            .boxed()
+            .map(x -> LocalDate.of(year, month, x))
+            .collect(Collectors.toList());
+    }
+
+
+    private DayOfMonth.TypeOfDay getTypeOfDay(Person person, LocalDate currentDay) {
+
+        DateMidnight dmDay = DateMidnight.parse(currentDay.toString());
 
         DayOfMonth.TypeOfDay typeOfDay;
 
-        FederalState state = workingTimeService.getFederalStateForPerson(person, currentDay);
+        FederalState state = workingTimeService.getFederalStateForPerson(person, dmDay);
 
-        if (DateUtil.isWorkDay(currentDay)
-                && (publicHolidayService.getWorkingDurationOfDate(currentDay, state).longValue() > 0)) {
+        if (DateUtil.isWorkDay(dmDay)
+                && (publicHolidayService.getWorkingDurationOfDate(dmDay, state).longValue() > 0)) {
             typeOfDay = WORKDAY;
         } else {
             typeOfDay = WEEKEND;
