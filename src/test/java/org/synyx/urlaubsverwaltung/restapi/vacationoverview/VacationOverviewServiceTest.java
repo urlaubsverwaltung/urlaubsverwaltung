@@ -40,26 +40,27 @@ public class VacationOverviewServiceTest {
 
     private VacationOverviewService sut;
 
-    private DepartmentService departmentService;
-    private WorkingTimeService workingTimeService;
-    private PublicHolidaysService publicHolidayService;
-    private SettingsServiceImpl settingsServiceImpl;
     private Department department;
     private Person person;
-    private Person person2;
 
     @Before
     public void setUp() throws Exception {
 
-        this.settingsServiceImpl = mock(SettingsServiceImpl.class);
-        this.departmentService = mock(DepartmentService.class);
-        this.workingTimeService = mock(WorkingTimeService.class);
+        Person person2;
+        DepartmentService departmentService;
+        WorkingTimeService workingTimeService;
+        PublicHolidaysService publicHolidayService;
+        SettingsServiceImpl settingsServiceImpl;
 
-        this.publicHolidayService = new PublicHolidaysService(settingsServiceImpl);
+        settingsServiceImpl = mock(SettingsServiceImpl.class);
+        departmentService = mock(DepartmentService.class);
+        workingTimeService = mock(WorkingTimeService.class);
+
+        publicHolidayService = new PublicHolidaysService(settingsServiceImpl);
         this.sut = new VacationOverviewService(departmentService, workingTimeService, publicHolidayService);
 
         this.person = TestDataCreator.createPerson();
-        this.person2 = TestDataCreator.createPerson("mamu", "Max", "Mustermann", "max@mustermann.de");
+        person2 = TestDataCreator.createPerson("mamu", "Max", "Mustermann", "max@mustermann.de");
         this.department = TestDataCreator.createDepartment("Admins");
         this.department.setMembers(Arrays.asList(person, person2));
 

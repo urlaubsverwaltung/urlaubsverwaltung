@@ -3,8 +3,17 @@ package org.synyx.urlaubsverwaltung.core.util;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ValueRange;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+
 /**
- * @author Aljona Murygina
+ * @author  Aljona Murygina
  */
 public final class DateUtil {
 
@@ -17,92 +26,130 @@ public final class DateUtil {
     }
 
     /**
+     * Get the days of the given month in the given year.
+     *
+     * @param  year  of the month to get the days of
+     * @param  month  to get the days of
+     *
+     * @return  list of days of the given month in the given year
+     */
+    public static List<LocalDate> getDaysOfMonth(int year, int month) {
+
+        LocalDate date = LocalDate.of(year, month, 1);
+        ValueRange rangeOfDaysOfMonth = date.range(ChronoField.DAY_OF_MONTH);
+
+        return IntStream.rangeClosed((int) rangeOfDaysOfMonth.getMinimum(), (int) rangeOfDaysOfMonth.getMaximum())
+            .boxed()
+            .map(x -> LocalDate.of(year, month, x))
+            .collect(Collectors.toList());
+    }
+
+
+    /**
+     * Helper Method to convert from java.time.localDate to org.joda.time.DateMidnight. This Method should only be used
+     * if it is really necessary. E.g. if you refactor a part of the software to get rid of Joda Time, but it is
+     * necessary to interact with DateMidnight of another part of the software
+     *
+     * @param  localDate  local Date to convert
+     *
+     * @return  Joda.tome Date Midnight format
+     *
+     * @deprecated  Because we won't use joda time anymore. This is just a helper method to convert to DateMidnight if
+     *              it is really needed through development
+     */
+    public static DateMidnight getDateMidnightFromLocalDate(LocalDate localDate) {
+
+        DateMidnight dateMidnightDate = DateMidnight.parse(localDate.toString());
+
+        return dateMidnightDate;
+    }
+
+
+    /**
      * Check if the given date is a work day.
      *
-     * @param date
-     *            to check
+     * @param  date  to check
      *
-     * @return {@code true} if the given date is a work day, else {@code false}
+     * @return  {@code true} if the given date is a work day, else {@code false}
      */
     public static boolean isWorkDay(DateMidnight date) {
 
         return !(date.getDayOfWeek() == DateTimeConstants.SATURDAY || date.getDayOfWeek() == DateTimeConstants.SUNDAY);
     }
 
+
     /**
      * Check if given date is before April.
      *
-     * @param date
-     *            to check
+     * @param  date  to check
      *
-     * @return {@code true} if the given date is before April, {@code false} if it is after April
+     * @return  {@code true} if the given date is before April, {@code false} if it is after April
      */
     public static boolean isBeforeApril(DateMidnight date) {
 
         return date.getMonthOfYear() < DateTimeConstants.APRIL;
     }
 
+
     /**
      * Check if given date is on Christmas Eve.
      *
-     * @param date
-     *            to check
+     * @param  date  to check
      *
-     * @return {@code true} if the given date is on Christmas Eve, else {@code false}
+     * @return  {@code true} if the given date is on Christmas Eve, else {@code false}
      */
     public static boolean isChristmasEve(DateMidnight date) {
 
         return date.getDayOfMonth() == DAY_OF_CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER;
     }
 
+
     /**
      * Check if given date is on New Year's Eve.
      *
-     * @param date
-     *            to check
+     * @param  date  to check
      *
-     * @return {@code true} if the given date is on New Year's Eve, else {@code false}
+     * @return  {@code true} if the given date is on New Year's Eve, else {@code false}
      */
     public static boolean isNewYearsEve(DateMidnight date) {
 
         return date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER;
     }
 
+
     /**
      * Get the first day of the given year.
      *
-     * @param year
-     *            to get the first day of
+     * @param  year  to get the first day of
      *
-     * @return the first day of the given year
+     * @return  the first day of the given year
      */
     public static DateMidnight getFirstDayOfYear(int year) {
 
         return getFirstDayOfMonth(year, DateTimeConstants.JANUARY);
     }
 
+
     /**
      * Get the last day of the given year.
      *
-     * @param year
-     *            to get the last day of
+     * @param  year  to get the last day of
      *
-     * @return the last day of the given year
+     * @return  the last day of the given year
      */
     public static DateMidnight getLastDayOfYear(int year) {
 
         return getLastDayOfMonth(year, DateTimeConstants.DECEMBER);
     }
 
+
     /**
      * Get the first day of the given month in the given year.
      *
-     * @param year
-     *            of the month to get the first day of
-     * @param month
-     *            to get the first day of
+     * @param  year  of the month to get the first day of
+     * @param  month  to get the first day of
      *
-     * @return the first day of the given month in the given year
+     * @return  the first day of the given month in the given year
      */
     public static DateMidnight getFirstDayOfMonth(int year, int month) {
 
@@ -111,15 +158,14 @@ public final class DateUtil {
         return monthOfYear.dayOfMonth().withMinimumValue();
     }
 
+
     /**
      * Get the last day of the given month in the given year.
      *
-     * @param year
-     *            of the month to get the last day of
-     * @param month
-     *            to get the first day of
+     * @param  year  of the month to get the last day of
+     * @param  month  to get the first day of
      *
-     * @return the last day of the given month in the given year
+     * @return  the last day of the given month in the given year
      */
     public static DateMidnight getLastDayOfMonth(int year, int month) {
 
@@ -128,12 +174,13 @@ public final class DateUtil {
         return monthOfYear.dayOfMonth().withMaximumValue();
     }
 
+
     /**
      * Get the German name of a month as text.
-     * 
-     * @param month
-     *            month as number from 1 to 12
-     * @return month as String
+     *
+     * @param  month  month as number from 1 to 12
+     *
+     * @return  month as String
      */
     public static String getMonthName(Integer month) {
 
@@ -154,5 +201,4 @@ public final class DateUtil {
 
         return monthNameArray[month - 1];
     }
-
 }

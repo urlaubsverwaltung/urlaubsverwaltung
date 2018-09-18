@@ -20,13 +20,9 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ValueRange;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WEEKEND;
 import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WORKDAY;
@@ -60,12 +56,12 @@ public class VacationOverviewService {
         int year = selectedYear != null ? selectedYear : LocalDate.now().getYear();
         int month = selectedMonth != null ? selectedMonth : LocalDate.now().getMonthValue();
 
-        List<LocalDate> daysOfMonthList = getDaysOfMonth(year, month);
+        List<LocalDate> daysOfMonthList = DateUtil.getDaysOfMonth(year, month);
 
         if (department != null) {
-            (department.getMembers()).stream().forEach(person -> {
+            (department.getMembers()).forEach(person -> {
                 VacationOverview vacationOverviewForPerson = getVacationOverview(person);
-                daysOfMonthList.stream().forEach(day -> {
+                daysOfMonthList.forEach(day -> {
                     DayOfMonth dayOfMonth = getDayOfMonth(person, day);
                     vacationOverviewForPerson.getDays().add(dayOfMonth);
                 });
@@ -88,28 +84,16 @@ public class VacationOverviewService {
     }
 
 
-    private List<LocalDate> getDaysOfMonth(int year, int month) {
-
-        LocalDate date = LocalDate.of(year, month, 1);
-        ValueRange rangeOfDaysOfMonth = date.range(ChronoField.DAY_OF_MONTH);
-
-        return IntStream.rangeClosed((int) rangeOfDaysOfMonth.getMinimum(), (int) rangeOfDaysOfMonth.getMaximum())
-            .boxed()
-            .map(x -> LocalDate.of(year, month, x))
-            .collect(Collectors.toList());
-    }
-
-
     private DayOfMonth.TypeOfDay getTypeOfDay(Person person, LocalDate currentDay) {
 
-        DateMidnight dmDay = DateMidnight.parse(currentDay.toString());
+        DateMidnight dateMidnightDay = DateUtil.getDateMidnightFromLocalDate(currentDay);
 
         DayOfMonth.TypeOfDay typeOfDay;
 
-        FederalState state = workingTimeService.getFederalStateForPerson(person, dmDay);
+        FederalState state = workingTimeService.getFederalStateForPerson(person, dateMidnightDay);
 
-        if (DateUtil.isWorkDay(dmDay)
-                && (publicHolidayService.getWorkingDurationOfDate(dmDay, state).longValue() > 0)) {
+        if (DateUtil.isWorkDay(dateMidnightDay)
+                && (publicHolidayService.getWorkingDurationOfDate(dateMidnightDay, state).longValue() > 0)) {
             typeOfDay = WORKDAY;
         } else {
             typeOfDay = WEEKEND;
