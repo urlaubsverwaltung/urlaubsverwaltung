@@ -25,7 +25,6 @@
     * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
     * [Konfiguration Google Calendar](#konfiguration-google-calendar)
  * [Entwicklung](#entwicklung)
- * [Support und individuelle Anpassungen](#support-und-individuelle-anpassungen)
  * [Changelog](CHANGELOG.md)
  * [Technologien](#technologien)
  * [Lizenz](#lizenz)
@@ -344,12 +343,6 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die extenen
 Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gezeigt, wie man das mit Docker
 tun kann.](docs/UV_WITH_DOCKER.md)
-
----
-
-## Support und individuelle Anpassungen
-
-Wer Support z.B. bei der Installation benötigt oder individuelle Anpassungen der Urlaubsverwaltung beauftragen möchte, kann sich an André Janus (Link: http://www.andre-janus.de/kontakt/) wenden. Man erhält ein unverbindliches Angebot mit einer Aufwands- und Kostenschätzung. Erscheinen die beauftragten Anpassungen für alle Benutzer der Urlaubsverwaltung sinnvoll, werden diese mittels eines Pull Requests in die Hauptversion einfließen. 
 
 ---
 
