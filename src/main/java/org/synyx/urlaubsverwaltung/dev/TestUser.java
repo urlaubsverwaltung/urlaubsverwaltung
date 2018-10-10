@@ -14,7 +14,8 @@ enum TestUser {
     DEPARTMENT_HEAD("testHead"),
     SECOND_STAGE_AUTHORITY("testManager"),
     BOSS("testBoss"),
-    OFFICE("test");
+    OFFICE("test"),
+    ADMIN("admin");
 
     private String login;
 
@@ -48,6 +49,9 @@ enum TestUser {
 
             case OFFICE:
                 return new Role[] { Role.USER, Role.BOSS, Role.OFFICE };
+
+            case ADMIN:
+                return new Role[] { Role.USER, Role.ADMIN};
 
             default:
                 return new Role[] { Role.USER };

@@ -67,6 +67,7 @@ public class TestDataCreationService {
 
     private Person boss;
     private Person office;
+    private Person admin;
 
     @PostConstruct
     public void createTestData() throws NoSuchAlgorithmException {
@@ -82,6 +83,8 @@ public class TestDataCreationService {
                 "boss@firma.test", TestUser.BOSS.getRoles());
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
                 "office@firma.test", TestUser.OFFICE.getRoles());
+
+        admin = personDataProvider.createTestPerson("admin", PASSWORD, "Senor", "Operation", "admin@firma.test", TestUser.ADMIN.getRoles());
 
         Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
                 "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
