@@ -54,6 +54,7 @@ die unterschiedlichen Rollen:
 | Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       | 
 | Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
 | Benutzer                  | testUser      | secret   | Klaus Müller      |
+| Admin                     | admin         | secret   | Senor Operation   |
 
 #### Blog Posts
 
@@ -82,6 +83,7 @@ In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 * **Chef**: darf Urlaubsanträge aller Benutzer einsehen, genehmigen und ablehnen
 * **Office**: darf Einstellungen zur Anwendung vornehmen, Mitarbeiter verwalten, Urlaub für Mitarbeiter
 beantragen/stornieren und Krankmeldungen pflegen
+* **Admin**: Keine fachliche Rolle sondern nur für den Zugriff von Management Schnittstellen ([Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html)).
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
