@@ -1,4 +1,5 @@
-### urlaubsverwaltung-2.27.0
+### [urlaubsverwaltung-2.27.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.27.0)
+* Bug: Spring Boot Actuators ohne Authentifizierung aufrufbar [#430](https://github.com/synyx/urlaubsverwaltung/issues/430)
 * Sicherheitslücken in Tomcat [#428](https://github.com/synyx/urlaubsverwaltung/issues/428)
 * CSV Export für Urlaubsstatistik hinzugefügt 
 * Bug: Fix JavaScript-Probleme in der Urlaubsübersicht bei älteren Internet Explorer Versionen [#369](https://github.com/synyx/urlaubsverwaltung/issues/369)
