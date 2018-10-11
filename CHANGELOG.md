@@ -1,5 +1,7 @@
 ### [urlaubsverwaltung-2.28.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.28.0)
 * Neue Feiertag Reformationstag für die Bundesländer Schleswig-Holstein, Hamburg, Bremen und Niedersachen hinzugefügt [#445](https://github.com/synyx/urlaubsverwaltung/pull/445) [#438](https://github.com/synyx/urlaubsverwaltung/issues/438) [#416](https://github.com/synyx/urlaubsverwaltung/issues/416)
+* Update der Frontend-Test Abhängigkeiten [#446](https://github.com/synyx/urlaubsverwaltung/pull/446)
+* Verbesserung der Entwicklerdokumentation (Lokales LDAP) [#433](https://github.com/synyx/urlaubsverwaltung/pull/433)
 
 ### [urlaubsverwaltung-2.27.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.27.0)
 * Bug: Spring Boot Actuators ohne Authentifizierung aufrufbar [#430](https://github.com/synyx/urlaubsverwaltung/issues/430)
