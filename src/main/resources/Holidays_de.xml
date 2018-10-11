@@ -112,5 +112,25 @@
             <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
         </tns:Holidays>
     </tns:SubConfigurations>
+    <tns:SubConfigurations hierarchy="sh" description="Schleswig-Holstein">
+        <tns:Holidays>
+            <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
+        </tns:Holidays>
+    </tns:SubConfigurations>
+    <tns:SubConfigurations hierarchy="hh" description="Hamburg">
+        <tns:Holidays>
+            <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
+        </tns:Holidays>
+    </tns:SubConfigurations>
+    <tns:SubConfigurations hierarchy="hb" description="Bremen">
+        <tns:Holidays>
+            <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
+        </tns:Holidays>
+    </tns:SubConfigurations>
+    <tns:SubConfigurations hierarchy="ni" description="Niedersachsen">
+        <tns:Holidays>
+            <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
+        </tns:Holidays>
+    </tns:SubConfigurations>
 </tns:Configuration>
 
