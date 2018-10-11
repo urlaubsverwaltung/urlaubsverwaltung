@@ -61,7 +61,21 @@ public class VacationDaysService {
         VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account);
 
         // it's before April - the left remaining vacation days must be used
-        if (DateUtil.isBeforeApril(nowService.now(), account.getYear())) {
+        if (DateUtil.isBeforeApril(nowService.now(), account.getYear()) &&
+
+                // TODO: if you apply for leave at the beginning of NEXT year, you
+                // should be able to use the remaining vacation days for THIS year.
+                // However, if we allow this here now, you would then later be able
+                // to take additional holiday this year, and we do not prevent this
+                // currently. So before that is fixed, we do not allow it here.
+                // For now, you can only use the remaining vacation days from LAST year
+                // if you apply for them THIS year.
+                //
+                // See issues #372 for a complaint about this being rejected here
+                // and #378 for an example of remaining vacation days not being
+                // counted properly when application and vacation are in different years
+                nowService.currentYear() == account.getYear()
+                ) {
             return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDays());
         } else {
             // it's after April - only the left not expiring remaining vacation days must be used
