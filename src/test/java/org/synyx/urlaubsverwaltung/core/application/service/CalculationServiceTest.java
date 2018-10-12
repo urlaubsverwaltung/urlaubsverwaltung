@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
@@ -76,7 +77,7 @@ public class CalculationServiceTest {
 
 
     @Test
-    public void testCheckApplication() {
+    public void testCheckApplication_Simple() {
 
         Person person = TestDataCreator.createPerson("horscht");
 
@@ -99,12 +100,52 @@ public class CalculationServiceTest {
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ZERO);
 
         Assert.assertFalse("Should NOT be enough vacation days to apply for leave",
-            service.checkApplication(applicationForLeaveToCheck));
+                service.checkApplication(applicationForLeaveToCheck));
 
         // enough vacation days for this application for leave, but none would be left
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ONE);
 
         Assert.assertTrue("Should be enough vacation days to apply for leave",
             service.checkApplication(applicationForLeaveToCheck));
+    }
+
+
+    /**
+     * https://github.com/synyx/urlaubsverwaltung/issues/447
+     */
+    @Test
+    public void testCheckApplication_NextYearUsingRemainingAlready() {
+
+        Person person = TestDataCreator.createPerson("horscht");
+
+        Application applicationForLeaveToCheck = new Application();
+        // nine days
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 30));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+
+        Account thisYear = new Account(
+                person, DateUtil.getFirstDayOfYear(2012).toDate(), DateUtil.getLastDayOfYear(2012).toDate(), BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.ZERO, "");
+
+        Account nextYear = new Account(
+                person, DateUtil.getFirstDayOfYear(2013).toDate(), DateUtil.getLastDayOfYear(2013).toDate(), BigDecimal.TEN,
+                // here we set up 2013 to have 10 days remaining vacation available from 2012,
+                // if those have already been used up, we cannot spend them in 2012 as well
+                BigDecimal.TEN, BigDecimal.TEN, "");
+
+
+        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(thisYear));
+        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(nextYear));
+
+        // set up 13 days already used next year, i.e. 10 + 3 remaining
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(nextYear)).thenReturn(BigDecimal.valueOf(7));
+
+        // this year still has all ten days (but 3 of them used up next year, see above)
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
+
+        Assert.assertFalse("Should not be enough vacation days to apply for leave, because three already used next year",
+                service.checkApplication(applicationForLeaveToCheck));
+
     }
 }
