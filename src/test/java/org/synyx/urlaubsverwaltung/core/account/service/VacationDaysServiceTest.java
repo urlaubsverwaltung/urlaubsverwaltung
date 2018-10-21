@@ -255,7 +255,42 @@ public class VacationDaysServiceTest {
             vacationDaysLeft.getRemainingVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
             vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        Assert.assertEquals("Number of vacation days already used for next year", BigDecimal.ZERO, vacationDaysLeft.getVacationDaysUsedNextYear());
+
     }
+
+
+    @Test
+    public void testGetVacationDaysLeft_WithRemainingAlreadyUsed() {
+
+        initCustomService("4", "20");
+
+        // 36 Total, using 24, so 12 left
+        Account account = new Account();
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("6"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+
+        // next year has only 12 new days, but using 24, i.e. all 12 from this year
+        Account nextYear = new Account();
+        nextYear.setAnnualVacationDays(new BigDecimal("12"));
+        nextYear.setVacationDays(new BigDecimal("12"));
+        nextYear.setRemainingVacationDays(new BigDecimal("20"));
+        nextYear.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+
+
+        VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, Optional.of(nextYear));
+
+        Assert.assertEquals("Number of vacation days already used for next year", new BigDecimal("12"), vacationDaysLeft.getVacationDaysUsedNextYear());
+
+        Assert.assertEquals("Wrong number of vacation days", BigDecimal.ZERO, vacationDaysLeft.getVacationDays());
+        Assert.assertEquals("Wrong number of remaining vacation days", BigDecimal.ZERO,
+                vacationDaysLeft.getRemainingVacationDays());
+        Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
+                vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+    }
+
 
 
     @Test
