@@ -142,7 +142,7 @@ public class CalculationServiceTest {
         Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(nextYear));
 
         // set up 13 days already used next year, i.e. 10 + 3 remaining
-        Mockito.when(vacationDaysService.getVacationDaysLeft(nextYear)).thenReturn(
+        Mockito.when(vacationDaysService.getVacationDaysLeft(nextYear, Optional.empty())).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.TEN)
