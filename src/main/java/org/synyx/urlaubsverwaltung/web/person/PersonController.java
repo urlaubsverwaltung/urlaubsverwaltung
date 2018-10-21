@@ -244,7 +244,7 @@ public class PersonController {
             if (account.isPresent()) {
                 Account holidaysAccount = account.get();
                 accounts.put(person, holidaysAccount);
-                vacationDaysLeftMap.put(person, vacationDaysService.getVacationDaysLeft(holidaysAccount));
+                vacationDaysLeftMap.put(person, vacationDaysService.getVacationDaysLeft(holidaysAccount, accountService.getHolidaysAccount(year+1, person)));
             }
         }
 
