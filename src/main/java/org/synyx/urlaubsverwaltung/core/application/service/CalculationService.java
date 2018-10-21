@@ -106,7 +106,7 @@ public class CalculationService {
         if (nextYear.isPresent()){
             Account nextAccount = nextYear.get();
             if (nextAccount.getRemainingVacationDays().signum() > 0){
-                VacationDaysLeft nextYearLeft = vacationDaysService.getVacationDaysLeft(nextAccount);
+                VacationDaysLeft nextYearLeft = vacationDaysService.getVacationDaysLeft(nextAccount, Optional.empty());
                 BigDecimal totalUsedNextYear = nextAccount.getVacationDays()
                         .add(nextAccount.getRemainingVacationDays())
                         .subtract(nextYearLeft.getVacationDays())

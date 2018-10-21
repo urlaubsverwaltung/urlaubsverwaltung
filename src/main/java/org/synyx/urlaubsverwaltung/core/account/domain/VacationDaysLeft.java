@@ -12,16 +12,25 @@ import java.math.BigDecimal;
  */
 public final class VacationDaysLeft {
 
+    /** Vacation days for this year that have not been used yet */
     private final BigDecimal vacationDays;
+
+    /** Additional vacation days left over from last year */
     private final BigDecimal remainingVacationDays;
+
+    /** Non-expiring vacation days left over from last year (included in `remainingVacationDays`) */
     private final BigDecimal remainingVacationDaysNotExpiring;
 
+    /** Vacaction days for this year that have already been used NEXT year */
+    private final BigDecimal vacationDaysUsedNextYear;
+
     private VacationDaysLeft(BigDecimal vacationDays, BigDecimal remainingVacationDays,
-        BigDecimal remainingVacationDaysNotExpiring) {
+        BigDecimal remainingVacationDaysNotExpiring, BigDecimal vacationDaysUsedNextYear) {
 
         this.vacationDays = vacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
+        this.vacationDaysUsedNextYear = vacationDaysUsedNextYear;
     }
 
     public static Builder builder() {
@@ -47,6 +56,10 @@ public final class VacationDaysLeft {
         return remainingVacationDaysNotExpiring;
     }
 
+    public BigDecimal getVacationDaysUsedNextYear() {
+        return vacationDaysUsedNextYear;
+    }
+
     /**
      * Builds information object about left vacation days.
      */
@@ -57,6 +70,7 @@ public final class VacationDaysLeft {
         private BigDecimal remainingVacationDaysNotExpiring;
         private BigDecimal usedDaysBeforeApril;
         private BigDecimal usedDaysAfterApril;
+        private BigDecimal vacationDaysUsedNextYear = BigDecimal.ZERO;
 
         public Builder withAnnualVacation(BigDecimal annualVacation) {
 
@@ -97,10 +111,17 @@ public final class VacationDaysLeft {
             return this;
         }
 
+        public Builder withVacationDaysUsedNextYear(BigDecimal vacationDaysUsedNextYear) {
+
+            this.vacationDaysUsedNextYear = vacationDaysUsedNextYear;
+
+            return this;
+        }
+
 
         public VacationDaysLeft get() {
 
-            BigDecimal leftVacationDays = annualVacationDays;
+            BigDecimal leftVacationDays = annualVacationDays.subtract(vacationDaysUsedNextYear);
             BigDecimal leftRemainingVacationDays = remainingVacationDays;
             BigDecimal leftRemainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
 
@@ -157,7 +178,7 @@ public final class VacationDaysLeft {
             }
 
             return new VacationDaysLeft(leftVacationDays, leftRemainingVacationDays,
-                    leftRemainingVacationDaysNotExpiring);
+                    leftRemainingVacationDaysNotExpiring, vacationDaysUsedNextYear);
         }
     }
 }
