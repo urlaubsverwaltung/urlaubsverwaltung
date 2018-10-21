@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
+import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
@@ -89,6 +90,7 @@ public class CalculationServiceTest {
 
         Account account = new Account();
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
+        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
 
         // vacation days would be left after this application for leave
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.TEN);
@@ -133,13 +135,21 @@ public class CalculationServiceTest {
                 // here we set up 2013 to have 10 days remaining vacation available from 2012,
                 // if those have already been used up, we cannot spend them in 2012 as well
                 BigDecimal.TEN, BigDecimal.TEN, "");
+        nextYear.setVacationDays(nextYear.getAnnualVacationDays());
 
 
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(thisYear));
         Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(nextYear));
 
         // set up 13 days already used next year, i.e. 10 + 3 remaining
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(nextYear)).thenReturn(BigDecimal.valueOf(7));
+        Mockito.when(vacationDaysService.getVacationDaysLeft(nextYear)).thenReturn(
+                VacationDaysLeft.builder()
+                        .withAnnualVacation(BigDecimal.TEN)
+                        .withRemainingVacation(BigDecimal.TEN)
+                        .notExpiring(BigDecimal.ZERO)
+                        .forUsedDaysBeforeApril(BigDecimal.valueOf(13))
+                        .forUsedDaysAfterApril(BigDecimal.ZERO)
+                        .get());
 
         // this year still has all ten days (but 3 of them used up next year, see above)
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
