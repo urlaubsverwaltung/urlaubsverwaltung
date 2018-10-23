@@ -78,7 +78,7 @@ public class CalculationServiceTest {
 
 
     @Test
-    public void testCheckApplication_Simple() {
+    public void testCheckApplicationSimple() {
 
         Person person = TestDataCreator.createPerson("horscht");
 
@@ -116,7 +116,7 @@ public class CalculationServiceTest {
      * https://github.com/synyx/urlaubsverwaltung/issues/447
      */
     @Test
-    public void testCheckApplication_NextYearUsingRemainingAlready() {
+    public void testCheckApplicationNextYearUsingRemainingAlready() {
 
         Person person = TestDataCreator.createPerson("horscht");
 
