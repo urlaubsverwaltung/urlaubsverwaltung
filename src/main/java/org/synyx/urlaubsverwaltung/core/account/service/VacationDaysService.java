@@ -71,7 +71,14 @@ public class VacationDaysService {
     }
 
 
-    // TODO: remove this method, use the one with the `nextYear` parameter
+    /**
+     * @deprecated use instead {@link #getVacationDaysLeft(Account, Optional)}
+     * because the account for the following year may also be relevant for the calculation
+     *
+     * @param account the account for the year to calculate the vacation days for
+     *
+     * @return information about the vacation days left for that year
+     */
     public VacationDaysLeft getVacationDaysLeft(Account account) {
 
        return getVacationDaysLeft(account, Optional.empty());
@@ -81,6 +88,12 @@ public class VacationDaysService {
      * This version of the method also considers the account for next year,
      * so that it can adjust for vacation days carried over from this year to the next and then used there
      * (reducing the amount available in this year accordingly)
+     *
+     * @param account the account for the year to calculate the vacation days for
+     *
+     * @param nextYear the account for following year, if available
+     *
+     * @return information about the vacation days left for that year
      */
     public VacationDaysLeft getVacationDaysLeft(Account account, Optional<Account> nextYear) {
 
@@ -90,6 +103,7 @@ public class VacationDaysService {
 
         BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
         BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
+        BigDecimal daysUsedNextYear = getRemainingVacationDaysAlreadyUsed(nextYear);
 
         return VacationDaysLeft.builder()
                 .withAnnualVacation(vacationDays)
@@ -97,7 +111,7 @@ public class VacationDaysService {
                 .notExpiring(remainingVacationDaysNotExpiring)
                 .forUsedDaysBeforeApril(daysBeforeApril)
                 .forUsedDaysAfterApril(daysAfterApril)
-                .withVacationDaysUsedNextYear(getRemainingVacationDaysAlreadyUsed(nextYear))
+                .withVacationDaysUsedNextYear(daysUsedNextYear)
                 .get();
     }
 

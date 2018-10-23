@@ -255,13 +255,13 @@ public class VacationDaysServiceTest {
             vacationDaysLeft.getRemainingVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
             vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-        Assert.assertEquals("Number of vacation days already used for next year", BigDecimal.ZERO, vacationDaysLeft.getVacationDaysUsedNextYear());
+        Assert.assertEquals("Wrong number of vacation days already used for next year", BigDecimal.ZERO, vacationDaysLeft.getVacationDaysUsedNextYear());
 
     }
 
 
     @Test
-    public void testGetVacationDaysLeft_WithRemainingAlreadyUsed() {
+    public void testGetVacationDaysLeftWithRemainingAlreadyUsed() {
 
         initCustomService("4", "20");
 
@@ -282,7 +282,7 @@ public class VacationDaysServiceTest {
 
         VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, Optional.of(nextYear));
 
-        Assert.assertEquals("Number of vacation days already used for next year", new BigDecimal("12"), vacationDaysLeft.getVacationDaysUsedNextYear());
+        Assert.assertEquals("Wrong number of vacation days already used for next year", new BigDecimal("12"), vacationDaysLeft.getVacationDaysUsedNextYear());
 
         Assert.assertEquals("Wrong number of vacation days", BigDecimal.ZERO, vacationDaysLeft.getVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days", BigDecimal.ZERO,
