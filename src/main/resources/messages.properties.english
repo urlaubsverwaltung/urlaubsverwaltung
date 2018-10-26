@@ -1,0 +1,608 @@
+# HEADER / NAVBAR
+nav.home.title=My Account
+nav.apply.title=File for application
+nav.signout.title=Signout
+nav.vacation.title=Vacation
+nav.sicknote.title=Sick Note
+nav.staff.title=User
+nav.department.title=Departments
+nav.settings.title=Settings
+
+# Patterns
+pattern.date=dd.MM.yyyy
+pattern.time=HH:mm
+
+# ABSENCE
+absence.period=Absence Period
+absence.period.duration=Duration
+absence.period.singleDay=single day {0}, {1}
+absence.period.multipleDays=multiple days from {0} until {1}
+absence.period.time={0} - {1}
+absence.period.startDate=Starte Date
+absence.period.endDate=End Date
+
+# APPLICATIONS FOR LEAVE
+applications.title=Applications for Leave
+applications.waiting=Pending Applications for Leave
+applications.none=There are no applications for leave
+applications.waiting.teamInformed.true=Team informed
+applications.waiting.teamInformed.false=Team informed
+# APPLICATION FOR LEAVE
+application.data.title=Application for Leave
+application.data.description=Sonderurlaub ist eine kurzfristige Freistellung aus pers\u00F6nlichen Gr\u00FCnden. Sie ist in Paragraph 616 BGB geregelt. Folgende Sonderurlaubstage sind von der Gesch\u00E4ftsf\u00FChrung genehmigt:</br><br/>Eigene Hochzeit: 1 Tag<br/>Geburt des Kindes: 1 Tag<br/>Tod des Ehepartners oder Kindes: 2 Tage<br/>Tod eines Elternteils: 1 Tag<br/>Umzug aus betrieblichem Grund: 1 Tag
+application.data.staff=Employee
+application.data.vacationType=Vacation Type
+application.data.status=Status
+application.data.time=Time 
+application.data.time.placeholder=(optional)
+application.data.reason=Reason
+application.data.hours=Number of worked out hours
+application.data.hours.description=If reduction of overtime is requested, the number of overtime hours must be stated.
+application.data.hours.number=Overtime reduced
+application.data.teamInformed=Agreed with team
+application.data.teamInformed.true=Yes
+application.data.teamInformed.false=No
+application.data.holidayReplacement=Holiday Replacement
+application.data.holidayReplacement.none=No holiday replacement
+application.data.furtherInformation.title=Further information
+application.data.furtherInformation.description=Further information regarding the application for leave is optional except when sepcial leave is requested. In this case, a reason must be stated.
+application.data.furtherInformation.address=Address/Phone number while on leave
+application.data.furtherInformation.comment=Comment 
+application.data.furtherInformation.notSpecified=Not specified
+application.data.workingTime=Working Time 
+
+# APPLIER OF APPLICATION FOR LEAVE
+application.applier.account.none=Without an existing leave account, no application for leave can be filed. 
+application.applier.applied=applied 
+
+# PROGRESS FOR APPLICATION FOR LEAVE
+application.progress.title=Progress
+application.progress.comment=with comment:
+application.progress.APPLIED=applied on
+application.progress.ALLOWED=allowed on
+application.progress.TEMPORARY_ALLOWED=Provisionally approved on
+application.progress.REJECTED=Rejected on
+application.progress.CANCELLED=Cancelled on
+application.progress.CANCEL_REQUESTED=Cancellation requested on
+application.progress.REVOKED=Cancelled on 
+application.progress.CONVERTED=Converted from sick note on
+
+# DEPARTMENT APPLICATIONS FOR LEAVE
+application.department.title=Vacation of co-workers
+application.department.none=There are no applications for leave of co-workers of the same department during this time. 
+
+# ERRORS FOR APPLICATION FOR LEAVE
+application.error.missingReasonForSpecialLeave=When applying for special leave, a reason must be stated.
+application.error.missingHoursForOvertime=The hours of overtime must be stated when apllying for reduction of overtime. 
+application.error.invalidHoursForOvertime=The hours of overtime reduced must be greater than 0. 
+application.error.zeroDays=The specified period corresponds to 0 working days. Therefore, no application for leave must be filed. 
+application.error.overlap=An application for leave or a sicknote already exists for this period of time. 
+application.error.noValidWorkingTime=It isn't possible to apply for leave as there is no information regarding working hours of the user for the selected period of time. If necessary, the data of the user must be corrected.
+application.error.notEnoughVacationDays=There aren't enough vacation days available to book this vacation. 
+application.error.notEnoughOvertime=There isn't enough overtime to book this vacation.
+application.error.tooFarInTheFuture=Vacation can be requested only a maximum of {0} months in advance. 
+application.error.tooFarInThePast=For the period of time specified, no application for leave can be filed any more. 
+application.error.halfDayPeriod=For a half-day period, the start and end dates must be the same.
+
+# ACTIONS FOR APPLICATION FOR LEAVE
+application.action.apply.success=Your application for leave was successfully submitted. 
+application.action.reason.error=A reason must be stated.
+application.action.reject.success=The application for leave has been rejected.
+application.action.allow.success=The application for leave has been approved.
+application.action.temporary_allow.success=The application for leave has been provisionnaly approved.
+application.action.cancel.success=The application for leave has been cancelled.
+application.action.refer.success=The person selected receives a notification by e-mail 
+application.action.remind.success=The supervisors receive a notification by e-Mail.
+application.action.remind.error.impatient=Don't be so impatient and leave the supervisors some time!
+application.action.remind.error.alreadySent=A maximum of one reminder can be sent. 
+
+# STATISTICS FOR APPLICATIONS FOR LEAVE
+applications.statistics=Statisitcs for applications for leave
+applications.statistics.total=Total
+applications.statistics.allowed=Allowed
+applications.statistics.waiting=Not allowed yet
+applications.statistics.left=Left
+applications.statistics.create=Create a statistic for applications for leave
+applications.statistics.error=A statistic for applications for leave cannot be created for a period of time not within a calendar year. 
+applications.statistics.error.period=Adjust period of time.
+
+# PRINT
+print.info.landscape=Printing is only possible in landscape format.
+print.info.portrait=Printing is only possible in portrait format.
+
+# ACTIONS
+action.print=Print
+action.save=Save
+action.cancel=Cancel
+action.confirm=Confirm
+action.edit=Edit
+action.delete.request=Apply for deletion
+action.delete=Delete
+action.details=Details
+action.apply.vacation=File for application
+action.apply.sicknote=Create sicknote
+action.allow=Approve
+action.reject=Reject
+action.refer=Forward
+action.remind=Remind
+action.convert=Convert into vacation
+action.applications.statistics=Statistic for application for leave
+action.applications.vacation_overview=Vacation Overview
+action.sicknotes.statistics=Sicknotes statistics
+action.staff.create=Create a user
+action.department.create=Create a department
+action.department.delete=Delete a department
+action.search=Search
+action.comment.new=New Comment
+action.overtime.new=Enter Overtime
+action.overtime.list=Overtime
+
+# CONFIRMATION QUESTIONS
+action.delete.confirm=Should this application really be canceled?
+action.allow.confirm=Should this application for leave be approved?
+action.temporary_allow.confirm=Should this application for leave be provisionally approved?
+action.reject.confirm=Should this application for leave really be rejected?
+action.refer.confirm=The following authorized persons ask to decide about this application: 
+action.department.delete.confirm=Should this department <b>{0}</b> really be cancelled?
+action.sicknote.cancel.confirm=Should this sicknote really be cancelled?
+
+# ACTION COMMENTS
+action.comment=Comment
+action.comment.optional=Comment, optional
+action.comment.mandatory=Comment, mandatory
+action.comment.maxChars=200 Characters
+
+# FILTER BY PERIODS
+filter.title=Adjust period of time
+filter.period=Period of time
+filter.validity=Status
+filter.period.startDate=Start Date
+filter.period.endDate=End Date
+
+# DURATION
+duration.days=Days
+duration.workDays=Workdays 
+duration.hours=Hours
+duration.vacationDays=Vacation Days
+duration.overtime=Overtime
+
+# VACATION TYPES
+HOLIDAY=Holiday
+SPECIALLEAVE=Special Leave
+UNPAIDLEAVE=Unpaid Leave
+OVERTIME=Reduction of Overtime
+
+# VACATION STATES
+WAITING=Pending
+ALLOWED=Allowed
+TEMPORARY_ALLOWED=Provisionally allowed
+REJECTED=Rejected
+CANCELLED=Cancelled
+REVOKED=Cancelled
+
+# SICK NOTE TYPES
+sicknote.type.SICK_NOTE=Sick Note
+sicknote.type.SICK_NOTE_CHILD=Child Sick Note
+sicknote.type.SICK_NOTE_WITH_CERTIFICATE=Sick Note with certification
+
+# DAY LENGTHS
+FULL=Full Day
+MORNING=Morning
+NOON=Noon
+ZERO=Zero
+
+# MONTHS
+month.1=January
+month.2=February
+month.3=March
+month.4=April
+month.5=May
+month.6=June
+month.7=July
+month.8=August
+month.9=September
+month.10=October
+month.11=November
+month.12=December
+
+# DAYS
+MONDAY=Monday
+TUESDAY=Tuesday
+WEDNESDAY=Wednesday
+THURSDAY=Thursday
+FRIDAY=Friday
+SATURDAY=Saturday
+SUNDAY=Sunday
+
+MONDAY.short=Mo
+TUESDAY.short=Tue
+WEDNESDAY.short=Wed
+THURSDAY.short=Thur
+FRIDAY.short=Fr
+SATURDAY.short=Sa
+SUNDAY.short=Su
+
+# HOLIDAYS ACCOUNT
+person.account.vacation.noInformation=No information possible
+person.account.vacation.title=Vacation Entitlement for
+person.account.vacation.entitlement=You are <b>entitled to</b> <h4>{0} vacation days</h4>
+person.account.vacation.entitlement.remaining=(as well as {0} days remaining from last year)
+person.account.vacation.entitlement.remaining.notExpiring=It has been agreed upon that <h4>{0} days remaining vacation are not invalid as per 1. April.
+person.account.vacation.left=<h4>{0} Vacation days</h4> remaining 
+person.account.vacation.left.remaining=(as well as {0} days remaining from last year)
+
+# OVERVIEW PAGE
+overview.title=Overview for
+overview.vacations.holidayLeave=</h4> {0} days of holiday </h4> have been applied for
+overview.vacations.holidayLeaveAllowed={0} Days have been approved  
+overview.vacations.otherLeave=<h4>{0} days of other leave </h4> have been applied for
+overview.vacations.otherLeaveAllowed={0} days have been approved
+overview.sicknotes.sickdays=There are <h4>{0} sick days</h4>
+overview.sicknotes.sickdays.child=There are <h4>{0} Child Sick Days </h4>
+overview.sicknotes.sickdays.aub=of these are {0} days with certificate of incapacity for work
+overview.vacationOverview.title=Vacation Overview
+overview.vacationOverview.tableTitle=Employee/Day
+overview.vacationOverview.legendTitle=Legend
+overview.vacationOverview.weekend=Weekend/Public Holiday
+overview.vacationOverview.allowed=Vacation approved
+overview.vacationOverview.vacation=Vacation not approved yet
+overview.vacationOverview.halfDayVacation=Half day of vacation
+overview.vacationOverview.sick=Sick
+
+# SICK NOTES
+sicknotes.title=Sick Notes
+sicknote.title=Sick Note
+sicknote.create.title=New Sick Note
+sicknote.edit.title=Edit Sick Note
+sicknote.convert.title=Convert sick note into vacation
+# SICK NOTE DETAILS
+sicknotes.details.title=has a <h4>{0}</h4>
+# SICK NOTE OVERVIEW OF DAYS PER PERSON
+sicknotes.daysOverview.sickDays.title=Number of sick days
+sicknotes.daysOverview.sickDays.number=Sick Days
+sicknotes.daysOverview.sickDays.child.title=Number of child sick days
+sicknotes.daysOverview.sickDays.child.number=Child Sick Days
+# SICK NOTE DATA
+sicknote.data.description=Note: For a half-day sick leave, the start and end dates must be the same.
+sicknote.data.staff=Employee 
+sicknote.data.type=Type
+sicknote.data.inactive=(inactive)
+sicknote.data.aub.short=certificate of incapacity for work
+sicknote.data.aub.description=If a certificate of incapacity for work is available, a period of time can optionally be specified here.
+sicknote.data.aub.notPresent=No
+# SICK NOTE STATISTICS
+sicknotes.statistics.title=Statistic for the year
+sicknotes.statistics.totalNumber=Number of sick notes 
+sicknotes.statistics.totalNumberOfDays=Number of sick days
+sicknotes.statistics.staffWithSickNotes=Number of employees with at least one sick note
+sicknotes.statistics.averageSickTime=Average Sick Time per Employee
+# SICK NOTE ERRORS
+sicknote.error.aubInvalidPeriod=Is not within the period of time of the sick note
+sicknote.error.halfDayPeriod=For a half-day sick leave, the start and end dates must be the same.
+sicknote.error.noValidWorkingTime=A sick note cannot be created for the user, as there is no information available regarding the working hours of the user. Please check and correct the user data if necessary.
+# PROGRESS FOR SICK NOTES
+sicknote.progress.title=Progress
+sicknote.progress.lastEdited=Last edited on
+sicknote.progress.CREATED=Sick Note has been created
+sicknote.progress.EDITED=Sick Note has been created
+sicknote.progress.CONVERTED_TO_VACATION=Sick Note has been converted to vacation
+sicknote.progress.CANCELLED=Sick NOte has been cancelled
+sicknote.progress.COMMENTED=New comment added
+
+# COMMON ERRORS
+typeMismatch.org.joda.time.DateMidnight=Please enter a valid date.
+typeMismatch.java.math.BigDecimal=Please enter a valid number.
+typeMismatch=Entry is invalid.
+error.entry.mandatory=Entry mandatory.
+error.entry.tooManyChars=The entry has too many characters.
+error.entry.invalid=Entry is invalid.
+error.entry.invalidPeriod=The selected period is invalid.
+error.entry.mail=The specified email address must be in the correct format. (e.g. john@doe.de)
+error.entry.commentTooLong=The comment must not exceed 200 characters.
+
+# PERSON LIST
+persons.active=Active User
+persons.inactive=Inactive User
+persons.none=There aren't any users.
+
+persons.account.vacation.entitlement.year=Vacation Entitlement per year
+persons.account.vacation.entitlement.actual=Actual Entitlement
+persons.account.vacation.entitlement.remaining=Remaining vacation from the previous year
+persons.account.vacation.vacationDaysLeft=Vacation days left
+
+# PERSON
+person.data.firstName=First Name
+person.data.lastName=Last Name
+
+# PERSON FORM
+
+# Data
+person.form.data.title=Personal Data
+person.form.data.description=E-Mails concerning the processing of a leave request shall be sent to the e-mail address provided. In Addition this e-mail address shall be used to show the linked gravatar of the user.
+person.form.data.login=Login
+person.form.data.login.error=The cosen login is already taken.
+person.form.data.firstName=First Name
+person.form.data.lastName=Last
+person.form.data.email=email address
+
+# Roles
+person.form.permissions.title=Permissions
+person.form.permissions.description=At least one permission must be assigned to each user. Email notifications for users with advanced permissions can be disabled. If a user has permission to manage vacation requests from his or her departments, he or she can be configured as a departmental manager under Departments.
+person.form.permissions.roles=Permissions
+person.form.permissions.roles.INACTIVE=has no longer access to vacation management (user data remain unchanged )
+person.form.permissions.roles.USER=has access to holiday management and may apply for vacation for himself
+person.form.permissions.roles.DEPARTMENT_HEAD=may view, approve and decline holiday requests for the users of his departments
+person.form.permissions.roles.DEPARTMENT_HEAD.departments=The user is a department manager in the following departments:
+person.form.permissions.roles.DEPARTMENT_HEAD.departments.none=The user does not yet manage a department.
+person.form.permissions.roles.SECOND_STAGE_AUTHORITY=is responsible for the final release in the two-stage approval of requests
+person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments=The user is responsible for the final release in the following departments:
+person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none=The user is  not responsible for any department yet.
+person.form.permissions.roles.BOSS=may view, approve and deny holiday requests <b> of all </ b> users
+person.form.permissions.roles.OFFICE=may make settings for the application, manage the data of <b> all </ b> employees, request / cancel leave for <b> all </ b> employees and maintain sick leave
+# Roles Errors
+person.form.permissions.error.mandatory=At least one permission must be selected.
+person.form.permissions.error.inactive=If the user is to be deactivated, no other authorization may be granted.
+person.form.permissions.error.user=An active user must have the permission to log in.
+person.form.permissions.error.combination=The combination of permissions is invalid.
+# Notifications
+person.form.notifications.DEPARTMENT_HEAD=erh\u00E4lt E-mail notification of new vacation requests from users in their departments
+person.form.notifications.SECOND_STAGE_AUTHORITY=Receives e-mail notification on pre-approved vacation requests
+person.form.notifications.BOSS=Receives e-mail notification for new holiday requests
+person.form.notifications.OFFICE=Receives e-mail notification for approved vacation requests
+person.form.notifications.OFFICE.overtime=Receives e-mail notification for the entry of over-hours
+# Notifications Errors
+person.form.notifications.error.combination=The chosen combination of permissions and email notifications is not valid.
+
+# Vacation
+person.form.annualVacation.title=Vacation entitlement of {0} for
+person.form.annualVacation.description=If a full year is selected as the period of time, the annual holiday entitlement and the proportional vacation entitlement do not differ.
+person.form.annualVacation.period.start=From
+person.form.annualVacation.period.end=Until
+person.form.annualVacation.annualVacation=Annual vacation entitlement
+person.form.annualVacation.actualVacation=Proportional holiday entitlement for the period
+person.form.annualVacation.remainingVacation=Remaining leave from the last year 
+person.form.annualVacation.remainingVacation.notExpiring=Share of remaining vacation, which doesn't expire on 1. April 
+person.form.annualVacation.comment=Comment on the change of holiday entitlement
+person.form.annualVacation.comment.placeholder=Here you can enter a comment ...
+
+# Working Times
+person.form.workingTime.title=Working hours of {0}
+person.form.workingTime.description=The days of the week have an influence on how many vacation days are deducted from the vacation account when the user applies for vacation. Also, the days of the week have an influence on sick days, since only working days are considered sick days.
+person.form.workingTime.existent=Previous working hours
+person.form.workingTime.validityPeriod=Valid from
+person.form.workingTime.weekDays=Weekdays
+person.form.workingTime.error.mandatory=At least one weekday must be selected.
+person.form.workingTime.federalState.description=Wenn die systemweite Einstellung des Bundeslandes ({0}) f\u00FCr diesen Benutzer unzutreffend ist, kann ein abweichendes Bundesland eingestellt werden, um bundeslandspezifische Feiertage zu ber\u00FCcksichtigen.
+person.form.workingTime.federalState.default=System-wide setting ({0})
+
+# Departments
+person.form.departments.title=Departments assigned
+person.form.departments.none=The user is not assigned to any department.
+
+# PERSON DETAILS
+# master data
+person.details.masterData.title=Master Data 
+# departments
+person.details.departments.title=Departments
+person.details.departments.none=DThe user is not assigned to any department.
+# vacation
+person.details.annualVacation.title=Vacation entitlement for
+# working time
+person.details.workingTime.title=Working Time
+person.details.workingTime.none=No information available.
+person.details.workingTime.validity=since 
+person.details.workingTime.federalState=hired in
+# action
+person.details.action.create.success=The user was created successfully.
+person.details.action.update.success=The user has been updated successfully.
+
+# EMAIL SUBJECTS
+# person
+subject.userCreation=Account created for vacation management
+# applications for leave
+subject.application.applied.user=Confirmation Application
+subject.application.applied.boss=New vacation request for {0}
+subject.application.appliedByOffice=A leave request has been submitted for you
+subject.application.allowed.user=Your leave request has been approved
+subject.application.temporaryAllowed.user=Your leave request has been provisionally approved
+subject.application.temporaryAllowed.secondStage=A leave request has been provisionally approved
+subject.application.allowed.office=New approved request
+subject.application.rejected=Your leave request was rejected
+subject.application.cancelled.user=Your request has been cancelled
+subject.application.refer=Help with the decision on a leave request
+subject.application.remind=Reminder waiting vacation request
+subject.application.cronRemind=Reminder for waiting vacation requests
+subject.application.holidayReplacement=vacation replacement
+subject.application.cancellationRequest=A user requests the cancellation of an approved application
+# sick notes
+subject.sicknote.converted=Your sick leave has been turned into a vacation
+subject.sicknote.endOfSickPay=End of sick payment
+# overtime
+subject.overtime.created=There were overhours registererd
+# accounts
+subject.account.updatedRemainingDays=Evaluation of updated remaining days
+# settings
+subject.settings.updated=Settings updated
+# errors
+subject.error.calendar.sync=Error synchronizing the calendar
+subject.error.calendar.update=Error updating a calendar entry
+subject.error.calendar.delete=Error deleting a calendar entry
+
+
+# SETTINGS
+# Tabs
+settings.tabs.absence=Absences
+settings.tabs.workingTime=Working Time
+settings.tabs.mail=E-Mails
+settings.tabs.calendar=Calendar synchronization
+# Vacation
+settings.vacation.title=Vacation Settings
+settings.vacation.description=The maximum value settings are used to validate forms.
+settings.vacation.maximumAnnualVacationDays=Maximum number of holidays per year
+settings.vacation.maximumMonthsToApplyForLeaveInAdvance=How many months in advance can employees request a vacation?
+# Reminder Notification
+settings.vacation.remindForWaitingApplications.title=Automatic reminder for waiting vacation requests
+settings.vacation.remindForWaitingApplications=Automatic reminder function
+settings.vacation.remindForWaitingApplications.true=Enable
+settings.vacation.remindForWaitingApplications.false=Disable
+settings.vacation.daysBeforeRemindForWaitingApplications=Reminder mail every x days
+settings.vacation.daysBeforeRemindForWaitingApplications.descripton=This setting allows the supervisors or department heads to alert them of waiting vacation requests by e-mail. This function is only available if the mail delivery is activated and configured.
+# Sick Days
+settings.sickDays.title=Sick Notes Settings
+settings.sickDays.description=The sick pay settings determine when the sick employee and the office staff are informed by e-mail about the end of the sick pay.
+settings.sickDays.maximumSickPayDays=Duration of sick pay (in days)
+settings.sickDays.daysBeforeEndOfSickPayNotification=How many days in advance should the employee be notified before the end of the sick pay.
+settings.sickDays.daysBeforeEndOfSickPayNotification.error=Notification of end of salary payment must be made before the end of the salary continuation. This function is only available if the mail delivery is activated and configured..
+# Public Holidays
+settings.publicHolidays.title=Public Holidays Settings
+settings.publicHolidays.description=The holiday configuration determines how many vacation days are deducted when applying for vacation. Federal State specific holidays are taken into account 
+settings.publicHolidays.federalState=Federal State
+settings.publicHolidays.workingDuration.christmasEve=Working time on Christmas Eve
+settings.publicHolidays.workingDuration.newYearsEve=Working time on New Year's Eve
+# Overtime
+settings.overtime.title=Overtime Settings
+settings.overtime.description=The maximum number of overtime hours determines how many hours an employee can accumulate for a maximum. This can have the effect of reducing overtime prematurely. The setting of the maximum number of minus hours describes how many negative hours the employee is allowed to collect.
+settings.overtime.overtimeActive=Activate overtime management
+settings.overtime.overtimeActive.true=activate
+settings.overtime.overtimeActive.false=deactivate
+settings.overtime.maximum=Maximum number of overtime
+settings.overtime.minimum=Maximum number of minus hours
+# Mail Settings
+settings.mail.title=Settings for e-mail delivery
+settings.mail.description=The sender e-mail address will be used as sender for all sent e-mails. E-mails will be sent to the specified administrator email address if technical errors occur within the application.
+settings.mail.active=e-mail delivery
+settings.mail.active.true=activate
+settings.mail.active.false=deactivate
+settings.mail.host=Host
+settings.mail.port=Port
+settings.mail.username=Username
+settings.mail.password=Password
+settings.mail.from=Your e-mail address
+settings.mail.administrator=Administrator E-mail address
+settings.mail.baseURL=Base URL of the application for links in emails
+# Calendar settings
+settings.calendar.title=Connection to calendars
+settings.calendar.description=In order to be able to connect the appointments to a calendar, the start and end of a workday must be defined (full hour between 0 and 24 o'clock).
+settings.calendar.workDay.begin=Begin of a workday
+settings.calendar.workDay.end=End of a workday
+settings.calendar.provider=calendar integration
+settings.calendar.provider.GoogleCalendarSyncProvider=Google Calendar
+settings.calendar.provider.ExchangeCalendarProvider=Microsoft Exchange Calendar
+settings.calendar.provider.NoopCalendarSyncProvider=deactivated
+
+# Microsoft Exchange Calendar Settings
+settings.calendar.ews.title=Connection to Microsoft Exchange calendar
+settings.calendar.ews.description=The holiday administration can be linked to a Microsoft Exchange calendar. Appointments for vacation requests and sick leave are created in the configured calendar.
+settings.calendar.ews.active=Connection
+settings.calendar.ews.active.true=activate
+settings.calendar.ews.active.false=deactivate
+settings.calendar.ews.email=e-mail address
+settings.calendar.ews.password=Password
+settings.calendar.ews.calendar=Name of calendar
+settings.calendar.ews.notification=Appointment notification
+settings.calendar.ews.notification.true=Send appointment notifications by e-mail
+# Google Calendar Settings
+settings.calendar.google.title=Connection to Google Calendar
+settings.calendar.google.description=The holiday management can be connected to a Google Calendar. Appointments for leave requests and sick leave messages are created in the configured calendar. </ Br> The <b> OAuth2 Client Id </ b> is opened via <a target = "_ blank" href = "https: // console. developers.google.com "> https://console.developers.google.com </a> configured as a web application. </ br> The <b> OAuth2 Client Secret </ b> is obtained by configuring an OAuth Clients. </ Br> The <b> Calendar ID </ b> is the so-called "calendar address" which can be found in the calendar details. </ Br> The <b> redirect URL </ b> must be in the configuration of the OAuth client as an "authorized redirect URL".
+settings.calendar.google.active=Connection
+settings.calendar.google.active.true=activate
+settings.calendar.google.active.false=deactivate
+settings.calendar.google.clientid=OAuth2 Client ID
+settings.calendar.google.clientsecret=OAuth2 Client Secret
+settings.calendar.google.calendarid=Calendar ID
+settings.calendar.google.redirecturl=Redirect URL
+settings.calendar.google.action.authenticate=Allow access ...
+settings.calendar.google.action.authenticate.description=Handshake not yet successfully completed.
+settings.calendar.google.action.authenticate.success=Connection to the Google Calendar is established.
+
+
+# Actions
+settings.action.update.description=Hinweis: By clicking on "Save" <b> all </ b> settings are saved.
+settings.action.update.success=The settings have been saved.
+settings.action.update.error=The settings could not be updated. Please correct the incorrect entries and click on "Save" again.
+
+# Federal States Germany
+federalState.BADEN_WUERTTEMBERG=Baden-W\u00FCrttemberg
+federalState.BAYERN=Bayern
+federalState.BAYERN_MUENCHEN=Bayern (M\u00FCnchen)
+federalState.BAYERN_AUGSBURG=Bayern (Augsburg)
+federalState.BAYERN_WUERZBURG=Bayern (W\u00FCrzburg)
+federalState.BAYERN_REGENSBURG=Bayern (Regensburg)
+federalState.BAYERN_INGOLSTADT=Bayern (Ingolstadt)
+federalState.BERLIN=Berlin
+federalState.BRANDENBURG=Brandenburg
+federalState.BREMEN=Bremen
+federalState.HAMBURG=Hamburg
+federalState.HESSEN=Hessen
+federalState.MECKLENBURG_VORPOMMERN=Mecklenburg-Vorpommern
+federalState.NIEDERSACHSEN=Niedersachsen
+federalState.NORDRHEIN_WESTFALEN=Nordrhein-Westfalen
+federalState.RHEINLAND_PFALZ=Rheinland-Pfalz
+federalState.SAARLAND=Saarland
+federalState.SACHSEN=Sachsen
+federalState.SACHSEN_ANHALT=Sachen-Anhalt
+federalState.SCHLESWIG_HOLSTEIN=Schleswig-Holstein
+federalState.THUERINGEN=Th\u00FCringen
+
+# DEPARTMENTS
+departments.title=Departents
+departments.none=There are no departments.
+# Data
+department.data=Department Data
+department.data.description=Departments allow users to be divided into groups.
+department.data.name=Name of department
+department.data.info=Description
+department.data.twoStageApproval=Two-stage approval process
+department.data.twoStageApproval.activate=Activate two-stage approval process
+department.data.twoStageApproval.help=Two-Stage Approval Process: Claims are provisionally approved by the head of department and must be released thereafter.
+department.data.lastModification=Last Modification
+# Members
+department.members=Employee
+department.members.description=Department heads can view and approve / reject the leave requests of department users. For someone to become a department head, he must have the appropriate authorization
+department.members.staff=Members of the department
+department.members.assigned=belongs to the department
+department.members.departmentHead=is department head
+department.members.secondStageAuthority=is responsible for the release of interim authorized claims
+department.members.secondStageAuthority.description=For a two-stage approval process, a release owner with the appropriate authority must be included in the department.
+department.members.error.departmentHeadNotAssigned=If a user is to be a department head, he must be assigned to the department.
+department.members.error.departmentHeadHasNoAccess=A user can only be a department head if he has the appropriate authorization.
+department.members.error.secondStageNotAssigned=If a user is to be release owner, he must belong to the department.
+department.members.error.secondStageHasNoAccess=A user can only be release owner if he has the appropriate authority.
+department.members.error.secondStageAuthorityMissing=For a two-stage approval process, a release owner with the appropriate authority must be included in the department.
+department.members.error.twoStageApprovalFlagMissing=A two-stage approval process must be marked with the department.
+
+# Feedback
+department.action.create.success=Department <b> {0} </ b> was successfully created.
+department.action.edit.success=The data for department <b> {0} </ b> has been updated successfully.
+department.action.delete.success=Department <b> {0} </ b> has been irrevocably deleted.
+
+# OVERTIME
+overtime.title=Overtime
+overtime.list=Entries
+overtime.none=Thre has been no overtime entered yet.
+overtime.details.hours=has entered: <h4> {0} Overtime </ h4>
+overtime.details.period=from {0} to {1}
+# Feedback
+overtime.feedback.CREATED=The over-hours were successfully entered.
+overtime.feedback.EDITED=The over-hours entry has been updated successfully
+# Data
+overtime.record.new=Enter overtime
+overtime.record.edit=Edit Overtime
+overtime.record.error.deactivated=The entry of over-hours is deactivated.
+overtime.data.description=Here the number of hours worked can be entered for a certain period of time. It is possible to enter a negative value in case that you have worked overtime without making a leave request.
+overtime.data.staff=Employee
+overtime.data.startDate=From
+overtime.data.endDate=Until
+overtime.data.numberOfHours=Number of over-hours
+overtime.data.numberOfHours.error.maxOvertime=The maximum possible sum of already and just entered overtime hours has been exceeded. It is a maximum of {0} over-hours.
+overtime.data.numberOfHours.error.minOvertime=There can not be more than {0} minus hours in the overtime account.
+overtime.data.comment=Comment
+# Progress
+overtime.progress.title=Progress 
+overtime.progress.lastEdited=Last edited on
+overtime.progress.comment=with comment:
+overtime.progress.CREATED=Created on
+overtime.progress.EDITED=Edited on
+# Overtime of person
+overtime.person.total=<B> This year </ b> <h4> {0} Overtime </ h4> has been entered
+overtime.person.left=There are <b> currently </ b> still <h4> {0} over-hours </ h4> that need to be cleared
