@@ -64,7 +64,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         try {
             Appointment appointment = new Appointment(exchangeService);
 
-            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimezone());
+            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimeZoneId());
 
             SendInvitationsMode invitationsMode = SendInvitationsMode.SendToNone;
 
@@ -224,7 +224,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         try {
             Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
 
-            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimezone());
+            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimeZoneId());
 
             SendInvitationsOrCancellationsMode notificationMode = SendInvitationsOrCancellationsMode.SendToNone;
 

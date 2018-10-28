@@ -524,13 +524,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.timezone">
-                                <spring:message code='settings.calendar.ews.timezone'/>:
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.timeZoneId">
+                                <spring:message code='settings.calendar.ews.timeZoneId'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:select id="calendarSettings.exchangeCalendarSettings.timezone" path="calendarSettings.exchangeCalendarSettings.timezone" class="form-control" cssErrorClass="form-control error">
-                                    <c:forEach items="${availableTimezones}" var="timezone">
-                                        <form:option value="${timezone}">${timezone}</form:option>
+                                <form:select id="calendarSettings.exchangeCalendarSettings.timeZoneId" path="calendarSettings.exchangeCalendarSettings.timeZoneId" class="form-control" cssErrorClass="form-control error">
+                                    <c:forEach items="${availableTimezones}" var="timeZoneId">
+                                        <form:option value="${timeZoneId}">${timeZoneId}</form:option>
                                     </c:forEach>
                                 </form:select>
                                 <span class="help-inline"><form:errors path="calendarSettings.provider" cssClass="error"/></span>

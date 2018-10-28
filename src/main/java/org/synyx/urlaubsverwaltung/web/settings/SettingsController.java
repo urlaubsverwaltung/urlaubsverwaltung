@@ -91,8 +91,8 @@ public class SettingsController {
         List<String> availableTimezones = Arrays.asList(TimeZone.getAvailableIDs());
         model.addAttribute("availableTimezones", availableTimezones);
 
-        if (settings.getCalendarSettings().getExchangeCalendarSettings().getTimezone() == null) {
-            settings.getCalendarSettings().getExchangeCalendarSettings().setTimezone(TimeZone.getDefault().getID());
+        if (settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
+            settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(TimeZone.getDefault().getID());
         }
 
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
