@@ -56,4 +56,5 @@
     <include file="dbchangelogs/changelog-2.26.1-remove-google-redirect-url.xml"/>
     <include file="dbchangelogs/changelog-2.37.0-add_ews_url_settings.xml"/>
     <include file="dbchangelogs/changelog-2.38.0-add-messagekey-to-vacationtype-and-sicknotetype.xml"/>
+    <include file="dbchangelogs/changelog-2.38.0-add-exchange-calendar-timezone.xml"/>
 </databaseChangeLog>
