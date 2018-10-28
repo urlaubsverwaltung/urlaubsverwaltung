@@ -3,16 +3,13 @@ package org.synyx.urlaubsverwaltung.core.sync.providers.exchange;
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
-import microsoft.exchange.webservices.data.core.enumeration.service.ConflictResolutionMode;
-import microsoft.exchange.webservices.data.core.enumeration.service.DeleteMode;
-import microsoft.exchange.webservices.data.core.enumeration.service.SendCancellationsMode;
-import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode;
-import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsOrCancellationsMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.*;
 import microsoft.exchange.webservices.data.core.service.folder.CalendarFolder;
 import microsoft.exchange.webservices.data.core.service.folder.Folder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
 import microsoft.exchange.webservices.data.property.complex.ItemId;
+import microsoft.exchange.webservices.data.property.complex.time.OlsonTimeZoneDefinition;
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -29,6 +26,7 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
+import java.util.TimeZone;
 import java.net.URI;
 
 
@@ -66,7 +64,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         try {
             Appointment appointment = new Appointment(exchangeService);
 
-            fillAppointment(absence, appointment);
+            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimezone());
 
             SendInvitationsMode invitationsMode = SendInvitationsMode.SendToNone;
 
@@ -197,14 +195,19 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     }
 
 
-    private void fillAppointment(Absence absence, Appointment appointment) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
+    private void fillAppointment(Absence absence, Appointment appointment, String exchangeTimeZoneId) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         Person person = absence.getPerson();
 
         appointment.setSubject(absence.getEventSubject());
 
+        OlsonTimeZoneDefinition timeZone = new OlsonTimeZoneDefinition(TimeZone.getTimeZone(exchangeTimeZoneId));
+
         appointment.setStart(absence.getStartDate());
+        appointment.setStartTimeZone(timeZone);
         appointment.setEnd(absence.getEndDate());
+        appointment.setEndTimeZone(timeZone);
+
         appointment.setIsAllDayEvent(absence.isAllDay());
         appointment.getRequiredAttendees().add(person.getEmail());
         appointment.setIsReminderSet(false);
@@ -221,7 +224,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         try {
             Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
 
-            fillAppointment(absence, appointment);
+            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimezone());
 
             SendInvitationsOrCancellationsMode notificationMode = SendInvitationsOrCancellationsMode.SendToNone;
 
