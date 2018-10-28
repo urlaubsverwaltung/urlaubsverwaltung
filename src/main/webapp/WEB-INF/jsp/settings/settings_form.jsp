@@ -518,27 +518,34 @@
                                         <spring:message code='settings.calendar.ews.calendar'/>:
                             </label>
                             <div class="col-md-8">
-                                        <form:input id="calendarSettings.exchangeCalendarSettings.calendar"
-                                                    path="calendarSettings.exchangeCalendarSettings.calendar"
-                                                    class="form-control" cssErrorClass="form-control error"/>
-                                        <span class="help-inline"><form:errors
-                                            path="calendarSettings.exchangeCalendarSettings.calendar"
-                                            cssClass="error"/></span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4"
-                                           for="calendarSettings.exchangeCalendarSettings.sendInvitationActive">
-                                        <spring:message code='settings.calendar.ews.notification'/>:
-                                    </label>
-                                    <div class="col-md-8 checkbox">
-                                        <label>
-                                            <form:checkbox
-                                                id="calendarSettings.exchangeCalendarSettings.sendInvitationActive"
-                                                path="calendarSettings.exchangeCalendarSettings.sendInvitationActive"
-                                                value="true"/>
-                                            <spring:message code="settings.calendar.ews.notification.true"/>
-                                        </label>
+                                <form:input id="calendarSettings.exchangeCalendarSettings.calendar" path="calendarSettings.exchangeCalendarSettings.calendar" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.calendar" cssClass="error"/></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.timezone">
+                                <spring:message code='settings.calendar.ews.timezone'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:select id="calendarSettings.exchangeCalendarSettings.timezone" path="calendarSettings.exchangeCalendarSettings.timezone" class="form-control" cssErrorClass="form-control error">
+                                    <c:forEach items="${availableTimezones}" var="timezone">
+                                        <form:option value="${timezone}">${timezone}</form:option>
+                                    </c:forEach>
+                                </form:select>
+                                <span class="help-inline"><form:errors path="calendarSettings.provider" cssClass="error"/></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.sendInvitationActive">
+                                <spring:message code='settings.calendar.ews.notification'/>:
+                            </label>
+                            <div class="col-md-8 checkbox">
+                                <label>
+                                    <form:checkbox id="calendarSettings.exchangeCalendarSettings.sendInvitationActive" path="calendarSettings.exchangeCalendarSettings.sendInvitationActive" value="true"/>
+                                    <spring:message code="settings.calendar.ews.notification.true"/>
+                                </label>
                             </div>
                         </div>
                             </div>
