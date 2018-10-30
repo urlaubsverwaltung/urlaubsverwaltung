@@ -528,7 +528,7 @@
                                 <spring:message code='settings.calendar.ews.timeZoneId'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:select id="calendarSettings.exchangeCalendarSettings.timeZoneId" path="calendarSettings.exchangeCalendarSettings.timeZoneId" class="form-control" cssErrorClass="form-control error">
+                                <form:select id="calendarSettings.exchangeCalendarSettings.timeZoneId" path="calendarSettings.exchangeCalendarSettings.timeZoneId" class="form-control chosenCombo" cssErrorClass="form-control error">
                                     <c:forEach items="${availableTimezones}" var="timeZoneId">
                                         <form:option value="${timeZoneId}">${timeZoneId}</form:option>
                                     </c:forEach>
@@ -693,6 +693,15 @@
 
         document.getElementById('google-calendar').hidden = value !== 'GoogleCalendarSyncProvider';
         document.getElementById('exchange-calendar').hidden = value !== 'ExchangeCalendarProvider';
+
+        if (value === 'ExchangeCalendarProvider') {
+           // problem if div is not displayed
+           // https://github.com/harvesthq/chosen/issues/92
+           $(".chosenCombo").chosen({width: "100%"});
+        } else {
+            // if not visible deactivate
+            $(".chosenCombo").chosen('destroy');
+        }
     }
 
     // initial run to update view
