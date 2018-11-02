@@ -26,7 +26,8 @@
     "babel-plugin-dynamic-import-node": "~1.2.0",
     "babel-preset-env": "~1.7.0",
     "jest": "~23.6.0",
-    "moment": "~2.22.2"
+    "moment": "~2.22.2",
+    "merge": "1.2.1"
   },
   "babel": {
     "presets": [
