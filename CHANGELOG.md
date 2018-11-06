@@ -1,6 +1,7 @@
 ### master / unreleased
 * Exchange Kalender Integration: Manuelle Pflege der EWS URL ermöglicht [#524](https://github.com/synyx/urlaubsverwaltung/pull/524)
 * Exchange Kalender Integration: Kalender für Synchronisation konfigurierbar gemacht [#527](https://github.com/synyx/urlaubsverwaltung/pull/527)
+* Exchange Kalender Integration: Timezone für Exchange-Kalender hinzugefügt [#452](https://github.com/synyx/urlaubsverwaltung/pull/452)
 * Englische Übersetzung hinzugefügt [#516](https://github.com/synyx/urlaubsverwaltung/pull/516) 
 * Neues buntes Favicon hinzugefügt [#536](https://github.com/synyx/urlaubsverwaltung/pull/536) 
 
