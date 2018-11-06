@@ -22,6 +22,12 @@
                                         arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}"/>
                     </c:otherwise>
                 </c:choose>
+                <c:choose>
+                    <c:when test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
+                        <br/>
+                        <b><spring:message code="person.account.vacation.left.alreadyUsedNextYear" arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" /></b>
+                    </c:when>
+                </c:choose>
             </c:when>
             <c:otherwise>
                 <spring:message code='person.account.vacation.noInformation'/>
