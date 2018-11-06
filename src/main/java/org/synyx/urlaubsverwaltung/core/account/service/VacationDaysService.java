@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import java.math.BigDecimal;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -70,7 +71,31 @@ public class VacationDaysService {
     }
 
 
+    /**
+     * @deprecated use instead {@link #getVacationDaysLeft(Account, Optional)}
+     * because the account for the following year may also be relevant for the calculation
+     *
+     * @param account the account for the year to calculate the vacation days for
+     *
+     * @return information about the vacation days left for that year
+     */
     public VacationDaysLeft getVacationDaysLeft(Account account) {
+
+       return getVacationDaysLeft(account, Optional.empty());
+    }
+
+    /**
+     * This version of the method also considers the account for next year,
+     * so that it can adjust for vacation days carried over from this year to the next and then used there
+     * (reducing the amount available in this year accordingly)
+     *
+     * @param account the account for the year to calculate the vacation days for
+     *
+     * @param nextYear the account for following year, if available
+     *
+     * @return information about the vacation days left for that year
+     */
+    public VacationDaysLeft getVacationDaysLeft(Account account, Optional<Account> nextYear) {
 
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
@@ -78,14 +103,30 @@ public class VacationDaysService {
 
         BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
         BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
+        BigDecimal daysUsedNextYear = getRemainingVacationDaysAlreadyUsed(nextYear);
 
         return VacationDaysLeft.builder()
-            .withAnnualVacation(vacationDays)
-            .withRemainingVacation(remainingVacationDays)
-            .notExpiring(remainingVacationDaysNotExpiring)
-            .forUsedDaysBeforeApril(daysBeforeApril)
-            .forUsedDaysAfterApril(daysAfterApril)
-            .get();
+                .withAnnualVacation(vacationDays)
+                .withRemainingVacation(remainingVacationDays)
+                .notExpiring(remainingVacationDaysNotExpiring)
+                .forUsedDaysBeforeApril(daysBeforeApril)
+                .forUsedDaysAfterApril(daysAfterApril)
+                .withVacationDaysUsedNextYear(daysUsedNextYear)
+                .get();
+    }
+
+
+    private BigDecimal getRemainingVacationDaysAlreadyUsed(Optional<Account> account) {
+        if (account.isPresent() && account.get().getRemainingVacationDays().signum() > 0){
+            VacationDaysLeft left = getVacationDaysLeft(account.get(), Optional.empty());
+            BigDecimal totalUsed = account.get().getVacationDays()
+                    .add(account.get().getRemainingVacationDays())
+                    .subtract(left.getVacationDays())
+                    .subtract(left.getRemainingVacationDays());
+            BigDecimal remainingUsed = totalUsed.subtract(account.get().getVacationDays());
+            if (remainingUsed.signum() > 0) return remainingUsed;
+        }
+        return BigDecimal.ZERO;
     }
 
 
