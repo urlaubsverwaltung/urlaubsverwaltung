@@ -230,7 +230,7 @@ public class OverlapService {
      *
      * @return  {@link List} of overlap intervals
      */
-    private List<Interval> getListOfOverlaps(DateMidnight startDate, DateMidnight endDate,
+    public List<Interval> getListOfOverlaps(DateMidnight startDate, DateMidnight endDate,
         List<Application> applicationsForLeave, List<SickNote> sickNotes) {
 
         Interval interval = new Interval(startDate, endDate);

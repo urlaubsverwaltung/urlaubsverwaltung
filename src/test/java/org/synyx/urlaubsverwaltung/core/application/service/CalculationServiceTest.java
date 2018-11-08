@@ -20,10 +20,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.core.workingtime.*;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
@@ -73,7 +70,7 @@ public class CalculationServiceTest {
             .thenReturn(Optional.of(workingTime));
 
         service = new CalculationService(vacationDaysService, accountService, accountInteractionService,
-                calendarService);
+                calendarService, new OverlapService(null, null));
     }
 
 
@@ -93,19 +90,39 @@ public class CalculationServiceTest {
         Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
 
         // vacation days would be left after this application for leave
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.TEN);
-
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(
+                VacationDaysLeft.builder()
+                        .withAnnualVacation(BigDecimal.TEN)
+                        .withRemainingVacation(BigDecimal.ZERO)
+                        .notExpiring(BigDecimal.ZERO)
+                        .forUsedDaysBeforeApril(BigDecimal.ZERO)
+                        .forUsedDaysAfterApril(BigDecimal.ZERO)
+                        .get());
         Assert.assertTrue("Should be enough vacation days to apply for leave",
-            service.checkApplication(applicationForLeaveToCheck));
+                service.checkApplication(applicationForLeaveToCheck));
 
         // not enough vacation days for this application for leave
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ZERO);
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(
+                VacationDaysLeft.builder()
+                        .withAnnualVacation(BigDecimal.TEN)
+                        .withRemainingVacation(BigDecimal.ZERO)
+                        .notExpiring(BigDecimal.ZERO)
+                        .forUsedDaysBeforeApril(BigDecimal.ZERO)
+                        .forUsedDaysAfterApril(BigDecimal.TEN)
+                        .get());
 
         Assert.assertFalse("Should NOT be enough vacation days to apply for leave",
                 service.checkApplication(applicationForLeaveToCheck));
 
         // enough vacation days for this application for leave, but none would be left
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ONE);
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(
+                VacationDaysLeft.builder()
+                        .withAnnualVacation(BigDecimal.TEN)
+                        .withRemainingVacation(BigDecimal.ZERO)
+                        .notExpiring(BigDecimal.ZERO)
+                        .forUsedDaysBeforeApril(BigDecimal.valueOf(4))
+                        .forUsedDaysAfterApril(BigDecimal.valueOf(5))
+                        .get());
 
         Assert.assertTrue("Should be enough vacation days to apply for leave",
             service.checkApplication(applicationForLeaveToCheck));
@@ -152,6 +169,16 @@ public class CalculationServiceTest {
                         .get());
 
         // this year still has all ten days (but 3 of them used up next year, see above)
+        Mockito.when(vacationDaysService.getVacationDaysLeft(thisYear, Optional.of(nextYear))).thenReturn(
+                VacationDaysLeft.builder()
+                        .withAnnualVacation(BigDecimal.TEN)
+                        .withRemainingVacation(BigDecimal.ZERO)
+                        .notExpiring(BigDecimal.ZERO)
+                        .forUsedDaysBeforeApril(BigDecimal.ZERO)
+                        .forUsedDaysAfterApril(BigDecimal.ZERO)
+                        .withVacationDaysUsedNextYear(BigDecimal.valueOf(3))
+                        .get());
+
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
 
         Assert.assertFalse("Should not be enough vacation days to apply for leave, because three already used next year",

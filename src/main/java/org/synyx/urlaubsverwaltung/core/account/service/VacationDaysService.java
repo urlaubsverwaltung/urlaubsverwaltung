@@ -62,7 +62,7 @@ public class VacationDaysService {
         VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account);
 
         // it's before April - the left remaining vacation days must be used
-        if (DateUtil.isBeforeApril(nowService.now(), account.getYear())) {
+        if (nowService.currentYear() == account.getYear() && DateUtil.isBeforeApril(nowService.now(), account.getYear())) {
             return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDays());
         } else {
             // it's after April - only the left not expiring remaining vacation days must be used
