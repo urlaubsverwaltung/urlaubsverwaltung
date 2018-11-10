@@ -1,9 +1,7 @@
-const {port} = require('../config');
 const Browser = require('../html/browser');
 const Application = require('../html/application');
 
-fixture`Applicaitons`
-    .page`http://localhost:${port}/login`;
+fixture`Applicaitons`;
 
 const today = new Date();
 const month = today.getMonth();
@@ -15,7 +13,7 @@ test('new application as a user', async t => {
     const browser = new Browser(t);
 
     let applicationNew = await browser.maximizeWindow()
-        .then(login => login.loginTestUser())
+        .then(login => login.loginAsUser())
         .then(overview => overview.newApplication());
 
     const day = await applicationNew.findWorkingDay();
@@ -35,7 +33,7 @@ test('cancel application as a user', async t => {
     const browser = new Browser(t);
 
     await browser.maximizeWindow()
-        .then(login => login.loginTestUser());
+        .then(login => login.loginAsUser());
 
 
     await new Application(t).goToApplication(applicationUrl)

@@ -10,9 +10,9 @@ class Browser {
     }
 
     async maximizeWindow() {
-    
+
         await this.t.maximizeWindow();
-    
+
         return new Login(this.t);
     }
 }
