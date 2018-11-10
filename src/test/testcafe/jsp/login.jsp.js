@@ -11,7 +11,7 @@ test('wrong login', async t => {
     login.enterPass('test');
     login.submit();
 
-    await t.expect(login.getErrorText()).eql('Der eingegebene Nutzername oder das Passwort ist falsch.');
+    await t.expect(Login.getErrorText()).eql('Der eingegebene Nutzername oder das Passwort ist falsch.');
 });
 
 test('correct login', async t => {

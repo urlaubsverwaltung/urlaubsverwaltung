@@ -2,7 +2,7 @@ const {port} = require('../config');
 const Browser = require('../html/browser');
 const Application = require('../html/application');
 
-fixture`applicaitons`
+fixture`Applicaitons`
     .page`http://localhost:${port}/login`;
 
 const today = new Date();

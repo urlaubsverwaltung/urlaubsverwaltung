@@ -1,18 +1,20 @@
 const Login = require('./login');
 
-const Browser = function(t) {
-    this.t = t;
-};
+class Browser {
+    constructor(t) {
+        this.t = t;
+    }
 
-Browser.prototype.getLocation = function() {
-    return this.t.eval(() => window.location);
-};
+    getLocation() {
+        return this.t.eval(() => window.location);
+    }
 
-Browser.prototype.maximizeWindow = async function () {
-
-    await this.t.maximizeWindow();
-
-    return new Login(this.t);
-};
+    async maximizeWindow() {
+    
+        await this.t.maximizeWindow();
+    
+        return new Login(this.t);
+    }
+}
 
 module.exports = Browser;
