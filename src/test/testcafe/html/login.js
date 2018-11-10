@@ -1,4 +1,6 @@
 import { Selector } from 'testcafe';
+const Overview = require('./overview');
+
 
 const Login = function(t) {
     this.t = t;
@@ -21,9 +23,12 @@ Login.prototype.getErrorText = function() {
 };
 
 Login.prototype.loginTestUser = async function() {
-    await this.enterUser('testUser');
-    await this.enterPass('secret');
-    await this.submit();
+    
+        await this.enterUser('testUser');
+        await this.enterPass('secret');
+        await this.submit();
+
+        return new Overview(this.t);
 };
 
 module.exports = Login;

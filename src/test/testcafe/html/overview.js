@@ -1,12 +1,18 @@
 import {Selector} from "testcafe";
 import {formatDateYMD} from '../DateUtil';
 
+const ApplicationNew = require('./applicationNew');
+
 const Overview = function(t) {
     this.t = t;
 };
 
-Overview.prototype.newApplication = function() {
-    return this.t.click('#application_new');
+Overview.prototype.newApplication = async function() {
+
+    await this.t.click('#application_new');
+
+    return new ApplicationNew(this.t);
+
 };
 
 Overview.prototype.selectDay = async function(date) {

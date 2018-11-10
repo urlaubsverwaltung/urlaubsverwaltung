@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "jest",
-    "test-cafe": "testcafe chrome src/test/testcafe/",
+    "test-cafe": "testcafe chrome src/test/testcafe/usecase src/test/testcafe/jsp",
     "test-cafe-headless": "testcafe chrome:headless src/test/testcafe/"
   },
   "repository": {

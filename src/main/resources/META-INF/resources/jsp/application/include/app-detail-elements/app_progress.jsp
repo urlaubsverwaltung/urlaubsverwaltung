@@ -14,7 +14,7 @@
     <tbody>
 
     <c:forEach items="${comments}" var="comment">
-        <tr>
+        <tr class="type-${comment.action}">
             <td class="hidden-print">
                 <div class="gravatar gravatar--medium img-circle hidden-print center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
             </td>

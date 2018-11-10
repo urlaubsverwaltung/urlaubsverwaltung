@@ -1,6 +1,8 @@
 import {Selector} from "testcafe";
 import {formatDateYMD} from '../DateUtil';
 
+const Application = require('./application');
+
 const ApplicationNew = function(t) {
     this.t = t;
 };
@@ -35,22 +37,29 @@ ApplicationNew.prototype.selectEmployee = function(name) {
        .typeText('#person-select', name);
 };
 
-ApplicationNew.prototype.from = function(date) {
+ApplicationNew.prototype.setFrom = async function(date) {
     const dayOfApplication = formatDateYMD('{2}.{1}.{0}', date);
-    return this.t
+    await this.t
         .typeText('#from', dayOfApplication)
         .pressKey('tab');
+
+    return this;
 };
 
-ApplicationNew.prototype.to = function(date) {
+ApplicationNew.prototype.setTo = async function(date) {
     const dayOfApplication = formatDateYMD('{2}.{1}.{0}', date);
-    return this.t
+    await this.t
         .typeText('#to', dayOfApplication)
         .pressKey('tab');
+
+    return this;
 };
 
-ApplicationNew.prototype.submit = function() {
-    return this.t.click('#submit');
+ApplicationNew.prototype.submit = async function() {
+    await this.t
+        .click('#submit');
+
+    return new Application(this.t);
 };
 
 

@@ -1,58 +1,48 @@
 const {port} = require('../config');
 const Browser = require('../html/browser');
-const Login = require('../html/login');
-const Overview = require('../html/overview');
-const ApplicationNew = require('../html/applicationNew');
 const Application = require('../html/application');
 
-
-fixture `overview.jsp`
-    .page `http://localhost:${port}/login`;
+fixture`applicaitons`
+    .page`http://localhost:${port}/login`;
 
 const today = new Date();
 const month = today.getMonth();
 const year = today.getFullYear();
-let day;
+let applicationUrl;
 
-test('new application as user', async t => {
+
+test('new application as a user', async t => {
     const browser = new Browser(t);
-    const login = new Login(t);
-    const overview = new Overview(t);
-    const applicationNew = new ApplicationNew(t);
-    const application = new Application(t);
 
-    await browser.maximizeWindow();
-    await login.loginTestUser();
-    await overview.newApplication();
+    let applicationNew = await browser.maximizeWindow()
+        .then(login => login.loginTestUser())
+        .then(overview => overview.newApplication());
 
-    day = await applicationNew.findWorkingDay();
+    const day = await applicationNew.findWorkingDay();
 
     const dateOfApplication = new Date(year, month, day);
 
-    await applicationNew.from(dateOfApplication);
-    await applicationNew.to(dateOfApplication);
-    await applicationNew.submit();
-
-    const location = await browser.getLocation();
-
-    await application.isApplicationUrl(location);
+    applicationUrl = await applicationNew
+        .setFrom(dateOfApplication)
+        .then(applicationNew => applicationNew.setTo(dateOfApplication))
+        .then(applicationNew => applicationNew.submit())
+        .then(application => application.isApplicationUrl())
+        .then(application => application.getApplicationUrl());
 });
 
-test('remove my application as user', async t => {
+
+test('cancel application as a user', async t => {
     const browser = new Browser(t);
-    const login = new Login(t);
-    const overview = new Overview(t);
-    const application = new Application(t);
 
-    await browser.maximizeWindow();
-    await login.loginTestUser();
+    await browser.maximizeWindow()
+        .then(login => login.loginTestUser());
 
-    await overview.selectDay(new Date(year, month, day));
 
-    await application.clickDelete();
-    await application.clickStorn();
+    await new Application(t).goToApplication(applicationUrl)
+        .then(application => application.clickCancel())
+        .then(application => application.enterCancelMessage('I do not like vacations'))
+        .then(application => application.clickCancelSubmit())
+        .then(application => application.applicationIsCanceled());
 
-    const location = await browser.getLocation();
-
-    await application.isApplicationUrl(location);
 });
+

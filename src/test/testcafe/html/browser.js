@@ -1,3 +1,4 @@
+const Login = require('./login');
 
 const Browser = function(t) {
     this.t = t;
@@ -7,9 +8,11 @@ Browser.prototype.getLocation = function() {
     return this.t.eval(() => window.location);
 };
 
+Browser.prototype.maximizeWindow = async function () {
 
-Browser.prototype.maximizeWindow = function() {
-    return this.t.maximizeWindow();
+    await this.t.maximizeWindow();
+
+    return new Login(this.t);
 };
 
 module.exports = Browser;
