@@ -63,13 +63,13 @@ $(function() {
                 return holidayService.isPublicHoliday(date);
             },
             isPersonalHoliday: function(date) {
-                return holidayService.isPersonalHoliday(date);
+                return !assert.isWeekend(date) && holidayService.isPersonalHoliday(date);
             },
             isSickDay: function(date) {
-                return holidayService.isSickDay(date);
+                return !assert.isWeekend(date) && holidayService.isSickDay(date);
             },
             isHalfDay: function(date) {
-              return holidayService.isHalfDay(date);
+              return !assert.isWeekend(date) && holidayService.isHalfDay(date);
             },
             title: function(date) {
               return holidayService.getDescription(date);
@@ -175,6 +175,10 @@ $(function() {
             var year = date.year();
             var formattedDate = date.format('YYYY-MM-DD');
 
+            if (!_CACHE[type]) {
+                return false;
+            }
+
             if(_CACHE[type][year]) {
 
               var holiday = _.findWhere(_CACHE[type][year], {date: formattedDate});
@@ -203,6 +207,10 @@ $(function() {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
+
+              if (!_CACHE['publicHoliday']) {
+                  return false;
+              }
 
               if(_CACHE['publicHoliday'][year]) {
 
@@ -242,6 +250,10 @@ $(function() {
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
 
+              if (!_CACHE['publicHoliday']) {
+                  return '';
+              }
+
               if(_CACHE['publicHoliday'][year]) {
 
                 var publicHoliday = _.findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
@@ -260,6 +272,10 @@ $(function() {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
+
+              if (!_CACHE['holiday']) {
+                  return null;
+              }
 
               if(_CACHE['holiday'][year]) {
 
@@ -281,6 +297,10 @@ $(function() {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
+
+              if (!_CACHE['holiday']) {
+                  return '-1';
+              }
 
               if(_CACHE['holiday'][year]) {
 
@@ -310,6 +330,10 @@ $(function() {
 
                 var year = date.year();
                 var formattedDate = date.format('YYYY-MM-DD');
+
+                if (!_CACHE['holiday']) {
+                    return '';
+                }
 
                 if(_CACHE['holiday'][year]) {
 
@@ -377,7 +401,7 @@ $(function() {
                 if (_CACHE['publicHoliday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/holidays', {year: year, person: personId}).success( cachePublicHoliday(year) );
+                    return fetch('/holidays', {year: year, person: personId}).done( cachePublicHoliday(year) );
                 }
             },
 
@@ -396,7 +420,7 @@ $(function() {
                 if (_CACHE['holiday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).success( cacheAbsences('holiday', year) );
+                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).done( cacheAbsences('holiday', year) );
                 }
             },
 
@@ -408,7 +432,7 @@ $(function() {
                 if (_CACHE['sick'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).success( cacheAbsences('sick', year) );
+                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).done( cacheAbsences('sick', year) );
                 }
             }
         };

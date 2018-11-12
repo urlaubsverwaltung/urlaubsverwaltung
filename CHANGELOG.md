@@ -1,3 +1,35 @@
+### [urlaubsverwaltung-2.28.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.28.0)
+* Neue Feiertag Reformationstag für die Bundesländer Schleswig-Holstein, Hamburg, Bremen und Niedersachen hinzugefügt [#445](https://github.com/synyx/urlaubsverwaltung/pull/445) [#438](https://github.com/synyx/urlaubsverwaltung/issues/438) [#416](https://github.com/synyx/urlaubsverwaltung/issues/416)
+* Update der Frontend-Test Abhängigkeiten [#446](https://github.com/synyx/urlaubsverwaltung/pull/446)
+* Verbesserung der Entwicklerdokumentation (Lokales LDAP) [#433](https://github.com/synyx/urlaubsverwaltung/pull/433)
+
+### [urlaubsverwaltung-2.27.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.27.0)
+* Bug: Spring Boot Actuators ohne Authentifizierung aufrufbar [#430](https://github.com/synyx/urlaubsverwaltung/issues/430)
+* Sicherheitslücken in Tomcat [#428](https://github.com/synyx/urlaubsverwaltung/issues/428)
+* CSV Export für Urlaubsstatistik hinzugefügt 
+* Bug: Fix JavaScript-Probleme in der Urlaubsübersicht bei älteren Internet Explorer Versionen [#369](https://github.com/synyx/urlaubsverwaltung/issues/369)
+* LDAP-Synchronisationszeitpunkt kann konfigiert werden [#354](https://github.com/synyx/urlaubsverwaltung/pull/354)
+
+### [urlaubsverwaltung-2.26.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.2)
+* Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
+* Google Kalendar: Kalendereinträg enthält auch die betreffende Person als Teilnehmer
+* Aktualisierung der Javascript Abhängigkeiten
+* Korrektur der Kalenderanzeige für Feiertage die auf einen Sonntag fallen
+
+### [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1)
+* Bug: Google Calendar Synchronisation funktioniert nur mit localhost [#377](https://github.com/synyx/urlaubsverwaltung/pull/377) 
+
+### [urlaubsverwaltung-2.26.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.0)
+* Anbindung an Google Calendar [#8](https://github.com/synyx/urlaubsverwaltung/issues/8)
+* Bug: Urlaubsantrag für ganztägig und morgens/mittags an einem Tag möglich [#257](https://github.com/synyx/urlaubsverwaltung/issues/257)
+* Kleinere Refactorings (Entfernen von Unterschriftssystem)
+
+### [urlaubsverwaltung-2.25.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.25.0)
+* Übersicht über alle Abwesenheiten von [@ajanus](https://github.com/ajanus) hinzu [#350](https://github.com/synyx/urlaubsverwaltung/pull/350)
+
+### [urlaubsverwaltung-2.24.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.1)
+* Bug: Fix H2 Konfiguration für Entwicklungsumgebung
+
 ### [urlaubsverwaltung-2.24.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.0)
 * Erweiterung der Benachrichtigung bei vorläufiger Genehmigung von Urlaubsanträgen: Hier werden jetzt auch mehrere Abteilungen beachtet.
 * Kleiner Refactorings (Paketstruktur und Sonar Issues)

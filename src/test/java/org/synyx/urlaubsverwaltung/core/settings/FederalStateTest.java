@@ -16,7 +16,7 @@ public class FederalStateTest {
 
         String[] codes = FederalState.BERLIN.getCodes();
 
-        Assert.assertEquals("Wrong number of codes", 0, codes.length);
+        Assert.assertEquals("Wrong number of codes", 1, codes.length);
     }
 
 

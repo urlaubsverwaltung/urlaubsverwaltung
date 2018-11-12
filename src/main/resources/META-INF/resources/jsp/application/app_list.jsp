@@ -58,7 +58,10 @@
                               data-title="<spring:message code="action.applications.statistics"/>">
                             <i class="fa fa-fw fa-bar-chart"></i>
                           </a>
-
+						  <a href="${URL_PREFIX}/application/vacationoverview" class="fa-action pull-right"
+                              data-title="<spring:message code="action.applications.vacation_overview"/>">
+                            <i class="fa fa-fw fa-calendar"></i>
+                          </a>
                           <sec:authorize access="hasAuthority('OFFICE')">
                           <a href="${URL_PREFIX}/application/new" class="fa-action pull-right"
                               data-title="<spring:message code="action.apply.vacation"/>">

@@ -21,7 +21,6 @@ public class ExchangeCalendarSettingsTest {
         Assert.assertNull("Should be null", calendarSettings.getPassword());
 
         // Default values
-        Assert.assertFalse("Should be deactivated", calendarSettings.isActive());
         Assert.assertNotNull("Should be set", calendarSettings.getCalendar());
         Assert.assertEquals("Wrong calendar name", "", calendarSettings.getCalendar());
         Assert.assertFalse("Should not send invitations", calendarSettings.isSendInvitationActive());

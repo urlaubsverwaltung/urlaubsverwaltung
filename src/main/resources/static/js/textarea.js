@@ -5,11 +5,11 @@ $(function () {
 
   var $textarea = $("textarea");
 
-  $textarea.focus(function () {
+  $textarea.on("focus", function () {
     this.rows = expandedNumberOfRows;
   });
 
-  $textarea.blur(function () {
+  $textarea.on("blur", function () {
 
     if (this.value == "") {
       this.rows = standardNumberOfRows;

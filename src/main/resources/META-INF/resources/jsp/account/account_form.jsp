@@ -33,7 +33,7 @@
 <div class="row">
 
 <div class="form-section">
-    <div class="col-xs-12">
+    <div class="col-md-12">
         <legend>
             <spring:message code="person.form.annualVacation.title" arguments="${person.niceName}"/>
             <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff/${person.id}/account?year="/>

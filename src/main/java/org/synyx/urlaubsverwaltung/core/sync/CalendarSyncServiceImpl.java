@@ -1,15 +1,12 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
 
@@ -17,84 +14,53 @@ import java.util.Optional;
 /**
  * Implementation of {@link CalendarSyncService}.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     private static final Logger LOG = Logger.getLogger(CalendarSyncServiceImpl.class);
 
-    private final SettingsService settingsService;
-    private final ExchangeCalendarProviderService exchangeCalendarProviderService;
+    private SettingsService settingsService;
+    private final CalendarService calendarService;
 
     @Autowired
-    public CalendarSyncServiceImpl(SettingsService settingsService,
-        ExchangeCalendarProviderService exchangeCalendarProviderService) {
-
+    public CalendarSyncServiceImpl(SettingsService settingsService, CalendarService calendarService) {
         this.settingsService = settingsService;
-        this.exchangeCalendarProviderService = exchangeCalendarProviderService;
+
+
+        this.calendarService = calendarService;
+
+        LOG.info("The following calendar provider is configured: " + calendarService.getCalendarProvider().getClass());
     }
 
     @Override
     public Optional<String> addAbsence(Absence absence) {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
-
-        if (exchangeCalendarSettings.isActive()) {
-            return exchangeCalendarProviderService.addAbsence(absence, calendarSettings);
-        }
-
-        LOG.info(String.format("No calendar provider configured to add event: %s", absence));
-
-        return Optional.empty();
+        return calendarService.getCalendarProvider().add(absence, calendarSettings);
     }
 
 
     @Override
     public void update(Absence absence, String eventId) {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
-
-        if (exchangeCalendarSettings.isActive()) {
-            exchangeCalendarProviderService.update(absence, eventId, calendarSettings);
-
-            return;
-        }
-
-        LOG.info(String.format("No calendar provider configured to update event: %s, eventId %s", absence, eventId));
+        calendarService.getCalendarProvider().update(absence, eventId, calendarSettings);
     }
 
 
     @Override
     public void deleteAbsence(String eventId) {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
-
-        if (exchangeCalendarSettings.isActive()) {
-            exchangeCalendarProviderService.deleteAbsence(eventId, calendarSettings);
-
-            return;
-        }
-
-        LOG.info(String.format("No calendar provider configured to delete event '%s'", eventId));
+        calendarService.getCalendarProvider().delete(eventId, calendarSettings);
     }
-
 
     @Override
     public void checkCalendarSyncSettings() {
+        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
-
-        if (exchangeCalendarSettings.isActive()) {
-            exchangeCalendarProviderService.checkCalendarSyncSettings(calendarSettings);
-
-            return;
-        }
-
-        LOG.info("No calendar provider is activated to check settings for");
+        calendarService.getCalendarProvider().checkCalendarSyncSettings(calendarSettings);
     }
 }

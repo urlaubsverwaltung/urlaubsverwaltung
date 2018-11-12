@@ -3,46 +3,30 @@ package org.synyx.urlaubsverwaltung.core.person;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
-import org.synyx.urlaubsverwaltung.core.keys.KeyPairService;
-import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
-
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 
 /**
- * @author  Aljona Murygina
- * @author  Johannes Reuter
+ * @author Aljona Murygina
+ * @author Johannes Reuter
  */
 public class PersonServiceImplTest {
 
     private PersonService sut;
 
     private PersonDAO personDAO;
-    private KeyPairService keyPairService;
-
-    private KeyPair generatedKeyPair;
 
     @Before
-    public void setUp() throws NoSuchAlgorithmException {
+    public void setUp() {
 
         personDAO = Mockito.mock(PersonDAO.class);
-        keyPairService = Mockito.mock(KeyPairService.class);
 
-        sut = new PersonServiceImpl(personDAO, keyPairService);
-
-        generatedKeyPair = CryptoUtil.generateKeyPair();
-        Mockito.when(keyPairService.generate(Mockito.anyString())).thenReturn(generatedKeyPair);
+        sut = new PersonServiceImpl(personDAO);
     }
 
 
@@ -62,9 +46,9 @@ public class PersonServiceImplTest {
 
         Assert.assertEquals("Wrong number of notifications", 2, createdPerson.getNotifications().size());
         Assert.assertTrue("Missing notification",
-            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
+                createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
         Assert.assertTrue("Missing notification",
-            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
+                createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
 
         Assert.assertEquals("Wrong number of permissions", 2, createdPerson.getPermissions().size());
         Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(Role.USER));
@@ -81,24 +65,6 @@ public class PersonServiceImplTest {
 
         Mockito.verify(personDAO).save(createdPerson);
     }
-
-
-    @Test
-    public void ensureGeneratesKeyPairOnCreationOfPerson() throws Exception {
-
-        Person person = TestDataCreator.createPerson("rick", "Rick", "Grimes", "rick@grimes.de");
-
-        Person createdPerson = sut.create(person);
-
-        Mockito.verify(keyPairService).generate("rick");
-
-        Assert.assertNotNull("Should have private key", createdPerson.getPrivateKey());
-        Assert.assertNotNull("Should have public key", createdPerson.getPublicKey());
-
-        Assert.assertEquals("Wrong private key", generatedKeyPair.getPrivate(),
-            CryptoUtil.getPrivateKeyByBytes(createdPerson.getPrivateKey()));
-    }
-
 
     @Test
     public void ensureUpdatedPersonHasCorrectAttributes() {
@@ -118,18 +84,15 @@ public class PersonServiceImplTest {
 
         Assert.assertEquals("Wrong number of notifications", 2, updatedPerson.getNotifications().size());
         Assert.assertTrue("Missing notification",
-            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
+                updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
         Assert.assertTrue("Missing notification",
-            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
+                updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
 
         Assert.assertEquals("Wrong number of permissions", 2, updatedPerson.getPermissions().size());
         Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(Role.USER));
         Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(Role.BOSS));
 
-        Assert.assertEquals("Private key should not have changed", person.getPrivateKey(),
-            updatedPerson.getPrivateKey());
-        Assert.assertEquals("Public key should not have changed", person.getPublicKey(), updatedPerson.getPublicKey());
-    }
+  }
 
 
     @Test
@@ -141,22 +104,6 @@ public class PersonServiceImplTest {
         sut.update(person);
 
         Mockito.verify(personDAO).save(person);
-    }
-
-
-    @Test
-    public void ensureDoesNotGenerateKeyPairOnUpdateOfPerson() {
-
-        Person person = TestDataCreator.createPerson();
-        person.setId(1);
-
-        Person updatedPerson = sut.update(person);
-
-        Mockito.verifyZeroInteractions(keyPairService);
-
-        Assert.assertEquals("Private key should not have changed", person.getPrivateKey(),
-            updatedPerson.getPrivateKey());
-        Assert.assertEquals("Public key should not have changed", person.getPublicKey(), updatedPerson.getPublicKey());
     }
 
 

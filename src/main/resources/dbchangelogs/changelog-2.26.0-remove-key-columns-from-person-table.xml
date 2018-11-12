@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="hammann" id="remove-key-columns-from-person-table">
+
+        <preConditions>
+            <tableExists tableName="Person"/>
+            <columnExists tableName="Person" columnName="privateKey"/>
+            <columnExists tableName="Person" columnName="publicKey"/>
+        </preConditions>
+
+        <dropColumn tableName="Person" columnName="privateKey"/>
+        <dropColumn tableName="Person" columnName="publicKey"/>
+
+    </changeSet>
+
+</databaseChangeLog>

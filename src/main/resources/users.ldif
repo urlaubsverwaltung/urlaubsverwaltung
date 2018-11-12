@@ -1,9 +1,4 @@
-dn: dc=example,dc=org
-dc: exapmle
-description: kwt
-objectClass: dcObject
-objectClass: organization
-o: example
+version: 1
 
 dn: ou=accounts,dc=example,dc=org
 ou: accounts
