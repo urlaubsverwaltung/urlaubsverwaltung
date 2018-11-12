@@ -1,64 +1,114 @@
+### [urlaubsverwaltung-2.28.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.28.0)
+* Neue Feiertag Reformationstag für die Bundesländer Schleswig-Holstein, Hamburg, Bremen und Niedersachen hinzugefügt [#445](https://github.com/synyx/urlaubsverwaltung/pull/445) [#438](https://github.com/synyx/urlaubsverwaltung/issues/438) [#416](https://github.com/synyx/urlaubsverwaltung/issues/416)
+* Update der Frontend-Test Abhängigkeiten [#446](https://github.com/synyx/urlaubsverwaltung/pull/446)
+* Verbesserung der Entwicklerdokumentation (Lokales LDAP) [#433](https://github.com/synyx/urlaubsverwaltung/pull/433)
+
+### [urlaubsverwaltung-2.27.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.27.0)
+* Bug: Spring Boot Actuators ohne Authentifizierung aufrufbar [#430](https://github.com/synyx/urlaubsverwaltung/issues/430)
+* Sicherheitslücken in Tomcat [#428](https://github.com/synyx/urlaubsverwaltung/issues/428)
+* CSV Export für Urlaubsstatistik hinzugefügt 
+* Bug: Fix JavaScript-Probleme in der Urlaubsübersicht bei älteren Internet Explorer Versionen [#369](https://github.com/synyx/urlaubsverwaltung/issues/369)
+* LDAP-Synchronisationszeitpunkt kann konfigiert werden [#354](https://github.com/synyx/urlaubsverwaltung/pull/354)
+
+### [urlaubsverwaltung-2.26.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.2)
+* Exchange Kalender: Ganztägige Abwesenheiten werden auch als solche angezeigt
+* Google Kalendar: Kalendereinträg enthält auch die betreffende Person als Teilnehmer
+* Aktualisierung der Javascript Abhängigkeiten
+* Korrektur der Kalenderanzeige für Feiertage die auf einen Sonntag fallen
+
+### [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1)
+* Bug: Google Calendar Synchronisation funktioniert nur mit localhost [#377](https://github.com/synyx/urlaubsverwaltung/pull/377) 
+
+### [urlaubsverwaltung-2.26.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.0)
+* Anbindung an Google Calendar [#8](https://github.com/synyx/urlaubsverwaltung/issues/8)
+* Bug: Urlaubsantrag für ganztägig und morgens/mittags an einem Tag möglich [#257](https://github.com/synyx/urlaubsverwaltung/issues/257)
+* Kleinere Refactorings (Entfernen von Unterschriftssystem)
+
+### [urlaubsverwaltung-2.25.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.25.0)
+* Übersicht über alle Abwesenheiten von [@ajanus](https://github.com/ajanus) hinzu [#350](https://github.com/synyx/urlaubsverwaltung/pull/350)
+
+### [urlaubsverwaltung-2.24.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.1)
+* Bug: Fix H2 Konfiguration für Entwicklungsumgebung
+
+### [urlaubsverwaltung-2.24.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.0)
+* Erweiterung der Benachrichtigung bei vorläufiger Genehmigung von Urlaubsanträgen: Hier werden jetzt auch mehrere Abteilungen beachtet.
+* Kleiner Refactorings (Paketstruktur und Sonar Issues)
+
+### [urlaubsverwaltung-2.23.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.23.0)
+* Kommentar zu Urlaubsanspruch in Urlaubsverwaltung pflegen [#238](https://github.com/synyx/urlaubsverwaltung/issues/238)
+* Probleme beim Einrichten einer neuen Installation (Schemamigration) [#264](https://github.com/synyx/urlaubsverwaltung/issues/264)
+* Einmaligen Feiertag: Reformationstag [#265](https://github.com/synyx/urlaubsverwaltung/issues/265)
+* Depencency Updates: Spring Boot 1.4.2 [#301](https://github.com/synyx/urlaubsverwaltung/pull/301) and Swagger 1.0.2 [#277](https://github.com/synyx/urlaubsverwaltung/issues/277)
+* Benutzer-Liste wird nicht vollständig angezeigt [#256](https://github.com/synyx/urlaubsverwaltung/issues/256)
+
+### [urlaubsverwaltung-2.22.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.0)
+* Verbessertes Logging für die Erinnerungsfunktion bei lange wartenden Urlaubsanträgen
+* Verbesserte Beschreibung der Office-Rolle
+* Update test-emailaddresses to reduce chance to send spam [#253](https://github.com/synyx/urlaubsverwaltung/issues/253)
+* Betreff in E-Mail bei neu beantragtem Urlaub sollte Namen enthalten [#249](https://github.com/synyx/urlaubsverwaltung/issues/249)
+* Erweiterung der REST-API um die Schnittstelle [`/availabilities`](http://urlaubsverwaltung-demo.synyx.de/api/index.html#!/availabilities) [#208](https://github.com/synyx/urlaubsverwaltung/issues/208)
+
 ### [urlaubsverwaltung-2.21.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.21.1)
-* Added additional exchange connection configuration (without domain)  #241 
-* crash on start urlaubsverwaltung-2.21.0.jar #239 
-* Regelmäßige Erinnerungsmail bei wartenden Anträgen Einstellungen  #227
-* Temporär genehmigte Urlaubsanträge stornieren Abteilungen #229 
-* Berechtigungsanzeige: Abteilungen werden nicht angezeigt #234
+* Added additional exchange connection configuration (without domain) [#241](https://github.com/synyx/urlaubsverwaltung/issues/241) 
+* crash on start urlaubsverwaltung-2.21.0.jar [#239](https://github.com/synyx/urlaubsverwaltung/issues/239) 
+* Regelmäßige Erinnerungsmail bei wartenden Anträgen Einstellungen [#227](https://github.com/synyx/urlaubsverwaltung/issues/227)
+* Temporär genehmigte Urlaubsanträge stornieren Abteilungen [#229](https://github.com/synyx/urlaubsverwaltung/issues/229) 
+* Berechtigungsanzeige: Abteilungen werden nicht angezeigt [#234](https://github.com/synyx/urlaubsverwaltung/issues/234)
 
 ### [urlaubsverwaltung-2.21.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.21.0)
-* Fehler beim Anpassen der Benutzerberichtigungen #226 
-* Regelmäßige Erinnerungsmail bei wartenden Anträgen Einstellungen  #227 
-* Antrag von Abteilungsleiter nur durch Chef bewilligen #228
-* Anrede mit Vor- und Nachname bei Chef-Mails #225 
+* Fehler beim Anpassen der Benutzerberichtigungen [#226](https://github.com/synyx/urlaubsverwaltung/issues/226) 
+* Regelmäßige Erinnerungsmail bei wartenden Anträgen Einstellungen [#227](https://github.com/synyx/urlaubsverwaltung/issues/227) 
+* Antrag von Abteilungsleiter nur durch Chef bewilligen [#228](https://github.com/synyx/urlaubsverwaltung/issues/228)
+* Anrede mit Vor- und Nachname bei Chef-Mails [#225](https://github.com/synyx/urlaubsverwaltung/issues/225) 
 
 ### [urlaubsverwaltung-2.20.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.20.1)
-* Bundeslandanzeige bezieht sich auf den Arbeitsort nicht Wohnort #222
+* Bundeslandanzeige bezieht sich auf den Arbeitsort nicht Wohnort [#222](https://github.com/synyx/urlaubsverwaltung/issues/222)
 
 ### [urlaubsverwaltung-2.20.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.20.0)
-* Benutzerformular: UX verbessern #216
+* Benutzerformular: UX verbessern [#216](https://github.com/synyx/urlaubsverwaltung/issues/216)
 
 ### [urlaubsverwaltung-2.19.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.19.0)
 #### Bug Fix / Konfigurationsänderung
 
-* Problembehebung LDAP/AD Authentifizierung/Sync: Update von Spring Boot Version und Spring LDAP Core #215
+* Problembehebung LDAP/AD Authentifizierung/Sync: Update von Spring Boot Version und Spring LDAP Core [#215](https://github.com/synyx/urlaubsverwaltung/issues/215)
 
 ### [urlaubsverwaltung-2.18.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.18.2)
 #### Bug Fixes
-* Bug: Error beim klicken von "Benutzer anlegen" #213
-* Bug: Urlaub genehmigen in Übersicht "offene Urlaubsanträge" bei zweistufigem Genehmigungsprozess #212 
-* Bug: Urlaub ablehnen in Übersicht "offene Urlaubsanträge" #209 
-* Bug: Editieren von Benutzer fehlende Validierung für invaliden Urlaubsanspruch #204 
+* Bug: Error beim klicken von "Benutzer anlegen" [#213](https://github.com/synyx/urlaubsverwaltung/issues/213)
+* Bug: Urlaub genehmigen in Übersicht "offene Urlaubsanträge" bei zweistufigem Genehmigungsprozess [#212](https://github.com/synyx/urlaubsverwaltung/issues/212) 
+* Bug: Urlaub ablehnen in Übersicht "offene Urlaubsanträge" [#209](https://github.com/synyx/urlaubsverwaltung/issues/209) 
+* Bug: Editieren von Benutzer fehlende Validierung für invaliden Urlaubsanspruch [#204](https://github.com/synyx/urlaubsverwaltung/issues/204) 
 
 #### Change Request
-* Noch nicht genehmigten Urlaub im Kalendar farblich hervorheben #200 
+* Noch nicht genehmigten Urlaub im Kalendar farblich hervorheben [#200](https://github.com/synyx/urlaubsverwaltung/issues/200) 
 
 
 ### [ urlaubsverwaltung-2.18.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.18.1)
 ####Bug Fixes
 
-*  Korrekte Auswahl des Krankmedlungstyps beim Editieren von Krankmeldungen #201   
+*  Korrekte Auswahl des Krankmedlungstyps beim Editieren von Krankmeldungen [#201](https://github.com/synyx/urlaubsverwaltung/issues/201)   
 
 ### [urlaubsverwaltung-2.18.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.18.0)
 #####Features
 
-*  Bundeslandauswahl pro User ermöglichen #178 
-*  Benutzerliste filterbar nach Abteilung #136 
+*  Bundeslandauswahl pro User ermöglichen [#178](https://github.com/synyx/urlaubsverwaltung/issues/178) 
+*  Benutzerliste filterbar nach Abteilung [#136](https://github.com/synyx/urlaubsverwaltung/issues/136) 
 
 #### Bug Fixes
 
-*  deaktivierter User loggt sich ein - Problem im Browser #190 
+*  deaktivierter User loggt sich ein - Problem im Browser [#190](https://github.com/synyx/urlaubsverwaltung/issues/190) 
 
 ### [urlaubsverwaltung-2.17.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.3)
 #### Bug Fixes
 
-*  Benutzer deaktivieren nicht möglich #188
+*  Benutzer deaktivieren nicht möglich [#188](https://github.com/synyx/urlaubsverwaltung/issues/188)
 
 ### [urlaubsverwaltung-2.17.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.2)
 #### Bug Fixes
 
-* Anzeige der Anträge von Mitarbeitern fehlerhaft (moment is not defined) #176 
-* Einstellung: Überstundenverwaltung deaktivieren wird nicht dauerhaft gespeichert #183 
-* Komma-Zahlen eintragen mit englischer Browser Locale #186
+* Anzeige der Anträge von Mitarbeitern fehlerhaft (moment is not defined) [#176](https://github.com/synyx/urlaubsverwaltung/issues/176) 
+* Einstellung: Überstundenverwaltung deaktivieren wird nicht dauerhaft gespeichert [#183](https://github.com/synyx/urlaubsverwaltung/issues/183) 
+* Komma-Zahlen eintragen mit englischer Browser Locale [#186](https://github.com/synyx/urlaubsverwaltung/issues/186)
 
 ### [urlaubsverwaltung-2.17.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.1)
 Mini Fix in Personenformular: Label fixen
@@ -66,16 +116,16 @@ Mini Fix in Personenformular: Label fixen
 ### [urlaubsverwaltung-2.17.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.0)
 #### Bug Fixes
 
-* Bug: Umwandeln von Krankheitstagen in Urlaub funktioniert nicht #170
-* Bug: Fehlerseite bei ungültigem Zeitraum einer Krankmeldung mit AU-Bescheinigung #164
+* Bug: Umwandeln von Krankheitstagen in Urlaub funktioniert nicht [#170](https://github.com/synyx/urlaubsverwaltung/issues/170)
+* Bug: Fehlerseite bei ungültigem Zeitraum einer Krankmeldung mit AU-Bescheinigung [#164](https://github.com/synyx/urlaubsverwaltung/issues/164)
 
 #### Features
 
-* Urlaubsantrag: Anzeige von Arbeitszeiten #169
-* Urlaubsantrag: Anzeige von Wochentagen #167
-* Benutzerpflege: Vereinfachung der Pflege von Urlaubsanspruch Benutzerpflege #168
-* Benutzerpflege: Validierung bei Vergabe von Berechtigungen verbessern #163
-* Urlaubsantrag: Überstundenanzahl optional bei deaktivierter Überstundenfunktion Einstellungen #161
+* Urlaubsantrag: Anzeige von Arbeitszeiten [#169](https://github.com/synyx/urlaubsverwaltung/issues/169)
+* Urlaubsantrag: Anzeige von Wochentagen [#167](https://github.com/synyx/urlaubsverwaltung/issues/167)
+* Benutzerpflege: Vereinfachung der Pflege von Urlaubsanspruch Benutzerpflege [#168](https://github.com/synyx/urlaubsverwaltung/issues/168)
+* Benutzerpflege: Validierung bei Vergabe von Berechtigungen verbessern [#163](https://github.com/synyx/urlaubsverwaltung/issues/163)
+* Urlaubsantrag: Überstundenanzahl optional bei deaktivierter Überstundenfunktion Einstellungen [#161](https://github.com/synyx/urlaubsverwaltung/issues/161)
 
 ### [urlaubsverwaltung-2.16.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.16.0)
 #### [Milestone 2.16.0](https://github.com/synyx/urlaubsverwaltung/issues?q=milestone%3Aurlaubsverwaltung-2.16.0+is%3Aclosed)
@@ -84,47 +134,47 @@ Mini Fix in Personenformular: Label fixen
 
 ### [urlaubsverwaltung-2.15.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.15.0)
 #### [Milestone 2.15.0](https://github.com/synyx/urlaubsverwaltung/issues?q=milestone%3Aurlaubsverwaltung-2.15.0+is%3Aclosed)
-* Feature: Zweistufiger Genehmigungsprozess für Urlaubsanträge #148
-* Feature: E-Mail-Benachrichtung bei neuen Überstundeneinträgen #147
-* Feature: Validierung für maximal mögliche Minusstunden #146
-* Feature: Urlaubsantrag erweitern um Uhrzeit #145 
-* Feature: Urlaubsarten pflegbar machen (Datenbank only) #144
-* Feature: Krankmeldungsarten pflegbar machen (Datenbank only) #143
+* Feature: Zweistufiger Genehmigungsprozess für Urlaubsanträge [#148](https://github.com/synyx/urlaubsverwaltung/issues/148)
+* Feature: E-Mail-Benachrichtung bei neuen Überstundeneinträgen [#147](https://github.com/synyx/urlaubsverwaltung/issues/147)
+* Feature: Validierung für maximal mögliche Minusstunden [#146](https://github.com/synyx/urlaubsverwaltung/issues/146)
+* Feature: Urlaubsantrag erweitern um Uhrzeit [#145](https://github.com/synyx/urlaubsverwaltung/issues/145) 
+* Feature: Urlaubsarten pflegbar machen (Datenbank only) [#144](https://github.com/synyx/urlaubsverwaltung/issues/144)
+* Feature: Krankmeldungsarten pflegbar machen (Datenbank only) [#143](https://github.com/synyx/urlaubsverwaltung/issues/143)
 
 ### [urlaubsverwaltung-2.14.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.14.1)
-* Bug Fix: Es ist nicht möglich, halbtägigen Urlaub zu beantragen #156
+* Bug Fix: Es ist nicht möglich, halbtägigen Urlaub zu beantragen [#156](https://github.com/synyx/urlaubsverwaltung/issues/156)
 
 ### [urlaubsverwaltung-2.14.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.14.0)
-* Enhancement: LDAP/AD Sync optional machen #142
+* Enhancement: LDAP/AD Sync optional machen [#142](https://github.com/synyx/urlaubsverwaltung/issues/142)
 * Enhancement: Als Mitarbeiter nicht genommenen genehmigten Urlaub stornieren können #11
-* Enhancement: Update auf Spring Boot 1.3, Spring Security 4 #126
+* Enhancement: Update auf Spring Boot 1.3, Spring Security 4 [#126](https://github.com/synyx/urlaubsverwaltung/issues/126)
 
 ### [urlaubsverwaltung-2.13.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.13.2)
-* Bug Fix: Krankheitsübersicht nicht möglich, wenn ein Mitarbeiter keine Arbeitszeiten konfiguriert hat #129
+* Bug Fix: Krankheitsübersicht nicht möglich, wenn ein Mitarbeiter keine Arbeitszeiten konfiguriert hat [#129](https://github.com/synyx/urlaubsverwaltung/issues/129)
 
 ### [urlaubsverwaltung-2.13.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.13.1)
-* Bug Fix: (Teilweise) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang #137
-* Bug Fix: Validierung von deaktivierter Exchange Konfiguration #135
+* Bug Fix: (Teilweise) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang [#137](https://github.com/synyx/urlaubsverwaltung/issues/137)
+* Bug Fix: Validierung von deaktivierter Exchange Konfiguration [#135](https://github.com/synyx/urlaubsverwaltung/issues/135)
 
 ### [urlaubsverwaltung-2.13.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.13.0)
-* #133: Maximale Überstunden konfigurieren / Überstundenfunktion implizit deaktivieren
-* #124: Zeitraum für Urlaubsstatistik und Krankheitsübersicht kann nun tagesgenau ausgewählt werden
+* Maximale Überstunden konfigurieren / Überstundenfunktion implizit deaktivieren [#133](https://github.com/synyx/urlaubsverwaltung/issues/133)
+* Zeitraum für Urlaubsstatistik und Krankheitsübersicht kann nun tagesgenau ausgewählt werden [#124](https://github.com/synyx/urlaubsverwaltung/issues/124)
 
 ### [urlaubsverwaltung-2.12.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.2)
 * Exchange Anbindung erfolgt nun über E-Mail-Adresse statt Domäne und Benutzername
 * Besseres Logging für Exchange Anbindung für bessere Fehlerverfolgbarkeit
 
 ### [urlaubsverwaltung-2.12.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.1)
-* Bug Fix: Exchange 2013 Kalender Anbindung #117
+* Bug Fix: Exchange 2013 Kalender Anbindung [#117](https://github.com/synyx/urlaubsverwaltung/issues/117)
 
 ### [urlaubsverwaltung-2.12.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.0)
 * Technisches Feature: Umbau der Urlaubsverwaltung zu einer Spring Boot Anwendung. Ab dieser Version ist die Anwendung eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung, d.h. sie wird nicht mehr als WAR in einem Tomcat installiert, sondern als JAR ausgeführt.
 
 ### [urlaubsverwaltung-2.11.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.4)
-* Bug Fix: (Teilweise) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang #137
+* Bug Fix: (Teilweise) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang [#137](https://github.com/synyx/urlaubsverwaltung/issues/137)
 
 ### [urlaubsverwaltung-2.11.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.3)
-* Bug Fix: Exchange 2013 Kalender Anbindung #117
+* Bug Fix: Exchange 2013 Kalender Anbindung [#117](https://github.com/synyx/urlaubsverwaltung/issues/117)
 
 ### [urlaubsverwaltung-2.11.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.2)
 * Bug Fix: Überstundenanzahl in Urlaubsstatistik und Überstundenliste wird auf eine Kommastelle aufgerundet
@@ -144,13 +194,13 @@ Mini Fix in Personenformular: Label fixen
 * Genauere Beschreibung siehe in [Tickets](https://github.com/synyx/urlaubsverwaltung/issues?q=milestone%3Aurlaubsverwaltung-2.11.0+is%3Aclosed)
 
 ### [urlaubsverwaltung-2.10.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.5)
-* Bug Fix: (Teilweise) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang #137
+* Bug Fix: (Teilweise) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang [#137](https://github.com/synyx/urlaubsverwaltung/issues/137)
 
 ### [urlaubsverwaltung-2.10.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.4)
 * Exchange Anbindung über E-Mail-Adresse statt Domäne und Benutzername
 
 ### [urlaubsverwaltung-2.10.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.2)
-* Bug Fix: Exchange 2013 Kalender Anbindung #117
+* Bug Fix: Exchange 2013 Kalender Anbindung [#117](https://github.com/synyx/urlaubsverwaltung/issues/117)
 
 ### [urlaubsverwaltung-2.10.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.1)
 * Bug: Fix für kaputte Icons und Benutzer-Avatar im Offline-Modus

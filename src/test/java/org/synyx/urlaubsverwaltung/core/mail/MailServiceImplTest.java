@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
@@ -24,7 +25,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.core.mail.MailServiceImpl.LOCALE;
 
 
 /**
@@ -55,9 +62,9 @@ public class MailServiceImplTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
         // TODO: Would be better to mock this service directly
-        RecipientsService recipientsService = new RecipientsService(personService, departmentService);
+        RecipientService recipientService = new RecipientService(personService, departmentService);
 
-        mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientsService, departmentService,
+        mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, departmentService,
                 settingsService);
 
         Person person = TestDataCreator.createPerson();
@@ -67,7 +74,7 @@ public class MailServiceImplTest {
         settings = new Settings();
         settings.getMailSettings().setActive(true);
 
-        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 
 
@@ -89,7 +96,7 @@ public class MailServiceImplTest {
         Person anotherPerson = TestDataCreator.createPerson("mmuster", "Marlene", "Muster", "max@firma.test");
         Person personWithoutMailAddress = TestDataCreator.createPerson("nomail", "No", "Mail", null);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
             .thenReturn(Arrays.asList(person, anotherPerson, personWithoutMailAddress));
 
         ArgumentCaptor<List> recipientsArgumentCaptor = ArgumentCaptor.forClass(List.class);
@@ -97,7 +104,7 @@ public class MailServiceImplTest {
         mailService.sendCancellationRequest(application, null);
 
         Mockito.verify(mailSender)
-            .sendEmail(Mockito.eq(settings.getMailSettings()), recipientsArgumentCaptor.capture(), Mockito.anyString(),
+            .sendEmail(eq(settings.getMailSettings()), recipientsArgumentCaptor.capture(), Mockito.anyString(),
                 Mockito.anyString());
 
         List value = recipientsArgumentCaptor.getValue();
@@ -113,6 +120,18 @@ public class MailServiceImplTest {
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
     }
 
+    @Test
+    public void ensureSendsNewApplicationNotificationSubjectIncludesApplicationPersonName () {
+
+        Person boss = TestDataCreator.createPerson("boss");
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+                .thenReturn(Collections.singletonList(boss));
+        when(messageSource.getMessage("subject.application.applied.boss", new String[]{"Marlene Muster"}, LOCALE)).thenReturn("Neuer Urlaubsantrag für Marlene Muster");
+
+        mailService.sendNewApplicationNotification(application, null);
+
+        verify(mailSender).sendEmail(any(MailSettings.class), any(List.class), eq("Neuer Urlaubsantrag für "+ application.getPerson().getNiceName()), anyString());
+    }
 
     @Test
     public void ensureSendsNewApplicationNotificationToDepartmentHeads() {
@@ -120,17 +139,17 @@ public class MailServiceImplTest {
         Person boss = TestDataCreator.createPerson("boss");
         Person departmentHead = TestDataCreator.createPerson("departmentHead");
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(Collections.singletonList(boss));
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Collections.singletonList(departmentHead));
 
         mailService.sendNewApplicationNotification(application, null);
 
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         Mockito.verify(departmentService)
-            .isDepartmentHeadOfPerson(Mockito.eq(departmentHead), Mockito.eq(application.getPerson()));
+            .isDepartmentHeadOfPerson(eq(departmentHead), eq(application.getPerson()));
     }
 
 
@@ -149,17 +168,17 @@ public class MailServiceImplTest {
         Person boss = TestDataCreator.createPerson("boss");
         Person departmentHead = TestDataCreator.createPerson("departmentHead");
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(Collections.singletonList(boss));
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Collections.singletonList(departmentHead));
 
         mailService.sendRemindBossNotification(application);
 
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         Mockito.verify(departmentService)
-            .isDepartmentHeadOfPerson(Mockito.eq(departmentHead), Mockito.eq(application.getPerson()));
+            .isDepartmentHeadOfPerson(eq(departmentHead), eq(application.getPerson()));
     }
 
 
@@ -178,15 +197,15 @@ public class MailServiceImplTest {
         Application applicationB = createApplication(personDepartmentB);
         Application applicationC = createApplication(personDepartmentC);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(Collections.singletonList(boss));
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Arrays.asList(departmentHeadAC, departmentHeadB));
 
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentA)).thenReturn(true);
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHeadB, personDepartmentB)).thenReturn(true);
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentC)).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentA)).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHeadB, personDepartmentB)).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentC)).thenReturn(true);
 
         mailService.sendRemindForWaitingApplicationsReminderNotification(Arrays.asList(applicationA, applicationB,
                 applicationC));
@@ -195,11 +214,11 @@ public class MailServiceImplTest {
             .getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         Mockito.verify(personService, times(3)).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
         Mockito.verify(departmentService)
-            .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadAC), Mockito.eq(applicationA.getPerson()));
+            .isDepartmentHeadOfPerson(eq(departmentHeadAC), eq(applicationA.getPerson()));
         Mockito.verify(departmentService)
-            .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadB), Mockito.eq(applicationB.getPerson()));
+            .isDepartmentHeadOfPerson(eq(departmentHeadB), eq(applicationB.getPerson()));
         Mockito.verify(departmentService)
-            .isDepartmentHeadOfPerson(Mockito.eq(departmentHeadAC), Mockito.eq(applicationC.getPerson()));
+            .isDepartmentHeadOfPerson(eq(departmentHeadAC), eq(applicationC.getPerson()));
     }
 
 

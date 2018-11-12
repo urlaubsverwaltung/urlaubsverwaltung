@@ -7,15 +7,12 @@ import javax.persistence.Embeddable;
 
 
 /**
- * Settings to sync absences with a Microsoft Exchange Calendar.
+ * Settings to sync absences with a Microsoft Exchange calendar.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class ExchangeCalendarSettings {
-
-    @Column(name = "calendar_ews_active")
-    private boolean active = false;
 
     @Column(name = "calendar_ews_email")
     private String email;
@@ -29,16 +26,8 @@ public class ExchangeCalendarSettings {
     @Column(name = "calendar_ews_sendInvitationActive")
     private boolean sendInvitationActive = false;
 
-    public boolean isActive() {
-
-        return active;
-    }
-
-
-    public void setActive(boolean active) {
-
-        this.active = active;
-    }
+    @Column(name = "calendar_ews_url")
+    private String ewsUrl;
 
 
     public String getEmail() {
@@ -94,5 +83,24 @@ public class ExchangeCalendarSettings {
     public void setSendInvitationActive(boolean sendInvitationActive) {
 
         this.sendInvitationActive = sendInvitationActive;
+    }
+
+    public String getEwsUrl() {
+
+        if (ewsUrl == null || ewsUrl.isEmpty()) {
+            return null;
+        }
+
+        return ewsUrl;
+    }
+
+
+    public void setEwsUrl(String ewsUrl) {
+
+        if (ewsUrl == null || ewsUrl.isEmpty()) {
+            this.ewsUrl = null;
+        } else {
+            this.ewsUrl = ewsUrl;
+        }
     }
 }

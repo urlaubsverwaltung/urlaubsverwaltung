@@ -1,104 +1,82 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import liquibase.util.csv.CSVWriter;
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.validation.DataBinder;
-
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.statistics.ApplicationForLeaveStatisticsCsvExportService;
+import org.synyx.urlaubsverwaltung.core.statistics.ApplicationForLeaveStatisticsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 
 /**
  * Controller to generate applications for leave statistics.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/web/application")
 @Controller
+@RequestMapping(ApplicationForLeaveStatisticsController.STATISTICS_REL)
 public class ApplicationForLeaveStatisticsController {
 
-    @Autowired
-    private SessionService sessionService;
+    static final String STATISTICS_REL = "/web/application/statistics";
 
     @Autowired
-    private PersonService personService;
+    private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
 
     @Autowired
-    private DepartmentService departmentService;
+    private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
 
     @Autowired
     private VacationTypeService vacationTypeService;
 
-    @Autowired
-    private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
-
     @InitBinder
     public void initBinder(DataBinder binder) {
-
         binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
     }
 
-
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/statistics", method = RequestMethod.POST)
+    @PostMapping
     public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period) {
 
-        return "redirect:/web/application/statistics?from=" + period.getStartDateAsString() + "&to="
-            + period.getEndDateAsString();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("redirect:" + STATISTICS_REL)
+                .queryParam("from", period.getStartDateAsString())
+                .queryParam("to", period.getEndDateAsString());
+        return builder.toUriString();
     }
 
-
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    @GetMapping
     public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
-        @RequestParam(value = "to", required = false) String to, Model model) {
+                                                @RequestParam(value = "to", required = false) String to,
+                                                Model model) {
 
         FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
 
-        DateMidnight fromDate = period.getStartDate();
-        DateMidnight toDate = period.getEndDate();
-
         // NOTE: Not supported at the moment
-        if (fromDate.getYear() != toDate.getYear()) {
+        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
 
             return "application/app_statistics";
         }
 
-        List<Person> persons = getRelevantPersons();
+        List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
 
-        List<ApplicationForLeaveStatistics> statistics = persons.stream().map(person ->
-                    applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate)).collect(Collectors.toList());
-
-        model.addAttribute("from", fromDate);
-        model.addAttribute("to", toDate);
+        model.addAttribute("from", period.getStartDate());
+        model.addAttribute("to", period.getEndDate());
         model.addAttribute("statistics", statistics);
         model.addAttribute("period", period);
         model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
@@ -106,15 +84,37 @@ public class ApplicationForLeaveStatisticsController {
         return "application/app_statistics";
     }
 
+    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
+    @GetMapping(value = "/download")
+    public String downloadCSV(@RequestParam(value = "from", required = false) String from,
+                              @RequestParam(value = "to", required = false) String to,
+                              HttpServletResponse response,
+                              Model model)
+        throws IOException {
 
-    private List<Person> getRelevantPersons() {
+        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
 
-        Person signedInUser = sessionService.getSignedInUser();
+        // NOTE: Not supported at the moment
+        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+            model.addAttribute("period", period);
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
 
-        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
-            return departmentService.getManagedMembersOfDepartmentHead(signedInUser);
+            return "application/app_statistics";
         }
 
-        return personService.getActivePersons();
+        List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
+
+        String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
+        response.setContentType("text/csv");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+
+        try (CSVWriter csvWriter = new CSVWriter(response.getWriter())) {
+            applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
+        }
+
+        model.addAttribute("period", period);
+
+        return "application/app_statistics";
     }
 }

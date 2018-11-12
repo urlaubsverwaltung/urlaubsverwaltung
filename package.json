@@ -1,0 +1,51 @@
+{
+  "name": "urlaubsverwaltung",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://travis-ci.org/synyx/urlaubsverwaltung.png)](https://travis-ci.org/synyx/urlaubsverwaltung) [![Coverage Status](https://coveralls.io/repos/github/synyx/urlaubsverwaltung/badge.svg?branch=master)](https://coveralls.io/github/synyx/urlaubsverwaltung?branch=master)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synyx/urlaubsverwaltung.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache License 2.0",
+  "bugs": {
+    "url": "https://github.com/synyx/urlaubsverwaltung/issues"
+  },
+  "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-core": "~6.26.3",
+    "babel-plugin-dynamic-import-node": "~1.2.0",
+    "babel-preset-env": "~1.7.0",
+    "jest": "~23.6.0",
+    "moment": "~2.22.2",
+    "merge": "1.2.1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "babel-plugin-dynamic-import-node"
+    ]
+  },
+  "jest": {
+    "testURL": "http://localhost",
+    "testEnvironment": "jsdom"
+  }
+}

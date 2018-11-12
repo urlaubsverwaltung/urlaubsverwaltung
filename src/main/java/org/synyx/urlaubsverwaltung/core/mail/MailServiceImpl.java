@@ -41,23 +41,23 @@ import java.util.stream.Collectors;
 @Service("mailService")
 class MailServiceImpl implements MailService {
 
-    private static final Locale LOCALE = Locale.GERMAN;
+    protected static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
     private final MailSender mailSender;
-    private final RecipientsService recipientsService;
+    private final RecipientService recipientService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
-        RecipientsService recipientsService, DepartmentService departmentService, SettingsService settingsService) {
+                    RecipientService recipientService, DepartmentService departmentService, SettingsService settingsService) {
 
         this.messageSource = messageSource;
         this.mailBuilder = mailBuilder;
         this.mailSender = mailSender;
-        this.recipientsService = recipientsService;
+        this.recipientService = recipientService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
     }
@@ -73,9 +73,10 @@ class MailServiceImpl implements MailService {
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
 
-        List<Person> recipients = recipientsService.getRecipientsForAllowAndRemind(application);
-        sendMailToEachRecipient(model, recipients, "new_applications",
-            getTranslation("subject.application.applied.boss"));
+        List<Person> recipients = recipientService.getRecipientsForAllowAndRemind(application);
+        String subject = getTranslation("subject.application.applied.boss", application.getPerson().getNiceName());
+
+        sendMailToEachRecipient(model, recipients, "new_applications", subject);
     }
 
 
@@ -128,7 +129,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.empty());
 
-        List<Person> recipients = recipientsService.getRecipientsForAllowAndRemind(application);
+        List<Person> recipients = recipientService.getRecipientsForAllowAndRemind(application);
         sendMailToEachRecipient(model, recipients, "remind", getTranslation("subject.application.remind"));
     }
 
@@ -149,7 +150,7 @@ class MailServiceImpl implements MailService {
             getTranslation("subject.application.temporaryAllowed.user"), textUser);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
-        List<Person> recipients = recipientsService.getRecipientsForTemporaryAllow(application);
+        List<Person> recipients = recipientService.getRecipientsForTemporaryAllow(application);
         sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority",
             getTranslation("subject.application.temporaryAllowed.secondStage"));
     }
@@ -172,7 +173,7 @@ class MailServiceImpl implements MailService {
         String textOffice = mailBuilder.buildMailBody("allowed_office", model);
         mailSender.sendEmail(mailSettings,
             RecipientUtil.getMailAddresses(
-                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+                recipientService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.application.allowed.office"), textOffice);
     }
 
@@ -259,19 +260,6 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendSignErrorNotification(Integer applicationId, String exception) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("applicationId", applicationId);
-        model.put("exception", exception);
-
-        String text = mailBuilder.buildMailBody("error_sign_application", model);
-
-        sendTechnicalNotification(getTranslation("subject.error.keys.sign"), text);
-    }
-
-
-    @Override
     public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
 
         Map<String, Object> model = new HashMap<>();
@@ -327,7 +315,7 @@ class MailServiceImpl implements MailService {
         // send email to office for printing statistic
         mailSender.sendEmail(getMailSettings(),
             RecipientUtil.getMailAddresses(
-                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+                recipientService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.account.updatedRemainingDays"), text);
 
         // send email to manager to notify about update of accounts
@@ -373,7 +361,7 @@ class MailServiceImpl implements MailService {
             getTranslation("subject.sicknote.endOfSickPay"), text);
         mailSender.sendEmail(getMailSettings(),
             RecipientUtil.getMailAddresses(
-                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+                recipientService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.sicknote.endOfSickPay"), text);
     }
 
@@ -421,7 +409,7 @@ class MailServiceImpl implements MailService {
 
         mailSender.sendEmail(mailSettings,
             RecipientUtil.getMailAddresses(
-                recipientsService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
+                recipientService.getRecipientsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)),
             getTranslation("subject.application.cancellationRequest"), text);
     }
 
@@ -438,7 +426,7 @@ class MailServiceImpl implements MailService {
 
         String textOffice = mailBuilder.buildMailBody("overtime_office", model);
 
-        List<Person> recipients = recipientsService.getRecipientsWithNotificationType(
+        List<Person> recipients = recipientService.getRecipientsWithNotificationType(
                 MailNotification.OVERTIME_NOTIFICATION_OFFICE);
 
         mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipients),
@@ -465,16 +453,17 @@ class MailServiceImpl implements MailService {
          */
         Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
                 .flatMap(application ->
-                            recipientsService.getRecipientsForAllowAndRemind(application)
+                            recipientService.getRecipientsForAllowAndRemind(application)
                             .stream()
                             .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
                 .collect(Collectors.groupingBy(Map.Entry::getKey,
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
-        for (Person recipient : applicationsPerRecipient.keySet()) {
+        for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
             MailSettings mailSettings = getMailSettings();
 
-            List<Application> applications = applicationsPerRecipient.get(recipient);
+            List<Application> applications = entry.getValue();
+            Person recipient = entry.getKey();
 
             Map<String, Object> model = new HashMap<>();
             model.put("applicationList", applications);

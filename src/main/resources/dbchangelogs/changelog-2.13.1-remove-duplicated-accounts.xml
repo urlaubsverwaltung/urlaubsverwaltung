@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <changeSet author="murygina" id="remove_duplicated_accounts">
-
+        <validCheckSum>7:32910bb107c7a38c51742bb7a75fb15d</validCheckSum>
         <preConditions>
             <tableExists tableName="Account"/>
             <columnExists tableName="Account" columnName="person_id"/>
@@ -12,8 +12,9 @@
             <columnExists tableName="Account" columnName="validTo"/>
         </preConditions>
 
+
         <sql>
-            DELETE FROM Account WHERE id IN (SELECT tmp.id FROM (SELECT account.id FROM Account account GROUP BY
+            DELETE FROM Account WHERE id IN (SELECT tmp.id FROM (SELECT MIN(account.id) id FROM Account account GROUP BY
             account.person_id, account.validFrom, account.validTo HAVING COUNT(1) > 1) as tmp)
         </sql>
 

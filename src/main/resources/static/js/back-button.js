@@ -1,6 +1,6 @@
 $(function () {
 
-  $('.btn.back').click(function () {
+  $('.btn.back').on("click", function () {
     parent.history.back();
     return false;
   });

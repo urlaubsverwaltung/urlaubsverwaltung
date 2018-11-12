@@ -24,14 +24,15 @@ import javax.servlet.http.HttpServletResponse;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.restapi")
-class ApiExceptionHandlerControllerAdvice {
+public class ApiExceptionHandlerControllerAdvice {
 
     private static final Logger LOG = Logger.getLogger(ApiExceptionHandlerControllerAdvice.class);
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ NumberFormatException.class, IllegalArgumentException.class })
     @ResponseBody
-    ErrorResponse handleException(HttpServletResponse response, IllegalArgumentException exception) throws IOException {
+    public ErrorResponse handleException(HttpServletResponse response,
+                                         IllegalArgumentException exception) throws IOException {
 
         LOG.debug(exception.toString());
 
@@ -42,7 +43,7 @@ class ApiExceptionHandlerControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseBody
-    ErrorResponse handleException(HttpServletResponse response, MethodArgumentTypeMismatchException exception)
+    public ErrorResponse handleException(HttpServletResponse response, MethodArgumentTypeMismatchException exception)
         throws IOException {
 
         LOG.debug(exception.toString());
@@ -54,7 +55,8 @@ class ApiExceptionHandlerControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseBody
-    ErrorResponse handleException(HttpServletResponse response, MissingServletRequestParameterException exception)
+    public ErrorResponse handleException(HttpServletResponse response,
+                                         MissingServletRequestParameterException exception)
         throws IOException {
 
         LOG.debug(exception.toString());
@@ -66,7 +68,7 @@ class ApiExceptionHandlerControllerAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
-    ErrorResponse handleException(AccessDeniedException exception) {
+    public ErrorResponse handleException(AccessDeniedException exception) {
 
         LOG.debug(exception.toString());
 
@@ -77,7 +79,7 @@ class ApiExceptionHandlerControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    ErrorResponse handleException(HttpServletResponse response, Exception exception) throws IOException {
+    public ErrorResponse handleException(HttpServletResponse response, Exception exception) throws IOException {
 
         LOG.debug(exception.toString());
 
