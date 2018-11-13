@@ -109,7 +109,7 @@ public class AccountController {
             accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,
                 actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         } else {
-            accountInteractionService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
+            accountInteractionService.updateOrCreateHolidaysAccount(person, validFrom, validTo, annualVacationDays,
                 actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 
