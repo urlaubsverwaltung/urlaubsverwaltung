@@ -3,6 +3,10 @@ package org.synyx.urlaubsverwaltung.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -12,6 +16,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
+
+import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -33,6 +39,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
     private final PersonService personService;
 
+    @Autowired
     public SimpleAuthenticationProvider(PersonService personService) {
 
         this.personService = personService;
@@ -40,6 +47,8 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) {
+
+        // TODO replace StandardPasswordEncoder
 
         StandardPasswordEncoder encoder = new StandardPasswordEncoder();
 
