@@ -34,7 +34,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="navbar-collapse">
       <ul class="nav navbar-nav">
-        <sec:authorize access="hasAuthority('USER')">
+        <sec:authorize access="hasRole('USER')">
           <li>
             <a href="${URL_PREFIX}/overview">
               <span class="img-circle gravatar gravatar--small hidden-print" data-gravatar="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"></span> <spring:message code="nav.home.title"/>
@@ -43,7 +43,7 @@
         </sec:authorize>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <sec:authorize access="hasAuthority('USER')">
+        <sec:authorize access="hasRole('USER')">
           <li>
             <a href="${URL_PREFIX}/application/new">
               <i class="fa fa-fw fa-plus-circle"></i> <spring:message code="nav.apply.title"/>
@@ -51,7 +51,7 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
+        <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
             <a href="${URL_PREFIX}/application">
               <i class="fa fa-fw fa-calendar"></i> <spring:message code="nav.vacation.title"/>
@@ -59,7 +59,7 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAuthority('OFFICE')">
+        <sec:authorize access="hasRole('OFFICE')">
           <li>
             <a href="${URL_PREFIX}/sicknote/">
               <i class="fa fa-fw fa-medkit"></i> <spring:message code="nav.sicknote.title"/>
@@ -67,7 +67,7 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
+        <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
             <a href="${URL_PREFIX}/staff?active=true">
               <i class="fa fa-fw fa-user"></i>
@@ -76,7 +76,7 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAnyAuthority('BOSS', 'OFFICE')">
+        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
           <li>
             <a href="${URL_PREFIX}/department">
               <i class="fa fa-fw fa-group"></i>
@@ -85,7 +85,7 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAuthority('OFFICE')">
+        <sec:authorize access="hasRole('OFFICE')">
           <li>
             <a href="${URL_PREFIX}/settings">
               <i class="fa fa-fw fa-cog"></i>
@@ -94,7 +94,7 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAuthority('USER')">
+        <sec:authorize access="hasRole('USER')">
           <li>
             <a href="<spring:url value='/logout' />">
               <i class="fa fa-fw fa-sign-out"></i> <spring:message code="nav.signout.title"/>

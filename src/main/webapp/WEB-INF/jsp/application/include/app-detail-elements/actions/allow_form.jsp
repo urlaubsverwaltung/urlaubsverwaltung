@@ -29,7 +29,7 @@
       </c:otherwise>
 </c:choose>
 
-<sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
+<sec:authorize access="hasRole('DEPARTMENT_HEAD')">
     <c:set var="IS_DEPARTMENT_HEAD" value="${true}"/>
 </sec:authorize>
 

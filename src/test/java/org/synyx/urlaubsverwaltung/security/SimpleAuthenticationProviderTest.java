@@ -43,8 +43,8 @@ public class SimpleAuthenticationProviderTest {
     public void ensureThatValidUserGetsAccess() {
 
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(Role.USER.name()));
-        grantedAuthorities.add(new SimpleGrantedAuthority(Role.OFFICE.name()));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + Role.USER.name()));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + Role.OFFICE.name()));
 
         String username = "user";
         String rawPassword = "secret";

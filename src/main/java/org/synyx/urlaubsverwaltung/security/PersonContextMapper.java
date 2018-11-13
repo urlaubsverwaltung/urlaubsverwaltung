@@ -9,6 +9,7 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Component;
@@ -125,7 +126,10 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-        permissions.stream().forEach(role -> grantedAuthorities.add(role::name));
+        permissions.stream().forEach(role -> {
+            String roleName = "ROLE_" + role.name();
+            grantedAuthorities.add(new SimpleGrantedAuthority(roleName));
+        });
 
         return grantedAuthorities;
     }

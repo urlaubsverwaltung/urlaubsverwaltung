@@ -30,7 +30,7 @@
 
                 <legend>
                     <spring:message code="sicknote.title" />
-                    <sec:authorize access="hasAuthority('OFFICE')">
+                    <sec:authorize access="hasRole('OFFICE')">
                       <c:if test="${sickNote.active}">
                         <uv:print/>
                         <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
@@ -153,7 +153,7 @@
                 
                 <legend>
                     <spring:message code="sicknote.progress.title" />
-                    <sec:authorize access="hasAuthority('OFFICE')">
+                    <sec:authorize access="hasRole('OFFICE')">
                       <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
                          data-title="<spring:message code="action.comment.new" />">
                         <i class="fa fa-comments"></i>
@@ -188,7 +188,7 @@
                     </tbody>
                 </table>
 
-                <sec:authorize access="hasAuthority('OFFICE')">
+                <sec:authorize access="hasRole('OFFICE')">
                 
                     <c:choose>
                         <c:when test="${not empty errors}">

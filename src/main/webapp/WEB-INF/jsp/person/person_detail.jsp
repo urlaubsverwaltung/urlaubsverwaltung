@@ -37,7 +37,7 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <legend>
                     <spring:message code="person.details.masterData.title"/>
-                    <sec:authorize access="hasAuthority('OFFICE')">
+                    <sec:authorize access="hasRole('OFFICE')">
                     <a href="${URL_PREFIX}/staff/${person.id}/edit" class="fa-action pull-right"
                        data-title="<spring:message code="action.edit"/>">
                         <i class="fa fa-pencil"></i>
@@ -82,7 +82,7 @@
                 <legend>
                     <spring:message code="person.details.annualVacation.title"/>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff/${person.id}?year="/>
-                    <sec:authorize access="hasAuthority('OFFICE')">
+                    <sec:authorize access="hasRole('OFFICE')">
                     <a href="${URL_PREFIX}/staff/${person.id}/account?year=${param.year}" class="fa-action pull-right"
                        data-title="<spring:message code="action.edit"/>">
                         <i class="fa fa-pencil"></i>
@@ -93,7 +93,7 @@
 
                 <legend>
                     <spring:message code="person.details.workingTime.title"/>
-                    <sec:authorize access="hasAuthority('OFFICE')">
+                    <sec:authorize access="hasRole('OFFICE')">
                     <a href="${URL_PREFIX}/staff/${person.id}/workingtime" class="fa-action pull-right"
                        data-title="<spring:message code="action.edit"/>">
                         <i class="fa fa-pencil"></i>

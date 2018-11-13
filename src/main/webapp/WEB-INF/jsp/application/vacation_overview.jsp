@@ -8,16 +8,16 @@
 	uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags"%>
 
-<sec:authorize access="hasAuthority('USER')">
+<sec:authorize access="hasRole('USER')">
 	<c:set var="IS_USER" value="${true}" />
 </sec:authorize>
-<sec:authorize access="hasAuthority('BOSS')">
+<sec:authorize access="hasRole('BOSS')">
 	<c:set var="IS_BOSS" value="${true}" />
 </sec:authorize>
-<sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
+<sec:authorize access="hasRole('DEPARTMENT_HEAD')">
 	<c:set var="IS_DEPARTMENT_HEAD" value="${true}" />
 </sec:authorize>
-<sec:authorize access="hasAuthority('OFFICE')">
+<sec:authorize access="hasRole('OFFICE')">
 	<c:set var="IS_OFFICE" value="${true}" />
 </sec:authorize>
 <c:set var="IS_ALLOWED" value="${IS_USER || IS_BOSS || IS_DEPARTMENT_HEAD || IS_OFFICE }" />
@@ -31,7 +31,7 @@
 <body>
 	<spring:url var="URL_PREFIX" value="/web" />
 
-	<sec:authorize access="hasAuthority('OFFICE')">
+	<sec:authorize access="hasRole('OFFICE')">
 		<c:set var="IS_OFFICE" value="true" />
 	</sec:authorize>
 

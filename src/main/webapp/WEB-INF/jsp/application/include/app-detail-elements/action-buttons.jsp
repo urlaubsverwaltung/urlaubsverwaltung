@@ -12,23 +12,23 @@
 
 <%-- SETTING VARIABLES --%>
 
-<sec:authorize access="hasAuthority('USER')">
+<sec:authorize access="hasRole('USER')">
   <c:set var="IS_USER" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('BOSS')">
+<sec:authorize access="hasRole('BOSS')">
   <c:set var="IS_BOSS" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
+<sec:authorize access="hasRole('DEPARTMENT_HEAD')">
   <c:set var="IS_DEPARTMENT_HEAD" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('SECOND_STAGE_AUTHORITY')">
+<sec:authorize access="hasRole('SECOND_STAGE_AUTHORITY')">
   <c:set var="IS_SECOND_STAGE_AUTHORITY" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('OFFICE')">
+<sec:authorize access="hasRole('OFFICE')">
   <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
 

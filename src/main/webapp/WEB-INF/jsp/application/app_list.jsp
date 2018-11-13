@@ -6,23 +6,23 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<sec:authorize access="hasAuthority('USER')">
+<sec:authorize access="hasRole('USER')">
     <c:set var="IS_USER" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('BOSS')">
+<sec:authorize access="hasRole('BOSS')">
     <c:set var="IS_BOSS" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
+<sec:authorize access="hasRole('DEPARTMENT_HEAD')">
     <c:set var="IS_DEPARTMENT_HEAD" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('SECOND_STAGE_AUTHORITY')">
+<sec:authorize access="hasRole('SECOND_STAGE_AUTHORITY')">
     <c:set var="IS_SECOND_STAGE_AUTHORITY" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('OFFICE')">
+<sec:authorize access="hasRole('OFFICE')">
     <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
 
@@ -62,7 +62,7 @@
                               data-title="<spring:message code="action.applications.vacation_overview"/>">
                             <i class="fa fa-fw fa-calendar"></i>
                           </a>
-                          <sec:authorize access="hasAuthority('OFFICE')">
+                          <sec:authorize access="hasRole('OFFICE')">
                           <a href="${URL_PREFIX}/application/new" class="fa-action pull-right"
                               data-title="<spring:message code="action.apply.vacation"/>">
                             <i class="fa fa-fw fa-plus-circle"></i>

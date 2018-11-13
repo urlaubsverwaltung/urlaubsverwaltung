@@ -18,7 +18,7 @@
 <body>
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<sec:authorize access="hasAuthority('OFFICE')">
+<sec:authorize access="hasRole('OFFICE')">
     <c:set var="IS_OFFICE" value="true"/>
 </sec:authorize>
 

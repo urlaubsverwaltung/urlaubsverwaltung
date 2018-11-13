@@ -84,7 +84,7 @@
 
                         <uv:print />
 
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <sec:authorize access="hasRole('OFFICE')">
                             <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right"
                                data-title="<spring:message code="action.staff.create"/>">
                                 <i class="fa fa-fw fa-user-plus"></i>

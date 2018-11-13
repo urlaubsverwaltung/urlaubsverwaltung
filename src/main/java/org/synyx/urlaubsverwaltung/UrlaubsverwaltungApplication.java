@@ -4,8 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 
 /**
@@ -15,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
-@ImportResource({ "classpath:spring-security.xml" })
+@EnableWebSecurity
 public class UrlaubsverwaltungApplication extends SpringBootServletInitializer { // NOSONAR - no private constructor needed
 
     @Override

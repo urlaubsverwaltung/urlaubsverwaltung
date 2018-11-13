@@ -60,7 +60,7 @@
         <th class="sortable-field is-centered"><spring:message code='persons.account.vacation.entitlement.actual' /></th>
         <th class="sortable-field is-centered"><spring:message code='persons.account.vacation.entitlement.remaining' /></th>
         <th class="sortable-field is-centered"><spring:message code="persons.account.vacation.vacationDaysLeft"/></th>
-        <sec:authorize access="hasAuthority('OFFICE')">
+        <sec:authorize access="hasRole('OFFICE')">
             <th><%-- placeholder to ensure correct number of th --%></th>
         </sec:authorize>    
     </tr>

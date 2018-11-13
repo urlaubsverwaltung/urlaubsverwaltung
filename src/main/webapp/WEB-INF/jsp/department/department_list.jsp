@@ -36,7 +36,7 @@
                     <legend>
                         <spring:message code="departments.title" />
                         <uv:print />
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <sec:authorize access="hasRole('OFFICE')">
                             <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
                             data-title="<spring:message code="action.department.create"/>">
                                 <i class="fa fa-fw fa-plus-circle"></i>
@@ -86,7 +86,7 @@
                                     <th class="sortable-field"><spring:message code="department.data.name" /></th>
                                     <th class="sortable-field"><spring:message code="department.members" /></th>
                                     <th class="sortable-field"><spring:message code='department.data.lastModification' /></th>
-                                    <sec:authorize access="hasAuthority('OFFICE')">
+                                    <sec:authorize access="hasRole('OFFICE')">
                                         <th><%-- placeholder to ensure correct number of th --%></th>
                                     </sec:authorize>
                                 </tr>
@@ -118,7 +118,7 @@
                                         <td class="hidden-xs">
                                             <uv:dateTime dateTime="${department.lastModification}"/>
                                         </td>
-                                        <sec:authorize access="hasAuthority('OFFICE')">
+                                        <sec:authorize access="hasRole('OFFICE')">
                                             <td>
                                                 <form:form method="DELETE" action="${URL_PREFIX}/department/${department.id}">
                                                     <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
