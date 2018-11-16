@@ -22,11 +22,11 @@
   "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
   "dependencies": {},
   "devDependencies": {
-    "babel-core": "~6.26.3",
-    "babel-plugin-dynamic-import-node": "~1.2.0",
-    "babel-preset-env": "~1.7.0",
-    "jest": "~23.6.0",
-    "moment": "~2.22.2",
+    "babel-core": "6.26.3",
+    "babel-plugin-dynamic-import-node": "1.2.0",
+    "babel-preset-env": "1.7.0",
+    "jest": "23.6.0",
+    "moment": "2.22.2",
     "merge": "1.2.1"
   },
   "babel": {
