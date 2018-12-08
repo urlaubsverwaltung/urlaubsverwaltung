@@ -15,7 +15,7 @@ before_deploy:
 - echo "create release notes $RELEASE_NOTES"
 
 deploy:
-  provider: releases
+- provider: releases
   api_key:
     secure: lEV9X4As9pSBZfJBWIvBzeqfOHGJojQHYYDkKqPb5TKwXjPcsWb/es+JeS6Yqx3hwxjpYL/p4FmczklaVqbABdrMAb+VkU504HwHdKz0qRl2o8Wkf2iCHrDAqTm/UYPPtfMr9RjRBNq8msCB6QChngnj3/C0moh/KUdgiMBPJEw=
   file: "${JAR_FILE}"
@@ -25,6 +25,14 @@ deploy:
     repo: synyx/urlaubsverwaltung
     tags: true
     jdk: oraclejdk8
+- provider: script
+  skip_cleanup: true
+  script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - ./mvnw docker:push
+  on:
+    repo: synyx/urlaubsverwaltung
+    branch: add_docker_image
 
 env:
   global:
