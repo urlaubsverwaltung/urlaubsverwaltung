@@ -1,9 +1,12 @@
 language: java
 
-script: ./mvnw clean verify jacoco:report coveralls:report
+script: ./mvnw clean verify jacoco:report coveralls:report -P buildDockerContainer
 
 jdk:
 - oraclejdk8
+
+services:
+- docker
 
 before_deploy:
 - export JAR_FILE=$(ls target/urlaubsverwaltung-*.jar)
