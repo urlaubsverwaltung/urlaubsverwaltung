@@ -329,7 +329,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>synyx/${project.artifactId}:${project.version}</name>
+                            <name>synyx/%a:%l</name>
                             <build>
                                 <dockerFileDir>./</dockerFileDir>
                                 <assembly>
