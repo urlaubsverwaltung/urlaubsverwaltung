@@ -6,7 +6,7 @@ after_success:
   - ./mvnw clean verify jacoco:report coveralls:report
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 branches:
   only:
