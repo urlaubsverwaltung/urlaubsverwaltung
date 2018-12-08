@@ -27,9 +27,7 @@ deploy:
     jdk: oraclejdk8
 - provider: script
   skip_cleanup: true
-  script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - ./mvnw docker:push
+  script: bash etc/deploy_docker_travis.sh
   on:
     repo: synyx/urlaubsverwaltung
     branch: add_docker_image
