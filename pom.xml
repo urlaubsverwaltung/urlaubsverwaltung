@@ -55,7 +55,7 @@
         <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
 
         <!-- Docker image build -->
-        <fabric8-docker-maven-plugin.version>0.26.1</fabric8-docker-maven-plugin.version>
+        <fabric8-docker-maven-plugin.version>0.27.2</fabric8-docker-maven-plugin.version>
         <docker.finalName>${project.build.finalName}</docker.finalName>
     </properties>
     <scm>
