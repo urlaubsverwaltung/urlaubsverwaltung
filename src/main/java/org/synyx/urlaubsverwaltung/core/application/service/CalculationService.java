@@ -115,20 +115,22 @@ public class CalculationService {
 
         VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account.get(), nextYear);
         LOG.info("vacationDaysLeft: " + vacationDaysLeft);
-        // we may need to consider if remaining vacation days can be be used or not
-        // first try without, maybe that's already enough
-        if (vacationDaysLeft.getVacationDays()
-                .add(vacationDaysLeft.getRemainingVacationDaysNotExpiring())
-                .subtract(workDays)
-                .compareTo(alreadyUsedNextYear) >= 0){
-            // good enough without looking at expiring remaining days
-            return true;
-        }
-        if (vacationDaysLeft.getVacationDays()
+
+        // now we need to consider which remaining vacation days expire
+        BigDecimal workDaysBeforeApril = getWorkdaysBeforeApril(year, application);
+
+        BigDecimal leftUntilApril = vacationDaysLeft.getVacationDays()
                 .add(vacationDaysLeft.getRemainingVacationDays())
-                .subtract(workDays)
-                .compareTo(alreadyUsedNextYear) < 0) {
-            // not enough even when considering all expiring remaining days
+                .subtract(workDaysBeforeApril)
+                .subtract(alreadyUsedNextYear);
+
+        BigDecimal workDaysAfterApril = workDays.subtract(workDaysBeforeApril);
+        BigDecimal leftAfterApril = vacationDaysLeft.getRemainingVacationDays()
+                .add(leftUntilApril)
+                .subtract(workDaysAfterApril)
+                .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+
+        if (leftUntilApril.signum() < 0 || leftAfterApril.signum() < 0){
             if (alreadyUsedNextYear.signum() > 0) {
                 LOG.info("Rejecting application by " + person + " for " + workDays + " days in " + year + " because "
                         + alreadyUsedNextYear + " remaining days have already been used in " + (year+1));
@@ -136,7 +138,10 @@ public class CalculationService {
             return false;
         }
 
-        // now we need to consider which remaining vacation days expire
+        return true;
+    }
+
+    private BigDecimal getWorkdaysBeforeApril(int year, Application application) {
         List<Interval> beforeApril = overlapService.getListOfOverlaps(
                 DateUtil.getFirstDayOfYear(year),
                 DateUtil.getLastDayOfMonth(year, DateTimeConstants.MARCH),
@@ -148,34 +153,10 @@ public class CalculationService {
         BigDecimal workDaysBeforeApril = beforeApril.isEmpty() ?
                 BigDecimal.ZERO :
                 calendarService.getWorkDays(application.getDayLength(),
-                        beforeApril.get(0).getStart().toDateMidnight(), beforeApril.get(0).getEnd().toDateMidnight(), person);
+                        beforeApril.get(0).getStart().toDateMidnight(), beforeApril.get(0).getEnd().toDateMidnight(),
+                        application.getPerson());
 
-
-        BigDecimal leftUntilApril = vacationDaysLeft.getVacationDays()
-                .add(vacationDaysLeft.getRemainingVacationDays())
-                .subtract(workDaysBeforeApril)
-                .subtract(alreadyUsedNextYear);
-
-        if (leftUntilApril.signum() < 0) {
-            if (alreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by " + person + " for " + workDays + " days in " + year + " because "
-                        + alreadyUsedNextYear + " remaining days have already been used in " + (year+1));
-            }
-            return false;
-        }
-        BigDecimal workDaysAfterApril = workDays.subtract(workDaysBeforeApril);
-        BigDecimal extraRemaining = vacationDaysLeft.getRemainingVacationDays()
-                .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        if (leftUntilApril.add(extraRemaining).compareTo(workDaysAfterApril) < 0){
-            if (alreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by " + person + " for " + workDays + " days in " + year + " because "
-                        + alreadyUsedNextYear + " remaining days have already been used in " + (year+1));
-            }
-            return false;
-        }
-
-        return true;
+        return workDaysBeforeApril;
     }
 
 

@@ -75,7 +75,7 @@ public class CalculationServiceTest {
 
 
     @Test
-    public void testCheckApplicationSimple() {
+    public void testCheckApplicationOneDay() {
 
         Person person = TestDataCreator.createPerson("horscht");
 
@@ -190,6 +190,5 @@ public class CalculationServiceTest {
 
         Assert.assertFalse("Should not be enough vacation days to apply for leave, because three already used next year",
                 service.checkApplication(applicationForLeaveToCheck));
-
     }
 }
