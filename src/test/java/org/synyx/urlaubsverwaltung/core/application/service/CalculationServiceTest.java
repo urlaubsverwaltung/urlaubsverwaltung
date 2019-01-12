@@ -85,12 +85,13 @@ public class CalculationServiceTest {
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
-        Account account = new Account();
-        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
-        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
+        Optional<Account> account2012 = Optional.of(new Account());
+        Optional<Account> account2013 = Optional.empty();
+        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
+        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
         // vacation days would be left after this application for leave
-        Mockito.when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.ZERO)
@@ -98,11 +99,13 @@ public class CalculationServiceTest {
                         .forUsedDaysBeforeApril(BigDecimal.ZERO)
                         .forUsedDaysAfterApril(BigDecimal.ZERO)
                         .get());
+        Mockito.when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
+
         Assert.assertTrue("Should be enough vacation days to apply for leave",
                 service.checkApplication(applicationForLeaveToCheck));
 
         // not enough vacation days for this application for leave
-        Mockito.when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.ZERO)
@@ -115,7 +118,7 @@ public class CalculationServiceTest {
                 service.checkApplication(applicationForLeaveToCheck));
 
         // enough vacation days for this application for leave, but none would be left
-        Mockito.when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.ZERO)
@@ -144,22 +147,24 @@ public class CalculationServiceTest {
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
-        Account thisYear = new Account(
-                person, DateUtil.getFirstDayOfYear(2012).toDate(), DateUtil.getLastDayOfYear(2012).toDate(), BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.ZERO, "");
+        Optional<Account> account2012 = Optional.of(
+                new Account(person, DateUtil.getFirstDayOfYear(2012).toDate(), DateUtil.getLastDayOfYear(2012).toDate(),
+                        BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.ZERO, "")
+        );
 
-        Account nextYear = new Account(
-                person, DateUtil.getFirstDayOfYear(2013).toDate(), DateUtil.getLastDayOfYear(2013).toDate(), BigDecimal.TEN,
+        Optional<Account> account2013 = Optional.of(
+                new Account(person, DateUtil.getFirstDayOfYear(2013).toDate(), DateUtil.getLastDayOfYear(2013).toDate(), BigDecimal.TEN,
                 // here we set up 2013 to have 10 days remaining vacation available from 2012,
                 // if those have already been used up, we cannot spend them in 2012 as well
-                BigDecimal.TEN, BigDecimal.TEN, "");
-        nextYear.setVacationDays(nextYear.getAnnualVacationDays());
+                BigDecimal.TEN, BigDecimal.TEN, ""));
+        account2013.get().setVacationDays(account2013.get().getAnnualVacationDays());
 
 
-        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(thisYear));
-        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(nextYear));
+        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
+        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
         // set up 13 days already used next year, i.e. 10 + 3 remaining
-        Mockito.when(vacationDaysService.getVacationDaysLeft(nextYear, Optional.empty())).thenReturn(
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2013.get(), Optional.empty())).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.TEN)
@@ -169,7 +174,7 @@ public class CalculationServiceTest {
                         .get());
 
         // this year still has all ten days (but 3 of them used up next year, see above)
-        Mockito.when(vacationDaysService.getVacationDaysLeft(thisYear, Optional.of(nextYear))).thenReturn(
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.ZERO)
@@ -179,7 +184,9 @@ public class CalculationServiceTest {
                         .withVacationDaysUsedNextYear(BigDecimal.valueOf(3))
                         .get());
 
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
+        Mockito.when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.TEN);
+
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2012.get())).thenReturn(BigDecimal.TEN);
 
         Assert.assertFalse("Should not be enough vacation days to apply for leave, because three already used next year",
                 service.checkApplication(applicationForLeaveToCheck));

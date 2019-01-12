@@ -59,7 +59,7 @@ public class VacationDaysService {
      */
     public BigDecimal calculateTotalLeftVacationDays(Account account) {
 
-        VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account);
+        VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account, Optional.empty());
 
         // it's before April - the left remaining vacation days must be used
         if (nowService.currentYear() == account.getYear() && DateUtil.isBeforeApril(nowService.now(), account.getYear())) {
@@ -116,15 +116,28 @@ public class VacationDaysService {
     }
 
 
-    private BigDecimal getRemainingVacationDaysAlreadyUsed(Optional<Account> account) {
-        if (account.isPresent() && account.get().getRemainingVacationDays().signum() > 0){
+    /**
+     * Returns the already used vacations from last year of the given account.
+     *
+     * @param account the account for the year to calculate the vacation days that are used from the year before
+     *
+     * @return total number of used vacations
+     */
+    public BigDecimal getRemainingVacationDaysAlreadyUsed(Optional<Account> account) {
+        if (account.isPresent() && account.get().getRemainingVacationDays().signum() > 0) {
+
             VacationDaysLeft left = getVacationDaysLeft(account.get(), Optional.empty());
+
             BigDecimal totalUsed = account.get().getVacationDays()
                     .add(account.get().getRemainingVacationDays())
                     .subtract(left.getVacationDays())
                     .subtract(left.getRemainingVacationDays());
+
             BigDecimal remainingUsed = totalUsed.subtract(account.get().getVacationDays());
-            if (remainingUsed.signum() > 0) return remainingUsed;
+
+            if (remainingUsed.signum() > 0) {
+                return remainingUsed;
+            }
         }
         return BigDecimal.ZERO;
     }

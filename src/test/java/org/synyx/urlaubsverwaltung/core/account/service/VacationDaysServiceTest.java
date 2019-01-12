@@ -242,7 +242,7 @@ public class VacationDaysServiceTest {
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
 
-        VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account);
+        VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, Optional.empty());
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft);
 
@@ -255,7 +255,8 @@ public class VacationDaysServiceTest {
             vacationDaysLeft.getRemainingVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
             vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-        Assert.assertEquals("Wrong number of vacation days already used for next year", BigDecimal.ZERO, vacationDaysLeft.getVacationDaysUsedNextYear());
+        Assert.assertEquals("Wrong number of vacation days already used for next year", BigDecimal.ZERO,
+            vacationDaysLeft.getVacationDaysUsedNextYear());
 
     }
 
@@ -291,7 +292,34 @@ public class VacationDaysServiceTest {
                 vacationDaysLeft.getRemainingVacationDaysNotExpiring());
     }
 
+    @Test
+    public void testGetVacationDaysUsedOfEmptyAccount() {
 
+        Assert.assertEquals(BigDecimal.ZERO, vacationDaysService.getRemainingVacationDaysAlreadyUsed(Optional.empty()));
+    }
+
+    @Test
+    public void testGetVacationDaysUsedOfZeroRemainingVacationDays() {
+
+        Optional<Account> account = Optional.of(new Account());
+        account.get().setRemainingVacationDays(BigDecimal.ZERO);
+
+        Assert.assertEquals(BigDecimal.ZERO, vacationDaysService.getRemainingVacationDaysAlreadyUsed(account));
+    }
+
+    @Test
+    public void testGetVacationDaysUsedOfOneRemainingVacationDays() {
+
+        initCustomService("20", "20");
+
+        Optional<Account> account = Optional.of(new Account());
+        account.get().setAnnualVacationDays(new BigDecimal("30"));
+        account.get().setVacationDays(new BigDecimal("30"));
+        account.get().setRemainingVacationDays(new BigDecimal("10"));
+        account.get().setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
+
+        Assert.assertEquals(BigDecimal.TEN, vacationDaysService.getRemainingVacationDaysAlreadyUsed(account));
+    }
 
     @Test
     public void testGetTotalVacationDaysForPastYear() {
