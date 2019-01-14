@@ -114,7 +114,7 @@ public class CalculationService {
         BigDecimal alreadyUsedNextYear = vacationDaysService.getRemainingVacationDaysAlreadyUsed(nextYear);
 
         VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account.get(), nextYear);
-        LOG.info("vacationDaysLeft: " + vacationDaysLeft);
+        LOG.info("vacationDaysLeft: " + (year + 1) + " " + vacationDaysLeft);
 
         // now we need to consider which remaining vacation days expire
         BigDecimal workDaysBeforeApril = getWorkdaysBeforeApril(year, application);

@@ -83,12 +83,14 @@ public class CalculationServiceTest {
     private void prepareSetupWith10DayAnnualVacation(Person person, int usedDaysBeforeApril, int usedDaysAfterApril) {
 
         Optional<Account> account2012 = Optional.of(new Account());
-        Optional<Account> accountEmpty = Optional.empty();
+        Optional<Account> account2013 = Optional.of(new Account());
+        Optional<Account> account2014 = Optional.of(new Account());
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
-        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(accountEmpty);
+        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
+        Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(account2014);
 
         // vacation days would be left after this application for leave
-        Mockito.when(vacationDaysService.getVacationDaysLeft(account2012.get(), accountEmpty)).thenReturn(
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.ZERO)
@@ -96,7 +98,37 @@ public class CalculationServiceTest {
                         .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
                         .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
                         .get());
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2013.get(), account2014)).thenReturn(
+                VacationDaysLeft.builder()
+                        .withAnnualVacation(BigDecimal.TEN)
+                        .withRemainingVacation(BigDecimal.ZERO)
+                        .notExpiring(BigDecimal.ZERO)
+                        .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
+                        .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
+                        .get());
+        Mockito.when(vacationDaysService.getVacationDaysLeft(account2014.get(), Optional.empty())).thenReturn(
+                VacationDaysLeft.builder()
+                        .withAnnualVacation(BigDecimal.TEN)
+                        .withRemainingVacation(BigDecimal.ZERO)
+                        .notExpiring(BigDecimal.ZERO)
+                        .forUsedDaysBeforeApril(BigDecimal.ZERO)
+                        .forUsedDaysAfterApril(BigDecimal.ZERO)
+                        .get());
         Mockito.when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
+        Mockito.when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2014)).thenReturn(BigDecimal.ZERO);
+    }
+
+
+    @Test
+    public void testCheckApplicationOneDayIsOkayNoVacationTakenBefore() {
+
+        Person person = TestDataCreator.createPerson("horscht");
+
+        Application applicationForLeaveToCheck = createApplicationStub(person);
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
+
+        prepareSetupWith10DayAnnualVacation(person, 0, 0);
 
         Assert.assertTrue("Should be enough vacation days to apply for leave",
                 service.checkApplication(applicationForLeaveToCheck));
@@ -138,6 +170,35 @@ public class CalculationServiceTest {
             service.checkApplication(applicationForLeaveToCheck));
     }
 
+    @Test
+    public void testCheckApplicationOneDayIsOkayOverAYear() {
+
+        Person person = TestDataCreator.createPerson("horscht");
+
+        Application applicationForLeaveToCheck = createApplicationStub(person);
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.DECEMBER, 30));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2013, DateTimeConstants.JANUARY, 2));
+
+        prepareSetupWith10DayAnnualVacation(person, 5, 4);
+
+        Assert.assertTrue("Should be enough vacation days to apply for leave",
+                service.checkApplication(applicationForLeaveToCheck));
+    }
+
+    @Test
+    public void testCheckApplicationOneDayIsNotOkayOverAYear() {
+
+        Person person = TestDataCreator.createPerson("horscht");
+
+        Application applicationForLeaveToCheck = createApplicationStub(person);
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.DECEMBER, 30));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2013, DateTimeConstants.JANUARY, 2));
+
+        prepareSetupWith10DayAnnualVacation(person, 5, 5);
+
+        Assert.assertFalse("Should not be enough vacation days to apply for leave",
+                service.checkApplication(applicationForLeaveToCheck));
+    }
 
     /**
      * https://github.com/synyx/urlaubsverwaltung/issues/447
