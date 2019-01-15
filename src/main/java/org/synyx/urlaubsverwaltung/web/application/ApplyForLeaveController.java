@@ -18,11 +18,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -37,7 +41,6 @@ import java.sql.Time;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
 
 /**
  * Controller to apply for leave.
@@ -63,10 +66,14 @@ public class ApplyForLeaveController {
     private VacationTypeService vacationTypeService;
 
     @Autowired
-    private ApplicationInteractionService applicationInteractionService;
+    private
+                                   ApplicationInteractionService applicationInteractionService;
 
     @Autowired
     private ApplicationValidator applicationValidator;
+
+    @Autowired
+    private SettingsService settingsService;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -125,11 +132,19 @@ public class ApplyForLeaveController {
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
         List<Person> persons = personService.getActivePersons();
-
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+
+        boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
+        model.addAttribute("overtimeActive", overtimeActive);
+
+        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+        if(!overtimeActive) {
+        	vacationTypes=vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
+        }
+		model.addAttribute("vacationTypes", vacationTypes);
+
         model.addAttribute("application", appForm);
-        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
     }
 
 
