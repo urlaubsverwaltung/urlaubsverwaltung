@@ -3,9 +3,12 @@ package org.synyx.urlaubsverwaltung.core.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.dao.VacationTypeDAO;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -22,6 +25,14 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     @Override
     public List<VacationType> getVacationTypes() {
 
-        return this.vacationTypeDAO.findAll();
+        return vacationTypeDAO.findAll();
+    }
+
+    @Override
+    public List<VacationType> getVacationTypesFilteredBy(VacationCategory vacationCategory) {
+
+        return getVacationTypes().stream()
+            .filter(vt -> vt.getCategory() != vacationCategory)
+            .collect(toList());
     }
 }
