@@ -50,100 +50,54 @@
 											.forEach(
 													function(currentDay, index,
 															array) {
-														if (response.response.absences
-																.find(
-																		function(
-																				currentValue,
-																				index,
-																				array) {
-																			if (this.toString() == currentValue.date
-																					&& currentValue.status === "WAITING"
-																					&& currentValue.type === "VACATION"
-																					&& currentValue.dayLength === 1) {
-																				return "test";
-																			}
-																		},
-																		currentDay.dayText)) {
-															currentDay.cssClass = 'vacationOverview-day-personal-holiday-status-WAITING vactionOverview-day-item ';
-														}
-														if (response.response.absences
-																.find(
-																		function(
-																				currentValue,
-																				index,
-																				array) {
-																			if (this.toString() == currentValue.date
-																					&& currentValue.status === "WAITING"
-																					&& currentValue.type === "VACATION"
-																					&& currentValue.dayLength < 1) {
-																				return "test";
-																			}
-																		},
-																		currentDay.dayText)) {
-															currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-WAITING vactionOverview-day-item ';
-														}
+														var currentAbsence = response.response.absences
+                                                            .find(
+                                                                    function(
+                                                                            currentValue,
+                                                                            index,
+                                                                            array) {
+                                                                        if (this.toString() == currentValue.date){
+                                                                            return currentValue;
+                                                                        }
+                                                                    },
+                                                                    currentDay.dayText);
 
-														if (response.response.absences
-																.find(
-																		function(
-																				currentValue,
-																				index,
-																				array) {
-																			if (this.toString() == currentValue.date
-																					&& currentValue.status === "ALLOWED"
-																					&& currentValue.dayLength < 1
-																					&& currentValue.type === "VACATION") {
-																				return "test";
-																			}
-																		},
-																		currentDay.dayText)) {
-															currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-ALLOWED vactionOverview-day-item ';
+                                                        var categoryCss = (currentAbsence && currentAbsence.category) ? 'vacationOverview-day-category-'+currentAbsence.category : "";
+
+
+														if (currentAbsence
+                                                            && currentAbsence.status === "WAITING"
+                                                            && currentAbsence.type === "VACATION"
+                                                            && currentAbsence.dayLength === 1) {
+															currentDay.cssClass = 'vacationOverview-day-personal-holiday-status-WAITING vactionOverview-day-item '+categoryCss;
 														}
-														if (response.response.absences
-																.find(
-																		function(
-																				currentValue,
-																				index,
-																				array) {
-																			if (this.toString() == currentValue.date
-																					&& currentValue.status === "ALLOWED"
-																					&& currentValue.dayLength === 1
-																					&& currentValue.type === "VACATION") {
-																				return "test";
-																			}
-																		},
-																		currentDay.dayText)) {
-															currentDay.cssClass = ' vacationOverview-day-personal-holiday-status-ALLOWED vactionOverview-day-item ';
+														else if (currentAbsence
+                                                            && currentAbsence.status === "WAITING"
+                                                            && currentAbsence.type === "VACATION"
+                                                            && currentAbsence.dayLength < 1) {
+															currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-WAITING vactionOverview-day-item '+categoryCss;
 														}
-														if (response.response.absences
-																.find(
-																		function(
-																				currentValue,
-																				index,
-																				array) {
-																			if (this.toString() == currentValue.date
-																					&& currentValue.type === 'SICK_NOTE'
-																					&& currentValue.dayLength === 1) {
-																				return "test";
-																			}
-																		},
-																		currentDay.dayText)) {
-															currentDay.cssClass = ' vacationOverview-day-sick-note vactionOverview-day-item ';
+														else if (currentAbsence
+                                                            && currentAbsence.status === "ALLOWED"
+                                                            && currentAbsence.type === "VACATION"
+                                                            && currentAbsence.dayLength < 1) {
+															currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-ALLOWED vactionOverview-day-item '+categoryCss;
 														}
-														if (response.response.absences
-																.find(
-																		function(
-																				currentValue,
-																				index,
-																				array) {
-																			if (this.toString() == currentValue.date
-																					&& currentValue.type === 'SICK_NOTE'
-																					&& currentValue.dayLength < 1) {
-																				return "test";
-																			}
-																		},
-																		currentDay.dayText)) {
-															currentDay.cssClass = ' vacationOverview-day-sick-note-half-day vactionOverview-day-item ';
+														else if (currentAbsence
+                                                            && currentAbsence.status === "ALLOWED"
+                                                            && currentAbsence.type === "VACATION"
+                                                            && currentAbsence.dayLength === 1) {
+															currentDay.cssClass = ' vacationOverview-day-personal-holiday-status-ALLOWED vactionOverview-day-item '+categoryCss;
+														}
+														else if (currentAbsence
+                                                            && currentAbsence.type === "SICK_NOTE"
+                                                            && currentAbsence.dayLength === 1) {
+															currentDay.cssClass = ' vacationOverview-day-sick-note vactionOverview-day-item '+categoryCss;
+														}
+														else if (currentAbsence
+                                                            && currentAbsence.type === "SICK_NOTE"
+                                                            && currentAbsence.dayLength < 1) {
+															currentDay.cssClass = ' vacationOverview-day-sick-note-half-day vactionOverview-day-item '+categoryCss;
 														}
 													}, this);
 								}

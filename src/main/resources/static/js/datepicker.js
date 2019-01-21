@@ -159,8 +159,11 @@ function colorizeDate(date, publicHolidays, absences) {
     var isPublicHoliday = isSpecialDay(dateString, publicHolidays);
 
     var absenceType;
+    var absenceCategory;
     if (isSpecialDay(dateString, absences)) {
-      absenceType = getAbsenceType(dateString, absences);
+      var absence = getAbsence(dateString, absences);
+      absenceType = absence.type;
+      absenceCategory = absence.category;
     }
 
     var isSickDay = absenceType === "SICK_NOTE";
@@ -180,10 +183,12 @@ function colorizeDate(date, publicHolidays, absences) {
 
     if (isSickDay) {
       cssClasses.push("sickday");
+      cssClasses.push("sickday-"+absenceCategory)
     }
 
     if (isPersonalHoliday) {
       cssClasses.push("holiday");
+      cssClasses.push("holiday-"+absenceCategory);
     }
 
     return [true, cssClasses.join(" ")];
@@ -200,11 +205,11 @@ function isSpecialDay(formattedDate, specialDays) {
 
 }
 
-function getAbsenceType(formattedDate, absences) {
+function getAbsence(formattedDate, absences) {
 
   var absence = _.findWhere(absences, {date: formattedDate});
 
-  return absence.type;
+  return absence;
 }
 
 function isHalfWorkday(formattedDate, holidays) {

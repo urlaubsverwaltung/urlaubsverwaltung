@@ -22,10 +22,8 @@ $(function() {
         dayPast               : 'datepicker-day-past',
         dayHalf               : 'datepicker-day-half',
         dayPublicHoliday      : 'datepicker-day-public-holiday',
-        dayHalfPublicHoliday  : 'datepicker-day-half-public-holiday',
-        dayPersonalHoliday    : 'datepicker-day-personal-holiday',
-        dayHalfPersonalHoliday: 'datepicker-day-half-personal-holiday',
-        daySickDay            : 'datepicker-day-sick-note',
+        dayPersonalHoliday    : 'datepicker-day-personal-holiday datepicker-day-personal-holiday-{{category}}',
+        daySickDay            : 'datepicker-day-sick-note datepicker-day-sick-note-{{category}}',
         dayStatus             : 'datepicker-day-status-{{status}}',
         next                  : 'datepicker-next',
         prev                  : 'datepicker-prev',
@@ -82,6 +80,9 @@ $(function() {
             },
             status : function(date) {
                 return holidayService.getStatus(date);
+            },
+            absenceCategory: function(date) {
+                return holidayService.getAbsenceCategory(date);
             }
         };
 
@@ -359,6 +360,39 @@ $(function() {
 
             },
 
+            getAbsenceCategory: function (date) {
+
+                var year = date.year();
+                var formattedDate = date.format('YYYY-MM-DD');
+
+                if (!_CACHE['holiday']) {
+                    return '';
+                }
+
+                if(_CACHE['holiday'][year]) {
+
+                    var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+
+                    if(holiday) {
+                        return holiday.category;
+                    }
+
+                }
+
+                if(_CACHE['sick'][year]) {
+
+                    var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
+
+                    if(sickDay) {
+                        return sickDay.category;
+                    }
+
+                }
+
+                return '';
+
+            },
+
             /**
              *
              * @param {moment} from
@@ -585,15 +619,16 @@ $(function() {
 
             function classes() {
                 var status = assert.status(date)
+                var category = assert.absenceCategory(date)
                 return [
-                    assert.isToday           (date) ? CSS.dayToday                                  : '',
-                    assert.isWeekend         (date) ? CSS.dayWeekend                                : '',
-                    assert.isPast            (date) ? CSS.dayPast                                   : '',
-                    assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday                          : '',
-                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday                        : '',
-                    assert.isSickDay         (date) ? CSS.daySickDay                                : '',
-                    assert.isHalfDay         (date) ? CSS.dayHalf                                   : '',
-                    status                          ? CSS.dayStatus.replace("{{status}}", status)   : ""
+                    assert.isToday           (date) ? CSS.dayToday                                             : '',
+                    assert.isWeekend         (date) ? CSS.dayWeekend                                           : '',
+                    assert.isPast            (date) ? CSS.dayPast                                              : '',
+                    assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday                                     : '',
+                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday.replace("{{category}}", category) : '',
+                    assert.isSickDay         (date) ? CSS.daySickDay.replace("{{category}}", category)         : '',
+                    assert.isHalfDay         (date) ? CSS.dayHalf                                              : '',
+                    status                          ? CSS.dayStatus.replace("{{status}}", status)              : ''
                 ].join(' ');
             }
 
