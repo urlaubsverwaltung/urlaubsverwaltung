@@ -21,6 +21,9 @@ public interface ApplicationDAO extends CrudRepository<Application, Integer> {
     List<Application> getApplicationsForACertainState(ApplicationStatus status);
 
 
+    List<Application> findByStatusInAndPerson(List<ApplicationStatus> statuses, Person person);
+
+
     @Query(
         "select x from Application x "
             + "where x.status = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "

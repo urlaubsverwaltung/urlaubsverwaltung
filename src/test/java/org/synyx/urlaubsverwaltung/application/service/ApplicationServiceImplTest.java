@@ -9,11 +9,15 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
 
 /**
@@ -85,7 +89,22 @@ public class ApplicationServiceImplTest {
         verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
+        assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
+    }
+
+
+    @Test
+    public void getForStatesAndPerson() {
+
+        final Application application = new Application();
+        final List<Application> applications = List.of(application);
+
+        final Person person = TestDataCreator.createPerson();
+
+        when(applicationDAO.findByStatusInAndPerson(singletonList(WAITING), person)).thenReturn(applications);
+
+        final List<Application> result = applicationService.getForStatesAndPerson(singletonList(WAITING), person);
+        assertEquals(applications, result);
     }
 
 
@@ -101,6 +120,6 @@ public class ApplicationServiceImplTest {
         verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);
+        assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);
     }
 }

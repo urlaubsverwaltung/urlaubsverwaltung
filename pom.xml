@@ -225,6 +225,21 @@
       <version>${swagger-annotations.version}</version>
     </dependency>
 
+    <!-- iCal -->
+    <dependency>
+      <groupId>org.mnode.ical4j</groupId>
+      <artifactId>ical4j</artifactId>
+      <version>3.0.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
+    </dependency>
+
     <!-- EXCHANGE SYNC -->
     <dependency>
       <groupId>com.microsoft.ews-java-api</groupId>
