@@ -52,9 +52,9 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
-     * @param  person {@link Person}
+     * @param  startDate  {@link DateMidnight}
+     * @param  endDate  {@link DateMidnight}
+     * @param  person  {@link Person}
      *
      * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
@@ -65,9 +65,9 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
      *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
-     * @param  status {@link org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus}
+     * @param  startDate  {@link DateMidnight}
+     * @param  endDate  {@link DateMidnight}
+     * @param  status  {@link org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus}
      *
      * @return  all {@link Application}s with the given state and vacation time between startDate x and endDate y
      */
@@ -79,16 +79,24 @@ public interface ApplicationService {
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
      * state.
      *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
-     * @param  person {@link Person}
-     * @param  status {@link org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus}
+     * @param  startDate  {@link DateMidnight}
+     * @param  endDate  {@link DateMidnight}
+     * @param  person  {@link Person}
+     * @param  status  {@link org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus}
      *
      * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y and
      *          with a certain state
      */
     List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate, DateMidnight endDate,
         Person person, ApplicationStatus status);
+
+
+    /**
+     * Get all {@link Application}.
+     *
+     * @return  all {@link Application}
+     */
+    List<Application> getForStates(List<ApplicationStatus> statuses);
 
 
     /**

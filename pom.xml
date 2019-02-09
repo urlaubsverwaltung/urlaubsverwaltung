@@ -92,7 +92,7 @@
     </repositories>
 
     <dependencies>
-        <!-- SPRING / WEB -->
+      <!-- SPRING / WEB -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -249,6 +249,12 @@
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-calendar</artifactId>
             <version>${google-api-services-calendar.version}</version>
+        </dependency>
+      <!-- iCal -->
+        <dependency>
+            <groupId>org.mnode.ical4j</groupId>
+            <artifactId>ical4j</artifactId>
+            <version>3.0.6</version>
         </dependency>
     </dependencies>
 

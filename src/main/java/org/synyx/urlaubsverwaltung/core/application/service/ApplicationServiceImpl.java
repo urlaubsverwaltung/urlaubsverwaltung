@@ -83,6 +83,13 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
+    public List<Application> getForStates(List<ApplicationStatus> statuses) {
+
+        return applicationDAO.findByStatusIn(statuses);
+    }
+
+
+    @Override
     public BigDecimal getTotalOvertimeReductionOfPerson(Person person) {
 
         Assert.notNull(person, "Person to get overtime reduction for must be given.");

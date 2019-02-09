@@ -25,6 +25,9 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     List<Application> getApplicationsForACertainState(ApplicationStatus status);
 
 
+    List<Application> findByStatusIn(List<ApplicationStatus> statuses);
+
+
     @Query(
         "select x from Application x "
         + "where x.status = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
