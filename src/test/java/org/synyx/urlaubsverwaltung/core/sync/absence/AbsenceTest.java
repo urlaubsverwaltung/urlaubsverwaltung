@@ -51,7 +51,7 @@ public class AbsenceTest {
 
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, timeConfiguration);
+        Absence absence = new Absence("ID", person, period, EventType.WAITING_APPLICATION, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
@@ -74,7 +74,7 @@ public class AbsenceTest {
 
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence("ID", person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
@@ -98,7 +98,7 @@ public class AbsenceTest {
 
         Period period = new Period(today, today, DayLength.MORNING);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence("ID", person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
         Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
@@ -115,7 +115,7 @@ public class AbsenceTest {
 
         Period period = new Period(today, today, DayLength.NOON);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence("ID", person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertEquals("Should start at 12 pm", start, absence.getStartDate());
         Assert.assertEquals("Should end at 4 pm", end, absence.getEndDate());
@@ -130,7 +130,7 @@ public class AbsenceTest {
 
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence("ID", person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertTrue("Should be all day", absence.isAllDay());
     }
@@ -143,7 +143,7 @@ public class AbsenceTest {
 
         Period period = new Period(today, today, DayLength.MORNING);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence("ID", person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
@@ -156,7 +156,7 @@ public class AbsenceTest {
 
         Period period = new Period(today, today, DayLength.NOON);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence("ID", person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
@@ -165,7 +165,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullPeriod() {
 
-        new Absence(person, null, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        new Absence("ID", person, null, EventType.ALLOWED_APPLICATION, timeConfiguration);
     }
 
 
@@ -174,7 +174,7 @@ public class AbsenceTest {
 
         Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
 
-        new Absence(null, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        new Absence("ID", null, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
     }
 
 
@@ -183,7 +183,7 @@ public class AbsenceTest {
 
         Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
 
-        new Absence(person, period, null, timeConfiguration);
+        new Absence("ID", person, period, null, timeConfiguration);
     }
 
 
@@ -192,7 +192,7 @@ public class AbsenceTest {
 
         Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
 
-        new Absence(person, period, EventType.ALLOWED_APPLICATION, null);
+        new Absence("ID", person, period, EventType.ALLOWED_APPLICATION, null);
     }
 
 
@@ -203,7 +203,7 @@ public class AbsenceTest {
         Period period = new Period(today, today, DayLength.FULL);
 
         BiConsumer<EventType, String> assertCorrectEventSubject = (type, subject) -> {
-            Absence absence = new Absence(person, period, type, timeConfiguration);
+            Absence absence = new Absence("ID", person, period, type, timeConfiguration);
 
             assertThat(absence.getEventType(), is(type));
             assertThat(absence.getEventSubject(), is(subject));

@@ -7,8 +7,10 @@ import org.joda.time.DateTimeZone;
 
 import org.springframework.util.Assert;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.Date;
 
@@ -20,20 +22,23 @@ import java.util.Date;
  */
 public class Absence {
 
+    private final String identifier;
     private final Date startDate;
     private final Date endDate;
     private final Person person;
     private final EventType eventType;
     private final boolean isAllDay;
 
-    public Absence(Person person, Period period, EventType eventType,
+    public Absence(String identifier, Person person, Period period, EventType eventType,
         AbsenceTimeConfiguration absenceTimeConfiguration) {
 
+        Assert.notNull(identifier, "Identifier must be given");
         Assert.notNull(person, "Person must be given");
         Assert.notNull(period, "Period must be given");
         Assert.notNull(eventType, "Type of absence must be given");
         Assert.notNull(absenceTimeConfiguration, "Time configuration must be given");
 
+        this.identifier = identifier;
         this.person = person;
         this.eventType = eventType;
 
@@ -48,7 +53,8 @@ public class Absence {
                 break;
 
             case MORNING:
-                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStartAsMillis());
+                this.startDate = new Date(startDateInMilliseconds
+                        + absenceTimeConfiguration.getMorningStartAsMillis());
                 this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEndAsMillis());
                 this.isAllDay = false;
                 break;
@@ -63,6 +69,23 @@ public class Absence {
                 throw new IllegalArgumentException("Invalid day length!");
         }
     }
+
+    public static Absence of(Application application, AbsenceTimeConfiguration timeConfig) {
+
+        String identifier = AbsenceType.VACATION.name() + "_" + application.getId();
+
+        return new Absence(identifier, application.getPerson(), application.getPeriod(), application.getEventType(),
+                timeConfig);
+    }
+
+
+    public static Absence of(SickNote sickNote, AbsenceTimeConfiguration timeConfig) {
+
+        String identifier = AbsenceType.SICKNOTE.name() + "_" + sickNote.getId();
+
+        return new Absence(identifier, sickNote.getPerson(), sickNote.getPeriod(), EventType.SICKNOTE, timeConfig);
+    }
+
 
     public EventType getEventType() {
 
@@ -109,6 +132,12 @@ public class Absence {
             default:
                 throw new IllegalStateException("Event type is not properly set.");
         }
+    }
+
+
+    public String getIdentifier() {
+
+        return identifier;
     }
 
 

@@ -25,15 +25,15 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
-import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.core.sync.absence.EventType;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.synyx.urlaubsverwaltung.core.sync.absence.Absence.of;
 
 
 /**
@@ -58,13 +58,9 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService,
-                                             ApplicationCommentService commentService,
-                                             AccountInteractionService accountInteractionService,
-                                             MailService mailService,
-                                             CalendarSyncService calendarSyncService,
-                                             AbsenceMappingService absenceMappingService,
-                                             SettingsService settingsService,
-                                             DepartmentService departmentService) {
+        ApplicationCommentService commentService, AccountInteractionService accountInteractionService,
+        MailService mailService, CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService,
+        SettingsService settingsService, DepartmentService departmentService) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
@@ -119,8 +115,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
-        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application.getPerson(),
-                    application.getPeriod(), EventType.WAITING_APPLICATION, timeConfiguration));
+        Optional<String> eventId = calendarSyncService.addAbsence(of(application, timeConfiguration));
 
         if (eventId.isPresent()) {
             absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId.get());
@@ -128,6 +123,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         return application;
     }
+
 
     @Override
     public Application allow(Application application, Person privilegedUser, Optional<String> comment) {
@@ -139,7 +135,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         // Second stage authority has almost the same power (except on own applications)
         boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
-                && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
+            && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
 
         boolean isOwnApplication = application.getPerson().equals(privilegedUser);
 
@@ -152,8 +148,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
 
         // DEPARTMENT_HEAD can _not_ allow SECOND_STAGE_AUTHORITY
-        boolean isSecondStageAuthorityApplication =
-                application.getPerson().hasRole(Role.SECOND_STAGE_AUTHORITY);
+        boolean isSecondStageAuthorityApplication = application.getPerson().hasRole(Role.SECOND_STAGE_AUTHORITY);
 
         if (isDepartmentHead && !isOwnApplication && !isSecondStageAuthorityApplication) {
             if (application.isTwoStageApproval()) {
@@ -199,7 +194,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
 
-    private Application allowFinally(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
+    private Application allowFinally(Application applicationForLeave, Person privilegedUser,
+        Optional<String> comment) {
 
         if (applicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
             // Early return - do nothing if expected status already set
@@ -233,8 +229,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (absenceMapping.isPresent()) {
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
             AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(applicationForLeave.getPerson(), applicationForLeave.getPeriod(),
-                    EventType.ALLOWED_APPLICATION, timeConfiguration), absenceMapping.get().getEventId());
+            calendarSyncService.update(of(applicationForLeave, timeConfiguration), absenceMapping.get().getEventId());
         }
 
         return applicationForLeave;
@@ -277,8 +272,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
-        if (application.hasStatus(ApplicationStatus.ALLOWED) ||
-                application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+        if (application.hasStatus(ApplicationStatus.ALLOWED)
+                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
             cancelApplication(application, canceller, comment);
         } else {
             revokeApplication(application, canceller, comment);
@@ -330,8 +325,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             LOG.info("Cancelled application for leave: " + application);
 
-            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCELLED, comment,
-                    canceller);
+            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCELLED,
+                    comment, canceller);
 
             if (!canceller.equals(application.getPerson())) {
                 mailService.sendCancelledByOfficeNotification(application, createdComment);
@@ -382,7 +377,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         if (remindDate == null) {
             DateMidnight minDateForNotification = application.getApplicationDate()
-                .plusDays(MIN_DAYS_LEFT_BEFORE_REMINDING_IS_POSSIBLE);
+                    .plusDays(MIN_DAYS_LEFT_BEFORE_REMINDING_IS_POSSIBLE);
 
             if (minDateForNotification.isAfterNow()) {
                 throw new ImpatientAboutApplicationForLeaveProcessException("It's too early to remind the bosses!");

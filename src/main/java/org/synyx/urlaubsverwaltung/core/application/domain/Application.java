@@ -11,16 +11,15 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sync.absence.EventType;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
 import java.math.BigDecimal;
 
 import java.sql.Time;
 
-import java.util.Arrays;
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -562,5 +561,17 @@ public class Application extends AbstractPersistable<Integer> {
         }
 
         return null;
+    }
+
+
+    public EventType getEventType() {
+
+        if (this.status == ApplicationStatus.ALLOWED) {
+            return EventType.ALLOWED_APPLICATION;
+        } else if (this.status == ApplicationStatus.WAITING || this.status == ApplicationStatus.TEMPORARY_ALLOWED) {
+            return EventType.WAITING_APPLICATION;
+        }
+
+        throw new IllegalStateException("Cannot map " + this.status.name() + " to EventType.");
     }
 }
