@@ -33,7 +33,7 @@ public class ICalController {
 
         response.setContentType("text/calendar");
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Disposition", "inline; filename=calendar.ics");
+        response.setHeader("Content-Disposition", "attachment; filename=calendar.ics");
 
         return iCalService.getICal();
     }
