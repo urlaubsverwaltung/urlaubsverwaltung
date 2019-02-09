@@ -83,6 +83,7 @@ public class ICalServiceImplTest {
 
         return "BEGIN:VCALENDAR\r\n"
             + "PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE\r\n"
+            + "X-WR-CALNAME:Urlaube\r\n"
             + "VERSION:2.0\r\n"
             + "BEGIN:VEVENT\r\n"
             + "DTSTAMP:" + currentDTSTAMP + "\r\n"

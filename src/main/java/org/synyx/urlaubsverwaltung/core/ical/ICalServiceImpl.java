@@ -7,6 +7,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.XProperty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +45,7 @@ public class ICalServiceImpl implements ICalService {
         List<VEvent> vEvents = absences.stream().map(this::toVEvent).collect(Collectors.toList());
         Calendar iCal = new Calendar();
         iCal.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
+        iCal.getProperties().add(new XProperty("X-WR-CALNAME", "Urlaube"));
         iCal.getProperties().add(Version.VERSION_2_0);
         iCal.getComponents().addAll(vEvents);
 
