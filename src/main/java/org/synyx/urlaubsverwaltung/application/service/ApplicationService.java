@@ -84,6 +84,14 @@ public interface ApplicationService {
 
 
     /**
+     * Get all {@link Application}.
+     *
+     * @return  all {@link Application}
+     */
+    List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, Person person);
+
+
+    /**
      * Get the total hours of overtime reduction for a certain person.
      *
      * @param person to get the total hours of overtime reduction for
