@@ -66,10 +66,10 @@ public class VacationController {
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
         Boolean departmentMembers,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2016-01-01")
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")
         String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2016-12-31")
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam(value = "to")
         String to,
         @ApiParam(value = "ID of the person")
