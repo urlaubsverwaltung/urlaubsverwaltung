@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.config;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -11,6 +12,10 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.synyx.urlaubsverwaltung.security.SimpleAuthenticationProvider;
 
 import java.util.Optional;
+
+
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -61,9 +66,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .logout().logoutUrl("/logout").logoutSuccessUrl("/login")
             .and()
-            .csrf().disable()
-            // TODO: dev-env
-            .headers().disable();
+            .csrf().disable();
+
+        boolean devProfileActive = asList(environment.getActiveProfiles()).contains("dev");
+        if (devProfileActive) {
+            http.headers().frameOptions().disable();
+        }
     }
 
     @Override
