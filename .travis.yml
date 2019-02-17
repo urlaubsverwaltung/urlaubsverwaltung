@@ -12,6 +12,8 @@ branches:
     - master
     - /urlaubsverwaltung\-[0-9]+\.[0-9]+\.[0-9]$/
 
+install: true
+
 script:
   - ./mvnw clean verify jacoco:report coveralls:report
 
