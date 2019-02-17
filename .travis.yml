@@ -1,13 +1,12 @@
 language: java
 
-script: ./mvnw verify
-
-after_success:
-  - ./mvnw clean verify jacoco:report coveralls:report
-
 jdk:
   - openjdk8
 
 branches:
   only:
     - master
+
+script:
+  - ./mvnw clean verify jacoco:report coveralls:report
+
