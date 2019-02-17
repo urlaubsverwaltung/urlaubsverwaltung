@@ -101,6 +101,9 @@ Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgen
 Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet hier, können Details zur Installation und
 Konfiguration [hier](docs/INSTALLATION_AS_WAR.md) nachgelesen werden.
 
+Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synxy/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
+Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
+
 #### Systemvoraussetzungen
 
 * JDK 8
