@@ -1,3 +1,12 @@
+### [urlaubsverwaltung-2.29.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.29.0)
+* Bug: help-block überlagert Link für Jahres-Auswahl [#448](https://github.com/synyx/urlaubsverwaltung/issues/448)
+* Sicherheitsupdates JS-Abhängigkeiten
+* Bereits verbuchter Resturlaub im nächsten Jahr kann in diesem Jahr erneut ausgegeben werden [#447](https://github.com/synyx/urlaubsverwaltung/issues/447)
+* Aktualisierung favicon [#459](https://github.com/synyx/urlaubsverwaltung/pull/459)
+* Einführung einheitlicher Coding-Guidelines
+* Bug: History des Browsers überlappt Kalender [#441](https://github.com/synyx/urlaubsverwaltung/issues/441)
+* Verbesserung der Swagger API Dokumentation
+
 ### [urlaubsverwaltung-2.28.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.28.0)
 * Neue Feiertag Reformationstag für die Bundesländer Schleswig-Holstein, Hamburg, Bremen und Niedersachen hinzugefügt [#445](https://github.com/synyx/urlaubsverwaltung/pull/445) [#438](https://github.com/synyx/urlaubsverwaltung/issues/438) [#416](https://github.com/synyx/urlaubsverwaltung/issues/416)
 * Update der Frontend-Test Abhängigkeiten [#446](https://github.com/synyx/urlaubsverwaltung/pull/446)
