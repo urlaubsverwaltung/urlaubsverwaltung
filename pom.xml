@@ -59,8 +59,9 @@
     </properties>
 
     <scm>
-        <developerConnection>scm:git:git@github.com/synyx/urlaubsverwaltung.git</developerConnection>
-        <connection>scm:git:git@github.com/synyx/urlaubsverwaltung.git</connection>
+        <url>https://github.com/synyx/urlaubsverwaltung</url>
+        <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
+        <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
         <tag>HEAD</tag>
     </scm>
 
