@@ -1,13 +1,29 @@
 language: java
 
-script: ./mvnw verify
-
-after_success:
-  - ./mvnw clean verify jacoco:report coveralls:report
-
 jdk:
   - openjdk8
+
+cache:
+  directories:
+    - $HOME/.m2
 
 branches:
   only:
     - master
+    - /urlaubsverwaltung\-[0-9]+\.[0-9]+\.[0-9]$/
+
+install: true
+
+script:
+  - ./mvnw clean verify jacoco:report coveralls:report
+
+deploy:
+  provider: script
+  script: ./mvnw compile jib:build -Djib.to.auth.username="$DOCKER_USERNAME" -Djib.to.auth.password="$DOCKER_PASSWORD"
+  on:
+    tags: true
+
+env:
+  global:
+    - secure: "m1Lw95blY7v8RURXr79L1w/1ltgGpsGfSsPXJYZ1+UMy9QhBZjgbs/2d9QHEyNhkqh3URgT7YOQ7fXlN8zvDB2FcMFjBAm4fTz9F70UnyJKLkoSNG+5VkWwF56OD80ujnXWpwSsziFj+DluVMv8geFNlLtQxhv7BLx4GcAwX23k="
+    - secure: "Wfy6lms6ddTDT5E4kDznw3rhk16s6TU426wjj2/Gvu/ac4D8pMFz9QMuZnvbW07dc7e63e1VB6BFy2dpbkPjyozfsl67CkPdxNb18wYVUIHWaifjOziF00i+FS/17X3YzhvbD0GGl1kDNNKJbbSEAFZJ0gmx0GXdHUyd7QjN1/o="
