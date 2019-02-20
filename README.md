@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/synyx/urlaubsverwaltung.png)](https://travis-ci.org/synyx/urlaubsverwaltung)
 [![Coverage Status](https://coveralls.io/repos/github/synyx/urlaubsverwaltung/badge.svg?branch=master)](https://coveralls.io/github/synyx/urlaubsverwaltung?branch=master)
+[![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 
 ## Urlaubsverwaltung
 
