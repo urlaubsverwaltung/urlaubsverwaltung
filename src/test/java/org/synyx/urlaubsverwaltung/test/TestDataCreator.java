@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.velocity.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -58,14 +58,14 @@ public final class TestDataCreator {
 
     public static Person createPerson(String username) {
 
-        String name = StringUtils.capitalizeFirstLetter(username);
+        String name = StringUtils.capitalize(username);
 
         return TestDataCreator.createPerson(username, name, name, username + "@test.de");
     }
 
     public static Person createPerson(String username, Role... roles) {
 
-        String name = StringUtils.capitalizeFirstLetter(username);
+        String name = StringUtils.capitalize(username);
 
         Person person = TestDataCreator.createPerson(username, name, name, username + "@test.de");
 
