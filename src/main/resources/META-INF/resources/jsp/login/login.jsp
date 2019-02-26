@@ -28,7 +28,6 @@
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#">
-                        <img src="<spring:url value='/images/synyx-logo-transparent.png' />" height="24" width="15" />
                         Urlaubsverwaltung
                     </a>
                 </div>
