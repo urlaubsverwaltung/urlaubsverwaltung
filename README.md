@@ -373,7 +373,4 @@ Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHAN
 ## Lizenz
 
 [synyx/urlaubsverwaltung](http://github.com/synyx/urlaubsverwaltung) is licensed under the
-[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-Alle Logos, Marken- und Warenzeichen unterliegen **nicht** der Apache License 2.0 und dürfen nur mit schriftlicher
-Genehmigung von [synyx](https://www.synyx.de/) weiterverwendet werden.
+[Apache License 2.0](LICENSE.txt)
