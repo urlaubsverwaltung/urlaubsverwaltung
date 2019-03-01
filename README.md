@@ -112,9 +112,10 @@ Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
 #### Download
 
-Die Anwendung steht auf Github bereits als deploybare JAR-Datei zum Download zur Verfügung.
-Einfach die JAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
-downloaden.
+Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
+Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
+da die WAR-Datei einen Tomcat bundled.
 
 #### Starten der Anwendung
 
@@ -122,7 +123,7 @@ Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an 
 zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar
+java -jar -Dspring.profiles.active=dev urlaubsverwaltung.war
 ```
 
 Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
