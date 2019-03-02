@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ImportResource;
@@ -14,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @author  David Schilling - schilling@synyx.de
  */
-@SpringBootApplication(exclude = { VelocityAutoConfiguration.class })
+@SpringBootApplication
 @EnableScheduling
 @ImportResource({ "classpath:spring-security.xml" })
 public class UrlaubsverwaltungApplication extends SpringBootServletInitializer { // NOSONAR - no private constructor needed
