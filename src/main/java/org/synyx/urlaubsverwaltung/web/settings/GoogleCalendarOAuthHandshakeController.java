@@ -13,9 +13,9 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalen
 @RequestMapping("/web")
 public class GoogleCalendarOAuthHandshakeController {
 
-    private static final Log LOG = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarOAuthHandshakeController.class);
 
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
@@ -97,14 +97,11 @@ public class GoogleCalendarOAuthHandshakeController {
                 settingsService.save(settings);
                 calendarSyncService.checkCalendarSyncSettings();
             } else {
-                error = "OAuth handshake error " + httpResponse.getStatusMessage();
-                LOG.warn(error);
+                LOG.warn("OAuth handshake error {}", httpResponse.getStatusMessage());
             }
 
         } catch (IOException e) {
-            error = "Exception while handling OAuth2 callback (" + e.getMessage() + ")."
-                    + " Redirecting to google connection status page.";
-            LOG.error(error, e);
+            LOG.error("Exception while handling OAuth2 callback ({}) Redirecting to google connection status page.", e.getMessage(), e);
         }
 
         StringBuilder buf = new StringBuilder();
@@ -149,7 +146,7 @@ public class GoogleCalendarOAuthHandshakeController {
         authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri);
 
 
-        LOG.info("using authorizationUrl " + authorizationUrl);
+        LOG.info("using authorizationUrl {}", authorizationUrl);
         return authorizationUrl.build();
     }
 }
