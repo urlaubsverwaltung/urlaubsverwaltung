@@ -54,6 +54,7 @@
         <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
         <commons-collections.version>3.2.1</commons-collections.version>
         <commons-lang.version>2.6</commons-lang.version>
+        <mockito.version>2.24.5</mockito.version>
     </properties>
 
     <scm>
@@ -151,6 +152,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
