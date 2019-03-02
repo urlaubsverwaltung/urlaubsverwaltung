@@ -106,7 +106,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> getPersonByID(Integer id) {
 
-        return Optional.ofNullable(personDAO.findOne(id));
+        return personDAO.findById(id);
     }
 
 

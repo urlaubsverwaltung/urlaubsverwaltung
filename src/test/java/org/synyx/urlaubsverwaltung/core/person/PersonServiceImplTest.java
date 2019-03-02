@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -71,7 +72,7 @@ public class PersonServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personDAO.findOne(Mockito.anyInt())).thenReturn(person);
+        Mockito.when(personDAO.findById(Mockito.anyInt())).thenReturn(Optional.of(person));
 
         Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
                 Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
@@ -130,7 +131,7 @@ public class PersonServiceImplTest {
     public void ensureGetPersonByIDCallsCorrectDaoMethod() {
 
         sut.getPersonByID(123);
-        Mockito.verify(personDAO).findOne(123);
+        Mockito.verify(personDAO).findById(123);
     }
 
 

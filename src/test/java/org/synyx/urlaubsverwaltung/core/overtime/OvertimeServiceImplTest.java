@@ -21,6 +21,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -40,15 +47,15 @@ public class OvertimeServiceImplTest {
     @Before
     public void setUp() {
 
-        commentDAO = Mockito.mock(OvertimeCommentDAO.class);
-        overtimeDAO = Mockito.mock(OvertimeDAO.class);
-        applicationService = Mockito.mock(ApplicationService.class);
-        mailService = Mockito.mock(MailService.class);
+        commentDAO = mock(OvertimeCommentDAO.class);
+        overtimeDAO = mock(OvertimeDAO.class);
+        applicationService = mock(ApplicationService.class);
+        mailService = mock(MailService.class);
 
         overtimeService = new OvertimeServiceImpl(overtimeDAO, commentDAO, applicationService, mailService);
 
-        overtimeMock = Mockito.mock(Overtime.class);
-        authorMock = Mockito.mock(Person.class);
+        overtimeMock = mock(Overtime.class);
+        authorMock = mock(Person.class);
     }
 
 
@@ -59,8 +66,8 @@ public class OvertimeServiceImplTest {
 
         overtimeService.record(overtimeMock, Optional.of("Foo Bar"), authorMock);
 
-        Mockito.verify(overtimeDAO).save(overtimeMock);
-        Mockito.verify(commentDAO).save(Mockito.any(OvertimeComment.class));
+        verify(overtimeDAO).save(overtimeMock);
+        verify(commentDAO).save(any(OvertimeComment.class));
     }
 
 
@@ -69,7 +76,7 @@ public class OvertimeServiceImplTest {
 
         overtimeService.record(overtimeMock, Optional.empty(), authorMock);
 
-        Mockito.verify(overtimeMock).onUpdate();
+        verify(overtimeMock).onUpdate();
     }
 
 
@@ -78,22 +85,22 @@ public class OvertimeServiceImplTest {
 
         overtimeService.record(overtimeMock, Optional.of("Foo Bar"), authorMock);
 
-        Mockito.verify(mailService)
-            .sendOvertimeNotification(Mockito.eq(overtimeMock), Mockito.any(OvertimeComment.class));
+        verify(mailService)
+            .sendOvertimeNotification(eq(overtimeMock), any(OvertimeComment.class));
     }
 
 
     @Test
     public void ensureCreatesCommentWithCorrectActionForNewOvertime() {
 
-        Mockito.when(overtimeMock.isNew()).thenReturn(true);
+        when(overtimeMock.isNew()).thenReturn(true);
 
         ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
 
         overtimeService.record(overtimeMock, Optional.empty(), authorMock);
 
-        Mockito.verify(overtimeMock).isNew();
-        Mockito.verify(commentDAO).save(commentCaptor.capture());
+        verify(overtimeMock).isNew();
+        verify(commentDAO).save(commentCaptor.capture());
 
         OvertimeComment comment = commentCaptor.getValue();
 
@@ -105,14 +112,14 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureCreatesCommentWithCorrectActionForExistentOvertime() {
 
-        Mockito.when(overtimeMock.isNew()).thenReturn(false);
+        when(overtimeMock.isNew()).thenReturn(false);
 
         ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
 
         overtimeService.record(overtimeMock, Optional.empty(), authorMock);
 
-        Mockito.verify(overtimeMock).isNew();
-        Mockito.verify(commentDAO).save(commentCaptor.capture());
+        verify(overtimeMock).isNew();
+        verify(commentDAO).save(commentCaptor.capture());
 
         OvertimeComment comment = commentCaptor.getValue();
 
@@ -128,7 +135,7 @@ public class OvertimeServiceImplTest {
 
         overtimeService.record(overtimeMock, Optional.empty(), authorMock);
 
-        Mockito.verify(commentDAO).save(commentCaptor.capture());
+        verify(commentDAO).save(commentCaptor.capture());
 
         OvertimeComment comment = commentCaptor.getValue();
 
@@ -148,7 +155,7 @@ public class OvertimeServiceImplTest {
 
         overtimeService.record(overtimeMock, Optional.of("Foo"), authorMock);
 
-        Mockito.verify(commentDAO).save(commentCaptor.capture());
+        verify(commentDAO).save(commentCaptor.capture());
 
         OvertimeComment comment = commentCaptor.getValue();
 
@@ -169,7 +176,7 @@ public class OvertimeServiceImplTest {
 
         overtimeService.getOvertimeRecordsForPerson(person);
 
-        Mockito.verify(overtimeDAO).findByPerson(person);
+        verify(overtimeDAO).findByPerson(person);
     }
 
 
@@ -187,7 +194,7 @@ public class OvertimeServiceImplTest {
 
         overtimeService.getOvertimeById(42);
 
-        Mockito.verify(overtimeDAO).findOne(42);
+        verify(overtimeDAO).findById(42);
     }
 
 
@@ -201,7 +208,7 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureReturnsEmptyOptionalIfNoOvertimeFoundForID() {
 
-        Mockito.when(overtimeDAO.findOne(Mockito.anyInt())).thenReturn(null);
+        when(overtimeDAO.findById(anyInt())).thenReturn(Optional.empty());
 
         Optional<Overtime> overtimeOptional = overtimeService.getOvertimeById(42);
 
@@ -229,7 +236,7 @@ public class OvertimeServiceImplTest {
         DateMidnight firstDay = new DateMidnight(2015, 1, 1);
         DateMidnight lastDay = new DateMidnight(2015, 12, 31);
 
-        Mockito.verify(overtimeDAO).findByPersonAndPeriod(person, firstDay.toDate(), lastDay.toDate());
+        verify(overtimeDAO).findByPersonAndPeriod(person, firstDay.toDate(), lastDay.toDate());
     }
 
 
@@ -238,11 +245,11 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureGetCommentsCorrectDAOMethod() {
 
-        Overtime overtime = Mockito.mock(Overtime.class);
+        Overtime overtime = mock(Overtime.class);
 
         overtimeService.getCommentsForOvertime(overtime);
 
-        Mockito.verify(commentDAO).findByOvertime(overtime);
+        verify(commentDAO).findByOvertime(overtime);
     }
 
 
@@ -281,8 +288,8 @@ public class OvertimeServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(overtimeDAO.findByPersonAndPeriod(Mockito.eq(person), Mockito.any(Date.class),
-                    Mockito.any(Date.class)))
+        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(Date.class),
+                    any(Date.class)))
             .thenReturn(Collections.emptyList());
 
         BigDecimal totalHours = overtimeService.getTotalOvertimeForPersonAndYear(person, 2016);
@@ -290,7 +297,7 @@ public class OvertimeServiceImplTest {
         DateMidnight firstDayOfYear = new DateMidnight(2016, 1, 1);
         DateMidnight lastDayOfYear = new DateMidnight(2016, 12, 31);
 
-        Mockito.verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", BigDecimal.ZERO, totalHours);
@@ -308,8 +315,8 @@ public class OvertimeServiceImplTest {
         Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
         otherOvertimeRecord.setHours(BigDecimal.TEN);
 
-        Mockito.when(overtimeDAO.findByPersonAndPeriod(Mockito.eq(person), Mockito.any(Date.class),
-                    Mockito.any(Date.class)))
+        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(Date.class),
+                    any(Date.class)))
             .thenReturn(Arrays.asList(overtimeRecord, otherOvertimeRecord));
 
         BigDecimal totalHours = overtimeService.getTotalOvertimeForPersonAndYear(person, 2016);
@@ -317,7 +324,7 @@ public class OvertimeServiceImplTest {
         DateMidnight firstDayOfYear = new DateMidnight(2016, 1, 1);
         DateMidnight lastDayOfYear = new DateMidnight(2016, 12, 31);
 
-        Mockito.verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", new BigDecimal("11"), totalHours);
@@ -338,13 +345,13 @@ public class OvertimeServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
-        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
+        when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
+        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
         BigDecimal totalHours = overtimeService.getLeftOvertimeForPerson(person);
 
-        Mockito.verify(overtimeDAO).calculateTotalHoursForPerson(person);
-        Mockito.verify(applicationService).getTotalOvertimeReductionOfPerson(person);
+        verify(overtimeDAO).calculateTotalHoursForPerson(person);
+        verify(applicationService).getTotalOvertimeReductionOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", BigDecimal.ZERO, totalHours);
@@ -356,13 +363,13 @@ public class OvertimeServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
-        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
+        when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
+        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         BigDecimal leftOvertime = overtimeService.getLeftOvertimeForPerson(person);
 
-        Mockito.verify(overtimeDAO).calculateTotalHoursForPerson(person);
-        Mockito.verify(applicationService).getTotalOvertimeReductionOfPerson(person);
+        verify(overtimeDAO).calculateTotalHoursForPerson(person);
+        verify(applicationService).getTotalOvertimeReductionOfPerson(person);
 
         Assert.assertNotNull("Should not be null", leftOvertime);
         Assert.assertEquals("Wrong left overtime", new BigDecimal("9"), leftOvertime);
@@ -374,8 +381,8 @@ public class OvertimeServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
-        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
+        when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
+        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
         BigDecimal leftOvertime = overtimeService.getLeftOvertimeForPerson(person);
 

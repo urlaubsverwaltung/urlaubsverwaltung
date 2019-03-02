@@ -43,7 +43,7 @@ public class SickNoteServiceImpl implements SickNoteService {
     @Override
     public Optional<SickNote> getById(Integer id) {
 
-        return Optional.ofNullable(sickNoteDAO.findOne(id));
+        return sickNoteDAO.findById(id);
     }
 
 

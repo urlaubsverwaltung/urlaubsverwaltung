@@ -95,7 +95,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         Assert.notNull(id, "ID must be given.");
 
-        return Optional.ofNullable(overtimeDAO.findOne(id));
+        return overtimeDAO.findById(id);
     }
 
 

@@ -44,7 +44,7 @@ public class ApplicationServiceImplTest {
     public void ensureGetApplicationByIdCallsCorrectDaoMethod() {
 
         applicationService.getApplicationById(1234);
-        Mockito.verify(applicationDAO).findOne(1234);
+        Mockito.verify(applicationDAO).findById(1234);
     }
 
 

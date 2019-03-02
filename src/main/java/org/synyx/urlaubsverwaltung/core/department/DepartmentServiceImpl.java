@@ -47,8 +47,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Optional<Department> getDepartmentById(Integer departmentId) {
-
-        return Optional.ofNullable(departmentDAO.findOne(departmentId));
+        return  departmentDAO.findById(departmentId);
     }
 
 
@@ -75,10 +74,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void delete(Integer departmentId) {
 
-        if (departmentDAO.findOne(departmentId) == null) {
-            LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
+        if(departmentDAO.findById(departmentId).isPresent()) {
+            departmentDAO.deleteById(departmentId);
         } else {
-            departmentDAO.delete(departmentId);
+            LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
         }
     }
 
