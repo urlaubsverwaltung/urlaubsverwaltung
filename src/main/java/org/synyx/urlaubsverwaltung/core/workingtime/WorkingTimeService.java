@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.workingtime;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateMidnight;
 
@@ -29,7 +30,7 @@ import java.util.Optional;
 @Transactional
 public class WorkingTimeService {
 
-    private static final Logger LOG = Logger.getLogger(WorkingTimeService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WorkingTimeService.class);
 
     private final WorkingTimeDAO workingTimeDAO;
     private final SettingsService settingsService;

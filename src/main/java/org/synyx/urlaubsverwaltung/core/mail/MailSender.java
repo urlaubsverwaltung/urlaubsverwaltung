@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +26,7 @@ import java.util.List;
 @Service
 class MailSender {
 
-    private static final Logger LOG = Logger.getLogger(MailSender.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MailSender.class);
 
     private final JavaMailSenderImpl mailSender;
 

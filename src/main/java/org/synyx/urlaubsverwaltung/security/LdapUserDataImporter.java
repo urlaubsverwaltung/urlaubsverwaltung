@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,7 +34,7 @@ import javax.annotation.PostConstruct;
 )
 public class LdapUserDataImporter {
 
-    private static final Logger LOG = Logger.getLogger(LdapSyncService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LdapSyncService.class);
 
     private final LdapUserService ldapUserService;
     private final LdapSyncService ldapSyncService;

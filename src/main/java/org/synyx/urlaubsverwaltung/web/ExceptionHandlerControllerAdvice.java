@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpStatus;
 
@@ -22,7 +23,7 @@ import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteAlreadyInactiveException
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.web")
 public class ExceptionHandlerControllerAdvice {
 
-    private static final Logger LOG = Logger.getLogger(ExceptionHandlerControllerAdvice.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
 
     private static final String ERROR_PAGE_NAME = "errors";
 

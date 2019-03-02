@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
@@ -42,7 +43,7 @@ public class TestDataCreationService {
     private static final String PASSWORD = "secret";
     private static final String NO_PASSWORD = "";
 
-    private static final Logger LOG = Logger.getLogger(TestDataCreationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestDataCreationService.class);
 
     @Autowired
     private PersonDataProvider personDataProvider;

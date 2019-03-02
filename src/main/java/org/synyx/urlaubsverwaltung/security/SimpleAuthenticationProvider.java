@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
  */
 public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
-    private static final Logger LOG = Logger.getLogger(SimpleAuthenticationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleAuthenticationProvider.class);
 
     private final PersonService personService;
 

@@ -16,7 +16,8 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -47,7 +48,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
      * Global instance of the JSON factory.
      */
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final Logger LOG = Logger.getLogger(GoogleCalendarSyncProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarSyncProvider.class);
 
     public static final String APPLICATION_NAME = "Urlaubsverwaltung";
     protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
@@ -97,7 +98,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                     httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
 
         } catch (GeneralSecurityException | IOException e) {
-            LOG.error(e);
+            LOG.error("Something went wrong!", e);
         }
 
         return null;

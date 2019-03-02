@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -47,7 +48,7 @@ import java.util.Optional;
 @RequestMapping("/web")
 public class ApplyForLeaveController {
 
-    private static final Logger LOG = Logger.getLogger(ApplyForLeaveController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplyForLeaveController.class);
 
     @Autowired
     private SessionService sessionService;

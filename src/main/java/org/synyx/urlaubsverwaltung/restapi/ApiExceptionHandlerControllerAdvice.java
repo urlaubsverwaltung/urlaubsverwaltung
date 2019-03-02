@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpStatus;
 
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.restapi")
 public class ApiExceptionHandlerControllerAdvice {
 
-    private static final Logger LOG = Logger.getLogger(ApiExceptionHandlerControllerAdvice.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApiExceptionHandlerControllerAdvice.class);
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ NumberFormatException.class, IllegalArgumentException.class })
