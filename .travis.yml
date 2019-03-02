@@ -21,7 +21,7 @@ after_success:
   - ./mvnw "$MAVEN_CLI_OPTS" jacoco:report coveralls:report
 
 before_deploy:
-  - export JAR_FILE=$(ls target/urlaubsverwaltung-*.jar)
+  - export WAR_FILE=$(ls target/urlaubsverwaltung-*.war)
 
 deploy:
   - provider: script
@@ -32,7 +32,7 @@ deploy:
   - provider: releases
     api_key:
       secure: dKVvxeiHtpKx2sNSxcmLvxRhNuE6uxKJtyZSa/KJhMwsAB+xGmSd03Su9OeOVZd3I83pIEzY8ZxRhnq2ck+aUJYQeOsAr+g9JOvv0JgsnV69Put/nFksXGjLtIwlCDME5seg+cCoxpqaKVyoXaJHL6URN+N15IETNyebytVWXbk=
-    file: "${JAR_FILE}"
+    file: "${WAR_FILE}"
     skip_cleanup: true
     on:
       repo: synyx/urlaubsverwaltung
