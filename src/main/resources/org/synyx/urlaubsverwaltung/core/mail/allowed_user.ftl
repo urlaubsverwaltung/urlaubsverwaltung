@@ -4,8 +4,9 @@ dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag 
 Es handelt sich um den Zeitraum von ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
 Einen schönen Urlaub!
 
-#if($comment.text && $comment.text != "")
+<#if (comment.text)??>
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 
-#end
-Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id}
+</#if>
+
+Link zum Antrag: ${settings.baseLinkURL}web/application/<#if application.id??>${application.id}</#if>
