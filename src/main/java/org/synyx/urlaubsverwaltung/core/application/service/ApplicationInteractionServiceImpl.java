@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateMidnight;
 
@@ -43,7 +44,7 @@ import java.util.Optional;
 @Transactional
 public class ApplicationInteractionServiceImpl implements ApplicationInteractionService {
 
-    private static final Logger LOG = Logger.getLogger(ApplicationInteractionServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationInteractionServiceImpl.class);
 
     private static final int MIN_DAYS_LEFT_BEFORE_REMINDING_IS_POSSIBLE = 2;
 

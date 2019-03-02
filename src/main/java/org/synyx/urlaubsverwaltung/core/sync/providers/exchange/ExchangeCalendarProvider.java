@@ -18,7 +18,8 @@ import microsoft.exchange.webservices.data.search.FolderView;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,7 +46,7 @@ import java.util.Optional;
 @Service
 public class ExchangeCalendarProvider implements CalendarProvider {
 
-    private static final Logger LOG = Logger.getLogger(ExchangeCalendarProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExchangeCalendarProvider.class);
 
     private final MailService mailService;
     private final ExchangeService exchangeService;

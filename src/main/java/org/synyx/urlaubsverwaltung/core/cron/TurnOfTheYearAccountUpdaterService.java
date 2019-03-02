@@ -1,7 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.cron;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateMidnight;
 
@@ -31,7 +32,7 @@ import java.util.Optional;
 @Service
 public class TurnOfTheYearAccountUpdaterService {
 
-    private static final Logger LOG = Logger.getLogger(TurnOfTheYearAccountUpdaterService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TurnOfTheYearAccountUpdaterService.class);
 
     private final PersonService personService;
     private final AccountService accountService;

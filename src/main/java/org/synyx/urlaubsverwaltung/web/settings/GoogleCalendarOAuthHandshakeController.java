@@ -13,9 +13,9 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalen
 @RequestMapping("/web")
 public class GoogleCalendarOAuthHandshakeController {
 
-    private static final Log LOG = LogFactory.getLog(GoogleCalendarOAuthHandshakeController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarOAuthHandshakeController.class);
 
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 

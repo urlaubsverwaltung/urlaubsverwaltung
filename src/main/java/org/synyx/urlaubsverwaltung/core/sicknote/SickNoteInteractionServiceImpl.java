@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateMidnight;
 
@@ -35,7 +36,7 @@ import java.util.Optional;
 @Transactional
 public class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
-    private static final Logger LOG = Logger.getLogger(SickNoteInteractionServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SickNoteInteractionServiceImpl.class);
 
     private final SickNoteService sickNoteService;
     private final SickNoteCommentService commentService;

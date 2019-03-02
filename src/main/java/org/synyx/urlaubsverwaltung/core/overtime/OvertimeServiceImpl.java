@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,7 +30,7 @@ import javax.transaction.Transactional;
 @Service
 public class OvertimeServiceImpl implements OvertimeService {
 
-    private static final Logger LOG = Logger.getLogger(OvertimeServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OvertimeServiceImpl.class);
 
     private final OvertimeDAO overtimeDAO;
     private final OvertimeCommentDAO commentDAO;

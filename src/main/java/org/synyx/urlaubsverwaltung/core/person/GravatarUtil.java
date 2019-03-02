@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.util.Assert;
 
@@ -19,7 +20,7 @@ public final class GravatarUtil {
 
     private static final String DIGEST_ALGORITHM = "MD5";
 
-    private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GravatarUtil.class);
 
     private GravatarUtil() {
 

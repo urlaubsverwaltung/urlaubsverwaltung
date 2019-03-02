@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ import java.util.Optional;
 @Transactional
 class AccountInteractionServiceImpl implements AccountInteractionService {
 
-    private static final Logger LOG = Logger.getLogger(AccountInteractionServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AccountInteractionServiceImpl.class);
 
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;

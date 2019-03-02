@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 
-    private static final Logger LOG = Logger.getLogger(DepartmentServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DepartmentServiceImpl.class);
 
     private final DepartmentDAO departmentDAO;
     private final ApplicationService applicationService;

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,7 +40,7 @@ import javax.naming.NamingException;
 @ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
 public class PersonContextMapper implements UserDetailsContextMapper {
 
-    private static final Logger LOG = Logger.getLogger(PersonContextMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PersonContextMapper.class);
 
     private final PersonService personService;
     private final LdapSyncService ldapSyncService;
