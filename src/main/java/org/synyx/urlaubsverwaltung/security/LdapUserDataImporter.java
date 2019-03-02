@@ -58,7 +58,7 @@ public class LdapUserDataImporter {
 
         List<LdapUser> users = ldapUserService.getLdapUsers();
 
-        LOG.info("Found " + users.size() + " user(s)");
+        LOG.info("Found {} user(s)", users.size());
 
         for (LdapUser user : users) {
             String username = user.getUsername();

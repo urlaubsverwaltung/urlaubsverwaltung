@@ -97,14 +97,11 @@ public class GoogleCalendarOAuthHandshakeController {
                 settingsService.save(settings);
                 calendarSyncService.checkCalendarSyncSettings();
             } else {
-                error = "OAuth handshake error " + httpResponse.getStatusMessage();
-                LOG.warn(error);
+                LOG.warn("OAuth handshake error {}", httpResponse.getStatusMessage());
             }
 
         } catch (IOException e) {
-            error = "Exception while handling OAuth2 callback (" + e.getMessage() + ")."
-                    + " Redirecting to google connection status page.";
-            LOG.error(error, e);
+            LOG.error("Exception while handling OAuth2 callback ({}) Redirecting to google connection status page.", e.getMessage(), e);
         }
 
         StringBuilder buf = new StringBuilder();
@@ -149,7 +146,7 @@ public class GoogleCalendarOAuthHandshakeController {
         authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri);
 
 
-        LOG.info("using authorizationUrl " + authorizationUrl);
+        LOG.info("using authorizationUrl {}", authorizationUrl);
         return authorizationUrl.build();
     }
 }

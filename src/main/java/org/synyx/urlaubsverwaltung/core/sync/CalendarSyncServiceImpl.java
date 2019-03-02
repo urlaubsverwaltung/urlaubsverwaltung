@@ -32,7 +32,7 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
         this.calendarService = calendarService;
 
-        LOG.info("The following calendar provider is configured: " + calendarService.getCalendarProvider().getClass());
+        LOG.info("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
     }
 
     @Override

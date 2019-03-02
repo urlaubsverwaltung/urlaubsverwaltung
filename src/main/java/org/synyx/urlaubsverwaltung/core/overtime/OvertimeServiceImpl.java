@@ -84,8 +84,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         mailService.sendOvertimeNotification(overtime, overtimeComment);
 
-        String loggingAction = isNewOvertime ? "Created" : "Updated";
-        LOG.info(loggingAction + " overtime record: " + overtime.toString());
+        LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", overtime);
 
         return overtime;
     }

@@ -67,7 +67,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CREATED, Optional.<String>empty(), creator);
 
-        LOG.info("Created sick note: " + sickNote.toString());
+        LOG.info("Created sick note: {}", sickNote);
 
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
@@ -92,7 +92,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.EDITED, Optional.<String>empty(), editor);
 
-        LOG.info("Updated sick note: " + sickNote.toString());
+        LOG.info("Updated sick note: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);
@@ -120,7 +120,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         applicationInteractionService.createFromConvertedSickNote(application, converter);
 
-        LOG.info("Converted sick note to vacation: " + sickNote.toString());
+        LOG.info("Converted sick note to vacation: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);
@@ -148,7 +148,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CANCELLED, Optional.<String>empty(), canceller);
 
-        LOG.info("Cancelled sick note: " + sickNote.toString());
+        LOG.info("Cancelled sick note: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);

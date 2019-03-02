@@ -64,7 +64,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         // get all their accounts and calculate the remaining vacation days for the new year
         for (Person person : persons) {
-            LOG.info("Updating account of " + person.getLoginName());
+            LOG.info("Updating account of {}", person.getLoginName());
 
             Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
@@ -72,14 +72,14 @@ public class TurnOfTheYearAccountUpdaterService {
                 Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
                         accountLastYear.get());
 
-                LOG.info("Setting remaining vacation days of " + person.getLoginName() + " to "
-                    + holidaysAccount.getRemainingVacationDays() + " for " + year);
+                LOG.info("Setting remaining vacation days of {} to {} for {}",
+                        person.getLoginName(), holidaysAccount.getRemainingVacationDays(), year);
 
                 updatedAccounts.add(holidaysAccount);
             }
         }
 
-        LOG.info("Successfully updated holidays accounts: " + updatedAccounts.size() + "/" + persons.size());
+        LOG.info("Successfully updated holidays accounts: {} / {}", updatedAccounts.size(), persons.size());
         mailService.sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
     }
 }

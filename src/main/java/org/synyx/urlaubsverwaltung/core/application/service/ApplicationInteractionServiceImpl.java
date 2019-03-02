@@ -94,7 +94,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationService.save(application);
 
-        LOG.info("Created application for leave: " + application.toString());
+        LOG.info("Created application for leave: {}", application);
 
         // COMMENT
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.APPLIED, comment,
@@ -177,8 +177,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (alreadyAllowed) {
             // Early return - do nothing if expected status already set
 
-            LOG.info("Application for leave is already in an allowed status, do nothing: "
-                + applicationForLeave.toString());
+            LOG.info("Application for leave is already in an allowed status, do nothing: {}",
+                    applicationForLeave);
 
             return applicationForLeave;
         }
@@ -189,7 +189,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationService.save(applicationForLeave);
 
-        LOG.info("Temporary allowed application for leave: " + applicationForLeave.toString());
+        LOG.info("Temporary allowed application for leave: {}", applicationForLeave);
 
         ApplicationComment createdComment = commentService.create(applicationForLeave,
                 ApplicationAction.TEMPORARY_ALLOWED, comment, privilegedUser);
@@ -205,8 +205,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (applicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
             // Early return - do nothing if expected status already set
 
-            LOG.info("Application for leave is already in an allowed status, do nothing: "
-                + applicationForLeave.toString());
+            LOG.info("Application for leave is already in an allowed status, do nothing: {}",
+                applicationForLeave);
 
             return applicationForLeave;
         }
@@ -217,7 +217,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationService.save(applicationForLeave);
 
-        LOG.info("Allowed application for leave: " + applicationForLeave.toString());
+        LOG.info("Allowed application for leave: {}", applicationForLeave);
 
         ApplicationComment createdComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED,
                 comment, privilegedUser);
@@ -251,7 +251,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationService.save(application);
 
-        LOG.info("Rejected application for leave: " + application.toString());
+        LOG.info("Rejected application for leave: {}", application);
 
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
                 privilegedUser);
@@ -305,7 +305,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationService.save(application);
 
-        LOG.info("Revoked application for leave: " + application);
+        LOG.info("Revoked application for leave: {}", application);
 
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.REVOKED, comment,
                 canceller);
@@ -329,7 +329,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             applicationService.save(application);
 
-            LOG.info("Cancelled application for leave: " + application);
+            LOG.info("Cancelled application for leave: {}", application);
 
             ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCELLED, comment,
                     canceller);
@@ -347,7 +347,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             applicationService.save(application);
 
-            LOG.info("Request cancellation of application for leave: " + application);
+            LOG.info("Request cancellation of application for leave: {}", application);
 
             ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCEL_REQUESTED,
                     comment, canceller);

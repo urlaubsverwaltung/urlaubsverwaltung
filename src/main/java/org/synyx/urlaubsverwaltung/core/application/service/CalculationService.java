@@ -124,7 +124,8 @@ public class CalculationService {
             return true;
         } else {
             if (alreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by "+person+" for "+workDays+" days in "+year+" because "+alreadyUsedNextYear+" remaining days have already been used in "+(year+1));
+                LOG.info("Rejecting application by {} for {} days in {} because {} remaining days have already been used in {}",
+                        person, workDays, year, alreadyUsedNextYear, year+1);
             }
             return false;
         }

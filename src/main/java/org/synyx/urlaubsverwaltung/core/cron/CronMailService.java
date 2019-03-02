@@ -52,7 +52,7 @@ public class CronMailService {
 
         List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 
-        LOG.info("Found " + sickNotes.size() + " sick notes reaching end of sick pay");
+        LOG.info("Found {} sick notes reaching end of sick pay", sickNotes.size());
 
         for (SickNote sickNote : sickNotes) {
             mailService.sendEndOfSickPayNotification(sickNote);
@@ -74,7 +74,7 @@ public class CronMailService {
                     .collect(Collectors.toList());
 
             if (!longWaitingApplications.isEmpty()) {
-                LOG.info(String.format("%d long waiting applications found. Sending Notification...", longWaitingApplications.size()));
+                LOG.info("{} long waiting applications found. Sending Notification...", longWaitingApplications.size());
 
                 mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 

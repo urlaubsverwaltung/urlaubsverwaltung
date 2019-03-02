@@ -44,9 +44,9 @@ public class StartupService {
     @PostConstruct
     public void logStartupInfo() {
 
-        LOG.info("DATABASE=" + dbUrl);
-        LOG.info("DATABASE USER=" + dbUser);
-        LOG.info("AUTHENTICATION=" + authentication);
-        LOG.info("ACTIVE PROFILES=" + Arrays.toString(activeProfiles));
+        LOG.info("DATABASE={}", dbUrl);
+        LOG.info("DATABASE USER={}", dbUser);
+        LOG.info("AUTHENTICATION={}", authentication);
+        LOG.info("ACTIVE PROFILES={}", Arrays.toString(activeProfiles));
     }
 }

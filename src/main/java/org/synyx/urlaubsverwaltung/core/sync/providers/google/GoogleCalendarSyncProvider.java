@@ -121,12 +121,12 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
                 Event eventInCalendar = googleCalendarClient.events().insert(calendarId, eventToCommit).execute();
 
-                LOG.info(String.format("Event %s for '%s' added to calendar '%s'.", eventInCalendar.getId(),
-                        absence.getPerson().getNiceName(), eventInCalendar.getSummary()));
+                LOG.info("Event {} for '{}' added to calendar '{}'.", eventInCalendar.getId(),
+                        absence.getPerson().getNiceName(), eventInCalendar.getSummary());
                 return Optional.of(eventInCalendar.getId());
 
             } catch (IOException ex) {
-                LOG.warn(String.format("An error occurred while trying to add appointment to calendar %s", calendarId), ex);
+                LOG.warn("An error occurred while trying to add appointment to calendar %s", calendarId, ex);
                 mailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
@@ -154,9 +154,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 // sync event to calendar
                 googleCalendarClient.events().patch(calendarId, eventId, event).execute();
 
-                LOG.info(String.format("Event %s has been updated in calendar '%s'.", eventId, calendarId));
+                LOG.info("Event {} has been updated in calendar '{}'.", eventId, calendarId);
             } catch (IOException ex) {
-                LOG.warn(String.format("Could not update event %s in calendar '%s'.", eventId, calendarId), ex);
+                LOG.warn("Could not update event {} in calendar '{}'.", eventId, calendarId, ex);
                 mailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
             }
         }
@@ -176,9 +176,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             try {
                 googleCalendarClient.events().delete(calendarId, eventId).execute();
 
-                LOG.info(String.format("Event %s has been deleted in calendar '%s'.", eventId, calendarId));
+                LOG.info("Event {} has been deleted in calendar '{}'.", eventId, calendarId);
             } catch (IOException ex) {
-                LOG.warn(String.format("Could not delete event %s in calendar '%s'", eventId, calendarId), ex);
+                LOG.warn("Could not delete event {} in calendar '{}'", eventId, calendarId, ex);
                 mailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
             }
         }
@@ -201,7 +201,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                     throw new IOException(httpResponse.getStatusMessage());
                 }
             } catch (IOException e) {
-                LOG.warn(String.format("Could not connect to calendar with calendar id '%s'", calendarId), e);
+                LOG.warn("Could not connect to calendar with calendar id '{}'", calendarId, e);
             }
         }
     }
