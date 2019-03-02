@@ -46,7 +46,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         accountService.save(account);
 
-        LOG.info("Created holidays account: " + account);
+        LOG.info("Created holidays account: {}", account);
 
         return account;
     }
@@ -66,7 +66,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         accountService.save(account);
 
-        LOG.info("Updated holidays account: " + account);
+        LOG.info("Updated holidays account: {}", account);
 
         return account;
     }
@@ -88,7 +88,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
                 updateRemainingVacationDays(nextYearsHolidaysAccount, changedHolidaysAccount);
 
-                LOG.info("Updated remaining vacation days of holidays account: " + nextYearsHolidaysAccount);
+                LOG.info("Updated remaining vacation days of holidays account: {}", nextYearsHolidaysAccount);
 
                 startYear++;
             } else {
@@ -131,7 +131,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             Account nextYearAccount = nextYearAccountOptional.get();
             updateRemainingVacationDays(nextYearAccount, referenceAccount);
 
-            LOG.info("Updated existing holidays account for " + nextYear + ": " + nextYearAccount);
+            LOG.info("Updated existing holidays account for {}: {}", nextYear, nextYearAccount);
 
             return nextYearAccount;
         }

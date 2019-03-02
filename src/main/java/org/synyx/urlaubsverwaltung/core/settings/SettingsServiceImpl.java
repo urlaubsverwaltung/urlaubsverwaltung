@@ -31,7 +31,7 @@ public class SettingsServiceImpl implements SettingsService {
 
         settingsDAO.save(settings);
 
-        LOG.info("Updated settings: " + settings.toString());
+        LOG.info("Updated settings: {}", settings);
     }
 
 

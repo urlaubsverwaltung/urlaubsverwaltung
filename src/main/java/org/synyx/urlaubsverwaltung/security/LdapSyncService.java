@@ -63,7 +63,7 @@ public class LdapSyncService {
 
         personService.save(person);
 
-        LOG.info("Successfully synced person data: " + person.toString());
+        LOG.info("Successfully synced person data: {}", person);
 
         return person;
     }
@@ -89,7 +89,7 @@ public class LdapSyncService {
                 mailAddress.orElse(null), Collections.singletonList(MailNotification.NOTIFICATION_USER),
                 Collections.singletonList(Role.USER));
 
-        LOG.info("Successfully auto-created person: " + person.toString());
+        LOG.info("Successfully auto-created person: {}", person);
 
         return person;
     }
@@ -109,6 +109,6 @@ public class LdapSyncService {
 
         personService.save(person);
 
-        LOG.info("Add 'OFFICE' to roles of person: " + person.toString());
+        LOG.info("Add 'OFFICE' to roles of person: {}", person);
     }
 }

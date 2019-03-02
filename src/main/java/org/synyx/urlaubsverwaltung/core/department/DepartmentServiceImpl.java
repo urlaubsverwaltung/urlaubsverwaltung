@@ -57,7 +57,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentDAO.save(department);
 
-        LOG.info("Created department: " + department.toString());
+        LOG.info("Created department: {}", department);
     }
 
 
@@ -68,7 +68,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentDAO.save(department);
 
-        LOG.info("Updated department: " + department.toString());
+        LOG.info("Updated department: {}", department);
     }
 
 
@@ -76,7 +76,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void delete(Integer departmentId) {
 
         if (departmentDAO.findOne(departmentId) == null) {
-            LOG.info("No department found for ID = " + departmentId + ", deletion is not necessary.");
+            LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
         } else {
             departmentDAO.delete(departmentId);
         }

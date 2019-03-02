@@ -18,7 +18,7 @@ public class NoopCalendarSyncProvider implements CalendarProvider {
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
-        LOG.info(String.format("No calendar provider configured to add event: %s", absence));
+        LOG.info("No calendar provider configured to add event: {}", absence);
 
         return Optional.empty();
     }
@@ -26,16 +26,16 @@ public class NoopCalendarSyncProvider implements CalendarProvider {
     @Override
     public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
 
-        LOG.info(String.format("No calendar provider configured to update event: %s, eventId %s", absence, eventId));
+        LOG.info("No calendar provider configured to update event: {}, eventId {}", absence, eventId);
     }
 
     @Override
     public void delete(String eventId, CalendarSettings calendarSettings) {
-        LOG.info(String.format("No calendar provider configured to delete event '%s'", eventId));
+        LOG.info("No calendar provider configured to delete event '{}'", eventId);
     }
 
     @Override
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
-        LOG.info(String.format("No calendar provider configured to check calendarSettings '%s'", calendarSettings));
+        LOG.info("No calendar provider configured to check calendarSettings '{}'", calendarSettings);
     }
 }
