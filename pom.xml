@@ -39,7 +39,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <joda.time.version>2.7</joda.time.version>
-        <spring-ldap-core.version>2.1.0.RELEASE</spring-ldap-core.version>
         <mail.version>1.4.7</mail.version>
         <mock-javamail.version>1.9</mock-javamail.version>
         <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
@@ -119,7 +118,6 @@
         <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
-            <version>${spring-ldap-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
