@@ -5,10 +5,10 @@
 * Email-Templating auf Freemaker umgestellt [#487](https://github.com/synyx/urlaubsverwaltung/pull/487)
 
 ### [urlaubsverwaltung-2.32.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.32.0)
-* Automatisierte Veröffentlichung des Release JARs auf in den GitHub Release
+* Automatisierte Veröffentlichung des Release-JARs in den GitHub Releases
 
 ### [urlaubsverwaltung-2.31.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.31.0)
-* Automatisierte Veröffentlichung des Release JARs auf in den GitHub Release
+* Automatisierte Veröffentlichung des Release-JARs in den GitHub Releases
 
 ### [urlaubsverwaltung-2.30.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.30.0)
 * Veröffentlichung der Urlaubsverwaltung auf [Docker Hub](https://hub.docker.com/r/synyx/urlaubsverwaltung/tags) für Releases [#481](https://github.com/synyx/urlaubsverwaltung/pull/481) 
