@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SettingsServiceImpl implements SettingsService {
 
-    private static final Logger LOG = Logger.getLogger(SettingsServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SettingsServiceImpl.class);
 
     private final SettingsDAO settingsDAO;
 
@@ -30,7 +31,7 @@ public class SettingsServiceImpl implements SettingsService {
 
         settingsDAO.save(settings);
 
-        LOG.info("Updated settings: " + settings.toString());
+        LOG.info("Updated settings: {}", settings);
     }
 
 

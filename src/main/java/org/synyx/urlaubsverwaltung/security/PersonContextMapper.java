@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,7 +40,7 @@ import javax.naming.NamingException;
 @ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
 public class PersonContextMapper implements UserDetailsContextMapper {
 
-    private static final Logger LOG = Logger.getLogger(PersonContextMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PersonContextMapper.class);
 
     private final PersonService personService;
     private final LdapSyncService ldapSyncService;
@@ -63,7 +64,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         try {
             ldapUser = ldapUserMapper.mapFromContext(ctx);
         } catch (InvalidSecurityConfigurationException | NamingException | UnsupportedMemberAffiliationException ex) {
-            LOG.info("User '" + username + "' can not sign in because: " + ex.getMessage());
+            LOG.info("User '{}' can not sign in!", username, ex);
             throw new BadCredentialsException("No authentication possible for user = " + username, ex);
         }
 
@@ -77,7 +78,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
             Person existentPerson = optionalPerson.get();
 
             if (existentPerson.hasRole(Role.INACTIVE)) {
-                LOG.info("User '" + username + "' has been deactivated and can not sign in therefore");
+                LOG.info("User '{}' has been deactivated and can not sign in therefore", username);
 
                 throw new DisabledException("User '" + username + "' has been deactivated");
             }
@@ -85,7 +86,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
             person = ldapSyncService.syncPerson(existentPerson, ldapUser.getFirstName(), ldapUser.getLastName(),
                     ldapUser.getEmail());
         } else {
-            LOG.info("No user found for username '" + username + "'");
+            LOG.info("No user found for username '{}'", username);
 
             person = ldapSyncService.createPerson(login, ldapUser.getFirstName(), ldapUser.getLastName(),
                     ldapUser.getEmail());
@@ -107,7 +108,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         user.setUsername(login);
         user.setAuthorities(getGrantedAuthorities(person));
 
-        LOG.info("User '" + username + "' has signed in with roles: " + person.getPermissions());
+        LOG.info("User '{}' has signed in with roles: {}", username, person.getPermissions());
 
         return user.createUserDetails();
     }
