@@ -100,7 +100,7 @@ Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverw
 Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgende Anleitung befolgen.
 
 Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet hier, können Details zur Installation und
-Konfiguration [hier](docs/INSTALLATION_AS_WAR.md) nachgelesen werden.
+Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
 
 Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synxy/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
 Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
@@ -112,9 +112,10 @@ Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
 #### Download
 
-Die Anwendung steht auf Github bereits als deploybare JAR-Datei zum Download zur Verfügung.
-Einfach die JAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
-downloaden.
+Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
+Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
+da die WAR-Datei einen Tomcat bundled.
 
 #### Starten der Anwendung
 
@@ -122,7 +123,7 @@ Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an 
 zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar
+java -jar -Dspring.profiles.active=dev urlaubsverwaltung.war
 ```
 
 Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
