@@ -52,9 +52,8 @@
         <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
         <google-api-client.version>1.23.0</google-api-client.version>
         <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
-        <!-- Override Tomcat version from Spring Boot to address security issues,
-           review this from time to time and when updating Spring Boot -->
-        <tomcat.version>8.5.32</tomcat.version>
+      <commons-lang.version>2.</commons-lang.version>
+      <commons-collections.version>3.2.1</commons-collections.version>
     </properties>
 
     <scm>
