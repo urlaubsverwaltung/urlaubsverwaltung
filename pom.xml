@@ -52,8 +52,8 @@
         <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
         <google-api-client.version>1.23.0</google-api-client.version>
         <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
-      <commons-lang.version>2.</commons-lang.version>
-      <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-lang.version>2.6</commons-lang.version>
     </properties>
 
     <scm>
@@ -161,12 +161,12 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>${commons-lang.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
+            <version>${commons-collections.version}</version>
         </dependency>
 
 
