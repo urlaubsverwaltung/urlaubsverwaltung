@@ -33,7 +33,7 @@ public class CronMailServiceTest {
     private MailService mailService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         applicationService = mock(ApplicationService.class);
         settingsService = mock(SettingsService.class);
@@ -44,7 +44,7 @@ public class CronMailServiceTest {
     }
 
     @Test
-    public void ensureSendEndOfSickPayNotification() throws Exception {
+    public void ensureSendEndOfSickPayNotification() {
 
         SickNote sickNoteA = new SickNote();
         SickNote sickNoteB = new SickNote();
@@ -57,7 +57,7 @@ public class CronMailServiceTest {
     }
 
     @Test
-    public void ensureNoSendWhenDeactivated() throws Exception {
+    public void ensureNoSendWhenDeactivated() {
 
         boolean isInactive = false;
         prepareSettingsWithRemindForWaitingApplications(isInactive);
@@ -67,7 +67,7 @@ public class CronMailServiceTest {
     }
 
     @Test
-    public void ensureSendWaitingApplicationsReminderNotification() throws Exception {
+    public void ensureSendWaitingApplicationsReminderNotification() {
 
         boolean isActive = true;
         prepareSettingsWithRemindForWaitingApplications(isActive);
