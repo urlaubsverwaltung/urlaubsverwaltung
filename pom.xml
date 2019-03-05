@@ -36,6 +36,8 @@
     <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
         <java.version>1.8</java.version>
         <joda.time.version>2.7</joda.time.version>
         <mail.version>1.4.7</mail.version>
