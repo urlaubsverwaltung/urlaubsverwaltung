@@ -2,13 +2,10 @@ package org.synyx.urlaubsverwaltung.core.department;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -20,10 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 
 /**
@@ -312,19 +306,19 @@ public class DepartmentServiceImplTest {
 
         // Ensure fetches applications for leave for every department member
         Mockito.verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(admin1));
+            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin1));
         Mockito.verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(admin2));
+            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin2));
         Mockito.verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(marketing1));
+            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing1));
         Mockito.verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(marketing2));
+            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing2));
         Mockito.verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(marketing3));
+            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing3));
 
         // Ensure does not fetch applications for leave for the given person
         Mockito.verify(applicationService, Mockito.never())
-            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(person));
+            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(person));
     }
 
 
@@ -358,11 +352,11 @@ public class DepartmentServiceImplTest {
         Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.eq(admin1)))
+                    Mockito.any(DateMidnight.class), eq(admin1)))
             .thenReturn(Arrays.asList(waitingApplication, otherApplication));
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.eq(marketing1)))
+                    Mockito.any(DateMidnight.class), eq(marketing1)))
             .thenReturn(Collections.singletonList(allowedApplication));
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);

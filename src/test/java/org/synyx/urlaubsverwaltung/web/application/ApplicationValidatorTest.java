@@ -1,14 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -25,17 +21,13 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
-
 import java.sql.Time;
-
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Matchers.any;
-
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -84,6 +76,7 @@ public class ApplicationValidatorTest {
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(DateMidnight.now());
         appForm.setEndDate(DateMidnight.now().plusDays(2));
+        appForm.setPerson(TestDataCreator.createPerson());
 
         // Default: everything is alright, override for negative cases
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
@@ -96,7 +89,6 @@ public class ApplicationValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.TEN);
     }
-
 
     // Supports --------------------------------------------------------------------------------------------------------
 
@@ -140,6 +132,8 @@ public class ApplicationValidatorTest {
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setEndDate(null);
+
+        when(errors.hasErrors()).thenReturn(true);
 
         validator.validate(appForm, errors);
 
@@ -635,7 +629,7 @@ public class ApplicationValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
                     Mockito.eq(appForm.getStartDate())))
             .thenReturn(Optional.empty());
 

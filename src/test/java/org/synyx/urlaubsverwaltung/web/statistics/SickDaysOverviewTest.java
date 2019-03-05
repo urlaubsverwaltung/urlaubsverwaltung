@@ -1,13 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -15,9 +12,9 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,13 +44,13 @@ public class SickDaysOverviewTest {
         sickNoteTypeChild.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
         sickNoteTypeChild.setDisplayName("Kind-Krankmeldung");
 
-        SickNote sickNoteWithoutAUB = new SickNote();
+        SickNote sickNoteWithoutAUB = TestDataCreator.anySickNote();
         sickNoteWithoutAUB.setSickNoteType(sickNoteType);
         sickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithoutAUB.setStartDate(new DateMidnight(2014, 10, 13));
         sickNoteWithoutAUB.setEndDate(new DateMidnight(2014, 10, 13));
 
-        SickNote sickNoteWithAUB = new SickNote();
+        SickNote sickNoteWithAUB = TestDataCreator.anySickNote();
         sickNoteWithAUB.setSickNoteType(sickNoteType);
         sickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithAUB.setStartDate(new DateMidnight(2014, 10, 14));
@@ -61,13 +58,13 @@ public class SickDaysOverviewTest {
         sickNoteWithAUB.setAubStartDate(new DateMidnight(2014, 10, 14));
         sickNoteWithAUB.setAubEndDate(new DateMidnight(2014, 10, 14));
 
-        SickNote childSickNoteWithoutAUB = new SickNote();
+        SickNote childSickNoteWithoutAUB = TestDataCreator.anySickNote();
         childSickNoteWithoutAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithoutAUB.setStartDate(new DateMidnight(2014, 10, 15));
         childSickNoteWithoutAUB.setEndDate(new DateMidnight(2014, 10, 15));
 
-        SickNote childSickNoteWithAUB = new SickNote();
+        SickNote childSickNoteWithAUB = TestDataCreator.anySickNote();
         childSickNoteWithAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithAUB.setStartDate(new DateMidnight(2014, 10, 16));
@@ -75,13 +72,13 @@ public class SickDaysOverviewTest {
         childSickNoteWithAUB.setAubStartDate(new DateMidnight(2014, 10, 16));
         childSickNoteWithAUB.setAubEndDate(new DateMidnight(2014, 10, 16));
 
-        SickNote inactiveSickNote = new SickNote();
+        SickNote inactiveSickNote = TestDataCreator.anySickNote();
         inactiveSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveSickNote.setStartDate(new DateMidnight(2014, 10, 17));
         inactiveSickNote.setEndDate(new DateMidnight(2014, 10, 17));
 
-        SickNote inactiveChildSickNote = new SickNote();
+        SickNote inactiveChildSickNote = TestDataCreator.anySickNote();
         inactiveChildSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveChildSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveChildSickNote.setStartDate(new DateMidnight(2014, 10, 18));
@@ -110,4 +107,5 @@ public class SickDaysOverviewTest {
         Assert.assertEquals("Wrong number of child sick days with AUB", BigDecimal.ONE,
             childSickDays.getDays().get("WITH_AUB"));
     }
+
 }

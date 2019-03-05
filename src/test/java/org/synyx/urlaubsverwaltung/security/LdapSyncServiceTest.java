@@ -3,10 +3,8 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -14,8 +12,15 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
+
+import static java.util.Collections.singletonList;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -41,16 +46,14 @@ public class LdapSyncServiceTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personService.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
-                    Mockito.anyString(), Mockito.anyListOf(MailNotification.class), Mockito.anyListOf(Role.class)))
-            .thenReturn(person);
+        when(personService.create(anyString(), anyString(), anyString(), anyString(), anyList(), anyList())).thenReturn(person);
 
         ldapSyncService.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
             Optional.of("murygina@synyx.de"));
 
-        Mockito.verify(personService)
+        verify(personService)
             .create("murygina", "Murygina", "Aljona", "murygina@synyx.de",
-                Collections.singletonList(MailNotification.NOTIFICATION_USER), Collections.singletonList(Role.USER));
+                singletonList(MailNotification.NOTIFICATION_USER), singletonList(Role.USER));
     }
 
 
@@ -59,15 +62,12 @@ public class LdapSyncServiceTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personService.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
-                    Mockito.anyString(), Mockito.anyListOf(MailNotification.class), Mockito.anyListOf(Role.class)))
-            .thenReturn(person);
+        when(personService.create(anyString(), isNull(), isNull(), isNull(), anyList(), anyList())).thenReturn(person);
 
         ldapSyncService.createPerson("murygina", Optional.empty(), Optional.empty(), Optional.empty());
 
-        Mockito.verify(personService)
-            .create("murygina", null, null, null, Collections.singletonList(MailNotification.NOTIFICATION_USER),
-                Collections.singletonList(Role.USER));
+        verify(personService)
+            .create("murygina", null, null, null, singletonList(MailNotification.NOTIFICATION_USER), singletonList(Role.USER));
     }
 
 
@@ -87,7 +87,7 @@ public class LdapSyncServiceTest {
         Person syncedPerson = ldapSyncService.syncPerson(person, Optional.of("Aljona"), Optional.of("Murygina"),
                 Optional.of("murygina@synyx.de"));
 
-        Mockito.verify(personService).save(Mockito.eq(person));
+        verify(personService).save(eq(person));
 
         Assert.assertNotNull("Missing login name", syncedPerson.getLoginName());
         Assert.assertNotNull("Missing first name", syncedPerson.getFirstName());
@@ -108,7 +108,7 @@ public class LdapSyncServiceTest {
 
         Person syncedPerson = ldapSyncService.syncPerson(person, Optional.empty(), Optional.empty(), Optional.empty());
 
-        Mockito.verify(personService).save(Mockito.eq(person));
+        verify(personService).save(eq(person));
 
         Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
         Assert.assertEquals("Wrong first name", "Marlene", syncedPerson.getFirstName());
@@ -121,7 +121,7 @@ public class LdapSyncServiceTest {
     public void ensureCanAppointPersonAsOfficeUser() {
 
         Person person = TestDataCreator.createPerson();
-        person.setPermissions(Collections.singletonList(Role.USER));
+        person.setPermissions(singletonList(Role.USER));
 
         Assert.assertEquals("Wrong initial permissions", 1, person.getPermissions().size());
 
@@ -129,7 +129,7 @@ public class LdapSyncServiceTest {
 
         ldapSyncService.appointPersonAsOfficeUser(person);
 
-        Mockito.verify(personService).save(personCaptor.capture());
+        verify(personService).save(personCaptor.capture());
 
         Collection<Role> permissions = personCaptor.getValue().getPermissions();
 
