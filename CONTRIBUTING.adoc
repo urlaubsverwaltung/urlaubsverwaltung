@@ -10,6 +10,9 @@ We use GitHub issues to track bugs and enhancements.
 If you are reporting a bug, please help to speed up problem diagnosis by providing as much
 information as possible.
 
+Please look for other issues or pull requests which already work on this topic. Is somebody already on it? Do you need to synchronize?
+
+Have you already checked the [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki)?
 
 == Reporting Security Vulnerabilities
 If you think you have found a security vulnerability in the Urlaubsverwaltung please *DO NOT*
