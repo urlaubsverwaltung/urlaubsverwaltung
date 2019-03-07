@@ -132,5 +132,10 @@
             <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
         </tns:Holidays>
     </tns:SubConfigurations>
+    <tns:SubConfigurations hierarchy="b" description="Berlin">
+        <tns:Holidays>
+            <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMAN" validFrom="2019"/>
+        </tns:Holidays>
+    </tns:SubConfigurations>
 </tns:Configuration>
 

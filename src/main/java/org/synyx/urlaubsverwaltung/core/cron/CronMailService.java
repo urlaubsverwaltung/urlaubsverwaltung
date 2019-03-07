@@ -1,16 +1,12 @@
 
 package org.synyx.urlaubsverwaltung.core.cron;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.scheduling.annotation.Scheduled;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -32,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class CronMailService {
 
-    private static final Logger LOG = Logger.getLogger(CronMailService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CronMailService.class);
 
     private final ApplicationService applicationService;
     private final SettingsService settingsService;
@@ -56,7 +52,7 @@ public class CronMailService {
 
         List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 
-        LOG.info("Found " + sickNotes.size() + " sick notes reaching end of sick pay");
+        LOG.info("Found {} sick notes reaching end of sick pay", sickNotes.size());
 
         for (SickNote sickNote : sickNotes) {
             mailService.sendEndOfSickPayNotification(sickNote);
@@ -78,7 +74,7 @@ public class CronMailService {
                     .collect(Collectors.toList());
 
             if (!longWaitingApplications.isEmpty()) {
-                LOG.info(String.format("%d long waiting applications found. Sending Notification...", longWaitingApplications.size()));
+                LOG.info("{} long waiting applications found. Sending Notification...", longWaitingApplications.size());
 
                 mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 

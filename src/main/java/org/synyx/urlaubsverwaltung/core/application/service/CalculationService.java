@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
+import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
@@ -29,6 +32,9 @@ import java.util.Optional;
  */
 @Service
 public class CalculationService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CalculationService.class);
+
 
     private final VacationDaysService vacationDaysService;
     private final AccountInteractionService accountInteractionService;
@@ -68,10 +74,7 @@ public class CalculationService {
         if (yearOfStartDate == yearOfEndDate) {
             BigDecimal workDays = calendarService.getWorkDays(dayLength, startDate, endDate, person);
 
-            Optional<Account> holidaysAccount = getHolidaysAccount(yearOfStartDate, person);
-
-            return holidaysAccount.isPresent()
-                && vacationDaysService.calculateTotalLeftVacationDays(holidaysAccount.get()).compareTo(workDays) >= 0;
+            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays);
         } else {
             // ensure that applying for leave for the period in the old year is possible
             BigDecimal workDaysInOldYear = calendarService.getWorkDays(dayLength, startDate,
@@ -81,19 +84,51 @@ public class CalculationService {
             BigDecimal workDaysInNewYear = calendarService.getWorkDays(dayLength,
                     DateUtil.getFirstDayOfYear(yearOfEndDate), endDate, person);
 
-            Optional<Account> holidaysAccountForOldYear = getHolidaysAccount(yearOfStartDate, person);
-            Optional<Account> holidaysAccountForNewYear = getHolidaysAccount(yearOfEndDate, person);
-
-            return accountHasEnoughVacationDaysLeft(holidaysAccountForOldYear, workDaysInOldYear)
-                && accountHasEnoughVacationDaysLeft(holidaysAccountForNewYear, workDaysInNewYear);
+            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYear)
+                && accountHasEnoughVacationDaysLeft(person, yearOfEndDate, workDaysInNewYear);
         }
     }
 
 
-    private boolean accountHasEnoughVacationDaysLeft(Optional<Account> account, BigDecimal workDays) {
+    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays) {
+        Optional<Account> account = getHolidaysAccount(year, person);
+        if (!account.isPresent()){
+            return false;
+        }
 
-        return account.isPresent()
-            && vacationDaysService.calculateTotalLeftVacationDays(account.get()).compareTo(workDays) >= 0;
+
+
+        // we also need to look at the next year, because "remaining days" from this year
+        // may already have been booked then
+
+        BigDecimal alreadyUsedNextYear = BigDecimal.ZERO;
+        // call accountService directly to avoid auto-creating a new account for next year
+        Optional<Account> nextYear = accountService.getHolidaysAccount(year+1, person);
+        if (nextYear.isPresent()){
+            Account nextAccount = nextYear.get();
+            if (nextAccount.getRemainingVacationDays().signum() > 0){
+                VacationDaysLeft nextYearLeft = vacationDaysService.getVacationDaysLeft(nextAccount, Optional.empty());
+                BigDecimal totalUsedNextYear = nextAccount.getVacationDays()
+                        .add(nextAccount.getRemainingVacationDays())
+                        .subtract(nextYearLeft.getVacationDays())
+                        .subtract(nextYearLeft.getRemainingVacationDays());
+                BigDecimal remainingUsedNextYear = totalUsedNextYear.subtract(nextAccount.getVacationDays());
+                if (remainingUsedNextYear.signum() > 0){
+                    alreadyUsedNextYear = remainingUsedNextYear;
+                }
+            }
+        }
+
+
+        if(vacationDaysService.calculateTotalLeftVacationDays(account.get()).subtract(workDays).compareTo(alreadyUsedNextYear) >= 0) {
+            return true;
+        } else {
+            if (alreadyUsedNextYear.signum() > 0) {
+                LOG.info("Rejecting application by {} for {} days in {} because {} remaining days have already been used in {}",
+                        person, workDays, year, alreadyUsedNextYear, year+1);
+            }
+            return false;
+        }
     }
 
 

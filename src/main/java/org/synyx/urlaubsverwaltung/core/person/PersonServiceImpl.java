@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Service("personService")
 class PersonServiceImpl implements PersonService {
 
-    private static final Logger LOG = Logger.getLogger(PersonServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PersonServiceImpl.class);
 
     private final PersonDAO personDAO;
 
@@ -40,7 +41,7 @@ class PersonServiceImpl implements PersonService {
 
         save(person);
 
-        LOG.info("Created person: " + person.toString());
+        LOG.info("Created person: {}", person);
 
         return person;
     }
@@ -63,7 +64,7 @@ class PersonServiceImpl implements PersonService {
 
         save(person);
 
-        LOG.info("Updated person: " + person.toString());
+        LOG.info("Updated person: {}", person);
 
         return person;
     }
@@ -74,7 +75,7 @@ class PersonServiceImpl implements PersonService {
 
         save(person);
 
-        LOG.info("Created person: " + person.toString());
+        LOG.info("Created person: {}", person);
 
         return person;
     }
@@ -89,7 +90,7 @@ class PersonServiceImpl implements PersonService {
 
         save(person);
 
-        LOG.info("Updated person: " + person.toString());
+        LOG.info("Updated person: {}", person);
 
         return person;
     }

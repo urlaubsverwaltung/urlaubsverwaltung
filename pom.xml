@@ -4,8 +4,8 @@
 
     <groupId>org.synyx</groupId>
     <artifactId>urlaubsverwaltung</artifactId>
-    <version>2.28.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <version>2.34.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <name>Urlaubsverwaltung</name>
 
@@ -30,7 +30,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.2.RELEASE</version>
+        <version>1.5.19.RELEASE</version>
         <relativePath />
     </parent>
 
@@ -39,7 +39,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <joda.time.version>2.7</joda.time.version>
-        <spring-ldap-core.version>2.1.0.RELEASE</spring-ldap-core.version>
         <mail.version>1.4.7</mail.version>
         <mock-javamail.version>1.9</mock-javamail.version>
         <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
@@ -49,20 +48,19 @@
         <httpcore.version>4.4.1</httpcore.version>
         <httpclient.version>4.5</httpclient.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <coveralls-maven-plugin.version>4.1.0</coveralls-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
+        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <google-api-client.version>1.23.0</google-api-client.version>
         <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
-        <!-- Override Tomcat version from Spring Boot to address security issues,
-           review this from time to time and when updating Spring Boot -->
-        <tomcat.version>8.5.32</tomcat.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-lang.version>2.6</commons-lang.version>
     </properties>
 
     <scm>
-        <developerConnection>scm:git:ssh://git@github.com/synyx/urlaubsverwaltung.git</developerConnection>
-        <connection>scm:git:ssh://git@github.com/synyx/urlaubsverwaltung.git</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <url>https://github.com/synyx/urlaubsverwaltung</url>
+        <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
+        <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
@@ -102,6 +100,10 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
             <exclusions>
@@ -114,15 +116,20 @@
         <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
-            <version>${spring-ldap-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -150,6 +157,18 @@
             <artifactId>json-path</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons-collections.version}</version>
+        </dependency>
+
+
 
         <!-- DATABASE -->
         <dependency>
@@ -190,8 +209,8 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
         </dependency>
 
         <!-- JODA TIME -->
@@ -274,19 +293,6 @@
                 <version>${coveralls-maven-plugin.version}</version>
             </plugin>
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -335,6 +341,31 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <from>
+                        <image>openjdk:8-jre-alpine</image>
+                    </from>
+                    <to>
+                        <image>registry.hub.docker.com/synyx/urlaubsverwaltung</image>
+                        <tags>
+                            <tag>${project.version}</tag>
+                        </tags>
+                    </to>
+                    <container>
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+                        <environment>
+                            <SPRING_PROFILES_ACTIVE>dev</SPRING_PROFILES_ACTIVE>
+                        </environment>
+                    </container>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
