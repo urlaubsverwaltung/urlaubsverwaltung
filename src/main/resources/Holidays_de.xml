@@ -134,7 +134,7 @@
     </tns:SubConfigurations>
     <tns:SubConfigurations hierarchy="b" description="Berlin">
         <tns:Holidays>
-            <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMENS_DAY" validFrom="2019"/>
+            <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMAN" validFrom="2019"/>
         </tns:Holidays>
     </tns:SubConfigurations>
 </tns:Configuration>
