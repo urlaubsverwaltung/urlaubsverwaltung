@@ -1,3 +1,6 @@
+### master / unreleased
+* Neue Feiertag Internationaler Frauentag für das Bundesland Berlin hinzugefügt
+
 ### [urlaubsverwaltung-2.33.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.33.0)
 * Aktuelle Spring Boot 1.5 Version [#490](https://github.com/synyx/urlaubsverwaltung/pull/490)
 * Logging auf SLF4J umgestellt [#489](https://github.com/synyx/urlaubsverwaltung/pull/489)
