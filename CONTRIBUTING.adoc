@@ -17,7 +17,7 @@ disclose it publicly until we've had a chance to fix it. Please *don't report se
 vulnerabilities using GitHub issues*, instead head over to urlaubsverwaltung@synyx.de and
 learn how to disclose them responsibly.
 
-== Pull request contribution
+== Pull Request Contribution
 
 New pull requests will be labeled with status of process as shown below:
 
