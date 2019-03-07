@@ -308,7 +308,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("accounts", updatedAccounts);
-        model.put("year", DateMidnight.now().getYear());
+        model.put("today", DateMidnight.now());
 
         String text = mailBuilder.buildMailBody("updated_accounts", model);
 

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateMidnight;
 
@@ -35,7 +36,7 @@ import java.util.Optional;
 @Transactional
 public class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
-    private static final Logger LOG = Logger.getLogger(SickNoteInteractionServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SickNoteInteractionServiceImpl.class);
 
     private final SickNoteService sickNoteService;
     private final SickNoteCommentService commentService;
@@ -66,7 +67,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CREATED, Optional.<String>empty(), creator);
 
-        LOG.info("Created sick note: " + sickNote.toString());
+        LOG.info("Created sick note: {}", sickNote);
 
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
@@ -91,7 +92,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.EDITED, Optional.<String>empty(), editor);
 
-        LOG.info("Updated sick note: " + sickNote.toString());
+        LOG.info("Updated sick note: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);
@@ -119,7 +120,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         applicationInteractionService.createFromConvertedSickNote(application, converter);
 
-        LOG.info("Converted sick note to vacation: " + sickNote.toString());
+        LOG.info("Converted sick note to vacation: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);
@@ -147,7 +148,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CANCELLED, Optional.<String>empty(), canceller);
 
-        LOG.info("Cancelled sick note: " + sickNote.toString());
+        LOG.info("Cancelled sick note: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);

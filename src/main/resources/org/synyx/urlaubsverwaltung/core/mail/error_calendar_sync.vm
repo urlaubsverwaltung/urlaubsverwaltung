@@ -1,8 +1,0 @@
-Der Termin für folgende Abwesenheit konnte nicht angelegt werden:
-
-${absence.person.niceName}
-${absence.startDate} - ${absence.endDate}
-
-Beim Synchronisieren mit dem Kalender '${calendar}' ist ein Fehler aufgetreten:
-
-${exception}

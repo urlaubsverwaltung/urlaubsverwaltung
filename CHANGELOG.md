@@ -1,6 +1,30 @@
 ### master / unreleased
 * Neue Feiertag Internationaler Frauentag für das Bundesland Berlin hinzugefügt
 
+### [urlaubsverwaltung-2.33.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.33.0)
+* Aktuelle Spring Boot 1.5 Version [#490](https://github.com/synyx/urlaubsverwaltung/pull/490)
+* Logging auf SLF4J umgestellt [#489](https://github.com/synyx/urlaubsverwaltung/pull/489)
+* Packetierung auf WAR-Dateien umgestellt [#488](https://github.com/synyx/urlaubsverwaltung/pull/488)
+* Email-Templating auf Freemaker umgestellt [#487](https://github.com/synyx/urlaubsverwaltung/pull/487)
+
+### [urlaubsverwaltung-2.32.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.32.0)
+* Automatisierte Veröffentlichung des Release-JARs in den GitHub Releases
+
+### [urlaubsverwaltung-2.31.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.31.0)
+* Automatisierte Veröffentlichung des Release-JARs in den GitHub Releases
+
+### [urlaubsverwaltung-2.30.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.30.0)
+* Veröffentlichung der Urlaubsverwaltung auf [Docker Hub](https://hub.docker.com/r/synyx/urlaubsverwaltung/tags) für Releases [#481](https://github.com/synyx/urlaubsverwaltung/pull/481) 
+
+### [urlaubsverwaltung-2.29.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.29.0)
+* Bug: help-block überlagert Link für Jahres-Auswahl [#448](https://github.com/synyx/urlaubsverwaltung/issues/448)
+* Sicherheitsupdates JS-Abhängigkeiten
+* Bereits verbuchter Resturlaub im nächsten Jahr kann in diesem Jahr erneut ausgegeben werden [#447](https://github.com/synyx/urlaubsverwaltung/issues/447)
+* Aktualisierung favicon [#459](https://github.com/synyx/urlaubsverwaltung/pull/459)
+* Einführung einheitlicher Coding-Guidelines
+* Bug: History des Browsers überlappt Kalender [#441](https://github.com/synyx/urlaubsverwaltung/issues/441)
+* Verbesserung der Swagger API Dokumentation
+
 ### [urlaubsverwaltung-2.28.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.28.0)
 * Neue Feiertag Reformationstag für die Bundesländer Schleswig-Holstein, Hamburg, Bremen und Niedersachen hinzugefügt [#445](https://github.com/synyx/urlaubsverwaltung/pull/445) [#438](https://github.com/synyx/urlaubsverwaltung/issues/438) [#416](https://github.com/synyx/urlaubsverwaltung/issues/416)
 * Update der Frontend-Test Abhängigkeiten [#446](https://github.com/synyx/urlaubsverwaltung/pull/446)

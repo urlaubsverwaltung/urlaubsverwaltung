@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ import java.util.Optional;
 @Service
 public class CalculationService {
 
-    private static final Logger LOG = Logger.getLogger(CalculationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CalculationService.class);
 
 
     private final VacationDaysService vacationDaysService;
@@ -123,7 +124,8 @@ public class CalculationService {
             return true;
         } else {
             if (alreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by "+person+" for "+workDays+" days in "+year+" because "+alreadyUsedNextYear+" remaining days have already been used in "+(year+1));
+                LOG.info("Rejecting application by {} for {} days in {} because {} remaining days have already been used in {}",
+                        person, workDays, year, alreadyUsedNextYear, year+1);
             }
             return false;
         }
