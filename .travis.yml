@@ -14,11 +14,17 @@ branches:
 
 install: true
 
-script:
-  - ./mvnw "$MAVEN_CLI_OPTS" clean verify
+git:
+  depth: false
 
-after_success:
-  - ./mvnw "$MAVEN_CLI_OPTS" jacoco:report coveralls:report
+addons:
+  sonarcloud:
+    organization: "synyx"
+    token:
+      secure: "TlV5IizkYOaDE+cL1Cfs7dGauzrLL2lRJUNC1ZCf/kLZSJD+FXNSEIIUvTqX0AYE4f0ChX8dgRkq9s/IRj5W0koWD766tEmUGdgqR9RNjw2fkZV0BINviloH7u3xqnygbt+9ZEDQj7oeKlrUCWzQ2oRt8L37T/qBf8gDHu7ucyM="
+
+script:
+  - ./mvnw "$MAVEN_CLI_OPTS" clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar
 
 before_deploy:
   - export WAR_FILE=$(ls target/urlaubsverwaltung-*.war)
