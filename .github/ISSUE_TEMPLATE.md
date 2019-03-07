@@ -3,6 +3,10 @@ Thanks for raising a Urlaubsverwaltungs issue.
 
 Please take the time to review the following categories as some of them do not apply here.
 
+Please look for other issues or pull requests which already work on this topic. Is somebody already on it? Do you need to synchronize?
+
+Have you already checked the [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki)?
+
 # 🙅 Issue
 - Question
   Feel free to ask us questions and please label them with 'type: question'
