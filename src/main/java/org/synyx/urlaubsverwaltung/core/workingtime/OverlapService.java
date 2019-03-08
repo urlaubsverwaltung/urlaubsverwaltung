@@ -2,14 +2,10 @@ package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;

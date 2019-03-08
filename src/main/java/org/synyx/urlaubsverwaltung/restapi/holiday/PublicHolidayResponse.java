@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.holiday;
 import de.jollyday.Holiday;
 
 import java.math.BigDecimal;
-
 import java.util.Locale;
 
 

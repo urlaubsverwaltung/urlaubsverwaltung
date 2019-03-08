@@ -2,7 +2,6 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import java.beans.PropertyEditorSupport;
-
 import java.sql.Time;
 
 

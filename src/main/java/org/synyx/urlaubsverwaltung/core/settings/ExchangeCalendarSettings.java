@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
-import java.util.Base64;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Base64;
 
 
 /**

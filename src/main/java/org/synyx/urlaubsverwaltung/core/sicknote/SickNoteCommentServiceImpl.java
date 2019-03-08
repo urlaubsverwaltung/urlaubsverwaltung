@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;

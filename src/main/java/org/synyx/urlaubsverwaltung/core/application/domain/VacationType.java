@@ -2,9 +2,7 @@ package org.synyx.urlaubsverwaltung.core.application.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.Assert;
 
 import javax.persistence.Entity;

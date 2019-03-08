@@ -1,14 +1,17 @@
 package org.synyx.urlaubsverwaltung.web.settings;
 
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.synyx.urlaubsverwaltung.core.settings.*;
+import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;

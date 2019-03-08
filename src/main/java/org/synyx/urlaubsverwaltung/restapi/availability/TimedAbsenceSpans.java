@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi.availability;
 
 import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.List;
 

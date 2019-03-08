@@ -2,11 +2,8 @@ package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.joda.time.DateTimeZone;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 

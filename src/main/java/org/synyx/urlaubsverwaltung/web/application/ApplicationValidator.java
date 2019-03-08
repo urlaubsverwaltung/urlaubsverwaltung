@@ -1,16 +1,11 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
@@ -28,9 +23,7 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
-
 import java.sql.Time;
-
 import java.util.Optional;
 
 

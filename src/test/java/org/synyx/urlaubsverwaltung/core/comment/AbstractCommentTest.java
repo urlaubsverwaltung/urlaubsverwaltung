@@ -1,10 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.comment;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;

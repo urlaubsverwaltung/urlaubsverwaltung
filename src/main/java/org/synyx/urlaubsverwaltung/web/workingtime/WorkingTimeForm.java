@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.workingtime;
 
 import org.joda.time.DateMidnight;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;

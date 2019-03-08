@@ -2,22 +2,12 @@ package org.synyx.urlaubsverwaltung.core.department;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -25,6 +15,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 
 /**

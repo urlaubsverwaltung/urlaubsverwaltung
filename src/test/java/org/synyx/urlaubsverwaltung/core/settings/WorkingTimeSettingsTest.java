@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.core.settings;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
 

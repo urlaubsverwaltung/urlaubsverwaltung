@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.overtime;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
 
