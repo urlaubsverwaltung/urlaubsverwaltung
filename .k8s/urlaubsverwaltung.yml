@@ -7,7 +7,7 @@ data:
   application.properties: |
     # generic
     server.port=8080
-    logging.file=logs/urlaubsverwaltung.log
+    logging.file=
 
     # DATABASE CONFIG
     spring.datasource.url=jdbc:mysql://xxx:3306/urlaubsverwaltung
@@ -61,7 +61,7 @@ metadata:
   name: urlaubsverwaltung
 spec:
   ports:
-    - port: 80
+    - port: http
       targetPort: 8080
   selector:
     app: urlaubsverwaltung
@@ -89,7 +89,7 @@ spec:
               httpGet:
                   path: /actuator/health
                   port: 8080
-              initialDelaySeconds: 60
+              initialDelaySeconds: 120
               periodSeconds: 10
               failureThreshold: 10
           readinessProbe:
@@ -99,11 +99,21 @@ spec:
               initialDelaySeconds: 60
               periodSeconds: 10
               failureThreshold: 10
+          resources:
+              requests:
+                  cpu: 0.5
+                  memory: "512Mi"
+              limits:
+                  cpu: 1.5
+                  memory: "1024Mi"
+          securityContext:
+              privileged: false
+              allowPrivilegeEscalation: false
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: default
             - name: JVM_OPTIONS
-              value: "-XX:+PrintFlagsFinal -XX:+PrintGCDetails"
+              value: "-XX:+PrintFlagsFinal -XX:+PrintGCDetails -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -116,11 +126,16 @@ spec:
                   key: databasePassword
           volumeMounts:
             - name: config-volume
-              mountPath: /config
+              mountPath: /app/config
       volumes:
         - name: config-volume
           configMap:
             name: urlaubsverwaltung
+      securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+          runAsNonRoot: true
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -134,4 +149,4 @@ spec:
           - path: /
             backend:
               serviceName: urlaubsverwaltung
-              servicePort: 80
+              servicePort: http
