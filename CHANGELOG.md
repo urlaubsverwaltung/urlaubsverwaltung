@@ -1,5 +1,9 @@
 ### master / unreleased
-* Neue Feiertag Internationaler Frauentag für das Bundesland Berlin hinzugefügt
+* ...
+
+### [urlaubsverwaltung-2.34.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.34.0)
+* Bug: Gravatar reaktiviert [#502](https://github.com/synyx/urlaubsverwaltung/pull/502)  
+* Neue Feiertag Internationaler Frauentag für das Bundesland Berlin hinzugefügt [#477](https://github.com/synyx/urlaubsverwaltung/pull/477)
 
 ### [urlaubsverwaltung-2.33.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.33.0)
 * Aktuelle Spring Boot 1.5 Version [#490](https://github.com/synyx/urlaubsverwaltung/pull/490)
