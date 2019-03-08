@@ -1,371 +1,371 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.synyx</groupId>
-    <artifactId>urlaubsverwaltung</artifactId>
-    <version>2.34.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+  <groupId>org.synyx</groupId>
+  <artifactId>urlaubsverwaltung</artifactId>
+  <version>2.34.0-SNAPSHOT</version>
+  <packaging>war</packaging>
 
-    <name>Urlaubsverwaltung</name>
+  <name>Urlaubsverwaltung</name>
 
-    <organization>
-        <name>synyx</name>
-        <url>http://synyx.de</url>
-    </organization>
+  <organization>
+    <name>synyx</name>
+    <url>http://synyx.de</url>
+  </organization>
 
-    <developers>
-        <developer>
-            <id>murygina</id>
-            <name>Aljona Murygina</name>
-            <email>murygina@synyx.de</email>
-        </developer>
-        <developer>
-            <id>honnel</id>
-            <name>Daniel Hammann</name>
-            <email>hammann@synyx.de</email>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <id>murygina</id>
+      <name>Aljona Murygina</name>
+      <email>murygina@synyx.de</email>
+    </developer>
+    <developer>
+      <id>honnel</id>
+      <name>Daniel Hammann</name>
+      <email>hammann@synyx.de</email>
+    </developer>
+  </developers>
 
-    <parent>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.19.RELEASE</version>
+    <relativePath/>
+  </parent>
+
+  <properties>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
+    <joda.time.version>2.7</joda.time.version>
+    <mail.version>1.4.7</mail.version>
+    <mock-javamail.version>1.9</mock-javamail.version>
+    <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
+    <jollyday.version>0.4.7</jollyday.version>
+    <swagger-springmvc.version>1.0.2</swagger-springmvc.version>
+    <ews-java-api.version>2.0</ews-java-api.version>
+    <httpcore.version>4.4.1</httpcore.version>
+    <httpclient.version>4.5</httpclient.version>
+    <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+    <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+    <google-api-client.version>1.23.0</google-api-client.version>
+    <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
+    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-lang.version>2.6</commons-lang.version>
+  </properties>
+
+  <scm>
+    <url>https://github.com/synyx/urlaubsverwaltung</url>
+    <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
+    <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>releases.nexus.synyx.de</id>
+      <name>Synyx Nexus: Releases</name>
+      <url>https://nexus.synyx.de/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots.nexus.synyx.de</id>
+      <name>Synyx Nexus: Snapshots</name>
+      <url>https://nexus.synyx.de/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>sonatype-snapshots</id>
+      <name>Sonatype OSS Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/releases/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <!-- SPRING / WEB -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-ldap</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.ldap</groupId>
+          <artifactId>spring-ldap-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.ldap</groupId>
+      <artifactId>spring-ldap-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${commons-lang.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>${commons-collections.version}</version>
+    </dependency>
+
+
+    <!-- DATABASE -->
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+    </dependency>
+
+    <!-- MAIL -->
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>${mail.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jvnet.mock-javamail</groupId>
+      <artifactId>mock-javamail</artifactId>
+      <version>${mock-javamail.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- Exclusions are included in the project already in the correct version -->
+        <exclusion>
+          <artifactId>mail</artifactId>
+          <groupId>javax.mail</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
+        </exclusion>
+      </exclusions>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+
+    <!-- JODA TIME -->
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time-jsptags</artifactId>
+      <version>${joda-time-jsptags.version}</version>
+    </dependency>
+
+    <!-- PUBLIC HOLIDAYS INFORMATION -->
+    <dependency>
+      <groupId>de.jollyday</groupId>
+      <artifactId>jollyday</artifactId>
+      <version>${jollyday.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <!-- API DOCUMENTATION -->
+    <dependency>
+      <groupId>com.mangofactory</groupId>
+      <artifactId>swagger-springmvc</artifactId>
+      <version>${swagger-springmvc.version}</version>
+    </dependency>
+
+    <!-- EXCHANGE SYNC -->
+    <dependency>
+      <groupId>com.microsoft.ews-java-api</groupId>
+      <artifactId>ews-java-api</artifactId>
+      <version>${ews-java-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>${httpcore.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+
+    <!-- GOOGLE CALENDAR SYNC -->
+
+    <dependency>
+      <groupId>com.google.api-client</groupId>
+      <artifactId>google-api-client</artifactId>
+      <version>${google-api-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-calendar</artifactId>
+      <version>${google-api-services-calendar.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${maven-release-plugin.version}</version>
+      </plugin>
+      <!-- Coveralls.io -->
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>${coveralls-maven-plugin.version}</version>
+      </plugin>
+      <plugin>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.19.RELEASE</version>
-        <relativePath />
-    </parent>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <profiles>
+            <profile>dev</profile>
+          </profiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- frontend-maven-plugin installs node and npm locally in the project directory -->
+        <!-- node is used to run javascript unit tests -->
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <nodeVersion>v8.11.1</nodeVersion>
+              <npmVersion>5.6.0</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install npm dependencies</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <arguments>install --no-save</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm test</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <arguments>run test</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <configuration>
+          <from>
+            <image>openjdk:8-jre-alpine</image>
+          </from>
+          <to>
+            <image>registry.hub.docker.com/synyx/urlaubsverwaltung</image>
+            <tags>
+              <tag>${project.version}</tag>
+            </tags>
+          </to>
+          <container>
+            <ports>
+              <port>8080</port>
+            </ports>
+            <environment>
+              <SPRING_PROFILES_ACTIVE>dev</SPRING_PROFILES_ACTIVE>
+            </environment>
+          </container>
+        </configuration>
+      </plugin>
 
-    <properties>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <joda.time.version>2.7</joda.time.version>
-        <mail.version>1.4.7</mail.version>
-        <mock-javamail.version>1.9</mock-javamail.version>
-        <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
-        <jollyday.version>0.4.7</jollyday.version>
-        <swagger-springmvc.version>1.0.2</swagger-springmvc.version>
-        <ews-java-api.version>2.0</ews-java-api.version>
-        <httpcore.version>4.4.1</httpcore.version>
-        <httpclient.version>4.5</httpclient.version>
-        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-        <google-api-client.version>1.23.0</google-api-client.version>
-        <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
-        <commons-collections.version>3.2.1</commons-collections.version>
-        <commons-lang.version>2.6</commons-lang.version>
-    </properties>
-
-    <scm>
-        <url>https://github.com/synyx/urlaubsverwaltung</url>
-        <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
-        <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>releases.nexus.synyx.de</id>
-            <name>Synyx Nexus: Releases</name>
-            <url>https://nexus.synyx.de/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots.nexus.synyx.de</id>
-            <name>Synyx Nexus: Snapshots</name>
-            <url>https://nexus.synyx.de/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>sonatype-snapshots</id>
-            <name>Sonatype OSS Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <!-- SPRING / WEB -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-ldap</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.ldap</groupId>
-                    <artifactId>spring-ldap-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>${commons-collections.version}</version>
-        </dependency>
-
-
-
-        <!-- DATABASE -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-        </dependency>
-
-        <!-- MAIL -->
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${mail.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jvnet.mock-javamail</groupId>
-            <artifactId>mock-javamail</artifactId>
-            <version>${mock-javamail.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <!-- Exclusions are included in the project already in the correct version -->
-                <exclusion>
-                    <artifactId>mail</artifactId>
-                    <groupId>javax.mail</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>junit</artifactId>
-                    <groupId>junit</groupId>
-                </exclusion>
-            </exclusions>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-        </dependency>
-
-        <!-- JODA TIME -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time-jsptags</artifactId>
-            <version>${joda-time-jsptags.version}</version>
-        </dependency>
-
-        <!-- PUBLIC HOLIDAYS INFORMATION -->
-        <dependency>
-            <groupId>de.jollyday</groupId>
-            <artifactId>jollyday</artifactId>
-            <version>${jollyday.version}</version>
-            <type>jar</type>
-        </dependency>
-
-        <!-- API DOCUMENTATION -->
-        <dependency>
-            <groupId>com.mangofactory</groupId>
-            <artifactId>swagger-springmvc</artifactId>
-            <version>${swagger-springmvc.version}</version>
-        </dependency>
-
-        <!-- EXCHANGE SYNC -->
-        <dependency>
-            <groupId>com.microsoft.ews-java-api</groupId>
-            <artifactId>ews-java-api</artifactId>
-            <version>${ews-java-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>${httpcore.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-        </dependency>
-
-        <!-- GOOGLE CALENDAR SYNC -->
-
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>${google-api-client.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-calendar</artifactId>
-            <version>${google-api-services-calendar.version}</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <testResources>
-            <testResource>
-                <directory>${project.basedir}/src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>${project.basedir}/src/main/resources</directory>
-            </testResource>
-        </testResources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>${maven-release-plugin.version}</version>
-            </plugin>
-            <!-- Coveralls.io -->
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>${coveralls-maven-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <profiles>
-                        <profile>dev</profile>
-                    </profiles>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- frontend-maven-plugin installs node and npm locally in the project directory -->
-                <!-- node is used to run javascript unit tests -->
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <phase>generate-test-resources</phase>
-                        <configuration>
-                            <nodeVersion>v8.11.1</nodeVersion>
-                            <npmVersion>5.6.0</npmVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install npm dependencies</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>generate-test-resources</phase>
-                        <configuration>
-                            <arguments>install --no-save</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm test</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>test</phase>
-                        <configuration>
-                            <arguments>run test</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:8-jre-alpine</image>
-                    </from>
-                    <to>
-                        <image>registry.hub.docker.com/synyx/urlaubsverwaltung</image>
-                        <tags>
-                            <tag>${project.version}</tag>
-                        </tags>
-                    </to>
-                    <container>
-                        <ports>
-                            <port>8080</port>
-                        </ports>
-                        <environment>
-                            <SPRING_PROFILES_ACTIVE>dev</SPRING_PROFILES_ACTIVE>
-                        </environment>
-                    </container>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
+    </plugins>
+  </build>
 </project>
