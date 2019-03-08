@@ -3,9 +3,7 @@ package org.synyx.urlaubsverwaltung.core.account.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.account.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.person.Person;

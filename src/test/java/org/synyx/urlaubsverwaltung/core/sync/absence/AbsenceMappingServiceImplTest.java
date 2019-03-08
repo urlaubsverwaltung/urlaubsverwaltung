@@ -2,16 +2,9 @@ package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-
-import java.util.Optional;
-
 import static org.hamcrest.CoreMatchers.is;
-
 import static org.junit.Assert.assertThat;
 
 

@@ -1,13 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.joda.time.DateMidnight;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
 

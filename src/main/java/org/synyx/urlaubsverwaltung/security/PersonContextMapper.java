@@ -2,33 +2,25 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
-
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 
+import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-
-import javax.naming.NamingException;
 
 
 /**

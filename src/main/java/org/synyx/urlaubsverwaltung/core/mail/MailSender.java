@@ -2,16 +2,12 @@ package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 
 import java.util.Arrays;

@@ -2,11 +2,8 @@ package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 

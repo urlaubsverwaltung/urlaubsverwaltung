@@ -1,9 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Optional;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
@@ -16,6 +12,10 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionServiceImpl}.

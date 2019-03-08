@@ -4,8 +4,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 
 import java.math.BigDecimal;
 

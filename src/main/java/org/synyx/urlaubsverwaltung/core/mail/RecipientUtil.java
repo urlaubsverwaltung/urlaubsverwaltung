@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.springframework.util.StringUtils;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Arrays;

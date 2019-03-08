@@ -2,23 +2,17 @@ package org.synyx.urlaubsverwaltung.core.overtime;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.math.BigDecimal;
-
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import java.math.BigDecimal;
+import java.util.Date;
 
 
 /**

@@ -2,16 +2,11 @@ package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;

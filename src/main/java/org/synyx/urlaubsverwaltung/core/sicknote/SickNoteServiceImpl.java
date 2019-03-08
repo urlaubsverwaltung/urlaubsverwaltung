@@ -1,11 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.joda.time.DateMidnight;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
