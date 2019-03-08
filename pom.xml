@@ -54,6 +54,8 @@
     <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
+    <docker-maven-plugin.version>0.28.0</docker-maven-plugin.version>
+    <run-java-sh.version>1.3.4</run-java-sh.version>
   </properties>
 
   <scm>
@@ -342,30 +344,44 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>jib-maven-plugin</artifactId>
-        <version>1.0.0</version>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${docker-maven-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>run-java-sh</artifactId>
+            <version>${run-java-sh.version}</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <from>
-            <image>openjdk:8-jre-alpine</image>
-          </from>
-          <to>
-            <image>registry.hub.docker.com/synyx/urlaubsverwaltung</image>
-            <tags>
-              <tag>${project.version}</tag>
-            </tags>
-          </to>
-          <container>
-            <ports>
-              <port>8080</port>
-            </ports>
-            <environment>
-              <SPRING_PROFILES_ACTIVE>dev</SPRING_PROFILES_ACTIVE>
-            </environment>
-          </container>
+          <images>
+            <image>
+              <name>registry.hub.docker.com/synyx/urlaubsverwaltung:${project.version}</name>
+              <external>
+                <type>properties</type>
+                <prefix>docker</prefix>
+                <mode>override</mode>
+              </external>
+              <build>
+                <dockerFileDir>${project.basedir}</dockerFileDir>
+                <dockerFile>Dockerfile</dockerFile>
+                <assembly>
+                  <descriptorRef>artifact</descriptorRef>
+                </assembly>
+                <!--<tags>
+                    <tag>${project.version}</tag>
+                </tags>-->
+              </build>
+              <run>
+                <ports>
+                  <port>8080:8080</port>
+                </ports>
+              </run>
+            </image>
+          </images>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 </project>
