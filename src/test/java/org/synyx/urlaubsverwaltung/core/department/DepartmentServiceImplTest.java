@@ -2,13 +2,10 @@ package org.synyx.urlaubsverwaltung.core.department;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -19,9 +16,6 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import static org.mockito.Matchers.eq;
 

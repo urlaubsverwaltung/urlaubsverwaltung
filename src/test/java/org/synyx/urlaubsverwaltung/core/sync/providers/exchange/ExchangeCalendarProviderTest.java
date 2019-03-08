@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 public class ExchangeCalendarProviderTest {

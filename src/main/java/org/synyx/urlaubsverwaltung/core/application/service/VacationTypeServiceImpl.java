@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.application.dao.VacationTypeDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 

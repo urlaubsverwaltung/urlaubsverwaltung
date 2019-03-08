@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

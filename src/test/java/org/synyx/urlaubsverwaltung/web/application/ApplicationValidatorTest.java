@@ -1,14 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -25,17 +21,13 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
-
 import java.sql.Time;
-
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Matchers.any;
-
 import static org.mockito.Mockito.when;
 
 

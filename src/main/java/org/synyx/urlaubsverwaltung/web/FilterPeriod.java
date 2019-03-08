@@ -3,9 +3,7 @@ package org.synyx.urlaubsverwaltung.web;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 

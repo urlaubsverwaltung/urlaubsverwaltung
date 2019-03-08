@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 

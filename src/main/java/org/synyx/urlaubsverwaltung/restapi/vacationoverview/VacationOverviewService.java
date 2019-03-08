@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -15,7 +14,6 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.ArrayList;
 import java.util.List;

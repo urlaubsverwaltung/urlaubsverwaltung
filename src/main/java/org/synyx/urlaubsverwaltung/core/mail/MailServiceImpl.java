@@ -1,13 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.context.MessageSource;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;

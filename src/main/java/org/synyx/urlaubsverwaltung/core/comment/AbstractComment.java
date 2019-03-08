@@ -1,17 +1,14 @@
 package org.synyx.urlaubsverwaltung.core.comment;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
+import java.util.Date;
 
 
 /**

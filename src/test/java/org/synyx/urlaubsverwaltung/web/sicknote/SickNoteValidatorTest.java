@@ -2,14 +2,10 @@ package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;

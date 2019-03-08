@@ -1,11 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 

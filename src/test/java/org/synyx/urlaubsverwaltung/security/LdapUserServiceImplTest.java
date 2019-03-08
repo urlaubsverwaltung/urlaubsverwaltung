@@ -2,9 +2,7 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.ldap.core.LdapTemplate;
 
 
