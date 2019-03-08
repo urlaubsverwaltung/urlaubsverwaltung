@@ -2,24 +2,18 @@ package org.synyx.urlaubsverwaltung.core.overtime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
-
-import javax.transaction.Transactional;
 
 
 /**

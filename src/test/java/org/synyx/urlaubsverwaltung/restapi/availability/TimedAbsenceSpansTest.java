@@ -2,11 +2,9 @@ package org.synyx.urlaubsverwaltung.restapi.availability;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
 import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

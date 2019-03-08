@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.period;
 
 import org.joda.time.DateTimeConstants;
-
 import org.springframework.util.Assert;
 
 

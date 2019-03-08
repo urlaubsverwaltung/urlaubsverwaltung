@@ -1,17 +1,12 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
@@ -22,15 +17,12 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-
 import java.security.NoSuchAlgorithmException;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 
 /**

@@ -1,13 +1,9 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-
 import org.springframework.stereotype.Component;
-
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -15,7 +11,6 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.math.BigDecimal;
-
 import java.util.Optional;
 
 

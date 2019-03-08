@@ -1,13 +1,11 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
-
 import java.util.HashMap;
 import java.util.Map;
 

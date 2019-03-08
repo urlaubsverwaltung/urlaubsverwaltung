@@ -2,11 +2,8 @@ package org.synyx.urlaubsverwaltung.web.department;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -16,7 +13,6 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Collections;
 
 import static junit.framework.TestCase.assertFalse;
-
 import static org.junit.Assert.assertTrue;
 
 

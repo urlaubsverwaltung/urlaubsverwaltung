@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
 import org.joda.time.DateMidnight;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
