@@ -1,5 +1,7 @@
 language: java
 
+services: docker
+
 jdk:
   - openjdk8
 
@@ -34,7 +36,7 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: ./mvnw "$MAVEN_CLI_OPTS" compile jib:build -Djib.to.auth.username="$DOCKER_USERNAME" -Djib.to.auth.password="$DOCKER_PASSWORD"
+    script: ./mvnw "$MAVEN_CLI_OPTS" docker:build docker:push -Ddocker.username=$DOCKER_USERNAME -Ddocker.password=$DOCKER_PASSWORD
     skip_cleanup: true
     on:
       tags: true
