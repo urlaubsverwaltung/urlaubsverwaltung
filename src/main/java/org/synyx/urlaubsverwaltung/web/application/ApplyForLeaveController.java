@@ -94,7 +94,7 @@ public class ApplyForLeaveController {
     @GetMapping("/application/new")
     public String newApplicationForm(
         @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
-        throws UnknownPersonException, AccessDeniedException {
+        throws UnknownPersonException {
 
         Person signedInUser = sessionService.getSignedInUser();
 
@@ -148,7 +148,7 @@ public class ApplyForLeaveController {
 
     @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
-        Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+        Model model, RedirectAttributes redirectAttributes) {
 
         LOG.info("POST new application received: {}", appForm);
 
