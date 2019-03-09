@@ -9,10 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -90,7 +91,7 @@ public class ApplyForLeaveController {
      *
      * @return  form to apply for leave
      */
-    @RequestMapping(value = "/application/new", method = RequestMethod.GET)
+    @GetMapping("/application/new")
     public String newApplicationForm(
         @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException, AccessDeniedException {
@@ -145,7 +146,7 @@ public class ApplyForLeaveController {
     }
 
 
-    @RequestMapping(value = "/application", method = RequestMethod.POST)
+    @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
         Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
