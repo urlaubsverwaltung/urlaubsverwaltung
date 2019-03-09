@@ -1,21 +1,17 @@
 {
-  "addons": [
-
-  ],
   "buildpacks": [
     {
       "url": "heroku/java"
     }
   ],
-  "env": {
-  },
   "formation": {
     "web": {
-      "quantity": 1
+      "quantity": 1,
+      "size": "free"
     }
   },
   "name": "urlaubsverwaltung",
-  "scripts": {
-  },
+  "repository": "https://github.com/synyx/urlaubsverwaltung",
+  "logo": "https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/static/favicon.ico",
   "stack": "heroku-18"
 }

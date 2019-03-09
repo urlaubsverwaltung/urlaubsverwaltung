@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/synyx/urlaubsverwaltung.png)](https://travis-ci.org/synyx/urlaubsverwaltung)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung)
 [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
+[![Heroku](https://img.shields.io/badge/%E2%86%91_Deploy_to-Heroku-7056bf.svg)](https://urlaubsverwaltung.herokuapp.com)
 
 ## Urlaubsverwaltung
 
@@ -45,7 +46,7 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 
 #### Demo System
 
-Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung-demo.synyx.de) mit Testbenutzern für
+Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung.herokuapp.com) mit Testbenutzern für
 die unterschiedlichen Rollen:
 
 | Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
@@ -91,7 +92,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 #### REST-Schnittstelle
 
 Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
-Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverwaltung-demo.synyx.de/api/index.html
+Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverwaltung.herokuapp.com/api/index.html
 
 ---
 
