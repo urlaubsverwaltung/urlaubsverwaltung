@@ -137,9 +137,9 @@ public class ApplyForLeaveController {
 
         List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
         if(!overtimeActive) {
-        	vacationTypes=vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
+            vacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
         }
-		model.addAttribute("vacationTypes", vacationTypes);
+        model.addAttribute("vacationTypes", vacationTypes);
 
         model.addAttribute("application", appForm);
     }
