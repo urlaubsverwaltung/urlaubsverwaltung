@@ -150,7 +150,7 @@ public class ApplyForLeaveController {
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
         Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
-        LOG.info("POST new application received: " + appForm.toString());
+        LOG.info("POST new application received: {}", appForm);
 
         Person applier = sessionService.getSignedInUser();
 
@@ -162,7 +162,7 @@ public class ApplyForLeaveController {
                 model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             }
 
-            LOG.info(String.format("new application (%s) has errors: %s", appForm.toString(), errors.toString()));
+            LOG.info("new application ({}) has errors: {}", appForm, errors);
 
             return "application/app_form";
         }
@@ -172,7 +172,7 @@ public class ApplyForLeaveController {
         Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
                 Optional.ofNullable(appForm.getComment()));
 
-        LOG.info("new application with sucess applied" + savedApplicationForLeave.toString());
+        LOG.info("new application with success applied {}", savedApplicationForLeave);
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 
