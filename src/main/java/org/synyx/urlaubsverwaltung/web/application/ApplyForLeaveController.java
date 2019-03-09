@@ -52,27 +52,25 @@ public class ApplyForLeaveController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplyForLeaveController.class);
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final VacationTypeService vacationTypeService;
+    private final ApplicationInteractionService applicationInteractionService;
+    private final ApplicationValidator applicationValidator;
+    private final SettingsService settingsService;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private VacationTypeService vacationTypeService;
-
-    @Autowired
-    private
-                                   ApplicationInteractionService applicationInteractionService;
-
-    @Autowired
-    private ApplicationValidator applicationValidator;
-
-    @Autowired
-    private SettingsService settingsService;
+    public ApplyForLeaveController(SessionService sessionService, PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
+                                   ApplicationInteractionService applicationInteractionService, ApplicationValidator applicationValidator, SettingsService settingsService) {
+        this.sessionService = sessionService;
+        this.personService = personService;
+        this.accountService = accountService;
+        this.vacationTypeService = vacationTypeService;
+        this.applicationInteractionService = applicationInteractionService;
+        this.applicationValidator = applicationValidator;
+        this.settingsService = settingsService;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
