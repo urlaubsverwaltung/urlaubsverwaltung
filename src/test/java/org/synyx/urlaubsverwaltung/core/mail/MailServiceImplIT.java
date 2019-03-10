@@ -65,7 +65,7 @@ public class MailServiceImplIT {
         MESSAGE_SOURCE = new StaticMessageSource();
 
         try {
-            Properties messageProperties = PropertiesUtil.load("messages.properties");
+            Properties messageProperties = PropertiesUtil.load("messages_de.properties");
 
             Map<String, String> messages = messageProperties.entrySet().stream().collect(Collectors.toMap(e ->
                     e.getKey().toString(),
