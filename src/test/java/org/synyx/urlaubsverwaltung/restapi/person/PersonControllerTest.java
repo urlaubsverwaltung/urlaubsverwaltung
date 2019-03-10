@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.restapi.person;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -15,6 +14,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,7 +67,7 @@ public class PersonControllerTest {
     public void ensureReturnsListWithOneElementIfLoginNameSpecified() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/persons").param("ldap", "muster"))
             .andExpect(status().isOk())
@@ -84,7 +84,7 @@ public class PersonControllerTest {
     @Test
     public void ensureReturnsEmptyListForUnknownLoginName() throws Exception {
 
-        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/persons").param("ldap", "muster"))
             .andExpect(status().isOk())

@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -184,7 +185,7 @@ public class PersonValidatorTest {
 
         when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>empty());
         validator.validateLogin("foo", errors);
-        verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
+        verify(errors, Mockito.never()).rejectValue(anyString(), anyString());
     }
 
 

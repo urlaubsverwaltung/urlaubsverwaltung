@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +17,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,7 +64,7 @@ public class SessionServiceTest {
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIfNoPersonCanBeFoundForTheCurrentlySignedInUser() {
 
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
 
         sessionService.getSignedInUser();
     }
@@ -75,7 +75,7 @@ public class SessionServiceTest {
 
         Person person = TestDataCreator.createPerson();
 
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
 
         Person signedInUser = sessionService.getSignedInUser();
 

@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,7 +53,7 @@ public class AvailabilityControllerTest {
 
         testPerson = TestDataCreator.createPerson("testPerson");
 
-        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(testPerson));
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.of(testPerson));
     }
 
 
