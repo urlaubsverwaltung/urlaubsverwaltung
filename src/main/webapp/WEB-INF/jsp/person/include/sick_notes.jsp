@@ -44,24 +44,28 @@
                         <uv:date date="${sickNote.startDate}"/>, <spring:message code="${sickNote.dayLength}"/>
                     </c:when>
                     <c:otherwise>
-                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>, <uv:date date="${sickNote.startDate}"/>
+                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>, <uv:date
+                        date="${sickNote.startDate}"/>
                         -
-                        <spring:message code="${sickNote.weekDayOfEndDate}.short"/>, <uv:date date="${sickNote.endDate}"/>
+                        <spring:message code="${sickNote.weekDayOfEndDate}.short"/>, <uv:date
+                        date="${sickNote.endDate}"/>
                     </c:otherwise>
                 </c:choose>
 
                 <c:if test="${sickNote.aubPresent == true}">
-                    <span class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
-                       (<i class="fa fa-check positive"></i> <spring:message code="sicknote.data.aub.short" />)
+                    <span
+                        class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+                       (<i class="fa fa-check positive"></i> <spring:message code="sicknote.data.aub.short"/>)
                     </span>
                 </c:if>
             </p>
         </td>
         <td class="is-centered hidden-xs">
-            <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days" /></span>
+            <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days"/></span>
         </td>
         <td class="hidden-print is-centered hidden-xs">
-            <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.progress.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/></span>
+            <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.progress.lastEdited"/> <uv:date
+            date="${sickNote.lastEdited}"/></span>
         </td>
         </c:forEach>
     </tbody>

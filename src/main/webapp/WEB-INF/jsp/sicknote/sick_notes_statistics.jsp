@@ -1,5 +1,4 @@
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
@@ -11,14 +10,14 @@
 <html>
 
 <head>
-    <uv:head />
+    <uv:head/>
 </head>
 
 <body>
 
-<spring:url var="URL_PREFIX" value="/web" />
+<spring:url var="URL_PREFIX" value="/web"/>
 
-<uv:menu />
+<uv:menu/>
 
 <div class="content">
     <div class="container">
@@ -27,9 +26,9 @@
 
             <div class="col-xs-12">
                 <legend>
-                    <spring:message code="sicknotes.statistics.title" />
-                    <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year=" />
-                    <uv:print />
+                    <spring:message code="sicknotes.statistics.title"/>
+                    <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
+                    <uv:print/>
                 </legend>
             </div>
 
@@ -38,54 +37,55 @@
         <div class="row">
 
             <div class="col-xs-12">
-            
-            <table class="list-table">
 
-                <thead>
+                <table class="list-table">
+
+                    <thead>
                     <tr>
-                        <th colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date date="${statistics.created}" /></th>
+                        <th colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
+                            date="${statistics.created}"/></th>
                     </tr>
-                </thead>
+                    </thead>
 
-                <tbody>
-                <tr>
-                    <td>
-                        <spring:message code="sicknotes.statistics.totalNumber" />
-                    </td>
-                    <td>
-                        <c:out value="${statistics.totalNumberOfSickNotes}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <spring:message code="sicknotes.statistics.totalNumberOfDays" />
-                    </td>
-                    <td>
-                        <uv:number number="${statistics.totalNumberOfSickDays}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <spring:message code="sicknotes.statistics.staffWithSickNotes" />
-                    </td>
-                    <td>
-                        <c:out value="${statistics.numberOfPersonsWithMinimumOneSickNote}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <spring:message code="sicknotes.statistics.averageSickTime" />
-                    </td>
-                    <td>
-                        <uv:number number="${statistics.averageDurationOfDiseasePerPerson}" />
-                    </td>
-                </tr>
-                </tbody>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <spring:message code="sicknotes.statistics.totalNumber"/>
+                        </td>
+                        <td>
+                            <c:out value="${statistics.totalNumberOfSickNotes}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <spring:message code="sicknotes.statistics.totalNumberOfDays"/>
+                        </td>
+                        <td>
+                            <uv:number number="${statistics.totalNumberOfSickDays}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <spring:message code="sicknotes.statistics.staffWithSickNotes"/>
+                        </td>
+                        <td>
+                            <c:out value="${statistics.numberOfPersonsWithMinimumOneSickNote}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <spring:message code="sicknotes.statistics.averageSickTime"/>
+                        </td>
+                        <td>
+                            <uv:number number="${statistics.averageDurationOfDiseasePerPerson}"/>
+                        </td>
+                    </tr>
+                    </tbody>
 
-            </table>
+                </table>
 
             </div>
-            
+
         </div>
     </div>
 </div>

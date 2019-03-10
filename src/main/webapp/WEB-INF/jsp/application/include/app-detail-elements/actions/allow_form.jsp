@@ -20,13 +20,13 @@
 </c:if>
 
 <c:choose>
-      <c:when test="${shortcut == true}">
+    <c:when test="${shortcut == true}">
         <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow?redirect=/web/application/"/>
-      </c:when>
+    </c:when>
 
-      <c:otherwise>
+    <c:otherwise>
         <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow"/>
-      </c:otherwise>
+    </c:otherwise>
 </c:choose>
 
 <sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
@@ -40,10 +40,10 @@
         <div class="control-label">
             <c:choose>
                 <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
-                    <b><spring:message code='action.temporary_allow.confirm'/></b>
+                    <strong><spring:message code='action.temporary_allow.confirm'/></strong>
                 </c:when>
                 <c:otherwise>
-                    <b><spring:message code='action.allow.confirm'/></b>
+                    <strong><spring:message code='action.allow.confirm'/></strong>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -52,7 +52,7 @@
     <div class="form-group">
         <div class="control-label">
             <spring:message code="action.comment.optional"/>: (<span
-                id="text-confirm"></span><spring:message code="action.comment.maxChars"/>)
+            id="text-confirm"></span><spring:message code="action.comment.maxChars"/>)
         </div>
         <form:textarea rows="2" cssClass="form-control" cssErrorClass="form-control error" path="text"
                        onkeyup="count(this.value, 'text-confirm');"

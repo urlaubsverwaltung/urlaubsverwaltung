@@ -6,18 +6,19 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
+<!DOCTYPE html>
 <html>
 <head>
-    <uv:head />
+    <uv:head/>
 </head>
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<uv:menu />
+<uv:menu/>
 
 <div class="print-info--only-portrait">
-    <h4><spring:message code="print.info.portrait" /></h4>
+    <h4><spring:message code="print.info.portrait"/></h4>
 </div>
 
 <div class="content print--only-portrait">
@@ -29,42 +30,47 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
 
                 <legend>
-                    <spring:message code="sicknote.title" />
+                    <spring:message code="sicknote.title"/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                      <c:if test="${sickNote.active}">
-                        <uv:print/>
-                        <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
-                           data-title="<spring:message code="action.delete"/>">
-                          <i class="fa fa-trash"></i>
-                        </a>
-                        <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
-                           data-title="<spring:message code="action.convert"/>">
-                          <i class="fa fa-retweet"></i>
-                        </a>
-                        <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
-                           data-title="<spring:message code="action.edit"/>">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                      </c:if>
+                        <c:if test="${sickNote.active}">
+                            <uv:print/>
+                            <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
+                               data-title="<spring:message code="action.delete"/>">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
+                               data-title="<spring:message code="action.convert"/>">
+                                <i class="fa fa-retweet"></i>
+                            </a>
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
+                               data-title="<spring:message code="action.edit"/>">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                        </c:if>
                     </sec:authorize>
                 </legend>
 
                 <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/cancel">
-                <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
-                                <h4 id="myModalLabel" class="modal-title"><spring:message code="action.delete" />?</h4>
+                    <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i
+                                        class="fa fa-remove"></i></button>
+                                    <h4 id="myModalLabel" class="modal-title"><spring:message
+                                        code="action.delete"/>?</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <spring:message code="action.sicknote.cancel.confirm"/>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-danger is-sticky" type="submit"><spring:message
+                                        code="action.delete"/></button>
+                                    <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true">
+                                        <spring:message code="action.cancel"/></button>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <spring:message code="action.sicknote.cancel.confirm" />
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-danger is-sticky" type="submit"><spring:message code="action.delete" /></button>
-                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><spring:message code="action.cancel" /></button>
-                            </div>
-                        </div>
                         </div>
                     </div>
                 </form:form>
@@ -82,7 +88,8 @@
                     </span>
                     <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
-                        <spring:message code="sicknotes.details.title" arguments="${sickNote.sickNoteType.displayName}"/>
+                        <spring:message code="sicknotes.details.title"
+                                        arguments="${sickNote.sickNoteType.displayName}"/>
 
                         <c:choose>
                             <c:when test="${sickNote.startDate == sickNote.endDate}">
@@ -93,7 +100,9 @@
                                 <c:set var="SICK_NOTE_DAY_LENGTH">
                                     <spring:message code="${sickNote.dayLength}"/>
                                 </c:set>
-                                <spring:message code="absence.period.singleDay" arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}" argumentSeparator=";"/>
+                                <spring:message code="absence.period.singleDay"
+                                                arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}"
+                                                argumentSeparator=";"/>
                             </c:when>
                             <c:otherwise>
                                 <c:set var="SICK_NOTE_START_DATE">
@@ -108,7 +117,9 @@
                                         <uv:date date="${sickNote.endDate}"/>
                                     </h5>
                                 </c:set>
-                                <spring:message code="absence.period.multipleDays" arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}" argumentSeparator=";"/>
+                                <spring:message code="absence.period.multipleDays"
+                                                arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}"
+                                                argumentSeparator=";"/>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -122,9 +133,9 @@
                         </td>
                         <td>
                             = <uv:number number="${sickNote.workDays}"/> <spring:message
-                                code="duration.workDays"/>
+                            code="duration.workDays"/>
                             <c:if test="${sickNote.active == false}">
-                                <span><spring:message code="sicknote.data.inactive" /></span>
+                                <span><spring:message code="sicknote.data.inactive"/></span>
                             </c:if>
                         </td>
                     </tr>
@@ -135,7 +146,7 @@
                                 <c:when test="${sickNote.aubPresent}">
                                     <i class="fa fa-check hidden-print"></i>
                                     <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
-                                        date="${sickNote.aubEndDate}"/>
+                                    date="${sickNote.aubEndDate}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <i class="fa fa-remove hidden-print"></i>
@@ -147,91 +158,102 @@
                     </tbody>
                 </table>
 
-            </div><%-- End of first column --%>
+            </div>
+            <%-- End of first column --%>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-                
+
                 <legend>
-                    <spring:message code="sicknote.progress.title" />
+                    <spring:message code="sicknote.progress.title"/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                      <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
-                         data-title="<spring:message code="action.comment.new" />">
-                        <i class="fa fa-comments"></i>
-                      </a>
+                        <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
+                           data-title="<spring:message code="action.comment.new" />">
+                            <i class="fa fa-comments"></i>
+                        </a>
                     </sec:authorize>
                 </legend>
 
                 <table class="list-table striped-table bordered-table">
                     <tbody>
-                        <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
-                            <tr>
-                                <td class="hidden-print">
-                                    <div class="gravatar gravatar--medium img-circle center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
-                                </td>
-                                <td>
-                                    <c:out value="${comment.person.niceName}" />
-                                </td>
-                                <td>
-                                    <uv:date date="${comment.date}" />:
-                                    <br />
-                                    <c:choose>
-                                        <c:when test="${empty comment.text}">
-                                            <spring:message code="sicknote.progress.${comment.action}" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:out value="${comment.text}" />
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                            </tr>
-                        </c:forEach>
+                    <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
+                        <tr>
+                            <td class="hidden-print">
+                                <div class="gravatar gravatar--medium img-circle center-block"
+                                     data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
+                            </td>
+                            <td>
+                                <c:out value="${comment.person.niceName}"/>
+                            </td>
+                            <td>
+                                <uv:date date="${comment.date}"/>:
+                                <br/>
+                                <c:choose>
+                                    <c:when test="${empty comment.text}">
+                                        <spring:message code="sicknote.progress.${comment.action}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${comment.text}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:forEach>
                     </tbody>
                 </table>
 
                 <sec:authorize access="hasAuthority('OFFICE')">
-                
+
                     <c:choose>
                         <c:when test="${not empty errors}">
-                           <c:set var="STYLE" value="display: block" />
+                            <c:set var="STYLE" value="display: block"/>
                             <div class="feedback">
                                 <div class="alert alert-danger">
-                                    <spring:message code="application.action.reason.error" />
+                                    <spring:message code="application.action.reason.error"/>
                                 </div>
                             </div>
                         </c:when>
                         <c:otherwise>
-                            <c:set var="STYLE" value="display: none" /> 
+                            <c:set var="STYLE" value="display: none"/>
                         </c:otherwise>
                     </c:choose>
-                    
+
                     <div id="comment-form" style="${STYLE}">
-                        <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment" modelAttribute="comment">
-                            <span id="text-comment"></span><spring:message code="action.comment.maxChars" />
-                            <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
-                            <br />
+                        <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment"
+                                   modelAttribute="comment">
+                            <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                            <form:textarea rows="2" path="text" cssClass="form-control"
+                                           cssErrorClass="form-control error"
+                                           onkeyup="count(this.value, 'text-comment');"
+                                           onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
+                            <br/>
                             <button class="btn btn-success col-xs-12 col-sm-5" type="submit">
-                                <spring:message code="action.save" />
+                                <spring:message code="action.save"/>
                             </button>
-                            <button class="btn btn-default col-xs-12 col-sm-5 pull-right" type="button" onclick="$('div#comment-form').hide();">
-                                <spring:message code="action.cancel" />
+                            <button class="btn btn-default col-xs-12 col-sm-5 pull-right" type="button"
+                                    onclick="$('div#comment-form').hide();">
+                                <spring:message code="action.cancel"/>
                             </button>
-                        </form:form> 
+                        </form:form>
                     </div>
-                
+
                 </sec:authorize>
 
                 <legend class="hidden-print">
-                    <spring:message code="sicknote.data.staff" />
+                    <spring:message code="sicknote.data.staff"/>
                 </legend>
-                
+
                 <uv:person person="${sickNote.person}" cssClass="hidden-print"/>
-            </div><%-- End of second column --%>
+            </div>
+            <%-- End of second column --%>
 
-        </div><%-- End of row --%>
+        </div>
+        <%-- End of row --%>
 
-    </div><%-- End of container --%>
+    </div>
+    <%-- End of container --%>
 
-</div><%-- End of content --%>
+</div>
+<%-- End of content --%>
 
 </body>
 </html>

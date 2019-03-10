@@ -36,8 +36,6 @@ public class ExceptionHandlerControllerAdvice {
         modelAndView.addObject("exception", exception);
         modelAndView.addObject("statusCode", httpStatus.value());
 
-        exception.printStackTrace();
-
         return modelAndView;
     }
 

@@ -12,7 +12,7 @@
 <head>
     <uv:head/>
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             $("table.sortable").tablesorter({
                 sortList: [[1, 0]],
@@ -47,7 +47,7 @@
 <uv:menu/>
 
 <div class="print-info--only-landscape">
-    <h4><spring:message code="print.info.landscape" /></h4>
+    <h4><spring:message code="print.info.landscape"/></h4>
 </div>
 
 <div class="content print--only-landscape">
@@ -68,12 +68,13 @@
                     <c:choose>
                         <c:when test="${not empty errors}">
                             <a href="#filterModal" data-toggle="modal">
-                                <spring:message code="applications.statistics.error.period" />
+                                <spring:message code="applications.statistics.error.period"/>
                             </a>
                         </c:when>
                         <c:otherwise>
                             <a href="#filterModal" data-toggle="modal">
-                                <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                                <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date
+                                date="${to}"/>
                             </a>
                         </c:otherwise>
                     </c:choose>
@@ -99,14 +100,17 @@
                                 <th class="hidden"><%-- placeholder to ensure correct number of th --%></th>
                                 <th class="sortable-field"><spring:message code="applications.statistics.allowed"/></th>
                                 <th class="sortable-field"><spring:message code="applications.statistics.waiting"/></th>
-                                <th class="sortable-field"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
+                                <th class="sortable-field"><spring:message code="applications.statistics.left"/> (<c:out
+                                    value="${from.year}"/>)
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
                                     <td class="hidden-print is-centered">
-                                        <div class="gravatar img-circle hidden-print" data-gravatar="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"></div>
+                                        <div class="gravatar img-circle hidden-print"
+                                             data-gravatar="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"></div>
                                     </td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.lastName}"/></td>
@@ -128,7 +132,10 @@
                                         </c:forEach>
                                     </td>
                                     <td class="hidden-xs hidden-sm number">
-                                        <b class="sortable"><uv:number number="${statistic.totalAllowedVacationDays}"/></b>
+                                        <strong class="sortable">
+                                            <uv:number
+                                            number="${statistic.totalAllowedVacationDays}"/>
+                                        </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
@@ -138,7 +145,10 @@
                                         </c:forEach>
                                     </td>
                                     <td class="hidden-xs hidden-sm number">
-                                        <b class="sortable"><uv:number number="${statistic.totalWaitingVacationDays}"/></b>
+                                        <strong class="sortable">
+                                            <uv:number
+                                            number="${statistic.totalWaitingVacationDays}"/>
+                                        </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
@@ -150,8 +160,8 @@
                                     <td class="hidden-xs">
                                         <b class="sortable"><uv:number number="${statistic.leftVacationDays}"/></b>
                                         <spring:message code="duration.vacationDays"/>
-                                        <br />
-                                        <b><uv:number number="${statistic.leftOvertime}"/></b>
+                                        <br/>
+                                        <strong><uv:number number="${statistic.leftOvertime}"/></strong>
                                         <spring:message code="duration.overtime"/>
                                     </td>
                                 </tr>
