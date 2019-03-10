@@ -28,7 +28,7 @@
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <a class="navbar-brand" href="#">
-                Urlaubsverwaltung
+                <spring:message code="header.title"/>
             </a>
         </div>
     </div><!-- /.container-fluid -->
@@ -79,7 +79,7 @@
 <footer>
     <div class="row">
         <div class="col-xs-12">
-            <p>synyx Urlaubsverwaltung Version ${version}</p>
+            <p><spring:message code="header.title"/> v${version} powered by <a href="https://synyx.de/">synyx</a></p>
         </div>
     </div>
 </footer>
