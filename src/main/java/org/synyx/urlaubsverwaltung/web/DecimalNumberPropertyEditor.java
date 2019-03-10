@@ -4,12 +4,9 @@ package org.synyx.urlaubsverwaltung.web;
 import org.springframework.util.StringUtils;
 
 import java.beans.PropertyEditorSupport;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import java.text.NumberFormat;
-
 import java.util.Locale;
 
 

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.springframework.beans.BeanUtils;
-
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;

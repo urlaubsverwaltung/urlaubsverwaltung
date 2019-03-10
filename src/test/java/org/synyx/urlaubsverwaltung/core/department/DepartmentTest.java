@@ -1,10 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
 import org.joda.time.DateTime;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 

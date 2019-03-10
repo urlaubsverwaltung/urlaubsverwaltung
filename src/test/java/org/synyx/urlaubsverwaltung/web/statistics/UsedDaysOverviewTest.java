@@ -1,13 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
@@ -17,7 +14,6 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

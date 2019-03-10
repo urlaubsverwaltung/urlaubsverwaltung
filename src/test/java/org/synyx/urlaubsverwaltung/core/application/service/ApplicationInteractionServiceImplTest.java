@@ -1,15 +1,16 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.domain.*;
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationAction;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;

@@ -2,31 +2,23 @@ package org.synyx.urlaubsverwaltung.core.application.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
-import java.math.BigDecimal;
-
-import java.sql.Time;
-
-import java.util.Arrays;
-import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.util.Date;
 
 
 /**

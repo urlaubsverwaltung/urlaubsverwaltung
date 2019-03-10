@@ -1,25 +1,18 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.validation.Errors;
-
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
@@ -161,7 +154,7 @@ public class ApplicationForLeaveDetailsController {
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 
         if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountService.getHolidaysAccount(year+1, application.getPerson())));
             model.addAttribute("account", account.get());
             model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         }

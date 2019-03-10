@@ -3,18 +3,15 @@ package org.synyx.urlaubsverwaltung.restapi.availability;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 
 import java.util.Optional;
 
@@ -46,10 +43,10 @@ public class AvailabilityController {
     )
     @RequestMapping(value = "/availabilities", method = RequestMethod.GET)
     public AvailabilityList personsAvailabilities(
-        @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = "2016-01-01")
+        @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam("from")
         String startDateString,
-        @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = "2016-01-31")
+        @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam("to")
         String endDateString,
         @ApiParam(value = "login name of the person")

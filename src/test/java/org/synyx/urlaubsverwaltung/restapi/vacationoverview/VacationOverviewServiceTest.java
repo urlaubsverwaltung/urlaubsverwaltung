@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.core.department.Department;
@@ -18,7 +17,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;

@@ -5,7 +5,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.core.settings.*;
+import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider;
 

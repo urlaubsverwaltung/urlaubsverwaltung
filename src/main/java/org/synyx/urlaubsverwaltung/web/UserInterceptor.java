@@ -1,12 +1,9 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
-
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import javax.servlet.http.HttpServletRequest;

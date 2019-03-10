@@ -2,14 +2,10 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;

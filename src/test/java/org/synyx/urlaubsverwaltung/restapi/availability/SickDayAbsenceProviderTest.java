@@ -1,13 +1,10 @@
 package org.synyx.urlaubsverwaltung.restapi.availability;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -15,7 +12,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

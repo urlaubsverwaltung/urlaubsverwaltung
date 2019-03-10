@@ -1,10 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateTimeConstants;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
 import java.util.Arrays;

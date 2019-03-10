@@ -1,16 +1,14 @@
 
 package org.synyx.urlaubsverwaltung.core.util;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 
 
 /**
@@ -22,7 +20,7 @@ import javax.annotation.PostConstruct;
 @Service
 public class StartupService {
 
-    private static final Logger LOG = Logger.getLogger(StartupService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StartupService.class);
 
     private final String dbUser;
     private final String dbUrl;
@@ -43,9 +41,9 @@ public class StartupService {
     @PostConstruct
     public void logStartupInfo() {
 
-        LOG.info("DATABASE=" + dbUrl);
-        LOG.info("DATABASE USER=" + dbUser);
-        LOG.info("AUTHENTICATION=" + authentication);
-        LOG.info("ACTIVE PROFILES=" + Arrays.toString(activeProfiles));
+        LOG.info("DATABASE={}", dbUrl);
+        LOG.info("DATABASE USER={}", dbUser);
+        LOG.info("AUTHENTICATION={}", authentication);
+        LOG.info("ACTIVE PROFILES={}", Arrays.toString(activeProfiles));
     }
 }

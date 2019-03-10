@@ -1,14 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -32,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 
-    private static final Logger LOG = Logger.getLogger(DepartmentServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DepartmentServiceImpl.class);
 
     private final DepartmentDAO departmentDAO;
     private final ApplicationService applicationService;
@@ -56,7 +53,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentDAO.save(department);
 
-        LOG.info("Created department: " + department.toString());
+        LOG.info("Created department: {}", department);
     }
 
 
@@ -67,7 +64,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentDAO.save(department);
 
-        LOG.info("Updated department: " + department.toString());
+        LOG.info("Updated department: {}", department);
     }
 
 
@@ -75,7 +72,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void delete(Integer departmentId) {
 
         if (departmentDAO.findOne(departmentId) == null) {
-            LOG.info("No department found for ID = " + departmentId + ", deletion is not necessary.");
+            LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
         } else {
             departmentDAO.delete(departmentId);
         }

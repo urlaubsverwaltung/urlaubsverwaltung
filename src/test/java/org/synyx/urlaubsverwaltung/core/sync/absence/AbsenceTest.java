@@ -1,11 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -16,7 +14,6 @@ import java.util.Date;
 import java.util.function.BiConsumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import static org.hamcrest.core.Is.is;
 
 

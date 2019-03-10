@@ -1,17 +1,12 @@
 package org.synyx.urlaubsverwaltung.web.overtime;
 
 import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.util.ReflectionUtils;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -20,9 +15,7 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.lang.reflect.Field;
-
 import java.math.BigDecimal;
-
 import java.util.Optional;
 import java.util.function.Consumer;
 

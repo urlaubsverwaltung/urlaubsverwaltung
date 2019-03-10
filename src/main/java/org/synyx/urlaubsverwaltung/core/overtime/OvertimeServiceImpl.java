@@ -1,24 +1,19 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
-
-import javax.transaction.Transactional;
 
 
 /**
@@ -29,7 +24,7 @@ import javax.transaction.Transactional;
 @Service
 public class OvertimeServiceImpl implements OvertimeService {
 
-    private static final Logger LOG = Logger.getLogger(OvertimeServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OvertimeServiceImpl.class);
 
     private final OvertimeDAO overtimeDAO;
     private final OvertimeCommentDAO commentDAO;
@@ -83,8 +78,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         mailService.sendOvertimeNotification(overtime, overtimeComment);
 
-        String loggingAction = isNewOvertime ? "Created" : "Updated";
-        LOG.info(loggingAction + " overtime record: " + overtime.toString());
+        LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", overtime);
 
         return overtime;
     }

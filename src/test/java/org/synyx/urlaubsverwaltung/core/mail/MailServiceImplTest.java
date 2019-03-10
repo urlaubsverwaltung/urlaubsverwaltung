@@ -3,12 +3,9 @@ package org.synyx.urlaubsverwaltung.core.mail;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
 import org.springframework.context.MessageSource;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;

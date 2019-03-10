@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 

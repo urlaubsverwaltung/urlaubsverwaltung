@@ -1,27 +1,23 @@
 package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 
 /**

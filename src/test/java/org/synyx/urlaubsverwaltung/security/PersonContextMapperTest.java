@@ -3,29 +3,24 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-
 import org.springframework.ldap.core.DirContextOperations;
-
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
+import javax.naming.Name;
+import javax.naming.NamingException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-
-import javax.naming.Name;
-import javax.naming.NamingException;
 
 
 /**

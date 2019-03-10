@@ -3,20 +3,16 @@ package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.io.IOException;
-
 import java.math.BigDecimal;
 
 

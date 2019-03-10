@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.joda.time.DateMidnight;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
@@ -13,7 +11,6 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
-
 import java.util.List;
 
 

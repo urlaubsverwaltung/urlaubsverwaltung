@@ -1,8 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.overview;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,8 +36,8 @@ import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller to display the personal overview page with basic information about
@@ -170,7 +169,7 @@ public class OverviewController {
 		Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
 		if (account.isPresent()) {
-			model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
+			model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountService.getHolidaysAccount(year+1, person)));
 			model.addAttribute("account", account.get());
 			model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
 		}

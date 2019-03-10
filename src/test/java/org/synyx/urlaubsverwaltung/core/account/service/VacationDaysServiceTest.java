@@ -2,13 +2,10 @@ package org.synyx.urlaubsverwaltung.core.account.service;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -28,9 +25,7 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
-
 import java.math.BigDecimal;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -255,7 +250,42 @@ public class VacationDaysServiceTest {
             vacationDaysLeft.getRemainingVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
             vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        Assert.assertEquals("Wrong number of vacation days already used for next year", BigDecimal.ZERO, vacationDaysLeft.getVacationDaysUsedNextYear());
+
     }
+
+
+    @Test
+    public void testGetVacationDaysLeftWithRemainingAlreadyUsed() {
+
+        initCustomService("4", "20");
+
+        // 36 Total, using 24, so 12 left
+        Account account = new Account();
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("6"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+
+        // next year has only 12 new days, but using 24, i.e. all 12 from this year
+        Account nextYear = new Account();
+        nextYear.setAnnualVacationDays(new BigDecimal("12"));
+        nextYear.setVacationDays(new BigDecimal("12"));
+        nextYear.setRemainingVacationDays(new BigDecimal("20"));
+        nextYear.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+
+
+        VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, Optional.of(nextYear));
+
+        Assert.assertEquals("Wrong number of vacation days already used for next year", new BigDecimal("12"), vacationDaysLeft.getVacationDaysUsedNextYear());
+
+        Assert.assertEquals("Wrong number of vacation days", BigDecimal.ZERO, vacationDaysLeft.getVacationDays());
+        Assert.assertEquals("Wrong number of remaining vacation days", BigDecimal.ZERO,
+                vacationDaysLeft.getRemainingVacationDays());
+        Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
+                vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+    }
+
 
 
     @Test

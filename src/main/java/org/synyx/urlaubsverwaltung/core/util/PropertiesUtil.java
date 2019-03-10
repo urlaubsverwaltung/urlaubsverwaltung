@@ -5,9 +5,7 @@
 package org.synyx.urlaubsverwaltung.core.util;
 
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.util.Properties;
 
 
