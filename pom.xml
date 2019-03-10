@@ -24,7 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
     <mail.version>1.4.7</mail.version>
     <mock-javamail.version>1.9</mock-javamail.version>
     <jollyday.version>0.5.8</jollyday.version>
