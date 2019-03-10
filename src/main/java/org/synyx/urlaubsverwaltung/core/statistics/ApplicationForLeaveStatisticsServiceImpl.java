@@ -17,14 +17,21 @@ import java.util.stream.Collectors;
 @Service
 public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveStatisticsService {
 
+    private final SessionService sessionService;
+    private final PersonService personService;
+    private final DepartmentService departmentService;
+    private final ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
+
     @Autowired
-    SessionService sessionService;
-    @Autowired
-    PersonService personService;
-    @Autowired
-    DepartmentService departmentService;
-    @Autowired
-    ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
+    public ApplicationForLeaveStatisticsServiceImpl(SessionService sessionService,
+                                                    PersonService personService,
+                                                    DepartmentService departmentService,
+                                                    ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder) {
+        this.sessionService = sessionService;
+        this.personService = personService;
+        this.departmentService = departmentService;
+        this.applicationForLeaveStatisticsBuilder = applicationForLeaveStatisticsBuilder;
+    }
 
     @Override
     public List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
