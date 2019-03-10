@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link SickNoteValidator}.
@@ -47,8 +49,8 @@ public class SickNoteValidatorTest {
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19),
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20), DayLength.FULL);
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+        when(overlapService.checkOverlap(Mockito.any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
     }
@@ -215,7 +217,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 1));
         sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 10));
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(SickNote.class)))
+        when(overlapService.checkOverlap(Mockito.any(SickNote.class)))
             .thenReturn(OverlapCase.FULLY_OVERLAPPING);
 
         validator.validate(sickNote, errors);
@@ -233,7 +235,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(Optional.empty());
 

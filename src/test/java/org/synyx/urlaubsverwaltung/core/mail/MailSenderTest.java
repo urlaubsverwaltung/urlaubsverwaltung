@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -36,7 +38,7 @@ public class MailSenderTest {
         settings = new Settings();
         settings.getMailSettings().setActive(true);
 
-        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 
 

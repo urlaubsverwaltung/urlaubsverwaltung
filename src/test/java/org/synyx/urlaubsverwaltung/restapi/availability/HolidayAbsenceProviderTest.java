@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Timo Eifler - eifler@synyx.de
@@ -53,7 +55,7 @@ public class HolidayAbsenceProviderTest {
     private void setupWorkingTimeServiceMock() {
 
         workingTimeService = Mockito.mock(WorkingTimeService.class);
-        Mockito.when(workingTimeService.getFederalStateForPerson(Mockito.any(Person.class),
+        when(workingTimeService.getFederalStateForPerson(Mockito.any(Person.class),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
@@ -63,10 +65,10 @@ public class HolidayAbsenceProviderTest {
 
         publicHolidaysService = Mockito.mock(PublicHolidaysService.class);
 
-        Mockito.when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, FederalState.BADEN_WUERTTEMBERG))
+        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(new BigDecimal(0));
 
-        Mockito.when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay,
+        when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay,
                     FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(new BigDecimal(1));
     }

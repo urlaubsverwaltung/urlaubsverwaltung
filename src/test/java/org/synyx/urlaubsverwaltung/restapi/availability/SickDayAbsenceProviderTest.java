@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Timo Eifler - eifler@synyx.de
@@ -53,10 +55,10 @@ public class SickDayAbsenceProviderTest {
 
         sickNoteService = Mockito.mock(SickNoteService.class);
 
-        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, sickDay, sickDay))
+        when(sickNoteService.getByPersonAndPeriod(testPerson, sickDay, sickDay))
             .thenReturn(Collections.singletonList(sickNote));
 
-        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, standardWorkingDay, standardWorkingDay))
+        when(sickNoteService.getByPersonAndPeriod(testPerson, standardWorkingDay, standardWorkingDay))
             .thenReturn(Collections.emptyList());
     }
 

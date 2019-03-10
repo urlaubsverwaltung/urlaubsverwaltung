@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.restapi.ApiExceptionHandlerControllerAdvice;
 
 import java.util.Collections;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +38,7 @@ public class DepartmentControllerTest {
     @Test
     public void ensureReturnsAllDepartments() throws Exception {
 
-        Mockito.when(departmentServiceMock.getAllDepartments()).thenReturn(Collections.emptyList());
+        when(departmentServiceMock.getAllDepartments()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/departments")).andExpect(status().isOk());
 

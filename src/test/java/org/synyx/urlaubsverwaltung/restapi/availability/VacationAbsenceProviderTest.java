@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Timo Eifler - eifler@synyx.de
@@ -48,7 +50,7 @@ public class VacationAbsenceProviderTest {
     @Test
     public void ensurePersonIsNotAvailableOnSickDay() {
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(vacationDay, vacationDay, testPerson))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(vacationDay, vacationDay, testPerson))
             .thenReturn(Collections.singletonList(application));
 
         TimedAbsenceSpans updatedTimedAbsenceSpans = vacationAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans,
@@ -69,7 +71,7 @@ public class VacationAbsenceProviderTest {
 
         DateMidnight standardWorkingDay = new DateMidnight(2016, 1, 5);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(standardWorkingDay,
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(standardWorkingDay,
                     standardWorkingDay, testPerson))
             .thenReturn(Collections.emptyList());
 

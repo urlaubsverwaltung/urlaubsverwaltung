@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,7 +48,7 @@ public class PersonControllerTest {
         Person person1 = TestDataCreator.createPerson("foo");
         Person person2 = TestDataCreator.createPerson("bar");
 
-        Mockito.when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(person1, person2));
+        when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(person1, person2));
 
         mockMvc.perform(get("/api/persons"))
             .andExpect(status().isOk())
@@ -64,7 +65,7 @@ public class PersonControllerTest {
     public void ensureReturnsListWithOneElementIfLoginNameSpecified() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/persons").param("ldap", "muster"))
             .andExpect(status().isOk())
@@ -81,7 +82,7 @@ public class PersonControllerTest {
     @Test
     public void ensureReturnsEmptyListForUnknownLoginName() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/persons").param("ldap", "muster"))
             .andExpect(status().isOk())

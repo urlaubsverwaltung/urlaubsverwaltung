@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -61,7 +62,7 @@ public class SickNoteControllerTest {
     @Test
     public void ensureReturnsSickNotesOfPersonIfPersonProvided() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt()))
+        when(personServiceMock.getPersonByID(Mockito.anyInt()))
             .thenReturn(Optional.of(TestDataCreator.createPerson()));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01")
@@ -84,7 +85,7 @@ public class SickNoteControllerTest {
         SickNote sickNote2 = TestDataCreator.createSickNote(TestDataCreator.createPerson("bar"));
         SickNote sickNote3 = TestDataCreator.createSickNote(TestDataCreator.createPerson("baz"));
 
-        Mockito.when(sickNoteServiceMock.getByPeriod(Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
+        when(sickNoteServiceMock.getByPeriod(Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
             .thenReturn(Arrays.asList(sickNote1, sickNote2, sickNote3));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "2016-12-31"))
@@ -149,7 +150,7 @@ public class SickNoteControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "foo").param("person", "23"))
             .andExpect(status().isBadRequest());

@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -56,14 +58,14 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         Account account2 = TestDataCreator.createHolidaysAccount(user2, LAST_YEAR);
         Account account3 = TestDataCreator.createHolidaysAccount(user3, LAST_YEAR);
 
-        Mockito.when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(user1, user2, user3));
-        Mockito.when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user1)).thenReturn(Optional.of(account1));
-        Mockito.when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user2)).thenReturn(Optional.of(account2));
-        Mockito.when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user3)).thenReturn(Optional.of(account3));
+        when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(user1, user2, user3));
+        when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user1)).thenReturn(Optional.of(account1));
+        when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user2)).thenReturn(Optional.of(account2));
+        when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user3)).thenReturn(Optional.of(account3));
 
         Account newAccount = Mockito.mock(Account.class);
-        Mockito.when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
-        Mockito.when(accountInteractionServiceMock.autoCreateOrUpdateNextYearsHolidaysAccount(
+        when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
+        when(accountInteractionServiceMock.autoCreateOrUpdateNextYearsHolidaysAccount(
                     Mockito.any(Account.class)))
             .thenReturn(newAccount);
 

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,8 +50,8 @@ public class WorkDayControllerTest {
     public void ensureReturnsWorkDays() throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
-        Mockito.when(workDaysServiceMock.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
+        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(workDaysServiceMock.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
             Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
@@ -133,7 +134,7 @@ public class WorkDayControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
             .param("to", "2016-01-06")
@@ -159,7 +160,7 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForInvalidLengthParameter() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
             .param("to", "2016-01-06")

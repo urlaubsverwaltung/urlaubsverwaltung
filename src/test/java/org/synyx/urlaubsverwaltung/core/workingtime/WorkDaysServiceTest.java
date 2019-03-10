@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -45,7 +46,7 @@ public class WorkDaysServiceTest {
     public void setUp() throws IOException {
 
         settingsService = Mockito.mock(SettingsService.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         publicHolidaysService = new PublicHolidaysService(settingsService);
         workingTimeService = Mockito.mock(WorkingTimeService.class);
@@ -58,7 +59,7 @@ public class WorkDaysServiceTest {
 
         workingTime = TestDataCreator.createWorkingTime();
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
     }
@@ -314,7 +315,7 @@ public class WorkDaysServiceTest {
 
         workingTime.setFederalStateOverride(FederalState.BAYERN_AUGSBURG);
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
