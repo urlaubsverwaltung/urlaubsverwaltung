@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -37,7 +39,7 @@ public class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, new DateMidnight(2015, 3, 3),
                 new DateMidnight(2015, 3, 6), DayLength.FULL);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
+        when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                     Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
@@ -67,7 +69,7 @@ public class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, new DateMidnight(2016, 3, 1),
                 new DateMidnight(2016, 3, 4), DayLength.FULL);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
+        when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                     Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 

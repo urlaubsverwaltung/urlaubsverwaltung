@@ -11,6 +11,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.service.AccountServiceImpl}.
@@ -37,7 +39,7 @@ public class AccountServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
         Account account = TestDataCreator.createHolidaysAccount(person, 2012);
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
+        when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, person);
 
@@ -50,7 +52,7 @@ public class AccountServiceImplTest {
     @Test
     public void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
 
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(Mockito.anyInt(), Mockito.any(Person.class)))
+        when(accountDAO.getHolidaysAccountByYearAndPerson(Mockito.anyInt(), Mockito.any(Person.class)))
             .thenReturn(null);
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, Mockito.mock(Person.class));

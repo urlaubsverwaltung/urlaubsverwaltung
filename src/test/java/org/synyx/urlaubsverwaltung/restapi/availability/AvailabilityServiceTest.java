@@ -11,6 +11,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Timo Eifler - eifler@synyx.de
@@ -34,7 +36,7 @@ public class AvailabilityServiceTest {
         freeTimeAbsenceProvider = Mockito.mock(FreeTimeAbsenceProvider.class);
         timedAbsenceSpansMock = Mockito.mock(TimedAbsenceSpans.class);
 
-        Mockito.when(freeTimeAbsenceProvider.checkForAbsence(
+        when(freeTimeAbsenceProvider.checkForAbsence(
                 Mockito.any(Person.class),
                 Mockito.any(DateMidnight.class)))
             .thenReturn(timedAbsenceSpansMock);
@@ -64,7 +66,7 @@ public class AvailabilityServiceTest {
 
         BigDecimal expectedAvailabilityRatio = BigDecimal.ONE;
 
-        Mockito.when(timedAbsenceSpansMock.calculatePresenceRatio()).thenReturn(expectedAvailabilityRatio);
+        when(timedAbsenceSpansMock.calculatePresenceRatio()).thenReturn(expectedAvailabilityRatio);
 
         AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(dayToTest, dayToTest,
                 testPerson);

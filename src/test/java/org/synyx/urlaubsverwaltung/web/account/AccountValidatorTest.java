@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -32,7 +33,7 @@ public class AccountValidatorTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
         settings = new Settings();
-        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(settings);
 
         validator = new AccountValidator(settingsService);
 

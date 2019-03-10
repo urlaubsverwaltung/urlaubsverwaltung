@@ -10,6 +10,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -45,8 +47,8 @@ public class LdapUserDataImporterTest {
     @Test
     public void ensureCreatesPersonIfLdapUserNotYetExists() {
 
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
-        Mockito.when(ldapUserServiceMock.getLdapUsers())
+        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
+        when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
                     new LdapUser("muster", Optional.empty(), Optional.empty(), Optional.empty())));
 
@@ -63,8 +65,8 @@ public class LdapUserDataImporterTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
-        Mockito.when(ldapUserServiceMock.getLdapUsers())
+        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
                     new LdapUser(person.getLoginName(), Optional.of("Vorname"), Optional.of("Nachname"),
                         Optional.of("Email"))));

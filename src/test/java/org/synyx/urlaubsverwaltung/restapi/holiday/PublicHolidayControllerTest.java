@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,7 +50,7 @@ public class PublicHolidayControllerTest {
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
-        Mockito.when(settingsServiceMock.getSettings()).thenReturn(settings);
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
     }
 
 
@@ -75,8 +76,8 @@ public class PublicHolidayControllerTest {
     public void ensureReturnsCorrectPublicHolidaysForYearAndPersonWithOverriddenFederalState() throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
-        Mockito.when(workingTimeServiceMock.getFederalStateForPerson(Mockito.any(Person.class),
+        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(workingTimeServiceMock.getFederalStateForPerson(Mockito.any(Person.class),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(FederalState.BAYERN);
 
@@ -92,8 +93,8 @@ public class PublicHolidayControllerTest {
         throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
-        Mockito.when(workingTimeServiceMock.getFederalStateForPerson(Mockito.any(Person.class),
+        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(workingTimeServiceMock.getFederalStateForPerson(Mockito.any(Person.class),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(FederalState.BAYERN);
 
@@ -138,7 +139,7 @@ public class PublicHolidayControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("person", "23"))
             .andExpect(status().isBadRequest());

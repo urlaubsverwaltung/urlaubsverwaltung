@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.security.PersonContextMapper}.
@@ -49,9 +51,9 @@ public class PersonContextMapperTest {
 
         context = Mockito.mock(DirContextOperations.class);
 
-        Mockito.when(context.getDn()).thenReturn(Mockito.mock(Name.class));
-        Mockito.when(context.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
-        Mockito.when(context.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
+        when(context.getDn()).thenReturn(Mockito.mock(Name.class));
+        when(context.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
+        when(context.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
     }
 
 
@@ -92,11 +94,11 @@ public class PersonContextMapperTest {
     public void ensureCreatesPersonIfPersonDoesNotExist() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.<Person>empty());
-        Mockito.when(ldapSyncService.createPerson(Mockito.anyString(), Matchers.<Optional<String>>any(),
+        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.<Person>empty());
+        when(ldapSyncService.createPerson(Mockito.anyString(), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(TestDataCreator.createPerson());
 
@@ -116,11 +118,11 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
-        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(person);
 
@@ -139,11 +141,11 @@ public class PersonContextMapperTest {
         String userIdentifier = "mgroehning";
         String userNameSignedInWith = "mgroehning@simpsons.com";
 
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("mgroehning", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.<Person>empty());
-        Mockito.when(ldapSyncService.createPerson(Mockito.anyString(), Matchers.<Optional<String>>any(),
+        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.<Person>empty());
+        when(ldapSyncService.createPerson(Mockito.anyString(), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(TestDataCreator.createPerson());
 
@@ -161,11 +163,11 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.INACTIVE));
 
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser(person.getLoginName(), Optional.of(person.getFirstName()),
                     Optional.of(person.getLastName()), Optional.of(person.getEmail())));
-        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+        when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(person);
 
@@ -177,7 +179,7 @@ public class PersonContextMapperTest {
     public void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier()
         throws NamingException, UnsupportedMemberAffiliationException {
 
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenThrow(new InvalidSecurityConfigurationException("Bad!"));
 
         personContextMapper.mapUserFromContext(context, "username", null);
@@ -188,7 +190,7 @@ public class PersonContextMapperTest {
     public void ensureLoginIsNotPossibleIfLdapUserHasNotSupportedMemberOfAttribute() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
 
         personContextMapper.mapUserFromContext(context, "username", null);
@@ -202,11 +204,11 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson("username");
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
-        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(person);
 
@@ -229,13 +231,13 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson("username");
         person.setPermissions(Collections.singletonList(Role.USER));
 
-        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
 
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
-        Mockito.when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Collections.emptyList());
-        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Collections.emptyList());
+        when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(person);
 

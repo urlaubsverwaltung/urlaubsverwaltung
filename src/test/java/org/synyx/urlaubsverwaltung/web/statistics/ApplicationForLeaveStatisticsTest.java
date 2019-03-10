@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics}.
@@ -32,7 +34,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         vacationTypeService = Mockito.mock(VacationTypeService.class);
         vacationTypes = TestDataCreator.createVacationTypes();
-        Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
     }
 
 

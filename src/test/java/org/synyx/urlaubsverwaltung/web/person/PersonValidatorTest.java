@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -169,7 +170,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUsernameMustBeUnique() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
+        when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
         validator.validateLogin("foo", errors);
         Mockito.verify(errors).rejectValue("loginName", "person.form.data.login.error");
     }
@@ -178,7 +179,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUniqueUsernameHasNoValidationError() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>empty());
+        when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>empty());
         validator.validateLogin("foo", errors);
         Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
     }
