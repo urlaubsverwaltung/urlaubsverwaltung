@@ -5,6 +5,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
+<!DOCTYPE html>
 <html>
 <head>
     <uv:head/>

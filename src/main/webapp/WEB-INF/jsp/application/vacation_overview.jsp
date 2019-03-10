@@ -21,6 +21,8 @@
     <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
 <c:set var="IS_ALLOWED" value="${IS_USER || IS_BOSS || IS_DEPARTMENT_HEAD || IS_OFFICE }"/>
+
+<!DOCTYPE html>
 <html>
 
 <head>
