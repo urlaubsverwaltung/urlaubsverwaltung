@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.availability;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -14,6 +13,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -68,8 +68,8 @@ public class AvailabilityControllerTest {
         verify(personServiceMock).getPersonByLogin(loginName);
 
         verify(availabilityServiceMock)
-            .getPersonsAvailabilities(Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 01, 31)), Mockito.eq(testPerson));
+            .getPersonsAvailabilities(eq(new DateMidnight(2016, 1, 1)),
+                eq(new DateMidnight(2016, 01, 31)), eq(testPerson));
     }
 
 

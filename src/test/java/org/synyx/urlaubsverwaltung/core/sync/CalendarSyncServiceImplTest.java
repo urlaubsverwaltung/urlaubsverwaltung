@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.core.sync;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -11,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,7 +56,7 @@ public class CalendarSyncServiceImplTest {
         calendarSyncService.addAbsence(absence);
 
         verify(calendarService.getCalendarProvider())
-            .add(Mockito.eq(absence), Mockito.eq(settings.getCalendarSettings()));
+            .add(eq(absence), eq(settings.getCalendarSettings()));
     }
 
 
@@ -71,7 +71,7 @@ public class CalendarSyncServiceImplTest {
         calendarSyncService.update(absence, eventId);
 
         verify(calendarService.getCalendarProvider())
-            .update(Mockito.eq(absence), Mockito.eq(eventId), Mockito.eq(settings.getCalendarSettings()));
+            .update(eq(absence), eq(eventId), eq(settings.getCalendarSettings()));
     }
 
 
@@ -85,7 +85,7 @@ public class CalendarSyncServiceImplTest {
         calendarSyncService.deleteAbsence(eventId);
 
         verify(calendarService.getCalendarProvider())
-            .delete(Mockito.eq(eventId), Mockito.eq(settings.getCalendarSettings()));
+            .delete(eq(eventId), eq(settings.getCalendarSettings()));
     }
 
 

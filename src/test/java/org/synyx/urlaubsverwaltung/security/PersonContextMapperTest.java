@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -24,6 +23,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -98,7 +98,7 @@ public class PersonContextMapperTest {
     public void ensureCreatesPersonIfPersonDoesNotExist() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.<Person>empty());
@@ -110,8 +110,8 @@ public class PersonContextMapperTest {
 
         verify(ldapUserMapper).mapFromContext(context);
         verify(ldapSyncService)
-            .createPerson(Mockito.eq("murygina"), Mockito.eq(Optional.of("Aljona")),
-                Mockito.eq(Optional.of("Murygina")), Mockito.eq(Optional.of("murygina@synyx.de")));
+            .createPerson(eq("murygina"), eq(Optional.of("Aljona")),
+                eq(Optional.of("Murygina")), eq(Optional.of("murygina@synyx.de")));
     }
 
 
@@ -122,7 +122,7 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
@@ -134,8 +134,8 @@ public class PersonContextMapperTest {
 
         verify(ldapUserMapper).mapFromContext(context);
         verify(ldapSyncService)
-            .syncPerson(Mockito.eq(person), Mockito.eq(Optional.of("Aljona")), Mockito.eq(Optional.of("Murygina")),
-                Mockito.eq(Optional.of("murygina@synyx.de")));
+            .syncPerson(eq(person), eq(Optional.of("Aljona")), eq(Optional.of("Murygina")),
+                eq(Optional.of("murygina@synyx.de")));
     }
 
 
@@ -145,7 +145,7 @@ public class PersonContextMapperTest {
         String userIdentifier = "mgroehning";
         String userNameSignedInWith = "mgroehning@simpsons.com";
 
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("mgroehning", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.<Person>empty());
@@ -168,7 +168,7 @@ public class PersonContextMapperTest {
         person.setPermissions(Collections.singletonList(Role.INACTIVE));
 
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser(person.getLoginName(), Optional.of(person.getFirstName()),
                     Optional.of(person.getLastName()), Optional.of(person.getEmail())));
         when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
@@ -183,7 +183,7 @@ public class PersonContextMapperTest {
     public void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier()
         throws NamingException, UnsupportedMemberAffiliationException {
 
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenThrow(new InvalidSecurityConfigurationException("Bad!"));
 
         personContextMapper.mapUserFromContext(context, "username", null);
@@ -194,7 +194,7 @@ public class PersonContextMapperTest {
     public void ensureLoginIsNotPossibleIfLdapUserHasNotSupportedMemberOfAttribute() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
 
         personContextMapper.mapUserFromContext(context, "username", null);
@@ -208,7 +208,7 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson("username");
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
@@ -235,7 +235,7 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson("username");
         person.setPermissions(Collections.singletonList(Role.USER));
 
-        when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+        when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
 

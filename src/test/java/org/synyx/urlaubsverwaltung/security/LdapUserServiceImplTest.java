@@ -2,10 +2,10 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -34,6 +34,6 @@ public class LdapUserServiceImplTest {
 
         ldapUserService.getLdapUsers();
 
-        verify(ldapTemplate).search(any(), Mockito.eq(ldapUserMapper));
+        verify(ldapTemplate).search(any(), eq(ldapUserMapper));
     }
 }
