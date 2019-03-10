@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
@@ -12,6 +11,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +57,7 @@ public class LdapUserDataImporterTest {
 
         ldapUserDataImporter.sync();
 
-        verify(personServiceMock, Mockito.times(1)).getPersonByLogin("muster");
+        verify(personServiceMock, times(1)).getPersonByLogin("muster");
         verify(ldapSyncServiceMock)
             .createPerson("muster", Optional.empty(), Optional.empty(), Optional.empty());
     }
@@ -76,7 +76,7 @@ public class LdapUserDataImporterTest {
 
         ldapUserDataImporter.sync();
 
-        verify(personServiceMock, Mockito.times(1)).getPersonByLogin(person.getLoginName());
+        verify(personServiceMock, times(1)).getPersonByLogin(person.getLoginName());
         verify(ldapSyncServiceMock)
             .syncPerson(person, Optional.of("Vorname"), Optional.of("Nachname"), Optional.of("Email"));
     }

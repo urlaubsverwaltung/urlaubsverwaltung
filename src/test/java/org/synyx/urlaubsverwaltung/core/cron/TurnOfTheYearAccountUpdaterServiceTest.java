@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.cron;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
@@ -20,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -78,13 +78,13 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
 
         verify(personServiceMock).getActivePersons();
 
-        verify(accountServiceMock, Mockito.times(3))
+        verify(accountServiceMock, times(3))
             .getHolidaysAccount(anyInt(), any(Person.class));
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user1);
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user2);
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user3);
 
-        verify(accountInteractionServiceMock, Mockito.times(3))
+        verify(accountInteractionServiceMock, times(3))
             .autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class));
         verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
         verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
