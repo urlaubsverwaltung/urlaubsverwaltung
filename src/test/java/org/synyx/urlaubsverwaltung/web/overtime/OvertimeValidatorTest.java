@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -41,11 +42,11 @@ public class OvertimeValidatorTest {
     @Before
     public void setUp() {
 
-        overtimeServiceMock = Mockito.mock(OvertimeService.class);
-        settingsServiceMock = Mockito.mock(SettingsService.class);
+        overtimeServiceMock = mock(OvertimeService.class);
+        settingsServiceMock = mock(SettingsService.class);
 
         validator = new OvertimeValidator(overtimeServiceMock, settingsServiceMock);
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
 
         Overtime overtimeRecord = TestDataCreator.createOvertimeRecord();
         overtimeForm = new OvertimeForm(overtimeRecord);

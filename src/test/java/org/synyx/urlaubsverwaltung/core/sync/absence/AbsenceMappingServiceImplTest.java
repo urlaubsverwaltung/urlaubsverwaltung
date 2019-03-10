@@ -2,10 +2,10 @@ package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
@@ -20,7 +20,7 @@ public class AbsenceMappingServiceImplTest {
     @Before
     public void setUp() throws Exception {
 
-        absenceMappingDAO = Mockito.mock(AbsenceMappingDAO.class);
+        absenceMappingDAO = mock(AbsenceMappingDAO.class);
         sut = new AbsenceMappingServiceImpl(absenceMappingDAO);
     }
 

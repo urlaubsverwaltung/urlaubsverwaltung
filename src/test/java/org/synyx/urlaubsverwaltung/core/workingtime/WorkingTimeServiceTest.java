@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -34,8 +35,8 @@ public class WorkingTimeServiceTest {
     @Before
     public void setUp() {
 
-        workingTimeDAOMock = Mockito.mock(WorkingTimeDAO.class);
-        settingsServiceMock = Mockito.mock(SettingsService.class);
+        workingTimeDAOMock = mock(WorkingTimeDAO.class);
+        settingsServiceMock = mock(SettingsService.class);
 
         workingTimeService = new WorkingTimeService(workingTimeDAOMock, settingsServiceMock);
     }

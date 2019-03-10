@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -36,7 +36,7 @@ public class VacationAbsenceProviderTest {
     @Before
     public void setUp() {
 
-        applicationService = Mockito.mock(ApplicationService.class);
+        applicationService = mock(ApplicationService.class);
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = TestDataCreator.createPerson();

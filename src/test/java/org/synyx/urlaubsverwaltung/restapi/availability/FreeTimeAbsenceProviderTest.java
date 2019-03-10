@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +38,7 @@ public class FreeTimeAbsenceProviderTest {
     @Before
     public void setUp() {
 
-        holidayAbsenceProvider = Mockito.mock(HolidayAbsenceProvider.class);
+        holidayAbsenceProvider = mock(HolidayAbsenceProvider.class);
         setupDefaultWorkingTimeService();
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -50,7 +51,7 @@ public class FreeTimeAbsenceProviderTest {
     private void setupDefaultWorkingTimeService() {
 
         testWorkingTime = TestDataCreator.createWorkingTime();
-        workingTimeService = Mockito.mock(WorkingTimeService.class);
+        workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
                     Mockito.any(DateMidnight.class)))
             .thenReturn(Optional.of(testWorkingTime));

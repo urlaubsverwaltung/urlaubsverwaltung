@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
@@ -26,7 +27,7 @@ public class SickNoteCommentServiceImplTest {
     @Before
     public void setUp() {
 
-        commentDAO = Mockito.mock(SickNoteCommentDAO.class);
+        commentDAO = mock(SickNoteCommentDAO.class);
 
         sickNoteCommentService = new SickNoteCommentServiceImpl(commentDAO);
     }

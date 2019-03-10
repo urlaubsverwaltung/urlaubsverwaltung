@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,8 +35,8 @@ public class AvailabilityServiceTest {
     @Before
     public void setUp() {
 
-        freeTimeAbsenceProvider = Mockito.mock(FreeTimeAbsenceProvider.class);
-        timedAbsenceSpansMock = Mockito.mock(TimedAbsenceSpans.class);
+        freeTimeAbsenceProvider = mock(FreeTimeAbsenceProvider.class);
+        timedAbsenceSpansMock = mock(TimedAbsenceSpans.class);
 
         when(freeTimeAbsenceProvider.checkForAbsence(
                 Mockito.any(Person.class),

@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -44,9 +45,9 @@ public class VacationControllerTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        applicationServiceMock = Mockito.mock(ApplicationService.class);
-        departmentServiceMock = Mockito.mock(DepartmentService.class);
+        personServiceMock = mock(PersonService.class);
+        applicationServiceMock = mock(ApplicationService.class);
+        departmentServiceMock = mock(DepartmentService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new VacationController(personServiceMock, applicationServiceMock,
                         departmentServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();

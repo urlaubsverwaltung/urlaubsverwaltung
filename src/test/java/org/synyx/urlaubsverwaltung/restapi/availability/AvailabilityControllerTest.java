@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,7 +39,7 @@ public class AvailabilityControllerTest {
 
         preparePersonServiceMock();
 
-        availabilityServiceMock = Mockito.mock(AvailabilityService.class);
+        availabilityServiceMock = mock(AvailabilityService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new AvailabilityController(availabilityServiceMock,
                         personServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
@@ -47,7 +48,7 @@ public class AvailabilityControllerTest {
 
     private void preparePersonServiceMock() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
+        personServiceMock = mock(PersonService.class);
 
         testPerson = TestDataCreator.createPerson("testPerson");
 

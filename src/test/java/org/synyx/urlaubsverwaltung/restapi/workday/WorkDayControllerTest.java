@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,8 +39,8 @@ public class WorkDayControllerTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        workDaysServiceMock = Mockito.mock(WorkDaysService.class);
+        personServiceMock = mock(PersonService.class);
+        workDaysServiceMock = mock(WorkDaysService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new WorkDayController(personServiceMock, workDaysServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())

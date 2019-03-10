@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -38,11 +39,11 @@ public class PersonValidatorTest {
     @Before
     public void setUp() {
 
-        personService = Mockito.mock(PersonService.class);
+        personService = mock(PersonService.class);
 
         validator = new PersonValidator(personService);
 
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
 
         person = TestDataCreator.createPerson();
     }

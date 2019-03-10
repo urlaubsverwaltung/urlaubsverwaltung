@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,16 +38,16 @@ public class SessionServiceTest {
     @Before
     public void setUp() {
 
-        personService = Mockito.mock(PersonService.class);
-        departmentService = Mockito.mock(DepartmentService.class);
+        personService = mock(PersonService.class);
+        departmentService = mock(DepartmentService.class);
 
         sessionService = new SessionService(personService, departmentService);
 
         // Mock authentication
-        Authentication authentication = Mockito.mock(Authentication.class);
+        Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(USER_NAME);
 
-        securityContext = Mockito.mock(SecurityContext.class);
+        securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);

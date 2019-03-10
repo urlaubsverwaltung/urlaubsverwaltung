@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -28,7 +29,7 @@ public class AccountServiceImplTest {
     @Before
     public void setUp() {
 
-        accountDAO = Mockito.mock(AccountDAO.class);
+        accountDAO = mock(AccountDAO.class);
 
         accountService = new AccountServiceImpl(accountDAO);
     }
@@ -55,7 +56,7 @@ public class AccountServiceImplTest {
         when(accountDAO.getHolidaysAccountByYearAndPerson(Mockito.anyInt(), Mockito.any(Person.class)))
             .thenReturn(null);
 
-        Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, Mockito.mock(Person.class));
+        Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, mock(Person.class));
 
         Assert.assertNotNull("Optional must not be null", optionalHolidaysAccount);
         Assert.assertFalse("Holidays account should not exist", optionalHolidaysAccount.isPresent());

@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +29,7 @@ public class ExtendedSickNoteTest {
     @Before
     public void setUp() {
 
-        calendarService = Mockito.mock(WorkDaysService.class);
+        calendarService = mock(WorkDaysService.class);
     }
 
 

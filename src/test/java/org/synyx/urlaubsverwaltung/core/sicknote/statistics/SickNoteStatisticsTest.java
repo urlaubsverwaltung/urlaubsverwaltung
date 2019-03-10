@@ -5,7 +5,6 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -18,6 +17,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -36,8 +36,8 @@ public class SickNoteStatisticsTest {
     @Before
     public void setUp() throws Exception {
 
-        calendarService = Mockito.mock(WorkDaysService.class);
-        sickNoteDAO = Mockito.mock(SickNoteDAO.class);
+        calendarService = mock(WorkDaysService.class);
+        sickNoteDAO = mock(SickNoteDAO.class);
         sickNotes = new ArrayList<>();
 
         Person person = TestDataCreator.createPerson();

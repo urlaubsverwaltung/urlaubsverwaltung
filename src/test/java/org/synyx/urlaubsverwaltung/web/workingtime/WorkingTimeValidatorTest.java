@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.web.workingtime;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
@@ -13,6 +12,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
@@ -31,7 +31,7 @@ public class WorkingTimeValidatorTest {
 
         validator = new WorkingTimeValidator();
 
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
 
         form = new WorkingTimeForm();
         form.setFederalState(FederalState.BAYERN);

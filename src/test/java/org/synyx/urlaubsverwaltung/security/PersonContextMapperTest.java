@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,15 +45,15 @@ public class PersonContextMapperTest {
     @Before
     public void setUp() {
 
-        personService = Mockito.mock(PersonService.class);
-        ldapSyncService = Mockito.mock(LdapSyncService.class);
-        ldapUserMapper = Mockito.mock(LdapUserMapper.class);
+        personService = mock(PersonService.class);
+        ldapSyncService = mock(LdapSyncService.class);
+        ldapUserMapper = mock(LdapUserMapper.class);
 
         personContextMapper = new PersonContextMapper(personService, ldapSyncService, ldapUserMapper);
 
-        context = Mockito.mock(DirContextOperations.class);
+        context = mock(DirContextOperations.class);
 
-        when(context.getDn()).thenReturn(Mockito.mock(Name.class));
+        when(context.getDn()).thenReturn(mock(Name.class));
         when(context.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
         when(context.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
     }

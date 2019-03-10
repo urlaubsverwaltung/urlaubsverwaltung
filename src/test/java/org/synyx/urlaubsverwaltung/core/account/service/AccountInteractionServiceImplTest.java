@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,13 +39,13 @@ public class AccountInteractionServiceImplTest {
     @Before
     public void setup() throws IOException {
 
-        accountService = Mockito.mock(AccountService.class);
+        accountService = mock(AccountService.class);
 
-        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
+        SettingsService settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        vacationDaysService = Mockito.mock(VacationDaysService.class);
+        vacationDaysService = mock(VacationDaysService.class);
 
         service = new AccountInteractionServiceImpl(accountService, vacationDaysService);
 

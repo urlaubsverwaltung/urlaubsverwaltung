@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +47,7 @@ public class SickDayAbsenceProviderTest {
         standardWorkingDay = new DateMidnight(2016, 1, 5);
 
         setupSickNoteServiceMock();
-        vacationAbsenceProvider = Mockito.mock(VacationAbsenceProvider.class);
+        vacationAbsenceProvider = mock(VacationAbsenceProvider.class);
 
         sickDayAbsenceProvider = new SickDayAbsenceProvider(vacationAbsenceProvider, sickNoteService);
     }
@@ -54,7 +55,7 @@ public class SickDayAbsenceProviderTest {
 
     private void setupSickNoteServiceMock() {
 
-        sickNoteService = Mockito.mock(SickNoteService.class);
+        sickNoteService = mock(SickNoteService.class);
 
         when(sickNoteService.getByPersonAndPeriod(testPerson, sickDay, sickDay))
             .thenReturn(Collections.singletonList(sickNote));

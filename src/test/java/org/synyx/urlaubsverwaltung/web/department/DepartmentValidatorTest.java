@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.web.department;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.department.Department;
@@ -14,6 +13,7 @@ import java.util.Collections;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 public class DepartmentValidatorTest {
 
     private DepartmentValidator sut;
-    private Errors errors = Mockito.mock(Errors.class);
+    private Errors errors = mock(Errors.class);
 
     @Before
     public void setUp() throws Exception {
