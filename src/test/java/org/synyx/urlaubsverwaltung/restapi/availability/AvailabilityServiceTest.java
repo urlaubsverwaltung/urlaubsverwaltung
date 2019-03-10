@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +58,7 @@ public class AvailabilityServiceTest {
 
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
-        verify(freeTimeAbsenceProvider, Mockito.times(DAYS_IN_TEST_DATE_RANGE))
+        verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE))
             .checkForAbsence(Mockito.eq(testPerson), any(DateMidnight.class));
     }
 
@@ -74,7 +75,7 @@ public class AvailabilityServiceTest {
         AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(dayToTest, dayToTest,
                 testPerson);
 
-        verify(timedAbsenceSpansMock, Mockito.times(1)).calculatePresenceRatio();
+        verify(timedAbsenceSpansMock, times(1)).calculatePresenceRatio();
 
         List<DayAvailability> availabilityList = personsAvailabilities.getAvailabilities();
         Assert.assertEquals("Wrong number of Availabilities returned", 1, availabilityList.size());
