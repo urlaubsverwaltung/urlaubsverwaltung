@@ -1,5 +1,9 @@
 ### master / unreleased
-* ...
+* Upgrade auf Spring Boot 2.1.3 [#501](https://github.com/synyx/urlaubsverwaltung/pull/501) 
+* Fix ug bei dem die Überstunden trotz Deaktivierung angezeigt wurden [#511](https://github.com/synyx/urlaubsverwaltung/pull/511) 
+
+### [urlaubsverwaltung-2.35.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.35.0)
+* Fix mariadb -> mysql connector [#509](https://github.com/synyx/urlaubsverwaltung/pull/509) 
 
 ### [urlaubsverwaltung-2.34.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.34.0)
 * Bug: Gravatar reaktiviert [#502](https://github.com/synyx/urlaubsverwaltung/pull/502)  
