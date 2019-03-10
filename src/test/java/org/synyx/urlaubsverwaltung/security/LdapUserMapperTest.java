@@ -3,13 +3,13 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.ldap.core.DirContextOperations;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -55,7 +55,7 @@ public class LdapUserMapperTest {
             // Expected
         }
 
-        verify(attributes, Mockito.atLeastOnce()).get(IDENTIFIER_ATTRIBUTE);
+        verify(attributes, atLeastOnce()).get(IDENTIFIER_ATTRIBUTE);
         verify(attributes, never()).get(FIRST_NAME_ATTRIBUTE);
         verify(attributes, never()).get(LAST_NAME_ATTRIBUTE);
         verify(attributes, never()).get(MAIL_ADDRESS_ATTRIBUTE);
@@ -129,7 +129,7 @@ public class LdapUserMapperTest {
             // Expected
         }
 
-        verify(ctx, Mockito.atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
         verify(ctx, never()).getStringAttribute(LAST_NAME_ATTRIBUTE);
         verify(ctx, never()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
         verify(ctx, never()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
@@ -148,10 +148,10 @@ public class LdapUserMapperTest {
 
         LdapUser ldapUser = ldapUserMapper.mapFromContext(ctx);
 
-        verify(ctx, Mockito.atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
-        verify(ctx, Mockito.atLeastOnce()).getStringAttribute(LAST_NAME_ATTRIBUTE);
-        verify(ctx, Mockito.atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
-        verify(ctx, Mockito.atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(LAST_NAME_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
 
         Assert.assertEquals("Wrong username", "rick", ldapUser.getUsername());
         Assert.assertEquals("Wrong first name", "Rick", ldapUser.getFirstName().get());
