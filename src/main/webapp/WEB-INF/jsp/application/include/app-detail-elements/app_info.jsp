@@ -80,9 +80,9 @@
     <tr>
         <td><spring:message code="absence.period.duration" /></td>
         <td>
-            <b>
+            <strong>
               <uv:number number="${application.workDays}" /> <spring:message code="duration.days" />
-            </b>
+            </strong>
             <span class="text-muted days">
                 <%-- filled by javascript --%>
             </span>

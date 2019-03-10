@@ -20,7 +20,7 @@
 
     <div class="form-group">
         <div class="control-label">
-            <b><spring:message code='action.delete.confirm'/></b>
+            <strong><spring:message code='action.delete.confirm'/></strong>
         </div>
     </div>
 

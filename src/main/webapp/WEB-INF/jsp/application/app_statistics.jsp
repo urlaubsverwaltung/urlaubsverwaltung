@@ -128,7 +128,9 @@
                                         </c:forEach>
                                     </td>
                                     <td class="hidden-xs hidden-sm number">
-                                        <b class="sortable"><uv:number number="${statistic.totalAllowedVacationDays}"/></b>
+                                        <strong class="sortable">
+                                            <uv:number number="${statistic.totalAllowedVacationDays}"/>
+                                        </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
@@ -138,7 +140,9 @@
                                         </c:forEach>
                                     </td>
                                     <td class="hidden-xs hidden-sm number">
-                                        <b class="sortable"><uv:number number="${statistic.totalWaitingVacationDays}"/></b>
+                                        <strong class="sortable">
+                                            <uv:number number="${statistic.totalWaitingVacationDays}"/>
+                                        </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
@@ -151,7 +155,7 @@
                                         <b class="sortable"><uv:number number="${statistic.leftVacationDays}"/></b>
                                         <spring:message code="duration.vacationDays"/>
                                         <br />
-                                        <b><uv:number number="${statistic.leftOvertime}"/></b>
+                                        <strong><uv:number number="${statistic.leftOvertime}"/></strong>
                                         <spring:message code="duration.overtime"/>
                                     </td>
                                 </tr>

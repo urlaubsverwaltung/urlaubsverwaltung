@@ -29,7 +29,7 @@
 
     <div class="form-group">
         <div class="control-label">
-            <b><spring:message code='action.reject.confirm'/></b>
+            <strong><spring:message code='action.reject.confirm'/></strong>
         </div>
     </div>
 
