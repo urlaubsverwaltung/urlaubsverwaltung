@@ -75,6 +75,7 @@ public class VacationDaysService {
      *
      * @return information about the vacation days left for that year
      */
+    @Deprecated
     public VacationDaysLeft getVacationDaysLeft(Account account) {
 
        return getVacationDaysLeft(account, Optional.empty());
