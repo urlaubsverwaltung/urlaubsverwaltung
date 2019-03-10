@@ -116,6 +116,10 @@
 * Fix Bug beim Generieren von Links in Emails [#517](https://github.com/synyx/urlaubsverwaltung/pull/517)
 * Upgrade Swagger API Spezifikation von Version 1.2 zu 2 [#523](https://github.com/synyx/urlaubsverwaltung/pull/523)
 
+## Breaking Changes
+* Bump to Java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
+
+
 ### [urlaubsverwaltung-2.35.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.35.0)
 * Fix mariadb -> mysql connector [#509](https://github.com/synyx/urlaubsverwaltung/pull/509) 
 
