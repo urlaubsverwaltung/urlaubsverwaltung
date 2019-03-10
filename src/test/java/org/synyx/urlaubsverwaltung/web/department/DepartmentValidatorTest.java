@@ -15,6 +15,7 @@ import java.util.Collections;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 
 /**
@@ -76,7 +77,7 @@ public class DepartmentValidatorTest {
         Department department = TestDataCreator.createDepartment("Foobar Department");
 
         sut.validate(department, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -110,7 +111,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -123,7 +124,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 

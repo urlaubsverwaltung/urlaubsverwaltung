@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -61,7 +62,7 @@ public class VacationControllerTest {
         verify(applicationServiceMock)
             .getApplicationsForACertainPeriodAndState(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31),
                 ApplicationStatus.ALLOWED);
-        Mockito.verifyZeroInteractions(personServiceMock);
+        verifyZeroInteractions(personServiceMock);
     }
 
 

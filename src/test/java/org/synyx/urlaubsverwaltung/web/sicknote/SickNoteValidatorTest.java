@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Optional;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -61,7 +62,7 @@ public class SickNoteValidatorTest {
     public void ensureValidDatesHaveNoErrors() {
 
         validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -177,7 +178,7 @@ public class SickNoteValidatorTest {
         comment.setText("I am a fluffy little comment");
         validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -197,7 +198,7 @@ public class SickNoteValidatorTest {
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
         validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
