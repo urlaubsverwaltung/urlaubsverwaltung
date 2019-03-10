@@ -13,6 +13,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 
 /**
@@ -64,7 +65,7 @@ public class WorkingTimeValidatorTest {
 
         validator.validate(form, errors);
 
-        Mockito.verify(errors).rejectValue("validFrom", "error.entry.mandatory");
+        verify(errors).rejectValue("validFrom", "error.entry.mandatory");
     }
 
 
@@ -75,7 +76,7 @@ public class WorkingTimeValidatorTest {
 
         validator.validate(form, errors);
 
-        Mockito.verify(errors).rejectValue("workingDays", "person.form.workingTime.error.mandatory");
+        verify(errors).rejectValue("workingDays", "person.form.workingTime.error.mandatory");
     }
 
 
@@ -86,7 +87,7 @@ public class WorkingTimeValidatorTest {
 
         validator.validate(form, errors);
 
-        Mockito.verify(errors).rejectValue("workingDays", "person.form.workingTime.error.mandatory");
+        verify(errors).rejectValue("workingDays", "person.form.workingTime.error.mandatory");
     }
 
 

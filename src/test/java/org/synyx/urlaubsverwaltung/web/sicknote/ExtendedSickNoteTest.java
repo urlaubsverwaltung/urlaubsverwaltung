@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -45,7 +46,7 @@ public class ExtendedSickNoteTest {
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);
 
-        Mockito.verify(calendarService)
+        verify(calendarService)
             .getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person);
 
         Assert.assertNotNull("Should not be null", extendedSickNote.getDayLength());

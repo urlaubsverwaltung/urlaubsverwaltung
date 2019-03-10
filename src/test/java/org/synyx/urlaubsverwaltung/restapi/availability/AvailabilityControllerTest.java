@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,9 +63,9 @@ public class AvailabilityControllerTest {
                 .param("person", loginName))
             .andExpect(status().isOk());
 
-        Mockito.verify(personServiceMock).getPersonByLogin(loginName);
+        verify(personServiceMock).getPersonByLogin(loginName);
 
-        Mockito.verify(availabilityServiceMock)
+        verify(availabilityServiceMock)
             .getPersonsAvailabilities(Mockito.eq(new DateMidnight(2016, 1, 1)),
                 Mockito.eq(new DateMidnight(2016, 01, 31)), Mockito.eq(testPerson));
     }

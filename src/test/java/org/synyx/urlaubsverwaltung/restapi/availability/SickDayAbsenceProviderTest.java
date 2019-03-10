@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -93,7 +94,7 @@ public class SickDayAbsenceProviderTest {
 
         sickDayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 
-        Mockito.verify(vacationAbsenceProvider, Mockito.times(1))
+        verify(vacationAbsenceProvider, Mockito.times(1))
             .checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
     }
 }

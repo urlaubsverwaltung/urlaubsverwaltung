@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -60,10 +61,10 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, Collections.singletonList("foo@bar.de"), "subject", "text");
 
-        Mockito.verify(javaMailSender).setHost(mailSettings.getHost());
-        Mockito.verify(javaMailSender).setPort(mailSettings.getPort());
-        Mockito.verify(javaMailSender).setUsername(mailSettings.getUsername());
-        Mockito.verify(javaMailSender).setPassword(mailSettings.getPassword());
+        verify(javaMailSender).setHost(mailSettings.getHost());
+        verify(javaMailSender).setPort(mailSettings.getPort());
+        verify(javaMailSender).setUsername(mailSettings.getUsername());
+        verify(javaMailSender).setPassword(mailSettings.getPassword());
     }
 
 
@@ -79,7 +80,7 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, Arrays.asList("max@firma.test", "marlene@firma.test"), subject, body);
 
-        Mockito.verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
+        verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
 
         SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
 

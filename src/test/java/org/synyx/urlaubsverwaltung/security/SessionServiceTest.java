@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -76,7 +77,7 @@ public class SessionServiceTest {
 
         Person signedInUser = sessionService.getSignedInUser();
 
-        Mockito.verify(personService).getPersonByLogin(USER_NAME);
+        verify(personService).getPersonByLogin(USER_NAME);
         Assert.assertEquals("Wrong person", person, signedInUser);
     }
 
@@ -132,7 +133,7 @@ public class SessionServiceTest {
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
 
-        Mockito.verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
+        verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
         Assert.assertTrue("Department head of person should be able to access the person's data", isAllowed);
     }
 
@@ -151,7 +152,7 @@ public class SessionServiceTest {
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
 
-        Mockito.verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
+        verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
         Assert.assertFalse("Department head - but not of person - should not be able to access the person's data",
             isAllowed);
     }
@@ -170,7 +171,7 @@ public class SessionServiceTest {
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
 
-        Mockito.verify(departmentService).isDepartmentHeadOfPerson(departmentHead, secondStageAuthority);
+        verify(departmentService).isDepartmentHeadOfPerson(departmentHead, secondStageAuthority);
         Assert.assertFalse("Department head - but not of secondStageAuthority - should not be able to access the secondStageAuthority's data",
                 isAllowed);
     }
@@ -189,7 +190,7 @@ public class SessionServiceTest {
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(secondStageAuthority, departmentHead);
 
-        Mockito.verify(departmentService).isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead);
+        verify(departmentService).isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead);
         Assert.assertTrue("secondStageAuthority should be able to access the departmentHeads's data",
                 isAllowed);
     }

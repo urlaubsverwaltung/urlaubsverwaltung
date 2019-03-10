@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -65,8 +66,8 @@ public class WorkDayControllerTest {
             .andExpect(jsonPath("$.response.workDays").exists())
             .andExpect(jsonPath("$.response.workDays", is("1")));
 
-        Mockito.verify(personServiceMock).getPersonByID(23);
-        Mockito.verify(workDaysServiceMock)
+        verify(personServiceMock).getPersonByID(23);
+        verify(workDaysServiceMock)
             .getWorkDays(DayLength.FULL, new DateMidnight(2016, 1, 4), new DateMidnight(2016, 1, 4), person);
     }
 
@@ -142,7 +143,7 @@ public class WorkDayControllerTest {
             .param("person", "23"))
             .andExpect(status().isBadRequest());
 
-        Mockito.verify(personServiceMock).getPersonByID(23);
+        verify(personServiceMock).getPersonByID(23);
     }
 
 

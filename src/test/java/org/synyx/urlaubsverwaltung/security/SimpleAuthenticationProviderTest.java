@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -60,7 +61,7 @@ public class SimpleAuthenticationProviderTest {
         Authentication credentials = new UsernamePasswordAuthenticationToken(username, rawPassword, null);
         Authentication authentication = authenticationProvider.authenticate(credentials);
 
-        Mockito.verify(personService).getPersonByLogin(username);
+        verify(personService).getPersonByLogin(username);
 
         Assert.assertNotNull("Missing authentication", authentication);
         Assert.assertEquals("Wrong username", username, authentication.getName());

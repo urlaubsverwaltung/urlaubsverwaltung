@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -57,7 +58,7 @@ public class VacationControllerTest {
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01").param("to", "2016-12-31"))
             .andExpect(status().isOk());
 
-        Mockito.verify(applicationServiceMock)
+        verify(applicationServiceMock)
             .getApplicationsForACertainPeriodAndState(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31),
                 ApplicationStatus.ALLOWED);
         Mockito.verifyZeroInteractions(personServiceMock);
@@ -75,10 +76,10 @@ public class VacationControllerTest {
                 .param("person", "23"))
             .andExpect(status().isOk());
 
-        Mockito.verify(applicationServiceMock)
+        verify(applicationServiceMock)
             .getApplicationsForACertainPeriodAndPersonAndState(new DateMidnight(2016, 1, 1),
                 new DateMidnight(2016, 12, 31), person, ApplicationStatus.ALLOWED);
-        Mockito.verify(personServiceMock).getPersonByID(23);
+        verify(personServiceMock).getPersonByID(23);
     }
 
 

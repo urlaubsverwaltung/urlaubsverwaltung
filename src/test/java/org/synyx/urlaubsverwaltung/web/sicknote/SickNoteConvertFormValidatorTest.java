@@ -6,6 +6,8 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
+import static org.mockito.Mockito.verify;
+
 
 /**
  * Unit test for {@link SickNoteConvertFormValidator}.
@@ -35,7 +37,7 @@ public class SickNoteConvertFormValidatorTest {
 
         validator.validate(convertForm, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.entry.mandatory");
+        verify(errors).rejectValue("reason", "error.entry.mandatory");
     }
 
 
@@ -48,7 +50,7 @@ public class SickNoteConvertFormValidatorTest {
 
         validator.validate(convertForm, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.entry.mandatory");
+        verify(errors).rejectValue("reason", "error.entry.mandatory");
     }
 
 
@@ -64,6 +66,6 @@ public class SickNoteConvertFormValidatorTest {
 
         validator.validate(convertForm, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.entry.tooManyChars");
+        verify(errors).rejectValue("reason", "error.entry.tooManyChars");
     }
 }

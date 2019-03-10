@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -40,7 +41,7 @@ public class LdapUserDataImporterTest {
 
         ldapUserDataImporter.sync();
 
-        Mockito.verify(ldapUserServiceMock).getLdapUsers();
+        verify(ldapUserServiceMock).getLdapUsers();
     }
 
 
@@ -54,8 +55,8 @@ public class LdapUserDataImporterTest {
 
         ldapUserDataImporter.sync();
 
-        Mockito.verify(personServiceMock, Mockito.times(1)).getPersonByLogin("muster");
-        Mockito.verify(ldapSyncServiceMock)
+        verify(personServiceMock, Mockito.times(1)).getPersonByLogin("muster");
+        verify(ldapSyncServiceMock)
             .createPerson("muster", Optional.empty(), Optional.empty(), Optional.empty());
     }
 
@@ -73,8 +74,8 @@ public class LdapUserDataImporterTest {
 
         ldapUserDataImporter.sync();
 
-        Mockito.verify(personServiceMock, Mockito.times(1)).getPersonByLogin(person.getLoginName());
-        Mockito.verify(ldapSyncServiceMock)
+        verify(personServiceMock, Mockito.times(1)).getPersonByLogin(person.getLoginName());
+        verify(ldapSyncServiceMock)
             .syncPerson(person, Optional.of("Vorname"), Optional.of("Nachname"), Optional.of("Email"));
     }
 }

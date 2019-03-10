@@ -14,6 +14,7 @@ import java.util.Collections;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 
 /**
@@ -44,7 +45,7 @@ public class DepartmentValidatorTest {
     public void ensureNameMustNotBeNull() throws Exception {
 
         sut.validate(TestDataCreator.createDepartment(null), errors);
-        Mockito.verify(errors).rejectValue("name", "error.entry.mandatory");
+        verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
 
@@ -54,7 +55,7 @@ public class DepartmentValidatorTest {
         Department department = TestDataCreator.createDepartment("");
 
         sut.validate(department, errors);
-        Mockito.verify(errors).rejectValue("name", "error.entry.mandatory");
+        verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
 
@@ -65,7 +66,7 @@ public class DepartmentValidatorTest {
                 "AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         sut.validate(department, errors);
-        Mockito.verify(errors).rejectValue("name", "error.entry.tooManyChars");
+        verify(errors).rejectValue("name", "error.entry.tooManyChars");
     }
 
 
@@ -97,7 +98,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verify(errors).rejectValue("description", "error.entry.tooManyChars");
+        verify(errors).rejectValue("description", "error.entry.tooManyChars");
     }
 
 
@@ -138,7 +139,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
+        verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
     }
 
 
@@ -154,7 +155,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
+        verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
     }
 
 
@@ -169,7 +170,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadHasNoAccess");
+        verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadHasNoAccess");
     }
 
 
@@ -185,7 +186,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageNotAssigned");
+        verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageNotAssigned");
     }
 
 
@@ -200,6 +201,6 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageHasNoAccess");
+        verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageHasNoAccess");
     }
 }

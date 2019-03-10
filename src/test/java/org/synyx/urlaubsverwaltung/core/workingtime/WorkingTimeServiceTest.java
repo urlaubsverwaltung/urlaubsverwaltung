@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -59,7 +60,7 @@ public class WorkingTimeServiceTest {
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
         Mockito.verifyZeroInteractions(settingsServiceMock);
-        Mockito.verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
+        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BAYERN, federalState);
@@ -85,8 +86,8 @@ public class WorkingTimeServiceTest {
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
+        verify(settingsServiceMock).getSettings();
+        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BADEN_WUERTTEMBERG, federalState);
@@ -109,8 +110,8 @@ public class WorkingTimeServiceTest {
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
+        verify(settingsServiceMock).getSettings();
+        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BADEN_WUERTTEMBERG, federalState);
@@ -126,7 +127,7 @@ public class WorkingTimeServiceTest {
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), DateMidnight.now(), person);
 
-        Mockito.verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 
@@ -151,7 +152,7 @@ public class WorkingTimeServiceTest {
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), DateMidnight.now(), person);
 
-        Mockito.verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 
