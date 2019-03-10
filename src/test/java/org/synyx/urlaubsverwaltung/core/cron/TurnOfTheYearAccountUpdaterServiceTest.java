@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,6 +90,6 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
         verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
 
-        verify(mailServiceMock).sendSuccessfullyUpdatedAccountsNotification(Mockito.anyListOf(Account.class));
+        verify(mailServiceMock).sendSuccessfullyUpdatedAccountsNotification(anyList());
     }
 }
