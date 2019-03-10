@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -149,7 +150,7 @@ public class OvertimeValidatorTest {
         validator.validate(overtimeForm, errors);
 
         verify(errors).hasFieldErrors("startDate");
-        verify(errors, Mockito.never()).rejectValue("startDate", "error.entry.mandatory");
+        verify(errors, never()).rejectValue("startDate", "error.entry.mandatory");
     }
 
 
@@ -163,7 +164,7 @@ public class OvertimeValidatorTest {
         validator.validate(overtimeForm, errors);
 
         verify(errors).hasFieldErrors("endDate");
-        verify(errors, Mockito.never()).rejectValue("endDate", "error.entry.mandatory");
+        verify(errors, never()).rejectValue("endDate", "error.entry.mandatory");
     }
 
 
@@ -223,7 +224,7 @@ public class OvertimeValidatorTest {
         validator.validate(overtimeForm, errors);
 
         verify(errors).hasFieldErrors("numberOfHours");
-        verify(errors, Mockito.never()).rejectValue("endDate", "error.entry.mandatory");
+        verify(errors, never()).rejectValue("endDate", "error.entry.mandatory");
     }
 
 

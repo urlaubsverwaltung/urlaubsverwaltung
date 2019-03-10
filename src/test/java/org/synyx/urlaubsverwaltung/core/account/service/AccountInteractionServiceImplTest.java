@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,9 +81,9 @@ public class AccountInteractionServiceImplTest {
 
         verify(vacationDaysService).calculateTotalLeftVacationDays(account2012);
         verify(vacationDaysService).calculateTotalLeftVacationDays(account2013);
-        verify(vacationDaysService, Mockito.never()).calculateTotalLeftVacationDays(account2014);
+        verify(vacationDaysService, never()).calculateTotalLeftVacationDays(account2014);
 
-        verify(accountService, Mockito.never()).save(account2012);
+        verify(accountService, never()).save(account2012);
         verify(accountService).save(account2013);
         verify(accountService).save(account2014);
 
