@@ -4,7 +4,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<table class="list-table bordered-table selectable-table" cellspacing="0">
+<table class="list-table selectable-table" cellspacing="0">
     <tbody>
     <c:forEach items="${sickNotes}" var="sickNote" varStatus="loopStatus">
     <c:choose>

@@ -101,7 +101,7 @@
 
                     <c:otherwise>
 
-                        <table class="list-table bordered-table selectable-table" cellspacing="0">
+                        <table class="list-table selectable-table" cellspacing="0">
                             <tbody>
                             <c:forEach items="${applications}" var="application" varStatus="loopStatus">
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
@@ -216,5 +216,3 @@
 </body>
 
 </html>
-
-
