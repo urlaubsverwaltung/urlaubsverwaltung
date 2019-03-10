@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,7 +60,7 @@ public class AbsenceControllerTest {
     public void ensureReturnsAbsencesOfPerson() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/absences").param("from", "2016-01-01").param("year", "2016").param("person", "23"))
             .andExpect(status().isOk());
@@ -86,7 +87,7 @@ public class AbsenceControllerTest {
         Application vacation = TestDataCreator.createApplication(person, new DateMidnight(2016, 4, 6),
                 new DateMidnight(2016, 4, 6), DayLength.FULL);
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
                     any(DateMidnight.class), any(DateMidnight.class)))
@@ -121,7 +122,7 @@ public class AbsenceControllerTest {
         Application vacation = TestDataCreator.createApplication(person, new DateMidnight(2016, 4, 6),
                 new DateMidnight(2016, 4, 6), DayLength.FULL);
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
                     any(DateMidnight.class), any(DateMidnight.class)))
@@ -153,7 +154,7 @@ public class AbsenceControllerTest {
         SickNote sickNote = TestDataCreator.createSickNote(person, new DateMidnight(2016, 6, 30),
                 new DateMidnight(2016, 7, 6), DayLength.FULL);
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
                     any(DateMidnight.class), any(DateMidnight.class)))
@@ -188,7 +189,7 @@ public class AbsenceControllerTest {
     public void ensureBadRequestForInvalidYearParameter() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/absences").param("year", "foo").param("person", "23"))
             .andExpect(status().isBadRequest());
@@ -199,7 +200,7 @@ public class AbsenceControllerTest {
     public void ensureBadRequestForInvalidMonthParameter() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "foo").param("person", "23"))
             .andExpect(status().isBadRequest());
@@ -210,7 +211,7 @@ public class AbsenceControllerTest {
     public void ensureBadRequestForOtherInvalidMonthParameter() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "30").param("person", "23"))
             .andExpect(status().isBadRequest());
@@ -235,7 +236,7 @@ public class AbsenceControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23"))
             .andExpect(status().isBadRequest());
@@ -245,7 +246,7 @@ public class AbsenceControllerTest {
     @Test
     public void ensureBadRequestForInvalidTypeParameter() throws Exception {
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt()))
+        when(personServiceMock.getPersonByID(anyInt()))
             .thenReturn(Optional.of(TestDataCreator.createPerson()));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "FOO"))

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -77,7 +78,7 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         verify(personServiceMock).getActivePersons();
 
         verify(accountServiceMock, Mockito.times(3))
-            .getHolidaysAccount(Mockito.anyInt(), any(Person.class));
+            .getHolidaysAccount(anyInt(), any(Person.class));
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user1);
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user2);
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user3);
