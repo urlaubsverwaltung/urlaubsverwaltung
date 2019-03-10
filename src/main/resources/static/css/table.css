@@ -52,7 +52,7 @@ tr.inactive td > * {
 **************************************************************************/
 
 .striped-table tr:nth-child(even) td {
-    background-color: #F1F1F1;
+    background-color: #FAFAFA;
 }
 
 /**************************************************************************
@@ -65,7 +65,7 @@ tr.inactive td > * {
 }
 
 .bordered-table td {
-    background-color: #FAFAFA;
+    background-color: #FFFFFF;
 }
 
 /**************************************************************************
