@@ -8,4 +8,4 @@ Kommentar zur Stornierung von ${comment.person.niceName} zum Antrag: ${comment.t
 
 </#if>
 
-Es handelt sich um folgenden Urlaubsantrag: ${settings.baseLinkURL}web/application/<#if application.id??>${application.id}</#if>
+Es handelt sich um folgenden Urlaubsantrag: ${settings.baseLinkURL}web/application/${application.id?c}
