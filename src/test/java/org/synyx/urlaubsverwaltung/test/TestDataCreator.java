@@ -104,7 +104,9 @@ public final class TestDataCreator {
         DateMidnight startDate = DateMidnight.now();
         DateMidnight endDate = startDate.plusDays(7);
 
-        return new Overtime(person, startDate, endDate, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, startDate, endDate, BigDecimal.ONE);
+        overtime.setId(1234);
+        return overtime;
     }
 
     // Application for leave -------------------------------------------------------------------------------------------
