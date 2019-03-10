@@ -8,7 +8,7 @@
 <head>
     <uv:head/>
     <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -49,8 +49,8 @@
             </c:choose>
 
             <form:form method="POST" action="${ACTION}" modelAttribute="overtime" cssClass="form-horizontal">
-                <form:hidden path="id" value="${overtime.id}" />
-                <form:hidden path="person" value="${overtime.person.id}" />
+                <form:hidden path="id" value="${overtime.id}"/>
+                <form:hidden path="person" value="${overtime.person.id}"/>
                 <div class="form-section">
                     <div class="col-xs-12">
                         <c:set var="formErrors"><form:errors/></c:set>
@@ -80,42 +80,48 @@
                     </div>
                     <div class="col-md-8 col-md-pull-4">
                         <c:if test="${signedInUser.id != overtime.person.id}">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">
-                                <spring:message code="overtime.data.staff"/>:
-                            </label>
-                            <div class="col-md-9">
-                                <p class="form-control-static"><c:out value="${overtime.person.niceName}"/></p>
-                            </div>
-                        </div><%-- End of person form group --%>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">
+                                    <spring:message code="overtime.data.staff"/>:
+                                </label>
+                                <div class="col-md-9">
+                                    <p class="form-control-static"><c:out value="${overtime.person.niceName}"/></p>
+                                </div>
+                            </div><%-- End of person form group --%>
                         </c:if>
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="startDate">
                                 <spring:message code="overtime.data.startDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="startDate" cssClass="form-control" cssErrorClass="form-control error" autocomplete="off"/>
+                                <form:input path="startDate" cssClass="form-control" cssErrorClass="form-control error"
+                                            autocomplete="off"/>
                                 <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
-                        </div><%-- End of start date form group --%>
+                        </div>
+                            <%-- End of start date form group --%>
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="endDate">
                                 <spring:message code="overtime.data.endDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="endDate" cssClass="form-control" cssErrorClass="form-control error" autocomplete="off"/>
+                                <form:input path="endDate" cssClass="form-control" cssErrorClass="form-control error"
+                                            autocomplete="off"/>
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>
-                        </div><%-- End of end date form group --%>
+                        </div>
+                            <%-- End of end date form group --%>
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="numberOfHours">
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="numberOfHours" cssClass="form-control" cssErrorClass="form-control error"/>
+                                <form:input path="numberOfHours" cssClass="form-control"
+                                            cssErrorClass="form-control error"/>
                                 <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
                             </div>
-                        </div><%-- End of number of overtime form group --%>
+                        </div>
+                            <%-- End of number of overtime form group --%>
                         <div class="form-group">
                             <label class="control-label col-md-3" for="comment">
                                 <spring:message code="overtime.data.comment"/>:
@@ -123,10 +129,11 @@
                             <div class="col-md-9">
                                 <span id="char-counter"></span><spring:message code="action.comment.maxChars"/>
                                 <form:textarea path="comment" cssClass="form-control" rows="2"
-                                          onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
+                                               onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
                                 <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
                             </div>
-                        </div><%-- End of comment form group --%>
+                        </div>
+                            <%-- End of comment form group --%>
                     </div>
                 </div><%-- End of first form section --%>
                 <div class="form-section">
@@ -141,9 +148,12 @@
                     </div>
                 </div><%-- End of second form section --%>
             </form:form>
-        </div><%-- End of row --%>
-    </div><%-- End of container --%>
-</div><%-- End of content --%>
+        </div>
+        <%-- End of row --%>
+    </div>
+    <%-- End of container --%>
+</div>
+<%-- End of content --%>
 
 </body>
 </html>

@@ -15,13 +15,13 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <c:choose>
-      <c:when test="${shortcut == true}">
+    <c:when test="${shortcut == true}">
         <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/reject?redirect=/web/application/"/>
-      </c:when>
+    </c:when>
 
-      <c:otherwise>
+    <c:otherwise>
         <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/reject"/>
-      </c:otherwise>
+    </c:otherwise>
 </c:choose>
 
 <form:form id="reject" cssClass="form action-form confirm alert alert-danger" method="POST"
@@ -36,7 +36,7 @@
     <div class="form-group">
         <div class="control-label">
             <spring:message code="action.comment.mandatory"/>: (<span
-                id="text-reject"></span><spring:message code="action.comment.maxChars"/>)
+            id="text-reject"></span><spring:message code="action.comment.maxChars"/>)
         </div>
         <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error"
                        onkeyup="count(this.value, 'text-reject');"

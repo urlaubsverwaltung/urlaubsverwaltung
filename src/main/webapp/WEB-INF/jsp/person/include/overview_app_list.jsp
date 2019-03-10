@@ -50,7 +50,8 @@
                 <h4 class="visible-print">
                     <c:out value="${app.vacationType.displayName}"/>
                 </h4>
-                <a class="hidden-print vacation ${app.vacationType.category}" href="${URL_PREFIX}/application/${app.id}">
+                <a class="hidden-print vacation ${app.vacationType.category}"
+                   href="${URL_PREFIX}/application/${app.id}">
                     <h4><c:out value="${app.vacationType.displayName}"/></h4>
                 </a>
 
@@ -62,12 +63,14 @@
                             <c:choose>
                                 <c:when test="${app.startTime != null && app.endTime != null}">
                                     <c:set var="APPLICATION_START_TIME">
-                                        <uv:time dateTime="${app.startDateWithTime}" />
+                                        <uv:time dateTime="${app.startDateWithTime}"/>
                                     </c:set>
                                     <c:set var="APPLICATION_END_TIME">
-                                        <uv:time dateTime="${app.endDateWithTime}" />
+                                        <uv:time dateTime="${app.endDateWithTime}"/>
                                     </c:set>
-                                    <spring:message code="absence.period.time" arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}" argumentSeparator=";"/>
+                                    <spring:message code="absence.period.time"
+                                                    arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
+                                                    argumentSeparator=";"/>
                                 </c:when>
                                 <c:otherwise>
                                     <spring:message code="${app.dayLength}"/>
@@ -82,60 +85,62 @@
                     </c:choose>
                 </p>
             </td>
-          <td class="is-centered hidden-xs">
+            <td class="is-centered hidden-xs">
             <span>
                 <c:choose>
                     <c:when test="${app.hours != null}">
-                        <uv:number number="${app.hours}" /> <spring:message code="duration.overtime" />
+                        <uv:number number="${app.hours}"/> <spring:message code="duration.overtime"/>
                     </c:when>
                     <c:otherwise>
-                        <uv:number number="${app.workDays}" /> <spring:message code="duration.days" />
+                        <uv:number number="${app.workDays}"/> <spring:message code="duration.days"/>
                     </c:otherwise>
                 </c:choose>
             </span>
 
-            <c:if test="${app.startDate.year != app.endDate.year}">
+                <c:if test="${app.startDate.year != app.endDate.year}">
                     <span class="days-${loopStatus.index}">
                         <%--is filled by javascript--%>
                         <script type="text/javascript">
 
                           $(document).ready(function () {
 
-                            var dayLength = '<c:out value="${app.dayLength}" />';
-                            var personId = '<c:out value="${app.person.id}" />';
+                              var dayLength = '<c:out value="${app.dayLength}" />';
+                              var personId = '<c:out value="${app.person.id}" />';
 
-                            var startDate = "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";
-                            var endDate = "<joda:format pattern='yyyy/MM/dd' value='${app.endDate}' />";
+                              var startDate = "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";
+                              var endDate = "<joda:format pattern='yyyy/MM/dd' value='${app.endDate}' />";
 
-                            var from = new Date(startDate);
-                            var to = new Date(endDate);
+                              var from = new Date(startDate);
+                              var to = new Date(endDate);
 
-                            sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
+                              sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
 
                           });
 
                         </script>
                     </span>
-            </c:if>
-          </td>
+                </c:if>
+            </td>
             <td class="is-centered hidden-xs hidden-print">
                 <i class="fa fa-clock-o"></i>
                 <span>
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">
-                            <spring:message code="application.progress.APPLIED" /> <uv:date date="${app.applicationDate}" />
+                            <spring:message code="application.progress.APPLIED"/> <uv:date
+                            date="${app.applicationDate}"/>
                         </c:when>
                         <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
-                            <spring:message code="application.progress.TEMPORARY_ALLOWED" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="application.progress.TEMPORARY_ALLOWED"/> <uv:date
+                            date="${app.editedDate}"/>
                         </c:when>
                         <c:when test="${app.status == 'ALLOWED'}">
-                            <spring:message code="application.progress.ALLOWED" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="application.progress.ALLOWED"/> <uv:date date="${app.editedDate}"/>
                         </c:when>
                         <c:when test="${app.status == 'REJECTED'}">
-                            <spring:message code="application.progress.REJECTED" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="application.progress.REJECTED"/> <uv:date date="${app.editedDate}"/>
                         </c:when>
                         <c:when test="${app.status == 'CANCELLED' || app.status == 'REVOKED'}">
-                            <spring:message code="application.progress.CANCELLED" /> <uv:date date="${app.cancelDate}" />
+                            <spring:message code="application.progress.CANCELLED"/> <uv:date date="${app.cancelDate}"/>
                         </c:when>
                         <c:otherwise>
                             &nbsp;
