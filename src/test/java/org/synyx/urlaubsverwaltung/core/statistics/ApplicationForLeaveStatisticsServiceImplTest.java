@@ -35,20 +35,7 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
         departmentService = mock(DepartmentService.class);
         applicationForLeaveStatisticsBuilder = mock(ApplicationForLeaveStatisticsBuilder.class);
 
-        sut = new ApplicationForLeaveStatisticsServiceImpl();
-        // made fields package private to enable testing
-        // normally it would be good to use private fields
-        // and constructor injection, but at the moment this
-        // is not possible in combination with the used spring
-        // version 1.4.2.RELEASE and the spring version is defined
-        // by the usage of JSPs (older spring versions does not
-        // support JSPs)
-        // So this is a workaround that should be removed as soon
-        // as the spring-version is updated.
-        sut.sessionService = sessionService;
-        sut.personService = personService;
-        sut.departmentService = departmentService;
-        sut.applicationForLeaveStatisticsBuilder = applicationForLeaveStatisticsBuilder;
+        sut = new ApplicationForLeaveStatisticsServiceImpl(sessionService, personService, departmentService, applicationForLeaveStatisticsBuilder);
     }
 
     @Test
