@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,7 +54,7 @@ public class SessionServiceTest {
         SecurityContextHolder.setContext(securityContext);
 
         // Mock department head
-        when(departmentService.isDepartmentHeadOfPerson(Mockito.any(Person.class), Mockito.any(Person.class)))
+        when(departmentService.isDepartmentHeadOfPerson(any(Person.class), any(Person.class)))
             .thenReturn(false);
     }
 

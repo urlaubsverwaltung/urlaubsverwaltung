@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -33,6 +34,6 @@ public class LdapUserServiceImplTest {
 
         ldapUserService.getLdapUsers();
 
-        verify(ldapTemplate).search(Mockito.any(), Mockito.eq(ldapUserMapper));
+        verify(ldapTemplate).search(any(), Mockito.eq(ldapUserMapper));
     }
 }

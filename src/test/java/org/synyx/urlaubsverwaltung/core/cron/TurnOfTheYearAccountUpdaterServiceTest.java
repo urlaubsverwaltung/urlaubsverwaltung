@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -68,7 +69,7 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         Account newAccount = mock(Account.class);
         when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
         when(accountInteractionServiceMock.autoCreateOrUpdateNextYearsHolidaysAccount(
-                    Mockito.any(Account.class)))
+                    any(Account.class)))
             .thenReturn(newAccount);
 
         sut.updateHolidaysAccounts();
@@ -76,13 +77,13 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         verify(personServiceMock).getActivePersons();
 
         verify(accountServiceMock, Mockito.times(3))
-            .getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class));
+            .getHolidaysAccount(Mockito.anyInt(), any(Person.class));
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user1);
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user2);
         verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user3);
 
         verify(accountInteractionServiceMock, Mockito.times(3))
-            .autoCreateOrUpdateNextYearsHolidaysAccount(Mockito.any(Account.class));
+            .autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class));
         verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
         verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
         verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account3);

@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -52,9 +53,9 @@ public class SickNoteValidatorTest {
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19),
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20), DayLength.FULL);
 
-        when(overlapService.checkOverlap(Mockito.any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
     }
 
@@ -220,7 +221,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 1));
         sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 10));
 
-        when(overlapService.checkOverlap(Mockito.any(SickNote.class)))
+        when(overlapService.checkOverlap(any(SickNote.class)))
             .thenReturn(OverlapCase.FULLY_OVERLAPPING);
 
         validator.validate(sickNote, errors);
@@ -238,8 +239,8 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.empty());
 
         validator.validate(sickNote, errors);
