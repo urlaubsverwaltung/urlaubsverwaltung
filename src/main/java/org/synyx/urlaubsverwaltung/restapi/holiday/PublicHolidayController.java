@@ -3,18 +3,13 @@ package org.synyx.urlaubsverwaltung.restapi.holiday;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-
 import de.jollyday.Holiday;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
@@ -23,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +54,7 @@ public class PublicHolidayController {
     )
     @RequestMapping(value = "/holidays", method = RequestMethod.GET)
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
-        @ApiParam(value = "Year to get the public holidays for", defaultValue = "2016")
+        @ApiParam(value = "Year to get the public holidays for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
         String year,
         @ApiParam(value = "Month of year to get the public holidays for")

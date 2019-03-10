@@ -3,16 +3,12 @@ package org.synyx.urlaubsverwaltung.restapi.absence;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -22,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +53,7 @@ public class AbsenceController {
     )
     @RequestMapping(value = "/absences", method = RequestMethod.GET)
     public ResponseWrapper<DayAbsenceList> personsVacations(
-        @ApiParam(value = "Year to get the absences for", defaultValue = "2016")
+        @ApiParam(value = "Year to get the absences for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
         String year,
         @ApiParam(value = "Month of year to get the absences for")

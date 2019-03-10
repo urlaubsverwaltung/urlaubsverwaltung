@@ -1,7 +1,7 @@
 
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import org.apache.velocity.app.VelocityEngine;
+import freemarker.template.Configuration;
 import org.joda.time.DateMidnight;
 import org.junit.After;
 import org.junit.Assert;
@@ -11,6 +11,7 @@ import org.jvnet.mock_javamail.Mailbox;
 import org.mockito.Mockito;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
@@ -38,7 +39,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -84,15 +90,11 @@ public class MailServiceIntegrationTest {
     @Before
     public void setUp() throws Exception {
 
-        Properties velocityProperties = new Properties();
-        velocityProperties.put("resource.loader", "class");
-        velocityProperties.put("class.resource.loader.class",
-            "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        velocityProperties.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.Log4JLogChute");
-        velocityProperties.put("runtime.log.logsystem.log4j.logger", MailServiceIntegrationTest.class.getName());
-
-        VelocityEngine velocityEngine = new VelocityEngine(velocityProperties);
-        MailBuilder mailBuilder = new MailBuilder(velocityEngine);
+        FreeMarkerConfigurationFactory freeMarkerConfigurationFactory = new FreeMarkerConfigurationFactory();
+        freeMarkerConfigurationFactory.setDefaultEncoding("UTF-8");
+        freeMarkerConfigurationFactory.setTemplateLoaderPath("classpath:/org/synyx/urlaubsverwaltung/core/mail/");
+        Configuration configuration = freeMarkerConfigurationFactory.createConfiguration();
+        MailBuilder mailBuilder = new MailBuilder(configuration);
 
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         MailSender mailSender = new MailSender(javaMailSender);
@@ -581,8 +583,7 @@ public class MailServiceIntegrationTest {
 
         // check content
         String content = (String) mail.getContent();
-        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + DateMidnight
-                .now().getYear()));
+        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear()));
         assertTrue(content.contains("Marlene Muster: 3"));
         assertTrue(content.contains("Max Mustermann: 5"));
         assertTrue(content.contains("Horst Dings: -1"));

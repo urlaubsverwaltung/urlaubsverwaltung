@@ -3,18 +3,14 @@ package org.synyx.urlaubsverwaltung.restapi.workday;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -23,7 +19,6 @@ import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 
 import java.math.BigDecimal;
-
 import java.util.Optional;
 
 
@@ -61,10 +56,10 @@ public class WorkDayController {
     )
     @RequestMapping(value = "/workdays", method = RequestMethod.GET)
     public ResponseWrapper<WorkDayResponse> workDays(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2016-01-01")
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
         String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2016-01-08")
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-08")
         @RequestParam("to")
         String to,
         @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")

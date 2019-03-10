@@ -4,7 +4,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.beans.PropertyEditorSupport;
-
 import java.util.Optional;
 
 

@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.core.department;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;

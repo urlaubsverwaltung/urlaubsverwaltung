@@ -2,11 +2,8 @@ package org.synyx.urlaubsverwaltung.core.account.service;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -19,7 +16,6 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

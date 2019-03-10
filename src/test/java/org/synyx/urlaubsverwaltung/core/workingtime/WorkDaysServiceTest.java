@@ -3,12 +3,9 @@ package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -19,9 +16,7 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
-
 import java.math.BigDecimal;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

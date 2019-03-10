@@ -1,11 +1,9 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.security.access.AccessDeniedException;
-
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,9 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 /**
@@ -26,16 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.restapi")
 public class ApiExceptionHandlerControllerAdvice {
 
-    private static final Logger LOG = Logger.getLogger(ApiExceptionHandlerControllerAdvice.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApiExceptionHandlerControllerAdvice.class);
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ NumberFormatException.class, IllegalArgumentException.class })
     @ResponseBody
     public ErrorResponse handleException(HttpServletResponse response,
                                          IllegalArgumentException exception) throws IOException {
-
-        LOG.debug(exception.toString());
-
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("Something went wrong!", exception);
+        }
         return new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
     }
 
@@ -46,8 +43,9 @@ public class ApiExceptionHandlerControllerAdvice {
     public ErrorResponse handleException(HttpServletResponse response, MethodArgumentTypeMismatchException exception)
         throws IOException {
 
-        LOG.debug(exception.toString());
-
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("Something went wrong!", exception);
+        }
         return new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
     }
 
@@ -59,8 +57,9 @@ public class ApiExceptionHandlerControllerAdvice {
                                          MissingServletRequestParameterException exception)
         throws IOException {
 
-        LOG.debug(exception.toString());
-
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("Something went wrong!", exception);
+        }
         return new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
     }
 
@@ -70,8 +69,9 @@ public class ApiExceptionHandlerControllerAdvice {
     @ResponseBody
     public ErrorResponse handleException(AccessDeniedException exception) {
 
-        LOG.debug(exception.toString());
-
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("Something went wrong!", exception);
+        }
         return new ErrorResponse(HttpStatus.FORBIDDEN, exception);
     }
 
@@ -81,8 +81,9 @@ public class ApiExceptionHandlerControllerAdvice {
     @ResponseBody
     public ErrorResponse handleException(HttpServletResponse response, Exception exception) throws IOException {
 
-        LOG.debug(exception.toString());
-
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("Something went wrong!", exception);
+        }
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception);
     }
 }

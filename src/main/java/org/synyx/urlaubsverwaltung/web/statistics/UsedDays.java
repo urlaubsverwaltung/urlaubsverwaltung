@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 
 import java.math.BigDecimal;
-
 import java.util.HashMap;
 import java.util.Map;
 

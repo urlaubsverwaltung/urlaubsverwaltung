@@ -1,15 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.workingtime;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
@@ -29,7 +25,7 @@ import java.util.Optional;
 @Transactional
 public class WorkingTimeService {
 
-    private static final Logger LOG = Logger.getLogger(WorkingTimeService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WorkingTimeService.class);
 
     private final WorkingTimeDAO workingTimeDAO;
     private final SettingsService settingsService;
@@ -94,9 +90,8 @@ public class WorkingTimeService {
         Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
 
         if (!optionalWorkingTime.isPresent()) {
-            LOG.debug(String.format(
-                    "No working time found for user '%s' equals or minor %s, using system federal state as fallback",
-                    person.getLoginName(), date.toString(DateFormat.PATTERN)));
+            LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
+                    person.getLoginName(), date.toString(DateFormat.PATTERN));
 
             return getSystemDefaultFederalState();
         }

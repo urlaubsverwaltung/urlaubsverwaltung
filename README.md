@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/synyx/urlaubsverwaltung.png)](https://travis-ci.org/synyx/urlaubsverwaltung)
-[![Coverage Status](https://coveralls.io/repos/github/synyx/urlaubsverwaltung/badge.svg?branch=master)](https://coveralls.io/github/synyx/urlaubsverwaltung?branch=master)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung)
+[![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 
 ## Urlaubsverwaltung
 
@@ -99,7 +100,10 @@ Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverw
 Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgende Anleitung befolgen.
 
 Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet hier, können Details zur Installation und
-Konfiguration [hier](docs/INSTALLATION_AS_WAR.md) nachgelesen werden.
+Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
+
+Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synxy/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
+Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
 #### Systemvoraussetzungen
 
@@ -108,9 +112,10 @@ Konfiguration [hier](docs/INSTALLATION_AS_WAR.md) nachgelesen werden.
 
 #### Download
 
-Die Anwendung steht auf Github bereits als deploybare JAR-Datei zum Download zur Verfügung.
-Einfach die JAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
-downloaden.
+Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
+Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
+da die WAR-Datei einen Tomcat bundled.
 
 #### Starten der Anwendung
 
@@ -118,7 +123,7 @@ Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an 
 zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar
+java -jar -Dspring.profiles.active=dev urlaubsverwaltung.war
 ```
 
 Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
@@ -369,7 +374,4 @@ Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHAN
 ## Lizenz
 
 [synyx/urlaubsverwaltung](http://github.com/synyx/urlaubsverwaltung) is licensed under the
-[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-Alle Logos, Marken- und Warenzeichen unterliegen **nicht** der Apache License 2.0 und dürfen nur mit schriftlicher
-Genehmigung von [synyx](https://www.synyx.de/) weiterverwendet werden.
+[Apache License 2.0](LICENSE.txt)

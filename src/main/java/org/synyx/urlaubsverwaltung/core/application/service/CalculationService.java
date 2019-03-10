@@ -1,14 +1,13 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
@@ -37,7 +36,7 @@ import java.util.Optional;
 @Service
 public class CalculationService {
 
-    private static final Logger LOG = Logger.getLogger(CalculationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CalculationService.class);
 
 
     private final VacationDaysService vacationDaysService;
@@ -114,7 +113,7 @@ public class CalculationService {
         BigDecimal alreadyUsedNextYear = vacationDaysService.getRemainingVacationDaysAlreadyUsed(nextYear);
 
         VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account.get(), nextYear);
-        LOG.info("vacationDaysLeft: " + (year + 1) + " " + vacationDaysLeft);
+        LOG.info("vacationDaysLeft: {} {}",  year + 1, vacationDaysLeft);
 
         // now we need to consider which remaining vacation days expire
         BigDecimal workDaysBeforeApril = getWorkdaysBeforeApril(year, application);
@@ -132,8 +131,8 @@ public class CalculationService {
 
         if (leftUntilApril.signum() < 0 || leftAfterApril.signum() < 0){
             if (alreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by " + person + " for " + workDays + " days in " + year + " because "
-                        + alreadyUsedNextYear + " remaining days have already been used in " + (year+1));
+                LOG.info("Rejecting application by {} for {} days in {} because {} remaining days have already been used in {}",
+                        person, workDays, year, alreadyUsedNextYear, year+1);
             }
             return false;
         }

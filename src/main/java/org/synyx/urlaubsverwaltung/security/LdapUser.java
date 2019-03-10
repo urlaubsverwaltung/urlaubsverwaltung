@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;

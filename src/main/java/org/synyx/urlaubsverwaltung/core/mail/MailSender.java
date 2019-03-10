@@ -1,16 +1,13 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 
 import java.util.Arrays;
@@ -25,7 +22,7 @@ import java.util.List;
 @Service
 class MailSender {
 
-    private static final Logger LOG = Logger.getLogger(MailSender.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MailSender.class);
 
     private final JavaMailSenderImpl mailSender;
 
@@ -76,22 +73,21 @@ class MailSender {
                 this.mailSender.send(message);
 
                 for (String recipient : message.getTo()) {
-                    LOG.info("Sent email to " + recipient);
+                    LOG.info("Sent email to {}", recipient);
                 }
             } else {
                 for (String recipient : message.getTo()) {
-                    LOG.info("No email configuration to send email to " + recipient);
+                    LOG.info("No email configuration to send email to {}", recipient);
                 }
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("To=" + Arrays.toString(message.getTo()) + "\n\n"
-                    + "Subject=" + message.getSubject() + "\n\n"
-                    + "Text=" + message.getText());
+                LOG.debug("To={}\n\nSubject={}\n\nText={}",
+                        Arrays.toString(message.getTo()), message.getSubject(), message.getText());
             }
         } catch (MailException ex) {
             for (String recipient : message.getTo()) {
-                LOG.error("Sending email to " + recipient + " failed", ex);
+                LOG.error("Sending email to {} failed", recipient, ex);
             }
         }
     }

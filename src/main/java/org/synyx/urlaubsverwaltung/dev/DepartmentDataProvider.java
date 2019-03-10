@@ -1,13 +1,9 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.joda.time.DateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-
 import org.springframework.stereotype.Component;
-
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;

@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.web.account;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
 import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+
+import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * @author Aljona Murygina - murygina@synyx.de
