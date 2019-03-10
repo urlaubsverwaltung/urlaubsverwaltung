@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,8 +54,8 @@ public class WorkDayControllerTest {
 
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-            Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(DateMidnight.class),
+            any(DateMidnight.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-04")

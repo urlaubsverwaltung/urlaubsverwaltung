@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,11 +53,11 @@ public class FreeTimeAbsenceProviderTest {
 
         testWorkingTime = TestDataCreator.createWorkingTime();
         workingTimeService = mock(WorkingTimeService.class);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(testWorkingTime));
-        when(workingTimeService.getFederalStateForPerson(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getFederalStateForPerson(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
 

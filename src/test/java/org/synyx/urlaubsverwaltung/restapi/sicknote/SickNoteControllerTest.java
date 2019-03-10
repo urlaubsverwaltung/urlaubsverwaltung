@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -74,7 +75,7 @@ public class SickNoteControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteServiceMock)
-            .getByPersonAndPeriod(Mockito.any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
+            .getByPersonAndPeriod(any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
                 Mockito.eq(new DateMidnight(2016, 12, 31)));
         verify(personServiceMock).getPersonByID(23);
     }
@@ -88,7 +89,7 @@ public class SickNoteControllerTest {
         SickNote sickNote2 = TestDataCreator.createSickNote(TestDataCreator.createPerson("bar"));
         SickNote sickNote3 = TestDataCreator.createSickNote(TestDataCreator.createPerson("baz"));
 
-        when(sickNoteServiceMock.getByPeriod(Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
+        when(sickNoteServiceMock.getByPeriod(any(DateMidnight.class), any(DateMidnight.class)))
             .thenReturn(Arrays.asList(sickNote1, sickNote2, sickNote3));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "2016-12-31"))

@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -95,8 +96,8 @@ public class VacationControllerTest {
         Application vacation2 = TestDataCreator.createApplication(TestDataCreator.createPerson("bar"),
                 new DateMidnight(2016, 4, 5), new DateMidnight(2016, 4, 10), DayLength.FULL);
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndState(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(ApplicationStatus.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndState(any(DateMidnight.class),
+                    any(DateMidnight.class), any(ApplicationStatus.class)))
             .thenReturn(Arrays.asList(vacation1, vacation2));
 
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01").param("to", "2016-12-31"))

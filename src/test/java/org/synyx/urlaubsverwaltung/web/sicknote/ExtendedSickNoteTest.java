@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -14,6 +13,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,8 +41,8 @@ public class ExtendedSickNoteTest {
         SickNote sickNote = TestDataCreator.createSickNote(person, new DateMidnight(2015, 3, 3),
                 new DateMidnight(2015, 3, 6), DayLength.MORNING);
 
-        when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);
@@ -73,8 +73,8 @@ public class ExtendedSickNoteTest {
         SickNote sickNote = TestDataCreator.createSickNote(person, new DateMidnight(2016, 3, 1),
                 new DateMidnight(2016, 3, 4), DayLength.FULL);
 
-        when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);

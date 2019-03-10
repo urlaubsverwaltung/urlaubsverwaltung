@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -79,8 +80,8 @@ public class PublicHolidayControllerTest {
 
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
-        when(workingTimeServiceMock.getFederalStateForPerson(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(FederalState.BAYERN);
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("person", "23")).andExpect(status().isOk());
@@ -96,8 +97,8 @@ public class PublicHolidayControllerTest {
 
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
-        when(workingTimeServiceMock.getFederalStateForPerson(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(FederalState.BAYERN);
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("month", "4").param("person", "23"))

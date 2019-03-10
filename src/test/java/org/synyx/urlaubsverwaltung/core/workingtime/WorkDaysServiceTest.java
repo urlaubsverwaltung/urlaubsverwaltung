@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +62,7 @@ public class WorkDaysServiceTest {
         workingTime = TestDataCreator.createWorkingTime();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
-                    Mockito.any(DateMidnight.class)))
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
     }
 
@@ -317,7 +318,7 @@ public class WorkDaysServiceTest {
         workingTime.setFederalStateOverride(FederalState.BAYERN_AUGSBURG);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
-                    Mockito.any(DateMidnight.class)))
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
         BigDecimal workDays = instance.getWorkDays(DayLength.FULL, from, to, person);

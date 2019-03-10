@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,11 +65,11 @@ public class AbsenceControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteServiceMock)
-            .getByPersonAndPeriod(Mockito.any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
+            .getByPersonAndPeriod(any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
                 Mockito.eq(new DateMidnight(2016, 12, 31)));
         verify(applicationServiceMock)
             .getApplicationsForACertainPeriodAndPerson(Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 12, 31)), Mockito.any(Person.class));
+                Mockito.eq(new DateMidnight(2016, 12, 31)), any(Person.class));
         verify(personServiceMock).getPersonByID(23);
     }
 
@@ -87,12 +88,12 @@ public class AbsenceControllerTest {
 
         when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
 
-        when(sickNoteServiceMock.getByPersonAndPeriod(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
+        when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
+                    any(DateMidnight.class), any(DateMidnight.class)))
             .thenReturn(Collections.singletonList(sickNote));
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(Collections.singletonList(vacation));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23"))
@@ -122,12 +123,12 @@ public class AbsenceControllerTest {
 
         when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
 
-        when(sickNoteServiceMock.getByPersonAndPeriod(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
+        when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
+                    any(DateMidnight.class), any(DateMidnight.class)))
             .thenReturn(Collections.singletonList(TestDataCreator.createSickNote(person)));
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(Collections.singletonList(vacation));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "VACATION"))
@@ -154,12 +155,12 @@ public class AbsenceControllerTest {
 
         when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
 
-        when(sickNoteServiceMock.getByPersonAndPeriod(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
+        when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
+                    any(DateMidnight.class), any(DateMidnight.class)))
             .thenReturn(Collections.singletonList(sickNote));
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(Collections.singletonList(vacation));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))

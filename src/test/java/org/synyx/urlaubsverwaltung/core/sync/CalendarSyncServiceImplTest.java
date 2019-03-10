@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -96,7 +97,7 @@ public class CalendarSyncServiceImplTest {
         calendarSyncService.checkCalendarSyncSettings();
 
         verify(calendarService.getCalendarProvider())
-                .checkCalendarSyncSettings(Mockito.any(CalendarSettings.class));
+                .checkCalendarSyncSettings(any(CalendarSettings.class));
     }
 
 

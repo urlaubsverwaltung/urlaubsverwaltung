@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -56,7 +57,7 @@ public class OvertimeValidatorTest {
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(BigDecimal.ZERO);
     }
 
@@ -243,7 +244,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(0);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(BigDecimal.ZERO);
 
         // just not important how many number of hours, can not record overtime!
@@ -263,7 +264,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(16);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("8"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("8"));
@@ -282,7 +283,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(16);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("8"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("8.5"));
@@ -303,7 +304,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMinimumOvertime(10);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("-9"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("-1.5"));
@@ -326,7 +327,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(100);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("99.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("2"));
@@ -357,7 +358,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(4);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("3.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("3"));
@@ -388,7 +389,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMinimumOvertime(4);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("-3.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("-3"));

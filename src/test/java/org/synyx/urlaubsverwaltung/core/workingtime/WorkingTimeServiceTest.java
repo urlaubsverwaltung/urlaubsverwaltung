@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -16,6 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -55,8 +55,8 @@ public class WorkingTimeServiceTest {
         workingTime.setFederalStateOverride(FederalState.BAYERN);
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(Date.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(Date.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
@@ -82,8 +82,8 @@ public class WorkingTimeServiceTest {
         workingTime.setFederalStateOverride(null);
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(Date.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(Date.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
@@ -106,8 +106,8 @@ public class WorkingTimeServiceTest {
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(Date.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(Date.class)))
             .thenReturn(null);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
@@ -145,7 +145,7 @@ public class WorkingTimeServiceTest {
         WorkingTime existentWorkingTime = TestDataCreator.createWorkingTime();
         existentWorkingTime.setFederalStateOverride(FederalState.BAYERN);
 
-        when(workingTimeDAOMock.findByPersonAndValidityDate(Mockito.any(Person.class), Mockito.any(Date.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDate(any(Person.class), any(Date.class)))
             .thenReturn(existentWorkingTime);
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
