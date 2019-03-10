@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,7 +50,7 @@ public class LdapUserDataImporterTest {
     @Test
     public void ensureCreatesPersonIfLdapUserNotYetExists() {
 
-        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.empty());
         when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
                     new LdapUser("muster", Optional.empty(), Optional.empty(), Optional.empty())));
@@ -67,7 +68,7 @@ public class LdapUserDataImporterTest {
 
         Person person = TestDataCreator.createPerson();
 
-        when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
                     new LdapUser(person.getLoginName(), Optional.of("Vorname"), Optional.of("Nachname"),

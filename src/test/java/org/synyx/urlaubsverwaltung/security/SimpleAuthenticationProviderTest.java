@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,7 +73,7 @@ public class SimpleAuthenticationProviderTest {
     @Test(expected = UsernameNotFoundException.class)
     public void ensureExceptionIsThrownIfUserCanNotBeFoundWithinDatabase() {
 
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
 
         Authentication credentials = new UsernamePasswordAuthenticationToken("user", "password", null);
         authenticationProvider.authenticate(credentials);

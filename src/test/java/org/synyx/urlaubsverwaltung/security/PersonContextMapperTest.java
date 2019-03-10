@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,7 +57,7 @@ public class PersonContextMapperTest {
 
         when(context.getDn()).thenReturn(mock(Name.class));
         when(context.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
-        when(context.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
+        when(context.getStringAttribute(anyString())).thenReturn("Foo");
     }
 
 
@@ -100,8 +101,8 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.<Person>empty());
-        when(ldapSyncService.createPerson(Mockito.anyString(), Matchers.<Optional<String>>any(),
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.<Person>empty());
+        when(ldapSyncService.createPerson(anyString(), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(TestDataCreator.createPerson());
 
@@ -124,7 +125,7 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(person);
@@ -147,8 +148,8 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("mgroehning", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.<Person>empty());
-        when(ldapSyncService.createPerson(Mockito.anyString(), Matchers.<Optional<String>>any(),
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.<Person>empty());
+        when(ldapSyncService.createPerson(anyString(), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(TestDataCreator.createPerson());
 
@@ -166,7 +167,7 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.INACTIVE));
 
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser(person.getLoginName(), Optional.of(person.getFirstName()),
                     Optional.of(person.getLastName()), Optional.of(person.getEmail())));
@@ -210,7 +211,7 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
             .thenReturn(person);
@@ -238,7 +239,7 @@ public class PersonContextMapperTest {
             .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
                     Optional.<String>empty()));
 
-        when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Collections.emptyList());
         when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
                     Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
