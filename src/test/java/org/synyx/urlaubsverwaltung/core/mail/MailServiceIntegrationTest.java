@@ -980,6 +980,6 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Office"));
         assertTrue(content.contains("es wurden Überstunden erfasst"));
-        assertTrue(content.contains("http://urlaubsverwaltung/web/overtime/"));
+        assertTrue(content.contains("http://urlaubsverwaltung/web/overtime/1234"));
     }
 }
