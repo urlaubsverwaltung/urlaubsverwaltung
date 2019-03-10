@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
@@ -12,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,7 +59,7 @@ public class AvailabilityServiceTest {
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
         verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE))
-            .checkForAbsence(Mockito.eq(testPerson), any(DateMidnight.class));
+            .checkForAbsence(eq(testPerson), any(DateMidnight.class));
     }
 
 

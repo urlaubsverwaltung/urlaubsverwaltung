@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.sicknote;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -21,6 +20,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -76,8 +76,8 @@ public class SickNoteControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteServiceMock)
-            .getByPersonAndPeriod(any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 12, 31)));
+            .getByPersonAndPeriod(any(Person.class), eq(new DateMidnight(2016, 1, 1)),
+                eq(new DateMidnight(2016, 12, 31)));
         verify(personServiceMock).getPersonByID(23);
     }
 

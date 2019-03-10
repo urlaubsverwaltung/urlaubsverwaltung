@@ -5,7 +5,6 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -24,6 +23,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +61,7 @@ public class WorkDaysServiceTest {
 
         workingTime = TestDataCreator.createWorkingTime();
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
                     any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
     }
@@ -317,7 +317,7 @@ public class WorkDaysServiceTest {
 
         workingTime.setFederalStateOverride(FederalState.BAYERN_AUGSBURG);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
                     any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
