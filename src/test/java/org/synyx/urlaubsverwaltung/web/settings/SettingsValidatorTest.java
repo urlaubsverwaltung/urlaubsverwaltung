@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendar
 import org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 
 /**
@@ -114,7 +115,7 @@ public class SettingsValidatorTest {
 
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 
@@ -284,7 +285,7 @@ public class SettingsValidatorTest {
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 
@@ -472,7 +473,7 @@ public class SettingsValidatorTest {
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 
@@ -492,7 +493,7 @@ public class SettingsValidatorTest {
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 

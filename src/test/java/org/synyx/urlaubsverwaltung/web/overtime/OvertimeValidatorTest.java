@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -82,7 +83,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -120,7 +121,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -183,7 +184,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -194,7 +195,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -205,7 +206,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -252,7 +253,7 @@ public class OvertimeValidatorTest {
         verify(errors).reject("overtime.record.error.deactivated");
 
         verify(settingsServiceMock).getSettings();
-        Mockito.verifyZeroInteractions(overtimeServiceMock);
+        verifyZeroInteractions(overtimeServiceMock);
     }
 
 
@@ -268,7 +269,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
         verify(settingsServiceMock).getSettings();
         verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
@@ -342,7 +343,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
         verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
         verify(settingsServiceMock).getSettings();
@@ -373,7 +374,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
         verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
         verify(settingsServiceMock).getSettings();
@@ -404,7 +405,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
         verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
         verify(settingsServiceMock).getSettings();
@@ -422,7 +423,7 @@ public class OvertimeValidatorTest {
 
             validator.validate(overtimeForm, errors);
 
-            Mockito.verifyZeroInteractions(errors);
+            verifyZeroInteractions(errors);
         };
 
         assertMayBeEmpty.accept(null);

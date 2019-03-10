@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -92,7 +93,7 @@ public class AccountValidatorTest {
 
         form.setAnnualVacationDays(new BigDecimal("28"));
         validator.validateAnnualVacation(form, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -125,7 +126,7 @@ public class AccountValidatorTest {
         form.setActualVacationDays(new BigDecimal("28"));
 
         validator.validateActualVacation(form, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -155,7 +156,7 @@ public class AccountValidatorTest {
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5"));
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -256,7 +257,7 @@ public class AccountValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
     @Test
@@ -267,7 +268,7 @@ public class AccountValidatorTest {
 
         validator.validateComment(form, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
     @Test

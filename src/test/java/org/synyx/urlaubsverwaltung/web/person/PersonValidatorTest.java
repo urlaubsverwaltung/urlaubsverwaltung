@@ -19,6 +19,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -96,7 +97,7 @@ public class PersonValidatorTest {
     public void ensureValidNameHasNoValidationError() {
 
         validator.validateName("Hans-Peter", "nameField", errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -162,7 +163,7 @@ public class PersonValidatorTest {
     public void ensureValidEmailHasNoValidationError() {
 
         validator.validateEmail("müller@verwaltung.com.de", errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -217,7 +218,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -283,7 +284,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -294,7 +295,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -305,7 +306,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -316,7 +317,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -382,7 +383,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -395,7 +396,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -407,7 +408,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -420,6 +421,6 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 }

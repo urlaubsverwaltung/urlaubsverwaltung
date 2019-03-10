@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -59,7 +60,7 @@ public class WorkingTimeServiceTest {
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
-        Mockito.verifyZeroInteractions(settingsServiceMock);
+        verifyZeroInteractions(settingsServiceMock);
         verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
 
         Assert.assertNotNull("Missing federal state", federalState);

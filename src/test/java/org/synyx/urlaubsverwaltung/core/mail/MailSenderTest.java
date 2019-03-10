@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -50,7 +51,7 @@ public class MailSenderTest {
 
         mailSender.sendEmail(settings.getMailSettings(), Collections.singletonList("foo@bar.de"), "subject", "text");
 
-        Mockito.verifyZeroInteractions(javaMailSender);
+        verifyZeroInteractions(javaMailSender);
     }
 
 
@@ -98,7 +99,7 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, null, "subject", "text");
 
-        Mockito.verifyZeroInteractions(javaMailSender);
+        verifyZeroInteractions(javaMailSender);
     }
 
 
@@ -109,6 +110,6 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, Collections.emptyList(), "subject", "text");
 
-        Mockito.verifyZeroInteractions(javaMailSender);
+        verifyZeroInteractions(javaMailSender);
     }
 }
