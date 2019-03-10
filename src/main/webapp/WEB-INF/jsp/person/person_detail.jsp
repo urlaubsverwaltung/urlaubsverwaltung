@@ -23,12 +23,12 @@
         <div class="feedback">
             <c:if test="${createSuccess}">
                 <div class="alert alert-success">
-                    <spring:message code="person.details.action.create.success" />
+                    <spring:message code="person.details.action.create.success"/>
                 </div>
             </c:if>
             <c:if test="${updateSuccess}">
                 <div class="alert alert-success">
-                    <spring:message code="person.details.action.update.success" />
+                    <spring:message code="person.details.action.update.success"/>
                 </div>
             </c:if>
         </div>
@@ -38,10 +38,10 @@
                 <legend>
                     <spring:message code="person.details.masterData.title"/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                    <a href="${URL_PREFIX}/staff/${person.id}/edit" class="fa-action pull-right"
-                       data-title="<spring:message code="action.edit"/>">
-                        <i class="fa fa-pencil"></i>
-                    </a>
+                        <a href="${URL_PREFIX}/staff/${person.id}/edit" class="fa-action pull-right"
+                           data-title="<spring:message code="action.edit"/>">
+                            <i class="fa fa-pencil"></i>
+                        </a>
                     </sec:authorize>
                 </legend>
                 <uv:person person="${person}"/>
@@ -83,10 +83,11 @@
                     <spring:message code="person.details.annualVacation.title"/>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff/${person.id}?year="/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                    <a href="${URL_PREFIX}/staff/${person.id}/account?year=${param.year}" class="fa-action pull-right"
-                       data-title="<spring:message code="action.edit"/>">
-                        <i class="fa fa-pencil"></i>
-                    </a>
+                        <a href="${URL_PREFIX}/staff/${person.id}/account?year=${param.year}"
+                           class="fa-action pull-right"
+                           data-title="<spring:message code="action.edit"/>">
+                            <i class="fa fa-pencil"></i>
+                        </a>
                     </sec:authorize>
                 </legend>
                 <uv:account-entitlement account="${account}"/>
@@ -94,10 +95,10 @@
                 <legend>
                     <spring:message code="person.details.workingTime.title"/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                    <a href="${URL_PREFIX}/staff/${person.id}/workingtime" class="fa-action pull-right"
-                       data-title="<spring:message code="action.edit"/>">
-                        <i class="fa fa-pencil"></i>
-                    </a>
+                        <a href="${URL_PREFIX}/staff/${person.id}/workingtime" class="fa-action pull-right"
+                           data-title="<spring:message code="action.edit"/>">
+                            <i class="fa fa-pencil"></i>
+                        </a>
                     </sec:authorize>
                 </legend>
                 <div class="box">
@@ -105,42 +106,42 @@
                     <span class="box-text">
                             <c:choose>
                                 <c:when test="${workingTime != null}">
-                                    <spring:message code="person.details.workingTime.validity" />
-                                    <h5 class="is-inline-block"><uv:date date="${workingTime.validFrom}" /></h5>:
+                                    <spring:message code="person.details.workingTime.validity"/>
+                                    <h5 class="is-inline-block"><uv:date date="${workingTime.validFrom}"/></h5>:
                                     <ul>
                                     <c:if test="${workingTime.monday.duration > 0}">
                                         <li>
-                                            <spring:message code="MONDAY" />
+                                            <spring:message code="MONDAY"/>
                                         </li>
                                     </c:if>
                                     <c:if test="${workingTime.tuesday.duration > 0}">
                                         <li>
-                                            <spring:message code="TUESDAY" />
+                                            <spring:message code="TUESDAY"/>
                                         </li>
                                     </c:if>
                                     <c:if test="${workingTime.wednesday.duration > 0}">
                                         <li>
-                                            <spring:message code="WEDNESDAY" />
+                                            <spring:message code="WEDNESDAY"/>
                                         </li>
                                     </c:if>
                                     <c:if test="${workingTime.thursday.duration > 0}">
                                         <li>
-                                            <spring:message code="THURSDAY" />
+                                            <spring:message code="THURSDAY"/>
                                         </li>
                                     </c:if>
                                     <c:if test="${workingTime.friday.duration > 0}">
                                         <li>
-                                            <spring:message code="FRIDAY" />
+                                            <spring:message code="FRIDAY"/>
                                         </li>
                                     </c:if>
                                     <c:if test="${workingTime.saturday.duration > 0}">
                                         <li>
-                                            <spring:message code="SATURDAY" />
+                                            <spring:message code="SATURDAY"/>
                                         </li>
                                     </c:if>
                                     <c:if test="${workingTime.sunday.duration > 0}">
                                         <li>
-                                            <spring:message code="SUNDAY" />
+                                            <spring:message code="SUNDAY"/>
                                         </li>
                                     </c:if>
                                     </ul>
@@ -154,7 +155,7 @@
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-map"></i></span>
                     <span class="box-text">
-                        <spring:message code="person.details.workingTime.federalState" />
+                        <spring:message code="person.details.workingTime.federalState"/>
                         <h5><spring:message code="federalState.${federalState}"/></h5>
                     </span>
                 </div>

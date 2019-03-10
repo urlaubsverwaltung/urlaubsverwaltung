@@ -7,95 +7,101 @@
 
 <html>
 <head>
-    <uv:head />
+    <uv:head/>
 </head>
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<uv:menu />
+<uv:menu/>
 
 <div class="content">
 
-    <c:set var="METHOD" value="POST" />
-    <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/convert" />
+    <c:set var="METHOD" value="POST"/>
+    <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/convert"/>
 
     <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNoteConvertForm" class="form-horizontal">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="row">
+            <div class="row">
 
-            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="col-xs-12 col-sm-12 col-md-6">
                     <legend>
-                        <spring:message code="sicknote.convert.title" />
+                        <spring:message code="sicknote.convert.title"/>
                     </legend>
-    
+
                     <div class="form-group">
-                        <form:hidden path="person" value="${sickNoteConvertForm.person.id}" />
+                        <form:hidden path="person" value="${sickNoteConvertForm.person.id}"/>
                         <label class="control-label col-sm-12 col-md-4">
                             <spring:message code='sicknote.data.staff'/>:
                         </label>
-    
+
                         <div class="col-md-7">
-                            <c:out value="${sickNoteConvertForm.person.niceName}" />
+                            <c:out value="${sickNoteConvertForm.person.niceName}"/>
                         </div>
                     </div>
 
                     <div class="form-group is-required">
                         <label class="control-label col-md-4">
-                            <spring:message code="application.data.vacationType" />:
+                            <spring:message code="application.data.vacationType"/>:
                         </label>
 
                         <div class="col-md-7">
-                            <form:select path="vacationType" size="1" cssClass="form-control" cssErrorClass="form-control error">
+                            <form:select path="vacationType" size="1" cssClass="form-control"
+                                         cssErrorClass="form-control error">
                                 <c:forEach items="${vacationTypes}" var="vacationType">
                                     <option value="${vacationType.id}">
-                                        <c:out value='${vacationType.displayName}' />
+                                        <c:out value='${vacationType.displayName}'/>
                                     </option>
                                 </c:forEach>
                             </form:select>
                             <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
                         </div>
                     </div>
-    
+
                     <div class="form-group">
-                        <form:hidden path="dayLength" />
-                        <form:hidden path="startDate" />
-                        <form:hidden path="endDate" />
-                        
+                        <form:hidden path="dayLength"/>
+                        <form:hidden path="startDate"/>
+                        <form:hidden path="endDate"/>
+
                         <label class="control-label col-md-4">
-                            <spring:message code="absence.period" />:
-                        </label>
-    
-                        <div class="col-md-7">
-                            <uv:date date="${sickNoteConvertForm.startDate}" /> - <uv:date date="${sickNoteConvertForm.endDate}" />, <spring:message code="${sickNoteConvertForm.dayLength}"/>
-                        </div>
-                    </div>
-    
-                    <div class="form-group is-required">
-                        <label class="control-label col-md-4">
-                            <spring:message code="application.data.reason" />:
+                            <spring:message code="absence.period"/>:
                         </label>
 
                         <div class="col-md-7">
-                            <span id="count-chars"></span><spring:message code="action.comment.maxChars" />
-                            <br />
-                            <form:textarea id="reason" path="reason" cssClass="form-control" cssErrorClass="form-control error" rows="2" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
+                            <uv:date date="${sickNoteConvertForm.startDate}"/> - <uv:date
+                            date="${sickNoteConvertForm.endDate}"/>, <spring:message
+                            code="${sickNoteConvertForm.dayLength}"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group is-required">
+                        <label class="control-label col-md-4">
+                            <spring:message code="application.data.reason"/>:
+                        </label>
+
+                        <div class="col-md-7">
+                            <span id="count-chars"></span><spring:message code="action.comment.maxChars"/>
+                            <br/>
+                            <form:textarea id="reason" path="reason" cssClass="form-control"
+                                           cssErrorClass="form-control error" rows="2"
+                                           onkeyup="count(this.value, 'count-chars');"
+                                           onkeydown="maxChars(this,200); count(this.value, 'count-chars');"/>
                             <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
                         </div>
 
                     </div>
 
-            </div>
+                </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend>
-                    <spring:message code="sicknote.title" />
-                </legend>
+                    <legend>
+                        <spring:message code="sicknote.title"/>
+                    </legend>
 
-                <div class="box">
+                    <div class="box">
                     <span class="box-icon bg-red">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
@@ -106,9 +112,10 @@
                             </c:otherwise>
                         </c:choose>
                     </span>
-                    <span class="box-text">
+                        <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
-                        <spring:message code="sicknotes.details.title" arguments="${sickNote.sickNoteType.displayName}"/>
+                        <spring:message code="sicknotes.details.title"
+                                        arguments="${sickNote.sickNoteType.displayName}"/>
 
                         <c:choose>
                             <c:when test="${sickNote.startDate == sickNote.endDate}">
@@ -121,7 +128,9 @@
                                 <c:set var="SICK_NOTE_DAY_LENGTH">
                                     <spring:message code="${sickNote.dayLength}"/>
                                 </c:set>
-                                <spring:message code="absence.period.singleDay" arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}" argumentSeparator=";"/>
+                                <spring:message code="absence.period.singleDay"
+                                                arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}"
+                                                argumentSeparator=";"/>
                             </c:when>
                             <c:otherwise>
                                 <c:set var="SICK_NOTE_START_DATE">
@@ -136,63 +145,67 @@
                                         <uv:date date="${sickNote.endDate}"/>
                                     </h5>
                                 </c:set>
-                                <spring:message code="absence.period.multipleDays" arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}" argumentSeparator=";"/>
+                                <spring:message code="absence.period.multipleDays"
+                                                arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}"
+                                                argumentSeparator=";"/>
                             </c:otherwise>
                         </c:choose>
                     </span>
+                    </div>
+
+                    <table class="list-table striped-table bordered-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <spring:message code="absence.period.duration"/>
+                            </td>
+                            <td>
+                                = <uv:number number="${sickNote.workDays}"/> <spring:message
+                                code="duration.workDays"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><spring:message code="sicknote.data.aub.short"/></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${sickNote.aubPresent}">
+                                        <i class="fa fa-check hidden-print"></i>
+                                        <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
+                                        date="${sickNote.aubEndDate}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="fa fa-remove hidden-print"></i>
+                                        <spring:message code="sicknote.data.aub.notPresent"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <table class="list-table striped-table bordered-table">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <spring:message code="absence.period.duration"/>
-                        </td>
-                        <td>
-                            = <uv:number number="${sickNote.workDays}"/> <spring:message
-                                code="duration.workDays"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><spring:message code="sicknote.data.aub.short"/></td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${sickNote.aubPresent}">
-                                    <i class="fa fa-check hidden-print"></i>
-                                    <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
-                                        date="${sickNote.aubEndDate}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <i class="fa fa-remove hidden-print"></i>
-                                    <spring:message code="sicknote.data.aub.notPresent"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
-            
-        </div>
 
-        <div class="row">
+            <div class="row">
 
-            <div class="col-xs-12">
+                <div class="col-xs-12">
 
-                <hr/>
+                    <hr/>
 
-                <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message code="action.save" /></button>
-                <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/sicknote/${sickNote.id}"><spring:message code="action.cancel"/></a>
+                    <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
+                        code="action.save"/></button>
+                    <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right"
+                       href="${URL_PREFIX}/sicknote/${sickNote.id}"><spring:message code="action.cancel"/></a>
 
+
+                </div>
 
             </div>
 
         </div>
-        
-    </div>
 
-</form:form>
-</div>    
+    </form:form>
+</div>
 
 </body>
 </html>

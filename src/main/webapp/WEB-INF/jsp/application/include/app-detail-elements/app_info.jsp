@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
@@ -16,10 +16,12 @@
         </c:choose>
     </span>
     <span class="box-text">
-        <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="application.applier.applied" />
+        <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}"/></h5> <spring:message
+        code="application.applier.applied"/>
         <h4>
             <c:out value="${application.vacationType.displayName}"/>
-            <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
+            <span class="state ${application.status} pull-right hidden-print hidden-xs"
+                  title="<spring:message code='${application.status}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
                     <i class="fa fa-question"></i>
@@ -54,7 +56,8 @@
                 <c:set var="APPLICATION_DAY_LENGTH">
                     <spring:message code="${application.dayLength}"/>
                 </c:set>
-                <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
+                <spring:message code="absence.period.singleDay"
+                                arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
             </c:when>
             <c:otherwise>
                 <c:set var="APPLICATION_START_DATE">
@@ -69,7 +72,8 @@
                         <uv:date date="${application.endDate}"/>
                     </h5>
                 </c:set>
-                <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
+                <spring:message code="absence.period.multipleDays"
+                                arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
             </c:otherwise>
         </c:choose>
     </span>
@@ -78,17 +82,17 @@
 <table class="list-table striped-table bordered-table" cellspacing="0">
 
     <tr>
-        <td><spring:message code="absence.period.duration" /></td>
+        <td><spring:message code="absence.period.duration"/></td>
         <td>
             <strong>
-              <uv:number number="${application.workDays}" /> <spring:message code="duration.days" />
+                <uv:number number="${application.workDays}"/> <spring:message code="duration.days"/>
             </strong>
             <span class="text-muted days">
                 <%-- filled by javascript --%>
             </span>
             <script type="text/javascript">
                 $(document).ready(function () {
-                  <c:if test="${application.startDate.year != application.endDate.year}">
+                    <c:if test="${application.startDate.year != application.endDate.year}">
 
                     var dayLength = '<c:out value="${application.dayLength}" />';
                     var personId = '<c:out value="${application.person.id}" />';
@@ -101,7 +105,7 @@
 
                     sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
 
-                  </c:if>
+                    </c:if>
                 });
             </script>
             <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
@@ -114,8 +118,8 @@
         </td>
     </tr>
     <tr class="visible-print">
-        <td><spring:message code="application.data.status" /></td>
-        <td><spring:message code="${application.status}" /></td>
+        <td><spring:message code="application.data.status"/></td>
+        <td><spring:message code="${application.status}"/></td>
     </tr>
     <tr><%-- needed for correct altering of table rows: there is a problem because the only in print visible row is altered too --%></tr>
     <tr>
@@ -127,12 +131,14 @@
                 <c:when test="${application.startTime != null && application.endTime != null}">
                     <p>
                         <c:set var="APPLICATION_START_TIME">
-                            <uv:time dateTime="${application.startDateWithTime}" />
+                            <uv:time dateTime="${application.startDateWithTime}"/>
                         </c:set>
                         <c:set var="APPLICATION_END_TIME">
-                            <uv:time dateTime="${application.endDateWithTime}" />
+                            <uv:time dateTime="${application.endDateWithTime}"/>
                         </c:set>
-                        <spring:message code="absence.period.time" arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}" argumentSeparator=";"/>
+                        <spring:message code="absence.period.time"
+                                        arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
+                                        argumentSeparator=";"/>
                     </p>
                 </c:when>
                 <c:otherwise>

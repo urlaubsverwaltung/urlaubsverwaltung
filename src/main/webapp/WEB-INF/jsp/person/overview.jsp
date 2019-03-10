@@ -10,7 +10,7 @@
 <html>
 
 <head>
-    <uv:head />
+    <uv:head/>
     <script type="text/javascript" src="<spring:url value='/lib/moment/moment-2.5.1.min.js' />"></script>
     <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de-2.5.1.js' />"></script>
 </head>
@@ -22,10 +22,10 @@
     <c:set var="IS_OFFICE" value="true"/>
 </sec:authorize>
 
-<uv:menu />
+<uv:menu/>
 
 <div class="print-info--only-portrait">
-    <h4><spring:message code="print.info.portrait" /></h4>
+    <h4><spring:message code="print.info.portrait"/></h4>
 </div>
 
 <div class="content print--only-portrait">
@@ -51,38 +51,41 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}" beforeApril="${beforeApril}"/>
+                <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
+                                 beforeApril="${beforeApril}"/>
             </div>
 
         </div>
 
         <c:if test="${settings.workingTimeSettings.overtimeActive}">
-        <div class="row">
-            <div class="col-xs-12">
-                <legend>
-                    <spring:message code="overtime.title"/>
-                    <a href="${URL_PREFIX}/overtime?person=${person.id}" class="fa-action pull-right" style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
-                        <i class="fa fa-th"></i>
-                    </a>
-                    <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
-                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
-                            <i class="fa fa-plus-circle"></i>
+            <div class="row">
+                <div class="col-xs-12">
+                    <legend>
+                        <spring:message code="overtime.title"/>
+                        <a href="${URL_PREFIX}/overtime?person=${person.id}" class="fa-action pull-right"
+                           style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
+                            <i class="fa fa-th"></i>
                         </a>
-                    </c:if>
-                </legend>
+                        <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
+                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right"
+                               data-title="<spring:message code="action.overtime.new"/>">
+                                <i class="fa fa-plus-circle"></i>
+                            </a>
+                        </c:if>
+                    </legend>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <uv:overtime-total hours="${overtimeTotal}"/>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <uv:overtime-left hours="${overtimeLeft}"/>
+                </div>
             </div>
-            <div class="col-xs-12 col-md-6">
-                <uv:overtime-total hours="${overtimeTotal}"/>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <uv:overtime-left hours="${overtimeLeft}"/>
-            </div>
-        </div>
         </c:if>
 
-        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
+        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript"></script>
         <script>
-            $(function() {
+            $(function () {
 
                 var datepickerLocale = "${pageContext.response.locale.language}";
                 var personId = '<c:out value="${person.id}" />';
@@ -104,21 +107,21 @@
                     var startDateToCalculate = date.clone();
                     var endDateToCalculate = date.clone();
                     var shownNumberOfMonths = 10;
-                    var startDate = startDateToCalculate.subtract(shownNumberOfMonths/2, 'months');
-                    var endDate = endDateToCalculate.add(shownNumberOfMonths/2, 'months');
+                    var startDate = startDateToCalculate.subtract(shownNumberOfMonths / 2, 'months');
+                    var endDate = endDateToCalculate.add(shownNumberOfMonths / 2, 'months');
 
                     var yearOfStartDate = startDate.year();
                     var yearOfEndDate = endDate.year();
 
                     $.when(
-                        holidayService.fetchPublic   ( yearOfStartDate ),
-                        holidayService.fetchPersonal ( yearOfStartDate ),
-                        holidayService.fetchSickDays ( yearOfStartDate ),
+                        holidayService.fetchPublic(yearOfStartDate),
+                        holidayService.fetchPersonal(yearOfStartDate),
+                        holidayService.fetchSickDays(yearOfStartDate),
 
-                        holidayService.fetchPublic   ( yearOfEndDate ),
-                        holidayService.fetchPersonal ( yearOfEndDate ),
-                        holidayService.fetchSickDays ( yearOfEndDate )
-                    ).always(function() {
+                        holidayService.fetchPublic(yearOfEndDate),
+                        holidayService.fetchPersonal(yearOfEndDate),
+                        holidayService.fetchSickDays(yearOfEndDate)
+                    ).always(function () {
                         Urlaubsverwaltung.Calendar.init(holidayService, date);
                     });
                 }
@@ -153,17 +156,18 @@
         <div class="row">
             <div class="col-xs-12">
                 <legend id="vacation">
-                    <spring:message code="applications.title" />
+                    <spring:message code="applications.title"/>
                     <c:choose>
                         <c:when test="${person.id == signedInUser.id}">
-                            <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+                            <a class="fa-action pull-right" href="${URL_PREFIX}/application/new"
+                               data-title="<spring:message code="action.apply.vacation"/>">
                                 <i class="fa fa-plus-circle"></i>
                             </a>
                         </c:when>
                         <c:otherwise>
                             <c:if test="${IS_OFFICE}">
                                 <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?person=${person.id}"
-                                    data-title="<spring:message code="action.apply.vacation"/>">
+                                   data-title="<spring:message code="action.apply.vacation"/>">
                                     <i class="fa fa-plus-circle"></i>
                                 </a>
                             </c:if>
@@ -176,17 +180,20 @@
 
         <div class="row">
 
-            <c:set var="holidayLeave" value="${usedDaysOverview.holidayDays.days['WAITING'] + usedDaysOverview.holidayDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.holidayDays.days['ALLOWED'] + 0}" />
-            <c:set var="holidayLeaveAllowed" value="${usedDaysOverview.holidayDays.days['ALLOWED'] + 0}" />
-            <c:set var="otherLeave" value="${usedDaysOverview.otherDays.days['WAITING'] + usedDaysOverview.otherDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.otherDays.days['ALLOWED'] + 0}" />
-            <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED'] + 0}" />
+            <c:set var="holidayLeave"
+                   value="${usedDaysOverview.holidayDays.days['WAITING'] + usedDaysOverview.holidayDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.holidayDays.days['ALLOWED'] + 0}"/>
+            <c:set var="holidayLeaveAllowed" value="${usedDaysOverview.holidayDays.days['ALLOWED'] + 0}"/>
+            <c:set var="otherLeave"
+                   value="${usedDaysOverview.otherDays.days['WAITING'] + usedDaysOverview.otherDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
+            <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="box-icon bg-yellow hidden-print"><i class="fa fa-sun-o"></i></span>
                     <span class="box-text">
-                        <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
-                        <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
+                        <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}"/>
+                        <i class="fa fa-check positive"></i> <spring:message
+                        code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
                     </span>
                 </div>
             </div>
@@ -195,8 +202,9 @@
                 <div class="box">
                     <span class="box-icon bg-yellow hidden-print"><i class="fa fa-flag-o"></i></span>
                     <span class="box-text">
-                        <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
-                        <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
+                        <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}"/>
+                        <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.otherLeaveAllowed"
+                                                                             arguments="${otherLeaveAllowed}"/>
                     </span>
                 </div>
             </div>
@@ -216,7 +224,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <legend id="anchorSickNotes">
-                        <spring:message code="sicknotes.title" />
+                        <spring:message code="sicknotes.title"/>
                         <c:if test="${IS_OFFICE}">
                             <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
                                data-title="<spring:message code="action.apply.sicknote" />">
@@ -231,20 +239,24 @@
                 <div class="col-xs-12 col-sm-12 col-md-6">
                     <div class="box">
                         <span class="box-icon bg-red hidden-print"><i class="fa fa-medkit"></i></span>
-                    <span class="box-text">
-                        <spring:message code="overview.sicknotes.sickdays" arguments="${sickDaysOverview.sickDays.days['TOTAL']}" />
+                        <span class="box-text">
+                        <spring:message code="overview.sicknotes.sickdays"
+                                        arguments="${sickDaysOverview.sickDays.days['TOTAL']}"/>
                         <i class="fa fa-check positive"></i>
-                        <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}" />
+                        <spring:message code="overview.sicknotes.sickdays.aub"
+                                        arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
                     </span>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-6">
                     <div class="box">
                         <span class="box-icon bg-red hidden-print"><i class="fa fa-child"></i></span>
-                    <span class="box-text">
-                        <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickDaysOverview.childSickDays.days['TOTAL']}" />
+                        <span class="box-text">
+                        <spring:message code="overview.sicknotes.sickdays.child"
+                                        arguments="${sickDaysOverview.childSickDays.days['TOTAL']}"/>
                         <i class="fa fa-check positive"></i>
-                        <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}" />
+                        <spring:message code="overview.sicknotes.sickdays.aub"
+                                        arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
                     </span>
                     </div>
                 </div>

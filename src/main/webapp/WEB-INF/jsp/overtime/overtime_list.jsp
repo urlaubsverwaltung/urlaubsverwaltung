@@ -27,7 +27,8 @@
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
 
                     <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
-                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
+                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right"
+                           data-title="<spring:message code="action.overtime.new"/>">
                             <i class="fa fa-plus-circle"></i>
                         </a>
                     </c:if>
@@ -62,12 +63,13 @@
                                     </td>
                                     <td>
                                         <h4 class="visible-print">
-                                            <spring:message code="overtime.title" />
+                                            <spring:message code="overtime.title"/>
                                         </h4>
                                         <a class="hidden-print" href="${URL_PREFIX}/overtime/${record.id}">
                                             <h4><spring:message code="overtime.title"/></h4>
                                         </a>
-                                        <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
+                                        <p><uv:date date="${record.startDate}"/> - <uv:date
+                                            date="${record.endDate}"/></p>
                                     </td>
                                     <td class="is-centered hidden-xs">
                                         <uv:number number="${record.hours}"/>
@@ -86,9 +88,12 @@
                 </c:choose>
             </div>
 
-        </div><%-- End of row --%>
-    </div><%-- End of container --%>
-</div><%-- End of content --%>
+        </div>
+        <%-- End of row --%>
+    </div>
+    <%-- End of container --%>
+</div>
+<%-- End of content --%>
 
 </body>
 </html>

@@ -53,7 +53,8 @@
                         <c:set var="END_DATE">
                             <h5 class="is-inline-block is-sticky"><uv:date date="${record.endDate}"/></h5>
                         </c:set>
-                        <spring:message code="overtime.details.period" arguments="${START_DATE};${END_DATE}" argumentSeparator=";"/>
+                        <spring:message code="overtime.details.period" arguments="${START_DATE};${END_DATE}"
+                                        argumentSeparator=";"/>
                     </span>
                 </div>
                 <legend>
@@ -61,25 +62,26 @@
                 </legend>
                 <table class="list-table striped-table bordered-table">
                     <tbody>
-                        <c:forEach items="${comments}" var="comment">
-                           <tr>
-                               <td>
-                                   <div class="gravatar gravatar--medium img-circle hidden-print center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
-                               </td>
-                               <td>
-                                   <c:out value="${comment.person.niceName}"/>
-                               </td>
-                               <td>
-                                   <spring:message code="overtime.progress.${comment.action}"/>
-                                   <uv:date date="${comment.date}"/>
-                                   <c:if test="${comment.text != null && not empty comment.text}">
-                                       <spring:message code="overtime.progress.comment"/>
-                                       <br/>
-                                       <i><c:out value="${comment.text}"/></i>
-                                   </c:if>
-                               </td>
-                           </tr> 
-                        </c:forEach>
+                    <c:forEach items="${comments}" var="comment">
+                        <tr>
+                            <td>
+                                <div class="gravatar gravatar--medium img-circle hidden-print center-block"
+                                     data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
+                            </td>
+                            <td>
+                                <c:out value="${comment.person.niceName}"/>
+                            </td>
+                            <td>
+                                <spring:message code="overtime.progress.${comment.action}"/>
+                                <uv:date date="${comment.date}"/>
+                                <c:if test="${comment.text != null && not empty comment.text}">
+                                    <spring:message code="overtime.progress.comment"/>
+                                    <br/>
+                                    <i><c:out value="${comment.text}"/></i>
+                                </c:if>
+                            </td>
+                        </tr>
+                    </c:forEach>
                     </tbody>
                 </table>
             </div>
@@ -91,9 +93,12 @@
                 <uv:overtime-total hours="${overtimeTotal}"/>
                 <uv:overtime-left hours="${overtimeLeft}"/>
             </div>
-        </div><%-- End of row --%>
-    </div><%-- End of container --%>
-</div><%-- End of content --%>
+        </div>
+        <%-- End of row --%>
+    </div>
+    <%-- End of container --%>
+</div>
+<%-- End of content --%>
 
 </body>
 </html>
