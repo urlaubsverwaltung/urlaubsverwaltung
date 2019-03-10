@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,7 +54,7 @@ public class WorkDayControllerTest {
     public void ensureReturnsWorkDays() throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(DateMidnight.class),
             any(DateMidnight.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
@@ -137,7 +138,7 @@ public class WorkDayControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
             .param("to", "2016-01-06")
@@ -163,7 +164,7 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForInvalidLengthParameter() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
             .param("to", "2016-01-06")

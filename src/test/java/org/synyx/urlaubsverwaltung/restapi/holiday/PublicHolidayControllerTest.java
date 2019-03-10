@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -79,7 +80,7 @@ public class PublicHolidayControllerTest {
     public void ensureReturnsCorrectPublicHolidaysForYearAndPersonWithOverriddenFederalState() throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
                     any(DateMidnight.class)))
             .thenReturn(FederalState.BAYERN);
@@ -96,7 +97,7 @@ public class PublicHolidayControllerTest {
         throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
                     any(DateMidnight.class)))
             .thenReturn(FederalState.BAYERN);
@@ -142,7 +143,7 @@ public class PublicHolidayControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("person", "23"))
             .andExpect(status().isBadRequest());

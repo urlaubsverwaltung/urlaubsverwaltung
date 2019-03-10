@@ -20,6 +20,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -66,7 +67,7 @@ public class SickNoteControllerTest {
     @Test
     public void ensureReturnsSickNotesOfPersonIfPersonProvided() throws Exception {
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt()))
+        when(personServiceMock.getPersonByID(anyInt()))
             .thenReturn(Optional.of(TestDataCreator.createPerson()));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01")
@@ -154,7 +155,7 @@ public class SickNoteControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "foo").param("person", "23"))
             .andExpect(status().isBadRequest());

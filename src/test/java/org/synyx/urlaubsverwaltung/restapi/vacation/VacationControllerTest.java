@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -72,7 +73,7 @@ public class VacationControllerTest {
     public void ensureReturnsAllowedVacationsOfPersonIfPersonProvided() throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01")
                 .param("to", "2016-12-31")
@@ -162,7 +163,7 @@ public class VacationControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01").param("to", "foo").param("person", "23"))
             .andExpect(status().isBadRequest());

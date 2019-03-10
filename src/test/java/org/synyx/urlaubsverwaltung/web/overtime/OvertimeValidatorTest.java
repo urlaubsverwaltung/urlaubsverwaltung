@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -340,7 +341,7 @@ public class OvertimeValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("3"));
 
-        when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+        when(overtimeServiceMock.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
@@ -371,7 +372,7 @@ public class OvertimeValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("2.5"));
 
-        when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+        when(overtimeServiceMock.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
@@ -402,7 +403,7 @@ public class OvertimeValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
 
-        when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+        when(overtimeServiceMock.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
