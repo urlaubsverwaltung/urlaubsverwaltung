@@ -40,10 +40,10 @@
         <div class="control-label">
             <c:choose>
                 <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
-                    <b><spring:message code='action.temporary_allow.confirm'/></b>
+                    <strong><spring:message code='action.temporary_allow.confirm'/></strong>
                 </c:when>
                 <c:otherwise>
-                    <b><spring:message code='action.allow.confirm'/></b>
+                    <strong><spring:message code='action.allow.confirm'/></strong>
                 </c:otherwise>
             </c:choose>
         </div>
