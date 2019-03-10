@@ -159,12 +159,14 @@
                                     <c:forEach items="${sickNoteTypes}" var="sickNoteType">
                                         <c:choose>
                                             <c:when test="${sickNoteType == sickNote.sickNoteType}">
-                                                <form:option value="${sickNoteType.id}"
-                                                             selected="selected">${sickNoteType.displayName}</form:option>
+                                                <form:option value="${sickNoteType.id}" selected="selected">
+                                                    <spring:message code="${sickNoteType.messageKey}"/>
+                                                </form:option>
                                             </c:when>
                                             <c:otherwise>
-                                                <form:option
-                                                    value="${sickNoteType.id}">${sickNoteType.displayName}</form:option>
+                                                <form:option value="${sickNoteType.id}">
+                                                    <spring:message code="${sickNoteType.messageKey}"/>
+                                                </form:option>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>

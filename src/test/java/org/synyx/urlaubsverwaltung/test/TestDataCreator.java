@@ -176,7 +176,7 @@ public final class TestDataCreator {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
-        sickNoteType.setDisplayName("Krankmeldung");
+        sickNoteType.setMessageKey("Krankmeldung");
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
@@ -251,7 +251,7 @@ public final class TestDataCreator {
         VacationType vacationType = new VacationType();
 
         vacationType.setCategory(category);
-        vacationType.setDisplayName(displayName);
+        vacationType.setMessageKey(displayName);
 
         return vacationType;
     }
@@ -263,24 +263,24 @@ public final class TestDataCreator {
         VacationType vacationType1 = new VacationType();
         vacationType1.setId(1000);
         vacationType1.setCategory(VacationCategory.HOLIDAY);
-        vacationType1.setDisplayName("Erholungsurlaub");
+        vacationType1.setMessageKey("Erholungsurlaub");
         vacationTypes.add(vacationType1);
 
         VacationType vacationType2 = new VacationType();
         vacationType2.setCategory(VacationCategory.SPECIALLEAVE);
-        vacationType2.setDisplayName("Sonderurlaub");
+        vacationType2.setMessageKey("Sonderurlaub");
         vacationType2.setId(2000);
         vacationTypes.add(vacationType2);
 
         VacationType vacationType3 = new VacationType();
         vacationType3.setCategory(VacationCategory.UNPAIDLEAVE);
-        vacationType3.setDisplayName("Unbezahlter Urlaub");
+        vacationType3.setMessageKey("Unbezahlter Urlaub");
         vacationType3.setId(3000);
         vacationTypes.add(vacationType3);
 
         VacationType vacationType4 = new VacationType();
         vacationType4.setCategory(VacationCategory.OVERTIME);
-        vacationType4.setDisplayName("Überstundenabbau");
+        vacationType4.setMessageKey("Überstundenabbau");
         vacationType4.setId(4000);
         vacationTypes.add(vacationType4);
 
