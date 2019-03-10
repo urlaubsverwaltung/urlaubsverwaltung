@@ -85,7 +85,7 @@ public class ApplicationForLeaveFormTest {
         Assert.assertEquals("Wrong day length", DayLength.FULL, application.getDayLength());
         Assert.assertEquals("Wrong address", "Musterstr. 39", application.getAddress());
         Assert.assertEquals("Wrong reason", "Deshalb", application.getReason());
-        Assert.assertEquals("Wrong type", overtime.getDisplayName(), application.getVacationType().getDisplayName());
+        Assert.assertEquals("Wrong type", overtime.getMessageKey(), application.getVacationType().getMessageKey());
         Assert.assertEquals("Wrong hours", BigDecimal.ONE, application.getHours());
         Assert.assertTrue("Team should be informed", application.isTeamInformed());
     }

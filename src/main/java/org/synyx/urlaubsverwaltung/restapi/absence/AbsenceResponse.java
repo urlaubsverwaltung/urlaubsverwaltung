@@ -33,7 +33,7 @@ public class AbsenceResponse {
 
         VacationType vacationType = application.getVacationType();
         this.type = vacationType.getCategory().toString();
-        this.typeName = vacationType.getDisplayName();
+        this.typeName = vacationType.getMessageKey();
     }
 
 
@@ -48,7 +48,7 @@ public class AbsenceResponse {
         SickNoteType sickNoteType = sickNote.getSickNoteType();
 
         this.type = sickNoteType.getCategory().toString();
-        this.typeName = sickNoteType.getDisplayName();
+        this.typeName = sickNoteType.getMessageKey();
     }
 
     public String getFrom() {

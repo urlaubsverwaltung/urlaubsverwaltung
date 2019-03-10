@@ -7,7 +7,19 @@ package org.synyx.urlaubsverwaltung.core.sicknote;
  */
 public enum SickNoteCategory {
 
-    SICK_NOTE,
-    SICK_NOTE_CHILD,
-    OTHER;
+    SICK_NOTE("application.data.sicknotetype.sicknote"),
+    SICK_NOTE_CHILD("application.data.sicknotetype.sicknotechild"),
+    OTHER("application.data.sicknotetype.other");
+
+    private String messageKey;
+
+    SickNoteCategory(String messageKey) {
+
+        this.messageKey = messageKey;
+    }
+
+    public String getMessageKey() {
+
+        return messageKey;
+    }
 }

@@ -128,7 +128,9 @@
                                         <spring:message code="applications.statistics.total"/>:
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
-                                            <small><c:out value="${type.displayName}"/>:</small>
+                                            <small>
+                                                <spring:message code="${type.messageKey}"/>:
+                                            </small>
                                         </c:forEach>
                                     </td>
                                     <td class="hidden-xs hidden-sm number">

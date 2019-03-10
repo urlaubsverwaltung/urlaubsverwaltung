@@ -48,11 +48,13 @@
             </td>
             <td>
                 <h4 class="visible-print">
-                    <c:out value="${app.vacationType.displayName}"/>
+                    <spring:message code="${app.vacationType.messageKey}"/>
                 </h4>
                 <a class="hidden-print vacation ${app.vacationType.category}"
                    href="${URL_PREFIX}/application/${app.id}">
-                    <h4><c:out value="${app.vacationType.displayName}"/></h4>
+                    <h4>
+                        <spring:message code="${app.vacationType.messageKey}"/>
+                    </h4>
                 </a>
 
                 <p>

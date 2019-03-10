@@ -7,9 +7,21 @@ package org.synyx.urlaubsverwaltung.core.application.domain;
  */
 public enum VacationCategory {
 
-    HOLIDAY,
-    SPECIALLEAVE,
-    UNPAIDLEAVE,
-    OVERTIME,
-    OTHER;
+    HOLIDAY("application.data.vacationType.holiday"),
+    SPECIALLEAVE("application.data.vacationType.specialleave"),
+    UNPAIDLEAVE("application.data.vacationType.unpaidleave"),
+    OVERTIME("application.data.vacationType.overtime"),
+    OTHER("application.data.vacationType.other");
+
+    private String messageKey;
+
+    VacationCategory(String messageKey) {
+
+        this.messageKey = messageKey;
+    }
+
+    public String getMessageKey() {
+
+        return messageKey;
+    }
 }
