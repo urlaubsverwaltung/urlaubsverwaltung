@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.restapi.department;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -10,6 +9,7 @@ import org.synyx.urlaubsverwaltung.restapi.ApiExceptionHandlerControllerAdvice;
 
 import java.util.Collections;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,7 +28,7 @@ public class DepartmentControllerTest {
     @Before
     public void setUp() {
 
-        departmentServiceMock = Mockito.mock(DepartmentService.class);
+        departmentServiceMock = mock(DepartmentService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new DepartmentController(departmentServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())

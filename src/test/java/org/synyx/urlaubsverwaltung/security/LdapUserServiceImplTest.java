@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
@@ -21,8 +22,8 @@ public class LdapUserServiceImplTest {
     @Before
     public void setUp() {
 
-        ldapTemplate = Mockito.mock(LdapTemplate.class);
-        ldapUserMapper = Mockito.mock(LdapUserMapper.class);
+        ldapTemplate = mock(LdapTemplate.class);
+        ldapUserMapper = mock(LdapUserMapper.class);
         ldapUserService = new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, "objectClassFilter", "memberOfFilter");
     }
 

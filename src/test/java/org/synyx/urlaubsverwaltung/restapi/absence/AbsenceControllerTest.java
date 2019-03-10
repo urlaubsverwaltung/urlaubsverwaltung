@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,9 +45,9 @@ public class AbsenceControllerTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        applicationServiceMock = Mockito.mock(ApplicationService.class);
-        sickNoteServiceMock = Mockito.mock(SickNoteService.class);
+        personServiceMock = mock(PersonService.class);
+        applicationServiceMock = mock(ApplicationService.class);
+        sickNoteServiceMock = mock(SickNoteService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new AbsenceController(personServiceMock, applicationServiceMock,
                         sickNoteServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();

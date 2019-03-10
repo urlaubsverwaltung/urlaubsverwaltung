@@ -10,6 +10,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,7 +44,7 @@ public class LdapUserMapperTest {
     public void ensureThrowsIfTryingToCreateLdapUserFromAttributesWithInvalidIdentifierAttribute()
         throws NamingException {
 
-        Attributes attributes = Mockito.mock(Attributes.class);
+        Attributes attributes = mock(Attributes.class);
         when(attributes.get(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
 
         try {
@@ -63,7 +64,7 @@ public class LdapUserMapperTest {
     @Test
     public void ensureCreatesLdapUserFromAttributesWithOnlyUsernameGiven() throws NamingException {
 
-        Attributes attributes = Mockito.mock(Attributes.class);
+        Attributes attributes = mock(Attributes.class);
         when(attributes.get(IDENTIFIER_ATTRIBUTE))
             .thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "username"));
         when(attributes.get(FIRST_NAME_ATTRIBUTE)).thenReturn(null);
@@ -87,7 +88,7 @@ public class LdapUserMapperTest {
     @Test
     public void ensureCreatesLdapUserFromAttributes() throws NamingException {
 
-        Attributes attributes = Mockito.mock(Attributes.class);
+        Attributes attributes = mock(Attributes.class);
         when(attributes.get(IDENTIFIER_ATTRIBUTE))
             .thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "geralt"));
         when(attributes.get(FIRST_NAME_ATTRIBUTE))
@@ -117,7 +118,7 @@ public class LdapUserMapperTest {
     public void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
+        DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
 
         try {
@@ -137,7 +138,7 @@ public class LdapUserMapperTest {
     @Test
     public void ensureCreatesLdapUserFromContext() throws NamingException, UnsupportedMemberAffiliationException {
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
+        DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
@@ -162,7 +163,7 @@ public class LdapUserMapperTest {
     public void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
+        DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
@@ -181,7 +182,7 @@ public class LdapUserMapperTest {
         ldapUserMapper = new LdapUserMapper(IDENTIFIER_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE,
                 MAIL_ADDRESS_ATTRIBUTE, null);
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
+        DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
@@ -206,7 +207,7 @@ public class LdapUserMapperTest {
         ldapUserMapper = new LdapUserMapper(IDENTIFIER_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE,
                 MAIL_ADDRESS_ATTRIBUTE, "");
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
+        DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");

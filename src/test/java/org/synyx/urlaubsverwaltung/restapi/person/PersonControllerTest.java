@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,7 +36,7 @@ public class PersonControllerTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
+        personServiceMock = mock(PersonService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new PersonController(personServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())

@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -40,11 +41,11 @@ public class SickNoteValidatorTest {
     @Before
     public void setUp() throws Exception {
 
-        overlapService = Mockito.mock(OverlapService.class);
-        workingTimeService = Mockito.mock(WorkingTimeService.class);
+        overlapService = mock(OverlapService.class);
+        workingTimeService = mock(WorkingTimeService.class);
 
         validator = new SickNoteValidator(overlapService, workingTimeService);
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
         Mockito.reset(errors);
 
         sickNote = TestDataCreator.createSickNote(TestDataCreator.createPerson(),

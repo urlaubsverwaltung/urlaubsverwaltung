@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,10 +40,10 @@ public class PublicHolidayControllerTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        publicHolidayServiceMock = Mockito.mock(PublicHolidaysService.class);
-        workingTimeServiceMock = Mockito.mock(WorkingTimeService.class);
-        settingsServiceMock = Mockito.mock(SettingsService.class);
+        personServiceMock = mock(PersonService.class);
+        publicHolidayServiceMock = mock(PublicHolidaysService.class);
+        workingTimeServiceMock = mock(WorkingTimeService.class);
+        settingsServiceMock = mock(SettingsService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new PublicHolidayController(publicHolidayServiceMock,
                         personServiceMock, workingTimeServiceMock, settingsServiceMock))

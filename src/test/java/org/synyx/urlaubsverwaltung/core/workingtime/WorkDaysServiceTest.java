@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -45,11 +46,11 @@ public class WorkDaysServiceTest {
     @Before
     public void setUp() throws IOException {
 
-        settingsService = Mockito.mock(SettingsService.class);
+        settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         publicHolidaysService = new PublicHolidaysService(settingsService);
-        workingTimeService = Mockito.mock(WorkingTimeService.class);
+        workingTimeService = mock(WorkingTimeService.class);
 
         instance = new WorkDaysService(publicHolidaysService, workingTimeService, settingsService);
 

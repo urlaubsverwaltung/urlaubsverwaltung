@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
@@ -14,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -32,9 +32,9 @@ public class MailSenderTest {
     @Before
     public void setUp() throws Exception {
 
-        javaMailSender = Mockito.mock(JavaMailSenderImpl.class);
+        javaMailSender = mock(JavaMailSenderImpl.class);
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        SettingsService settingsService = mock(SettingsService.class);
         mailSender = new MailSender(javaMailSender);
 
         settings = new Settings();

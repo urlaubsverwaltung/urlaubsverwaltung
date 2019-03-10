@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +38,7 @@ public class SimpleAuthenticationProviderTest {
     @Before
     public void setUp() {
 
-        personService = Mockito.mock(PersonService.class);
+        personService = mock(PersonService.class);
         authenticationProvider = new SimpleAuthenticationProvider(personService);
     }
 

@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
@@ -31,7 +32,7 @@ public class ApplicationCommentServiceImplTest {
     @Before
     public void setUp() {
 
-        commentDAO = Mockito.mock(ApplicationCommentDAO.class);
+        commentDAO = mock(ApplicationCommentDAO.class);
         commentService = new ApplicationCommentServiceImpl(commentDAO);
     }
 

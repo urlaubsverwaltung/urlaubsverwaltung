@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -41,8 +42,8 @@ public class SickNoteControllerTest {
     @Before
     public void setUp() {
 
-        sickNoteServiceMock = Mockito.mock(SickNoteService.class);
-        personServiceMock = Mockito.mock(PersonService.class);
+        sickNoteServiceMock = mock(SickNoteService.class);
+        personServiceMock = mock(PersonService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new SickNoteController(sickNoteServiceMock, personServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())

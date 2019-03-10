@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,9 +29,9 @@ public class LdapUserDataImporterTest {
     @Before
     public void setUp() {
 
-        ldapUserServiceMock = Mockito.mock(LdapUserService.class);
-        ldapSyncServiceMock = Mockito.mock(LdapSyncService.class);
-        personServiceMock = Mockito.mock(PersonService.class);
+        ldapUserServiceMock = mock(LdapUserService.class);
+        ldapSyncServiceMock = mock(LdapSyncService.class);
+        personServiceMock = mock(PersonService.class);
 
         ldapUserDataImporter = new LdapUserDataImporter(ldapUserServiceMock, ldapSyncServiceMock, personServiceMock);
     }

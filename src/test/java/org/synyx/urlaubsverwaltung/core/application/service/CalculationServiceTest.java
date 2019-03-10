@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -48,12 +49,12 @@ public class CalculationServiceTest {
     @Before
     public void setUp() throws IOException {
 
-        vacationDaysService = Mockito.mock(VacationDaysService.class);
-        accountService = Mockito.mock(AccountService.class);
-        accountInteractionService = Mockito.mock(AccountInteractionService.class);
+        vacationDaysService = mock(VacationDaysService.class);
+        accountService = mock(AccountService.class);
+        accountInteractionService = mock(AccountInteractionService.class);
 
-        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
+        SettingsService settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         calendarService = new WorkDaysService(new PublicHolidaysService(settingsService), workingTimeService,

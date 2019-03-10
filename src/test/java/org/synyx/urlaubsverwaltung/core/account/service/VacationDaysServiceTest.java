@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -48,10 +49,10 @@ public class VacationDaysServiceTest {
     @Before
     public void setUp() throws IOException {
 
-        applicationService = Mockito.mock(ApplicationService.class);
-        nowService = Mockito.mock(NowService.class);
+        applicationService = mock(ApplicationService.class);
+        nowService = mock(NowService.class);
 
-        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
+        WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
 
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();
@@ -63,7 +64,7 @@ public class VacationDaysServiceTest {
                     Mockito.any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        SettingsService settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService),
@@ -364,7 +365,7 @@ public class VacationDaysServiceTest {
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        vacationDaysService = new VacationDaysService(Mockito.mock(WorkDaysService.class), nowService,
+        vacationDaysService = new VacationDaysService(mock(WorkDaysService.class), nowService,
                 applicationService) {
 
             @Override

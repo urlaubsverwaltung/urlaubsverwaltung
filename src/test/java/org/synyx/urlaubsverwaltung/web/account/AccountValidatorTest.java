@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.web.account;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -13,6 +12,7 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ public class AccountValidatorTest {
     @Before
     public void setUp() {
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        SettingsService settingsService = mock(SettingsService.class);
 
         settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
@@ -41,7 +41,7 @@ public class AccountValidatorTest {
 
         form = new AccountForm(2013);
 
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
     }
 
 

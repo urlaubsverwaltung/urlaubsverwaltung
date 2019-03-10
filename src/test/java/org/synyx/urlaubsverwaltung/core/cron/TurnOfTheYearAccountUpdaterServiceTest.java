@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,10 +39,10 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        accountServiceMock = Mockito.mock(AccountService.class);
-        accountInteractionServiceMock = Mockito.mock(AccountInteractionService.class);
-        mailServiceMock = Mockito.mock(MailService.class);
+        personServiceMock = mock(PersonService.class);
+        accountServiceMock = mock(AccountService.class);
+        accountInteractionServiceMock = mock(AccountInteractionService.class);
+        mailServiceMock = mock(MailService.class);
 
         sut = new TurnOfTheYearAccountUpdaterService(personServiceMock, accountServiceMock,
                 accountInteractionServiceMock, mailServiceMock);
@@ -64,7 +65,7 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user2)).thenReturn(Optional.of(account2));
         when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user3)).thenReturn(Optional.of(account3));
 
-        Account newAccount = Mockito.mock(Account.class);
+        Account newAccount = mock(Account.class);
         when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
         when(accountInteractionServiceMock.autoCreateOrUpdateNextYearsHolidaysAccount(
                     Mockito.any(Account.class)))
