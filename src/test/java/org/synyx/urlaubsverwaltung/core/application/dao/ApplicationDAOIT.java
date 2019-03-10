@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -24,9 +25,10 @@ import java.util.List;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+
+@RunWith(SpringRunner.class)
 @ContextConfiguration("classpath:META-INF/applicationContext.xml")
 @Transactional
 public class ApplicationDAOIT {
@@ -69,42 +71,42 @@ public class ApplicationDAOIT {
 
         // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
         Application fullDayOvertimeReduction = TestDataCreator.createApplication(person,
-                getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
+            getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
         fullDayOvertimeReduction.setHours(new BigDecimal("8"));
         fullDayOvertimeReduction.setStatus(ApplicationStatus.ALLOWED);
         applicationDAO.save(fullDayOvertimeReduction);
 
         // Waiting overtime reduction (2.5 hours) ----------------------------------------------------------------------
         Application halfDayOvertimeReduction = TestDataCreator.createApplication(person,
-                getVacationType(VacationCategory.OVERTIME), now.plusDays(5), now.plusDays(10), DayLength.MORNING);
+            getVacationType(VacationCategory.OVERTIME), now.plusDays(5), now.plusDays(10), DayLength.MORNING);
         halfDayOvertimeReduction.setHours(new BigDecimal("2.5"));
         halfDayOvertimeReduction.setStatus(ApplicationStatus.WAITING);
         applicationDAO.save(halfDayOvertimeReduction);
 
         // Cancelled overtime reduction (1 hour) ----------------------------------------------------------------------
         Application cancelledOvertimeReduction = TestDataCreator.createApplication(person,
-                getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
+            getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
         cancelledOvertimeReduction.setHours(BigDecimal.ONE);
         cancelledOvertimeReduction.setStatus(ApplicationStatus.CANCELLED);
         applicationDAO.save(cancelledOvertimeReduction);
 
         // Rejected overtime reduction (1 hour) -----------------------------------------------------------------------
         Application rejectedOvertimeReduction = TestDataCreator.createApplication(person,
-                getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
+            getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
         rejectedOvertimeReduction.setHours(BigDecimal.ONE);
         rejectedOvertimeReduction.setStatus(ApplicationStatus.REJECTED);
         applicationDAO.save(rejectedOvertimeReduction);
 
         // Revoked overtime reduction (1 hour) ------------------------------------------------------------------------
         Application revokedOvertimeReduction = TestDataCreator.createApplication(person,
-                getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
+            getVacationType(VacationCategory.OVERTIME), now, now.plusDays(2), DayLength.FULL);
         revokedOvertimeReduction.setHours(BigDecimal.ONE);
         revokedOvertimeReduction.setStatus(ApplicationStatus.REVOKED);
         applicationDAO.save(revokedOvertimeReduction);
 
         // Holiday with hours set accidentally (1 hour) ---------------------------------------------------------------
         Application holiday = TestDataCreator.createApplication(person, getVacationType(VacationCategory.HOLIDAY),
-                now.minusDays(8), now.minusDays(4), DayLength.FULL);
+            now.minusDays(8), now.minusDays(4), DayLength.FULL);
 
         // NOTE: Holiday should not have hours set, but who knows....
         // More than once heard: "this should never happen" ;)
@@ -113,7 +115,7 @@ public class ApplicationDAOIT {
 
         // Overtime reduction for other person -------------------------------------------------------------------------
         Application overtimeReduction = TestDataCreator.createApplication(otherPerson,
-                getVacationType(VacationCategory.OVERTIME), now.plusDays(5), now.plusDays(10), DayLength.NOON);
+            getVacationType(VacationCategory.OVERTIME), now.plusDays(5), now.plusDays(10), DayLength.NOON);
         overtimeReduction.setHours(new BigDecimal("2.5"));
         applicationDAO.save(overtimeReduction);
 
@@ -123,7 +125,7 @@ public class ApplicationDAOIT {
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Total overtime reduction calculated wrongly", new BigDecimal("10.5").setScale(1,
-                BigDecimal.ROUND_UNNECESSARY), totalHours.setScale(1, BigDecimal.ROUND_UNNECESSARY));
+            BigDecimal.ROUND_UNNECESSARY), totalHours.setScale(1, BigDecimal.ROUND_UNNECESSARY));
     }
 
 

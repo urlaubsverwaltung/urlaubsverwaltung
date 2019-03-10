@@ -18,13 +18,9 @@ import java.util.List;
 public class SickNoteStatistics {
 
     private final DateMidnight created;
-
     private final int year;
-
     private final int totalNumberOfSickNotes;
-
     private final BigDecimal totalNumberOfSickDays;
-
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
     public SickNoteStatistics(int year, SickNoteDAO sickNoteDAO, WorkDaysService calendarService) {

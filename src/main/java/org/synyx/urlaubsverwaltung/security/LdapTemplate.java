@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class LdapTemplate extends org.springframework.ldap.core.LdapTemplate {
 
     @Autowired
-    public LdapTemplate(@Qualifier("ldapContextSource") LdapContextSource contextSource) {
+    public LdapTemplate(@Qualifier("ldapContextSourceSync") LdapContextSource contextSource) {
 
         super(contextSource);
 
