@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 public class WorkDayControllerTest {
 
@@ -41,7 +41,7 @@ public class WorkDayControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(new WorkDayController(personServiceMock, workDaysServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
-                .build();
+            .build();
     }
 
 
@@ -51,13 +51,13 @@ public class WorkDayControllerTest {
         Person person = TestDataCreator.createPerson();
         Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
         Mockito.when(workDaysServiceMock.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-04")
-                .param("to", "2016-01-04")
-                .param("length", "FULL")
-                .param("person", "23"))
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.response").exists())
@@ -73,7 +73,8 @@ public class WorkDayControllerTest {
     @Test
     public void ensureBadRequestForMissingFromParameter() throws Exception {
 
-        mockMvc.perform(get("/api/workdays").param("to", "2016-01-06").param("length", "FULL").param("person", "23"))
+        mockMvc.perform(get("/api/workdays").param("to", "2016-01-06")
+            .param("length", "FULL").param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
@@ -82,9 +83,9 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForInvalidFromParameter() throws Exception {
 
         mockMvc.perform(get("/api/workdays").param("from", "foo")
-                .param("to", "2016-01-06")
-                .param("length", "FULL")
-                .param("person", "23"))
+            .param("to", "2016-01-06")
+            .param("length", "FULL")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
@@ -101,9 +102,9 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForInvalidToParameter() throws Exception {
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
-                .param("to", "foo")
-                .param("length", "FULL")
-                .param("person", "23"))
+            .param("to", "foo")
+            .param("length", "FULL")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
@@ -112,8 +113,8 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForMissingPersonParameter() throws Exception {
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
-                .param("to", "2016-01-06")
-                .param("length", "FULL"))
+            .param("to", "2016-01-06")
+            .param("length", "FULL"))
             .andExpect(status().isBadRequest());
     }
 
@@ -122,9 +123,9 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForInvalidPersonParameter() throws Exception {
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
-                .param("to", "2016-01-06")
-                .param("length", "FULL")
-                .param("person", "foo"))
+            .param("to", "2016-01-06")
+            .param("length", "FULL")
+            .param("person", "foo"))
             .andExpect(status().isBadRequest());
     }
 
@@ -135,9 +136,9 @@ public class WorkDayControllerTest {
         Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
-                .param("to", "2016-01-06")
-                .param("length", "FULL")
-                .param("person", "23"))
+            .param("to", "2016-01-06")
+            .param("length", "FULL")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
 
         Mockito.verify(personServiceMock).getPersonByID(23);
@@ -148,8 +149,8 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForMissingLengthParameter() throws Exception {
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
-                .param("to", "2016-01-06")
-                .param("person", "23"))
+            .param("to", "2016-01-06")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
@@ -161,9 +162,9 @@ public class WorkDayControllerTest {
         Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
-                .param("to", "2016-01-06")
-                .param("length", "FOO")
-                .param("person", "23"))
+            .param("to", "2016-01-06")
+            .param("length", "FOO")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
@@ -172,9 +173,9 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForInvalidPeriod() throws Exception {
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
-                .param("to", "2015-01-06")
-                .param("length", "FULL")
-                .param("person", "23"))
+            .param("to", "2015-01-06")
+            .param("length", "FULL")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 }

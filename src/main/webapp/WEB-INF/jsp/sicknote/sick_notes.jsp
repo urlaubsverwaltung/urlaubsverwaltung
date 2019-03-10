@@ -1,5 +1,4 @@
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
@@ -11,27 +10,27 @@
 <html>
 
 <head>
-    <uv:head />
+    <uv:head/>
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             $("table.sortable").tablesorter({
-                sortList: [[1,0]]
+                sortList: [[1, 0]]
             });
-            
+
         });
-        
+
     </script>
 </head>
 
 <body>
 
-<spring:url var="URL_PREFIX" value="/web" />
+<spring:url var="URL_PREFIX" value="/web"/>
 
-<uv:menu />
+<uv:menu/>
 
 <div class="print-info--only-landscape">
-    <h4><spring:message code="print.info.landscape" /></h4>
+    <h4><spring:message code="print.info.landscape"/></h4>
 </div>
 
 <div class="content print--only-landscape">
@@ -42,19 +41,19 @@
             <div class="col-xs-12">
 
                 <legend class="is-sticky">
-                    <spring:message code="sicknotes.title" />
-                    <uv:print />
+                    <spring:message code="sicknotes.title"/>
+                    <uv:print/>
                     <a href="${URL_PREFIX}/sicknote/statistics" class="fa-action pull-right"
                        data-title="<spring:message code="action.sicknotes.statistics"/>">
-                      <i class="fa fa-fw fa-bar-chart"></i>
+                        <i class="fa fa-fw fa-bar-chart"></i>
                     </a>
                     <a href="${URL_PREFIX}/sicknote/new" class="fa-action pull-right"
                        data-title="<spring:message code="action.apply.sicknote"/>">
-                      <i class="fa fa-fw fa-plus-circle"></i>
+                        <i class="fa fa-fw fa-plus-circle"></i>
                     </a>
                 </legend>
 
-                <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/sicknote/filter" />
+                <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/sicknote/filter"/>
 
                 <p class="is-inline-block">
                     <a href="#filterModal" data-toggle="modal">
@@ -62,7 +61,7 @@
                     </a>
                 </p>
                 <p class="pull-right visible-print">
-                    <spring:message code="filter.validity"/> <uv:date date="${today}" />
+                    <spring:message code="filter.validity"/> <uv:date date="${today}"/>
                 </p>
 
                 <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
@@ -73,7 +72,8 @@
                         <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
                         <th class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
                         <th class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.title"/></th>
-                        <th class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.child.title"/></th>
+                        <th class="sortable-field"><spring:message
+                            code="sicknotes.daysOverview.sickDays.child.title"/></th>
                         <th class="hidden"><%-- tablesorter placeholder for sick days column in xs screen --%></th>
                     </tr>
                     </thead>
@@ -81,7 +81,8 @@
                     <c:forEach items="${persons}" var="person">
                     <tr onclick="navigate('${URL_PREFIX}/staff/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered hidden-print">
-                            <div class="gravatar img-circle hidden-print" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
+                            <div class="gravatar img-circle hidden-print"
+                                 data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
                         </td>
                         <td class="hidden-xs">
                             <c:out value="${person.firstName}"/>
@@ -99,7 +100,8 @@
                             <c:if test="${sickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
                                     <i class="fa fa-check positive"></i> <spring:message
-                                        code="overview.sicknotes.sickdays.aub" arguments="${sickDays[person].days['WITH_AUB']}"/>
+                                    code="overview.sicknotes.sickdays.aub"
+                                    arguments="${sickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
@@ -110,14 +112,16 @@
                             <c:if test="${childSickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
                                     <i class="fa fa-check positive"></i> <spring:message
-                                            code="overview.sicknotes.sickdays.aub"
-                                            arguments="${childSickDays[person].days['WITH_AUB']}"/>
+                                    code="overview.sicknotes.sickdays.aub"
+                                    arguments="${childSickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="visible-xs">
-                            <i class="fa fa-medkit hidden-print"></i> <uv:number number="${sickDays[person].days['TOTAL']}"/>
-                            <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person].days['TOTAL']}"/>
+                            <i class="fa fa-medkit hidden-print"></i> <uv:number
+                            number="${sickDays[person].days['TOTAL']}"/>
+                            <i class="fa fa-child hidden-print"></i> <uv:number
+                            number="${childSickDays[person].days['TOTAL']}"/>
                         </td>
                         </c:forEach>
                     </tbody>
