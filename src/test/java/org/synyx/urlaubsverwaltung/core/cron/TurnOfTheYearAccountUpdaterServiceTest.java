@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -71,20 +72,20 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
 
         sut.updateHolidaysAccounts();
 
-        Mockito.verify(personServiceMock).getActivePersons();
+        verify(personServiceMock).getActivePersons();
 
-        Mockito.verify(accountServiceMock, Mockito.times(3))
+        verify(accountServiceMock, Mockito.times(3))
             .getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class));
-        Mockito.verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user1);
-        Mockito.verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user2);
-        Mockito.verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user3);
+        verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user1);
+        verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user2);
+        verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user3);
 
-        Mockito.verify(accountInteractionServiceMock, Mockito.times(3))
+        verify(accountInteractionServiceMock, Mockito.times(3))
             .autoCreateOrUpdateNextYearsHolidaysAccount(Mockito.any(Account.class));
-        Mockito.verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
-        Mockito.verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
-        Mockito.verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
+        verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
+        verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
+        verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
 
-        Mockito.verify(mailServiceMock).sendSuccessfullyUpdatedAccountsNotification(Mockito.anyListOf(Account.class));
+        verify(mailServiceMock).sendSuccessfullyUpdatedAccountsNotification(Mockito.anyListOf(Account.class));
     }
 }

@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -54,7 +55,7 @@ public class SickNoteControllerTest {
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "2016-12-31"))
             .andExpect(status().isOk());
 
-        Mockito.verify(sickNoteServiceMock).getByPeriod(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31));
+        verify(sickNoteServiceMock).getByPeriod(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31));
         Mockito.verifyZeroInteractions(personServiceMock);
     }
 
@@ -70,10 +71,10 @@ public class SickNoteControllerTest {
                 .param("person", "23"))
             .andExpect(status().isOk());
 
-        Mockito.verify(sickNoteServiceMock)
+        verify(sickNoteServiceMock)
             .getByPersonAndPeriod(Mockito.any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
                 Mockito.eq(new DateMidnight(2016, 12, 31)));
-        Mockito.verify(personServiceMock).getPersonByID(23);
+        verify(personServiceMock).getPersonByID(23);
     }
 
 

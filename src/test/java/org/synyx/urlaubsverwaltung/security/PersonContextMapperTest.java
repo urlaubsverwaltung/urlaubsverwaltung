@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -104,8 +105,8 @@ public class PersonContextMapperTest {
 
         personContextMapper.mapUserFromContext(context, "murygina", null);
 
-        Mockito.verify(ldapUserMapper).mapFromContext(context);
-        Mockito.verify(ldapSyncService)
+        verify(ldapUserMapper).mapFromContext(context);
+        verify(ldapSyncService)
             .createPerson(Mockito.eq("murygina"), Mockito.eq(Optional.of("Aljona")),
                 Mockito.eq(Optional.of("Murygina")), Mockito.eq(Optional.of("murygina@synyx.de")));
     }
@@ -128,8 +129,8 @@ public class PersonContextMapperTest {
 
         personContextMapper.mapUserFromContext(context, "murygina", null);
 
-        Mockito.verify(ldapUserMapper).mapFromContext(context);
-        Mockito.verify(ldapSyncService)
+        verify(ldapUserMapper).mapFromContext(context);
+        verify(ldapSyncService)
             .syncPerson(Mockito.eq(person), Mockito.eq(Optional.of("Aljona")), Mockito.eq(Optional.of("Murygina")),
                 Mockito.eq(Optional.of("murygina@synyx.de")));
     }
@@ -243,7 +244,7 @@ public class PersonContextMapperTest {
 
         personContextMapper.mapUserFromContext(context, "username", null);
 
-        Mockito.verify(personService).getPersonsByRole(Role.OFFICE);
-        Mockito.verify(ldapSyncService).appointPersonAsOfficeUser(person);
+        verify(personService).getPersonsByRole(Role.OFFICE);
+        verify(ldapSyncService).appointPersonAsOfficeUser(person);
     }
 }

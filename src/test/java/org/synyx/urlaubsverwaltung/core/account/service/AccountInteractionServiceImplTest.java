@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -76,13 +77,13 @@ public class AccountInteractionServiceImplTest {
 
         service.updateRemainingVacationDays(2012, person);
 
-        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2012);
-        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2013);
-        Mockito.verify(vacationDaysService, Mockito.never()).calculateTotalLeftVacationDays(account2014);
+        verify(vacationDaysService).calculateTotalLeftVacationDays(account2012);
+        verify(vacationDaysService).calculateTotalLeftVacationDays(account2013);
+        verify(vacationDaysService, Mockito.never()).calculateTotalLeftVacationDays(account2014);
 
-        Mockito.verify(accountService, Mockito.never()).save(account2012);
-        Mockito.verify(accountService).save(account2013);
-        Mockito.verify(accountService).save(account2014);
+        verify(accountService, Mockito.never()).save(account2012);
+        verify(accountService).save(account2013);
+        verify(accountService).save(account2014);
 
         Assert.assertEquals("Wrong number of remaining vacation days for 2012", BigDecimal.valueOf(5),
                 account2012.getRemainingVacationDays());
@@ -128,10 +129,10 @@ public class AccountInteractionServiceImplTest {
         Assert.assertEquals("Wrong validity end date", new DateMidnight(nextYear, 12, 31),
                 createdHolidaysAccount.getValidTo());
 
-        Mockito.verify(accountService).save(createdHolidaysAccount);
+        verify(accountService).save(createdHolidaysAccount);
 
-        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(referenceHolidaysAccount);
-        Mockito.verify(accountService).getHolidaysAccount(nextYear, person);
+        verify(vacationDaysService).calculateTotalLeftVacationDays(referenceHolidaysAccount);
+        verify(accountService).getHolidaysAccount(nextYear, person);
     }
 
 
@@ -167,9 +168,9 @@ public class AccountInteractionServiceImplTest {
         Assert.assertEquals("Wrong validity start date", nextYearAccount.getValidFrom(), account.getValidFrom());
         Assert.assertEquals("Wrong validity end date", nextYearAccount.getValidTo(), account.getValidTo());
 
-        Mockito.verify(accountService).save(account);
+        verify(accountService).save(account);
 
-        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(referenceAccount);
-        Mockito.verify(accountService).getHolidaysAccount(nextYear, person);
+        verify(vacationDaysService).calculateTotalLeftVacationDays(referenceAccount);
+        verify(accountService).getHolidaysAccount(nextYear, person);
     }
 }

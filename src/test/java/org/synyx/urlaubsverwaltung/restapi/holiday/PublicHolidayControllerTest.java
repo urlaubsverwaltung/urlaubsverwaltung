@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,7 +60,7 @@ public class PublicHolidayControllerTest {
 
         mockMvc.perform(get("/api/holidays").param("year", "2016")).andExpect(status().isOk());
 
-        Mockito.verify(publicHolidayServiceMock).getHolidays(2016, FederalState.BADEN_WUERTTEMBERG);
+        verify(publicHolidayServiceMock).getHolidays(2016, FederalState.BADEN_WUERTTEMBERG);
     }
 
 
@@ -68,7 +69,7 @@ public class PublicHolidayControllerTest {
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("month", "4")).andExpect(status().isOk());
 
-        Mockito.verify(publicHolidayServiceMock).getHolidays(2016, 4, FederalState.BADEN_WUERTTEMBERG);
+        verify(publicHolidayServiceMock).getHolidays(2016, 4, FederalState.BADEN_WUERTTEMBERG);
     }
 
 
@@ -83,8 +84,8 @@ public class PublicHolidayControllerTest {
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("person", "23")).andExpect(status().isOk());
 
-        Mockito.verify(publicHolidayServiceMock).getHolidays(2016, FederalState.BAYERN);
-        Mockito.verify(workingTimeServiceMock).getFederalStateForPerson(person, new DateMidnight(2016, 1, 1));
+        verify(publicHolidayServiceMock).getHolidays(2016, FederalState.BAYERN);
+        verify(workingTimeServiceMock).getFederalStateForPerson(person, new DateMidnight(2016, 1, 1));
     }
 
 
@@ -101,8 +102,8 @@ public class PublicHolidayControllerTest {
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("month", "4").param("person", "23"))
             .andExpect(status().isOk());
 
-        Mockito.verify(publicHolidayServiceMock).getHolidays(2016, 4, FederalState.BAYERN);
-        Mockito.verify(workingTimeServiceMock).getFederalStateForPerson(person, new DateMidnight(2016, 4, 1));
+        verify(publicHolidayServiceMock).getHolidays(2016, 4, FederalState.BAYERN);
+        verify(workingTimeServiceMock).getFederalStateForPerson(person, new DateMidnight(2016, 4, 1));
     }
 
 

@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -104,7 +105,7 @@ public class HolidayAbsenceProviderTest {
 
         holidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 
-        Mockito.verify(sickDayAbsenceProvider, Mockito.times(1))
+        verify(sickDayAbsenceProvider, Mockito.times(1))
             .checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
     }
 }

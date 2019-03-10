@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
 
+import static org.mockito.Mockito.verify;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -30,6 +32,6 @@ public class LdapUserServiceImplTest {
 
         ldapUserService.getLdapUsers();
 
-        Mockito.verify(ldapTemplate).search(Mockito.any(), Mockito.eq(ldapUserMapper));
+        verify(ldapTemplate).search(Mockito.any(), Mockito.eq(ldapUserMapper));
     }
 }

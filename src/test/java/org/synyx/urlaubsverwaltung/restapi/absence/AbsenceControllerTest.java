@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -61,13 +62,13 @@ public class AbsenceControllerTest {
         mockMvc.perform(get("/api/absences").param("from", "2016-01-01").param("year", "2016").param("person", "23"))
             .andExpect(status().isOk());
 
-        Mockito.verify(sickNoteServiceMock)
+        verify(sickNoteServiceMock)
             .getByPersonAndPeriod(Mockito.any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
                 Mockito.eq(new DateMidnight(2016, 12, 31)));
-        Mockito.verify(applicationServiceMock)
+        verify(applicationServiceMock)
             .getApplicationsForACertainPeriodAndPerson(Mockito.eq(new DateMidnight(2016, 1, 1)),
                 Mockito.eq(new DateMidnight(2016, 12, 31)), Mockito.any(Person.class));
-        Mockito.verify(personServiceMock).getPersonByID(23);
+        verify(personServiceMock).getPersonByID(23);
     }
 
 

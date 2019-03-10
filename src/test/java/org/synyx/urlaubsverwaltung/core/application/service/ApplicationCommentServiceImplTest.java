@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.service.ApplicationCommentServiceImpl}.
@@ -56,7 +58,7 @@ public class ApplicationCommentServiceImplTest {
 
         Assert.assertNull("Text should not be set", comment.getText());
 
-        Mockito.verify(commentDAO).save(Mockito.eq(comment));
+        verify(commentDAO).save(Mockito.eq(comment));
     }
 
 
@@ -81,6 +83,6 @@ public class ApplicationCommentServiceImplTest {
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
 
-        Mockito.verify(commentDAO).save(Mockito.eq(comment));
+        verify(commentDAO).save(Mockito.eq(comment));
     }
 }
