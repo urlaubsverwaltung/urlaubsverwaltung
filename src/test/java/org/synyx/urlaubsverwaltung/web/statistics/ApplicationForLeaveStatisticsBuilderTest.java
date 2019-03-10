@@ -24,6 +24,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatisticsBuilder}.
@@ -45,15 +51,15 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     @Before
     public void setUp() {
 
-        accountService = Mockito.mock(AccountService.class);
-        applicationService = Mockito.mock(ApplicationService.class);
-        calendarService = Mockito.mock(WorkDaysService.class);
-        vacationDaysService = Mockito.mock(VacationDaysService.class);
-        overtimeService = Mockito.mock(OvertimeService.class);
-        vacationTypeService = Mockito.mock(VacationTypeService.class);
+        accountService = mock(AccountService.class);
+        applicationService = mock(ApplicationService.class);
+        calendarService = mock(WorkDaysService.class);
+        vacationDaysService = mock(VacationDaysService.class);
+        overtimeService = mock(OvertimeService.class);
+        vacationTypeService = mock(VacationTypeService.class);
 
         vacationTypes = TestDataCreator.createVacationTypes();
-        Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
         builder = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
                 vacationDaysService, overtimeService, vacationTypeService);
@@ -70,21 +76,21 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenFromDateIsNull() {
 
-        builder.build(Mockito.mock(Person.class), null, new DateMidnight(2015, 12, 31));
+        builder.build(mock(Person.class), null, new DateMidnight(2015, 12, 31));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenToDateIsNull() {
 
-        builder.build(Mockito.mock(Person.class), new DateMidnight(2014, 1, 1), null);
+        builder.build(mock(Person.class), new DateMidnight(2014, 1, 1), null);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
 
-        builder.build(Mockito.mock(Person.class), new DateMidnight(2014, 1, 1), new DateMidnight(2015, 1, 1));
+        builder.build(mock(Person.class), new DateMidnight(2014, 1, 1), new DateMidnight(2015, 1, 1));
     }
 
 
@@ -94,73 +100,66 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         DateMidnight from = new DateMidnight(2014, 1, 1);
         DateMidnight to = new DateMidnight(2014, 12, 31);
 
-        Person person = Mockito.mock(Person.class);
-        Account account = Mockito.mock(Account.class);
+        Person person = mock(Person.class);
+        Account account = mock(Account.class);
 
-        Mockito.when(person.getEmail()).thenReturn("muster@firma.test");
-        Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
+        when(person.getEmail()).thenReturn("muster@firma.test");
+        when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
+        when(vacationDaysService.calculateTotalLeftVacationDays(eq(account)))
             .thenReturn(BigDecimal.TEN);
-        Mockito.when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
 
-        Application holidayWaiting = new Application();
+        Application holidayWaiting = TestDataCreator.anyFullDayApplication(person);
         holidayWaiting.setVacationType(vacationTypes.get(0));
         holidayWaiting.setStartDate(new DateMidnight(2014, 10, 13));
         holidayWaiting.setEndDate(new DateMidnight(2014, 10, 13));
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
-        holidayWaiting.setPerson(person);
 
-        Application holidayTemporaryAllowed = new Application();
+        Application holidayTemporaryAllowed = TestDataCreator.anyFullDayApplication(person);
         holidayTemporaryAllowed.setVacationType(vacationTypes.get(0));
         holidayTemporaryAllowed.setStartDate(new DateMidnight(2014, 10, 12));
         holidayTemporaryAllowed.setEndDate(new DateMidnight(2014, 10, 12));
         holidayTemporaryAllowed.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
-        holidayTemporaryAllowed.setPerson(person);
 
-        Application holidayAllowed = new Application();
+        Application holidayAllowed = TestDataCreator.anyFullDayApplication(person);
         holidayAllowed.setVacationType(vacationTypes.get(0));
         holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
-        holidayAllowed.setPerson(person);
 
-        Application holidayRejected = new Application();
+        Application holidayRejected = TestDataCreator.anyFullDayApplication(person);
         holidayRejected.setVacationType(vacationTypes.get(0));
         holidayRejected.setStartDate(new DateMidnight(2014, 11, 6));
         holidayRejected.setEndDate(new DateMidnight(2014, 11, 6));
         holidayRejected.setStatus(ApplicationStatus.REJECTED);
-        holidayRejected.setPerson(person);
 
-        Application specialLeaveWaiting = new Application();
+        Application specialLeaveWaiting = TestDataCreator.anyFullDayApplication(person);
         specialLeaveWaiting.setVacationType(vacationTypes.get(1));
         specialLeaveWaiting.setStartDate(new DateMidnight(2014, 10, 15));
         specialLeaveWaiting.setEndDate(new DateMidnight(2014, 10, 15));
         specialLeaveWaiting.setStatus(ApplicationStatus.WAITING);
-        specialLeaveWaiting.setPerson(person);
 
-        Application unpaidLeaveAllowed = new Application();
+        Application unpaidLeaveAllowed = TestDataCreator.anyFullDayApplication(person);
         unpaidLeaveAllowed.setVacationType(vacationTypes.get(2));
         unpaidLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 16));
         unpaidLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 16));
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
-        unpaidLeaveAllowed.setPerson(person);
 
-        Application overTimeWaiting = new Application();
+        Application overTimeWaiting = TestDataCreator.anyFullDayApplication(person);
         overTimeWaiting.setVacationType(vacationTypes.get(3));
         overTimeWaiting.setStartDate(new DateMidnight(2014, 11, 3));
         overTimeWaiting.setEndDate(new DateMidnight(2014, 11, 3));
         overTimeWaiting.setStatus(ApplicationStatus.WAITING);
-        overTimeWaiting.setPerson(person);
 
         List<Application> applications = Arrays.asList(holidayWaiting, holidayTemporaryAllowed, holidayAllowed,
                 holidayRejected, specialLeaveWaiting, unpaidLeaveAllowed, overTimeWaiting);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
             .thenReturn(applications);
 
         // just return 1 day for each application for leave
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.eq(person)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
+                    any(DateMidnight.class), eq(person)))
             .thenReturn(BigDecimal.ONE);
 
         ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
@@ -183,47 +182,42 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Assert.assertEquals("Wrong number of left vacation days", BigDecimal.TEN, statistics.getLeftVacationDays());
     }
 
-
     @Test
     public void ensureCallsCalendarServiceToCalculatePartialVacationDaysOfVacationsSpanningTwoYears() {
 
         DateMidnight from = new DateMidnight(2015, 1, 1);
         DateMidnight to = new DateMidnight(2015, 12, 31);
 
-        Person person = Mockito.mock(Person.class);
-        Account account = Mockito.mock(Account.class);
+        Person person = mock(Person.class);
+        Account account = mock(Account.class);
 
-        Mockito.when(person.getEmail()).thenReturn("muster@firma.test");
-        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
+        when(person.getEmail()).thenReturn("muster@firma.test");
+        when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
+        when(vacationDaysService.calculateTotalLeftVacationDays(eq(account)))
             .thenReturn(BigDecimal.TEN);
-        Mockito.when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
 
-        Application holidayAllowed = new Application();
+        Application holidayAllowed = TestDataCreator.anyFullDayApplication(person);
         holidayAllowed.setVacationType(vacationTypes.get(0));
         holidayAllowed.setStartDate(new DateMidnight(2014, 12, 29));
         holidayAllowed.setEndDate(new DateMidnight(2015, 1, 9));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
-        holidayAllowed.setDayLength(DayLength.FULL);
-        holidayAllowed.setPerson(person);
 
-        Application holidayWaiting = new Application();
+        Application holidayWaiting = TestDataCreator.anyFullDayApplication(person);
         holidayWaiting.setVacationType(vacationTypes.get(0));
         holidayWaiting.setStartDate(new DateMidnight(2015, 12, 21));
         holidayWaiting.setEndDate(new DateMidnight(2016, 1, 4));
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
-        holidayWaiting.setDayLength(DayLength.FULL);
-        holidayWaiting.setPerson(person);
 
         List<Application> applications = Arrays.asList(holidayWaiting, holidayAllowed);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
             .thenReturn(applications);
 
-        Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 1, 1),
+        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 1, 1),
                     new DateMidnight(2015, 1, 9), person))
             .thenReturn(new BigDecimal("5"));
-        Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 12, 21),
+        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 12, 21),
                     new DateMidnight(2015, 12, 31), person))
             .thenReturn(new BigDecimal("7"));
 
@@ -249,19 +243,19 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         DateMidnight from = new DateMidnight(2015, 1, 1);
         DateMidnight to = new DateMidnight(2015, 12, 31);
 
-        Person person = Mockito.mock(Person.class);
-        Account account = Mockito.mock(Account.class);
+        Person person = mock(Person.class);
+        Account account = mock(Account.class);
 
-        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
-        Mockito.when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("6.5"));
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(new BigDecimal("8.5"));
+        when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("6.5"));
+        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(new BigDecimal("8.5"));
 
         ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
 
         Assert.assertEquals("Wrong left overtime", new BigDecimal("6.5"), statistics.getLeftOvertime());
         Assert.assertEquals("Wrong left vacation days", new BigDecimal("8.5"), statistics.getLeftVacationDays());
 
-        Mockito.verify(overtimeService).getLeftOvertimeForPerson(person);
-        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account);
+        verify(overtimeService).getLeftOvertimeForPerson(person);
+        verify(vacationDaysService).calculateTotalLeftVacationDays(account);
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Component("ldapContextSource")
+@Component("ldapContextSourceSync")
 @ConditionalOnExpression("'${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true'")
 public class LdapContextSourceForLdapSync extends LdapContextSource {
 

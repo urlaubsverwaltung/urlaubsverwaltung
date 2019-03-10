@@ -6,7 +6,6 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -15,10 +14,15 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -35,8 +39,8 @@ public class OverlapServiceTest {
     @Before
     public void setup() {
 
-        applicationDAO = Mockito.mock(ApplicationDAO.class);
-        sickNoteDAO = Mockito.mock(SickNoteDAO.class);
+        applicationDAO = mock(ApplicationDAO.class);
+        sickNoteDAO = mock(SickNoteDAO.class);
         service = new OverlapService(applicationDAO, sickNoteDAO);
     }
 
@@ -59,8 +63,8 @@ public class OverlapServiceTest {
         rejectedApplication.setEndDate(endDate);
         rejectedApplication.setStatus(ApplicationStatus.REJECTED);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(cancelledApplication, rejectedApplication));
 
         Application applicationToBeChecked = new Application();
@@ -78,8 +82,8 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfNoActiveApplicationsForLeaveInThePeriod() {
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(new ArrayList<>());
 
         DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
@@ -115,12 +119,12 @@ public class OverlapServiceTest {
         allowedApplication.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
         allowedApplication.setStatus(ApplicationStatus.ALLOWED);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(waitingApplication, allowedApplication));
 
         // application for leave to check: 18.01. - 19.01.
-        Application applicationToCheck = new Application();
+        Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
         applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
         applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
@@ -142,12 +146,12 @@ public class OverlapServiceTest {
         waitingApplication.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
         waitingApplication.setStatus(ApplicationStatus.WAITING);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(waitingApplication));
 
         // application for leave to check: 14.01. - 16.01.
-        Application applicationToCheck = new Application();
+        Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
         applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 14));
         applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
@@ -169,12 +173,12 @@ public class OverlapServiceTest {
         allowedApplication.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
         allowedApplication.setStatus(ApplicationStatus.ALLOWED);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(allowedApplication));
 
         // application for leave to check: 18.01. - 20.01.
-        Application applicationToCheck = new Application();
+        Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
         applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
         applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
@@ -198,8 +202,8 @@ public class OverlapServiceTest {
         inactiveSickNote.setEndDate(endDate);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
 
-        Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
-                    Mockito.any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class),
+                    any(Date.class)))
             .thenReturn(Arrays.asList(inactiveSickNote));
 
         // sick note to be checked: 16.01. - 18.01.
@@ -218,8 +222,8 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfNoActiveSickNotesInThePeriod() {
 
-        Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
-                    Mockito.any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class),
+                    any(Date.class)))
             .thenReturn(new ArrayList<SickNote>());
 
         // sick note to be checked: 16.01. - 18.01.
@@ -245,12 +249,12 @@ public class OverlapServiceTest {
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
-                    Mockito.any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class),
+                    any(Date.class)))
             .thenReturn(Arrays.asList(sickNote));
 
         // application for leave to check: 18.01. - 19.01.
-        Application applicationToCheck = new Application();
+        Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
         applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
         applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
@@ -272,12 +276,12 @@ public class OverlapServiceTest {
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
-                    Mockito.any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class),
+                    any(Date.class)))
             .thenReturn(Arrays.asList(sickNote));
 
         // application for leave to check: 14.01. - 16.01.
-        Application applicationToCheck = new Application();
+        Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
         applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 14));
         applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
@@ -300,8 +304,8 @@ public class OverlapServiceTest {
         existentSickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
         existentSickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
-                    Mockito.any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class),
+                    any(Date.class)))
             .thenReturn(Arrays.asList(existentSickNote));
 
         // sick note should be edited to: 16.03. - 17.03.
@@ -331,8 +335,8 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(morningVacation));
 
         Application noonVacation = new Application();
@@ -358,11 +362,11 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(morningVacation));
 
-        Application otherMorningVacation = new Application();
+        Application otherMorningVacation = TestDataCreator.anyApplication();
         otherMorningVacation.setDayLength(DayLength.MORNING);
         otherMorningVacation.setStartDate(vacationDate);
         otherMorningVacation.setEndDate(vacationDate);
@@ -385,11 +389,11 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(morningVacation));
 
-        Application fullDayVacation = new Application();
+        Application fullDayVacation = TestDataCreator.anyApplication();
         fullDayVacation.setDayLength(DayLength.FULL);
         fullDayVacation.setStartDate(vacationDate);
         fullDayVacation.setEndDate(vacationDate);
@@ -411,11 +415,11 @@ public class OverlapServiceTest {
         fullDayVacation.setEndDate(vacationDate);
         fullDayVacation.setStatus(ApplicationStatus.WAITING);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                any(Date.class), any(Person.class)))
                 .thenReturn(Arrays.asList(fullDayVacation));
 
-        Application morningVacation = new Application();
+        Application morningVacation = TestDataCreator.anyApplication();
         morningVacation.setDayLength(DayLength.MORNING);
         morningVacation.setStartDate(vacationDate);
         morningVacation.setEndDate(vacationDate);
@@ -438,11 +442,11 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.ALLOWED);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                    Mockito.any(Date.class), Mockito.any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
+                    any(Date.class), any(Person.class)))
             .thenReturn(Arrays.asList(morningVacation));
 
-        SickNote sickNote = new SickNote();
+        SickNote sickNote = TestDataCreator.anySickNote();
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(vacationDate);
         sickNote.setEndDate(vacationDate);

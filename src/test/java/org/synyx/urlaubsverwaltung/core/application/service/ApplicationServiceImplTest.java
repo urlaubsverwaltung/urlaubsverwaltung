@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -16,11 +11,15 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link ApplicationServiceImpl}.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationServiceImplTest {
 
@@ -30,7 +29,7 @@ public class ApplicationServiceImplTest {
     @Before
     public void setUp() {
 
-        applicationDAO = Mockito.mock(ApplicationDAO.class);
+        applicationDAO = mock(ApplicationDAO.class);
         applicationService = new ApplicationServiceImpl(applicationDAO);
     }
 
@@ -41,7 +40,7 @@ public class ApplicationServiceImplTest {
     public void ensureGetApplicationByIdCallsCorrectDaoMethod() {
 
         applicationService.getApplicationById(1234);
-        Mockito.verify(applicationDAO).findOne(1234);
+        verify(applicationDAO).findById(1234);
     }
 
 
@@ -63,7 +62,7 @@ public class ApplicationServiceImplTest {
         Application application = new Application();
 
         applicationService.save(application);
-        Mockito.verify(applicationDAO).save(application);
+        verify(applicationDAO).save(application);
     }
 
 
@@ -81,11 +80,11 @@ public class ApplicationServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
+        when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
 
         BigDecimal totalHours = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-        Mockito.verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
+        verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
@@ -97,11 +96,11 @@ public class ApplicationServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
+        when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         BigDecimal totalHours = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-        Mockito.verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
+        verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);
