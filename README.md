@@ -250,13 +250,23 @@ Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es notwendig die di
 
 Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der Urlaubsverwaltung entwickeln möchte.
 
-#### Repository clonen
+### Repository clonen
 
 ```bash
 git clone git@github.com:synyx/urlaubsverwaltung.git
 ```
 
-#### Anwendung starten
+### Release
+
+Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
+Zum sorgenfreien Release Erstellung kann folgendes Script verwendet werden. 
+
+    export RELEASE_VERSION=0.10.0
+    export NEW_VERSION=0.11.0-SNAPSHOT
+    ./release.sh
+    git fetch
+
+### Anwendung starten
 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
 Plugin gestartet werden:
@@ -281,7 +291,7 @@ Maven Aufruf gestartet werden:
 ```
 Einzelne Parameter lassen sich mit `-D<parameterName>=<parameterWert>` überschreiben.
 
-#### Anwendung nutzen
+### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
 Ohne weitere Anpassung der Standardkonfiguration wird eine H2-Datenbank verwendet und es werden Testdaten angelegt,
@@ -294,12 +304,12 @@ Testbenutzern anmelden:
 * `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
 * `test/secret`: Benutzer mit der Rolle `Office`
 
-#### Anlegen von Testdaten deaktivieren
+### Anlegen von Testdaten deaktivieren
 
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
 in den `application-dev.properties` auf `false` setzen.
 
-#### H2 Web Konsole
+### H2 Web Konsole
 
 Die Standardkonfiguration sorgt dafür, dass eine H2 Web Konsole aktiv ist. Diese kann standardmäßig erreicht werden
 unter:
@@ -308,11 +318,11 @@ unter:
 
 Die H2 Konfigurationen können in der `application-dev.properties` überschrieben werden.
 
-#### API
+### API
 
 Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/api` erreichbar ist.
 
-#### Authentifizierung
+### Authentifizierung
 
 Siehe [Authentifizierung](#authentifizierung)
 
@@ -322,7 +332,7 @@ Property oder man konfiguriert diese in den `application.properties` bzw. in den
 Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
 `application.properties` bzw. in den `application-dev.properties` konfiguriert sein.
 
-##### LDAP
+#### LDAP
 
 Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
@@ -334,7 +344,7 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 
 <pre>auth=ldap</pre>
 
-##### Active Directory
+#### Active Directory
 
 Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
@@ -346,7 +356,7 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 
 <pre>auth=activeDirectory</pre>
 
-#### Externe Systeme mit Docker virtualisieren
+### Externe Systeme mit Docker virtualisieren
 
 Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die extenen
 Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gezeigt, wie man das mit Docker
