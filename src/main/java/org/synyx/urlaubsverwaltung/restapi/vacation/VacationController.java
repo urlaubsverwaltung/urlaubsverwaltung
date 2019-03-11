@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi.vacation;
 
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,6 +24,8 @@ import org.synyx.urlaubsverwaltung.restapi.absence.AbsenceResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -100,7 +101,7 @@ public class VacationController {
             }
         }
 
-        List<AbsenceResponse> vacationResponses = Lists.transform(applications, AbsenceResponse::new);
+        List<AbsenceResponse> vacationResponses = applications.stream().map(AbsenceResponse::new).collect(toList());
 
         return new ResponseWrapper<>(new VacationListResponse(vacationResponses));
     }
