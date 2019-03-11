@@ -37,30 +37,28 @@ public class TestDataCreationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestDataCreationService.class);
 
-    @Autowired
-    private PersonDataProvider personDataProvider;
-
-    @Autowired
-    private ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
-
-    @Autowired
-    private SickNoteDataProvider sickNoteDataProvider;
-
-    @Autowired
-    private SickNoteTypeService sickNoteTypeService;
-
-    @Autowired
-    private VacationTypeService vacationTypeService;
-
-    @Autowired
-    private OvertimeRecordDataProvider overtimeRecordDataProvider;
-
-    @Autowired
-    private DepartmentDataProvider departmentDataProvider;
+    private final PersonDataProvider personDataProvider;
+    private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
+    private final SickNoteDataProvider sickNoteDataProvider;
+    private final SickNoteTypeService sickNoteTypeService;
+    private final VacationTypeService vacationTypeService;
+    private final OvertimeRecordDataProvider overtimeRecordDataProvider;
+    private final DepartmentDataProvider departmentDataProvider;
 
     private Person boss;
     private Person office;
     private Person admin;
+
+    @Autowired
+    public TestDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider, SickNoteDataProvider sickNoteDataProvider, SickNoteTypeService sickNoteTypeService, VacationTypeService vacationTypeService, OvertimeRecordDataProvider overtimeRecordDataProvider, DepartmentDataProvider departmentDataProvider) {
+        this.personDataProvider = personDataProvider;
+        this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
+        this.sickNoteDataProvider = sickNoteDataProvider;
+        this.sickNoteTypeService = sickNoteTypeService;
+        this.vacationTypeService = vacationTypeService;
+        this.overtimeRecordDataProvider = overtimeRecordDataProvider;
+        this.departmentDataProvider = departmentDataProvider;
+    }
 
     @PostConstruct
     public void createTestData() throws NoSuchAlgorithmException {

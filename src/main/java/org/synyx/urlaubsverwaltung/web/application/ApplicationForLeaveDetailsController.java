@@ -51,38 +51,32 @@ import java.util.Optional;
 @Controller
 public class ApplicationForLeaveDetailsController {
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final ApplicationService applicationService;
+    private final ApplicationInteractionService applicationInteractionService;
+    private final VacationDaysService vacationDaysService;
+    private final ApplicationCommentService commentService;
+    private final WorkDaysService workDaysService;
+    private final ApplicationCommentValidator commentValidator;
+    private final DepartmentService departmentService;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
-    private ApplicationInteractionService applicationInteractionService;
-
-    @Autowired
-    private VacationDaysService vacationDaysService;
-
-    @Autowired
-    private ApplicationCommentService commentService;
-
-    @Autowired
-    private WorkDaysService workDaysService;
-
-    @Autowired
-    private ApplicationCommentValidator commentValidator;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private WorkingTimeService workingTimeService;
+    public ApplicationForLeaveDetailsController(VacationDaysService vacationDaysService, SessionService sessionService, PersonService personService, AccountService accountService, ApplicationService applicationService, ApplicationInteractionService applicationInteractionService, ApplicationCommentService commentService, WorkDaysService workDaysService, ApplicationCommentValidator commentValidator, DepartmentService departmentService, WorkingTimeService workingTimeService) {
+        this.vacationDaysService = vacationDaysService;
+        this.sessionService = sessionService;
+        this.personService = personService;
+        this.accountService = accountService;
+        this.applicationService = applicationService;
+        this.applicationInteractionService = applicationInteractionService;
+        this.commentService = commentService;
+        this.workDaysService = workDaysService;
+        this.commentValidator = commentValidator;
+        this.departmentService = departmentService;
+        this.workingTimeService = workingTimeService;
+    }
 
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
