@@ -47,26 +47,24 @@ import java.util.stream.Collectors;
 @RequestMapping("/web")
 public class PersonController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final VacationDaysService vacationDaysService;
+    private final DepartmentService departmentService;
+    private final WorkingTimeService workingTimeService;
+    private final SettingsService settingsService;
+    private final SessionService sessionService;
 
     @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private VacationDaysService vacationDaysService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private WorkingTimeService workingTimeService;
-
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private SessionService sessionService;
+    public PersonController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, DepartmentService departmentService, WorkingTimeService workingTimeService, SettingsService settingsService, SessionService sessionService) {
+        this.personService = personService;
+        this.accountService = accountService;
+        this.vacationDaysService = vacationDaysService;
+        this.departmentService = departmentService;
+        this.workingTimeService = workingTimeService;
+        this.settingsService = settingsService;
+        this.sessionService = sessionService;
+    }
 
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
     public String showStaffInformation(@PathVariable("personId") Integer personId,

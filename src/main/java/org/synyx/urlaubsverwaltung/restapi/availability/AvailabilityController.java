@@ -26,7 +26,6 @@ import java.util.Optional;
 public class AvailabilityController {
 
     private final PersonService personService;
-
     private final AvailabilityService availabilityService;
 
     @Autowired

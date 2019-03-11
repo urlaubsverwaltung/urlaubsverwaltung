@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class VacationOverviewController {
 
-    private VacationOverviewService vacationOverviewService;
+    private final VacationOverviewService vacationOverviewService;
 
     @Autowired
     VacationOverviewController(VacationOverviewService vacationOverviewService) {

@@ -46,35 +46,30 @@ import java.util.Optional;
 @RequestMapping("/web")
 public class SickNoteController {
 
-    @Autowired
-    private SickNoteService sickNoteService;
+    private final SickNoteService sickNoteService;
+    private final SickNoteInteractionService sickNoteInteractionService;
+    private final SickNoteCommentService sickNoteCommentService;
+    private final SickNoteTypeService sickNoteTypeService;
+    private final VacationTypeService vacationTypeService;
+    private final PersonService personService;
+    private final WorkDaysService calendarService;
+    private final SickNoteValidator validator;
+    private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
+    private final SessionService sessionService;
 
     @Autowired
-    private SickNoteInteractionService sickNoteInteractionService;
-
-    @Autowired
-    private SickNoteCommentService sickNoteCommentService;
-
-    @Autowired
-    private SickNoteTypeService sickNoteTypeService;
-
-    @Autowired
-    private VacationTypeService vacationTypeService;
-
-    @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private WorkDaysService calendarService;
-
-    @Autowired
-    private SickNoteValidator validator;
-
-    @Autowired
-    private SickNoteConvertFormValidator sickNoteConvertFormValidator;
-
-    @Autowired
-    private SessionService sessionService;
+    public SickNoteController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService, SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService, VacationTypeService vacationTypeService, PersonService personService, WorkDaysService calendarService, SickNoteValidator validator, SickNoteConvertFormValidator sickNoteConvertFormValidator, SessionService sessionService) {
+        this.sickNoteService = sickNoteService;
+        this.sickNoteInteractionService = sickNoteInteractionService;
+        this.sickNoteCommentService = sickNoteCommentService;
+        this.sickNoteTypeService = sickNoteTypeService;
+        this.vacationTypeService = vacationTypeService;
+        this.personService = personService;
+        this.calendarService = calendarService;
+        this.validator = validator;
+        this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
+        this.sessionService = sessionService;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder) {

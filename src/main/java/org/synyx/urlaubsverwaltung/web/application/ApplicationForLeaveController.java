@@ -33,17 +33,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/web")
 public class ApplicationForLeaveController {
 
-    @Autowired
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
+    private final WorkDaysService calendarService;
+    private final DepartmentService departmentService;
+    private final SessionService sessionService;
 
     @Autowired
-    private WorkDaysService calendarService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private SessionService sessionService;
+    public ApplicationForLeaveController(ApplicationService applicationService, WorkDaysService calendarService, DepartmentService departmentService, SessionService sessionService) {
+        this.applicationService = applicationService;
+        this.calendarService = calendarService;
+        this.departmentService = departmentService;
+        this.sessionService = sessionService;
+    }
 
     /**
      * Show waiting applications for leave.

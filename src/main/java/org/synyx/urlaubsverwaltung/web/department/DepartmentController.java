@@ -32,14 +32,16 @@ import java.util.Optional;
 @RequestMapping(value = "/web")
 public class DepartmentController {
 
-    @Autowired
-    private DepartmentService departmentService;
+    private final DepartmentService departmentService;
+    private final PersonService personService;
+    private final DepartmentValidator validator;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private DepartmentValidator validator;
+    public DepartmentController(DepartmentService departmentService, PersonService personService, DepartmentValidator validator) {
+        this.departmentService = departmentService;
+        this.personService = personService;
+        this.validator = validator;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder) {

@@ -22,8 +22,12 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 @RequestMapping("/web")
 public class SickNoteStatisticsController {
 
+    private final SickNoteStatisticsService statisticsService;
+
     @Autowired
-    private SickNoteStatisticsService statisticsService;
+    public SickNoteStatisticsController(SickNoteStatisticsService statisticsService) {
+        this.statisticsService = statisticsService;
+    }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET)
