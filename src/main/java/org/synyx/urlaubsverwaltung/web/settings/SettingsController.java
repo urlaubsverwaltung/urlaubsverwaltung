@@ -57,7 +57,7 @@ public class SettingsController {
                                   HttpServletRequest request) {
 
         String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-                request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
+            request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
 
         Settings settings = settingsService.getSettings();
 
@@ -81,9 +81,9 @@ public class SettingsController {
         model.addAttribute("dayLengthTypes", DayLength.values());
 
         List<String> providers = calendarProviders.stream()
-                .map(provider -> provider.getClass().getSimpleName())
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
+            .map(provider -> provider.getClass().getSimpleName())
+            .sorted(Comparator.reverseOrder())
+            .collect(Collectors.toList());
         model.addAttribute("providers", providers);
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
     }
@@ -99,7 +99,7 @@ public class SettingsController {
                                 HttpServletRequest request) {
 
         String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-                request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
+            request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
 
         settingsValidator.validate(settings, errors);
 
@@ -141,8 +141,8 @@ public class SettingsController {
 
     private boolean refreshTokenGotInvalid(GoogleCalendarSettings oldSettings, GoogleCalendarSettings newSettings) {
         if (oldSettings.getClientSecret() == null
-                || oldSettings.getClientId() == null
-                || oldSettings.getCalendarId() == null) {
+            || oldSettings.getClientId() == null
+            || oldSettings.getCalendarId() == null) {
             return true;
         }
 
@@ -151,7 +151,7 @@ public class SettingsController {
 
     private boolean shouldShowOAuthError(String googleOAuthError, Settings settings) {
         return googleOAuthError != null
-                && !googleOAuthError.isEmpty()
-                && settings.getCalendarSettings().getGoogleCalendarSettings().getRefreshToken() == null;
+            && !googleOAuthError.isEmpty()
+            && settings.getCalendarSettings().getGoogleCalendarSettings().getRefreshToken() == null;
     }
 }
