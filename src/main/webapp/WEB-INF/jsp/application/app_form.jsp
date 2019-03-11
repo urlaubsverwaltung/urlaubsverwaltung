@@ -178,12 +178,12 @@
                                     <c:choose>
                                         <c:when test="${vacationType == application.vacationType}">
                                             <option value="${vacationType.id}" selected="selected">
-                                                <c:out value="${vacationType.displayName}"/>
+                                                <spring:message code="${vacationType.messageKey}"/>
                                             </option>
                                         </c:when>
                                         <c:otherwise>
                                             <option value="${vacationType.id}">
-                                                <c:out value="${vacationType.displayName}"/>
+                                                <spring:message code="${vacationType.messageKey}"/>
                                             </option>
                                         </c:otherwise>
                                     </c:choose>

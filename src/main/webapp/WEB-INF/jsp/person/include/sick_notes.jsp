@@ -29,12 +29,12 @@
         <td>
             <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="hidden-print">
                 <h4>
-                    <c:out value="${sickNote.sickNoteType.displayName}"/>
+                    <spring:message code="${sickNote.sickNoteType.messageKey}"/>
                 </h4>
             </a>
 
             <h4 class="visible-print">
-                <c:out value="${sickNote.sickNoteType.displayName}"/>
+                <spring:message code="${sickNote.sickNoteType.messageKey}"/>
             </h4>
 
             <p>

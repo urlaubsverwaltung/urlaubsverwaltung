@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 
 /**
@@ -20,7 +21,6 @@ public class AbsenceResponse {
     private BigDecimal dayLength;
     private PersonResponse person;
     private String type;
-    private String typeName;
     private String status;
 
     public AbsenceResponse(Application application) {
@@ -33,14 +33,13 @@ public class AbsenceResponse {
 
         VacationType vacationType = application.getVacationType();
         this.type = vacationType.getCategory().toString();
-        this.typeName = vacationType.getDisplayName();
     }
 
 
     public AbsenceResponse(SickNote sickNote) {
 
         this.from = sickNote.getStartDate().toString(RestApiDateFormat.DATE_PATTERN);
-        this.to = sickNote.getEndDate().toString(RestApiDateFormat.DATE_PATTERN);
+        this.to = Objects.requireNonNull(sickNote.getEndDate()).toString(RestApiDateFormat.DATE_PATTERN);
         this.dayLength = sickNote.getDayLength().getDuration();
         this.person = new PersonResponse(sickNote.getPerson());
         this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";
@@ -48,7 +47,6 @@ public class AbsenceResponse {
         SickNoteType sickNoteType = sickNote.getSickNoteType();
 
         this.type = sickNoteType.getCategory().toString();
-        this.typeName = sickNoteType.getDisplayName();
     }
 
     public String getFrom() {
@@ -109,19 +107,6 @@ public class AbsenceResponse {
 
         this.type = type;
     }
-
-
-    public String getTypeName() {
-
-        return typeName;
-    }
-
-
-    public void setTypeName(String typeName) {
-
-        this.typeName = typeName;
-    }
-
 
     public String getStatus() {
 

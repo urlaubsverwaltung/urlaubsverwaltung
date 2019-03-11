@@ -119,14 +119,14 @@
                                             <h4>
                                                 <c:choose>
                                                     <c:when test="${application.hours != null}">
-                                                        <uv:number number="${application.hours}"/> <spring:message
-                                                        code="duration.hours"/> <c:out
-                                                        value="${application.vacationType.displayName}"/>
+                                                        <uv:number number="${application.hours}"/>
+                                                        <spring:message code="duration.hours"/>
+                                                        <spring:message code="${application.vacationType.messageKey}"/>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <uv:number number="${application.workDays}"/> <spring:message
-                                                        code="duration.days"/> <c:out
-                                                        value="${application.vacationType.displayName}"/>
+                                                        <uv:number number="${application.workDays}"/>
+                                                        <spring:message code="duration.days"/>
+                                                        <spring:message code="${application.vacationType.messageKey}"/>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </h4>

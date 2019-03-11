@@ -19,7 +19,7 @@
         <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}"/></h5> <spring:message
         code="application.applier.applied"/>
         <h4>
-            <c:out value="${application.vacationType.displayName}"/>
+            <spring:message code="${application.vacationType.messageKey}"/>
             <span class="state ${application.status} pull-right hidden-print hidden-xs"
                   title="<spring:message code='${application.status}' />">
             <c:choose>
