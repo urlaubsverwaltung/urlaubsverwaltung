@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.view.RedirectView;
 
 
@@ -13,10 +13,9 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/api")
 public class BaseController {
 
-    private static final String ROOT_URL = "/";
     private static final boolean RELATIVE_CONTEXT = true;
 
-    @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
+    @GetMapping
     public RedirectView discover() {
 
         return new RedirectView("/swagger-ui.html", RELATIVE_CONTEXT);
