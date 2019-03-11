@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +15,12 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -34,22 +39,22 @@ public class SessionServiceTest {
     @Before
     public void setUp() {
 
-        personService = Mockito.mock(PersonService.class);
-        departmentService = Mockito.mock(DepartmentService.class);
+        personService = mock(PersonService.class);
+        departmentService = mock(DepartmentService.class);
 
         sessionService = new SessionService(personService, departmentService);
 
         // Mock authentication
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getName()).thenReturn(USER_NAME);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(USER_NAME);
 
-        securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
 
         // Mock department head
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(Mockito.any(Person.class), Mockito.any(Person.class)))
+        when(departmentService.isDepartmentHeadOfPerson(any(Person.class), any(Person.class)))
             .thenReturn(false);
     }
 
@@ -59,7 +64,7 @@ public class SessionServiceTest {
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIfNoPersonCanBeFoundForTheCurrentlySignedInUser() {
 
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
 
         sessionService.getSignedInUser();
     }
@@ -70,18 +75,18 @@ public class SessionServiceTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
 
         Person signedInUser = sessionService.getSignedInUser();
 
-        Mockito.verify(personService).getPersonByLogin(USER_NAME);
+        verify(personService).getPersonByLogin(USER_NAME);
         Assert.assertEquals("Wrong person", person, signedInUser);
     }
 
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIllegalOnNullAuthentication() {
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(null);
+        when(securityContext.getAuthentication()).thenReturn(null);
         sessionService.getSignedInUser();
     }
 
@@ -126,11 +131,11 @@ public class SessionServiceTest {
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
 
-        Mockito.verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
+        verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
         Assert.assertTrue("Department head of person should be able to access the person's data", isAllowed);
     }
 
@@ -145,11 +150,11 @@ public class SessionServiceTest {
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(false);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(false);
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
 
-        Mockito.verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
+        verify(departmentService).isDepartmentHeadOfPerson(departmentHead, person);
         Assert.assertFalse("Department head - but not of person - should not be able to access the person's data",
             isAllowed);
     }
@@ -164,11 +169,11 @@ public class SessionServiceTest {
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(departmentHead, secondStageAuthority)).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, secondStageAuthority)).thenReturn(true);
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
 
-        Mockito.verify(departmentService).isDepartmentHeadOfPerson(departmentHead, secondStageAuthority);
+        verify(departmentService).isDepartmentHeadOfPerson(departmentHead, secondStageAuthority);
         Assert.assertFalse("Department head - but not of secondStageAuthority - should not be able to access the secondStageAuthority's data",
                 isAllowed);
     }
@@ -183,11 +188,11 @@ public class SessionServiceTest {
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead)).thenReturn(true);
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(secondStageAuthority, departmentHead);
 
-        Mockito.verify(departmentService).isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead);
+        verify(departmentService).isSecondStageAuthorityOfPerson(secondStageAuthority, departmentHead);
         Assert.assertTrue("secondStageAuthority should be able to access the departmentHeads's data",
                 isAllowed);
     }
@@ -201,7 +206,7 @@ public class SessionServiceTest {
         Person user = TestDataCreator.createPerson(42, "user");
         user.setPermissions(Collections.singletonList(Role.USER));
 
-        Mockito.when(departmentService.isDepartmentHeadOfPerson(user, person)).thenReturn(false);
+        when(departmentService.isDepartmentHeadOfPerson(user, person)).thenReturn(false);
 
         boolean isAllowed = sessionService.isSignedInUserAllowedToAccessPersonData(user, person);
 

@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.core.application.service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.core.application.dao.VacationTypeDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;

@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.web.settings;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
@@ -15,7 +14,9 @@ import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 
 /**
@@ -54,7 +55,7 @@ public class SettingsValidatorTest {
     public void ensureThatValidateFailsWithOtherClassThanSettings() throws Exception {
 
         Object o = new Object();
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(o, mockError);
     }
 
@@ -71,7 +72,7 @@ public class SettingsValidatorTest {
         workingTimeSettings.setWorkingDurationForNewYearsEve(null);
         workingTimeSettings.setMaximumOvertime(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("workingTimeSettings.federalState", "error.entry.mandatory");
         verify(mockError)
@@ -92,7 +93,7 @@ public class SettingsValidatorTest {
         workingTimeSettings.setMaximumOvertime(null);
         workingTimeSettings.setMinimumOvertime(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
 
         settingsValidator.validate(settings, mockError);
 
@@ -110,11 +111,11 @@ public class SettingsValidatorTest {
         workingTimeSettings.setMaximumOvertime(null);
         workingTimeSettings.setMinimumOvertime(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
 
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 
@@ -126,7 +127,7 @@ public class SettingsValidatorTest {
         workingTimeSettings.setOvertimeActive(true);
         workingTimeSettings.setMaximumOvertime(-1);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
 
         settingsValidator.validate(settings, mockError);
 
@@ -142,7 +143,7 @@ public class SettingsValidatorTest {
         workingTimeSettings.setOvertimeActive(true);
         workingTimeSettings.setMinimumOvertime(-1);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
 
         settingsValidator.validate(settings, mockError);
 
@@ -164,7 +165,7 @@ public class SettingsValidatorTest {
         absenceSettings.setDaysBeforeEndOfSickPayNotification(null);
         absenceSettings.setDaysBeforeRemindForWaitingApplications(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.mandatory");
         verify(mockError)
@@ -189,7 +190,7 @@ public class SettingsValidatorTest {
         absenceSettings.setDaysBeforeEndOfSickPayNotification(-1);
         absenceSettings.setDaysBeforeRemindForWaitingApplications(-1);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
         verify(mockError)
@@ -208,7 +209,7 @@ public class SettingsValidatorTest {
         Settings settings = new Settings();
         settings.getAbsenceSettings().setMaximumMonthsToApplyForLeaveInAdvance(0);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError)
             .rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
@@ -221,7 +222,7 @@ public class SettingsValidatorTest {
         Settings settings = new Settings();
         settings.getAbsenceSettings().setMaximumAnnualVacationDays(367);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
     }
@@ -238,7 +239,7 @@ public class SettingsValidatorTest {
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(Integer.MAX_VALUE + 1);
         absenceSettings.setMaximumSickPayDays(Integer.MAX_VALUE + 1);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError)
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
@@ -257,7 +258,7 @@ public class SettingsValidatorTest {
         absenceSettings.setDaysBeforeEndOfSickPayNotification(11);
         absenceSettings.setMaximumSickPayDays(10);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError)
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification",
@@ -281,10 +282,10 @@ public class SettingsValidatorTest {
         mailSettings.setFrom(null);
         mailSettings.setBaseLinkURL(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 
@@ -302,7 +303,7 @@ public class SettingsValidatorTest {
         mailSettings.setFrom(null);
         mailSettings.setBaseLinkURL(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("mailSettings.host", "error.entry.mandatory");
         verify(mockError).rejectValue("mailSettings.port", "error.entry.mandatory");
@@ -323,7 +324,7 @@ public class SettingsValidatorTest {
         mailSettings.setAdministrator("foo");
         mailSettings.setFrom("bar");
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mail");
         verify(mockError).rejectValue("mailSettings.from", "error.entry.mail");
@@ -340,7 +341,7 @@ public class SettingsValidatorTest {
         mailSettings.setActive(true);
         mailSettings.setPort(-1);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
     }
@@ -356,7 +357,7 @@ public class SettingsValidatorTest {
         mailSettings.setActive(true);
         mailSettings.setPort(0);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
     }
@@ -373,7 +374,7 @@ public class SettingsValidatorTest {
         calendarSettings.setWorkDayBeginHour(null);
         calendarSettings.setWorkDayEndHour(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.mandatory");
         verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.mandatory");
@@ -389,7 +390,7 @@ public class SettingsValidatorTest {
         calendarSettings.setWorkDayBeginHour(8);
         calendarSettings.setWorkDayEndHour(8);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
         verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
@@ -405,7 +406,7 @@ public class SettingsValidatorTest {
         calendarSettings.setWorkDayBeginHour(17);
         calendarSettings.setWorkDayEndHour(8);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
         verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
@@ -421,7 +422,7 @@ public class SettingsValidatorTest {
         calendarSettings.setWorkDayBeginHour(-1);
         calendarSettings.setWorkDayEndHour(-2);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
         verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
@@ -437,7 +438,7 @@ public class SettingsValidatorTest {
         calendarSettings.setWorkDayBeginHour(0);
         calendarSettings.setWorkDayEndHour(0);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
         verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
@@ -453,7 +454,7 @@ public class SettingsValidatorTest {
         calendarSettings.setWorkDayBeginHour(25);
         calendarSettings.setWorkDayEndHour(42);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
         verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
@@ -469,10 +470,10 @@ public class SettingsValidatorTest {
         calendarSettings.setWorkDayBeginHour(10);
         calendarSettings.setWorkDayEndHour(18);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 
@@ -489,10 +490,10 @@ public class SettingsValidatorTest {
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        Mockito.verifyZeroInteractions(mockError);
+        verifyZeroInteractions(mockError);
     }
 
 
@@ -508,7 +509,7 @@ public class SettingsValidatorTest {
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
         verify(mockError)
@@ -531,7 +532,7 @@ public class SettingsValidatorTest {
         exchangeCalendarSettings.setPassword("top-secret");
         exchangeCalendarSettings.setCalendar("Urlaub");
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
         verify(mockError).rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mail");
@@ -549,7 +550,7 @@ public class SettingsValidatorTest {
         googleCalendarSettings.setClientId(null);
         googleCalendarSettings.setClientSecret(null);
 
-        Errors mockError = Mockito.mock(Errors.class);
+        Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
         verify(mockError)
