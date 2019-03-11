@@ -11,8 +11,10 @@ import org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
 
+import static java.util.Collections.emptyList;
+import static java.util.Locale.GERMAN;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.any;
@@ -24,24 +26,21 @@ import static org.mockito.Mockito.when;
 
 public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
+    private ApplicationForLeaveStatisticsCsvExportServiceImpl sut;
 
     private MessageSource messageSource;
-    private VacationTypeService vacationTypeService;
-    private ApplicationForLeaveStatisticsCsvExportServiceImpl sut;
 
     @Before
     public void setUp() {
         messageSource = mock(MessageSource.class);
-        vacationTypeService = mock(VacationTypeService.class);
+        VacationTypeService vacationTypeService = mock(VacationTypeService.class);
 
         sut = new ApplicationForLeaveStatisticsCsvExportServiceImpl(messageSource, vacationTypeService);
     }
 
     @Test
     public void writeStatisticsForOnePersonFor2018() {
-        FilterPeriod period = new FilterPeriod(
-                java.util.Optional.ofNullable("01.01.2018"),
-                java.util.Optional.ofNullable("31.12.2018"));
+        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
 
         List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
         Person person = mock(Person.class);
@@ -49,9 +48,8 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
         when(person.getLastName()).thenReturn("personOneLastName");
 
         VacationTypeService vts = mock(VacationTypeService.class);
-        when(vts.getVacationTypes()).thenReturn(new ArrayList());
+        when(vts.getVacationTypes()).thenReturn(emptyList());
 
-        ApplicationForLeaveStatistics applicationForLeaveStatistics = mock(ApplicationForLeaveStatistics.class);
         statistics.add(new ApplicationForLeaveStatistics(person, vts));
 
         CSVWriter csvWriter = mock(CSVWriter.class);
@@ -72,20 +70,18 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
         sut.writeStatistics(period, statistics, csvWriter);
 
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
+            .writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2018)", ""});
+            .writeNext(new String[]{"{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2018)", ""});
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
+            .writeNext(new String[]{"", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
+            .writeNext(new String[]{"personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
     }
 
     @Test
     public void writeStatisticsForTwoPersonsFor2019() {
-        FilterPeriod period = new FilterPeriod(
-                java.util.Optional.ofNullable("01.01.2019"),
-                java.util.Optional.ofNullable("31.12.2019"));
+        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
 
         List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
         Person personOne = mock(Person.class);
@@ -97,9 +93,8 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
         when(personTwo.getLastName()).thenReturn("personTwoLastName");
 
         VacationTypeService vts = mock(VacationTypeService.class);
-        when(vts.getVacationTypes()).thenReturn(new ArrayList());
+        when(vts.getVacationTypes()).thenReturn(emptyList());
 
-        ApplicationForLeaveStatistics applicationForLeaveStatistics = mock(ApplicationForLeaveStatistics.class);
         statistics.add(new ApplicationForLeaveStatistics(personOne, vts));
         statistics.add(new ApplicationForLeaveStatistics(personTwo, vts));
 
@@ -121,47 +116,38 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
         sut.writeStatistics(period, statistics, csvWriter);
 
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"{absence.period}: 01.01.2019 - 31.12.2019"});
+            .writeNext(new String[]{"{absence.period}: 01.01.2019 - 31.12.2019"});
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2019)", ""});
+            .writeNext(new String[]{"{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2019)", ""});
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
+            .writeNext(new String[]{"", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
+            .writeNext(new String[]{"personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
         verify(csvWriter, times(1))
-                .writeNext(new String[]{"personTwoFirstName", "personTwoLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
-    }
-
-    private void mockMessageSource(String key) {
-        when(messageSource.getMessage(eq(key), any(), any()))
-                .thenReturn(String.format("{%s}", key));
+            .writeNext(new String[]{"personTwoFirstName", "personTwoLastName", "{applications.statistics.total}", "0", "0", "0", "0"});
     }
 
     @Test
     public void getFileNameForComplete2018() {
-        FilterPeriod period = new FilterPeriod(
-                java.util.Optional.ofNullable("01.01.2018"),
-                java.util.Optional.ofNullable("31.12.2018"));
+        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
 
-        when(messageSource.getMessage("applications.statistics", new String[]{"Statistik"}, Locale.GERMAN))
-                .thenReturn("test");
+        when(messageSource.getMessage("applications.statistics", new String[]{"Statistik"}, GERMAN)).thenReturn("test");
 
         String fileName = sut.getFileName(period);
-
         assertThat(fileName, is("test_01012018_31122018.csv"));
     }
 
     @Test
     public void getFileNameForComplete2019() {
-        FilterPeriod period = new FilterPeriod(
-                java.util.Optional.ofNullable("01.01.2019"),
-                java.util.Optional.ofNullable("31.12.2019"));
+        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
 
-        when(messageSource.getMessage(eq("applications.statistics"), any(), any()))
-                .thenReturn("test");
+        when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
 
         String fileName = sut.getFileName(period);
-
         assertThat(fileName, is("test_01012019_31122019.csv"));
+    }
+
+    private void mockMessageSource(String key) {
+        when(messageSource.getMessage(eq(key), any(), any())).thenReturn(String.format("{%s}", key));
     }
 }
