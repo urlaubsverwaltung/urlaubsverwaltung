@@ -31,6 +31,7 @@ import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.web.department.UnknownDepartmentException;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class PersonController {
                     signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
+        Integer year = requestedYear.orElseGet(() -> DateMidnight.now().getYear());
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
@@ -104,10 +105,7 @@ public class PersonController {
         }
 
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
-
-        if (account.isPresent()) {
-            model.addAttribute("account", account.get());
-        }
+        account.ifPresent(account1 -> model.addAttribute("account", account1));
 
         return PersonConstants.PERSON_DETAIL_JSP;
     }
@@ -173,7 +171,7 @@ public class PersonController {
             return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
         }
 
-        return Collections.<Person>emptyList();
+        return Collections.emptyList();
     }
 
 
@@ -199,7 +197,7 @@ public class PersonController {
             return members.stream().filter(person -> person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
         }
 
-        return Collections.<Person>emptyList();
+        return Collections.emptyList();
     }
 
 
@@ -248,7 +246,7 @@ public class PersonController {
         model.addAttribute("now", DateMidnight.now());
 
         List<Department> departments = getRelevantDepartments(signedInUser);
-        Collections.sort(departments, (a, b) -> a.getName().compareTo(b.getName()));
+        departments.sort(Comparator.comparing(Department::getName));
         model.addAttribute("departments", departments);
     }
 }

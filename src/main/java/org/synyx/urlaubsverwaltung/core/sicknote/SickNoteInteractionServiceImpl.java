@@ -60,7 +60,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteAction.CREATED, Optional.<String>empty(), creator);
+        commentService.create(sickNote, SickNoteAction.CREATED, Optional.empty(), creator);
 
         LOG.info("Created sick note: {}", sickNote);
 
@@ -70,9 +70,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote.getPerson(),
                     sickNote.getPeriod(), EventType.SICKNOTE, timeConfiguration));
 
-        if (eventId.isPresent()) {
-            absenceMappingService.create(sickNote.getId(), AbsenceType.SICKNOTE, eventId.get());
-        }
+        eventId.ifPresent(s -> absenceMappingService.create(sickNote.getId(), AbsenceType.SICKNOTE, s));
 
         return sickNote;
     }
@@ -85,7 +83,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteAction.EDITED, Optional.<String>empty(), editor);
+        commentService.create(sickNote, SickNoteAction.EDITED, Optional.empty(), editor);
 
         LOG.info("Updated sick note: {}", sickNote);
 
@@ -111,7 +109,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, Optional.<String>empty(), converter);
+        commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, Optional.empty(), converter);
 
         applicationInteractionService.createFromConvertedSickNote(application, converter);
 
@@ -141,7 +139,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteAction.CANCELLED, Optional.<String>empty(), canceller);
+        commentService.create(sickNote, SickNoteAction.CANCELLED, Optional.empty(), canceller);
 
         LOG.info("Cancelled sick note: {}", sickNote);
 

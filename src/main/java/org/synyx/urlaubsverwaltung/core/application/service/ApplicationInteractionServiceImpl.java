@@ -118,9 +118,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application.getPerson(),
                     application.getPeriod(), EventType.WAITING_APPLICATION, timeConfiguration));
 
-        if (eventId.isPresent()) {
-            absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId.get());
-        }
+        eventId.ifPresent(s -> absenceMappingService.create(application.getId(), AbsenceType.VACATION, s));
 
         return application;
     }
@@ -363,7 +361,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationService.save(application);
 
-        commentService.create(application, ApplicationAction.CONVERTED, Optional.<String>empty(), creator);
+        commentService.create(application, ApplicationAction.CONVERTED, Optional.empty(), creator);
         mailService.sendSickNoteConvertedToVacationNotification(application);
 
         return application;

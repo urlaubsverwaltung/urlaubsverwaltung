@@ -87,7 +87,7 @@ public class ApplicationForLeaveController {
             return getApplicationsForLeaveForSecondStageAuthority(user);
         }
 
-        return Collections.<ApplicationForLeave>emptyList();
+        return Collections.emptyList();
     }
 
 
@@ -113,7 +113,7 @@ public class ApplicationForLeaveController {
 
     private Comparator<ApplicationForLeave> dateComparator() {
 
-        return (o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate());
+        return Comparator.comparing(Application::getStartDate);
     }
 
 
