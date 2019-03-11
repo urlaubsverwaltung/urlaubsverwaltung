@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -34,14 +35,15 @@ class MailBuilder {
      *
      * @param templateName of the template to be used
      * @param model        to fill the template
+     * @param locale       the locale used for the email template
      * @return the text representation of the filled template
      */
-    String buildMailBody(String templateName, Map<String, Object> model) {
+    String buildMailBody(String templateName, Map<String, Object> model, Locale locale) {
 
         String templateFilename = templateName + FILE_EXTENSION;
 
         try {
-            Template template = freemarkerConfiguration.getTemplate(templateFilename);
+            Template template = freemarkerConfiguration.getTemplate(templateFilename, locale);
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         } catch (TemplateException | IOException e) {
             throw new RuntimeException("Something went wrong processing email template=" + templateName, e);
