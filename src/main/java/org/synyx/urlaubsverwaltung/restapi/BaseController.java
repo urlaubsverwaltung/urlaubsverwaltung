@@ -19,6 +19,6 @@ public class BaseController {
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     public RedirectView discover() {
 
-        return new RedirectView("index.html", RELATIVE_CONTEXT);
+        return new RedirectView("/swagger-ui.html", RELATIVE_CONTEXT);
     }
 }

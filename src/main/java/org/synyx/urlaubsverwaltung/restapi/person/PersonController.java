@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi.person;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Api(value = "Persons", description = "Get information about the persons of the application")
 @RestController("restApiPersonController")
@@ -43,7 +43,7 @@ public class PersonController {
     public ResponseWrapper<PersonListResponse> persons(
         @ApiParam(value = "LDAP Login")
         @RequestParam(value = "ldap", required = false)
-        String ldapName) {
+            String ldapName) {
 
         List<Person> persons = new ArrayList<>();
 
