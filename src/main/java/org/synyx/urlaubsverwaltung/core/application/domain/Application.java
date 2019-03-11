@@ -160,6 +160,12 @@ public class Application extends AbstractPersistable<Integer> {
      */
     private BigDecimal hours;
 
+    @Override
+    public void setId(Integer id) { // NOSONAR - make it public instead of protected
+
+        super.setId(id);
+    }
+
     public String getAddress() {
 
         return address;

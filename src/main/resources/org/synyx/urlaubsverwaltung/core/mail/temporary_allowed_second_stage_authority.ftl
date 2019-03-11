@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-es liegt ein neuer zu genehmigender Antrag vor: ${settings.baseLinkURL}web/application/<#if application.id??>${application.id}</#if>
+es liegt ein neuer zu genehmigender Antrag vor: ${settings.baseLinkURL}web/application/${application.id?c}
 
 Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden.
 <#if (comment.text)??>
