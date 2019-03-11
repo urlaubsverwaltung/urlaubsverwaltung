@@ -5,8 +5,7 @@ echo "==> new development version will be $NEW_VERSION"
 ./mvnw --version
 ./mvnw --batch-mode release:prepare \
  -Dresume=false \
- -DautoVersionSubmodules=true \
- -Dtag=$RELEASE_VERSION \
+ -Dtag=urlaubsverwaltung-$RELEASE_VERSION \
  -DreleaseVersion=$RELEASE_VERSION\
  -DdevelopmentVersion=$NEW_VERSION
 
