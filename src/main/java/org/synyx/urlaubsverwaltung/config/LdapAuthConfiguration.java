@@ -19,8 +19,12 @@ import org.synyx.urlaubsverwaltung.security.PersonContextMapper;
 @ConditionalOnProperty(name = "auth", havingValue = "ldap")
 public class LdapAuthConfiguration {
 
+    private final Environment environment;
+
     @Autowired
-    private Environment environment;
+    public LdapAuthConfiguration(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean
     public LdapContextSource ldapContextSource() {
