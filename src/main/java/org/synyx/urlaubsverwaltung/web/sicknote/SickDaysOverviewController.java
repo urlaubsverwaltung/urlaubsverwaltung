@@ -40,14 +40,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/web")
 public class SickDaysOverviewController {
 
-    @Autowired
-    private SickNoteService sickNoteService;
+    private final SickNoteService sickNoteService;
+    private final PersonService personService;
+    private final WorkDaysService calendarService;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private WorkDaysService calendarService;
+    public SickDaysOverviewController(SickNoteService sickNoteService, PersonService personService, WorkDaysService calendarService) {
+        this.sickNoteService = sickNoteService;
+        this.personService = personService;
+        this.calendarService = calendarService;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder) {

@@ -42,17 +42,18 @@ import java.util.Optional;
 @RequestMapping("/web")
 public class OvertimeController {
 
-    @Autowired
-    private OvertimeService overtimeService;
+    private final OvertimeService overtimeService;
+    private final PersonService personService;
+    private final SessionService sessionService;
+    private final OvertimeValidator validator;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private SessionService sessionService;
-
-    @Autowired
-    private OvertimeValidator validator;
+    public OvertimeController(OvertimeService overtimeService, PersonService personService, SessionService sessionService, OvertimeValidator validator) {
+        this.overtimeService = overtimeService;
+        this.personService = personService;
+        this.sessionService = sessionService;
+        this.validator = validator;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {

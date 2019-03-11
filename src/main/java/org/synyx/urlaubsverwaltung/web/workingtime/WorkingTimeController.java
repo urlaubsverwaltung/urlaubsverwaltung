@@ -41,17 +41,18 @@ import java.util.Optional;
 @RequestMapping("/web")
 public class WorkingTimeController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final WorkingTimeService workingTimeService;
+    private final SettingsService settingsService;
+    private final WorkingTimeValidator validator;
 
     @Autowired
-    private WorkingTimeService workingTimeService;
-
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private WorkingTimeValidator validator;
+    public WorkingTimeController(PersonService personService, WorkingTimeService workingTimeService, SettingsService settingsService, WorkingTimeValidator validator) {
+        this.personService = personService;
+        this.workingTimeService = workingTimeService;
+        this.settingsService = settingsService;
+        this.validator = validator;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {

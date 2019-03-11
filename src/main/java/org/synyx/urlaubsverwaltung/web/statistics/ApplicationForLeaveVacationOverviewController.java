@@ -21,11 +21,14 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 @Controller
 public class ApplicationForLeaveVacationOverviewController {
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService;
+    private final DepartmentService departmentService;
 
     @Autowired
-    private DepartmentService departmentService;
+    public ApplicationForLeaveVacationOverviewController(SessionService sessionService, DepartmentService departmentService) {
+        this.sessionService = sessionService;
+        this.departmentService = departmentService;
+    }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/vacationoverview", method = RequestMethod.POST)
