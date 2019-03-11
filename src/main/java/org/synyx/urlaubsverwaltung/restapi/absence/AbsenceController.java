@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi.absence;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Api(value = "Absences", description = "Get all absences for a certain period")
+@Api("Absences: Get all absences for a certain period")
 @RestController("restApiAbsenceController")
 @RequestMapping("/api")
 public class AbsenceController {

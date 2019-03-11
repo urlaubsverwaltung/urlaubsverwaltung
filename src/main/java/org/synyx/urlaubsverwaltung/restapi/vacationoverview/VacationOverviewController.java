@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 
 import java.util.List;
 
-@Api(value = "VacationOverview", description = "Get Vacation-Overview Metadata")
+@Api("VacationOverview: Get Vacation-Overview Metadata")
 @RestController("restApiVacationOverview")
 @RequestMapping("/api")
 public class VacationOverviewController {
