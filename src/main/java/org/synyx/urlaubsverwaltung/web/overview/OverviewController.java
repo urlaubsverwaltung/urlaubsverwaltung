@@ -49,7 +49,7 @@ import java.util.Optional;
 public class OverviewController {
 
     private final PersonService personService;
-    private final  AccountService accountService;
+    private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final SessionService sessionService;
     private final ApplicationService applicationService;
