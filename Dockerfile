@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM openjdk:11-jre
 EXPOSE 8080
 
 ENV JAVA_OPTIONS=""
