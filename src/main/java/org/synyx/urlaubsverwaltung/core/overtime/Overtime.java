@@ -96,6 +96,11 @@ public class Overtime extends AbstractPersistable<Integer> {
         return hours;
     }
 
+    @Override
+    public void setId(Integer id) { // NOSONAR - make it public instead of protected
+
+        super.setId(id);
+    }
 
     public void setPerson(Person person) {
 

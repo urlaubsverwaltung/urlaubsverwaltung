@@ -159,6 +159,7 @@ public class MailServiceIntegrationTest {
 
         DateMidnight now = DateMidnight.now();
         Application application = new Application();
+        application.setId(1234);
         application.setPerson(person);
         application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub"));
         application.setDayLength(DayLength.FULL);
@@ -269,7 +270,7 @@ public class MailServiceIntegrationTest {
         assertTrue(contentDepartmentHead.contains("Hallo " + recipient.getNiceName()));
         assertTrue(contentDepartmentHead.contains(niceName));
         assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
-        assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/"));
+        assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/1234"));
         assertTrue("No comment in mail content", contentDepartmentHead.contains(comment.getText()));
         assertTrue("Wrong comment author", contentDepartmentHead.contains(comment.getPerson().getNiceName()));
     }
@@ -312,6 +313,7 @@ public class MailServiceIntegrationTest {
 
         String content = (String) message.getContent();
 
+        assertTrue(content.contains("es liegt ein neuer zu genehmigender Antrag vor: http://urlaubsverwaltung/web/application/1234"));
         assertTrue(content.contains("Marlene Muster: 05.11.2015 bis 06.11.2015"));
         assertTrue(content.contains("Niko Schmidt: 04.11.2015 bis 04.11.2015"));
     }
@@ -349,6 +351,7 @@ public class MailServiceIntegrationTest {
         assertTrue(contentUser.contains("gestellter Antrag wurde von Hugo Boss genehmigt"));
         assertTrue("No comment in mail content", contentUser.contains(comment.getText()));
         assertTrue("Wrong comment author", contentUser.contains(comment.getPerson().getNiceName()));
+        assertTrue(contentUser.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
 
         // get email office
         Message msgOffice = inboxOffice.get(0);
@@ -367,6 +370,7 @@ public class MailServiceIntegrationTest {
         assertTrue(contentOfficeMail.contains("Erholungsurlaub"));
         assertTrue("No comment in mail content", contentOfficeMail.contains(comment.getText()));
         assertTrue("Wrong comment author", contentOfficeMail.contains(comment.getPerson().getNiceName()));
+        assertTrue(contentOfficeMail.contains("es liegt ein neuer genehmigter Antrag vor: http://urlaubsverwaltung/web/application/1234"));
     }
 
 
@@ -401,6 +405,7 @@ public class MailServiceIntegrationTest {
             "Bitte beachte, dass dieser erst noch von einem entsprechend Verantwortlichen freigegeben werden muss"));
         assertTrue("No comment in mail content", contentUser.contains(comment.getText()));
         assertTrue("Wrong comment author", contentUser.contains(comment.getPerson().getNiceName()));
+        assertTrue(contentUser.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
 
         // get email office
         Message msgSecondStage = inboxSecondStage.get(0);
@@ -413,8 +418,8 @@ public class MailServiceIntegrationTest {
 
         // check content of office email
         String contentSecondStageMail = (String) msgSecondStage.getContent();
-        assertTrue(contentSecondStageMail.contains(
-            "Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden"));
+        assertTrue(contentSecondStageMail.contains("es liegt ein neuer zu genehmigender Antrag vor: http://urlaubsverwaltung/web/application/1234"));
+        assertTrue(contentSecondStageMail.contains("Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden"));
         assertTrue(contentSecondStageMail.contains("Lieschen Müller"));
         assertTrue(contentSecondStageMail.contains("Erholungsurlaub"));
         assertTrue("No comment in mail content", contentSecondStageMail.contains(comment.getText()));
@@ -445,6 +450,7 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Lieschen Müller"));
         assertTrue(content.contains("wurde leider von Hugo Boss abgelehnt"));
+        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
@@ -476,6 +482,7 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("dein Urlaubsantrag wurde erfolgreich eingereicht"));
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
+        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
 
@@ -507,6 +514,7 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("dein Urlaubsantrag wurde von Marlene Muster für dich storniert"));
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
+        assertTrue(content.contains("Es handelt sich um folgenden Urlaubsantrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
     @Test
@@ -536,6 +544,7 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Marlene Muster hat einen Urlaubsantrag für dich gestellt"));
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
+        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
 
@@ -760,6 +769,7 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Office"));
         assertTrue(content.contains("hat beantragt den bereits genehmigten Urlaub"));
+        assertTrue(content.contains("Es handelt sich um folgenden Urlaubsantrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
 
@@ -786,7 +796,7 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Max Muster"));
         assertTrue(content.contains("Rick Grimes bittet dich um Hilfe bei der Entscheidung über einen Urlaubsantrag"));
-        assertTrue(content.contains("http://urlaubsverwaltung/web/application/"));
+        assertTrue(content.contains("http://urlaubsverwaltung/web/application/1234"));
     }
 
 
@@ -815,6 +825,7 @@ public class MailServiceIntegrationTest {
         // check content of email
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Hugo Boss"));
+        assertTrue(content.contains("Den Urlaubsantrag findet ihr hier: http://urlaubsverwaltung/web/application/1234"));
     }
 
 
@@ -870,6 +881,7 @@ public class MailServiceIntegrationTest {
 
         for (Application application : applications) {
             assertTrue(content.contains(application.getApplier().getNiceName()));
+            assertTrue(content.contains("http://urlaubsverwaltung/web/application/1234"));
         }
     }
 
@@ -899,6 +911,7 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Lieschen Müller"));
         assertTrue(content.contains("Marlene Muster hat deine Krankmeldung zu Urlaub umgewandelt"));
+        assertTrue(content.contains("Für Details siehe: http://urlaubsverwaltung/web/application/1234"));
     }
 
 
@@ -967,6 +980,6 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Office"));
         assertTrue(content.contains("es wurden Überstunden erfasst"));
-        assertTrue(content.contains("http://urlaubsverwaltung/web/overtime/"));
+        assertTrue(content.contains("http://urlaubsverwaltung/web/overtime/1234"));
     }
 }
