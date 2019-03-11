@@ -38,18 +38,18 @@
                 <h2 class="error-description">
                     <c:choose>
                         <c:when test="${statusCode == 403}">
-                            Dir fehlen die Berechtigungen für die angeforderte Seite.
+                          <spring:message code="errorPage.403"/>
                         </c:when>
                         <c:when test="${statusCode == 404}">
-                            Die angeforderte Seite existiert nicht.
+                          <spring:message code="errorPage.404"/>
                         </c:when>
                         <c:otherwise>
-                            Hier hat sich ein Fehler eingeschlichen...
+                          <spring:message code="errorPage.other"/>
                         </c:otherwise>
                     </c:choose>
                 </h2>
                 <p class="error-link">
-                    <a href="${URL_PREFIX}/overview">Zurück zur Übersicht</a>
+                    <a href="${URL_PREFIX}/overview"><spring:message code="errorPage.back"/></a>
                 </p>
             </div>
         </div>

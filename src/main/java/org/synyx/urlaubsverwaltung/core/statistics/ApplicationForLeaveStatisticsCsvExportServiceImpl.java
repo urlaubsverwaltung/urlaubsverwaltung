@@ -73,7 +73,7 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements Applic
 
                 String[] csvRowVacationTypes = new String[csvHeader.length];
 
-                csvRowVacationTypes[2] = type.getDisplayName();
+                csvRowVacationTypes[2] = getTranslation(type.getMessageKey());
                 csvRowVacationTypes[3] = decimalFormat
                         .format(applicationForLeaveStatistics.getAllowedVacationDays().get(type));
                 csvRowVacationTypes[4] = decimalFormat

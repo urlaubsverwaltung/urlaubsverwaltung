@@ -11,7 +11,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
-    <title>Login</title>
+    <title><spring:message code="login.title"/></title>
     <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />"/>
     <link rel="stylesheet" href="<spring:url value='/lib/bootstrap/bootstrap-3.3.7.min.css' />">
     <link rel="stylesheet" href="<spring:url value='/lib/font-awesome/css/font-awesome-4.5.0.min.css' />"/>
@@ -28,7 +28,7 @@
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <a class="navbar-brand" href="#">
-                Urlaubsverwaltung
+                <spring:message code="header.title"/>
             </a>
         </div>
     </div><!-- /.container-fluid -->
@@ -45,23 +45,23 @@
                 <form method="post" class="login--form" action="/login">
                     <c:if test="${param.login_error != null}">
                         <div id="login--error" class="alert alert-danger">
-                            Der eingegebene Nutzername oder das Passwort ist falsch.
+                          <spring:message code="login.form.error"/>
                         </div>
                     </c:if>
 
                     <div class="form-group">
-                        <label for="username">Username</label>
+                        <label for="username"><spring:message code="login.form.username"/></label>
                         <input class="form-control" type="text" name="username" id="username" autofocus="autofocus">
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Passwort</label>
+                        <label for="password"><spring:message code="login.form.password"/></label>
                         <input class="form-control" type="password" name="password" id="password">
                     </div>
 
                     <div class="form-group">
                         <button class="btn btn-primary btn-block" type="submit">
-                            <i class="fa fa-sign-in"></i> Login
+                            <i class="fa fa-sign-in"></i> <spring:message code="login.form.submit"/>
                         </button>
                     </div>
 
@@ -79,7 +79,7 @@
 <footer>
     <div class="row">
         <div class="col-xs-12">
-            <p>synyx Urlaubsverwaltung Version ${version}</p>
+            <p><spring:message code="header.title"/> v${version} powered by <a href="https://synyx.de/">synyx</a></p>
         </div>
     </div>
 </footer>

@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,7 +29,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.core.mail.MailServiceImpl.LOCALE;
 
 
 /**
@@ -98,7 +98,7 @@ public class MailServiceImplTest {
 
         ArgumentCaptor<List> recipientsArgumentCaptor = ArgumentCaptor.forClass(List.class);
 
-        when(mailBuilder.buildMailBody(any(), any())).thenReturn("body");
+        when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("body");
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("subject");
 
 
@@ -126,9 +126,10 @@ public class MailServiceImplTest {
         Person boss = TestDataCreator.createPerson("boss");
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
                 .thenReturn(Collections.singletonList(boss));
-        when(messageSource.getMessage("subject.application.applied.boss", new String[]{"Marlene Muster"}, LOCALE)).thenReturn("Neuer Urlaubsantrag für Marlene Muster");
+        when(messageSource.getMessage("subject.application.applied.boss", new String[]{"Marlene Muster"}, Locale.GERMAN))
+            .thenReturn("Neuer Urlaubsantrag für Marlene Muster");
 
-        when(mailBuilder.buildMailBody(any(), any())).thenReturn("mail body");
+        when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("mail body");
         mailService.sendNewApplicationNotification(application, null);
 
         verify(mailSender).sendEmail(any(MailSettings.class), any(List.class), eq("Neuer Urlaubsantrag für "+ application.getPerson().getNiceName()), anyString());

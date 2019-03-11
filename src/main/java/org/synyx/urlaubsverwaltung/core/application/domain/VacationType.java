@@ -23,7 +23,7 @@ public class VacationType extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private VacationCategory category;
 
-    private String displayName;
+    private String messageKey;
 
     @Override
     public void setId(Integer id) { // NOSONAR - make it public instead of protected
@@ -52,15 +52,15 @@ public class VacationType extends AbstractPersistable<Integer> {
     }
 
 
-    public String getDisplayName() {
+    public String getMessageKey() {
 
-        return displayName;
+        return messageKey;
     }
 
 
-    public void setDisplayName(String displayName) {
+    public void setMessageKey(String messageKey) {
 
-        this.displayName = displayName;
+        this.messageKey = messageKey;
     }
 
 

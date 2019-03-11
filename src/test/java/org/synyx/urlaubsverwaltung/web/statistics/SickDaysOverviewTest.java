@@ -41,11 +41,11 @@ public class SickDaysOverviewTest {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
-        sickNoteType.setDisplayName("Krankmeldung");
+        sickNoteType.setMessageKey("Krankmeldung");
 
         SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
-        sickNoteTypeChild.setDisplayName("Kind-Krankmeldung");
+        sickNoteTypeChild.setMessageKey("Kind-Krankmeldung");
 
         SickNote sickNoteWithoutAUB = TestDataCreator.anySickNote();
         sickNoteWithoutAUB.setSickNoteType(sickNoteType);

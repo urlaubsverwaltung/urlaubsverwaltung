@@ -2,7 +2,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
-<title>Urlaubsverwaltung</title>
+<title><spring:message code="header.title"/></title>
 <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/jquery-ui-1.12.1.css' />" />
 <link rel="stylesheet" href="<spring:url value='/lib/bootstrap/bootstrap-3.3.7.min.css' />">
