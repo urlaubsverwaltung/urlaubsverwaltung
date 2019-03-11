@@ -502,6 +502,20 @@
                         </div>
                         <div class="form-group">
                                     <label class="control-label col-md-4"
+                                           for="calendarSettings.exchangeCalendarSettings.ewsUrl">
+                                        <spring:message code='settings.calendar.ews.url'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="calendarSettings.exchangeCalendarSettings.ewsUrl"
+                                                    path="calendarSettings.exchangeCalendarSettings.ewsUrl"
+                                                    class="form-control" cssErrorClass="form-control error"/>
+                                        <span class="help-inline"><form:errors
+                                            path="calendarSettings.exchangeCalendarSettings.ewsUrl"
+                                            cssClass="error"/></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-4"
                                            for="calendarSettings.exchangeCalendarSettings.calendar">
                                         <spring:message code='settings.calendar.ews.calendar'/>:
                             </label>
