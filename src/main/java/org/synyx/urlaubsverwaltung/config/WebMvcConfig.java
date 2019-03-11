@@ -15,8 +15,12 @@ import org.synyx.urlaubsverwaltung.web.UserInterceptor;
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
+    private final UserInterceptor userInterceptor;
+
     @Autowired
-    private UserInterceptor userInterceptor;
+    public WebMvcConfig(UserInterceptor userInterceptor) {
+        this.userInterceptor = userInterceptor;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
