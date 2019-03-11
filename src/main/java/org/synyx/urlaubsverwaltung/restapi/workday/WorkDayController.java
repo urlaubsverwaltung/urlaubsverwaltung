@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi.workday;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -58,16 +58,16 @@ public class WorkDayController {
     public ResponseWrapper<WorkDayResponse> workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
-        String from,
+            String from,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-08")
         @RequestParam("to")
-        String to,
+            String to,
         @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")
         @RequestParam("length")
-        String length,
+            String length,
         @ApiParam(value = "ID of the person")
         @RequestParam("person")
-        Integer personId) {
+            Integer personId) {
 
         DateTimeFormatter fmt = DateTimeFormat.forPattern(RestApiDateFormat.DATE_PATTERN);
         DateMidnight startDate = DateMidnight.parse(from, fmt);

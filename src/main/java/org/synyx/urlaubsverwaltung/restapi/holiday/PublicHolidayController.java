@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.restapi.holiday;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
 import de.jollyday.Holiday;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author  Aljona Murygina <murygina@synyx.de>
+ * @author Aljona Murygina <murygina@synyx.de>
  */
 @Api(value = "Public Holidays", description = "Get information about public holidays")
 @RestController("restApiCalendarController")
@@ -41,7 +41,7 @@ public class PublicHolidayController {
 
     @Autowired
     public PublicHolidayController(PublicHolidaysService publicHolidaysService, PersonService personService,
-        WorkingTimeService workingTimeService, SettingsService settingsService) {
+                                   WorkingTimeService workingTimeService, SettingsService settingsService) {
 
         this.publicHolidaysService = publicHolidaysService;
         this.personService = personService;
@@ -56,13 +56,13 @@ public class PublicHolidayController {
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
-        String year,
+            String year,
         @ApiParam(value = "Month of year to get the public holidays for")
         @RequestParam(value = "month", required = false)
-        String month,
+            String month,
         @ApiParam(value = "ID of the person to get the public holidays for. Can be missing to get system defaults.")
         @RequestParam(value = "person", required = false)
-        Integer personId) {
+            Integer personId) {
 
         Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
 
@@ -76,9 +76,9 @@ public class PublicHolidayController {
         Set<Holiday> holidays = getHolidays(year, optionalMonth, federalState);
 
         List<PublicHolidayResponse> publicHolidayResponses = holidays.stream().map(holiday ->
-                        new PublicHolidayResponse(holiday,
-                            publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight(),
-                                federalState))).collect(Collectors.toList());
+            new PublicHolidayResponse(holiday,
+                publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight(),
+                    federalState))).collect(Collectors.toList());
 
         return new ResponseWrapper<>(new PublicHolidayListResponse(publicHolidayResponses));
     }

@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi.department;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author  Daniel Hammann - <hammann@synyx.de>
+ * @author Daniel Hammann - <hammann@synyx.de>
  */
 @Api(value = "Departments", description = "Get information about the departments of the application")
 @RestController("restApiDepartmentController")
@@ -35,9 +35,9 @@ public class DepartmentController {
     public ResponseWrapper<DepartmentsListWrapper> departments() {
 
         return new ResponseWrapper<>(new DepartmentsListWrapper(
-                    departmentService.getAllDepartments()
-                        .stream()
-                        .map(DepartmentResponse::new)
-                        .collect(Collectors.toList())));
+            departmentService.getAllDepartments()
+                .stream()
+                .map(DepartmentResponse::new)
+                .collect(Collectors.toList())));
     }
 }
