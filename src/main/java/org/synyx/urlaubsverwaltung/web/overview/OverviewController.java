@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.overview;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,7 +25,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
@@ -35,8 +32,12 @@ import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.web.ControllerConstants.YEAR_ATTRIBUTE;
 
 /**
  * Controller to display the personal overview page with basic information about
@@ -72,8 +73,7 @@ public class OverviewController {
     }
 
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
-    public String showOverview(
-            @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
+    public String showOverview(@RequestParam(value = YEAR_ATTRIBUTE, required = false) String year) {
 
         Person user = sessionService.getSignedInUser();
 
@@ -86,7 +86,7 @@ public class OverviewController {
 
     @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable("personId") Integer personId,
-            @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
+                               @RequestParam(value = YEAR_ATTRIBUTE, required = false) Integer year, Model model)
             throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -106,7 +106,7 @@ public class OverviewController {
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
 
-        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
+        model.addAttribute(YEAR_ATTRIBUTE, DateMidnight.now().getYear());
         model.addAttribute("currentYear", DateMidnight.now().getYear());
         model.addAttribute("currentMonth", DateMidnight.now().getMonthOfYear());
 
@@ -118,11 +118,10 @@ public class OverviewController {
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year),
                 DateUtil.getLastDayOfYear(year));
 
-        List<ExtendedSickNote> extendedSickNotes = FluentIterable.from(sickNotes)
-                .transform(input -> new ExtendedSickNote(input, calendarService)).toSortedList((o1, o2) -> {
-                    // show latest sick notes at first
-                    return o2.getStartDate().compareTo(o1.getStartDate());
-                });
+        List<ExtendedSickNote> extendedSickNotes = sickNotes.stream()
+            .map(input -> new ExtendedSickNote(input, calendarService))
+            .sorted(Comparator.comparing(ExtendedSickNote::getStartDate).reversed())
+            .collect(toList());
 
         model.addAttribute("sickNotes", extendedSickNotes);
 
@@ -133,17 +132,16 @@ public class OverviewController {
     private void prepareApplications(Person person, int year, Model model) {
 
         // get the person's applications for the given year
-        List<Application> applications = FluentIterable
-                .from(applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
-                        DateUtil.getLastDayOfYear(year), person))
-                .filter(input -> !input.hasStatus(ApplicationStatus.REVOKED)).toList();
+        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
+            DateUtil.getLastDayOfYear(year), person).stream()
+            .filter(input -> !input.hasStatus(ApplicationStatus.REVOKED))
+            .collect(toList());
 
         if (!applications.isEmpty()) {
-            ImmutableList<ApplicationForLeave> applicationsForLeave = FluentIterable.from(applications)
-                    .transform(input -> new ApplicationForLeave(input, calendarService)).toSortedList((o1, o2) -> {
-                        // show latest applications at first
-                        return o2.getStartDate().compareTo(o1.getStartDate());
-                    });
+            List<ApplicationForLeave> applicationsForLeave = applications.stream()
+                .map(application -> new ApplicationForLeave(application, calendarService))
+                .sorted(Comparator.comparing(ApplicationForLeave::getStartDate).reversed())
+                .collect(toList());
 
             model.addAttribute("applications", applicationsForLeave);
 
