@@ -1,52 +1,48 @@
 package org.synyx.urlaubsverwaltung.config;
 
-import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
-import com.mangofactory.swagger.models.dto.ApiInfo;
-import com.mangofactory.swagger.plugin.EnableSwagger;
-import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.Collections;
 
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Configuration
-@EnableSwagger
+@EnableSwagger2
 public class SwaggerConfig {
 
     @Value(value = "${info.app.version}")
     private String version;
 
-    private SpringSwaggerConfig springSwaggerConfig;
-
-    @Autowired
-    public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
-
-        this.springSwaggerConfig = springSwaggerConfig;
-    }
-
-
     @Bean
-    public SwaggerSpringMvcPlugin swaggerSpringMvcPlugin() {
-
-        SwaggerSpringMvcPlugin swaggerSpringMvcPlugin = new SwaggerSpringMvcPlugin(this.springSwaggerConfig);
-        swaggerSpringMvcPlugin.apiVersion(version);
-        swaggerSpringMvcPlugin.apiInfo(new ProjectApiInfo());
-        swaggerSpringMvcPlugin.includePatterns("/api/.+");
-
-        return swaggerSpringMvcPlugin;
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("org.synyx.urlaubsverwaltung.restapi"))
+            .paths(PathSelectors.ant("/api/*"))
+            .build()
+            .apiInfo(apiInfo());
     }
 
-    private final class ProjectApiInfo extends ApiInfo {
 
-        private ProjectApiInfo() {
-
-            super("Urlaubsverwaltung API: " + version,
-                "This Rest API provides the possibility to fetch information about the persons "
-                + "and their vacation and sick notes.", null, "murygina@synyx.de", null, null);
-        }
+    private ApiInfo apiInfo() {
+        return new ApiInfo(
+            "Urlaubsverwaltung API",
+            "This rest API provides the possibility to fetch information about " +
+                "absences, availabilities, persons, public holidays, sicknotes, vacations and working days",
+            version,
+            "Terms of service",
+            new Contact("synyx GmbH", "https://github.com/synyx/urlaubsverwaltung", "urlaubsverwaltung@synyx.de"),
+            "Apache 2.0", "https://github.com/synyx/urlaubsverwaltung/blob/master/LICENSE.txt", Collections.emptyList());
     }
 }

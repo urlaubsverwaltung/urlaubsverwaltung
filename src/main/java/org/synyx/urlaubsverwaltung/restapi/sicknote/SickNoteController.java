@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi.sicknote;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
-@Api(value = "Sick Notes", description = "Get all sick notes for a certain period")
+@Api("Sick Notes: Get all sick notes for a certain period")
 @RestController("restApiSickNoteController")
 @RequestMapping("/api")
 public class SickNoteController {
@@ -44,20 +44,20 @@ public class SickNoteController {
 
     @ApiOperation(
         value = "Get all sick notes for a certain period", notes = "Get all sick notes for a certain period. "
-            + "If a person is specified, only the sick notes of this person are fetched. "
-            + "Information only reachable for users with role office."
+        + "If a person is specified, only the sick notes of this person are fetched. "
+        + "Information only reachable for users with role office."
     )
     @RequestMapping(value = "/sicknotes", method = RequestMethod.GET)
     public ResponseWrapper<SickNoteListResponse> sickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")
-        String from,
+            String from,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam(value = "to")
-        String to,
+            String to,
         @ApiParam(value = "ID of the person")
         @RequestParam(value = "person", required = false)
-        Integer personId) {
+            Integer personId) {
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.DATE_PATTERN);
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
@@ -78,9 +78,9 @@ public class SickNoteController {
         }
 
         List<AbsenceResponse> sickNoteResponses = sickNotes.stream()
-                .filter(SickNote::isActive)
-                .map(AbsenceResponse::new)
-                .collect(Collectors.toList());
+            .filter(SickNote::isActive)
+            .map(AbsenceResponse::new)
+            .collect(Collectors.toList());
 
         return new ResponseWrapper<>(new SickNoteListResponse(sickNoteResponses));
     }

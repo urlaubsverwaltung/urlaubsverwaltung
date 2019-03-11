@@ -2,6 +2,7 @@
 * Upgrade auf Spring Boot 2.1.3 [#501](https://github.com/synyx/urlaubsverwaltung/pull/501) 
 * Fix Bug bei dem die Überstunden trotz Deaktivierung angezeigt wurden [#511](https://github.com/synyx/urlaubsverwaltung/pull/511) 
 * Fix Bug beim Generieren von Links in Emails [#517](https://github.com/synyx/urlaubsverwaltung/pull/517)
+* Upgrade Swagger API Spezifikation von Version 1.2 zu 2 [#523](https://github.com/synyx/urlaubsverwaltung/pull/523)
 
 ### [urlaubsverwaltung-2.35.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.35.0)
 * Fix mariadb -> mysql connector [#509](https://github.com/synyx/urlaubsverwaltung/pull/509) 

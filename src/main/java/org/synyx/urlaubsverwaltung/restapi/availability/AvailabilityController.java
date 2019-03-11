@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi.availability;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ import java.util.Optional;
  * @author  Marc Kannegiesser - kannegiesser@synyx.de
  * @author  Timo Eifler - eifler@synyx.de
  */
-@Api(value = "Availabilities", description = "Get all availabilities for a certain period")
+@Api("Availabilities: Get all availabilities for a certain period")
 @RestController("restApiAvailabilityController")
 @RequestMapping("/api")
 public class AvailabilityController {
