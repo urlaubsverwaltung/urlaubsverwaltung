@@ -30,7 +30,7 @@ import java.util.Optional;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Api(value = "Vacations", description = "Get all vacations for a certain period")
+@Api("Vacations: Get all vacations for a certain period")
 @RestController("restApiVacationController")
 @RequestMapping("/api")
 public class VacationController {

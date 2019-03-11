@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Api(value = "Work Days", description = "Get information about work day in a certain period")
+@Api("Work Days: Get information about work day in a certain period")
 @RestController("restApiWorkDayController")
 @RequestMapping("/api")
 public class WorkDayController {

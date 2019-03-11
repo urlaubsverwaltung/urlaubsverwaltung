@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Api(value = "Absences", description = "Get all absences for a certain period")
+@Api("Absences: Get all absences for a certain period")
 @RestController("restApiAbsenceController")
 @RequestMapping("/api")
 public class AbsenceController {

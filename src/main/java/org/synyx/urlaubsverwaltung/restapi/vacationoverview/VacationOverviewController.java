@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 
 import java.util.List;
 
-@Api(value = "VacationOverview", description = "Get Vacation-Overview Metadata")
+@Api("VacationOverview: Get Vacation-Overview Metadata")
 @RestController("restApiVacationOverview")
 @RequestMapping("/api")
 public class VacationOverviewController {
