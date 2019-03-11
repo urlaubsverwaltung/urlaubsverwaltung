@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * @author Aljona Murygina - murygina@synyx.de
  */
-@Api(value = "Sick Notes", description = "Get all sick notes for a certain period")
+@Api("Sick Notes: Get all sick notes for a certain period")
 @RestController("restApiSickNoteController")
 @RequestMapping("/api")
 public class SickNoteController {

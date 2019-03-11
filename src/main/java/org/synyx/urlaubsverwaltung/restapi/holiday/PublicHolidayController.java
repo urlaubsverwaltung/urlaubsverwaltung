@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * @author Aljona Murygina <murygina@synyx.de>
  */
-@Api(value = "Public Holidays", description = "Get information about public holidays")
+@Api("Public Holidays: Get information about public holidays")
 @RestController("restApiCalendarController")
 @RequestMapping("/api")
 public class PublicHolidayController {

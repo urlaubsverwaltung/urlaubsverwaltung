@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * @author Aljona Murygina - murygina@synyx.de
  */
-@Api(value = "Persons", description = "Get information about the persons of the application")
+@Api("Persons: Get information about the persons of the application")
 @RestController("restApiPersonController")
 @RequestMapping("/api")
 public class PersonController {

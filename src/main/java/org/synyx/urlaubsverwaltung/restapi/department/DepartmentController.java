@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * @author Daniel Hammann - <hammann@synyx.de>
  */
-@Api(value = "Departments", description = "Get information about the departments of the application")
+@Api("Departments: Get information about the departments of the application")
 @RestController("restApiDepartmentController")
 @RequestMapping("/api")
 public class DepartmentController {
