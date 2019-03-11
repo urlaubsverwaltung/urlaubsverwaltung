@@ -2,13 +2,18 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Collections;
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -25,9 +30,9 @@ public class LdapUserDataImporterTest {
     @Before
     public void setUp() {
 
-        ldapUserServiceMock = Mockito.mock(LdapUserService.class);
-        ldapSyncServiceMock = Mockito.mock(LdapSyncService.class);
-        personServiceMock = Mockito.mock(PersonService.class);
+        ldapUserServiceMock = mock(LdapUserService.class);
+        ldapSyncServiceMock = mock(LdapSyncService.class);
+        personServiceMock = mock(PersonService.class);
 
         ldapUserDataImporter = new LdapUserDataImporter(ldapUserServiceMock, ldapSyncServiceMock, personServiceMock);
     }
@@ -38,22 +43,22 @@ public class LdapUserDataImporterTest {
 
         ldapUserDataImporter.sync();
 
-        Mockito.verify(ldapUserServiceMock).getLdapUsers();
+        verify(ldapUserServiceMock).getLdapUsers();
     }
 
 
     @Test
     public void ensureCreatesPersonIfLdapUserNotYetExists() {
 
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
-        Mockito.when(ldapUserServiceMock.getLdapUsers())
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.empty());
+        when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
                     new LdapUser("muster", Optional.empty(), Optional.empty(), Optional.empty())));
 
         ldapUserDataImporter.sync();
 
-        Mockito.verify(personServiceMock, Mockito.times(1)).getPersonByLogin("muster");
-        Mockito.verify(ldapSyncServiceMock)
+        verify(personServiceMock, times(1)).getPersonByLogin("muster");
+        verify(ldapSyncServiceMock)
             .createPerson("muster", Optional.empty(), Optional.empty(), Optional.empty());
     }
 
@@ -63,16 +68,16 @@ public class LdapUserDataImporterTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
-        Mockito.when(ldapUserServiceMock.getLdapUsers())
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
+        when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
                     new LdapUser(person.getLoginName(), Optional.of("Vorname"), Optional.of("Nachname"),
                         Optional.of("Email"))));
 
         ldapUserDataImporter.sync();
 
-        Mockito.verify(personServiceMock, Mockito.times(1)).getPersonByLogin(person.getLoginName());
-        Mockito.verify(ldapSyncServiceMock)
+        verify(personServiceMock, times(1)).getPersonByLogin(person.getLoginName());
+        verify(ldapSyncServiceMock)
             .syncPerson(person, Optional.of("Vorname"), Optional.of("Nachname"), Optional.of("Email"));
     }
 }

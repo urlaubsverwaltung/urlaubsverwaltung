@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.sicknote;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -19,6 +18,13 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,8 +44,8 @@ public class SickNoteControllerTest {
     @Before
     public void setUp() {
 
-        sickNoteServiceMock = Mockito.mock(SickNoteService.class);
-        personServiceMock = Mockito.mock(PersonService.class);
+        sickNoteServiceMock = mock(SickNoteService.class);
+        personServiceMock = mock(PersonService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new SickNoteController(sickNoteServiceMock, personServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
@@ -53,15 +59,15 @@ public class SickNoteControllerTest {
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "2016-12-31"))
             .andExpect(status().isOk());
 
-        Mockito.verify(sickNoteServiceMock).getByPeriod(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31));
-        Mockito.verifyZeroInteractions(personServiceMock);
+        verify(sickNoteServiceMock).getByPeriod(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31));
+        verifyZeroInteractions(personServiceMock);
     }
 
 
     @Test
     public void ensureReturnsSickNotesOfPersonIfPersonProvided() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt()))
+        when(personServiceMock.getPersonByID(anyInt()))
             .thenReturn(Optional.of(TestDataCreator.createPerson()));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01")
@@ -69,10 +75,10 @@ public class SickNoteControllerTest {
                 .param("person", "23"))
             .andExpect(status().isOk());
 
-        Mockito.verify(sickNoteServiceMock)
-            .getByPersonAndPeriod(Mockito.any(Person.class), Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 12, 31)));
-        Mockito.verify(personServiceMock).getPersonByID(23);
+        verify(sickNoteServiceMock)
+            .getByPersonAndPeriod(any(Person.class), eq(new DateMidnight(2016, 1, 1)),
+                eq(new DateMidnight(2016, 12, 31)));
+        verify(personServiceMock).getPersonByID(23);
     }
 
 
@@ -84,7 +90,7 @@ public class SickNoteControllerTest {
         SickNote sickNote2 = TestDataCreator.createSickNote(TestDataCreator.createPerson("bar"));
         SickNote sickNote3 = TestDataCreator.createSickNote(TestDataCreator.createPerson("baz"));
 
-        Mockito.when(sickNoteServiceMock.getByPeriod(Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
+        when(sickNoteServiceMock.getByPeriod(any(DateMidnight.class), any(DateMidnight.class)))
             .thenReturn(Arrays.asList(sickNote1, sickNote2, sickNote3));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "2016-12-31"))
@@ -149,7 +155,7 @@ public class SickNoteControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "foo").param("person", "23"))
             .andExpect(status().isBadRequest());

@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
@@ -13,6 +12,11 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -25,7 +29,7 @@ public class ApplicationForLeaveTest {
     @Before
     public void setUp() {
 
-        calendarService = Mockito.mock(WorkDaysService.class);
+        calendarService = mock(WorkDaysService.class);
     }
 
 
@@ -37,13 +41,13 @@ public class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, new DateMidnight(2015, 3, 3),
                 new DateMidnight(2015, 3, 6), DayLength.FULL);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
         ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);
 
-        Mockito.verify(calendarService)
+        verify(calendarService)
             .getWorkDays(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
 
         Assert.assertNotNull("Should not be null", applicationForLeave.getStartDate());
@@ -67,8 +71,8 @@ public class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, new DateMidnight(2016, 3, 1),
                 new DateMidnight(2016, 3, 4), DayLength.FULL);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 
         ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);

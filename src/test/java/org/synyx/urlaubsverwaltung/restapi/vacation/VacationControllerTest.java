@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.vacation;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -21,6 +20,12 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -41,9 +46,9 @@ public class VacationControllerTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        applicationServiceMock = Mockito.mock(ApplicationService.class);
-        departmentServiceMock = Mockito.mock(DepartmentService.class);
+        personServiceMock = mock(PersonService.class);
+        applicationServiceMock = mock(ApplicationService.class);
+        departmentServiceMock = mock(DepartmentService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new VacationController(personServiceMock, applicationServiceMock,
                         departmentServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
@@ -56,10 +61,10 @@ public class VacationControllerTest {
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01").param("to", "2016-12-31"))
             .andExpect(status().isOk());
 
-        Mockito.verify(applicationServiceMock)
+        verify(applicationServiceMock)
             .getApplicationsForACertainPeriodAndState(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31),
                 ApplicationStatus.ALLOWED);
-        Mockito.verifyZeroInteractions(personServiceMock);
+        verifyZeroInteractions(personServiceMock);
     }
 
 
@@ -67,17 +72,17 @@ public class VacationControllerTest {
     public void ensureReturnsAllowedVacationsOfPersonIfPersonProvided() throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01")
                 .param("to", "2016-12-31")
                 .param("person", "23"))
             .andExpect(status().isOk());
 
-        Mockito.verify(applicationServiceMock)
+        verify(applicationServiceMock)
             .getApplicationsForACertainPeriodAndPersonAndState(new DateMidnight(2016, 1, 1),
                 new DateMidnight(2016, 12, 31), person, ApplicationStatus.ALLOWED);
-        Mockito.verify(personServiceMock).getPersonByID(23);
+        verify(personServiceMock).getPersonByID(23);
     }
 
 
@@ -91,8 +96,8 @@ public class VacationControllerTest {
         Application vacation2 = TestDataCreator.createApplication(TestDataCreator.createPerson("bar"),
                 new DateMidnight(2016, 4, 5), new DateMidnight(2016, 4, 10), DayLength.FULL);
 
-        Mockito.when(applicationServiceMock.getApplicationsForACertainPeriodAndState(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(ApplicationStatus.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndState(any(DateMidnight.class),
+                    any(DateMidnight.class), any(ApplicationStatus.class)))
             .thenReturn(Arrays.asList(vacation1, vacation2));
 
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01").param("to", "2016-12-31"))
@@ -157,7 +162,7 @@ public class VacationControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01").param("to", "foo").param("person", "23"))
             .andExpect(status().isBadRequest());

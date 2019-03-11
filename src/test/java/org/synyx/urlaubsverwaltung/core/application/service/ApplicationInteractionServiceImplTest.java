@@ -31,11 +31,11 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static java.util.Optional.of;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -131,7 +131,7 @@ public class ApplicationInteractionServiceImplTest {
         service.apply(applicationForLeave, applier, comment);
 
         verify(calendarSyncService).addAbsence(any(Absence.class));
-        verify(absenceMappingService).create(isNull(Integer.class), eq(AbsenceType.VACATION), anyString());
+        verify(absenceMappingService).create(isNull(), eq(AbsenceType.VACATION), anyString());
     }
 
 
@@ -208,7 +208,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
@@ -243,7 +243,7 @@ public class ApplicationInteractionServiceImplTest {
     private void assertCalendarSyncIsExecuted() {
 
         verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION));
+        verify(absenceMappingService).getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION));
     }
 
 
@@ -268,7 +268,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(false);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
@@ -292,7 +292,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
@@ -360,7 +360,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, departmentHead, comment);
@@ -388,7 +388,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, departmentHead, comment);
@@ -461,7 +461,7 @@ public class ApplicationInteractionServiceImplTest {
 
         when(commentService.create(any(), any(), any(), any())).thenReturn(new ApplicationComment(person));
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), any())).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), any())).thenReturn(of(absenceMapping));
 
         service.allow(applicationForLeave, departmentHead, comment);
 
@@ -489,7 +489,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
 
 
@@ -517,7 +517,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
 
 
@@ -546,7 +546,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, secondStage, comment);
@@ -726,7 +726,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(Integer.class), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
 
         service.reject(applicationForLeave, boss, comment);
 

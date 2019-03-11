@@ -17,6 +17,12 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link SickNoteValidator}.
@@ -36,20 +42,20 @@ public class SickNoteValidatorTest {
     @Before
     public void setUp() throws Exception {
 
-        overlapService = Mockito.mock(OverlapService.class);
-        workingTimeService = Mockito.mock(WorkingTimeService.class);
+        overlapService = mock(OverlapService.class);
+        workingTimeService = mock(WorkingTimeService.class);
 
         validator = new SickNoteValidator(overlapService, workingTimeService);
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
         Mockito.reset(errors);
 
         sickNote = TestDataCreator.createSickNote(TestDataCreator.createPerson(),
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19),
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20), DayLength.FULL);
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
     }
 
@@ -58,7 +64,7 @@ public class SickNoteValidatorTest {
     public void ensureValidDatesHaveNoErrors() {
 
         validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -67,7 +73,7 @@ public class SickNoteValidatorTest {
 
         sickNote.setDayLength(null);
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("dayLength", "error.entry.mandatory");
+        verify(errors).rejectValue("dayLength", "error.entry.mandatory");
     }
 
 
@@ -76,7 +82,7 @@ public class SickNoteValidatorTest {
 
         sickNote.setStartDate(null);
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("startDate", "error.entry.mandatory");
+        verify(errors).rejectValue("startDate", "error.entry.mandatory");
     }
 
 
@@ -85,7 +91,7 @@ public class SickNoteValidatorTest {
 
         sickNote.setEndDate(null);
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("endDate", "error.entry.mandatory");
+        verify(errors).rejectValue("endDate", "error.entry.mandatory");
     }
 
 
@@ -95,7 +101,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 1));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+        verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
 
 
@@ -106,7 +112,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
+        verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
     }
 
 
@@ -117,7 +123,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
+        verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
     }
 
 
@@ -128,7 +134,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+        verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
 
 
@@ -139,7 +145,7 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+        verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
 
 
@@ -148,7 +154,7 @@ public class SickNoteValidatorTest {
 
         validator.validateComment(new SickNoteComment(), errors);
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("text", "error.entry.mandatory");
+        verify(errors).rejectValue("text", "error.entry.mandatory");
     }
 
 
@@ -162,7 +168,7 @@ public class SickNoteValidatorTest {
             + "sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
         validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("text", "error.entry.tooManyChars");
+        verify(errors).rejectValue("text", "error.entry.tooManyChars");
     }
 
 
@@ -174,7 +180,7 @@ public class SickNoteValidatorTest {
         comment.setText("I am a fluffy little comment");
         validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -184,7 +190,7 @@ public class SickNoteValidatorTest {
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("aubEndDate", "error.entry.invalidPeriod");
+        verify(errors).rejectValue("aubEndDate", "error.entry.invalidPeriod");
     }
 
 
@@ -194,7 +200,7 @@ public class SickNoteValidatorTest {
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
         validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -204,8 +210,8 @@ public class SickNoteValidatorTest {
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 19));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 20));
         validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("aubStartDate", "sicknote.error.aubInvalidPeriod");
-        Mockito.verify(errors).rejectValue("aubEndDate", "sicknote.error.aubInvalidPeriod");
+        verify(errors).rejectValue("aubStartDate", "sicknote.error.aubInvalidPeriod");
+        verify(errors).rejectValue("aubEndDate", "sicknote.error.aubInvalidPeriod");
     }
 
 
@@ -215,12 +221,12 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 1));
         sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 10));
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(SickNote.class)))
+        when(overlapService.checkOverlap(any(SickNote.class)))
             .thenReturn(OverlapCase.FULLY_OVERLAPPING);
 
         validator.validate(sickNote, errors);
 
-        Mockito.verify(errors).reject("application.error.overlap");
+        verify(errors).reject("application.error.overlap");
     }
 
 
@@ -233,14 +239,14 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.empty());
 
         validator.validate(sickNote, errors);
 
-        Mockito.verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(sickNote.getPerson(), startDate);
-        Mockito.verify(errors).reject("sicknote.error.noValidWorkingTime");
+        verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(sickNote.getPerson(), startDate);
+        verify(errors).reject("sicknote.error.noValidWorkingTime");
     }
 
 
@@ -261,7 +267,7 @@ public class SickNoteValidatorTest {
 
         validator.validate(sickNote, errors);
 
-        Mockito.verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+        verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
 
 
@@ -282,6 +288,6 @@ public class SickNoteValidatorTest {
 
         validator.validate(sickNote, errors);
 
-        Mockito.verify(errors).rejectValue("aubEndDate", "error.entry.invalidPeriod");
+        verify(errors).rejectValue("aubEndDate", "error.entry.invalidPeriod");
     }
 }
