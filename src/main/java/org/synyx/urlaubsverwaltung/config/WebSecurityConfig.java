@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.config;
 
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/web/settings/**").hasAuthority("OFFICE")
                 .antMatchers("/web/google-api-handshake/**").hasAuthority("OFFICE")
                 .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
+                .requestMatchers(EndpointRequest.to(PrometheusScrapeEndpoint.class)).permitAll()
                 // TODO muss konfigurierbar werden!
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).hasAuthority("ADMIN")
                 .anyRequest()

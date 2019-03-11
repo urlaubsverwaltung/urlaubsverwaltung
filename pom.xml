@@ -166,6 +166,11 @@
       <version>${commons-collections.version}</version>
     </dependency>
 
+    <!-- METRICS -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
 
     <!-- DATABASE -->
     <dependency>
