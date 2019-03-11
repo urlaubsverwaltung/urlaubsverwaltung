@@ -1,5 +1,8 @@
 ### master / unreleased
 
+### [urlaubsverwaltung-2.36.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.0)
+* Bugfix: Dependency Conflicts
+
 ### [urlaubsverwaltung-2.36.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.0)
 * Upgrade auf Spring Boot 2.1.3 [#501](https://github.com/synyx/urlaubsverwaltung/pull/501) 
 * Fix Bug bei dem die Überstunden trotz Deaktivierung angezeigt wurden [#511](https://github.com/synyx/urlaubsverwaltung/pull/511) 
