@@ -72,7 +72,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         // save comment
         OvertimeAction action = isNewOvertime ? OvertimeAction.CREATED : OvertimeAction.EDITED;
         OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action);
-        comment.ifPresent((text) -> overtimeComment.setText(text));
+        comment.ifPresent(overtimeComment::setText);
 
         commentDAO.save(overtimeComment);
 
@@ -136,10 +136,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeDAO.calculateTotalHoursForPerson(person));
 
-        if (totalOvertime.isPresent()) {
-            return totalOvertime.get();
-        }
+        return totalOvertime.orElse(BigDecimal.ZERO);
 
-        return BigDecimal.ZERO;
     }
 }
