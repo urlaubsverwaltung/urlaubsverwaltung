@@ -1,4 +1,8 @@
 ### master / unreleased
+* Exchange Kalender Integration: Manuelle Pflege der EWS URL ermöglicht [#524](https://github.com/synyx/urlaubsverwaltung/pull/524)
+
+### [urlaubsverwaltung-2.36.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.0)
+* Fixup Release: Veröffentlichung der Dockercontainer berichtigt
 
 ### [urlaubsverwaltung-2.36.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.0)
 * Bugfix: Dependency Conflicts
