@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -36,19 +35,16 @@ import java.util.stream.Collectors;
 public class SettingsController {
 
     private final SettingsService settingsService;
-    private final CalendarSyncService calendarSyncService;
     private final List<CalendarProvider> calendarProviders;
     private final MailService mailService;
     private final SettingsValidator settingsValidator;
 
     @Autowired
     public SettingsController(SettingsService settingsService,
-                              CalendarSyncService calendarSyncService,
                               List<CalendarProvider> calendarProviders,
                               MailService mailService,
                               SettingsValidator settingsValidator) {
         this.settingsService = settingsService;
-        this.calendarSyncService = calendarSyncService;
         this.calendarProviders = calendarProviders;
         this.mailService = mailService;
         this.settingsValidator = settingsValidator;
