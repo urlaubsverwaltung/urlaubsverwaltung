@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.web.person;
 
 import org.joda.time.DateMidnight;
@@ -33,14 +32,16 @@ import java.util.Locale;
 @RequestMapping("/web")
 public class PersonManagementController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final DepartmentService departmentService;
+    private final PersonValidator validator;
 
     @Autowired
-    DepartmentService departmentService;
-
-    @Autowired
-    private PersonValidator validator;
+    public PersonManagementController(PersonService personService, DepartmentService departmentService, PersonValidator validator) {
+        this.personService = personService;
+        this.departmentService = departmentService;
+        this.validator = validator;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {

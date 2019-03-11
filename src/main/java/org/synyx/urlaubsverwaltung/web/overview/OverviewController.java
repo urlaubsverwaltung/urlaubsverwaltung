@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -49,37 +48,30 @@ import java.util.Optional;
 @RequestMapping("/web")
 public class OverviewController {
 
-	@Autowired
-	private PersonService personService;
+	private final PersonService personService;
+	private final AccountService accountService;
+    private final VacationDaysService vacationDaysService;
+    private final SessionService sessionService;
+    private final ApplicationService applicationService;
+    private final WorkDaysService calendarService;
+    private final SickNoteService sickNoteService;
+    private final OvertimeService overtimeService;
+    private final SettingsService settingsService;
 
-	@Autowired
-	private DepartmentService departmentService;
+    @Autowired
+    public OverviewController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, SessionService sessionService, ApplicationService applicationService, WorkDaysService calendarService, SickNoteService sickNoteService, OvertimeService overtimeService, SettingsService settingsService) {
+        this.personService = personService;
+        this.accountService = accountService;
+        this.vacationDaysService = vacationDaysService;
+        this.sessionService = sessionService;
+        this.applicationService = applicationService;
+        this.calendarService = calendarService;
+        this.sickNoteService = sickNoteService;
+        this.overtimeService = overtimeService;
+        this.settingsService = settingsService;
+    }
 
-	@Autowired
-	private AccountService accountService;
-
-	@Autowired
-	private VacationDaysService vacationDaysService;
-
-	@Autowired
-	private SessionService sessionService;
-
-	@Autowired
-	private ApplicationService applicationService;
-
-	@Autowired
-	private WorkDaysService calendarService;
-
-	@Autowired
-	private SickNoteService sickNoteService;
-
-	@Autowired
-	private OvertimeService overtimeService;
-
-	@Autowired
-	private SettingsService settingsService;
-
-	@RequestMapping(value = "/overview", method = RequestMethod.GET)
+    @RequestMapping(value = "/overview", method = RequestMethod.GET)
 	public String showOverview(
 			@RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
 

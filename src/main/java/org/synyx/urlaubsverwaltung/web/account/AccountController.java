@@ -38,17 +38,18 @@ import java.util.Optional;
 @RequestMapping("/web")
 public class AccountController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final AccountInteractionService accountInteractionService;
+    private final AccountValidator validator;
 
     @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private AccountInteractionService accountInteractionService;
-
-    @Autowired
-    private AccountValidator validator;
+    public AccountController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountValidator validator) {
+        this.personService = personService;
+        this.accountService = accountService;
+        this.accountInteractionService = accountInteractionService;
+        this.validator = validator;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
