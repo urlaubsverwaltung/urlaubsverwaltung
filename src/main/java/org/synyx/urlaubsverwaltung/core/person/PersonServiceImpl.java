@@ -130,7 +130,7 @@ class PersonServiceImpl implements PersonService {
 
     private Comparator<Person> personComparator() {
 
-        return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
+        return Comparator.comparing(p -> p.getNiceName().toLowerCase());
     }
 
 
