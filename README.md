@@ -261,10 +261,12 @@ git clone git@github.com:synyx/urlaubsverwaltung.git
 Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
 Zum sorgenfreien Release Erstellung kann folgendes Script verwendet werden. 
 
+``bash
     export RELEASE_VERSION=0.10.0
     export NEW_VERSION=0.11.0-SNAPSHOT
     ./release.sh
     git fetch
+```
 
 ### Anwendung starten
 
