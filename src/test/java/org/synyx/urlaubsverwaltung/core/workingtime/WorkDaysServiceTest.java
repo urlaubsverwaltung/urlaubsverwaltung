@@ -5,7 +5,6 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -23,6 +22,10 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -44,11 +47,11 @@ public class WorkDaysServiceTest {
     @Before
     public void setUp() throws IOException {
 
-        settingsService = Mockito.mock(SettingsService.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+        settingsService = mock(SettingsService.class);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         publicHolidaysService = new PublicHolidaysService(settingsService);
-        workingTimeService = Mockito.mock(WorkingTimeService.class);
+        workingTimeService = mock(WorkingTimeService.class);
 
         instance = new WorkDaysService(publicHolidaysService, workingTimeService, settingsService);
 
@@ -58,8 +61,8 @@ public class WorkDaysServiceTest {
 
         workingTime = TestDataCreator.createWorkingTime();
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
     }
 
@@ -314,8 +317,8 @@ public class WorkDaysServiceTest {
 
         workingTime.setFederalStateOverride(FederalState.BAYERN_AUGSBURG);
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
         BigDecimal workDays = instance.getWorkDays(DayLength.FULL, from, to, person);

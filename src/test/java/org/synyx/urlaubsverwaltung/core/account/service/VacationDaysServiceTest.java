@@ -5,7 +5,6 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -30,6 +29,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService}.
@@ -46,10 +49,10 @@ public class VacationDaysServiceTest {
     @Before
     public void setUp() throws IOException {
 
-        applicationService = Mockito.mock(ApplicationService.class);
-        nowService = Mockito.mock(NowService.class);
+        applicationService = mock(ApplicationService.class);
+        nowService = mock(NowService.class);
 
-        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
+        WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
 
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();
@@ -57,12 +60,12 @@ public class VacationDaysServiceTest {
                 DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+        SettingsService settingsService = mock(SettingsService.class);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService),
                 workingTimeService, settingsService);
@@ -115,8 +118,8 @@ public class VacationDaysServiceTest {
         a4.setVacationType(getVacationType(VacationCategory.HOLIDAY));
         a4.setPerson(person);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(Arrays.asList(a1, a2, a3, a4));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
@@ -162,8 +165,8 @@ public class VacationDaysServiceTest {
         a4.setStatus(ApplicationStatus.WAITING);
         a4.setVacationType(getVacationType(VacationCategory.HOLIDAY));
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(Arrays.asList(a1, a2, a4));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
@@ -214,8 +217,8 @@ public class VacationDaysServiceTest {
         allowedOvertime.setVacationType(getVacationType(VacationCategory.OVERTIME));
         allowedOvertime.setStatus(ApplicationStatus.ALLOWED);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
+                    any(DateMidnight.class), any(Person.class)))
             .thenReturn(Arrays.asList(cancelledHoliday, rejectedHoliday, waitingSpecialLeave, allowedSpecialLeave,
                     waitingUnpaidLeave, allowedUnpaidLeave, waitingOvertime, allowedOvertime));
 
@@ -291,7 +294,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetTotalVacationDaysForPastYear() {
 
-        Mockito.when(nowService.now()).thenReturn(new DateMidnight(2015, 4, 2));
+        when(nowService.now()).thenReturn(new DateMidnight(2015, 4, 2));
 
         initCustomService("4", "1");
 
@@ -315,7 +318,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetTotalVacationDaysForThisYearBeforeApril() {
 
-        Mockito.when(nowService.now()).thenReturn(new DateMidnight(2015, 3, 2));
+        when(nowService.now()).thenReturn(new DateMidnight(2015, 3, 2));
 
         initCustomService("4", "1");
 
@@ -339,7 +342,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetTotalVacationDaysForThisYearAfterApril() {
 
-        Mockito.when(nowService.now()).thenReturn(new DateMidnight(2015, 4, 2));
+        when(nowService.now()).thenReturn(new DateMidnight(2015, 4, 2));
 
         initCustomService("4", "3");
 
@@ -362,7 +365,7 @@ public class VacationDaysServiceTest {
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        vacationDaysService = new VacationDaysService(Mockito.mock(WorkDaysService.class), nowService,
+        vacationDaysService = new VacationDaysService(mock(WorkDaysService.class), nowService,
                 applicationService) {
 
             @Override

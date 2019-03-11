@@ -17,7 +17,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
@@ -131,7 +130,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
         Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.MORNING);
 
-        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(Mockito.mock(CalendarSettings.class));
+        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(CalendarSettings.class));
         Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, config);
 
         int eventsBeforeAdd = getCalendarEventCount();
@@ -152,7 +151,7 @@ public class GoogleCalendarSyncProviderServiceTest {
     }
 
     private SettingsService prepareSettingsServiceMock() {
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        SettingsService settingsService = mock(SettingsService.class);
         Settings settings = new Settings();
         CalendarSettings calendarSettings = new CalendarSettings();
         GoogleCalendarSettings googleCalendarSettings = new GoogleCalendarSettings();

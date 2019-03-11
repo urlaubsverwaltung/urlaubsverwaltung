@@ -18,6 +18,12 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -35,11 +41,11 @@ public class PersonValidatorTest {
     @Before
     public void setUp() {
 
-        personService = Mockito.mock(PersonService.class);
+        personService = mock(PersonService.class);
 
         validator = new PersonValidator(personService);
 
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
 
         person = TestDataCreator.createPerson();
     }
@@ -69,7 +75,7 @@ public class PersonValidatorTest {
     public void ensureNameMustNotBeNull() {
 
         validator.validateName(null, "nameField", errors);
-        Mockito.verify(errors).rejectValue("nameField", "error.entry.mandatory");
+        verify(errors).rejectValue("nameField", "error.entry.mandatory");
     }
 
 
@@ -77,7 +83,7 @@ public class PersonValidatorTest {
     public void ensureNameMustNotBeEmpty() {
 
         validator.validateName("", "nameField", errors);
-        Mockito.verify(errors).rejectValue("nameField", "error.entry.mandatory");
+        verify(errors).rejectValue("nameField", "error.entry.mandatory");
     }
 
 
@@ -86,7 +92,7 @@ public class PersonValidatorTest {
 
         validator.validateName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "nameField",
             errors);
-        Mockito.verify(errors).rejectValue("nameField", "error.entry.tooManyChars");
+        verify(errors).rejectValue("nameField", "error.entry.tooManyChars");
     }
 
 
@@ -94,7 +100,7 @@ public class PersonValidatorTest {
     public void ensureValidNameHasNoValidationError() {
 
         validator.validateName("Hans-Peter", "nameField", errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -104,7 +110,7 @@ public class PersonValidatorTest {
     public void ensureEmailMustNotBeNull() {
 
         validator.validateEmail(null, errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry.mandatory");
+        verify(errors).rejectValue("email", "error.entry.mandatory");
     }
 
 
@@ -112,7 +118,7 @@ public class PersonValidatorTest {
     public void ensureEmailMustNotBeEmpty() {
 
         validator.validateEmail("", errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry.mandatory");
+        verify(errors).rejectValue("email", "error.entry.mandatory");
     }
 
 
@@ -120,7 +126,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithoutAtIsInvalid() {
 
         validator.validateEmail("fraulyoner(at)verwaltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
+        verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 
@@ -128,7 +134,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithMoreThanOneAtIsInvalid() {
 
         validator.validateEmail("fraulyoner@verw@ltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
+        verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 
@@ -136,7 +142,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithAtOnInvalidPlaceIsInvalid() {
 
         validator.validateEmail("@fraulyonerverwaltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
+        verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 
@@ -144,7 +150,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithInvalidHostNameIsInvalid() {
 
         validator.validateEmail("fraulyoner@verwaltungde", errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
+        verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 
@@ -152,7 +158,7 @@ public class PersonValidatorTest {
     public void ensureEmailMustNotBeTooLong() {
 
         validator.validateEmail("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@net.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry.tooManyChars");
+        verify(errors).rejectValue("email", "error.entry.tooManyChars");
     }
 
 
@@ -160,7 +166,7 @@ public class PersonValidatorTest {
     public void ensureValidEmailHasNoValidationError() {
 
         validator.validateEmail("müller@verwaltung.com.de", errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -169,18 +175,18 @@ public class PersonValidatorTest {
     @Test
     public void ensureUsernameMustBeUnique() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
+        when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
         validator.validateLogin("foo", errors);
-        Mockito.verify(errors).rejectValue("loginName", "person.form.data.login.error");
+        verify(errors).rejectValue("loginName", "person.form.data.login.error");
     }
 
 
     @Test
     public void ensureUniqueUsernameHasNoValidationError() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>empty());
+        when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>empty());
         validator.validateLogin("foo", errors);
-        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
+        verify(errors, never()).rejectValue(anyString(), anyString());
     }
 
 
@@ -193,7 +199,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.mandatory");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.mandatory");
     }
 
 
@@ -204,7 +210,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.inactive");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.inactive");
     }
 
 
@@ -215,7 +221,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -226,7 +232,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.user");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.user");
     }
 
 
@@ -237,7 +243,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
     }
 
 
@@ -248,7 +254,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
     }
 
 
@@ -259,7 +265,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
     }
 
 
@@ -270,7 +276,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
     }
 
 
@@ -281,7 +287,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -292,7 +298,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -303,7 +309,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -314,7 +320,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -329,7 +335,7 @@ public class PersonValidatorTest {
 
         validator.validateNotifications(person, errors);
 
-        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
+        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
     }
 
 
@@ -342,7 +348,7 @@ public class PersonValidatorTest {
 
         validator.validateNotifications(person, errors);
 
-        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
+        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
     }
 
 
@@ -354,7 +360,7 @@ public class PersonValidatorTest {
 
         validator.validateNotifications(person, errors);
 
-        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
+        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
     }
 
 
@@ -367,7 +373,7 @@ public class PersonValidatorTest {
 
         validator.validateNotifications(person, errors);
 
-        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
+        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
     }
 
 
@@ -380,7 +386,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -393,7 +399,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -405,7 +411,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -418,6 +424,6 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(person, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 }

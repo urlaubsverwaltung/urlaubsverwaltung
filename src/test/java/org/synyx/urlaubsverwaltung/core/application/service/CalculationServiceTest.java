@@ -5,7 +5,6 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
@@ -29,6 +28,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link CalculationService}.
@@ -46,13 +49,13 @@ public class CalculationServiceTest {
     @Before
     public void setUp() throws IOException {
 
-        vacationDaysService = Mockito.mock(VacationDaysService.class);
-        accountService = Mockito.mock(AccountService.class);
-        accountInteractionService = Mockito.mock(AccountInteractionService.class);
+        vacationDaysService = mock(VacationDaysService.class);
+        accountService = mock(AccountService.class);
+        accountInteractionService = mock(AccountInteractionService.class);
 
-        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+        WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
+        SettingsService settingsService = mock(SettingsService.class);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         calendarService = new WorkDaysService(new PublicHolidaysService(settingsService), workingTimeService,
                 settingsService);
@@ -63,8 +66,8 @@ public class CalculationServiceTest {
                 DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
         service = new CalculationService(vacationDaysService, accountService, accountInteractionService,
@@ -84,23 +87,23 @@ public class CalculationServiceTest {
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
         Account account = new Account();
-        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
-        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
 
         // vacation days would be left after this application for leave
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.TEN);
+        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.TEN);
 
         Assert.assertTrue("Should be enough vacation days to apply for leave",
             service.checkApplication(applicationForLeaveToCheck));
 
         // not enough vacation days for this application for leave
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ZERO);
 
         Assert.assertFalse("Should NOT be enough vacation days to apply for leave",
                 service.checkApplication(applicationForLeaveToCheck));
 
         // enough vacation days for this application for leave, but none would be left
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ONE);
+        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ONE);
 
         Assert.assertTrue("Should be enough vacation days to apply for leave",
             service.checkApplication(applicationForLeaveToCheck));
@@ -133,11 +136,11 @@ public class CalculationServiceTest {
         nextYear.setVacationDays(nextYear.getAnnualVacationDays());
 
 
-        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(thisYear));
-        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(nextYear));
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(thisYear));
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(nextYear));
 
         // set up 13 days already used next year, i.e. 10 + 3 remaining
-        Mockito.when(vacationDaysService.getVacationDaysLeft(nextYear, Optional.empty())).thenReturn(
+        when(vacationDaysService.getVacationDaysLeft(nextYear, Optional.empty())).thenReturn(
                 VacationDaysLeft.builder()
                         .withAnnualVacation(BigDecimal.TEN)
                         .withRemainingVacation(BigDecimal.TEN)
@@ -147,7 +150,7 @@ public class CalculationServiceTest {
                         .get());
 
         // this year still has all ten days (but 3 of them used up next year, see above)
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
+        when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
 
         Assert.assertFalse("Should not be enough vacation days to apply for leave, because three already used next year",
                 service.checkApplication(applicationForLeaveToCheck));

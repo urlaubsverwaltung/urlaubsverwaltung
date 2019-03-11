@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.availability;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -13,6 +12,11 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,7 +40,7 @@ public class AvailabilityControllerTest {
 
         preparePersonServiceMock();
 
-        availabilityServiceMock = Mockito.mock(AvailabilityService.class);
+        availabilityServiceMock = mock(AvailabilityService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new AvailabilityController(availabilityServiceMock,
                         personServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
@@ -45,11 +49,11 @@ public class AvailabilityControllerTest {
 
     private void preparePersonServiceMock() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
+        personServiceMock = mock(PersonService.class);
 
         testPerson = TestDataCreator.createPerson("testPerson");
 
-        Mockito.when(personServiceMock.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(testPerson));
+        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.of(testPerson));
     }
 
 
@@ -61,11 +65,11 @@ public class AvailabilityControllerTest {
                 .param("person", loginName))
             .andExpect(status().isOk());
 
-        Mockito.verify(personServiceMock).getPersonByLogin(loginName);
+        verify(personServiceMock).getPersonByLogin(loginName);
 
-        Mockito.verify(availabilityServiceMock)
-            .getPersonsAvailabilities(Mockito.eq(new DateMidnight(2016, 1, 1)),
-                Mockito.eq(new DateMidnight(2016, 01, 31)), Mockito.eq(testPerson));
+        verify(availabilityServiceMock)
+            .getPersonsAvailabilities(eq(new DateMidnight(2016, 1, 1)),
+                eq(new DateMidnight(2016, 01, 31)), eq(testPerson));
     }
 
 

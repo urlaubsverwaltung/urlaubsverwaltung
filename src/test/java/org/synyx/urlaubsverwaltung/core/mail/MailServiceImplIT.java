@@ -48,8 +48,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +57,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author Aljona Murygina
  */
-public class MailServiceIntegrationTest {
+public class MailServiceImplIT {
 
     private static final StaticMessageSource MESSAGE_SOURCE;
 

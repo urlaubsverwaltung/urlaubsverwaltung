@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -15,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -34,7 +36,7 @@ public class VacationAbsenceProviderTest {
     @Before
     public void setUp() {
 
-        applicationService = Mockito.mock(ApplicationService.class);
+        applicationService = mock(ApplicationService.class);
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = TestDataCreator.createPerson();
@@ -48,7 +50,7 @@ public class VacationAbsenceProviderTest {
     @Test
     public void ensurePersonIsNotAvailableOnSickDay() {
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(vacationDay, vacationDay, testPerson))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(vacationDay, vacationDay, testPerson))
             .thenReturn(Collections.singletonList(application));
 
         TimedAbsenceSpans updatedTimedAbsenceSpans = vacationAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans,
@@ -69,7 +71,7 @@ public class VacationAbsenceProviderTest {
 
         DateMidnight standardWorkingDay = new DateMidnight(2016, 1, 5);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(standardWorkingDay,
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(standardWorkingDay,
                     standardWorkingDay, testPerson))
             .thenReturn(Collections.emptyList());
 
