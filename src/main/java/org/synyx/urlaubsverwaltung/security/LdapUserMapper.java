@@ -33,7 +33,6 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
     private final String firstNameAttribute;
     private final String lastNameAttribute;
     private final String mailAddressAttribute;
-
     private final String memberOfFilter;
 
     @Autowired
