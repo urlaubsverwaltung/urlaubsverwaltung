@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.application.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationCommentDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationAction;
@@ -13,6 +12,10 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 
 /**
@@ -29,7 +32,7 @@ public class ApplicationCommentServiceImplTest {
     @Before
     public void setUp() {
 
-        commentDAO = Mockito.mock(ApplicationCommentDAO.class);
+        commentDAO = mock(ApplicationCommentDAO.class);
         commentService = new ApplicationCommentServiceImpl(commentDAO);
     }
 
@@ -56,7 +59,7 @@ public class ApplicationCommentServiceImplTest {
 
         Assert.assertNull("Text should not be set", comment.getText());
 
-        Mockito.verify(commentDAO).save(Mockito.eq(comment));
+        verify(commentDAO).save(eq(comment));
     }
 
 
@@ -81,6 +84,6 @@ public class ApplicationCommentServiceImplTest {
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
 
-        Mockito.verify(commentDAO).save(Mockito.eq(comment));
+        verify(commentDAO).save(eq(comment));
     }
 }

@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.sync;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -18,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -28,11 +28,11 @@ public class CalendarServiceTest {
     private Class expected;
 
     private SettingsService getPreparedSettingsServiceForProvider(Class provider) {
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
-        Settings settings = Mockito.mock(Settings.class);
+        SettingsService settingsService = mock(SettingsService.class);
+        Settings settings = mock(Settings.class);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        CalendarSettings calendarSettings = Mockito.mock(CalendarSettings.class);
+        CalendarSettings calendarSettings = mock(CalendarSettings.class);
         when(settings.getCalendarSettings()).thenReturn(calendarSettings);
 
         when(calendarSettings.getProvider()).thenReturn(provider.getSimpleName());

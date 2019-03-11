@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.workday;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -17,6 +16,11 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,8 +40,8 @@ public class WorkDayControllerTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        workDaysServiceMock = Mockito.mock(WorkDaysService.class);
+        personServiceMock = mock(PersonService.class);
+        workDaysServiceMock = mock(WorkDaysService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new WorkDayController(personServiceMock, workDaysServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
@@ -49,9 +53,9 @@ public class WorkDayControllerTest {
     public void ensureReturnsWorkDays() throws Exception {
 
         Person person = TestDataCreator.createPerson();
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
-        Mockito.when(workDaysServiceMock.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-            Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(DateMidnight.class),
+            any(DateMidnight.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-04")
@@ -64,8 +68,8 @@ public class WorkDayControllerTest {
             .andExpect(jsonPath("$.response.workDays").exists())
             .andExpect(jsonPath("$.response.workDays", is("1")));
 
-        Mockito.verify(personServiceMock).getPersonByID(23);
-        Mockito.verify(workDaysServiceMock)
+        verify(personServiceMock).getPersonByID(23);
+        verify(workDaysServiceMock)
             .getWorkDays(DayLength.FULL, new DateMidnight(2016, 1, 4), new DateMidnight(2016, 1, 4), person);
     }
 
@@ -133,7 +137,7 @@ public class WorkDayControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
             .param("to", "2016-01-06")
@@ -141,7 +145,7 @@ public class WorkDayControllerTest {
             .param("person", "23"))
             .andExpect(status().isBadRequest());
 
-        Mockito.verify(personServiceMock).getPersonByID(23);
+        verify(personServiceMock).getPersonByID(23);
     }
 
 
@@ -159,7 +163,7 @@ public class WorkDayControllerTest {
     public void ensureBadRequestForInvalidLengthParameter() throws Exception {
 
         Person person = TestDataCreator.createPerson("muster");
-        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         mockMvc.perform(get("/api/workdays").param("from", "2016-01-01")
             .param("to", "2016-01-06")

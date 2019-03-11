@@ -5,7 +5,6 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -17,6 +16,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -34,8 +36,8 @@ public class SickNoteStatisticsTest {
     @Before
     public void setUp() throws Exception {
 
-        calendarService = Mockito.mock(WorkDaysService.class);
-        sickNoteDAO = Mockito.mock(SickNoteDAO.class);
+        calendarService = mock(WorkDaysService.class);
+        sickNoteDAO = mock(SickNoteDAO.class);
         sickNotes = new ArrayList<>();
 
         Person person = TestDataCreator.createPerson();
@@ -51,14 +53,14 @@ public class SickNoteStatisticsTest {
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
 
-        Mockito.when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
-        Mockito.when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
+        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
+        when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
 
-        Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
+        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
                     new DateMidnight(2013, DateTimeConstants.OCTOBER, 11), person))
             .thenReturn(new BigDecimal("5"));
 
-        Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
+        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
                     new DateMidnight(2013, DateTimeConstants.DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 
@@ -96,7 +98,7 @@ public class SickNoteStatisticsTest {
     @Test
     public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() throws Exception {
 
-        Mockito.when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
+        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
 
         statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
 
@@ -107,7 +109,7 @@ public class SickNoteStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetTotalNumberOfSickDaysInvalidDateRange() throws Exception {
 
-        Mockito.when(sickNoteDAO.findAllActiveByYear(2015)).thenReturn(sickNotes);
+        when(sickNoteDAO.findAllActiveByYear(2015)).thenReturn(sickNotes);
 
         statistics = new SickNoteStatistics(2015, sickNoteDAO, calendarService);
 
