@@ -13,5 +13,6 @@ public class UrlaubsverwaltungApplicationIT {
 
     @Test
     public void contextLoads() {
+        // ok to be empty
     }
 }
