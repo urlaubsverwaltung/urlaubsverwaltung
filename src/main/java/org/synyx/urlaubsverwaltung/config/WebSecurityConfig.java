@@ -29,6 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .csrf()
                 .disable()
+            .httpBasic()
+                .and()
             .authorizeRequests()
                 // TODO move to common url static or resources
                 .antMatchers("/css/**").permitAll()
