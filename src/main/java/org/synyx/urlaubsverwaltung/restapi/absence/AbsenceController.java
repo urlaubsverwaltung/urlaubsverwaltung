@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.lang.Integer.parseInt;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -93,21 +95,17 @@ public class AbsenceController {
 
     private static DateMidnight getStartDate(String year, Optional<String> optionalMonth) {
 
-        if (optionalMonth.isPresent()) {
-            return DateUtil.getFirstDayOfMonth(Integer.parseInt(year), Integer.parseInt(optionalMonth.get()));
-        }
+        return optionalMonth.map(s -> DateUtil.getFirstDayOfMonth(parseInt(year), parseInt(s)))
+            .orElseGet(() -> DateUtil.getFirstDayOfYear(parseInt(year)));
 
-        return DateUtil.getFirstDayOfYear(Integer.parseInt(year));
     }
 
 
     private static DateMidnight getEndDate(String year, Optional<String> optionalMonth) {
 
-        if (optionalMonth.isPresent()) {
-            return DateUtil.getLastDayOfMonth(Integer.parseInt(year), Integer.parseInt(optionalMonth.get()));
-        }
+        return optionalMonth.map(s -> DateUtil.getLastDayOfMonth(parseInt(year), parseInt(s)))
+            .orElseGet(() -> DateUtil.getLastDayOfYear(parseInt(year)));
 
-        return DateUtil.getLastDayOfYear(Integer.parseInt(year));
     }
 
 

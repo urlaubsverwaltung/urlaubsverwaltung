@@ -43,9 +43,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
         comment.setAction(action);
         comment.setApplication(application);
 
-        if (text.isPresent()) {
-            comment.setText(text.get());
-        }
+        text.ifPresent(comment::setText);
 
         commentDAO.save(comment);
 
