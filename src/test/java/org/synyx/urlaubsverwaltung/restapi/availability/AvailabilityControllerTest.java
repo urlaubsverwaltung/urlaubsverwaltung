@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 /**
- * @author  Timo Eifler - eifler@synyx.de
+ * @author Timo Eifler - eifler@synyx.de
  */
 public class AvailabilityControllerTest {
 
@@ -43,7 +43,7 @@ public class AvailabilityControllerTest {
         availabilityServiceMock = mock(AvailabilityService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new AvailabilityController(availabilityServiceMock,
-                        personServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
+            personServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
     }
 
 
@@ -61,8 +61,8 @@ public class AvailabilityControllerTest {
     public void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
 
         mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
-                .param("to", "2016-01-31")
-                .param("person", loginName))
+            .param("to", "2016-01-31")
+            .param("person", loginName))
             .andExpect(status().isOk());
 
         verify(personServiceMock).getPersonByLogin(loginName);
@@ -77,8 +77,8 @@ public class AvailabilityControllerTest {
     public void ensureRequestsAreOnlyAllowedForADateRangeOfMaxOneMonth() throws Exception {
 
         mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
-                .param("to", "2016-02-01")
-                .param("person", loginName))
+            .param("to", "2016-02-01")
+            .param("person", loginName))
             .andExpect(status().isBadRequest());
     }
 
@@ -103,8 +103,8 @@ public class AvailabilityControllerTest {
     public void ensureBadRequestForInvalidFromParameter() throws Exception {
 
         mockMvc.perform(get("/api/availabilities").param("from", "foo")
-                .param("to", "2016-12-31")
-                .param("person", loginName))
+            .param("to", "2016-12-31")
+            .param("person", loginName))
             .andExpect(status().isBadRequest());
     }
 
@@ -121,8 +121,8 @@ public class AvailabilityControllerTest {
     public void ensureBadRequestForInvalidToParameter() throws Exception {
 
         mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
-                .param("to", "foo")
-                .param("person", loginName))
+            .param("to", "foo")
+            .param("person", loginName))
             .andExpect(status().isBadRequest());
     }
 
@@ -131,8 +131,8 @@ public class AvailabilityControllerTest {
     public void ensureBadRequestForInvalidPeriod() throws Exception {
 
         mockMvc.perform(get("/api/availabilities").param("from", "2016-01-01")
-                .param("to", "2015-01-01")
-                .param("person", loginName))
+            .param("to", "2015-01-01")
+            .param("person", loginName))
             .andExpect(status().isBadRequest());
     }
 }
