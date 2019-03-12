@@ -313,7 +313,7 @@ in den `application-dev.properties` auf `false` setzen.
 
 ### H2 Web Konsole
 
-Die Standardkonfiguration im `dev` profil sorgt dafür, dass eine H2 Web Konsole aktiv ist.  
+Die Standardkonfiguration im `dev`-Profil sorgt dafür, dass eine H2 Web Konsole aktiv ist.  
 Diese kann standardmäßig erreicht werden unter:
 
 <pre>localhost:8080/h2-console/</pre>
