@@ -1,4 +1,5 @@
-### master / unreleased
+### [urlaubsverwaltung-2.37.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.1)
+* Fix basic auth Zugriff auf die API [#545](https://github.com/synyx/urlaubsverwaltung/pull/545)
 
 ### [urlaubsverwaltung-2.37.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.0)
 * Exchange Kalender Integration: Manuelle Pflege der EWS URL ermöglicht [#524](https://github.com/synyx/urlaubsverwaltung/pull/524)
