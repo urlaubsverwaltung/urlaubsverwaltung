@@ -64,7 +64,7 @@ public class AvailabilityControllerTest {
 
         verify(availabilityService)
             .getPersonsAvailabilities(eq(new DateMidnight(2016, 1, 1)),
-                eq(new DateMidnight(2016, 01, 31)), eq(testPerson));
+                eq(new DateMidnight(2016, 1, 31)), eq(testPerson));
     }
 
 
