@@ -53,13 +53,8 @@ public class FilterPeriod {
         // Override default values with parsed dates
         DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
 
-        if (startDateAsString.isPresent()) {
-            this.startDate = DateMidnight.parse(startDateAsString.get(), formatter);
-        }
-
-        if (endDateAsString.isPresent()) {
-            this.endDate = DateMidnight.parse(endDateAsString.get(), formatter);
-        }
+        startDateAsString.ifPresent(startDateString -> this.startDate = DateMidnight.parse(startDateString, formatter));
+        endDateAsString.ifPresent(endDateString -> this.endDate = DateMidnight.parse(endDateString, formatter));
 
         Assert.isTrue(endDate.isAfter(startDate) || endDate.isEqual(startDate), "Start date must be before end date");
     }

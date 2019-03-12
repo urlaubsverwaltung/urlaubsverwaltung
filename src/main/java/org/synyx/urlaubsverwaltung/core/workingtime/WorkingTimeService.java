@@ -103,14 +103,8 @@ public class WorkingTimeService {
     private FederalState getFederalState(WorkingTime workingTime) {
 
         Optional<FederalState> optionalFederalStateOverride = workingTime.getFederalStateOverride();
-
-        if (optionalFederalStateOverride.isPresent()) {
-            return optionalFederalStateOverride.get();
-        }
-
-        return getSystemDefaultFederalState();
+        return optionalFederalStateOverride.orElseGet(this::getSystemDefaultFederalState);
     }
-
 
     private FederalState getSystemDefaultFederalState() {
 

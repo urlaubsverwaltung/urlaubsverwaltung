@@ -33,9 +33,7 @@ public class SickNoteCommentServiceImpl implements SickNoteCommentService {
         comment.setAction(action);
         comment.setPerson(author);
 
-        if (text.isPresent()) {
-            comment.setText(text.get());
-        }
+        text.ifPresent(comment::setText);
 
         commentDAO.save(comment);
 

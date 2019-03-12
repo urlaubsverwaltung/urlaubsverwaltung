@@ -110,9 +110,7 @@ class MailServiceImpl implements MailService {
         model.put("dayLength", getTranslation(application.getDayLength().name()));
         model.put("settings", mailSettings);
 
-        if (optionalComment.isPresent()) {
-            model.put("comment", optionalComment.get());
-        }
+        optionalComment.ifPresent(applicationComment -> model.put("comment", applicationComment));
 
         return model;
     }
