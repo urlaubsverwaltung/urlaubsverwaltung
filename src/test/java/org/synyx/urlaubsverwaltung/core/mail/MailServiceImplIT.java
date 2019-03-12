@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -122,36 +123,36 @@ public class MailServiceImplIT {
 
         // BOSS
         boss = TestDataCreator.createPerson("boss", "Hugo", "Boss", "boss@firma.test");
-        boss.setPermissions(Collections.singletonList(Role.BOSS));
+        boss.setPermissions(singletonList(Role.BOSS));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-            .thenReturn(Collections.singletonList(boss));
+            .thenReturn(singletonList(boss));
 
         // DEPARTMENT HEAD
         departmentHead = TestDataCreator.createPerson("head", "Michel", "Mustermann", "head@firma.test");
-        departmentHead.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(singletonList(Role.DEPARTMENT_HEAD));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
-            .thenReturn(Collections.singletonList(departmentHead));
+            .thenReturn(singletonList(departmentHead));
 
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), any(Person.class))).thenReturn(true);
 
         // SECOND STAGE AUTHORITY
         secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
-        secondStage.setPermissions(Collections.singletonList(Role.SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(singletonList(Role.SECOND_STAGE_AUTHORITY));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY))
-            .thenReturn(Collections.singletonList(secondStage));
+            .thenReturn(singletonList(secondStage));
 
         when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), any(Person.class)))
             .thenReturn(true);
 
         // OFFICE
         office = TestDataCreator.createPerson("office", "Marlene", "Muster", "office@firma.test");
-        office.setPermissions(Collections.singletonList(Role.OFFICE));
+        office.setPermissions(singletonList(Role.OFFICE));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
-            .thenReturn(Collections.singletonList(office));
+            .thenReturn(singletonList(office));
     }
 
 
@@ -300,7 +301,7 @@ public class MailServiceImplIT {
             new DateMidnight(2015, 11, 4), new DateMidnight(2015, 11, 4), DayLength.MORNING);
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-            .thenReturn(Collections.singletonList(boss));
+            .thenReturn(singletonList(boss));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(eq(person),
             any(DateMidnight.class), any(DateMidnight.class)))
@@ -861,7 +862,7 @@ public class MailServiceImplIT {
 
         verifyInbox(boss, Arrays.asList(applicationA, applicationB, applicationC));
         verifyInbox(departmentHeadA, Arrays.asList(applicationA, applicationC));
-        verifyInbox(departmentHeadB, Arrays.asList(applicationB));
+        verifyInbox(departmentHeadB, singletonList(applicationB));
     }
 
 
@@ -959,7 +960,7 @@ public class MailServiceImplIT {
         OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, OvertimeAction.CREATED);
 
         when(personService.getPersonsWithNotificationType(MailNotification.OVERTIME_NOTIFICATION_OFFICE))
-            .thenReturn(Collections.singletonList(office));
+            .thenReturn(singletonList(office));
 
         mailService.sendOvertimeNotification(overtimeRecord, overtimeComment);
 

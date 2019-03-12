@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -41,12 +42,12 @@ public class RecipientServiceTest {
 
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(departmentHead));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
         when(departmentService.isDepartmentHeadOfPerson(departmentHead, normalUser)).thenReturn(true);
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays.asList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -58,12 +59,12 @@ public class RecipientServiceTest {
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
         Application application = getHolidayApplication(departmentHead);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(departmentHead));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
         when(departmentService.isDepartmentHeadOfPerson(departmentHead, departmentHead)).thenReturn(true);
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays.asList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -78,17 +79,17 @@ public class RecipientServiceTest {
 
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(departmentHead));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
         when(departmentService.isDepartmentHeadOfPerson(departmentHead, normalUser)).thenReturn(true);
 
         // given second stage
         Person secondStage = TestDataCreator.createPerson("secondStage", Role.SECOND_STAGE_AUTHORITY);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(Arrays.asList(secondStage));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
         when(departmentService.isSecondStageAuthorityOfPerson(secondStage, normalUser)).thenReturn(true);
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays.asList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -100,17 +101,17 @@ public class RecipientServiceTest {
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
         Application application = getHolidayApplication(departmentHead);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(departmentHead));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
         when(departmentService.isDepartmentHeadOfPerson(departmentHead, departmentHead)).thenReturn(true);
 
         // given second stage
         Person secondStage = TestDataCreator.createPerson("secondStage", Role.SECOND_STAGE_AUTHORITY);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(Arrays.asList(secondStage));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
         when(departmentService.isSecondStageAuthorityOfPerson(secondStage, departmentHead)).thenReturn(true);
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays.asList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -125,12 +126,12 @@ public class RecipientServiceTest {
 
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(departmentHead));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
         when(departmentService.isDepartmentHeadOfPerson(departmentHead, secondStage)).thenReturn(true);
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays.asList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -164,7 +165,7 @@ public class RecipientServiceTest {
         Person secondStage = TestDataCreator.createPerson("secondStage", Role.SECOND_STAGE_AUTHORITY);
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(head1, head2));
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(Collections.singletonList(secondStage));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
         when(departmentService.isDepartmentHeadOfPerson(head1, head1)).thenReturn(true);
         when(departmentService.isDepartmentHeadOfPerson(head2, head1)).thenReturn(true);
         when(departmentService.isSecondStageAuthorityOfPerson(secondStage, head1)).thenReturn(true);
@@ -182,12 +183,12 @@ public class RecipientServiceTest {
 
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(departmentHead));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
         when(departmentService.isDepartmentHeadOfPerson(departmentHead, normalUser)).thenReturn(true);
 
         // given second stage
         Person secondStage = TestDataCreator.createPerson("secondStage", Role.SECOND_STAGE_AUTHORITY);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(Arrays.asList(secondStage));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
         when(departmentService.isSecondStageAuthorityOfPerson(secondStage, normalUser)).thenReturn(true);
 
         List<Person> recipientsForTemporaryAllow = sut.getRecipientsForTemporaryAllow(application);
