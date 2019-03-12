@@ -45,7 +45,7 @@ public class ApplicationCommentServiceImplTest {
                 TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         ApplicationComment comment = commentService.create(application, ApplicationAction.ALLOWED,
-                Optional.<String>empty(), author);
+                Optional.empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
 

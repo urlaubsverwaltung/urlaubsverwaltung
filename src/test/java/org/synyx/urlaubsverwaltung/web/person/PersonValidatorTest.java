@@ -184,7 +184,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUniqueUsernameHasNoValidationError() {
 
-        when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>empty());
+        when(personService.getPersonByLogin("foo")).thenReturn(Optional.empty());
         validator.validateLogin("foo", errors);
         verify(errors, never()).rejectValue(anyString(), anyString());
     }

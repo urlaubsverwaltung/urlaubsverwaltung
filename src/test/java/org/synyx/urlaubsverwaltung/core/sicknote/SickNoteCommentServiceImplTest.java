@@ -40,7 +40,7 @@ public class SickNoteCommentServiceImplTest {
         SickNote sickNote = TestDataCreator.createSickNote(author);
 
         SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.EDITED,
-                Optional.<String>empty(), author);
+                Optional.empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
 

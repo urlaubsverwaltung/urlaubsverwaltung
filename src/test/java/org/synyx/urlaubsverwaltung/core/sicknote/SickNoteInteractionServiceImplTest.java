@@ -87,7 +87,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CREATED, Optional.<String>empty(), person);
+        verify(commentService).create(sickNote, SickNoteAction.CREATED, Optional.empty(), person);
 
         Assert.assertNotNull("Should not be null", createdSickNote);
 
@@ -113,7 +113,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.EDITED, Optional.<String>empty(), person);
+        verify(commentService).create(sickNote, SickNoteAction.EDITED, Optional.empty(), person);
 
         Assert.assertNotNull("Should not be null", updatedSickNote);
 
@@ -138,7 +138,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CANCELLED, Optional.<String>empty(), person);
+        verify(commentService).create(sickNote, SickNoteAction.CANCELLED, Optional.empty(), person);
 
         Assert.assertNotNull("Should not be null", cancelledSickNote);
 
@@ -174,7 +174,7 @@ public class SickNoteInteractionServiceImplTest {
 
         verify(sickNoteService).save(sickNote);
         verify(commentService)
-            .create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, Optional.<String>empty(), person);
+            .create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, Optional.empty(), person);
 
         Assert.assertNotNull("Should not be null", convertedSickNote);
 
