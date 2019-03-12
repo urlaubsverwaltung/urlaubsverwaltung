@@ -584,7 +584,7 @@ $(function() {
         function renderDay(date) {
 
             function classes() {
-                var status = assert.status(date)
+                var status = assert.status(date);
                 return [
                     assert.isToday           (date) ? CSS.dayToday                                  : '',
                     assert.isWeekend         (date) ? CSS.dayWeekend                                : '',

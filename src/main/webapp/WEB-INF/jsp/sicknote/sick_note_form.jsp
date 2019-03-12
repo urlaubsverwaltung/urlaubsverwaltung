@@ -16,7 +16,7 @@
         $(document).ready(function () {
 
             var person = '${param.person}';
-            $("#employee").val(person)
+            $("#employee").val(person);
 
             <%-- DATEPICKER --%>
 
@@ -27,13 +27,13 @@
             <c:when test="${sickNote.id == null}">
             var getPersonId = function () {
                 return $("#employee option:selected").val();
-            }
+            };
             </c:when>
             <c:otherwise>
             var getPersonId = function () {
                 var personId = "<c:out value="${sickNote.person.id}" />";
                 return personId;
-            }
+            };
             </c:otherwise>
             </c:choose>
 
