@@ -35,7 +35,6 @@ public class FreeTimeAbsenceProviderTest {
     private WorkingTimeService workingTimeService;
     private TimedAbsenceSpans emptyTimedAbsenceSpans;
     private Person testPerson;
-    private WorkingTime testWorkingTime;
 
     @Before
     public void setUp() {
@@ -52,7 +51,7 @@ public class FreeTimeAbsenceProviderTest {
 
     private void setupDefaultWorkingTimeService() {
 
-        testWorkingTime = TestDataCreator.createWorkingTime();
+        WorkingTime testWorkingTime = TestDataCreator.createWorkingTime();
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
                     any(DateMidnight.class)))
