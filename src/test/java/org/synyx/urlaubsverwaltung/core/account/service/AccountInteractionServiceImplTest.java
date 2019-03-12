@@ -72,7 +72,7 @@ public class AccountInteractionServiceImplTest {
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account2012));
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account2014));
-        when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.<Account> empty());
+        when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.empty());
 
         when(vacationDaysService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
         when(vacationDaysService.calculateTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));

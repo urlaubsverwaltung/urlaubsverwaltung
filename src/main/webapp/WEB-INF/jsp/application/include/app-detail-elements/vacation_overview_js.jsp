@@ -180,9 +180,7 @@
                                                     if (!dayItem.cssClass) {
                                                         dayItem.cssClass = ' vacationOverview-day vactionOverview-day-item ';
                                                     }
-                                                    ;
                                                 }
-                                                ;
                                                 outputTable += "<td class='" + dayItem.cssClass + "'></td>";
                                             }, outputTable);
                                     outputTable += "</tr>";
