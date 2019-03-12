@@ -27,14 +27,14 @@ public class DepartmentValidatorTest {
     private Errors errors = mock(Errors.class);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         sut = new DepartmentValidator();
     }
 
 
     @Test
-    public void ensureSupportsOnlyDepartmentClass() throws Exception {
+    public void ensureSupportsOnlyDepartmentClass() {
 
         assertFalse(sut.supports(null));
         assertFalse(sut.supports(Application.class));
@@ -43,7 +43,7 @@ public class DepartmentValidatorTest {
 
 
     @Test
-    public void ensureNameMustNotBeNull() throws Exception {
+    public void ensureNameMustNotBeNull() {
 
         sut.validate(TestDataCreator.createDepartment(null), errors);
         verify(errors).rejectValue("name", "error.entry.mandatory");
@@ -51,7 +51,7 @@ public class DepartmentValidatorTest {
 
 
     @Test
-    public void ensureNameMustNotBeEmpty() throws Exception {
+    public void ensureNameMustNotBeEmpty() {
 
         Department department = TestDataCreator.createDepartment("");
 
@@ -61,7 +61,7 @@ public class DepartmentValidatorTest {
 
 
     @Test
-    public void ensureNameMustNotBeTooLong() throws Exception {
+    public void ensureNameMustNotBeTooLong() {
 
         Department department = TestDataCreator.createDepartment(
                 "AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -82,7 +82,7 @@ public class DepartmentValidatorTest {
 
 
     @Test
-    public void ensureDescriptionMustNotBeTooLong() throws Exception {
+    public void ensureDescriptionMustNotBeTooLong() {
 
         Department department = TestDataCreator.createDepartment("Foobar Department");
         department.setDescription(
