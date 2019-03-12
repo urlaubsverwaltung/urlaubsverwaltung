@@ -21,7 +21,7 @@ import java.util.Optional;
 class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private final PublicHolidaysService publicHolidaysService;
-    private WorkingTimeService workingTimeService;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
     HolidayAbsenceProvider(SickDayAbsenceProvider nextPriorityProvider, PublicHolidaysService publicHolidaysService,

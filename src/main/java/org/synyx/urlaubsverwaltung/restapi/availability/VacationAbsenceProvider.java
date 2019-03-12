@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
     @Autowired
     VacationAbsenceProvider(ApplicationService applicationService) {

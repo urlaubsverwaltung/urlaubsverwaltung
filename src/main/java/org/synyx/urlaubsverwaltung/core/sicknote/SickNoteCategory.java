@@ -11,7 +11,7 @@ public enum SickNoteCategory {
     SICK_NOTE_CHILD("application.data.sicknotetype.sicknotechild"),
     OTHER("application.data.sicknotetype.other");
 
-    private String messageKey;
+    private final String messageKey;
 
     SickNoteCategory(String messageKey) {
 

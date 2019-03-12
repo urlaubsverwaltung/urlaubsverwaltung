@@ -22,7 +22,7 @@ public enum WeekDay {
     private static final int MIN_WEEK_DAY = 1;
     private static final int MAX_WEEK_DAY = 7;
 
-    private Integer dayOfWeek;
+    private final Integer dayOfWeek;
 
     WeekDay(Integer dayOfWeek) {
 

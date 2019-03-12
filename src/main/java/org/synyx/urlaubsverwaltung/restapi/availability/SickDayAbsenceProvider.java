@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
-    private SickNoteService sickNoteService;
+    private final SickNoteService sickNoteService;
 
     @Autowired
     SickDayAbsenceProvider(VacationAbsenceProvider nextPriorityProvider, SickNoteService sickNoteService) {
