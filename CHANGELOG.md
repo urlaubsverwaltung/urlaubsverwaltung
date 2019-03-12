@@ -1,6 +1,6 @@
 ### master / unreleased
 
-### [urlaubsverwaltung-2.38.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.0)
+### [urlaubsverwaltung-2.37.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.0)
 * Exchange Kalender Integration: Manuelle Pflege der EWS URL ermöglicht [#524](https://github.com/synyx/urlaubsverwaltung/pull/524)
 * Exchange Kalender Integration: Kalender für Synchronisation konfigurierbar gemacht [#527](https://github.com/synyx/urlaubsverwaltung/pull/527)
 * Exchange Kalender Integration: Timezone für Exchange-Kalender hinzugefügt [#452](https://github.com/synyx/urlaubsverwaltung/pull/452)
