@@ -13,6 +13,7 @@ import microsoft.exchange.webservices.data.core.service.folder.Folder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
 import microsoft.exchange.webservices.data.property.complex.ItemId;
+import microsoft.exchange.webservices.data.property.complex.time.OlsonTimeZoneDefinition;
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -28,15 +29,16 @@ import org.synyx.urlaubsverwaltung.core.sync.CalendarNotCreatedException;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
-import java.util.Optional;
 import java.net.URI;
+import java.util.Optional;
+import java.util.TimeZone;
 
 
 /**
  * Provides sync of absences with exchange server calendar.
  *
- * @author  Daniel Hammann - <hammann@synyx.de>
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Daniel Hammann - <hammann@synyx.de>
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class ExchangeCalendarProvider implements CalendarProvider {
@@ -45,6 +47,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
     private final MailService mailService;
     private final ExchangeService exchangeService;
+    private final ExchangeFactory exchangeFactory;
 
     private String credentialsMailAddress;
     private String credentialsPassword;
@@ -52,8 +55,15 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     @Autowired
     public ExchangeCalendarProvider(MailService mailService) {
 
+        this(mailService, new ExchangeService(), new ExchangeFactory());
+    }
+
+    public ExchangeCalendarProvider(MailService mailService,
+                                    ExchangeService exchangeService, ExchangeFactory exchangeFactory) {
+
         this.mailService = mailService;
-        this.exchangeService = new ExchangeService();
+        this.exchangeService = exchangeService;
+        this.exchangeFactory = exchangeFactory;
     }
 
     @Override
@@ -64,9 +74,9 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         connectToExchange(exchangeCalendarSettings);
 
         try {
-            Appointment appointment = new Appointment(exchangeService);
+            Appointment appointment = this.exchangeFactory.getNewAppointment(exchangeService);
 
-            fillAppointment(absence, appointment);
+            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimeZoneId());
 
             SendInvitationsMode invitationsMode = SendInvitationsMode.SendToNone;
 
@@ -82,7 +92,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             }
 
             LOG.info("Appointment {} for '{}' added to exchange calendar '{}'.", appointment.getId(),
-                    absence.getPerson().getNiceName(), calendarName);
+                absence.getPerson().getNiceName(), calendarName);
 
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
@@ -102,8 +112,8 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         String[] emailPart = email.split("[@._]");
         if (emailPart.length < 2) {
             LOG.warn(String.format(
-                    "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
-                    "email-address is not valid (expected form: name@domain)"));
+                "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
+                "email-address is not valid (expected form: name@domain)"));
             return;
         }
         String username = emailPart[0];
@@ -121,7 +131,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                 }
             } catch (Exception usernameException) { // NOSONAR - EWS Java API throws Exception, that's life
                 LOG.info("No connection could be established to the Exchange calendar for username={}, cause={}",
-                        username, usernameException.getMessage());
+                    username, usernameException.getMessage());
                 try {
                     exchangeService.setCredentials(new WebCredentials(username, password, domain));
                     exchangeService.setTraceEnabled(true);
@@ -129,7 +139,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                     exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 } catch (Exception usernameDomainException) { // NOSONAR - EWS Java API throws Exception, that's life
                     LOG.info("No connection could be established to the Exchange calendar for username={} and domain={}, cause={}",
-                            username, domain, usernameDomainException.getMessage());
+                        username, domain, usernameDomainException.getMessage());
 
                     try {
                         exchangeService.setCredentials(new WebCredentials(email, password));
@@ -138,7 +148,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                         exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                     } catch (Exception emailException) { // NOSONAR - EWS Java API throws Exception, that's life
                         LOG.warn("No connection could be established to the Exchange calendar for email={}, cause={}", email,
-                                emailException.getMessage());
+                            emailException.getMessage());
                     }
                 }
             }
@@ -166,7 +176,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
-                new FolderView(Integer.MAX_VALUE));
+            new FolderView(Integer.MAX_VALUE));
 
         for (Folder folder : calendarRoot.getFolders()) {
             if (folder.getDisplayName().equals(calendarName)) {
@@ -192,19 +202,24 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             return CalendarFolder.bind(exchangeService, folder.getId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             throw new CalendarNotCreatedException(String.format("Exchange calendar '%s' could not be created",
-                    calendarName), ex);
+                calendarName), ex);
         }
     }
 
 
-    private void fillAppointment(Absence absence, Appointment appointment) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
+    private void fillAppointment(Absence absence, Appointment appointment, String exchangeTimeZoneId) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         Person person = absence.getPerson();
 
         appointment.setSubject(absence.getEventSubject());
 
+        OlsonTimeZoneDefinition timeZone = new OlsonTimeZoneDefinition(TimeZone.getTimeZone(exchangeTimeZoneId));
+
         appointment.setStart(absence.getStartDate());
+        appointment.setStartTimeZone(timeZone);
         appointment.setEnd(absence.getEndDate());
+        appointment.setEndTimeZone(timeZone);
+
         appointment.setIsAllDayEvent(absence.isAllDay());
         appointment.getRequiredAttendees().add(person.getEmail());
         appointment.setIsReminderSet(false);
@@ -221,7 +236,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         try {
             Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
 
-            fillAppointment(absence, appointment);
+            fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimeZoneId());
 
             SendInvitationsOrCancellationsMode notificationMode = SendInvitationsOrCancellationsMode.SendToNone;
 
@@ -297,7 +312,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     private void discoverFolders(WellKnownFolderName wellKnownFolderName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         FindFoldersResults folders = exchangeService.findFolders(wellKnownFolderName,
-                new FolderView(Integer.MAX_VALUE));
+            new FolderView(Integer.MAX_VALUE));
 
         for (Folder folder : folders.getFolders()) {
             LOG.info("Found folder: {} - {}", wellKnownFolderName.name(), folder.getDisplayName());

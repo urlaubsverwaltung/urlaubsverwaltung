@@ -28,6 +28,10 @@ public class ExchangeCalendarSettings {
     @Column(name = "calendar_ews_url")
     private String ewsUrl;
 
+    @Column(name = "calendar_ews_timezoneid")
+    private String timeZoneId;
+
+
     public String getEmail() {
 
         return email;
@@ -100,5 +104,13 @@ public class ExchangeCalendarSettings {
         } else {
             this.ewsUrl = ewsUrl;
         }
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
+    }
+
+    public void setTimeZoneId(String timeZoneId) {
+        this.timeZoneId = timeZoneId;
     }
 }
