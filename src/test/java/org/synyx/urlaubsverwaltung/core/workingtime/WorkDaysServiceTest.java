@@ -45,7 +45,7 @@ public class WorkDaysServiceTest {
     private Person person;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
 
         settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
