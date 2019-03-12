@@ -34,7 +34,7 @@ public enum FederalState {
     SCHLESWIG_HOLSTEIN("sh"),
     THUERINGEN("th");
 
-    private String[] codes;
+    private final String[] codes;
 
     FederalState(String... codes) {
 

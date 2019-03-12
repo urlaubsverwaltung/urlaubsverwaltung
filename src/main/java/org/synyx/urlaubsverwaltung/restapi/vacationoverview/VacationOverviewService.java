@@ -24,9 +24,9 @@ import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WORK
 @Component
 public class VacationOverviewService {
 
-    private DepartmentService departmentService;
-    private WorkingTimeService workingTimeService;
-    private PublicHolidaysService publicHolidayService;
+    private final DepartmentService departmentService;
+    private final WorkingTimeService workingTimeService;
+    private final PublicHolidaysService publicHolidayService;
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     @Autowired

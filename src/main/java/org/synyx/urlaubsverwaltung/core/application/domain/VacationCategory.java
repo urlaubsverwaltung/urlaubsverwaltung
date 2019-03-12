@@ -13,7 +13,7 @@ public enum VacationCategory {
     OVERTIME("application.data.vacationType.overtime"),
     OTHER("application.data.vacationType.other");
 
-    private String messageKey;
+    private final String messageKey;
 
     VacationCategory(String messageKey) {
 
