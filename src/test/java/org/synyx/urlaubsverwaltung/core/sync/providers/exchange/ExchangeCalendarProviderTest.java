@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -107,7 +106,7 @@ public class ExchangeCalendarProviderTest {
 
         CalendarSettings calendarSettings = getMockedCalendarSettings();
 
-        assertEquals(cut.add(absence, calendarSettings).get(), "item-id");
+        assertEquals("item-id", cut.add(absence, calendarSettings).orElse("bad-id"));
 
         verify(appointment, times(1)).setStartTimeZone(any(TimeZoneDefinition.class));
         verify(appointment, times(1)).setEndTimeZone(any(TimeZoneDefinition.class));
