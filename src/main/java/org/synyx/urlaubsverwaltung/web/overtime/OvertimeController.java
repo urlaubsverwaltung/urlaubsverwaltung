@@ -76,7 +76,7 @@ public class OvertimeController {
 
     @GetMapping(value = "/overtime", params = PersonConstants.PERSON_ATTRIBUTE)
     public String showOvertime(
-        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = true) Integer personId,
+        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE) Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
