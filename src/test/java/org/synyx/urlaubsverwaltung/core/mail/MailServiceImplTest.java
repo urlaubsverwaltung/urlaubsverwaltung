@@ -3,7 +3,10 @@ package org.synyx.urlaubsverwaltung.core.mail;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
@@ -18,10 +21,10 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -32,8 +35,9 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
+@RunWith(MockitoJUnitRunner.class)
 public class MailServiceImplTest {
 
     private MailServiceImpl mailService;
@@ -46,6 +50,9 @@ public class MailServiceImplTest {
 
     private Application application;
     private Settings settings;
+
+    @Captor
+    private ArgumentCaptor<List<String>> recipientsArgumentCaptor;
 
     @Before
     public void setUp() {
@@ -62,7 +69,7 @@ public class MailServiceImplTest {
         RecipientService recipientService = new RecipientService(personService, departmentService);
 
         mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, departmentService,
-                settingsService);
+            settingsService);
 
         Person person = TestDataCreator.createPerson();
 
@@ -96,11 +103,8 @@ public class MailServiceImplTest {
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
             .thenReturn(Arrays.asList(person, anotherPerson, personWithoutMailAddress));
 
-        ArgumentCaptor<List> recipientsArgumentCaptor = ArgumentCaptor.forClass(List.class);
-
         when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("body");
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("subject");
-
 
         mailService.sendCancellationRequest(application, null);
 
@@ -121,18 +125,17 @@ public class MailServiceImplTest {
     }
 
     @Test
-    public void ensureSendsNewApplicationNotificationSubjectIncludesApplicationPersonName () {
+    public void ensureSendsNewApplicationNotificationSubjectIncludesApplicationPersonName() {
 
         Person boss = TestDataCreator.createPerson("boss");
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-                .thenReturn(Collections.singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
         when(messageSource.getMessage("subject.application.applied.boss", new String[]{"Marlene Muster"}, Locale.GERMAN))
             .thenReturn("Neuer Urlaubsantrag für Marlene Muster");
 
         when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("mail body");
         mailService.sendNewApplicationNotification(application, null);
 
-        verify(mailSender).sendEmail(any(MailSettings.class), any(List.class), eq("Neuer Urlaubsantrag für "+ application.getPerson().getNiceName()), anyString());
+        verify(mailSender).sendEmail(any(MailSettings.class), any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
     }
 
     @Test
@@ -142,10 +145,10 @@ public class MailServiceImplTest {
         Person departmentHead = TestDataCreator.createPerson("departmentHead");
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-            .thenReturn(Collections.singletonList(boss));
+            .thenReturn(singletonList(boss));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
-            .thenReturn(Collections.singletonList(departmentHead));
+            .thenReturn(singletonList(departmentHead));
 
         mailService.sendNewApplicationNotification(application, null);
 
@@ -171,10 +174,10 @@ public class MailServiceImplTest {
         Person departmentHead = TestDataCreator.createPerson("departmentHead");
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-            .thenReturn(Collections.singletonList(boss));
+            .thenReturn(singletonList(boss));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
-            .thenReturn(Collections.singletonList(departmentHead));
+            .thenReturn(singletonList(departmentHead));
 
         mailService.sendRemindBossNotification(application);
 
@@ -200,7 +203,7 @@ public class MailServiceImplTest {
         Application applicationC = createApplication(personDepartmentC);
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-            .thenReturn(Collections.singletonList(boss));
+            .thenReturn(singletonList(boss));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Arrays.asList(departmentHeadAC, departmentHeadB));
@@ -210,7 +213,7 @@ public class MailServiceImplTest {
         when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentC)).thenReturn(true);
 
         mailService.sendRemindForWaitingApplicationsReminderNotification(Arrays.asList(applicationA, applicationB,
-                applicationC));
+            applicationC));
 
         verify(personService, times(3))
             .getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
