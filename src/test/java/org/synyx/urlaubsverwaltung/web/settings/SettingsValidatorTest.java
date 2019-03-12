@@ -28,7 +28,7 @@ public class SettingsValidatorTest {
     private SettingsValidator settingsValidator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         settingsValidator = new SettingsValidator();
     }
@@ -37,14 +37,14 @@ public class SettingsValidatorTest {
     // Supported class -------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureSettingsClassIsSupported() throws Exception {
+    public void ensureSettingsClassIsSupported() {
 
         Assert.assertTrue("Should return true for Settings class.", settingsValidator.supports(Settings.class));
     }
 
 
     @Test
-    public void ensureOtherClassThanSettingsIsNotSupported() throws Exception {
+    public void ensureOtherClassThanSettingsIsNotSupported() {
 
         Assert.assertFalse("Should return false for other classes than Settings.",
             settingsValidator.supports(Object.class));
@@ -52,7 +52,7 @@ public class SettingsValidatorTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureThatValidateFailsWithOtherClassThanSettings() throws Exception {
+    public void ensureThatValidateFailsWithOtherClassThanSettings() {
 
         Object o = new Object();
         Errors mockError = mock(Errors.class);
@@ -63,7 +63,7 @@ public class SettingsValidatorTest {
     // Working time settings: Public holidays --------------------------------------------------------------------------
 
     @Test
-    public void ensureWorkingTimeSettingsCanNotBeNull() throws Exception {
+    public void ensureWorkingTimeSettingsCanNotBeNull() {
 
         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -204,7 +204,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatMaximumMonthsToApplyForLeaveInAdvanceNotZero() throws Exception {
+    public void ensureThatMaximumMonthsToApplyForLeaveInAdvanceNotZero() {
 
         Settings settings = new Settings();
         settings.getAbsenceSettings().setMaximumMonthsToApplyForLeaveInAdvance(0);
@@ -217,7 +217,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() throws Exception {
+    public void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() {
 
         Settings settings = new Settings();
         settings.getAbsenceSettings().setMaximumAnnualVacationDays(367);
@@ -229,7 +229,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatAbsenceSettingsAreSmallerOrEqualsThanMaxInt() throws Exception {
+    public void ensureThatAbsenceSettingsAreSmallerOrEqualsThanMaxInt() {
 
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
@@ -251,7 +251,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatDaysBeforeEndOfSickPayNotificationIsSmallerThanMaximumSickPayDays() throws Exception {
+    public void ensureThatDaysBeforeEndOfSickPayNotificationIsSmallerThanMaximumSickPayDays() {
 
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();

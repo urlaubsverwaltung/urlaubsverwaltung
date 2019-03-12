@@ -30,7 +30,7 @@ public class MailSenderTest {
     private Settings settings;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         javaMailSender = mock(JavaMailSenderImpl.class);
 

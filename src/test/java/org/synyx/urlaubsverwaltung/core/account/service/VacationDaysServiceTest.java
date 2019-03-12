@@ -47,7 +47,7 @@ public class VacationDaysServiceTest {
     private NowService nowService;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
 
         applicationService = mock(ApplicationService.class);
         nowService = mock(NowService.class);

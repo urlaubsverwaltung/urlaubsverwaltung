@@ -38,7 +38,7 @@ public class AccountInteractionServiceImplTest {
 
 
     @Before
-    public void setup() throws IOException {
+    public void setup() {
 
         accountService = mock(AccountService.class);
 

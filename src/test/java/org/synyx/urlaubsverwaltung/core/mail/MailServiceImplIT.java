@@ -549,7 +549,7 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureCorrectFrom() throws MessagingException, IOException {
+    public void ensureCorrectFrom() throws MessagingException {
 
         mailService.sendConfirmation(application, null);
 

@@ -34,7 +34,7 @@ public class SickNoteStatisticsTest {
     private List<SickNote> sickNotes;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         calendarService = mock(WorkDaysService.class);
         sickNoteDAO = mock(SickNoteDAO.class);
@@ -69,21 +69,21 @@ public class SickNoteStatisticsTest {
 
 
     @Test
-    public void testGetTotalNumberOfSickNotes() throws Exception {
+    public void testGetTotalNumberOfSickNotes() {
 
         Assert.assertEquals(2, statistics.getTotalNumberOfSickNotes());
     }
 
 
     @Test
-    public void testGetTotalNumberOfSickDays() throws Exception {
+    public void testGetTotalNumberOfSickDays() {
 
         Assert.assertEquals(new BigDecimal("14"), statistics.getTotalNumberOfSickDays());
     }
 
 
     @Test
-    public void testGetAverageDurationOfDiseasePerPerson() throws Exception {
+    public void testGetAverageDurationOfDiseasePerPerson() {
 
         // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
         // 14 workdays / 7 persons = 2 workdays per person
@@ -96,7 +96,7 @@ public class SickNoteStatisticsTest {
 
 
     @Test
-    public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() throws Exception {
+    public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
 
         when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
 
@@ -107,7 +107,7 @@ public class SickNoteStatisticsTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetTotalNumberOfSickDaysInvalidDateRange() throws Exception {
+    public void testGetTotalNumberOfSickDaysInvalidDateRange() {
 
         when(sickNoteDAO.findAllActiveByYear(2015)).thenReturn(sickNotes);
 
