@@ -17,9 +17,8 @@ zur Urlaubsverwaltung verwendet wird.
 
 Um dieses Beispiel zu verwenden sind folgende Schritte notwendig:
 
-* Das `MYSQL_ROOT_PASSWORD=` muss für die MariaDB im [docker-compose-File](docker-compose/with-mariadb/docker-compose.yaml) gesetzt werden
-* Das `MYSQL_PASSWORD=` muss für die MariaDB im [db.env-File](docker-compose/with-mariadb/db.env) gesetzt werden
 * Über `docker-compose pull` wird das neuste Container Image der Urlaubsverwaltung runtergeladen
 * Der Start der Urlaubsverwaltung inkl. MariaDB erfolgt durch `docker-compose up -d`
 
-Falls die Urlaubsverwaltung auf eine neue Version aktualisiert werden sollte, müssen Schritte 3 und 4 wiederholt werden.
+Falls die Urlaubsverwaltung auf eine neue Version aktualisiert werden sollte,
+müssen diese zwei Schritte wiederholt werden.
