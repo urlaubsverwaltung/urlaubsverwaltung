@@ -126,7 +126,7 @@ public class PersonController {
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownDepartmentException {
 
-        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
+        Integer year = requestedYear.orElseGet(() -> DateMidnight.now().getYear());
 
         Person signedInUser = sessionService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)

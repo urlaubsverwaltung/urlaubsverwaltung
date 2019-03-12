@@ -166,9 +166,7 @@ public class DepartmentController {
 
         departmentService.delete(departmentId);
 
-        if (department.isPresent()) {
-            redirectAttributes.addFlashAttribute("deletedDepartment", department.get());
-        }
+        department.ifPresent(department1 -> redirectAttributes.addFlashAttribute("deletedDepartment", department1));
 
         return "redirect:/web/department/";
     }

@@ -135,9 +135,7 @@ public class ApplicationForLeaveDetailsController {
         Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
                 application.getPerson(), application.getStartDate());
 
-        if (optionalWorkingTime.isPresent()) {
-            model.addAttribute("workingTime", optionalWorkingTime.get());
-        }
+        optionalWorkingTime.ifPresent(workingTime -> model.addAttribute("workingTime", workingTime));
 
         // DEPARTMENT APPLICATIONS FOR LEAVE
         List<Application> departmentApplications =
