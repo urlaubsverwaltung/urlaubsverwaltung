@@ -180,9 +180,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
             List<Person> members = getManagedMembersOfDepartmentHead(departmentHead);
 
-            if (members.contains(person)) {
-                return true;
-            }
+            return members.contains(person);
         }
 
         return false;
@@ -195,9 +193,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (secondStageAuthority.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
             List<Person> members = getMembersForSecondStageAuthority(secondStageAuthority);
 
-            if (members.contains(person)) {
-                return true;
-            }
+            return members.contains(person);
         }
 
         return false;
