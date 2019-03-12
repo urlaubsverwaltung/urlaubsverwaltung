@@ -4,12 +4,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 /**
@@ -84,6 +84,6 @@ public final class LdapUser {
 
     public List<String> getMemberOf() {
 
-        return Collections.unmodifiableList(memberOf.stream().collect(Collectors.toList()));
+        return Collections.unmodifiableList(new ArrayList<>(memberOf));
     }
 }
