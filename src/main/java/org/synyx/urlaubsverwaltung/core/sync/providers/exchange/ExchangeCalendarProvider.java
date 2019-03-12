@@ -3,7 +3,11 @@ package org.synyx.urlaubsverwaltung.core.sync.providers.exchange;
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
-import microsoft.exchange.webservices.data.core.enumeration.service.*;
+import microsoft.exchange.webservices.data.core.enumeration.service.ConflictResolutionMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.DeleteMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.SendCancellationsMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsOrCancellationsMode;
 import microsoft.exchange.webservices.data.core.service.folder.CalendarFolder;
 import microsoft.exchange.webservices.data.core.service.folder.Folder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
@@ -25,16 +29,16 @@ import org.synyx.urlaubsverwaltung.core.sync.CalendarNotCreatedException;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
+import java.net.URI;
 import java.util.Optional;
 import java.util.TimeZone;
-import java.net.URI;
 
 
 /**
  * Provides sync of absences with exchange server calendar.
  *
- * @author  Daniel Hammann - <hammann@synyx.de>
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Daniel Hammann - <hammann@synyx.de>
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class ExchangeCalendarProvider implements CalendarProvider {
@@ -88,7 +92,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             }
 
             LOG.info("Appointment {} for '{}' added to exchange calendar '{}'.", appointment.getId(),
-                    absence.getPerson().getNiceName(), calendarName);
+                absence.getPerson().getNiceName(), calendarName);
 
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
@@ -108,8 +112,8 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         String[] emailPart = email.split("[@._]");
         if (emailPart.length < 2) {
             LOG.warn(String.format(
-                    "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
-                    "email-address is not valid (expected form: name@domain)"));
+                "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
+                "email-address is not valid (expected form: name@domain)"));
             return;
         }
         String username = emailPart[0];
@@ -127,7 +131,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                 }
             } catch (Exception usernameException) { // NOSONAR - EWS Java API throws Exception, that's life
                 LOG.info("No connection could be established to the Exchange calendar for username={}, cause={}",
-                        username, usernameException.getMessage());
+                    username, usernameException.getMessage());
                 try {
                     exchangeService.setCredentials(new WebCredentials(username, password, domain));
                     exchangeService.setTraceEnabled(true);
@@ -135,7 +139,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                     exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 } catch (Exception usernameDomainException) { // NOSONAR - EWS Java API throws Exception, that's life
                     LOG.info("No connection could be established to the Exchange calendar for username={} and domain={}, cause={}",
-                            username, domain, usernameDomainException.getMessage());
+                        username, domain, usernameDomainException.getMessage());
 
                     try {
                         exchangeService.setCredentials(new WebCredentials(email, password));
@@ -144,7 +148,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
                         exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                     } catch (Exception emailException) { // NOSONAR - EWS Java API throws Exception, that's life
                         LOG.warn("No connection could be established to the Exchange calendar for email={}, cause={}", email,
-                                emailException.getMessage());
+                            emailException.getMessage());
                     }
                 }
             }
@@ -172,7 +176,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
-                new FolderView(Integer.MAX_VALUE));
+            new FolderView(Integer.MAX_VALUE));
 
         for (Folder folder : calendarRoot.getFolders()) {
             if (folder.getDisplayName().equals(calendarName)) {
@@ -198,7 +202,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             return CalendarFolder.bind(exchangeService, folder.getId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             throw new CalendarNotCreatedException(String.format("Exchange calendar '%s' could not be created",
-                    calendarName), ex);
+                calendarName), ex);
         }
     }
 
@@ -308,7 +312,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     private void discoverFolders(WellKnownFolderName wellKnownFolderName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         FindFoldersResults folders = exchangeService.findFolders(wellKnownFolderName,
-                new FolderView(Integer.MAX_VALUE));
+            new FolderView(Integer.MAX_VALUE));
 
         for (Folder folder : folders.getFolders()) {
             LOG.info("Found folder: {} - {}", wellKnownFolderName.name(), folder.getDisplayName());
