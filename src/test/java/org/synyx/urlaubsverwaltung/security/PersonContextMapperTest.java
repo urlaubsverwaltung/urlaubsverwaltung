@@ -101,9 +101,9 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.<Person>empty());
-        when(ldapSyncService.createPerson(anyString(), Matchers.<Optional<String>>any(),
-                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
+        when(ldapSyncService.createPerson(anyString(), Matchers.any(),
+                    Matchers.any(), Matchers.any()))
             .thenReturn(TestDataCreator.createPerson());
 
         personContextMapper.mapUserFromContext(context, "murygina", null);
@@ -126,8 +126,8 @@ public class PersonContextMapperTest {
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                     Optional.of("murygina@synyx.de")));
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
-        when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
-                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+        when(ldapSyncService.syncPerson(any(Person.class), Matchers.any(),
+                    Matchers.any(), Matchers.any()))
             .thenReturn(person);
 
         personContextMapper.mapUserFromContext(context, "murygina", null);
@@ -146,11 +146,11 @@ public class PersonContextMapperTest {
         String userNameSignedInWith = "mgroehning@simpsons.com";
 
         when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser("mgroehning", Optional.<String>empty(), Optional.<String>empty(),
-                    Optional.<String>empty()));
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.<Person>empty());
-        when(ldapSyncService.createPerson(anyString(), Matchers.<Optional<String>>any(),
-                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+            .thenReturn(new LdapUser("mgroehning", Optional.empty(), Optional.empty(),
+                    Optional.empty()));
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
+        when(ldapSyncService.createPerson(anyString(), Matchers.any(),
+                    Matchers.any(), Matchers.any()))
             .thenReturn(TestDataCreator.createPerson());
 
         UserDetails userDetails = personContextMapper.mapUserFromContext(context, userNameSignedInWith, null);
@@ -171,8 +171,8 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser(person.getLoginName(), Optional.of(person.getFirstName()),
                     Optional.of(person.getLastName()), Optional.of(person.getEmail())));
-        when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
-                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+        when(ldapSyncService.syncPerson(any(Person.class), Matchers.any(),
+                    Matchers.any(), Matchers.any()))
             .thenReturn(person);
 
         personContextMapper.mapUserFromContext(context, person.getLoginName(), null);
@@ -209,11 +209,11 @@ public class PersonContextMapperTest {
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
         when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
-                    Optional.<String>empty()));
+            .thenReturn(new LdapUser("username", Optional.empty(), Optional.empty(),
+                    Optional.empty()));
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
-        when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
-                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+        when(ldapSyncService.syncPerson(any(Person.class), Matchers.any(),
+                    Matchers.any(), Matchers.any()))
             .thenReturn(person);
 
         UserDetails userDetails = personContextMapper.mapUserFromContext(context, "username", null);
@@ -236,13 +236,13 @@ public class PersonContextMapperTest {
         person.setPermissions(Collections.singletonList(Role.USER));
 
         when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
-                    Optional.<String>empty()));
+            .thenReturn(new LdapUser("username", Optional.empty(), Optional.empty(),
+                    Optional.empty()));
 
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Collections.emptyList());
-        when(ldapSyncService.syncPerson(any(Person.class), Matchers.<Optional<String>>any(),
-                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+        when(ldapSyncService.syncPerson(any(Person.class), Matchers.any(),
+                    Matchers.any(), Matchers.any()))
             .thenReturn(person);
 
         personContextMapper.mapUserFromContext(context, "username", null);

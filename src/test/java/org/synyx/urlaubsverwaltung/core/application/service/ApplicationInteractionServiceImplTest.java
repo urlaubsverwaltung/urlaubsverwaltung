@@ -962,7 +962,7 @@ public class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.CONVERTED), eq(Optional.<String>empty()),
+            .create(eq(applicationForLeave), eq(ApplicationAction.CONVERTED), eq(Optional.empty()),
                 eq(creator));
         verify(mailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
 
