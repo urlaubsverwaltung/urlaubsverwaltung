@@ -47,7 +47,7 @@ public class CalculationServiceTest {
     private WorkDaysService calendarService;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
 
         vacationDaysService = mock(VacationDaysService.class);
         accountService = mock(AccountService.class);
