@@ -6,9 +6,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
@@ -72,7 +72,7 @@ public class OverviewController {
         this.settingsService = settingsService;
     }
 
-    @RequestMapping(value = "/overview", method = RequestMethod.GET)
+    @GetMapping("/overview")
     public String showOverview(@RequestParam(value = YEAR_ATTRIBUTE, required = false) String year) {
 
         Person user = sessionService.getSignedInUser();
@@ -84,7 +84,7 @@ public class OverviewController {
         return "redirect:/web/staff/" + user.getId() + "/overview";
     }
 
-    @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
+    @GetMapping("/staff/{personId}/overview")
     public String showOverview(@PathVariable("personId") Integer personId,
                                @RequestParam(value = YEAR_ATTRIBUTE, required = false) Integer year, Model model)
             throws UnknownPersonException, AccessDeniedException {

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -52,7 +52,7 @@ public class ApplicationForLeaveController {
      * @return  waiting applications for leave page
      */
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/application", method = RequestMethod.GET)
+    @GetMapping("/application")
     public String showWaiting(Model model) {
 
         List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();

@@ -4,8 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -39,7 +39,7 @@ public class PersonController {
     @ApiOperation(
         value = "Get all active persons of the application", notes = "Get all active persons of the application"
     )
-    @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
+    @GetMapping(ROOT_URL)
     public ResponseWrapper<PersonListResponse> persons(
         @ApiParam(value = "LDAP Login")
         @RequestParam(value = "ldap", required = false)
