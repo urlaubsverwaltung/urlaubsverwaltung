@@ -399,7 +399,7 @@
         <configuration>
           <images>
             <image>
-              <name>registry.hub.docker.com/synyx/urlaubsverwaltung:${project.version}</name>
+              <name>registry.hub.docker.com/synyx/urlaubsverwaltung</name>
               <external>
                 <type>properties</type>
                 <prefix>docker</prefix>
@@ -411,9 +411,10 @@
                 <assembly>
                   <descriptorRef>artifact</descriptorRef>
                 </assembly>
-                <!--<tags>
+                <tags>
                     <tag>${project.version}</tag>
-                </tags>-->
+                    <tag>latest</tag>
+                </tags>
               </build>
               <run>
                 <ports>
