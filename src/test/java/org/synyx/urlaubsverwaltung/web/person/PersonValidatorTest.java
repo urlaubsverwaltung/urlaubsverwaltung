@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -217,7 +218,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureSelectingOnlyInactiveRoleIsValid() {
 
-        person.setPermissions(Collections.singletonList(Role.INACTIVE));
+        person.setPermissions(singletonList(Role.INACTIVE));
 
         validator.validatePermissions(person, errors);
 
@@ -228,7 +229,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUserRoleMustBeSelectedIfUserShouldNotBeDeactivated() {
 
-        person.setPermissions(Collections.singletonList(Role.OFFICE));
+        person.setPermissions(singletonList(Role.OFFICE));
 
         validator.validatePermissions(person, errors);
 
@@ -355,7 +356,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureBossMailNotificationIsOnlyValidIfBossRoleSelected() {
 
-        person.setPermissions(Arrays.asList(Role.USER));
+        person.setPermissions(singletonList(Role.USER));
         person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
 
         validator.validateNotifications(person, errors);
