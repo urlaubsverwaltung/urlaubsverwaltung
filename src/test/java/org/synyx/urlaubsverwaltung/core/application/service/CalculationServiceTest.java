@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link CalculationService}.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 public class CalculationServiceTest {
 
@@ -58,20 +58,20 @@ public class CalculationServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         calendarService = new WorkDaysService(new PublicHolidaysService(settingsService), workingTimeService,
-                settingsService);
+            settingsService);
 
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();
         List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+            DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(DateMidnight.class)))
+            any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
         service = new CalculationService(vacationDaysService, accountService, accountInteractionService,
-                calendarService);
+            calendarService);
     }
 
 
@@ -100,7 +100,7 @@ public class CalculationServiceTest {
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ZERO);
 
         Assert.assertFalse("Should NOT be enough vacation days to apply for leave",
-                service.checkApplication(applicationForLeaveToCheck));
+            service.checkApplication(applicationForLeaveToCheck));
 
         // enough vacation days for this application for leave, but none would be left
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ONE);
@@ -126,13 +126,13 @@ public class CalculationServiceTest {
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
         Account thisYear = new Account(
-                person, DateUtil.getFirstDayOfYear(2012).toDate(), DateUtil.getLastDayOfYear(2012).toDate(), BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.ZERO, "");
+            person, DateUtil.getFirstDayOfYear(2012).toDate(), DateUtil.getLastDayOfYear(2012).toDate(), BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.ZERO, "");
 
         Account nextYear = new Account(
-                person, DateUtil.getFirstDayOfYear(2013).toDate(), DateUtil.getLastDayOfYear(2013).toDate(), BigDecimal.TEN,
-                // here we set up 2013 to have 10 days remaining vacation available from 2012,
-                // if those have already been used up, we cannot spend them in 2012 as well
-                BigDecimal.TEN, BigDecimal.TEN, "");
+            person, DateUtil.getFirstDayOfYear(2013).toDate(), DateUtil.getLastDayOfYear(2013).toDate(), BigDecimal.TEN,
+            // here we set up 2013 to have 10 days remaining vacation available from 2012,
+            // if those have already been used up, we cannot spend them in 2012 as well
+            BigDecimal.TEN, BigDecimal.TEN, "");
         nextYear.setVacationDays(nextYear.getAnnualVacationDays());
 
 
@@ -141,19 +141,19 @@ public class CalculationServiceTest {
 
         // set up 13 days already used next year, i.e. 10 + 3 remaining
         when(vacationDaysService.getVacationDaysLeft(nextYear, Optional.empty())).thenReturn(
-                VacationDaysLeft.builder()
-                        .withAnnualVacation(BigDecimal.TEN)
-                        .withRemainingVacation(BigDecimal.TEN)
-                        .notExpiring(BigDecimal.ZERO)
-                        .forUsedDaysBeforeApril(BigDecimal.valueOf(13))
-                        .forUsedDaysAfterApril(BigDecimal.ZERO)
-                        .get());
+            VacationDaysLeft.builder()
+                .withAnnualVacation(BigDecimal.TEN)
+                .withRemainingVacation(BigDecimal.TEN)
+                .notExpiring(BigDecimal.ZERO)
+                .forUsedDaysBeforeApril(BigDecimal.valueOf(13))
+                .forUsedDaysAfterApril(BigDecimal.ZERO)
+                .get());
 
         // this year still has all ten days (but 3 of them used up next year, see above)
         when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
 
         Assert.assertFalse("Should not be enough vacation days to apply for leave, because three already used next year",
-                service.checkApplication(applicationForLeaveToCheck));
+            service.checkApplication(applicationForLeaveToCheck));
 
     }
 }
