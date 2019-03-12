@@ -24,8 +24,8 @@ import static org.mockito.Mockito.when;
 @RunWith(Parameterized.class)
 public class CalendarServiceTest {
 
-    private Class input;
-    private Class expected;
+    private final Class input;
+    private final Class expected;
 
     private SettingsService getPreparedSettingsServiceForProvider(Class provider) {
         SettingsService settingsService = mock(SettingsService.class);

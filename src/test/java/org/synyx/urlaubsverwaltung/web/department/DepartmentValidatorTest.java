@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 public class DepartmentValidatorTest {
 
     private DepartmentValidator sut;
-    private Errors errors = mock(Errors.class);
+    private final Errors errors = mock(Errors.class);
 
     @Before
     public void setUp() {

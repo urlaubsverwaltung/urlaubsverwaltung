@@ -17,7 +17,7 @@ enum TestUser {
     OFFICE("test"),
     ADMIN("admin");
 
-    private String login;
+    private final String login;
 
     TestUser(String login) {
 

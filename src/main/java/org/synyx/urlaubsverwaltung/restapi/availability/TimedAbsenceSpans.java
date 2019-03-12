@@ -13,7 +13,7 @@ import java.util.List;
  */
 class TimedAbsenceSpans {
 
-    private List<TimedAbsence> absencesList;
+    private final List<TimedAbsence> absencesList;
 
     TimedAbsenceSpans(List<TimedAbsence> absencesList) {
 

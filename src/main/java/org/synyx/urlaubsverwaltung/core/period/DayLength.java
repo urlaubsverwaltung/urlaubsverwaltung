@@ -13,7 +13,7 @@ public enum DayLength {
     NOON(new BigDecimal("0.5")),
     ZERO(BigDecimal.ZERO);
 
-    private BigDecimal duration;
+    private final BigDecimal duration;
 
     DayLength(BigDecimal duration) {
 
