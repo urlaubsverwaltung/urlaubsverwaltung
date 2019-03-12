@@ -24,7 +24,7 @@ public class SickNoteTest {
 
         Assert.assertNotNull("Last modification date should be set", sickNote.getLastEdited());
         Assert.assertEquals("Wrong last modification date", DateTime.now().withTimeAtStartOfDay(),
-            sickNote.getLastEdited());
+            sickNote.getLastEdited().toDateTime());
     }
 
 
