@@ -8,9 +8,9 @@ import microsoft.exchange.webservices.data.core.service.item.Appointment;
  *
  * @author  Christian Lange - <lange@synyx.de>
  */
-public class ExchangeFactory {
+class ExchangeFactory {
 
-    public Appointment getNewAppointment(ExchangeService exchangeService) throws Exception {
+    Appointment getNewAppointment(ExchangeService exchangeService) throws Exception {
         return new Appointment(exchangeService);
     }
 }
