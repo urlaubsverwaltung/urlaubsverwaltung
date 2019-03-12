@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -52,7 +52,7 @@ public class PublicHolidayController {
     @ApiOperation(
         value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
     )
-    @RequestMapping(value = "/holidays", method = RequestMethod.GET)
+    @GetMapping("/holidays")
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")

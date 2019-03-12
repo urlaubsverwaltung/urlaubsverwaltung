@@ -7,11 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -63,7 +64,7 @@ public class WorkingTimeController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/workingtime", method = RequestMethod.GET)
+    @GetMapping("/staff/{personId}/workingtime")
     public String editWorkingTime(@PathVariable("personId") Integer personId, Model model)
         throws UnknownPersonException {
 
@@ -94,7 +95,7 @@ public class WorkingTimeController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/workingtime", method = RequestMethod.POST)
+    @PostMapping("/staff/{personId}/workingtime")
     public String updateWorkingTime(@PathVariable("personId") Integer personId,
                                     @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm,
                                     Model model,

@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -31,14 +32,14 @@ public class ApplicationForLeaveVacationOverviewController {
     }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/vacationoverview", method = RequestMethod.POST)
+    @PostMapping("/vacationoverview")
     public String applicationForLeaveVacationOverview() {
 
         return "redirect:/web/application/vacationoverview";
     }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/vacationoverview", method = RequestMethod.GET)
+    @GetMapping("/vacationoverview")
     public String applicationForLeaveVacationOverview(Model model) {
         Person signedInUser = sessionService.getSignedInUser();
 

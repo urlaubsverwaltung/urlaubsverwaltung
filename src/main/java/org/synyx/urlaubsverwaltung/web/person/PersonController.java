@@ -6,9 +6,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
@@ -67,7 +67,7 @@ public class PersonController {
         this.sessionService = sessionService;
     }
 
-    @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
+    @GetMapping("/staff/{personId}")
     public String showStaffInformation(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownPersonException, AccessDeniedException {
@@ -112,7 +112,7 @@ public class PersonController {
 
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/staff", method = RequestMethod.GET)
+    @GetMapping("/staff")
     public String showStaff() {
 
         return "redirect:/web/staff?active=true";
@@ -120,7 +120,7 @@ public class PersonController {
 
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/staff", method = RequestMethod.GET, params = "active")
+    @GetMapping(value = "/staff", params = "active")
     public String showStaff(@RequestParam(value = "active") Boolean active,
         @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,

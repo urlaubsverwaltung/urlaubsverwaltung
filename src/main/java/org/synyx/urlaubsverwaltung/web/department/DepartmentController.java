@@ -6,11 +6,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -51,7 +53,7 @@ public class DepartmentController {
 
 
     @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
-    @RequestMapping(value = "/department", method = RequestMethod.GET)
+    @GetMapping("/department")
     public String showAllDepartments(Model model) {
 
         List<Department> departments = departmentService.getAllDepartments();
@@ -63,7 +65,7 @@ public class DepartmentController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/department/new", method = RequestMethod.GET)
+    @GetMapping("/department/new")
     public String newDepartmentForm(Model model) {
 
         List<Person> persons = getPersons();
@@ -82,7 +84,7 @@ public class DepartmentController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/department", method = RequestMethod.POST)
+    @PostMapping("/department")
     public String newDepartment(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department,
         Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
@@ -106,7 +108,7 @@ public class DepartmentController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/department/{departmentId}/edit", method = RequestMethod.GET)
+    @GetMapping("/department/{departmentId}/edit")
     public String editDepartment(@PathVariable("departmentId") Integer departmentId, Model model)
         throws UnknownDepartmentException {
 
@@ -123,7 +125,7 @@ public class DepartmentController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.POST)
+    @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
         @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
         RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
@@ -156,7 +158,7 @@ public class DepartmentController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.DELETE)
+    @DeleteMapping("/department/{departmentId}")
     public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
         RedirectAttributes redirectAttributes) {
 

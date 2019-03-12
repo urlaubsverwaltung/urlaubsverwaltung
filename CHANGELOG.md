@@ -1,3 +1,6 @@
+### master / unreleased
+* Replace request mapping [#544](https://github.com/synyx/urlaubsverwaltung/pull/544)
+
 ### [urlaubsverwaltung-2.37.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.1)
 * Fix basic auth Zugriff auf die API [#545](https://github.com/synyx/urlaubsverwaltung/pull/545)
 
