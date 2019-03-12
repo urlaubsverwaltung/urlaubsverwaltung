@@ -27,7 +27,7 @@ public class DepartmentTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureCanNotSetLastModificationDateToNull() throws Exception {
+    public void ensureCanNotSetLastModificationDateToNull() {
 
         new Department().setLastModification(null);
     }

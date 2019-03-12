@@ -39,7 +39,7 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
     }
 
     @Test
-    public void getStatisticsForDepartmentHead() throws Exception {
+    public void getStatisticsForDepartmentHead() {
 
         FilterPeriod filterPeriod = new FilterPeriod(java.util.Optional.ofNullable("01.01.2018"), java.util.Optional.ofNullable("31.12.2018"));
 
@@ -59,7 +59,7 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
     }
 
     @Test
-    public void getStatisticsForOtherThanDepartmentHead() throws Exception {
+    public void getStatisticsForOtherThanDepartmentHead() {
 
         FilterPeriod filterPeriod = new FilterPeriod(java.util.Optional.ofNullable("01.01.2018"), java.util.Optional.ofNullable("31.12.2018"));
 

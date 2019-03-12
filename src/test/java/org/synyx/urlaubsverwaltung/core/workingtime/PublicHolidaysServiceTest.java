@@ -31,7 +31,7 @@ public class PublicHolidaysServiceTest {
     private SettingsService settingsService;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
 
         settingsService = mock(SettingsService.class);
         publicHolidaysService = new PublicHolidaysService(settingsService);

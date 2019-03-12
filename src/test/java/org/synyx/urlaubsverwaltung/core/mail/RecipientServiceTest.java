@@ -27,14 +27,14 @@ public class RecipientServiceTest {
     private DepartmentService departmentService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         personService = mock(PersonService.class);
         departmentService = mock(DepartmentService.class);
         sut = new RecipientService(personService, departmentService);
     }
 
     @Test
-    public void testAllowUserApplicationWithSingleStageDepartment() throws Exception {
+    public void testAllowUserApplicationWithSingleStageDepartment() {
         // given user application
         Person normalUser = TestDataCreator.createPerson("normalUser", Role.USER);
         Application application = getHolidayApplication(normalUser);
@@ -54,7 +54,7 @@ public class RecipientServiceTest {
     }
 
     @Test
-    public void testAllowDepartmentHeadApplicationWithSingleStageDepartment() throws Exception {
+    public void testAllowDepartmentHeadApplicationWithSingleStageDepartment() {
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
         Application application = getHolidayApplication(departmentHead);
@@ -71,7 +71,7 @@ public class RecipientServiceTest {
     }
 
     @Test
-    public void testAllowUserApplicationWithSecondStageDepartment() throws Exception {
+    public void testAllowUserApplicationWithSecondStageDepartment() {
         // given user application
         Person normalUser = TestDataCreator.createPerson("normalUser", Role.USER);
         Application application = getHolidayApplication(normalUser);
@@ -96,7 +96,7 @@ public class RecipientServiceTest {
     }
 
     @Test
-    public void testAllowDepartmentHeadWithSecondStageDepartment() throws Exception {
+    public void testAllowDepartmentHeadWithSecondStageDepartment() {
         // given department head
         Person departmentHead = TestDataCreator.createPerson("departmentHead", Role.DEPARTMENT_HEAD);
         Application application = getHolidayApplication(departmentHead);
@@ -118,7 +118,7 @@ public class RecipientServiceTest {
     }
 
     @Test
-    public void testAllowSecondStageApplicationWithSecondStageDepartment() throws Exception {
+    public void testAllowSecondStageApplicationWithSecondStageDepartment() {
         // given second stage
         Person secondStage = TestDataCreator.createPerson("secondStage", Role.SECOND_STAGE_AUTHORITY);
         Application application = getHolidayApplication(secondStage);
@@ -156,7 +156,7 @@ public class RecipientServiceTest {
      * recipient head2, secondStage
      */
     @Test
-    public void testApplicationDepartmentHeadWithTwoDepartmentsWithDifferentRules() throws Exception {
+    public void testApplicationDepartmentHeadWithTwoDepartmentsWithDifferentRules() {
         Person head1 = TestDataCreator.createPerson("head1", Role.DEPARTMENT_HEAD);
         Application application = getHolidayApplication(head1);
 
@@ -175,7 +175,7 @@ public class RecipientServiceTest {
     }
 
     @Test
-    public void testTemporaryAllowUserApplicationWithSecondStageDepartment() throws Exception {
+    public void testTemporaryAllowUserApplicationWithSecondStageDepartment() {
         // given user application
         Person normalUser = TestDataCreator.createPerson("normalUser", Role.USER);
         Application application = getHolidayApplication(normalUser);

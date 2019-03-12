@@ -18,7 +18,7 @@ public class AbsenceMappingServiceImplTest {
     private AbsenceMappingDAO absenceMappingDAO;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         absenceMappingDAO = mock(AbsenceMappingDAO.class);
         sut = new AbsenceMappingServiceImpl(absenceMappingDAO);
@@ -26,7 +26,7 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCreateAbsenceMappingForVacation() throws Exception {
+    public void shouldCreateAbsenceMappingForVacation() {
 
         String eventId = "eventId";
 
@@ -40,7 +40,7 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCreateAbsenceMappingForSickDay() throws Exception {
+    public void shouldCreateAbsenceMappingForSickDay() {
 
         String eventId = "eventId";
 

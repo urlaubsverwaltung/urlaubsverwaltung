@@ -73,7 +73,7 @@ public class GoogleCalendarSyncProviderServiceTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         settingsService = prepareSettingsServiceMock();
         mailService = mock(MailService.class);
         googleCalendarSyncProvider = new GoogleCalendarSyncProvider(mailService, settingsService);
