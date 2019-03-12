@@ -1,4 +1,6 @@
 ### master / unreleased
+
+### [urlaubsverwaltung-2.38.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.0)
 * Replace request mapping [#544](https://github.com/synyx/urlaubsverwaltung/pull/544)
 * Bugfix: DockerHub label `latest` wurde nicht veröffentlicht [#549](https://github.com/synyx/urlaubsverwaltung/pull/549)
 
