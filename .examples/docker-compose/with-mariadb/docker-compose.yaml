@@ -24,7 +24,7 @@ services:
     env_file:
       - db.env
     volumes:
-      - ./application.properties:/config/application.properties
+      - ./application.properties:/app/application.properties
     depends_on:
       mariadb:
         condition: service_healthy
