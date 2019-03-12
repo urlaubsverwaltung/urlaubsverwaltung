@@ -7,8 +7,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -54,7 +54,7 @@ public class WorkDayController {
         value = "Calculate the work days for a certain period and person",
         notes = "The calculation depends on the working time of the person."
     )
-    @RequestMapping(value = "/workdays", method = RequestMethod.GET)
+    @GetMapping("/workdays")
     public ResponseWrapper<WorkDayResponse> workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
