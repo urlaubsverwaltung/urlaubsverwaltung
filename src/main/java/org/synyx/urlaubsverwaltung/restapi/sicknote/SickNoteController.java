@@ -7,8 +7,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -47,7 +47,7 @@ public class SickNoteController {
         + "If a person is specified, only the sick notes of this person are fetched. "
         + "Information only reachable for users with role office."
     )
-    @RequestMapping(value = "/sicknotes", method = RequestMethod.GET)
+    @GetMapping("/sicknotes")
     public ResponseWrapper<SickNoteListResponse> sickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")

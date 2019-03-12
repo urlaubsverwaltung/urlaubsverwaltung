@@ -7,11 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -52,7 +53,7 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/new", method = RequestMethod.GET)
+    @GetMapping("/staff/new")
     public String newPersonForm(Model model) {
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, new Person());
@@ -62,7 +63,7 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff", method = RequestMethod.POST)
+    @PostMapping("/staff")
     public String newPerson(@ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person,
                             Errors errors,
                             RedirectAttributes redirectAttributes) {
@@ -82,7 +83,7 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.GET)
+    @GetMapping("/staff/{personId}/edit")
     public String editPersonForm(@PathVariable("personId") Integer personId,
                                  Model model)
         throws UnknownPersonException {
@@ -100,7 +101,7 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.POST)
+    @PostMapping("/staff/{personId}/edit")
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
         RedirectAttributes redirectAttributes) {

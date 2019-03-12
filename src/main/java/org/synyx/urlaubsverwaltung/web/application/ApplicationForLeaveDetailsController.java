@@ -7,10 +7,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -78,7 +79,7 @@ public class ApplicationForLeaveDetailsController {
         this.workingTimeService = workingTimeService;
     }
 
-    @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
+    @GetMapping("/{applicationId}")
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
@@ -164,7 +165,7 @@ public class ApplicationForLeaveDetailsController {
      * Allow a not yet allowed application for leave (Privileged user only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
-    @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/allow")
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
@@ -219,7 +220,7 @@ public class ApplicationForLeaveDetailsController {
      * to decide about this application (an email is sent).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
-    @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException, AccessDeniedException {
@@ -254,7 +255,7 @@ public class ApplicationForLeaveDetailsController {
      * Reject an application for leave (Boss only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
-    @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/reject")
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
@@ -304,7 +305,7 @@ public class ApplicationForLeaveDetailsController {
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
      * Office.
      */
-    @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/cancel")
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, AccessDeniedException {
@@ -351,7 +352,7 @@ public class ApplicationForLeaveDetailsController {
     /**
      * Remind the bosses about the decision of an application for leave.
      */
-    @RequestMapping(value = "/{applicationId}/remind", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/remind")
     public String remindBoss(@PathVariable("applicationId") Integer applicationId,
         RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 

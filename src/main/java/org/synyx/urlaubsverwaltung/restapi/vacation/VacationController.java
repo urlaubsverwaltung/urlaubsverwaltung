@@ -7,8 +7,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -57,7 +57,7 @@ public class VacationController {
             + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched. "
             + "Information only reachable for users with role office."
     )
-    @RequestMapping(value = "/vacations", method = RequestMethod.GET)
+    @GetMapping("/vacations")
     public ResponseWrapper<VacationListResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
