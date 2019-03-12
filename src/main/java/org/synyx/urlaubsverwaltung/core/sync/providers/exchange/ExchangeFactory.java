@@ -10,7 +10,13 @@ import microsoft.exchange.webservices.data.core.service.item.Appointment;
  */
 class ExchangeFactory {
 
-    Appointment getNewAppointment(ExchangeService exchangeService) throws Exception {
-        return new Appointment(exchangeService);
+    Appointment getNewAppointment(ExchangeService exchangeService) throws ExchangeServiceException {
+        try {
+
+            return new Appointment(exchangeService);
+        } catch (Exception e) {
+
+            throw new ExchangeServiceException(e.getMessage());
+        }
     }
 }
