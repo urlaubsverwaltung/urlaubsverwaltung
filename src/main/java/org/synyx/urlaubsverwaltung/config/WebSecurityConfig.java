@@ -1,16 +1,27 @@
 package org.synyx.urlaubsverwaltung.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import static java.util.Arrays.asList;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final Environment environment;
+
+    @Autowired(required = false)
+    public WebSecurityConfig(Environment environment) {
+        this.environment = environment;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -51,6 +62,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .logout()
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login");
+
+        boolean devProfileActive = asList(environment.getActiveProfiles()).contains("dev");
+        if (devProfileActive) {
+            http.headers().frameOptions().disable();
+        }
     }
 
 }
