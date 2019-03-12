@@ -22,8 +22,10 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 
@@ -85,6 +87,14 @@ public class SettingsController {
             .sorted(Comparator.reverseOrder())
             .collect(Collectors.toList());
         model.addAttribute("providers", providers);
+
+        List<String> availableTimezones = Arrays.asList(TimeZone.getAvailableIDs());
+        model.addAttribute("availableTimezones", availableTimezones);
+
+        if (settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
+            settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(TimeZone.getDefault().getID());
+        }
+
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
     }
 

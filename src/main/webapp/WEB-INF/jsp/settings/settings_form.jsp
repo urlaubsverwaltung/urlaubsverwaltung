@@ -518,27 +518,34 @@
                                         <spring:message code='settings.calendar.ews.calendar'/>:
                             </label>
                             <div class="col-md-8">
-                                        <form:input id="calendarSettings.exchangeCalendarSettings.calendar"
-                                                    path="calendarSettings.exchangeCalendarSettings.calendar"
-                                                    class="form-control" cssErrorClass="form-control error"/>
-                                        <span class="help-inline"><form:errors
-                                            path="calendarSettings.exchangeCalendarSettings.calendar"
-                                            cssClass="error"/></span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4"
-                                           for="calendarSettings.exchangeCalendarSettings.sendInvitationActive">
-                                        <spring:message code='settings.calendar.ews.notification'/>:
-                                    </label>
-                                    <div class="col-md-8 checkbox">
-                                        <label>
-                                            <form:checkbox
-                                                id="calendarSettings.exchangeCalendarSettings.sendInvitationActive"
-                                                path="calendarSettings.exchangeCalendarSettings.sendInvitationActive"
-                                                value="true"/>
-                                            <spring:message code="settings.calendar.ews.notification.true"/>
-                                        </label>
+                                <form:input id="calendarSettings.exchangeCalendarSettings.calendar" path="calendarSettings.exchangeCalendarSettings.calendar" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.calendar" cssClass="error"/></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.timeZoneId">
+                                <spring:message code='settings.calendar.ews.timeZoneId'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:select id="calendarSettings.exchangeCalendarSettings.timeZoneId" path="calendarSettings.exchangeCalendarSettings.timeZoneId" class="form-control chosenCombo" cssErrorClass="form-control error">
+                                    <c:forEach items="${availableTimezones}" var="timeZoneId">
+                                        <form:option value="${timeZoneId}">${timeZoneId}</form:option>
+                                    </c:forEach>
+                                </form:select>
+                                <span class="help-inline"><form:errors path="calendarSettings.provider" cssClass="error"/></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.sendInvitationActive">
+                                <spring:message code='settings.calendar.ews.notification'/>:
+                            </label>
+                            <div class="col-md-8 checkbox">
+                                <label>
+                                    <form:checkbox id="calendarSettings.exchangeCalendarSettings.sendInvitationActive" path="calendarSettings.exchangeCalendarSettings.sendInvitationActive" value="true"/>
+                                    <spring:message code="settings.calendar.ews.notification.true"/>
+                                </label>
                             </div>
                         </div>
                             </div>
@@ -686,6 +693,15 @@
 
         document.getElementById('google-calendar').hidden = value !== 'GoogleCalendarSyncProvider';
         document.getElementById('exchange-calendar').hidden = value !== 'ExchangeCalendarProvider';
+
+        if (value === 'ExchangeCalendarProvider') {
+           // problem if div is not displayed
+           // https://github.com/harvesthq/chosen/issues/92
+           $(".chosenCombo").chosen({width: "100%"});
+        } else {
+            // if not visible deactivate
+            $(".chosenCombo").chosen('destroy');
+        }
     }
 
     // initial run to update view
