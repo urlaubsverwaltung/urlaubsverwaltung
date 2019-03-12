@@ -40,7 +40,7 @@ public class SickNoteValidatorTest {
     private Errors errors;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         overlapService = mock(OverlapService.class);
         workingTimeService = mock(WorkingTimeService.class);
