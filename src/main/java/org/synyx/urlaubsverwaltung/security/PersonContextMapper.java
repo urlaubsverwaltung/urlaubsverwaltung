@@ -125,7 +125,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-        permissions.stream().forEach(role -> grantedAuthorities.add(role::name));
+        permissions.forEach(role -> grantedAuthorities.add(role::name));
 
         return grantedAuthorities;
     }

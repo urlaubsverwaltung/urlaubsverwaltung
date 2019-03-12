@@ -75,7 +75,7 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
             }
         }
 
-        return new LdapUser(username, firstName, lastName, email, groups.stream().toArray(String[]::new));
+        return new LdapUser(username, firstName, lastName, email, groups.toArray(new String[0]));
     }
 
 
