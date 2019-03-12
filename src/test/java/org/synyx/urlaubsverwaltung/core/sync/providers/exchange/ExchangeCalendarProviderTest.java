@@ -9,9 +9,10 @@ import microsoft.exchange.webservices.data.property.complex.Attendee;
 import microsoft.exchange.webservices.data.property.complex.AttendeeCollection;
 import microsoft.exchange.webservices.data.property.complex.FolderId;
 import microsoft.exchange.webservices.data.property.complex.ItemId;
+import microsoft.exchange.webservices.data.property.complex.time.TimeZoneDefinition;
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
+import microsoft.exchange.webservices.data.search.FolderView;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
@@ -19,8 +20,13 @@ import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ExchangeCalendarProviderTest {
 
@@ -40,8 +46,8 @@ public class ExchangeCalendarProviderTest {
     }
 
     private CalendarSettings getMockedCalendarSettings() {
-        CalendarSettings calendarSettings = Mockito.mock(CalendarSettings.class);
-        ExchangeCalendarSettings exchangeCalSettings = Mockito.mock(ExchangeCalendarSettings.class);
+        CalendarSettings calendarSettings = mock(CalendarSettings.class);
+        ExchangeCalendarSettings exchangeCalSettings = mock(ExchangeCalendarSettings.class);
         when(exchangeCalSettings.getTimeZoneId()).thenReturn("Europe/Berlin");
 
         when(calendarSettings.getExchangeCalendarSettings()).thenReturn(exchangeCalSettings);
@@ -54,25 +60,25 @@ public class ExchangeCalendarProviderTest {
 
     private ExchangeService getMockedExchangeService() throws Exception {
 
-        ExchangeService exchangeService = Mockito.mock(ExchangeService.class);
+        ExchangeService exchangeService = mock(ExchangeService.class);
 
         FindFoldersResults calendarRoot = new FindFoldersResults();
 
-        CalendarFolder folder = Mockito.mock(CalendarFolder.class);
+        CalendarFolder folder = mock(CalendarFolder.class);
 
         when(folder.getDisplayName()).thenReturn("");
         when(folder.getId()).thenReturn(new FolderId("folder-id"));
 
         calendarRoot.getFolders().add(folder);
 
-        when(exchangeService.findFolders(eq(WellKnownFolderName.Calendar), anyObject())).thenReturn(calendarRoot);
+        when(exchangeService.findFolders(eq(WellKnownFolderName.Calendar), any(FolderView.class))).thenReturn(calendarRoot);
         when(exchangeService.getRequestedServerVersion()).thenReturn(ExchangeVersion.Exchange2010_SP2);
 
         return exchangeService;
     }
 
     private Appointment getMockedAppointment() throws Exception {
-        Appointment appointment = Mockito.mock(Appointment.class);
+        Appointment appointment = mock(Appointment.class);
 
 
         AttendeeCollection attendeeCollection = new AttendeeCollection();
@@ -87,23 +93,23 @@ public class ExchangeCalendarProviderTest {
 
     @Test
     public void add() throws Exception {
-        MailService mailService = Mockito.mock(MailService.class);
-        ExchangeFactory exchangeFactory = Mockito.mock(ExchangeFactory.class);
+        MailService mailService = mock(MailService.class);
+        ExchangeFactory exchangeFactory = mock(ExchangeFactory.class);
 
         Appointment appointment = getMockedAppointment();
-        when(exchangeFactory.getNewAppointment(anyObject())).thenReturn(appointment);
+        when(exchangeFactory.getNewAppointment(any(ExchangeService.class))).thenReturn(appointment);
 
         ExchangeService exchangeService = getMockedExchangeService();
         ExchangeCalendarProvider cut = new ExchangeCalendarProvider(mailService, exchangeService, exchangeFactory);
 
-        Absence absence = Mockito.mock(Absence.class);
+        Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(new Person("login", "lastName", "firstName", "abc@de.f"));
 
         CalendarSettings calendarSettings = getMockedCalendarSettings();
 
         assertEquals(cut.add(absence, calendarSettings).get(), "item-id");
 
-        verify(appointment, times(1)).setStartTimeZone(anyObject());
-        verify(appointment, times(1)).setEndTimeZone(anyObject());
+        verify(appointment, times(1)).setStartTimeZone(any(TimeZoneDefinition.class));
+        verify(appointment, times(1)).setEndTimeZone(any(TimeZoneDefinition.class));
     }
 }
