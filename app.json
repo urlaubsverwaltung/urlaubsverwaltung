@@ -13,5 +13,7 @@
   "name": "urlaubsverwaltung",
   "repository": "https://github.com/synyx/urlaubsverwaltung",
   "logo": "https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/static/images/urlaubaer.png",
-  "stack": "heroku-18"
+  "stack": "heroku-18",
+  "success_url": "https://synyx.github.io/urlaubsverwaltung-landingpage/",
+  "website": "https://synyx.github.io/urlaubsverwaltung-landingpage/"
 }
