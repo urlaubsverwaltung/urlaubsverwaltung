@@ -31,7 +31,6 @@ public class CalculationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalculationService.class);
 
-
     private final VacationDaysService vacationDaysService;
     private final AccountInteractionService accountInteractionService;
     private final AccountService accountService;
@@ -92,8 +91,6 @@ public class CalculationService {
             return false;
         }
 
-
-
         // we also need to look at the next year, because "remaining days" from this year
         // may already have been booked then
 
@@ -137,12 +134,7 @@ public class CalculationService {
         }
 
         Optional<Account> lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
+        return lastYearsHolidaysAccount.map(accountInteractionService::autoCreateOrUpdateNextYearsHolidaysAccount);
 
-        if (!lastYearsHolidaysAccount.isPresent()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
-                    lastYearsHolidaysAccount.get()));
     }
 }
