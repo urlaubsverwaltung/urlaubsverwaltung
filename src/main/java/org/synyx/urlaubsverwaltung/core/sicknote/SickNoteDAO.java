@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public interface SickNoteDAO extends JpaRepository<SickNote, Integer> {
+public interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
 
     @Query(
         "SELECT x FROM SickNote x WHERE x.person = ?1 AND "

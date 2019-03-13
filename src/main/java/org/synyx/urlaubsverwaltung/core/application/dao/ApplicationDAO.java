@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public interface ApplicationDAO extends JpaRepository<Application, Integer> {
+public interface ApplicationDAO extends CrudRepository<Application, Integer> {
 
     @Query("select x from Application x where x.status = ?1")
     List<Application> getApplicationsForACertainState(ApplicationStatus status);
