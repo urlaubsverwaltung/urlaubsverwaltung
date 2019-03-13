@@ -61,7 +61,8 @@ metadata:
   name: urlaubsverwaltung
 spec:
   ports:
-    - port: http
+    - name: http
+      port: 80
       targetPort: 8080
   selector:
     app: urlaubsverwaltung
