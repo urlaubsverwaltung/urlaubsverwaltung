@@ -1,10 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
@@ -22,12 +23,18 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.joda.time.DateTimeConstants.AUGUST;
+import static org.joda.time.DateTimeConstants.FRIDAY;
+import static org.joda.time.DateTimeConstants.MONDAY;
+import static org.joda.time.DateTimeConstants.THURSDAY;
+import static org.joda.time.DateTimeConstants.TUESDAY;
+import static org.joda.time.DateTimeConstants.WEDNESDAY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,21 +45,22 @@ import static org.mockito.Mockito.when;
  *
  * @author Aljona Murygina - murygina@synyx.de
  */
+@RunWith(MockitoJUnitRunner.class)
 public class CalculationServiceTest {
 
-    private CalculationService service;
+    private CalculationService sut;
+
+    @Mock
     private VacationDaysService vacationDaysService;
+    @Mock
     private AccountInteractionService accountInteractionService;
+    @Mock
     private AccountService accountService;
+    @Mock
     private WorkDaysService calendarService;
 
     @Before
     public void setUp() {
-
-        vacationDaysService = mock(VacationDaysService.class);
-        accountService = mock(AccountService.class);
-        accountInteractionService = mock(AccountInteractionService.class);
-
         WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
         SettingsService settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -62,53 +70,101 @@ public class CalculationServiceTest {
 
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-            DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        List<Integer> workingDays = asList(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-            any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(DateMidnight.class)))
             .thenReturn(Optional.of(workingTime));
 
-        service = new CalculationService(vacationDaysService, accountService, accountInteractionService,
-            calendarService);
+        sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, calendarService);
     }
 
 
     @Test
-    public void testCheckApplicationSimple() {
+    public void testCheckApplicationSameYearAndEnoughDaysLeft() {
 
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
-        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, AUGUST, 20));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
         Account account = new Account();
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
-        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
 
         // vacation days would be left after this application for leave
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.TEN);
 
-        Assert.assertTrue("Should be enough vacation days to apply for leave",
-            service.checkApplication(applicationForLeaveToCheck));
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    public void testCheckApplicationSameYearAndNotEnoughDaysLeft() {
+
+        Person person = TestDataCreator.createPerson("horscht");
+
+        Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+
+        Account account = new Account();
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         // not enough vacation days for this application for leave
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ZERO);
 
-        Assert.assertFalse("Should NOT be enough vacation days to apply for leave",
-            service.checkApplication(applicationForLeaveToCheck));
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isFalse();
+    }
+
+    @Test
+    public void testCheckApplicationSameYearAndExactEnoughDaysLeft() {
+
+        Person person = TestDataCreator.createPerson("horscht");
+
+        Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+
+        Account account = new Account();
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         // enough vacation days for this application for leave, but none would be left
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ONE);
 
-        Assert.assertTrue("Should be enough vacation days to apply for leave",
-            service.checkApplication(applicationForLeaveToCheck));
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
     }
 
+    @Test
+    public void testCheckApplicationLastYear() {
+
+        Person person = TestDataCreator.createPerson("horscht");
+
+        Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+
+        Account account = new Account();
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.empty());
+        when(accountService.getHolidaysAccount(2011, person)).thenReturn(Optional.of(account));
+        when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(account)).thenReturn(account);
+
+        // enough vacation days for this application for leave, but none would be left
+        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.ONE);
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
 
     /**
      * https://github.com/synyx/urlaubsverwaltung/issues/447
@@ -120,8 +176,8 @@ public class CalculationServiceTest {
 
         Application applicationForLeaveToCheck = new Application();
         // nine days
-        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 30));
+        applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, AUGUST, 30));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
@@ -152,8 +208,7 @@ public class CalculationServiceTest {
         // this year still has all ten days (but 3 of them used up next year, see above)
         when(vacationDaysService.calculateTotalLeftVacationDays(thisYear)).thenReturn(BigDecimal.TEN);
 
-        Assert.assertFalse("Should not be enough vacation days to apply for leave, because three already used next year",
-            service.checkApplication(applicationForLeaveToCheck));
-
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isFalse();
     }
 }
