@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 
 /**
@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author  Daniel Hammann - hammann@synyx.de
  */
-public interface SettingsDAO extends JpaRepository<Settings, Integer> {
+public interface SettingsDAO extends CrudRepository<Settings, Integer> {
 }
