@@ -1,4 +1,5 @@
 ### master / unreleased
+* Bugfix: Fehlende englishe Übersetzung für Exchange (EWS) URL ergänzt [#557](https://github.com/synyx/urlaubsverwaltung/pull/557)
 
 ### [urlaubsverwaltung-2.38.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.0)
 * Replace request mapping [#544](https://github.com/synyx/urlaubsverwaltung/pull/544)
