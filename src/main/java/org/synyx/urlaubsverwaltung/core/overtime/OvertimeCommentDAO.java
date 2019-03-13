@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
-public interface OvertimeCommentDAO extends JpaRepository<OvertimeComment, Integer> {
+public interface OvertimeCommentDAO extends CrudRepository<OvertimeComment, Integer> {
 
     List<OvertimeComment> findByOvertime(Overtime overtime);
 }

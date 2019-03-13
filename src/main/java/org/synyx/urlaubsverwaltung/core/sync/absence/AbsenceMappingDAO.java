@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.core.sync.absence;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 
 /**
  * Daniel Hammann - <hammann@synyx.de>.
  */
-public interface AbsenceMappingDAO extends JpaRepository<AbsenceMapping, Integer> {
+public interface AbsenceMappingDAO extends CrudRepository<AbsenceMapping, Integer> {
 
     AbsenceMapping findAbsenceMappingByAbsenceIdAndAbsenceType(Integer id, AbsenceType absenceType);
 }
