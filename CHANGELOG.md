@@ -1,4 +1,5 @@
 ### master / unreleased
+* Bugfix: Fehlerhafte Übersetzung in den Email-Templates des Urlaubtypes [#560](https://github.com/synyx/urlaubsverwaltung/pull/560)
 
 ### [urlaubsverwaltung-2.38.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.1)
 * Bugfix: Fehlende englishe Übersetzung für Exchange (EWS) URL ergänzt [#557](https://github.com/synyx/urlaubsverwaltung/pull/557)
