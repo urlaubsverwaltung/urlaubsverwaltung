@@ -56,7 +56,7 @@
                 <div class="form-group">
                     <div class="row">
                         <label class="control-label col-md-3" for="yearSelect">
-                            Jahr:
+                            <spring:message code="overview.vacationOverview.year"/>:
                         </label>
                         <div class="col-md-6">
                             <select id="yearSelect" name="yearSelect" size="1" path="" class="form-control">
@@ -78,7 +78,7 @@
                 <div class="form-group">
                     <div class="row">
                         <label class="control-label col-md-3" for="monthSelect">
-                            Monat:
+                            <spring:message code="overview.vacationOverview.month"/>:
                         </label>
                         <div class="col-md-6">
                             <select id="monthSelect" name="monthSelect" size="1" path="" class="form-control">
@@ -107,7 +107,7 @@
                 <div class="form-group">
                     <div class="row">
                         <label class="control-label col-md-3" for="departmentSelect">
-                            Abteilung:
+                            <spring:message code="overview.vacationOverview.department"/>:
                         </label>
                         <div class="col-md-6">
                             <select id="departmentSelect" name="departmentSelect" size="1" path="" class="form-control">
