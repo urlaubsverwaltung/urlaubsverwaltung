@@ -162,7 +162,7 @@ public class MailServiceImplIT {
         Application application = new Application();
         application.setId(1234);
         application.setPerson(person);
-        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub"));
+        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(DayLength.FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);
@@ -270,6 +270,7 @@ public class MailServiceImplIT {
         String contentDepartmentHead = (String) msg.getContent();
         assertTrue(contentDepartmentHead.contains("Hallo " + recipient.getNiceName()));
         assertTrue(contentDepartmentHead.contains(niceName));
+        assertTrue(contentDepartmentHead.contains("Erholungsurlaub"));
         assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
         assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/1234"));
         assertTrue("No comment in mail content", contentDepartmentHead.contains(comment.getText()));
@@ -290,7 +291,7 @@ public class MailServiceImplIT {
     public void ensureNotificationAboutNewApplicationContainsInformationAboutDepartmentVacations()
         throws MessagingException, IOException {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Urlaub");
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 
         Person departmentMember = TestDataCreator.createPerson("muster", "Marlene", "Muster", "mmuster@foo.de");
         Application departmentApplication = TestDataCreator.createApplication(departmentMember, vacationType,

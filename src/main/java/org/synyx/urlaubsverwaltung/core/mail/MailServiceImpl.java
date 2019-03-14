@@ -107,6 +107,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
+        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
         model.put("dayLength", getTranslation(application.getDayLength().name()));
         model.put("settings", mailSettings);
 
