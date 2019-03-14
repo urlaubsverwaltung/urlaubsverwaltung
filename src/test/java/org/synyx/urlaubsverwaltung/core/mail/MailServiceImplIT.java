@@ -39,14 +39,13 @@ import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,9 +67,8 @@ public class MailServiceImplIT {
         try {
             Properties messageProperties = PropertiesUtil.load("messages_de.properties");
 
-            Map<String, String> messages = messageProperties.entrySet().stream().collect(Collectors.toMap(e ->
-                    e.getKey().toString(),
-                e -> e.getValue().toString()));
+            Map<String, String> messages = messageProperties.entrySet().stream()
+                .collect(toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
 
             MESSAGE_SOURCE.addMessages(messages, Locale.GERMAN);
         } catch (IOException e) {
