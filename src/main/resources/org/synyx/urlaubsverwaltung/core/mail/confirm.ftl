@@ -8,7 +8,7 @@ Informationen zum Urlaubsantrag:
 
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
-Art des Urlaubs: ${application.vacationType.messageKey}
+Art des Urlaubs: ${vacationType}
 <#if (application.reason)??>
 Grund: ${application.reason}
 </#if>
