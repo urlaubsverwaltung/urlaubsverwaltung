@@ -30,9 +30,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -50,13 +47,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                  
               </td>
@@ -120,8 +117,6 @@ exports[`calendar renders 1`] = `
                   05
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -134,6 +129,8 @@ exports[`calendar renders 1`] = `
                   06
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -206,8 +203,6 @@ exports[`calendar renders 1`] = `
                   12
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -220,6 +215,8 @@ exports[`calendar renders 1`] = `
                   13
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -292,8 +289,6 @@ exports[`calendar renders 1`] = `
                   19
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -306,6 +301,8 @@ exports[`calendar renders 1`] = `
                   20
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -378,8 +375,6 @@ exports[`calendar renders 1`] = `
                   26
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -392,6 +387,8 @@ exports[`calendar renders 1`] = `
                   27
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -446,6 +443,9 @@ exports[`calendar renders 1`] = `
               <td>
                  
               </td>
+              <td>
+                 
+              </td>
             </tr>
           </tbody>
         </table>
@@ -464,9 +464,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -484,13 +481,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                  
               </td>
@@ -527,8 +524,6 @@ exports[`calendar renders 1`] = `
                   02
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -541,6 +536,8 @@ exports[`calendar renders 1`] = `
                   03
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -613,8 +610,6 @@ exports[`calendar renders 1`] = `
                   09
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -627,6 +622,8 @@ exports[`calendar renders 1`] = `
                   10
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -699,8 +696,6 @@ exports[`calendar renders 1`] = `
                   16
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -713,6 +708,8 @@ exports[`calendar renders 1`] = `
                   17
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -785,8 +782,6 @@ exports[`calendar renders 1`] = `
                   23
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -799,6 +794,8 @@ exports[`calendar renders 1`] = `
                   24
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -871,6 +868,9 @@ exports[`calendar renders 1`] = `
                   30
                 </span>
               </td>
+              <td>
+                 
+              </td>
             </tr>
           </tbody>
         </table>
@@ -889,9 +889,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -909,10 +906,31 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -925,6 +943,8 @@ exports[`calendar renders 1`] = `
                   01
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -997,8 +1017,6 @@ exports[`calendar renders 1`] = `
                   07
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1011,6 +1029,8 @@ exports[`calendar renders 1`] = `
                   08
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1083,8 +1103,6 @@ exports[`calendar renders 1`] = `
                   14
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1097,6 +1115,8 @@ exports[`calendar renders 1`] = `
                   15
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1169,8 +1189,6 @@ exports[`calendar renders 1`] = `
                   21
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1183,6 +1201,8 @@ exports[`calendar renders 1`] = `
                   22
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1255,8 +1275,6 @@ exports[`calendar renders 1`] = `
                   28
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1269,6 +1287,8 @@ exports[`calendar renders 1`] = `
                   29
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1305,6 +1325,9 @@ exports[`calendar renders 1`] = `
               <td>
                  
               </td>
+              <td>
+                 
+              </td>
             </tr>
           </tbody>
         </table>
@@ -1323,9 +1346,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -1343,13 +1363,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                  
               </td>
@@ -1404,8 +1424,6 @@ exports[`calendar renders 1`] = `
                   04
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1418,6 +1436,8 @@ exports[`calendar renders 1`] = `
                   05
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1490,8 +1510,6 @@ exports[`calendar renders 1`] = `
                   11
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1504,6 +1522,8 @@ exports[`calendar renders 1`] = `
                   12
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1576,8 +1596,6 @@ exports[`calendar renders 1`] = `
                   18
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1590,6 +1608,8 @@ exports[`calendar renders 1`] = `
                   19
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1662,8 +1682,6 @@ exports[`calendar renders 1`] = `
                   25
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend datepicker-day-past     "
@@ -1676,6 +1694,8 @@ exports[`calendar renders 1`] = `
                   26
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day   datepicker-day-past     "
@@ -1730,6 +1750,9 @@ exports[`calendar renders 1`] = `
               <td>
                  
               </td>
+              <td>
+                 
+              </td>
             </tr>
           </tbody>
         </table>
@@ -1748,9 +1771,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -1768,13 +1788,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                  
               </td>
@@ -1811,8 +1831,6 @@ exports[`calendar renders 1`] = `
                   02
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -1825,6 +1843,8 @@ exports[`calendar renders 1`] = `
                   03
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -1897,8 +1917,6 @@ exports[`calendar renders 1`] = `
                   09
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -1911,6 +1929,8 @@ exports[`calendar renders 1`] = `
                   10
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -1983,8 +2003,6 @@ exports[`calendar renders 1`] = `
                   16
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -1997,6 +2015,8 @@ exports[`calendar renders 1`] = `
                   17
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2069,8 +2089,6 @@ exports[`calendar renders 1`] = `
                   23
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2083,6 +2101,8 @@ exports[`calendar renders 1`] = `
                   24
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2155,8 +2175,6 @@ exports[`calendar renders 1`] = `
                   30
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2168,24 +2186,6 @@ exports[`calendar renders 1`] = `
                 >
                   31
                 </span>
-              </td>
-              <td>
-                 
-              </td>
-              <td>
-                 
-              </td>
-              <td>
-                 
-              </td>
-              <td>
-                 
-              </td>
-              <td>
-                 
-              </td>
-              <td>
-                 
               </td>
             </tr>
           </tbody>
@@ -2205,9 +2205,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -2225,13 +2222,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2304,8 +2301,6 @@ exports[`calendar renders 1`] = `
                   06
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2318,6 +2313,8 @@ exports[`calendar renders 1`] = `
                   07
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2390,8 +2387,6 @@ exports[`calendar renders 1`] = `
                   13
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2404,6 +2399,8 @@ exports[`calendar renders 1`] = `
                   14
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2476,8 +2473,6 @@ exports[`calendar renders 1`] = `
                   20
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2490,6 +2485,8 @@ exports[`calendar renders 1`] = `
                   21
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2562,8 +2559,6 @@ exports[`calendar renders 1`] = `
                   27
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2576,6 +2571,8 @@ exports[`calendar renders 1`] = `
                   28
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2621,6 +2618,9 @@ exports[`calendar renders 1`] = `
               <td>
                  
               </td>
+              <td>
+                 
+              </td>
             </tr>
           </tbody>
         </table>
@@ -2639,9 +2639,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -2659,13 +2656,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                  
               </td>
@@ -2711,8 +2708,6 @@ exports[`calendar renders 1`] = `
                   03
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2725,6 +2720,8 @@ exports[`calendar renders 1`] = `
                   04
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2797,8 +2794,6 @@ exports[`calendar renders 1`] = `
                   10
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2811,6 +2806,8 @@ exports[`calendar renders 1`] = `
                   11
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2883,8 +2880,6 @@ exports[`calendar renders 1`] = `
                   17
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2897,6 +2892,8 @@ exports[`calendar renders 1`] = `
                   18
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -2969,8 +2966,6 @@ exports[`calendar renders 1`] = `
                   24
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -2983,6 +2978,8 @@ exports[`calendar renders 1`] = `
                   25
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3028,6 +3025,9 @@ exports[`calendar renders 1`] = `
               <td>
                  
               </td>
+              <td>
+                 
+              </td>
             </tr>
           </tbody>
         </table>
@@ -3046,9 +3046,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -3066,13 +3063,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                  
               </td>
@@ -3118,8 +3115,6 @@ exports[`calendar renders 1`] = `
                   03
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3132,6 +3127,8 @@ exports[`calendar renders 1`] = `
                   04
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3204,8 +3201,6 @@ exports[`calendar renders 1`] = `
                   10
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3218,6 +3213,8 @@ exports[`calendar renders 1`] = `
                   11
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3290,8 +3287,6 @@ exports[`calendar renders 1`] = `
                   17
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3304,6 +3299,8 @@ exports[`calendar renders 1`] = `
                   18
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3376,8 +3373,6 @@ exports[`calendar renders 1`] = `
                   24
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3390,6 +3385,8 @@ exports[`calendar renders 1`] = `
                   25
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3462,6 +3459,9 @@ exports[`calendar renders 1`] = `
                   31
                 </span>
               </td>
+              <td>
+                 
+              </td>
             </tr>
           </tbody>
         </table>
@@ -3480,9 +3480,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -3500,10 +3497,31 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
+              <td>
+                 
+              </td>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3516,6 +3534,8 @@ exports[`calendar renders 1`] = `
                   01
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3588,8 +3608,6 @@ exports[`calendar renders 1`] = `
                   07
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3602,6 +3620,8 @@ exports[`calendar renders 1`] = `
                   08
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3674,8 +3694,6 @@ exports[`calendar renders 1`] = `
                   14
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3688,6 +3706,8 @@ exports[`calendar renders 1`] = `
                   15
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3760,8 +3780,6 @@ exports[`calendar renders 1`] = `
                   21
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3774,6 +3792,8 @@ exports[`calendar renders 1`] = `
                   22
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3846,8 +3866,6 @@ exports[`calendar renders 1`] = `
                   28
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -3860,6 +3878,8 @@ exports[`calendar renders 1`] = `
                   29
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -3871,6 +3891,9 @@ exports[`calendar renders 1`] = `
                 >
                   30
                 </span>
+              </td>
+              <td>
+                 
               </td>
               <td>
                  
@@ -3905,9 +3928,6 @@ exports[`calendar renders 1`] = `
           <thead>
             <tr>
               <th>
-                Su
-              </th>
-              <th>
                 Mo
               </th>
               <th>
@@ -3925,13 +3945,13 @@ exports[`calendar renders 1`] = `
               <th>
                 Sa
               </th>
+              <th>
+                Su
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                 
-              </td>
               <td>
                  
               </td>
@@ -3995,8 +4015,6 @@ exports[`calendar renders 1`] = `
                   05
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -4009,6 +4027,8 @@ exports[`calendar renders 1`] = `
                   06
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -4081,8 +4101,6 @@ exports[`calendar renders 1`] = `
                   12
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -4095,6 +4113,8 @@ exports[`calendar renders 1`] = `
                   13
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -4167,8 +4187,6 @@ exports[`calendar renders 1`] = `
                   19
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -4181,6 +4199,8 @@ exports[`calendar renders 1`] = `
                   20
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -4253,8 +4273,6 @@ exports[`calendar renders 1`] = `
                   26
                 </span>
               </td>
-            </tr>
-            <tr>
               <td>
                 <span
                   class="datepicker-day  datepicker-day-weekend      "
@@ -4267,6 +4285,8 @@ exports[`calendar renders 1`] = `
                   27
                 </span>
               </td>
+            </tr>
+            <tr>
               <td>
                 <span
                   class="datepicker-day        "
@@ -4314,6 +4334,9 @@ exports[`calendar renders 1`] = `
                 >
                   31
                 </span>
+              </td>
+              <td>
+                 
               </td>
               <td>
                  
