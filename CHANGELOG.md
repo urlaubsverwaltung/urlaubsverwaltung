@@ -1,4 +1,4 @@
-### master / unreleased
+### [urlaubsverwaltung-2.38.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.2)
 * Bugfix: Fehlerhafte Übersetzung in den Email-Templates des Urlaubtypes [#560](https://github.com/synyx/urlaubsverwaltung/pull/560)
 
 ### [urlaubsverwaltung-2.38.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.1)
