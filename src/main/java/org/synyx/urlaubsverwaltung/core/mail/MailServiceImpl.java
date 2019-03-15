@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
+
 
 /**
  * Implementation of interface {@link MailService}.
@@ -63,8 +65,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application, ofNullable(comment));
         model.put("departmentVacations",
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
@@ -107,6 +108,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
+        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
         model.put("dayLength", getTranslation(application.getDayLength().name()));
         model.put("settings", mailSettings);
 
@@ -133,7 +135,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.ofNullable(comment));
+            ofNullable(comment));
         model.put("departmentVacations",
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
@@ -155,7 +157,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.ofNullable(comment));
+            ofNullable(comment));
 
         // Inform user that the application for leave has been allowed
         String textUser = mailBuilder.buildMailBody("allowed_user", model, LOCALE);
@@ -177,7 +179,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.ofNullable(comment));
+            ofNullable(comment));
         String text = mailBuilder.buildMailBody("rejected", model, LOCALE);
         mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.rejected"), text);
@@ -206,7 +208,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.ofNullable(comment));
+            ofNullable(comment));
         String text = mailBuilder.buildMailBody("confirm", model, LOCALE);
         mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.applied.user"), text);
@@ -218,7 +220,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.ofNullable(comment));
+            ofNullable(comment));
         String text = mailBuilder.buildMailBody("new_application_by_office", model, LOCALE);
         mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(application.getPerson()),
             getTranslation("subject.application.appliedByOffice"), text);
@@ -230,7 +232,7 @@ class MailServiceImpl implements MailService {
 
         MailSettings mailSettings = getMailSettings();
         Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.ofNullable(comment));
+            ofNullable(comment));
 
         String text = mailBuilder.buildMailBody("cancelled_by_office", model, LOCALE);
 
