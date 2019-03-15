@@ -12,8 +12,8 @@
 
 <head>
     <uv:head/>
-    <script type="text/javascript" src="<spring:url value='/lib/moment/moment-2.5.1.min.js' />"></script>
-    <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de-2.5.1.js' />"></script>
+    <script src="<spring:url value='/lib/date-fns.1.30.1.min.js' />" type="text/javascript" ></script>
+    <script src="<spring:url value='/lib/date-fns.de.js' />" type="text/javascript" ></script>
 </head>
 
 <body>
@@ -95,26 +95,24 @@
                 var webPrefix = "<spring:url value='/web' />";
                 var apiPrefix = "<spring:url value='/api' />";
 
-                // calendar is initialised when moment.js AND moment.language.js are loaded
                 function initCalendar() {
-                    var year = getUrlParam("year");
-                    var date = moment();
+                    const { getYear, setYear, firstOfYear, subMonths, addMonths } = dateFns;
 
-                    if (year.length > 0 && year != date.year()) {
-                        date.year(year).month(0).date(1);
+                    var year = getUrlParam("year");
+                    var date = new Date();
+
+                    if (year.length > 0 && year != getYear(date)) {
+                        date = firstOfYear(setYear(date, year));
                     }
 
                     var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
-                    // NOTE: All moments are mutable!
-                    var startDateToCalculate = date.clone();
-                    var endDateToCalculate = date.clone();
                     var shownNumberOfMonths = 10;
-                    var startDate = startDateToCalculate.subtract(shownNumberOfMonths / 2, 'months');
-                    var endDate = endDateToCalculate.add(shownNumberOfMonths / 2, 'months');
+                    var startDate = subMonths(date, shownNumberOfMonths / 2);
+                    var endDate = addMonths(date, shownNumberOfMonths / 2);
 
-                    var yearOfStartDate = startDate.year();
-                    var yearOfEndDate = endDate.year();
+                    var yearOfStartDate = getYear(startDate);
+                    var yearOfEndDate = getYear(endDate);
 
                     $.when(
                         holidayService.fetchPublic(yearOfStartDate),

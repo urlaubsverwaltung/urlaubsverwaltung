@@ -1,6 +1,30 @@
 import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from './TestSetupHelper';
 
 describe ('calendar', () => {
+    const RealDate = Date;
+    const dateInstanceIdentifier = Symbol('date-identifier');
+
+    // mocking Date with overridden instanceof operator o_O phew°°°
+    // required since datefn verifies with foo instanceof Date
+    function mockDate(isoDate) {
+      global.Date = class extends RealDate {
+        static [Symbol.hasInstance](instance) {
+          return instance[dateInstanceIdentifier];
+        }
+
+        // noinspection JSAnnotator
+        constructor(...args) {
+          let d = args.length ? new RealDate(...args) : new RealDate(isoDate);
+          d[dateInstanceIdentifier] = true;
+          return d;
+        }
+      };
+    }
+
+    afterEach(() => {
+      global.Date = RealDate;
+    });
+
     beforeEach (calendarTestSetup);
     afterEach (cleanup);
 
@@ -50,18 +74,18 @@ describe ('calendar', () => {
     }
 
     function renderCalendar (holidayService) {
-        // note: date.now is mocked in calendarTestSetup
-        const referenceDate = Date.now();
+        // note: Date is mocked in calendarTestSetup to return a fixed date value
+        const referenceDate = new Date();
         window.Urlaubsverwaltung.Calendar.init(holidayService, referenceDate);
     }
 
     async function calendarTestSetup () {
         await setup();
 
-        window.moment = await import('moment');
+        window.dateFns = await import('date-fns');
 
         // 01.12.2017
-        jest.spyOn(Date, 'now').mockReturnValue(new Date(1512130448379));
+        mockDate(1512130448379);
 
         document.body.innerHTML = `<div id="datepicker"></div>`;
 
