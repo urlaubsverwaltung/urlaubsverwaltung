@@ -120,7 +120,7 @@ public final class TestDataCreator {
     public static Application createApplication(Person person, DateMidnight startDate, DateMidnight endDate,
                                                 DayLength dayLength) {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub");
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 
         Application application = new Application();
         application.setPerson(person);
@@ -243,15 +243,15 @@ public final class TestDataCreator {
 
     public static VacationType createVacationType(VacationCategory category) {
 
-        return createVacationType(category, category.toString());
+        return createVacationType(category, category.getMessageKey());
     }
 
-    public static VacationType createVacationType(VacationCategory category, String displayName) {
+    public static VacationType createVacationType(VacationCategory category, String messageKey) {
 
         VacationType vacationType = new VacationType();
 
         vacationType.setCategory(category);
-        vacationType.setMessageKey(displayName);
+        vacationType.setMessageKey(messageKey);
 
         return vacationType;
     }
@@ -263,24 +263,24 @@ public final class TestDataCreator {
         VacationType vacationType1 = new VacationType();
         vacationType1.setId(1000);
         vacationType1.setCategory(VacationCategory.HOLIDAY);
-        vacationType1.setMessageKey("Erholungsurlaub");
+        vacationType1.setMessageKey("application.data.vacationType.holiday");
         vacationTypes.add(vacationType1);
 
         VacationType vacationType2 = new VacationType();
         vacationType2.setCategory(VacationCategory.SPECIALLEAVE);
-        vacationType2.setMessageKey("Sonderurlaub");
+        vacationType2.setMessageKey("application.data.vacationType.specialleave");
         vacationType2.setId(2000);
         vacationTypes.add(vacationType2);
 
         VacationType vacationType3 = new VacationType();
         vacationType3.setCategory(VacationCategory.UNPAIDLEAVE);
-        vacationType3.setMessageKey("Unbezahlter Urlaub");
+        vacationType3.setMessageKey("application.data.vacationType.unpaidleave");
         vacationType3.setId(3000);
         vacationTypes.add(vacationType3);
 
         VacationType vacationType4 = new VacationType();
         vacationType4.setCategory(VacationCategory.OVERTIME);
-        vacationType4.setMessageKey("Überstundenabbau");
+        vacationType4.setMessageKey("application.data.vacationType.overtime");
         vacationType4.setId(4000);
         vacationTypes.add(vacationType4);
 

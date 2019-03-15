@@ -197,7 +197,7 @@ public class RecipientServiceTest {
     }
 
     private Application getHolidayApplication(Person normalUser) {
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub");
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
         return TestDataCreator.createApplication(normalUser, vacationType);
     }
 }
