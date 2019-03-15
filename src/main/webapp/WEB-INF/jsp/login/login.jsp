@@ -42,7 +42,8 @@
 
             <div class="login">
 
-                <form method="post" class="login--form" action="/login">
+                <spring:url var="LOGIN" value="/login"/>
+                <form method="post" class="login--form" action="${LOGIN}">
                     <c:if test="${param.login_error != null}">
                         <div id="login--error" class="alert alert-danger">
                           <spring:message code="login.form.error"/>
