@@ -5,8 +5,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-<script src="<spring:url value='/lib/date-fns.1.30.1.min.js' />" type="text/javascript" ></script>
-<script src="<spring:url value='/lib/date-fns.de.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/datepicker.js'/>" type="text/javascript"></script>
 
 <script type="text/javascript">
