@@ -12,8 +12,6 @@
 
 <head>
     <uv:head/>
-    <script src="<spring:url value='/lib/date-fns.1.30.1.min.js' />" type="text/javascript" ></script>
-    <script src="<spring:url value='/lib/date-fns.de.js' />" type="text/javascript" ></script>
 </head>
 
 <body>
