@@ -1,0 +1,83 @@
+# Default values for urlaubsverwaltung.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: synyx/urlaubsverwaltung
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  runAsNonRoot: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+environment:
+  javaOptions: "-XX:+PrintFlagsFinal -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+  springProfilesActive: default
+  serverPort: 8080
+  # configure database jdbc url - required when deployMariaDb:false
+  springDatasourceUrl: jdbc:mysql://mariadb:3306/urlaubsverwaltung
+
+secrets:
+  # configure ldap bind dn
+  ldapManagerDn: ""
+  # configure ldap bind password
+  ldapManagerPassword: ""
+  # configure ldap sync user dn
+  ldapSyncUserDn: ""
+  # configure ldap sync user password
+  ldapSyncPassword: ""
+  # configure mariadb username - required when deployMariaDb:false
+  databaseUsername: ""
+  # configure mariadb password - required when deployMariaDb:false
+  databasePassword: ""
+
+
+
+deployMariaDb: false
+
+# see https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application.properties
+# for configuration options
+applicationProperties: |-
