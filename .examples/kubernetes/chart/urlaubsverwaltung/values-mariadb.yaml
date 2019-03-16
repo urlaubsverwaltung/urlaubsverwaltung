@@ -1,0 +1,22 @@
+image:
+  tag: 2.35.0
+
+applicationProperties: |-
+  # AUTHENTICATION
+  auth=default
+  testdata.create=true
+
+# use mariadb to store data
+deployMariaDb: true
+
+# mariadb related config options
+mariadb:
+  db:
+    user: urlaubsverwaltung
+    password: secret
+    name: urlaubsverwaltung
+  replication:
+    enabled: false
+  master:
+    persistence:
+      size: 512Mi
