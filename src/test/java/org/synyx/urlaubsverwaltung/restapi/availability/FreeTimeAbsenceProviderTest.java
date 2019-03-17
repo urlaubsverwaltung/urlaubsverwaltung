@@ -24,9 +24,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
 public class FreeTimeAbsenceProviderTest {
 
     private FreeTimeAbsenceProvider freeTimeAbsenceProvider;

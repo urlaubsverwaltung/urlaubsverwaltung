@@ -8,8 +8,6 @@ import org.junit.Test;
 
 /**
  * Unit test for {@link DateUtil}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class DateUtilTest {
 

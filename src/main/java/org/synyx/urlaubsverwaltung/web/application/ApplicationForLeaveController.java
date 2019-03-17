@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 
 /**
  * Controller for showing applications for leave in a certain state.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

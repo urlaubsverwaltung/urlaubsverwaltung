@@ -23,10 +23,7 @@ import java.util.List;
 
 /**
  * Department represents an organisation unit of a company.
- *
- * @author  Daniel Hammann - <hammann@synyx.de>
  */
-
 @Entity
 public class Department extends AbstractPersistable<Integer> {
 

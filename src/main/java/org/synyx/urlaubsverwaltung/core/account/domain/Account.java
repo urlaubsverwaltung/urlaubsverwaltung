@@ -16,8 +16,6 @@ import java.util.Date;
 
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Entity
 public class Account extends AbstractPersistable<Integer> {

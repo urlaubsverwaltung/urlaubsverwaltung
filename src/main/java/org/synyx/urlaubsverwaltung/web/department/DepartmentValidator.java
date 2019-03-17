@@ -13,8 +13,6 @@ import java.util.List;
 
 /**
  * Validates the content of {@link Department}s.
- *
- * @author  Daniel Hammann - <hammann@synyx.de>
  */
 @Component
 public class DepartmentValidator implements Validator {

@@ -20,8 +20,6 @@ import java.util.Date;
 
 /**
  * Entity representing a sick note with information about employee and period.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
 public class SickNote extends AbstractPersistable<Integer> {

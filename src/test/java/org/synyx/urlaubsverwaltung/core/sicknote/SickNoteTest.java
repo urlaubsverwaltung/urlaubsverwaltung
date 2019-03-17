@@ -12,8 +12,6 @@ import java.util.function.Consumer;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNote}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteTest {
 

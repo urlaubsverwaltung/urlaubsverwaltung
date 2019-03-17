@@ -14,8 +14,6 @@ import java.util.Arrays;
 /**
  * This service is executed every time the application is started to log information about the application configuration
  * like database user and url.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class StartupService {

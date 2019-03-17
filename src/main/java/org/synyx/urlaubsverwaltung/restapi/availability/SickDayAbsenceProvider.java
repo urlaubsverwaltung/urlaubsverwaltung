@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
 @Service
 class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
 

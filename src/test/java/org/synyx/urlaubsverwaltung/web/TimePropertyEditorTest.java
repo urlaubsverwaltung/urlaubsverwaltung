@@ -7,9 +7,6 @@ import org.junit.Test;
 import java.sql.Time;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class TimePropertyEditorTest {
 
     private TimePropertyEditor editor;

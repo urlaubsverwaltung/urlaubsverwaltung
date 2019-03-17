@@ -16,10 +16,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author Aljona Murygina
- * @author Johannes Reuter
- */
 public class PersonServiceImplTest {
 
     private PersonService sut;

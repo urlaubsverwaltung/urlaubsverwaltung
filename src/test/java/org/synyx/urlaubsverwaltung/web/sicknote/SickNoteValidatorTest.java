@@ -26,8 +26,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link SickNoteValidator}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteValidatorTest {
 

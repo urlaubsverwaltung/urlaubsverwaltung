@@ -7,8 +7,6 @@ import java.util.Optional;
 
 /**
  * Sync absences with all activated and configured calendar providers.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface CalendarSyncService {
 

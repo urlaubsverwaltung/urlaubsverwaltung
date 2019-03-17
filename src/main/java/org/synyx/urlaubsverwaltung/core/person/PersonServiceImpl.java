@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 
 /**
  * Implementation for {@link PersonService}.
- *
- * @author Aljona Murygina
- * @author Johannes Reuter
  */
 @Service("personService")
 class PersonServiceImpl implements PersonService {

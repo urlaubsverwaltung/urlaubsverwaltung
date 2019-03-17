@@ -7,8 +7,6 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 
 /**
  * Unit test for {@link TestUser}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class TestUserTest {
 

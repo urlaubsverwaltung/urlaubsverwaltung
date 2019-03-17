@@ -32,9 +32,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Service
 @Transactional
 public class ApplicationInteractionServiceImpl implements ApplicationInteractionService {

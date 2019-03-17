@@ -14,8 +14,6 @@ import java.sql.Time;
 
 /**
  * View class representing an application for leave.
- *
- * @author  Aljona Murygina
  */
 public class ApplicationForLeaveForm {
 

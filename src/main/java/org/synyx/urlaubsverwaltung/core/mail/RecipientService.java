@@ -17,8 +17,6 @@ import java.util.stream.Stream;
 
 /**
  * Provides functionality to get the correct mail recipients for different use cases.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 class RecipientService {

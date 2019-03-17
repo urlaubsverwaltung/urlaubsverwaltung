@@ -14,8 +14,6 @@ import java.math.BigDecimal;
 
 /**
  * Helper class to check durations.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnProperty("testdata.create")

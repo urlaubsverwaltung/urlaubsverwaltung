@@ -18,8 +18,6 @@ import java.util.Optional;
 
 /**
  * Service for handling {@link WorkingTime} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional

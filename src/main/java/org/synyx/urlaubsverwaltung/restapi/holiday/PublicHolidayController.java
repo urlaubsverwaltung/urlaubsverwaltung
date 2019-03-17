@@ -26,9 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-/**
- * @author Aljona Murygina <murygina@synyx.de>
- */
 @Api("Public Holidays: Get information about public holidays")
 @RestController("restApiCalendarController")
 @RequestMapping("/api")

@@ -10,8 +10,6 @@ import java.util.Optional;
 
 /**
  * Provides interactions with applications for leave, i.e. apply for leave, allow, cancel etc.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface ApplicationInteractionService {
 

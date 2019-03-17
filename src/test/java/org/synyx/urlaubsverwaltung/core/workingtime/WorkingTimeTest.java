@@ -11,8 +11,6 @@ import java.util.List;
 
 /**
  * Unit test for {@link WorkingTime}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class WorkingTimeTest {
 

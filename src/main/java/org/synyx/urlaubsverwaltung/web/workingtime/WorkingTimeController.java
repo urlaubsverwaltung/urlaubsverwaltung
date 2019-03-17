@@ -35,8 +35,6 @@ import java.util.Optional;
 /**
  * Controller to manage {@link org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime}s of
  * {@link org.synyx.urlaubsverwaltung.core.person.Person}s.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

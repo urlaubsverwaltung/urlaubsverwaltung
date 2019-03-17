@@ -22,9 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
 public class SickDaysOverviewTest {
 
     private WorkDaysService calendarService;

@@ -10,8 +10,6 @@ import javax.persistence.Enumerated;
 
 /**
  * Settings concerning working time of persons, like settings for public holidays.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class WorkingTimeSettings {

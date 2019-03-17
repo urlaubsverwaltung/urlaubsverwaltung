@@ -5,8 +5,6 @@ import javax.persistence.Embeddable;
 
 /**
  * Settings concerning absence of persons because of vacation or sick days.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class AbsenceSettings {

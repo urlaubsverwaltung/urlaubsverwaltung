@@ -21,8 +21,6 @@ import java.util.Optional;
 
 /**
  * Is to be scheduled every turn of the year: calculates the remaining vacation days for the new year.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class TurnOfTheYearAccountUpdaterService {

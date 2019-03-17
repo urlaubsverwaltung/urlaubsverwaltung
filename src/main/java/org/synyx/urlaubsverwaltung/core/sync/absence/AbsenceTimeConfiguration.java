@@ -7,8 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Time configuration for half day absences (start and end time for morning resp. noon).
- *
- * @author  Daniel Hammann - <hammann@synyx.de>
  */
 public class AbsenceTimeConfiguration {
 

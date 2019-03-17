@@ -9,8 +9,6 @@ import java.util.Optional;
 
 /**
  * Convert {@link Person}'s id to {@link Person} object.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class PersonPropertyEditor extends PropertyEditorSupport {
 

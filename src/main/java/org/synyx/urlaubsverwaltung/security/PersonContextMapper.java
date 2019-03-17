@@ -25,8 +25,6 @@ import java.util.Optional;
 
 /**
  * Map granted authorities to application roles described in {@link Role}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")

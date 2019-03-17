@@ -6,8 +6,6 @@ import org.junit.Test;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.settings.Settings}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SettingsTest {
 

@@ -15,8 +15,6 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

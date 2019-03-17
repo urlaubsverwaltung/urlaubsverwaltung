@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 
 /**
  * Details for a (partial) absence of a person on a day.
- *
- * @author  Timo Eifler - eifler@synyx.de
  */
 
 class TimedAbsence {

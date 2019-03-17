@@ -24,9 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
-/**
- * @author Timo Eifler - eifler@synyx.de
- */
 @RunWith(MockitoJUnitRunner.class)
 public class AvailabilityControllerTest {
 
