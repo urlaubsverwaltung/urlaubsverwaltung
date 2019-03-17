@@ -16,8 +16,6 @@ import java.util.List;
 
 /**
  * Object to abstract how many days have been used in a year.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UsedDaysOverview {
 

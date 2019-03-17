@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.core.sicknote;
 
 /**
  * Describes the category of sick note.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public enum SickNoteCategory {
 

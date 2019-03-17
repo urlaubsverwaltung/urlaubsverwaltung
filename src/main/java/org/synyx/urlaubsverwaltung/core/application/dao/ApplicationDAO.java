@@ -14,8 +14,6 @@ import java.util.List;
 
 /**
  * Repository for {@link Application} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface ApplicationDAO extends CrudRepository<Application, Integer> {
 

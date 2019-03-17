@@ -14,8 +14,6 @@ import java.util.Set;
 
 /**
  * Represents a LDAP user with relevant information.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public final class LdapUser {
 

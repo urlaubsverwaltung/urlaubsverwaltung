@@ -9,9 +9,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class LdapUserTest {
 
     @Test

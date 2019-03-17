@@ -11,9 +11,6 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class AbsenceResponse {
 
     private String from;

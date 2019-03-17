@@ -10,8 +10,6 @@ import java.util.Map;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.UsedDays}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UsedDaysTest {
 

@@ -12,8 +12,6 @@ import java.sql.Time;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.domain.Application}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationTest {
 

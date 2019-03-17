@@ -8,8 +8,6 @@ import javax.persistence.Embeddable;
 
 /**
  * Settings to sync absences with a calendar provider.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class CalendarSettings {

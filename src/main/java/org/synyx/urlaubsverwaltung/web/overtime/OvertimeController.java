@@ -36,8 +36,6 @@ import java.util.Optional;
 
 /**
  * Manage overtime of persons.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

@@ -38,8 +38,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link ApplicationValidator}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationValidatorTest {
 

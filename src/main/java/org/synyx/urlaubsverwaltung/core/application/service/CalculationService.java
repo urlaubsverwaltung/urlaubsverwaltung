@@ -28,8 +28,6 @@ import java.util.Optional;
 /**
  * This service calculates if a {@link Person} may apply for leave, i.e. if he/she has enough vacation days to apply for
  * leave.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class CalculationService {

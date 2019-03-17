@@ -13,8 +13,6 @@ import java.beans.PropertyEditorSupport;
 
 /**
  * Converts a {@link String} to {@link org.joda.time.DateMidnight} and vice versa.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 

@@ -18,7 +18,6 @@ import java.util.Date;
 /**
  * Represents the overtime of a person for a certain period of time.
  *
- * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
 @Entity

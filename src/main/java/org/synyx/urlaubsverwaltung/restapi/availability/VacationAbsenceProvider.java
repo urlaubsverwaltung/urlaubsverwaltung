@@ -13,9 +13,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
 @Service
 class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 

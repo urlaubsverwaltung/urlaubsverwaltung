@@ -30,8 +30,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link WorkDaysService}.
- *
- * @author  Aljona Murygina
  */
 public class WorkDaysServiceTest {
 

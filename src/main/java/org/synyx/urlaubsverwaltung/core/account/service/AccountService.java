@@ -8,8 +8,6 @@ import java.util.Optional;
 
 /**
  * Provides access to {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface AccountService {
 

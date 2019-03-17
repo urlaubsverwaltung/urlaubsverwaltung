@@ -8,8 +8,6 @@ import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 
 /**
  * Unit test for {@link AbsenceTimeConfiguration}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class AbsenceTimeConfigurationTest {
 

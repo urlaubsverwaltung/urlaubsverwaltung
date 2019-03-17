@@ -32,8 +32,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatisticsBuilder}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationForLeaveStatisticsBuilderTest {
 

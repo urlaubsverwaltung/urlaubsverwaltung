@@ -17,7 +17,6 @@ import java.util.Optional;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
 @Transactional

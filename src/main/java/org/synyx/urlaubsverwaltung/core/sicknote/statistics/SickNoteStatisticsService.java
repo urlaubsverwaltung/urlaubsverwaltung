@@ -9,8 +9,6 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 /**
  * Service for creating {@link SickNoteStatistics}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional

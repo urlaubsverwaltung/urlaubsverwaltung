@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.core.util;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
-/**
- * @author Aljona Murygina
- */
 public final class DateUtil {
 
     private static final int DAY_OF_NEW_YEARS_EVE = 31;

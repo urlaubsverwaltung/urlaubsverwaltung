@@ -20,10 +20,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
-
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class ApplicationDAOIT {

@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 
 /**
  * Service to send emails at a particular time. (Cronjob)
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class CronMailService {

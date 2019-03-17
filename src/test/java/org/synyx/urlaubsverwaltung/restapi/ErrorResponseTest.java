@@ -5,9 +5,6 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class ErrorResponseTest {
 
     @Test

@@ -16,9 +16,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class LdapUserMapperTest {
 
     private static final String IDENTIFIER_ATTRIBUTE = "uid";

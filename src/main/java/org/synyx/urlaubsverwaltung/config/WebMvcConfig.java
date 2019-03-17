@@ -9,8 +9,6 @@ import org.synyx.urlaubsverwaltung.web.UserInterceptor;
 
 /**
  * Configuration for WebMvc. Configuration is done by overriding base methods of {@link WebMvcConfigurerAdapter}.
- *
- * @author  David Schilling - schilling@synyx.de
  */
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {

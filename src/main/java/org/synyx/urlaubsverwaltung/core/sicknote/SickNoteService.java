@@ -9,8 +9,6 @@ import java.util.Optional;
 
 /**
  * Service for handling {@link SickNote}s.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface SickNoteService {
 

@@ -6,8 +6,6 @@ import org.junit.Test;
 
 /**
  * Unit test for {@link CalendarSettings}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class CalendarSettingsTest {
 

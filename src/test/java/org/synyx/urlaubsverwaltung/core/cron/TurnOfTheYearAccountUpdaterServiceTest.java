@@ -24,9 +24,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class TurnOfTheYearAccountUpdaterServiceTest {
 
     private static final int NEW_YEAR = DateMidnight.now().getYear();

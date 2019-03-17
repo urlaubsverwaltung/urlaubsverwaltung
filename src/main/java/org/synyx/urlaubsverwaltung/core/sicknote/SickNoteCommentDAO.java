@@ -8,8 +8,6 @@ import java.util.List;
 
 /**
  * Repository for {@link SickNoteComment} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface SickNoteCommentDAO extends CrudRepository<SickNoteComment, Integer> {
 

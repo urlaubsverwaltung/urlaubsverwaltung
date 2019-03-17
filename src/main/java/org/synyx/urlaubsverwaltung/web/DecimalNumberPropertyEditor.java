@@ -12,8 +12,6 @@ import java.util.Locale;
 
 /**
  * Converts a string to decimal number and vice versa.
- *
- * @author  Aljona Murygina
  */
 public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
 

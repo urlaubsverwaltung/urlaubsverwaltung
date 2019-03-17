@@ -32,9 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class VacationControllerTest {
 
     private MockMvc mockMvc;

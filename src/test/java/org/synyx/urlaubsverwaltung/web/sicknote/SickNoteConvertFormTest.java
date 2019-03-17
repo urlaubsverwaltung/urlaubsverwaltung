@@ -15,8 +15,6 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteConvertFormTest {
 

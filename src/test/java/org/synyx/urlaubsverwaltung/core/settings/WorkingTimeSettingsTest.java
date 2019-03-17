@@ -5,9 +5,6 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class WorkingTimeSettingsTest {
 
     @Test

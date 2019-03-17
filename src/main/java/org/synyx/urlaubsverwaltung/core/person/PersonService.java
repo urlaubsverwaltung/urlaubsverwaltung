@@ -6,9 +6,6 @@ import java.util.Optional;
 
 /**
  * Service provides access to {@link Person} entities.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
 
 public interface PersonService {

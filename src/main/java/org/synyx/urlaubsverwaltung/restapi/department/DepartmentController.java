@@ -12,9 +12,6 @@ import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 import java.util.stream.Collectors;
 
 
-/**
- * @author Daniel Hammann - <hammann@synyx.de>
- */
 @Api("Departments: Get information about the departments of the application")
 @RestController("restApiDepartmentController")
 @RequestMapping("/api")

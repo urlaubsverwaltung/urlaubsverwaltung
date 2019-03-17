@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 
 /**
  * Contains information about the left vacation days of a person respective about the left remaining vacation days.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public final class VacationDaysLeft {
 

@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 /**
  * Represents an extended {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNote} with information about the number
  * of work days. (depending on working time of the person)
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ExtendedSickNote extends SickNote {
 

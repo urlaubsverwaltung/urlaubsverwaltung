@@ -36,9 +36,6 @@ import java.util.TimeZone;
 
 /**
  * Provides sync of absences with exchange server calendar.
- *
- * @author Daniel Hammann - <hammann@synyx.de>
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class ExchangeCalendarProvider implements CalendarProvider {

@@ -29,9 +29,6 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 
-/**
- * Daniel Hammann - <hammann@synyx.de>.
- */
 @Controller
 @RequestMapping("/web/settings")
 public class SettingsController {

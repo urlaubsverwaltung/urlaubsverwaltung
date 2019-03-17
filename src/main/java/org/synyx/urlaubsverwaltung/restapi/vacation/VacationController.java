@@ -28,9 +28,6 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Api("Vacations: Get all vacations for a certain period")
 @RestController("restApiVacationController")
 @RequestMapping("/api")

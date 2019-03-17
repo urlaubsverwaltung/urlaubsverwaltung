@@ -54,9 +54,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author Aljona Murygina
- */
 public class MailServiceImplIT {
 
     private static final StaticMessageSource MESSAGE_SOURCE;

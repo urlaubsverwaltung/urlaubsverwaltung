@@ -10,8 +10,6 @@ import java.util.List;
 
 /**
  * Repository for {@link SickNote} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
 

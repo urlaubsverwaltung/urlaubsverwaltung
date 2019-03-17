@@ -29,8 +29,6 @@ import java.util.Optional;
 
 /**
  * Controller to generate applications for leave statistics.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping(ApplicationForLeaveStatisticsController.STATISTICS_REL)

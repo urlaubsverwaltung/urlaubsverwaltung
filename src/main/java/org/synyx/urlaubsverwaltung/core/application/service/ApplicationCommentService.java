@@ -11,8 +11,6 @@ import java.util.Optional;
 
 /**
  * This service provides access to the {@link ApplicationComment} entities.
- *
- * @author  Aljona Murygina
  */
 public interface ApplicationCommentService {
 

@@ -9,8 +9,6 @@ import java.util.Locale;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class DecimalNumberPropertyEditorTest {
 

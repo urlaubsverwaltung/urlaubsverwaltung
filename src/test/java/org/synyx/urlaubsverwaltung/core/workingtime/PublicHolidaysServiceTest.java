@@ -20,8 +20,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link PublicHolidaysService}.
- *
- * @author  Aljona Murygina
  */
 public class PublicHolidaysServiceTest {
 

@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.web.person;
 
 /**
  * Constants concerning {@link PersonController}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public final class PersonConstants {
 

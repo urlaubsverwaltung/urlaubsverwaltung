@@ -10,9 +10,6 @@ import java.util.Optional;
 
 /**
  * Service for handling {@link Department}s.
- *
- * @author  Daniel Hammann - <hammann@synyx.de>
- * @author  Aljona Murygina - <murygina@synyx.de>
  */
 public interface DepartmentService {
 

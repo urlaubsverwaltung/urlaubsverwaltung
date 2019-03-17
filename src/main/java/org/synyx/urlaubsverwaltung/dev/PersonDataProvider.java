@@ -23,8 +23,6 @@ import java.util.Optional;
 
 /**
  * Provides person test data.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnProperty("testdata.create")

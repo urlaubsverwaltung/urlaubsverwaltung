@@ -31,8 +31,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.security.PersonContextMapper}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class PersonContextMapperTest {
 

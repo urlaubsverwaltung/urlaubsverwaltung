@@ -18,9 +18,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
 @Api("Persons: Get information about the persons of the application")
 @RestController("restApiPersonController")
 @RequestMapping("/api")

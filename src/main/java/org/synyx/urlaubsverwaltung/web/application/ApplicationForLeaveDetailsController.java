@@ -45,8 +45,6 @@ import java.util.Optional;
 
 /**
  * Controller to manage applications for leave.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @RequestMapping("/web/application")
 @Controller
