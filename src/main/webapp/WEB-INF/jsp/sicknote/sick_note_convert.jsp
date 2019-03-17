@@ -106,10 +106,10 @@
                     <span class="box-icon bg-red">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
-                                <i class="fa fa-child"></i>
+                                <i class="fa fa-child" aria-hidden="true"></i>
                             </c:when>
                             <c:otherwise>
-                                <i class="fa fa-medkit"></i>
+                                <i class="fa fa-medkit" aria-hidden="true"></i>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -173,12 +173,12 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${sickNote.aubPresent}">
-                                        <i class="fa fa-check hidden-print"></i>
+                                        <i class="fa fa-check hidden-print" aria-hidden="true"></i>
                                         <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
                                         date="${sickNote.aubEndDate}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <i class="fa fa-remove hidden-print"></i>
+                                        <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
                                         <spring:message code="sicknote.data.aub.notPresent"/>
                                     </c:otherwise>
                                 </c:choose>

@@ -10,6 +10,7 @@ exports[`calendar renders 1`] = `
       class="datepicker-prev"
     >
       <i
+        aria-hidden="true"
         class="fa fa-chevron-left"
       />
     </button>
@@ -4330,6 +4331,7 @@ exports[`calendar renders 1`] = `
       class="datepicker-next"
     >
       <i
+        aria-hidden="true"
         class="fa fa-chevron-right"
       />
     </button>

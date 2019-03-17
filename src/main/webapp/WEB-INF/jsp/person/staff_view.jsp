@@ -56,7 +56,7 @@
                         <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                             <li>
                                 <a href="${URL_PREFIX}/staff?active=true&year=${year}">
-                                    <i class="fa fa-fw fa-toggle-on"></i>
+                                    <i class="fa fa-fw fa-toggle-on" aria-hidden="true"></i>
                                     <spring:message code="persons.active"/>
                                 </a>
                             </li>
@@ -64,7 +64,7 @@
                                 <c:forEach items="${departments}" var="department">
                                     <li>
                                         <a href='${URL_PREFIX}/staff?active=true&year=${year}&department=${department.id}'>
-                                            <i class="fa fa-fw"></i>
+                                            <i class="fa fa-fw" aria-hidden="true"></i>
                                             <c:out value="${department.name}"/>
                                         </a>
                                     </li>
@@ -73,7 +73,7 @@
                             </c:if>
                             <li>
                                 <a href="${URL_PREFIX}/staff?active=false&year=${year}">
-                                    <i class="fa fa-fw fa-toggle-off"></i>
+                                    <i class="fa fa-fw fa-toggle-off" aria-hidden="true"></i>
                                     <spring:message code="persons.inactive"/>
                                 </a>
                             </li>
@@ -86,9 +86,9 @@
                     <uv:print/>
 
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right"
+                        <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right" aria-hidden="true"
                            data-title="<spring:message code="action.staff.create"/>">
-                            <i class="fa fa-fw fa-user-plus"></i>
+                            <i class="fa fa-fw fa-user-plus" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
 

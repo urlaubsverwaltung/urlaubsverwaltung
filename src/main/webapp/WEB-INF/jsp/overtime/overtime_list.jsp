@@ -30,7 +30,7 @@
                     <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
                         <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right"
                            data-title="<spring:message code="action.overtime.new"/>">
-                            <i class="fa fa-plus-circle"></i>
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
                         </a>
                     </c:if>
                 </legend>
@@ -60,7 +60,7 @@
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
-                                        <span class="hidden-print"><i class="fa fa-history"></i></span>
+                                        <span class="hidden-print"><i class="fa fa-history" aria-hidden="true"></i></span>
                                     </td>
                                     <td>
                                         <h4 class="visible-print">
@@ -77,7 +77,7 @@
                                         <spring:message code="duration.hours"/>
                                     </td>
                                     <td class="hidden-print is-centered hidden-xs">
-                                        <i class="fa fa-clock-o"></i>
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
                                         <spring:message code="overtime.progress.lastEdited"/>
                                         <uv:date date="${record.lastModificationDate}"/>
                                     </td>

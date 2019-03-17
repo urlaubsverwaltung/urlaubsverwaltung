@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="overtime.data.description"/>
                         </span>
                     </div>

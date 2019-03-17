@@ -118,10 +118,10 @@
                                         <c:out value="${statistic.person.niceName}"/>
                                     </td>
                                     <td class="visible-xs hidden-print">
-                                        <i class="fa fa-fw fa-check"></i>
+                                        <i class="fa fa-fw fa-check" aria-hidden="true"></i>
                                         <uv:number number="${statistic.totalAllowedVacationDays}"/>
                                         <br/>
-                                        <i class="fa fa-fw fa-question hidden-print"></i>
+                                        <i class="fa fa-fw fa-question hidden-print" aria-hidden="true"></i>
                                         <uv:number number="${statistic.totalWaitingVacationDays}"/>
                                     </td>
                                     <td class="hidden-xs hidden-sm">

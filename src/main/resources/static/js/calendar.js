@@ -490,8 +490,8 @@ $(function() {
 
             return render(TMPL.container, {
 
-                prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left"></i>'),
-                nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right"></i>'),
+                prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left" aria-hidden="true"></i>'),
+                nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right" aria-hidden="true"></i>'),
 
                 months: function() {
                     var html = '';
