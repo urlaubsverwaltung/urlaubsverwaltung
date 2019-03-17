@@ -12,8 +12,6 @@ import java.util.Optional;
 
 /**
  * Represents a period of time to filter requests by.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class FilterPeriod {
 

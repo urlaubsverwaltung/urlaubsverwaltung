@@ -9,8 +9,6 @@ import java.util.Map;
 
 /**
  * Represents number of days for specific application states.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UsedDays {
 

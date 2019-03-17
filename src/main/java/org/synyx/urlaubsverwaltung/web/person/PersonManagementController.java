@@ -26,9 +26,6 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Controller
 @RequestMapping("/web")
 public class PersonManagementController {

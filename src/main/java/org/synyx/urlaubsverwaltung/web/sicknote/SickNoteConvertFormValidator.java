@@ -8,8 +8,6 @@ import org.springframework.validation.Validator;
 
 /**
  * Class for validating {@link org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm} object.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 public class SickNoteConvertFormValidator implements Validator {

@@ -14,7 +14,6 @@ import javax.persistence.ManyToOne;
 /**
  * Recorded comment after executed an overtime action, e.g. create a new overtime record.
  *
- * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
 @Entity

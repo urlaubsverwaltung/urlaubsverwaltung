@@ -22,9 +22,6 @@ import java.util.stream.Collectors;
 
 /**
  * Implementation for {@link DepartmentService}.
- *
- * @author Daniel Hammann - <hammann@synyx.de>
- * @author Aljona Murygina - <murygina@synyx.de>
  */
 @Service
 public class DepartmentServiceImpl implements DepartmentService {

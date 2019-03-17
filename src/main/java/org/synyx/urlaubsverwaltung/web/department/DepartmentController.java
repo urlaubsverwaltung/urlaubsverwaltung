@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-/**
- * @author  Daniel Hammann - <hammann@synyx.de>
- */
 @Controller
 @RequestMapping(value = "/web")
 public class DepartmentController {

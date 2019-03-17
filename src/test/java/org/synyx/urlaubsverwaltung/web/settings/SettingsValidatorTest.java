@@ -19,10 +19,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 
-/**
- * @author  Daniel Hammann - <hammann@synyx.de>
- * @author  Aljona Murygina - <murygina@synyx.de>
- */
 public class SettingsValidatorTest {
 
     private SettingsValidator settingsValidator;

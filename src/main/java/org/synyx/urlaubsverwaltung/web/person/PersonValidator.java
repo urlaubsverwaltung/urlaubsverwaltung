@@ -18,8 +18,6 @@ import java.util.Optional;
 
 /**
  * This class validate if master data of a {@link Person} is filled correctly.
- *
- * @author  Aljona Murygina
  */
 @Component
 class PersonValidator implements Validator {

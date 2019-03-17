@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * @author  Daniel Hammann - <hammann@synyx.de>
- */
 public class DepartmentTest {
 
     @Test

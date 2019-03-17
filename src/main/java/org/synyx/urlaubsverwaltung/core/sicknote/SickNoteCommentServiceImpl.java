@@ -10,8 +10,6 @@ import java.util.Optional;
 
 /**
  * Implementation for {@link SickNoteCommentService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class SickNoteCommentServiceImpl implements SickNoteCommentService {

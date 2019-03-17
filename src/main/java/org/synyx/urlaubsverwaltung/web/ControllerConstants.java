@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.web;
 
 /**
  * Constants concerning all controllers.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public final class ControllerConstants {
 

@@ -6,9 +6,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 
-/**
- * Daniel Hammann - <hammann@synyx.de>.
- */
 @Service
 public class AbsenceMappingServiceImpl implements AbsenceMappingService {
 

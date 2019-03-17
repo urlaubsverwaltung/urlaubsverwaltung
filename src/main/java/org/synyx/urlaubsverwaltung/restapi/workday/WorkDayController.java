@@ -22,9 +22,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Api("Work Days: Get information about work day in a certain period")
 @RestController("restApiWorkDayController")
 @RequestMapping("/api")

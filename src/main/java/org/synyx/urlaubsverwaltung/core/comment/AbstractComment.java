@@ -13,8 +13,6 @@ import java.util.Date;
 
 /**
  * Represents a basic comment.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @MappedSuperclass
 public abstract class AbstractComment extends AbstractPersistable<Integer> {

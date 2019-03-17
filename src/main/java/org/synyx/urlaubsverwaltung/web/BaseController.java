@@ -4,9 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Controller
 public class BaseController {
 

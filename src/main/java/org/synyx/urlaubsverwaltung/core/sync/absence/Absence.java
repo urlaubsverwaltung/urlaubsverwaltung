@@ -12,8 +12,6 @@ import java.util.Date;
 
 /**
  * Represents a period of time where a person is not at work.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class Absence {
 

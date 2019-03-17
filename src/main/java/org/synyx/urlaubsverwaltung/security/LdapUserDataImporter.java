@@ -17,8 +17,6 @@ import java.util.Optional;
 
 /**
  * Import person data from configured LDAP or Active Directory.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional

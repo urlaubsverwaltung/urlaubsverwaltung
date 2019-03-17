@@ -11,21 +11,8 @@
 
   <organization>
     <name>synyx</name>
-    <url>http://synyx.de</url>
+    <url>https://synyx.de</url>
   </organization>
-
-  <developers>
-    <developer>
-      <id>murygina</id>
-      <name>Aljona Murygina</name>
-      <email>murygina@synyx.de</email>
-    </developer>
-    <developer>
-      <id>honnel</id>
-      <name>Daniel Hammann</name>
-      <email>hammann@synyx.de</email>
-    </developer>
-  </developers>
 
   <parent>
     <groupId>org.springframework.boot</groupId>

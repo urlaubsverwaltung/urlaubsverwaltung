@@ -11,8 +11,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 /**
  * Represents a form to convert a sick note to vacation.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteConvertForm {
 

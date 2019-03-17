@@ -9,9 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
-/**
- * Daniel Hammann - <hammann@synyx.de>.
- */
 public class AbsenceMappingServiceImplTest {
 
     private AbsenceMappingService sut;

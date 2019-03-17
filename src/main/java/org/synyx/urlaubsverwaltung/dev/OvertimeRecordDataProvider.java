@@ -16,8 +16,6 @@ import java.util.Optional;
 
 /**
  * Provides overtime record test data.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnProperty("testdata.create")

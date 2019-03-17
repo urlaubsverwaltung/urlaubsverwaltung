@@ -9,8 +9,6 @@ import java.util.List;
 
 /**
  * Repository for {@link Department} entities.
- *
- * @author  Daniel Hammann - <hammann@synyx.de>
  */
 public interface DepartmentDAO extends JpaRepository<Department, Integer> {
 

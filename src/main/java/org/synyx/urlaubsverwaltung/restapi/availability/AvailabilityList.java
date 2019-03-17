@@ -5,9 +5,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import java.util.List;
 
 
-/**
- * @author  Marc Kannegiesser - kannegiesser@synyx.de
- */
 class AvailabilityList {
 
     private final String personLoginName;

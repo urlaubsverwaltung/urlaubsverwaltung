@@ -27,9 +27,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
 @Service
 @ConditionalOnProperty("testdata.create")
 public class TestDataCreationService {

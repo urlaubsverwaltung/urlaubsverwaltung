@@ -24,8 +24,6 @@ import java.util.Optional;
 
 /**
  * Implementation for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional

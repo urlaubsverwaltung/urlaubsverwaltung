@@ -9,9 +9,6 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 final class RecipientUtil {
 
     private RecipientUtil() {

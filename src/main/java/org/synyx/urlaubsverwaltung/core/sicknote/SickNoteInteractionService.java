@@ -6,8 +6,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 /**
  * Provides interactions with sick notes, i.e. create, edit etc.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface SickNoteInteractionService {
 

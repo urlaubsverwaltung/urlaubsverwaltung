@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class VacationDaysLeftTest {
 

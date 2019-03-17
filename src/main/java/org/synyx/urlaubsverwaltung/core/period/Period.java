@@ -6,8 +6,6 @@ import org.springframework.util.Assert;
 
 /**
  * Represents a period of time.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class Period {
 

@@ -17,8 +17,6 @@ import java.util.Optional;
 
 /**
  * Implementation of interface {@link ApplicationService}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 class ApplicationServiceImpl implements ApplicationService {

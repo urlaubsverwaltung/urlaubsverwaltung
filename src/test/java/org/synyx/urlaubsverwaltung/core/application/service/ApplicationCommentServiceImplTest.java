@@ -20,8 +20,6 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.service.ApplicationCommentServiceImpl}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationCommentServiceImplTest {
 

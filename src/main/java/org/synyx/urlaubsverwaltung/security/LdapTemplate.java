@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * LDAP template to fetch data from LDAP or Active Directory.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnExpression(

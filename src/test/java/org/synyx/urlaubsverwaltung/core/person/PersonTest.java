@@ -10,9 +10,6 @@ import java.util.Collections;
 import java.util.List;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class PersonTest {
 
     @Test

@@ -12,9 +12,6 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 import java.util.Optional;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Service
 public class SessionService {
 

@@ -6,8 +6,6 @@ import javax.persistence.Embeddable;
 
 /**
  * Mail relevant settings.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class MailSettings {

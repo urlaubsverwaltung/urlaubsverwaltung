@@ -7,9 +7,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class SickDaysTest {
 
     @Test

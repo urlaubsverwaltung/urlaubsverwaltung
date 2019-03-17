@@ -5,9 +5,6 @@ import org.synyx.urlaubsverwaltung.restapi.absence.AbsenceResponse;
 import java.util.List;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 class SickNoteListResponse {
 
     private List<AbsenceResponse> sickNotes;

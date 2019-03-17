@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * Allows access to overtime records.
  *
- * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
 public interface OvertimeDAO extends CrudRepository<Overtime, Integer> {

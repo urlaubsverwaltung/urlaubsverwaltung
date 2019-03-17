@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 class PublicHolidayListResponse {
 
     private List<PublicHolidayResponse> publicHolidays;

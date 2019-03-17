@@ -16,11 +16,7 @@ import java.util.List;
 
 /**
  * This service provides sending notification emails.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
-
 public interface MailService {
 
     /**

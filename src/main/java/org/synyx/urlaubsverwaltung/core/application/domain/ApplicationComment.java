@@ -11,9 +11,6 @@ import javax.persistence.ManyToOne;
 
 /**
  * This class describes the information that every step of an {@link Application}'s lifecycle contains.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
 @Entity
 public class ApplicationComment extends AbstractComment {

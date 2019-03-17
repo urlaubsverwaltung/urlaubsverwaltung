@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 
 /**
  * Provides authentication with password, which is saved in database.
- *
- * @author Daniel Hammann - <hammann@synyx.de>
  */
 public class SimpleAuthenticationProvider implements AuthenticationProvider {
 

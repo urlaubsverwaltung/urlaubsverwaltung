@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.web;
 
 /**
  * Thrown in case no result found for a certain ID.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public abstract class AbstractNoResultFoundException extends Exception {
 
