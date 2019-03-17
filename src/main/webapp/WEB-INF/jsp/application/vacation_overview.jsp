@@ -27,7 +27,7 @@
 
 <head>
     <uv:head/>
-    <%@include file="include/app-detail-elements/vacation_overview_js.jsp" %>
+    <script defer src="<spring:url value='/js/vacation_overview.js' />" type="text/javascript" ></script>
 </head>
 
 <body>
