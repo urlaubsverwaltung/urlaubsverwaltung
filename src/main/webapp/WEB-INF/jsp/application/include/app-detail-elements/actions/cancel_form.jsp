@@ -7,9 +7,9 @@
 
 <c:if test="${action == 'cancel'}">
 <script type="text/javascript">
-    $(document).ready(function () {
+    document.addEventListener('DOMContentLoaded', function() {
         $("#cancel").show();
-    });
+    })
 </script>
 </c:if>
 

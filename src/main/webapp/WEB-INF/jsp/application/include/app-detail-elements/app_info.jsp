@@ -92,8 +92,7 @@
                 <%-- filled by javascript --%>
             </span>
             <script type="text/javascript">
-                $(document).ready(function () {
-
+                document.addEventListener('DOMContentLoaded', function() {
                     var dayLength = '<c:out value="${application.dayLength}" />';
                     var personId = '<c:out value="${application.person.id}" />';
 

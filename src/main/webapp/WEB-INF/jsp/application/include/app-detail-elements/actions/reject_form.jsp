@@ -6,9 +6,9 @@
 
 <c:if test="${action == 'reject'}">
 <script type="text/javascript">
-    $(document).ready(function () {
+    document.addEventListener('DOMContentLoaded', function() {
         $("#reject").show();
-    });
+    })
 </script>
 </c:if>
 

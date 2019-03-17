@@ -7,9 +7,9 @@
 
 <c:if test="${action == 'allow'}">
 <script type="text/javascript">
-    $(document).ready(function () {
+    document.addEventListener('DOMContentLoaded', function() {
         $("#allow").show();
-    });
+    })
 </script>
 </c:if>
 
