@@ -41,7 +41,7 @@
                     <c:if test="${comment.text != null && not empty comment.text}">
                         <spring:message code="application.progress.comment"/>
                         <br/>
-                        <i><c:out value="${comment.text}"/></i>
+                        <em><c:out value="${comment.text}"/></em>
                     </c:if>
                 </td>
             </tr>
