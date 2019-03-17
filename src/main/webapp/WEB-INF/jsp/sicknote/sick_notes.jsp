@@ -45,11 +45,11 @@
                     <uv:print/>
                     <a href="${URL_PREFIX}/sicknote/statistics" class="fa-action pull-right"
                        data-title="<spring:message code="action.sicknotes.statistics"/>">
-                        <i class="fa fa-fw fa-bar-chart"></i>
+                        <i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>
                     </a>
                     <a href="${URL_PREFIX}/sicknote/new" class="fa-action pull-right"
                        data-title="<spring:message code="action.apply.sicknote"/>">
-                        <i class="fa fa-fw fa-plus-circle"></i>
+                        <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
                     </a>
                 </legend>
 
@@ -94,33 +94,33 @@
                             <c:out value="${person.niceName}"/>
                         </td>
                         <td class="hidden-xs">
-                            <i class="fa fa-medkit hidden-print"></i>
+                            <i class="fa fa-medkit hidden-print" aria-hidden="true"></i>
                             <uv:number number="${sickDays[person].days['TOTAL']}"/>
                             <spring:message code="sicknotes.daysOverview.sickDays.number"/>
                             <c:if test="${sickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
-                                    <i class="fa fa-check positive"></i> <spring:message
+                                    <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
                                     code="overview.sicknotes.sickdays.aub"
                                     arguments="${sickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="hidden-xs">
-                            <i class="fa fa-child hidden-print"></i>
+                            <i class="fa fa-child hidden-print" aria-hidden="true"></i>
                             <uv:number number="${childSickDays[person].days['TOTAL']}"/>
                             <spring:message code="sicknotes.daysOverview.sickDays.child.number"/>
                             <c:if test="${childSickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
-                                    <i class="fa fa-check positive"></i> <spring:message
+                                    <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
                                     code="overview.sicknotes.sickdays.aub"
                                     arguments="${childSickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="visible-xs">
-                            <i class="fa fa-medkit hidden-print"></i> <uv:number
+                            <i class="fa fa-medkit hidden-print" aria-hidden="true"></i> <uv:number
                             number="${sickDays[person].days['TOTAL']}"/>
-                            <i class="fa fa-child hidden-print"></i> <uv:number
+                            <i class="fa fa-child hidden-print" aria-hidden="true"></i> <uv:number
                             number="${childSickDays[person].days['TOTAL']}"/>
                         </td>
                         </c:forEach>

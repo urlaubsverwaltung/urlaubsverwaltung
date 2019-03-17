@@ -99,7 +99,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.vacation.description"/>
                         </span>
                     </div>
@@ -131,7 +131,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
                         </span>
                     </div>
@@ -177,7 +177,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.sickDays.description"/>
                         </span>
                     </div>
@@ -211,7 +211,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.publicHolidays.description"/>
                         </span>
                     </div>
@@ -268,7 +268,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.overtime.description"/>
                         </span>
                     </div>
@@ -321,7 +321,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.mail.description"/>
                         </span>
                     </div>
@@ -417,7 +417,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.calendar.description"/>
                         </span>
                     </div>
@@ -466,7 +466,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.calendar.ews.description"/>
                         </span>
                     </div>
@@ -557,7 +557,7 @@
                             </div>
                             <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.calendar.google.description"/>
                         </span>
                             </div>

@@ -132,7 +132,7 @@
 
                 <div class="col-md-4 col-md-push-8">
             <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
+                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                 <spring:message code="application.data.description"/>
             </span>
                     <span id="departmentVacations" class="help-block info"></span>
@@ -300,7 +300,7 @@
                 <c:if test="${overtimeActive}">
                     <div class="col-md-4 col-md-push-8">
             	<span class="help-block">
-                	<i class="fa fa-fw fa-info-circle"></i>
+                	<i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                 	<spring:message code="application.data.hours.description"/>
             	</span>
                     </div>
@@ -327,7 +327,7 @@
                 </div>
                 <div class="col-md-4 col-md-push-8">
             <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
+                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                 <spring:message code="application.data.furtherInformation.description"/>
             </span>
                 </div>

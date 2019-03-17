@@ -163,7 +163,7 @@
                                             </c:otherwise>
                                         </c:choose>
                                         <c:if test="${application.status == 'ALLOWED'}">
-                                            <i class="fa fa-check positive"></i>
+                                            <i class="fa fa-check positive" aria-hidden="true"></i>
                                         </c:if>
                                     </td>
                                 </tr>

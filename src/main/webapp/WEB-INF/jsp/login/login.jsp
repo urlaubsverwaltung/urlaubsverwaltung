@@ -62,7 +62,7 @@
 
                     <div class="form-group">
                         <button class="btn btn-primary btn-block" type="submit">
-                            <i class="fa fa-sign-in"></i> <spring:message code="login.form.submit"/>
+                            <i class="fa fa-sign-in" aria-hidden="true"></i> <spring:message code="login.form.submit"/>
                         </button>
                     </div>
 

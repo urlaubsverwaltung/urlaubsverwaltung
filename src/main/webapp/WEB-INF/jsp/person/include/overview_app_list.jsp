@@ -26,19 +26,19 @@
                 <span>
                      <c:choose>
                          <c:when test="${app.status == 'WAITING'}">
-                             <i class="fa fa-question"></i>
+                             <i class="fa fa-question" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'ALLOWED'}">
-                             <i class="fa fa-check"></i>
+                             <i class="fa fa-check" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
-                             <i class="fa fa-check"></i>
+                             <i class="fa fa-check" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'REJECTED'}">
-                             <i class="fa fa-ban"></i>
+                             <i class="fa fa-ban" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'CANCELLED'}">
-                             <i class="fa fa-trash"></i>
+                             <i class="fa fa-trash" aria-hidden="true"></i>
                          </c:when>
                          <c:otherwise>
                              &nbsp;
@@ -124,7 +124,7 @@
                 </c:if>
             </td>
             <td class="is-centered hidden-xs hidden-print">
-                <i class="fa fa-clock-o"></i>
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
                 <span>
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">

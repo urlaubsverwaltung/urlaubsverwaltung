@@ -1,4 +1,4 @@
-// script to count number of chars in textarea 
+// script to count number of chars in textarea
 function count(val, id) {
     document.getElementById(id).innerHTML = val.length + "/";
 }
@@ -119,8 +119,8 @@ function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLen
 
 function buildUrl(urlPrefix, startDate, endDate, dayLength, personId) {
 
-    return urlPrefix + "?from=" + startDate + "&to=" + endDate + "&length=" + dayLength + "&person=" + personId; 
-    
+    return urlPrefix + "?from=" + startDate + "&to=" + endDate + "&length=" + dayLength + "&person=" + personId;
+
 }
 
 // thanks to http://www.jaqe.de/2009/01/16/url-parameter-mit-javascript-auslesen/
@@ -163,7 +163,7 @@ function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, person
         $vacations.append("<br/>" + person + ": " + startDate + " - " + endDate);
 
         if(vacation.status === "ALLOWED") {
-          $vacations.append(" <i class='fa fa-check positive'></i>");
+          $vacations.append(" <i class='fa fa-check positive' aria-hidden="true"></i>");
         }
 
       });
