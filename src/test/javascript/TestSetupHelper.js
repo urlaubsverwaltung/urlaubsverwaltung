@@ -22,8 +22,7 @@ export async function setup () {
     // so window is already available here
     // and we're able to attach additional custom stuff
 
-    // importing jquery which is used in application
-    const $ = await import('../../main/resources/static/lib/jquery/js/jquery-3.3.1');
+    const $ = await import('jquery');
     window.jQuery = window.$ = $;
 
     // defined in 'actions.js' as global function

@@ -19,8 +19,8 @@
         window.uv.webPrefix = "<spring:url value='/web' />";
         window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/jquery.timepicker-1.11.13.min.css' />"/>
-    <script type="text/javascript" src="<spring:url value='/lib/jquery/js/jquery.timepicker-1.11.13.min.js' />"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/timepicker.css' />"/>
+    <script type="text/javascript" src="<spring:url value='/lib/timepicker.min.js' />"></script>
 
     <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
     <script src="<spring:url value='/js/datepicker.js'/>" type="text/javascript"></script>
