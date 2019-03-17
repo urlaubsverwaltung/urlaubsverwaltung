@@ -36,15 +36,15 @@
                             <uv:print/>
                             <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
                                data-title="<spring:message code="action.delete"/>">
-                                <i class="fa fa-trash"></i>
+                                <i class="fa fa-trash" aria-hidden="true"></i>
                             </a>
                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
                                data-title="<spring:message code="action.convert"/>">
-                                <i class="fa fa-retweet"></i>
+                                <i class="fa fa-retweet" aria-hidden="true"></i>
                             </a>
                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
                                data-title="<spring:message code="action.edit"/>">
-                                <i class="fa fa-pencil"></i>
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
                             </a>
                         </c:if>
                     </sec:authorize>
@@ -57,7 +57,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i
-                                        class="fa fa-remove"></i></button>
+                                        class="fa fa-remove" aria-hidden="true"></i></button>
                                     <h4 id="myModalLabel" class="modal-title"><spring:message
                                         code="action.delete"/>?</h4>
                                 </div>
@@ -79,10 +79,10 @@
                     <span class="box-icon bg-red hidden-print">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                                <i class="fa fa-child"></i>
+                                <i class="fa fa-child" aria-hidden="true"></i>
                             </c:when>
                             <c:otherwise>
-                                <i class="fa fa-medkit"></i>
+                                <i class="fa fa-medkit" aria-hidden="true"></i>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -147,12 +147,12 @@
                         <td>
                             <c:choose>
                                 <c:when test="${sickNote.aubPresent}">
-                                    <i class="fa fa-check hidden-print"></i>
+                                    <i class="fa fa-check hidden-print" aria-hidden="true"></i>
                                     <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
                                     date="${sickNote.aubEndDate}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <i class="fa fa-remove hidden-print"></i>
+                                    <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
                                     <spring:message code="sicknote.data.aub.notPresent"/>
                                 </c:otherwise>
                             </c:choose>
@@ -171,7 +171,7 @@
                     <sec:authorize access="hasAuthority('OFFICE')">
                         <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
                            data-title="<spring:message code="action.comment.new" />">
-                            <i class="fa fa-comments"></i>
+                            <i class="fa fa-comments" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
                 </legend>

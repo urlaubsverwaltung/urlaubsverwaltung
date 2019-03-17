@@ -63,14 +63,16 @@
                 <div class="col-xs-12">
                     <legend>
                         <spring:message code="overtime.title"/>
-                        <a href="${URL_PREFIX}/overtime?person=${person.id}" class="fa-action pull-right"
+                        <a href="${URL_PREFIX}/overtime?person=${person.id}"
+                           class="fa-action pull-right" aria-hidden="true"
                            style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
-                            <i class="fa fa-th"></i>
+                            <i class="fa fa-th" aria-hidden="true"></i>
                         </a>
                         <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
-                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right"
+                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}"
+                               class="fa-action pull-right" aria-hidden="true"
                                data-title="<spring:message code="action.overtime.new"/>">
-                                <i class="fa fa-plus-circle"></i>
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
                             </a>
                         </c:if>
                     </legend>
@@ -160,16 +162,17 @@
                     <spring:message code="applications.title"/>
                     <c:choose>
                         <c:when test="${person.id == signedInUser.id}">
-                            <a class="fa-action pull-right" href="${URL_PREFIX}/application/new"
+                            <a class="fa-action pull-right" aria-hidden="true" href="${URL_PREFIX}/application/new"
                                data-title="<spring:message code="action.apply.vacation"/>">
-                                <i class="fa fa-plus-circle"></i>
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
                             </a>
                         </c:when>
                         <c:otherwise>
                             <c:if test="${IS_OFFICE}">
-                                <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?person=${person.id}"
+                                <a class="fa-action pull-right" aria-hidden="true"
+                                   href="${URL_PREFIX}/application/new?person=${person.id}"
                                    data-title="<spring:message code="action.apply.vacation"/>">
-                                    <i class="fa fa-plus-circle"></i>
+                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                 </a>
                             </c:if>
                         </c:otherwise>
@@ -190,7 +193,9 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
-                    <span class="box-icon bg-yellow hidden-print"><i class="fa fa-sun-o"></i></span>
+                    <span class="box-icon bg-yellow hidden-print">
+                        <i class="fa fa-sun-o" aria-hidden="true"></i>
+                    </span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}"/>
                         <i class="fa fa-check positive"></i> <spring:message

@@ -27,7 +27,7 @@
                             <c:out value="${statusCode}"/>
                         </c:when>
                         <c:otherwise>
-                            <i class="fa fa-frown-o"></i>
+                            <i class="fa fa-frown-o" aria-hidden="true"></i>
                         </c:otherwise>
                     </c:choose>
                 </h1>

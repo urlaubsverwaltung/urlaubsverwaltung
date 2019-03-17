@@ -39,7 +39,7 @@
                     <sec:authorize access="hasAuthority('OFFICE')">
                         <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
                            data-title="<spring:message code="action.department.create"/>">
-                            <i class="fa fa-fw fa-plus-circle"></i>
+                            <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
                 </legend>
@@ -108,7 +108,7 @@
                                                      title="<spring:message code='department.data.info'/>"
                                                      data-content="${department.description}">
                                                     <c:out value="${department.name}"/>
-                                                    <i class="fa fa-fw fa-info-circle hidden-print"></i>
+                                                    <i class="fa fa-fw fa-info-circle hidden-print" aria-hidden="true"></i>
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
@@ -133,7 +133,7 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal"
-                                                                        aria-hidden="true"><i class="fa fa-remove"></i>
+                                                                        aria-hidden="true"><i class="fa fa-remove" aria-hidden="true"></i>
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
                                                                     <spring:message
@@ -160,13 +160,13 @@
                                                href="#modal-cancel-${department.id}"
                                                data-toggle="modal"
                                                data-title="<spring:message code='action.department.delete' />">
-                                                <i class="fa fa-fw fa-trash"></i>
+                                                <i class="fa fa-fw fa-trash" aria-hidden="true"></i>
                                             </a>
 
                                             <a class="fa-action pull-right"
                                                href="${URL_PREFIX}/department/${department.id}/edit"
                                                data-title="<spring:message code="action.edit" />">
-                                                <i class="fa fa-fw fa-pencil"></i>
+                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
                                             </a>
                                         </td>
                                     </sec:authorize>

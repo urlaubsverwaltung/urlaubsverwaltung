@@ -37,13 +37,13 @@
                     <c:if test="${record.person.id == signedInUser.id || IS_OFFICE}">
                         <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="fa-action pull-right"
                            data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil"></i>
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
                         </a>
                     </c:if>
                 </legend>
                 <div class="box">
                     <span class="box-icon bg-green">
-                        <i class="fa fa-history"></i>
+                        <i class="fa fa-history" aria-hidden="true"></i>
                     </span>
                     <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${record.person.niceName}"/></h5>
