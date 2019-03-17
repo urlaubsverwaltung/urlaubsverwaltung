@@ -12,6 +12,14 @@
 
 <head>
     <uv:head/>
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+    </script>
+    <script src="<spring:url value='/js/calendar.js' />" type="text/javascript"></script>
+    <script defer src="<spring:url value='/js/person/overview.js' />" type="text/javascript"></script>
 </head>
 
 <body>
@@ -94,7 +102,7 @@
                 var apiPrefix = "<spring:url value='/api' />";
 
                 function initCalendar() {
-                    const {getYear, setYear, firstOfYear, subMonths, addMonths} = dateFns;
+                    const { getYear, setYear, firstOfYear, subMonths, addMonths } = dateFns;
 
                     var year = getUrlParam("year");
                     var date = new Date();
@@ -205,9 +213,8 @@
                     <span class="box-icon bg-yellow hidden-print"><i class="fa fa-flag-o" aria-hidden="true"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}"/>
-                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
-                        code="overview.vacations.otherLeaveAllowed"
-                        arguments="${otherLeaveAllowed}"/>
+                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message code="overview.vacations.otherLeaveAllowed"
+                                                                             arguments="${otherLeaveAllowed}"/>
                     </span>
                 </div>
             </div>

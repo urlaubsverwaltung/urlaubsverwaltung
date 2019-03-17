@@ -8,28 +8,14 @@
 <html>
 <head>
     <uv:head/>
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+    </script>
     <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
     <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var locale = "${pageContext.response.locale.language}";
-            var urlPrefix = "<spring:url value='/api' />";
-
-            var onSelect = function (selectedDate) {
-                var $endDate = $("#endDate");
-                if (this.id == "startDate" && $endDate.val() === "") {
-                    $endDate.datepicker("setDate", selectedDate);
-                }
-            };
-
-            var getPersonId = function () {
-                return "<c:out value="${overtime.person.id}" />";
-            };
-
-            createDatepickerInstances(["#startDate", "#endDate"], locale, urlPrefix, getPersonId, onSelect);
-        });
-    </script>
+    <script defer src="<spring:url value='/js/overtime/overtime_form.js' />" type="text/javascript"></script>
 </head>
 <body>
 

@@ -1,3 +1,44 @@
+$(document).ready(function () {
+
+  var datepickerLocale = window.navigator.language;
+  var urlPrefix = window.uv.apiPrefix;
+  var personId = window.uv.personId;
+
+  var getPersonId = function () {
+    return personId;
+  };
+
+  var onSelect = function (selectedDate) {
+
+    instance = $(this).data("datepicker"),
+      date = $.datepicker.parseDate(
+        instance.settings.dateFormat ||
+        $.datepicker._defaults.dateFormat,
+        selectedDate, instance.settings);
+
+
+    var $from = $("#from");
+    var $to = $("#to");
+
+    if (this.id === "from" && $to.val() === "") {
+      $to.datepicker("setDate", selectedDate);
+    }
+
+    var dayLength = $('input:radio[name=dayLength]:checked').val();
+    var startDate = $from.datepicker("getDate");
+    var toDate = $to.datepicker("getDate");
+
+    sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
+    sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
+
+  };
+
+  var selectors = ["#from", "#to", "#at"];
+
+  createDatepickerInstances(selectors, datepickerLocale, urlPrefix, getPersonId, onSelect);
+
+});
+
 $(function () {
   // CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY
 
@@ -12,15 +53,15 @@ $(function () {
     $(id).datepicker('setDate', new Date(y, m, d));
   }
 
-  var from = '${param.from}';
-  var to = '${param.to}';
+  var from = document.getElementById('from').value;
+  var to = document.getElementById('to').value;
 
   if (from) {
     preset('#from', from);
     preset('#to', to || from);
 
-    var urlPrefix = "<spring:url value='/api' />";
-    var personId = "<c:out value='${person.id}' />";
+    var urlPrefix = window.uv.apiPrefix;
+    var personId = window.uv.personId;
     var startDate = $("#from").datepicker("getDate");
     var endDate = $("#to").datepicker("getDate");
 

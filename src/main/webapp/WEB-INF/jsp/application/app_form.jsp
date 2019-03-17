@@ -13,10 +13,17 @@
 
 <head>
     <uv:head/>
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+    </script>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/jquery.timepicker-1.11.13.min.css' />"/>
     <script type="text/javascript" src="<spring:url value='/lib/jquery/js/jquery.timepicker-1.11.13.min.js' />"></script>
 
-    <%@include file="include/app-form-elements/datepicker.jsp" %>
+    <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
+    <script src="<spring:url value='/js/datepicker.js'/>" type="text/javascript"></script>
     <script defer type="text/javascript" src="<spring:url value='/js/application/app_form.js' />"></script>
     <script defer type="text/javascript" src="<spring:url value='/js/application/day-length-selector.js' />"></script>
 </head>
@@ -162,7 +169,7 @@
                         <div class="col-md-5">
                             <form:input id="from" path="startDate" class="form-control"
                                         cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
-                                        autocomplete="off"/>
+                                        autocomplete="off" value="${param.from}"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="startTime" path="startTime" class="form-control"
@@ -177,7 +184,7 @@
                         </label>
                         <div class="col-md-5">
                             <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error"
-                                        placeholder="${DATE_PATTERN}" autocomplete="off"/>
+                                        placeholder="${DATE_PATTERN}" autocomplete="off" value="${param.to}"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="endTime" path="endTime" class="form-control"

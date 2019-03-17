@@ -14,7 +14,10 @@
 
 <head>
     <uv:head/>
-    <script src="<spring:url value='/lib/list-1.3.0.min.js' />" type="text/javascript"></script>
+    <c:if test="${not empty persons}">
+    <script defer src="<spring:url value='/lib/list-1.3.0.min.js' />" type="text/javascript"></script>
+    <script defer src="<spring:url value='/js/person/staff_list.js' />" type="text/javascript"></script>
+    </c:if>
 </head>
 
 <body>
