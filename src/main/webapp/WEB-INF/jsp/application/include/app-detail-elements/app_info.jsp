@@ -87,12 +87,12 @@
             <strong>
                 <uv:number number="${application.workDays}"/> <spring:message code="duration.days"/>
             </strong>
+            <c:if test="${application.startDate.year != application.endDate.year}">
             <span class="text-muted days">
                 <%-- filled by javascript --%>
             </span>
             <script type="text/javascript">
                 $(document).ready(function () {
-                    <c:if test="${application.startDate.year != application.endDate.year}">
 
                     var dayLength = '<c:out value="${application.dayLength}" />';
                     var personId = '<c:out value="${application.person.id}" />';
@@ -104,10 +104,9 @@
                     var to = new Date(endDate);
 
                     sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
-
-                    </c:if>
                 });
             </script>
+            </c:if>
             <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
                 <span class="text-muted">
                     <br/>

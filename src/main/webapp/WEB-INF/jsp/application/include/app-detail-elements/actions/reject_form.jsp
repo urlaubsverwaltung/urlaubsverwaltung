@@ -4,13 +4,13 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<c:if test="${action == 'reject'}">
 <script type="text/javascript">
     $(document).ready(function () {
-        <c:if test="${action == 'reject'}">
         $("#reject").show();
-        </c:if>
     });
 </script>
+</c:if>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 

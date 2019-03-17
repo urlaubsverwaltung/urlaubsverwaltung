@@ -5,13 +5,13 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
+<c:if test="${action == 'cancel'}">
 <script type="text/javascript">
     $(document).ready(function () {
-        <c:if test="${action == 'cancel'}">
         $("#cancel").show();
-        </c:if>
     });
 </script>
+</c:if>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
