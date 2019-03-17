@@ -15,8 +15,6 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Unit test for {@link SickNoteCommentServiceImpl}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteCommentServiceImplTest {
 

@@ -13,8 +13,6 @@ import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteAlreadyInactiveException
 
 /**
  * Handles exceptions and redirects to error page.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.web")
 public class ExceptionHandlerControllerAdvice {

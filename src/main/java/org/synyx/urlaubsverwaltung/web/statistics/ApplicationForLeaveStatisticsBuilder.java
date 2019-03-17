@@ -25,8 +25,6 @@ import java.util.Optional;
 /**
  * Builds a {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics} for the given
  * {@link org.synyx.urlaubsverwaltung.core.person.Person} and period.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 public class ApplicationForLeaveStatisticsBuilder {

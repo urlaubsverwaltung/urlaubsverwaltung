@@ -20,8 +20,6 @@ import java.util.Optional;
 
 /**
  * Syncs the person data from configured LDAP.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional

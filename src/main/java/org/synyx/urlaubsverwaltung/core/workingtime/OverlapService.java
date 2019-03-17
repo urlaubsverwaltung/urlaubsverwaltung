@@ -21,8 +21,6 @@ import static java.util.stream.Collectors.toList;
 /**
  * This service handles the validation of {@link Application} for leave concerning overlapping, i.e. if there is already
  * an existent {@link Application} for leave in the same period, the user may not apply for leave in this period.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class OverlapService {

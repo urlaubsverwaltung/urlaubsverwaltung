@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 
 /**
  * Provides calculation of used / left vacation days.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class VacationDaysService {

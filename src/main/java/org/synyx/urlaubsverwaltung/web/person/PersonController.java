@@ -41,8 +41,6 @@ import java.util.stream.Collectors;
 
 /**
  * Controller for management of {@link Person} entities.
- *
- * @author  Aljona Murygina
  */
 @Controller
 @RequestMapping("/web")

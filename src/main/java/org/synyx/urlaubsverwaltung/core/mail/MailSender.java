@@ -16,8 +16,6 @@ import java.util.List;
 
 /**
  * Sends mails using {@link JavaMailSenderImpl}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 class MailSender {

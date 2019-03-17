@@ -7,9 +7,6 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
 class AccountForm {
 
     private int holidaysAccountYear;

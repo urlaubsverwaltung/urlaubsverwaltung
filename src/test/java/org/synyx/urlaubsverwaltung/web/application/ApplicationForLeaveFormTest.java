@@ -14,9 +14,6 @@ import java.math.BigDecimal;
 import java.util.function.Consumer;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class ApplicationForLeaveFormTest {
 
     @Test

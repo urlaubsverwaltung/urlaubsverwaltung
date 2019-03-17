@@ -11,8 +11,6 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Unit test for {@link SickNoteConvertFormValidator}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteConvertFormValidatorTest {
 

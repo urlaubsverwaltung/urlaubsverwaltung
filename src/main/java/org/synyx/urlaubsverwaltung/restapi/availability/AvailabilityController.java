@@ -16,10 +16,6 @@ import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 import java.util.Optional;
 
 
-/**
- * @author  Marc Kannegiesser - kannegiesser@synyx.de
- * @author  Timo Eifler - eifler@synyx.de
- */
 @Api("Availabilities: Get all availabilities for a certain period")
 @RestController("restApiAvailabilityController")
 @RequestMapping("/api")

@@ -24,9 +24,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
 @Api("Sick Notes: Get all sick notes for a certain period")
 @RestController("restApiSickNoteController")
 @RequestMapping("/api")

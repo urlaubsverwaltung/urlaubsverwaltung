@@ -7,8 +7,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Configuration to send mails.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Configuration
 public class MailConfig {

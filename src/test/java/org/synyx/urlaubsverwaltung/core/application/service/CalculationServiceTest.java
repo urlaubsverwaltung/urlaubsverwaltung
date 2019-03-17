@@ -47,8 +47,6 @@ import static org.synyx.urlaubsverwaltung.core.period.DayLength.FULL;
 
 /**
  * Unit test for {@link CalculationService}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CalculationServiceTest {

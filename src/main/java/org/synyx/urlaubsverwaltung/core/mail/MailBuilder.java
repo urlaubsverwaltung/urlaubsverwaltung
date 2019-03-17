@@ -14,8 +14,6 @@ import java.util.Map;
 
 /**
  * Builds mail content by filling templates with data.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 class MailBuilder {

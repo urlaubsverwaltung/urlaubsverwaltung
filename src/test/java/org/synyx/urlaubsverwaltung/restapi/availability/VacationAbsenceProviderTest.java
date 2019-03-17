@@ -19,9 +19,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
 public class VacationAbsenceProviderTest {
 
     private VacationAbsenceProvider vacationAbsenceProvider;

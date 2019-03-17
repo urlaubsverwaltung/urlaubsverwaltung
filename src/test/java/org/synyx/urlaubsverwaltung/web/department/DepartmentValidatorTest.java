@@ -18,9 +18,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 
-/**
- * @author  Daniel Hammann - <hammann@synyx.de>
- */
 public class DepartmentValidatorTest {
 
     private DepartmentValidator sut;

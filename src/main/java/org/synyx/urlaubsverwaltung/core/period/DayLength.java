@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.core.period;
 import java.math.BigDecimal;
 
 
-/**
- * @author  Aljona Murygina
- */
 public enum DayLength {
 
     FULL(new BigDecimal("1.0")),

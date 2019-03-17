@@ -17,9 +17,6 @@ import org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSync
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 
-/**
- * Daniel Hammann - <hammann@synyx.de>.
- */
 @Component
 public class SettingsValidator implements Validator {
 

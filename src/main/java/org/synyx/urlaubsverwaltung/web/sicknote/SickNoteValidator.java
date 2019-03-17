@@ -20,8 +20,6 @@ import java.util.Optional;
 
 /**
  * Class for validating {@link SickNote} object.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 public class SickNoteValidator implements Validator {

@@ -34,9 +34,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
 @RunWith(MockitoJUnitRunner.class)
 public class MailServiceImplTest {
 

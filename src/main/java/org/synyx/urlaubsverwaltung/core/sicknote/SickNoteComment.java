@@ -10,8 +10,6 @@ import javax.persistence.ManyToOne;
 
 /**
  * Comment to a sick note containing detailed information like date of comment or commenting person.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
 public class SickNoteComment extends AbstractComment {

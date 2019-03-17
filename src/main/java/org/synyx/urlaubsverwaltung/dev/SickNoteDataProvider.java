@@ -14,8 +14,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 
 /**
  * Provides sick note test data.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnProperty("testdata.create")

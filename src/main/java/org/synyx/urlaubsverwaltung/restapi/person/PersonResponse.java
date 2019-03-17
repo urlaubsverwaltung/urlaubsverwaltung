@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.person;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class PersonResponse {
 
     private String ldapName;

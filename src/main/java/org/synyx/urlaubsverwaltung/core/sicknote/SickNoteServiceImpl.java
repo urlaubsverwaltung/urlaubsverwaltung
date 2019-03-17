@@ -14,8 +14,6 @@ import java.util.Optional;
 
 /**
  * Implementation for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class SickNoteServiceImpl implements SickNoteService {

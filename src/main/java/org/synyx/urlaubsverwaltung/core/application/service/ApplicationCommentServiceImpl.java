@@ -19,8 +19,6 @@ import java.util.Optional;
 
 /**
  * Implementation of interface {@link ApplicationCommentService}.
- *
- * @author  Aljona Murygina
  */
 @Service
 @Transactional

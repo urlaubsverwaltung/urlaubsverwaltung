@@ -54,8 +54,6 @@ import static org.synyx.urlaubsverwaltung.core.period.DayLength.FULL;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class VacationDaysServiceTest {
 

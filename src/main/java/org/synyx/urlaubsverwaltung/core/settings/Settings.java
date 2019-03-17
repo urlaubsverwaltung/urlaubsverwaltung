@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 
 /**
  * Represents the settings / business rules for the application.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
 public class Settings extends AbstractPersistable<Integer> {

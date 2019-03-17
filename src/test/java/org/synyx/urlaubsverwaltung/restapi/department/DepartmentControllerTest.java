@@ -16,9 +16,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class DepartmentControllerTest {
 
     private MockMvc mockMvc;

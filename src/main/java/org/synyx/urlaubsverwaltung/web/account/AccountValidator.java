@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 
 /**
  * Validates {@link AccountForm}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Component
 class AccountValidator implements Validator {

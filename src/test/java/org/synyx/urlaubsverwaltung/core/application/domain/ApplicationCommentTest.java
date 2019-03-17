@@ -11,8 +11,6 @@ import java.util.function.Consumer;
 
 /**
  * Unit test for {@link ApplicationComment}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationCommentTest {
 

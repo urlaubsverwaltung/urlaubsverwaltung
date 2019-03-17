@@ -28,9 +28,6 @@ import java.util.stream.Collectors;
 import static java.lang.Integer.parseInt;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Api("Absences: Get all absences for a certain period")
 @RestController("restApiAbsenceController")
 @RequestMapping("/api")

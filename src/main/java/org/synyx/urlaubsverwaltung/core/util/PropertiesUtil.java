@@ -9,9 +9,6 @@ import java.net.URL;
 import java.util.Properties;
 
 
-/**
- * @author  Aljona Murygina
- */
 public final class PropertiesUtil {
 
     private PropertiesUtil() {

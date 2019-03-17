@@ -9,8 +9,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 /**
  * Repository for {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface AccountDAO extends CrudRepository<Account, Integer> {
 

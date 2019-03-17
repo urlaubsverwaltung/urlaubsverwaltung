@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.web.application;
 
 /**
  * Represents a comment.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationCommentForm {
 

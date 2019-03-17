@@ -13,8 +13,6 @@ import java.util.Optional;
 
 /**
  * Implementation of {@link CalendarSyncService}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class CalendarSyncServiceImpl implements CalendarSyncService {

@@ -15,8 +15,6 @@ import java.util.Optional;
 
 /**
  * Implementation of interface {@link AccountInteractionService}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional

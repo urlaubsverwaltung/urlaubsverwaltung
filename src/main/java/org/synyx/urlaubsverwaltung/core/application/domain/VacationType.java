@@ -13,8 +13,6 @@ import javax.persistence.Enumerated;
 /**
  * Describes a type of vacation.
  *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  * @since  2.15.0
  */
 @Entity

@@ -10,8 +10,6 @@ import java.util.List;
 
 /**
  * Repository for accessing {@link WorkingTime} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 interface WorkingTimeDAO extends CrudRepository<WorkingTime, Integer> {
 

@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.web.application;
 
 /**
  * Represents the person that should decide about an application for leave.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ReferredPerson {
 

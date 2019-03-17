@@ -30,8 +30,6 @@ import java.util.Optional;
 /**
  * This class validate if an {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} is filled
  * correctly by the user, else it saves error messages in errors object.
- *
- * @author  Aljona Murygina
  */
 @Component
 public class ApplicationValidator implements Validator {

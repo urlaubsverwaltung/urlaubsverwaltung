@@ -8,9 +8,6 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.List;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class RecipientUtilTest {
 
     @Test

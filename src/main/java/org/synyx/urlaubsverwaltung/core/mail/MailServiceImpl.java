@@ -32,9 +32,6 @@ import static java.util.Optional.ofNullable;
 
 /**
  * Implementation of interface {@link MailService}.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
 @Service("mailService")
 class MailServiceImpl implements MailService {

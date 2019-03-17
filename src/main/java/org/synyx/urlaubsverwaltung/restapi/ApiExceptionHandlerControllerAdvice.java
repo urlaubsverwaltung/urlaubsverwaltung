@@ -14,8 +14,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Handles exceptions and redirects to error page.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.restapi")
 public class ApiExceptionHandlerControllerAdvice {

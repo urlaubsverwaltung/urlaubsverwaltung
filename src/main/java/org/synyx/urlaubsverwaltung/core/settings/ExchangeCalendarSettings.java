@@ -7,8 +7,6 @@ import java.util.Base64;
 
 /**
  * Settings to sync absences with a Microsoft Exchange calendar.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class ExchangeCalendarSettings {

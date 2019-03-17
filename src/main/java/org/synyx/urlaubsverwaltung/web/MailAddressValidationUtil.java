@@ -6,8 +6,6 @@ import java.util.regex.Pattern;
 
 /**
  * Util class to validate mail address.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public final class MailAddressValidationUtil {
 

@@ -42,8 +42,6 @@ import static org.synyx.urlaubsverwaltung.web.ControllerConstants.YEAR_ATTRIBUTE
 /**
  * Controller to display the personal overview page with basic information about
  * overtime, applications for leave and sick notes.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

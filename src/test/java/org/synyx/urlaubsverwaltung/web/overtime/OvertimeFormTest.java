@@ -12,9 +12,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class OvertimeFormTest {
 
     @Test(expected = IllegalArgumentException.class)

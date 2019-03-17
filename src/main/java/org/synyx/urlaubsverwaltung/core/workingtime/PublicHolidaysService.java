@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 /**
  * Service for calendar purpose using jollyday library.
- *
- * @author  Aljona Murygina
  */
 @Component
 public class PublicHolidaysService {

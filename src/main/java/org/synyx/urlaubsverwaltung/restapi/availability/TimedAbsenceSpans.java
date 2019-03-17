@@ -8,8 +8,6 @@ import java.util.List;
 /**
  * Wrapper class for a list of {@link TimedAbsence} which provides additional utility methods to retrieve information
  * about the list.
- *
- * @author  Timo Eifler - eifler@synyx.de
  */
 class TimedAbsenceSpans {
 

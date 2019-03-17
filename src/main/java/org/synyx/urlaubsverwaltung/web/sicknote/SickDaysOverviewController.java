@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
 
 /**
  * Controller for overview about the sick days of all users.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

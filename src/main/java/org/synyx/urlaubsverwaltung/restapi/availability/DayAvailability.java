@@ -5,9 +5,6 @@ import java.math.BigDecimal;
 
 /**
  * Represents the availability for a person on a given day. Also contains the reason for being absent.
- *
- * @author  Marc Kannegiesser - kannegiesser@synyx.de
- * @author  Timo Eifler - eifler@synyx.de
  */
 class DayAvailability {
 

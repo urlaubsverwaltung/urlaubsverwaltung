@@ -24,8 +24,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 public class UsedDaysOverviewTest {
 

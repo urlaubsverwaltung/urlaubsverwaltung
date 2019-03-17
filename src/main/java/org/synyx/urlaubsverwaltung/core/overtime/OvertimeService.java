@@ -10,7 +10,6 @@ import java.util.Optional;
 /**
  * Provides possibility to create and fetch {@link Overtime} records.
  *
- * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
 public interface OvertimeService {
