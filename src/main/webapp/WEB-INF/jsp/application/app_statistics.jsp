@@ -11,32 +11,7 @@
 
 <head>
     <uv:head/>
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            $("table.sortable").tablesorter({
-                sortList: [[1, 0]],
-                headers: {
-                    0: {sorter: false},
-                    3: {sorter: false},
-                    4: {sorter: false},
-                    5: {sorter: 'commaNumber'},
-                    6: {sorter: 'commaNumber'},
-                    7: {sorter: 'commaNumber'}
-                },
-                textExtraction: function (node) {
-                    var sortable = $(node).find('.sortable');
-
-                    if (sortable.length > 0) {
-                        return sortable[0].innerHTML;
-                    }
-
-                    return node.innerHTML;
-                }
-            });
-
-        });
-    </script>
+    <script defer type="text/javascript" src="<spring:url value='/js/application/app_statistics.js' />"></script>
 </head>
 
 <body>

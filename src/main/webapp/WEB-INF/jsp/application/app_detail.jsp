@@ -12,6 +12,7 @@
 
 <head>
     <uv:head/>
+    <script defer type="text/javascript" src="<spring:url value='/js/custom.js' />"></script>
 </head>
 
 <body>
