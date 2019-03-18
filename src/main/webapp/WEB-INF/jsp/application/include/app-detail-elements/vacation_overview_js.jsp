@@ -33,17 +33,17 @@
                             .forEach(function (listItem, index, array) {
                                 var personId = listItem.personID;
                                 var url = location.protocol + "//"
-										+ location.host + "/api/absences?year="
-										+ encodeURIComponent(selectedYearValue) + "&month="
-										+ encodeURIComponent(selectedMonthValue) + "&person="
-										+ encodeURIComponent(personId);
-								var xhttp = new XMLHttpRequest();
-								xhttp.open("GET", url, false);
-								xhttp.setRequestHeader("Content-type",
-										"application/json");
-								xhttp.send();
-								var response = JSON.parse(xhttp.responseText);
-								if (response != null && response != undefined) {
+                                    + location.host + "/api/absences?year="
+                                    + encodeURIComponent(selectedYearValue) + "&month="
+                                    + encodeURIComponent(selectedMonthValue) + "&person="
+                                    + encodeURIComponent(personId);
+                                var xhttp = new XMLHttpRequest();
+                                xhttp.open("GET", url, false);
+                                xhttp.setRequestHeader("Content-type",
+                                    "application/json");
+                                xhttp.send();
+                                var response = JSON.parse(xhttp.responseText);
+                                if (response != null && response != undefined) {
 
                                     listItem.days
                                         .forEach(
@@ -149,10 +149,10 @@
                             });
 
                         var outputTable = "<table cellspacing='0' id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
-					outputTable += "<thead class='hidden-xs'>";
+                        outputTable += "<thead class='hidden-xs'>";
                         outputTable += "<tr>";
-					outputTable += "<th class='sortable-field'><spring:message code='person.data.firstName'/></th>";
-					outputTable += "<th class='sortable-field'><spring:message code='person.data.lastName'/></th>";
+                        outputTable += "<th class='sortable-field'><spring:message code='person.data.firstName'/></th>";
+                        outputTable += "<th class='sortable-field'><spring:message code='person.data.lastName'/></th>";
                         overViewList[0].days
                             .forEach(
                                 function (item, index, array) {
@@ -168,11 +168,11 @@
                             .forEach(
                                 function (item, index, array) {
                                     outputTable += "<tr>";
-										outputTable += "<td class='hidden-xs'>"
+                                    outputTable += "<td class='hidden-xs'>"
                                         + item.person.firstName
-												+ "</td>";
-										outputTable += "<td class='hidden-xs'>"
-												+ item.person.lastName
+                                        + "</td>";
+                                    outputTable += "<td class='hidden-xs'>"
+                                        + item.person.lastName
                                         + "</td>";
                                     item.days
                                         .forEach(
@@ -191,24 +191,25 @@
                                     outputTable += "</tr>";
                                 }, outputTable);
 
-					outputTable += "</tbody></table>";
-					var element = document.getElementById("vacationOverview");
-					element.innerHTML = outputTable;
-				}
-			}
-
-			$("table.sortable").tablesorter({
-                sortList: [[0, 0]],
-                headers: {
-                    '.non-sortable' : {
-                        sorter: false
+                        outputTable += "</tbody></table>";
+                        var element = document.getElementById("vacationOverview");
+                        element.innerHTML = outputTable;
                     }
                 }
-			});
-		}
-		var selectedYear = document.getElementById('yearSelect');
-		var selectedMonth = document.getElementById('monthSelect');
-		var selectedDepartment = document.getElementById('departmentSelect');
+
+                $("table.sortable").tablesorter({
+                    sortList: [[0, 0]],
+                    headers: {
+                        '.non-sortable': {
+                            sorter: false
+                        }
+                    }
+                });
+            }
+
+            var selectedYear = document.getElementById('yearSelect');
+            var selectedMonth = document.getElementById('monthSelect');
+            var selectedDepartment = document.getElementById('departmentSelect');
 
             selectedYear.addEventListener("change", function () {
                 selectedItemChange();
