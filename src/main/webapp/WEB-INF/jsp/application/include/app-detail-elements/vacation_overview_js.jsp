@@ -32,7 +32,6 @@
                         overViewList
                             .forEach(function (listItem, index, array) {
                                 var personId = listItem.personID;
-                                var personFullName = listItem.person.niceName;
                                 var url = location.protocol + "//"
                                     + location.host + "/api/absences?year="
                                     + encodeURIComponent(selectedYearValue) + "&month="
@@ -149,25 +148,31 @@
                                 }
                             });
 
-                        var outputTable = "<table cellspacing='0' class='list-table sortable tablesorter vacationOverview-table'>";
-                        outputTable += "<tr><th><spring:message code='overview.vacationOverview.tableTitle' /></th>";
+                        var outputTable = "<table cellspacing='0' id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
+                        outputTable += "<thead class='hidden-xs'>";
+                        outputTable += "<tr>";
+                        outputTable += "<th class='sortable-field'><spring:message code='person.data.firstName'/></th>";
+                        outputTable += "<th class='sortable-field'><spring:message code='person.data.lastName'/></th>";
                         overViewList[0].days
                             .forEach(
                                 function (item, index, array) {
+                                    let defaultClasses = "non-sortable vactionOverview-day-item";
                                     if (item.typeOfDay === "WEEKEND") {
-                                        outputTable += "<th class='vacationOverview-day-weekend vactionOverview-day-item'>"
-                                            + item.dayNumber + "</th>";
+                                        outputTable += "<th class='" + defaultClasses + "vacationOverview-day-weekend'>" + item.dayNumber + "</th>";
                                     } else {
-                                        outputTable += "<th class='vactionOverview-day-item'>"
-                                            + item.dayNumber + "</th>";
+                                        outputTable += "<th class='" + defaultClasses + "'>" + item.dayNumber + "</th>";
                                     }
                                 }, outputTable);
                         outputTable += "</tr><tbody class='vacationOverview-tbody'>";
                         overViewList
                             .forEach(
                                 function (item, index, array) {
-                                    outputTable += "<tr><td>"
-                                        + item.person.niceName
+                                    outputTable += "<tr>";
+                                    outputTable += "<td class='hidden-xs'>"
+                                        + item.person.firstName
+                                        + "</td>";
+                                    outputTable += "<td class='hidden-xs'>"
+                                        + item.person.lastName
                                         + "</td>";
                                     item.days
                                         .forEach(
@@ -191,6 +196,15 @@
                         element.innerHTML = outputTable;
                     }
                 }
+
+                $("table.sortable").tablesorter({
+                    sortList: [[0, 0]],
+                    headers: {
+                        '.non-sortable': {
+                            sorter: false
+                        }
+                    }
+                });
             }
 
             var selectedYear = document.getElementById('yearSelect');
