@@ -156,12 +156,11 @@
                         overViewList[0].days
                             .forEach(
                                 function (item, index, array) {
+                                    let defaultClasses = "non-sortable vactionOverview-day-item";
                                     if (item.typeOfDay === "WEEKEND") {
-                                        outputTable += "<th class='vacationOverview-day-weekend vactionOverview-day-item'>"
-                                            + item.dayNumber + "</th>";
+                                        outputTable += "<th class='" + defaultClasses + "vacationOverview-day-weekend'>" + item.dayNumber + "</th>";
                                     } else {
-                                        outputTable += "<th class='vactionOverview-day-item'>"
-                                            + item.dayNumber + "</th>";
+                                        outputTable += "<th class='" + defaultClasses + "'>" + item.dayNumber + "</th>";
                                     }
                                 }, outputTable);
                         outputTable += "</tr><tbody class='vacationOverview-tbody'>";
@@ -201,41 +200,11 @@
 			$("table.sortable").tablesorter({
                 sortList: [[0, 0]],
                 headers: {
-                    0: {sorter: true},
-                    1: {sorter: true},
-                    2: {sorter: false},
-                    3: {sorter: false},
-                    4: {sorter: false},
-                    5: {sorter: false},
-                    6: {sorter: false},
-                    7: {sorter: false},
-                    8: {sorter: false},
-                    9: {sorter: false},
-                    10: {sorter: false},
-                    11: {sorter: false},
-                    12: {sorter: false},
-                    13: {sorter: false},
-                    14: {sorter: false},
-                    15: {sorter: false},
-                    16: {sorter: false},
-                    17: {sorter: false},
-                    18: {sorter: false},
-                    19: {sorter: false},
-                    20: {sorter: false},
-                    21: {sorter: false},
-                    22: {sorter: false},
-                    23: {sorter: false},
-                    24: {sorter: false},
-                    25: {sorter: false},
-                    26: {sorter: false},
-                    27: {sorter: false},
-                    28: {sorter: false},
-                    29: {sorter: false},
-                    30: {sorter: false},
-                    31: {sorter: false},
-                    32: {sorter: false}
+                    '.non-sortable' : {
+                        sorter: false
+                    }
                 }
-            });
+			});
 		}
 		var selectedYear = document.getElementById('yearSelect');
 		var selectedMonth = document.getElementById('monthSelect');
