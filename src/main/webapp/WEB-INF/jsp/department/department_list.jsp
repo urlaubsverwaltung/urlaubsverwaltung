@@ -13,9 +13,8 @@
 
 <head>
     <uv:head/>
-
+    <script src="<spring:url value='/js/popover.js' />" type="text/javascript" ></script>
     <spring:url var="URL_PREFIX" value="/web"/>
-
 </head>
 
 <body>

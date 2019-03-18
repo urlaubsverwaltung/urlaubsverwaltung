@@ -18,6 +18,5 @@
 <script src="<spring:url value='/js/feedback.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/sortable.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/textarea.js' />" type="text/javascript" ></script>
-<script src="<spring:url value='/js/popover.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/gravatar.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/polyfills.js' />" type="text/javascript" ></script>
