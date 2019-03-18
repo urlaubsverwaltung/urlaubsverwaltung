@@ -46,7 +46,6 @@ public class ApplicationForLeaveStatisticsController {
     private static final int ORDER_ASCENDING = 0;
     private static final int ORDER_DESCENDING = 1;
 
-
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     private final VacationTypeService vacationTypeService;

@@ -178,14 +178,14 @@
                                         </c:forEach>
                                     </td>
                                     <td class="hidden-xs">
-                                        <b class="sortable"><uv:number number="${statistic.leftVacationDays}"/></b>
+                                        <strong class="sortable"><uv:number number="${statistic.leftVacationDays}"/></strong>
                                         <spring:message code="duration.vacationDays"/>
                                         <br/>
                                         <strong><uv:number number="${statistic.leftOvertime}"/></strong>
                                         <spring:message code="duration.overtime"/>
                                     </td>
                                      <td class="hidden-xs">
-                                        <b class="sortable"><uv:number number="${statistic.entitlementVacationDays}"/></b>
+                                        <strong class="sortable"><uv:number number="${statistic.entitlementVacationDays}"/></strong>
                                         <spring:message code="duration.vacationDays"/>
                                     </td>
                                 </tr>
