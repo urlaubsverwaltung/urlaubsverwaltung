@@ -5,6 +5,7 @@ something, or simply want to hack on the code this document should help you get 
 
 
 ## Using GitHub Issues
+
 We use GitHub issues to track bugs and enhancements.
 
 If you are reporting a bug, please help to speed up problem diagnosis by providing as much
@@ -14,14 +15,18 @@ Please look for other issues or pull requests which already work on this topic. 
 
 Have you already checked the [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki)?
 
+
 ## Reporting Security Vulnerabilities
+
 If you think you have found a security vulnerability in the Urlaubsverwaltung please *DO NOT*
 disclose it publicly until we've had a chance to fix it. Please *don't report security
 vulnerabilities using GitHub issues*, instead head over to urlaubsverwaltung@synyx.de and
 learn how to disclose them responsibly.
 
+
 ## Pull Request Contribution
 
+Every contributor has to add herself/himself to [AUTHORS.md](AUTHORS.md) to grant full and irrevocable copyright to the Urlaubsverwaltung, otherwise a contribution is not possible.
 New pull requests will be labeled with status of process as shown below:
 
 ![Pull request workflow](docs/workflow-pullrequests.svg)
