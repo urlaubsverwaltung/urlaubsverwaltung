@@ -1,8 +1,6 @@
 Urlaubsverwaltung contributors in alphabetical order:
 
-
-
-
+* Daniel Fuchs <github@honnel.de>
 
 By adding your name to this list, you grant full and irrevocable copyright  
 and patent indemnity to the Urlaubsverwaltung and all use of the Urlaubsverwaltung,  
