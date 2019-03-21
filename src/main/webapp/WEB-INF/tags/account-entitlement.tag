@@ -4,7 +4,9 @@
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.core.account.domain.Account" required="true" %>
 
 <div class="box">
-    <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
+    <span class="box-icon bg-green">
+        <i class="fa fa-calendar" aria-hidden="true"></i>
+    </span>
     <span class="box-text">
         <c:choose>
             <c:when test="${account != null}">
