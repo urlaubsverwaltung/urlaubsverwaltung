@@ -22,7 +22,7 @@ Die folgende Anleitung gilt nur für Versionen < 2.12.0.
 #### Systemvoraussetzungen
 
 * Apache Tomcat Version 7
-* JDK 8
+* JDK 11
 * MySQL Datenbank
 
 #### Download
