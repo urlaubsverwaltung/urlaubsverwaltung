@@ -115,7 +115,7 @@ Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
 ### Systemvoraussetzungen
 
-* JDK 8
+* JDK 11
 * MySQL Datenbank (v8.0.16)
 * Docker 17.12.0+ & Docker Compose
 
