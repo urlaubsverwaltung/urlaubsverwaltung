@@ -194,7 +194,7 @@
                     </span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}"/>
-                        <i class="fa fa-check positive"></i> <spring:message
+                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
                         code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
                     </span>
                 </div>
@@ -202,10 +202,10 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
-                    <span class="box-icon bg-yellow hidden-print"><i class="fa fa-flag-o"></i></span>
+                    <span class="box-icon bg-yellow hidden-print"><i class="fa fa-flag-o" aria-hidden="true"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}"/>
-                        <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.otherLeaveAllowed"
+                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message code="overview.vacations.otherLeaveAllowed"
                                                                              arguments="${otherLeaveAllowed}"/>
                     </span>
                 </div>
@@ -230,7 +230,7 @@
                         <c:if test="${IS_OFFICE}">
                             <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
                                data-title="<spring:message code="action.apply.sicknote" />">
-                                <i class="fa fa-plus-circle"></i>
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
                             </a>
                         </c:if>
                     </legend>
@@ -240,11 +240,13 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-6">
                     <div class="box">
-                        <span class="box-icon bg-red hidden-print"><i class="fa fa-medkit"></i></span>
+                        <span class="box-icon bg-red hidden-print">
+                            <i class="fa fa-medkit" aria-hidden="true"></i>
+                        </span>
                         <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays"
                                         arguments="${sickDaysOverview.sickDays.days['TOTAL']}"/>
-                        <i class="fa fa-check positive"></i>
+                        <i class="fa fa-check positive" aria-hidden="true"></i>
                         <spring:message code="overview.sicknotes.sickdays.aub"
                                         arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
                     </span>
@@ -252,11 +254,13 @@
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-6">
                     <div class="box">
-                        <span class="box-icon bg-red hidden-print"><i class="fa fa-child"></i></span>
+                        <span class="box-icon bg-red hidden-print">
+                            <i class="fa fa-child" aria-hidden="true"></i>
+                        </span>
                         <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays.child"
                                         arguments="${sickDaysOverview.childSickDays.days['TOTAL']}"/>
-                        <i class="fa fa-check positive"></i>
+                        <i class="fa fa-check positive" aria-hidden="true"></i>
                         <spring:message code="overview.sicknotes.sickdays.aub"
                                         arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
                     </span>

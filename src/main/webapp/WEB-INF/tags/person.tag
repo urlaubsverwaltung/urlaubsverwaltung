@@ -10,7 +10,7 @@
 <div class="box ${cssClass}">
     <div class="box-image gravatar img-circle" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
     <span class="box-text">
-        <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
+        <i class="fa fa-at" aria-hidden="true"></i> <c:out value="${person.loginName}"/>
         <h4>
             <c:choose>
                 <c:when test="${nameIsNoLink}">
@@ -26,7 +26,7 @@
                 <c:out value="${person.niceName}"/>
             </span>
         </h4>
-        <i class="fa fa-envelope-o"></i>
+        <i class="fa fa-envelope-o" aria-hidden="true"></i>
         <a href="mailto:<c:out value='${person.email}'/>">
             <span class="hidden-print"><c:out value="${person.email}"/></span>
         </a>
