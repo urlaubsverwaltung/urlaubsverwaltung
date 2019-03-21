@@ -14,7 +14,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    <i class="fa fa-remove" aria-hidden="true"></i>
+                </button>
                 <h4 id="filterModalLabel" class="modal-title"><spring:message code="filter.title"/></h4>
             </div>
             <form:form method="POST" action="${actionUrl}" modelAttribute="period" class="form-horizontal">

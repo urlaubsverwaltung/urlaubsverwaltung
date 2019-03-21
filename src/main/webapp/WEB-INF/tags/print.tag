@@ -2,5 +2,5 @@
 
 <a href="#" class="fa-action pull-right hidden-xs hidden-sm" data-title="<spring:message code='action.print' />" media="print"
    onclick="window.print(); return false;">
-  <i class="fa fa-print"></i>
+  <i class="fa fa-print" aria-hidden="true"></i>
 </a>
