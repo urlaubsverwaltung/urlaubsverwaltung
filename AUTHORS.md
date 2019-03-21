@@ -2,6 +2,7 @@ Urlaubsverwaltung contributors in alphabetical order:
 
 * Aljona Buchloh <aljona.buchloh@gmail.com>
 * Daniel Fuchs <github@honnel.de>
+* Tobias Schneider <Tobias.Schneider@Tobsch.org>
 
 By adding your name to this list, you grant full and irrevocable copyright  
 and patent indemnity to the Urlaubsverwaltung and all use of the Urlaubsverwaltung,  
