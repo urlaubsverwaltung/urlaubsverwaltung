@@ -1,6 +1,6 @@
 Hallo ${application.person.niceName},
 
-${application.applier.niceName} hat einen Urlaubsantrag für dich gestellt, der in Kürze von einem der Chefs bearbeitet werden sollte.
+${application.applier.niceName} hat einen Urlaubsantrag für dich gestellt.
 
 ---------------------------------------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 Hallo ${application.person.niceName},
 
-dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze von einem der Chefs bearbeitet werden.
+dein Urlaubsantrag wurde erfolgreich eingereicht.
 
 ---------------------------------------------------------------------------------------------------------
 

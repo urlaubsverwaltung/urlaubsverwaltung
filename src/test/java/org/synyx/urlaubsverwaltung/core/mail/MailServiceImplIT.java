@@ -822,7 +822,7 @@ public class MailServiceImplIT {
         // check content of email
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Hugo Boss"));
-        assertTrue(content.contains("Den Urlaubsantrag findet ihr hier: http://urlaubsverwaltung/web/application/1234"));
+        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
 
