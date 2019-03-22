@@ -163,7 +163,7 @@ function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, person
         $vacations.append("<br/>" + person + ": " + startDate + " - " + endDate);
 
         if(vacation.status === "ALLOWED") {
-          $vacations.append(" <i class='fa fa-check positive' aria-hidden="true"></i>");
+          $vacations.append(" <i class='fa fa-check positive' aria-hidden='true'></i>");
         }
 
       });
