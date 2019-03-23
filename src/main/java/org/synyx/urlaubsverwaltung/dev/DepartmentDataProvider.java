@@ -13,8 +13,6 @@ import java.util.List;
 
 /**
  * Provides department test data.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnProperty("testdata.create")

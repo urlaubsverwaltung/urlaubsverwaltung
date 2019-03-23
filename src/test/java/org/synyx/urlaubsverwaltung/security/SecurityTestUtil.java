@@ -8,8 +8,6 @@ import java.util.Collection;
 
 /**
  * Helper class for tests concerning security relevant stuff.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SecurityTestUtil {
 

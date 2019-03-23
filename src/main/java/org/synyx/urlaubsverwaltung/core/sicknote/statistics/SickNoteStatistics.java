@@ -12,8 +12,6 @@ import java.util.List;
 
 /**
  * A statistic containing information about sick notes of a year.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteStatistics {
 

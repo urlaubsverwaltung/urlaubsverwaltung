@@ -18,8 +18,6 @@ import java.util.Optional;
 
 /**
  * Validates overtime record.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 public class OvertimeValidator implements Validator {

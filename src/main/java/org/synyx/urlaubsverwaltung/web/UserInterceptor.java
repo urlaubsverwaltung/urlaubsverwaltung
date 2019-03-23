@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Interceptor to add current user specific attributes like the Gravatar URL to every response.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 public class UserInterceptor implements HandlerInterceptor {

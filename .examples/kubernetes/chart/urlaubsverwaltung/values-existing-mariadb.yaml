@@ -1,0 +1,14 @@
+image:
+  tag: 2.35.0
+
+applicationProperties: |-
+  # AUTHENTICATION
+  auth=default
+  testdata.create=true
+
+environment:
+  springDatasourceUrl: jdbc:mysql://mariadb:3306/urlaubsverwaltung
+
+secrets:
+  databaseUsername: "user"
+  databasePassword: "secret"

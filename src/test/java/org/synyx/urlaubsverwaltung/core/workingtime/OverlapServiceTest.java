@@ -28,8 +28,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link OverlapService}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 public class OverlapServiceTest {
 

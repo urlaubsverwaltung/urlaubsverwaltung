@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * Allows access to overtime comments.
  *
- * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
 public interface OvertimeCommentDAO extends CrudRepository<OvertimeComment, Integer> {

@@ -19,8 +19,6 @@ import static org.hamcrest.core.Is.is;
 
 /**
  * Unit test for {@link Absence}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class AbsenceTest {
 

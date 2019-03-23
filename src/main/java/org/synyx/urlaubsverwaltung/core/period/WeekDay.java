@@ -6,8 +6,6 @@ import org.springframework.util.Assert;
 
 /**
  * Represents a day of week.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public enum WeekDay {
 

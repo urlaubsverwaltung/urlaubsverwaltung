@@ -18,8 +18,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link CalendarSyncServiceImpl}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class CalendarSyncServiceImplTest {
 

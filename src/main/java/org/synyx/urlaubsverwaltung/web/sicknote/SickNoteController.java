@@ -40,8 +40,6 @@ import java.util.Optional;
 
 /**
  * Controller for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNote} purposes.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

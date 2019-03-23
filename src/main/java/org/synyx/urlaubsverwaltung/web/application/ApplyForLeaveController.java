@@ -44,8 +44,6 @@ import java.util.Optional;
 
 /**
  * Controller to apply for leave.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")

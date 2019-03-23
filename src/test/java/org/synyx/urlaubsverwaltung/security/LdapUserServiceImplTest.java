@@ -10,9 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class LdapUserServiceImplTest {
 
     private LdapTemplate ldapTemplate;

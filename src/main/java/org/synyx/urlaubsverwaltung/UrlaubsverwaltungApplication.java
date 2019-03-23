@@ -7,8 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Spring Boot Entry Point.
- *
- * @author  David Schilling - schilling@synyx.de
  */
 @SpringBootApplication
 @EnableScheduling

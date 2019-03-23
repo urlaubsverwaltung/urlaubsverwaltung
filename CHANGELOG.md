@@ -1,3 +1,8 @@
+### master/unreleased
+* Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/#372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/#551)
+* Verbesserung Urlaubsübersicht durch dynamische Sortierung [#395](https://github.com/synyx/urlaubsverwaltung/issues/395)
+* Kleine inhaltliche Verbesserungen in den E-Mail-Templates
+
 ### [urlaubsverwaltung-2.38.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.3)
 * Bugfix: Fehlende englische Übersetzung für die Urlaubsübersicht [#559](https://github.com/synyx/urlaubsverwaltung/pull/559)
 * Bugfix: Falls der 'server.servlet.context-path' gesetzt wird kann man sich nicht einloggen [#565](https://github.com/synyx/urlaubsverwaltung/pull/565)

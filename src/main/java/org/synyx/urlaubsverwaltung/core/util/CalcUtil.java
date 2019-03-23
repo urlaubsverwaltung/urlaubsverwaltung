@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 
 /**
  * Contains helper methods for handling {@link BigDecimal}s.
- *
- * @author  Aljona Murygina
  */
 public final class CalcUtil {
 

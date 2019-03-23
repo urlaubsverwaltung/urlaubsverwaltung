@@ -36,10 +36,6 @@ import java.util.Optional;
 
 import static org.apache.http.HttpStatus.SC_OK;
 
-/**
- * @author Daniel Hammann - hammann@synyx.de
- * @author Marc Sommer - sommer@synyx.de
- */
 @Service
 public class GoogleCalendarSyncProvider implements CalendarProvider {
 

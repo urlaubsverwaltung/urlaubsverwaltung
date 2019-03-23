@@ -54,9 +54,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author Aljona Murygina
- */
 public class MailServiceImplIT {
 
     private static final StaticMessageSource MESSAGE_SOURCE;
@@ -825,7 +822,7 @@ public class MailServiceImplIT {
         // check content of email
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Hugo Boss"));
-        assertTrue(content.contains("Den Urlaubsantrag findet ihr hier: http://urlaubsverwaltung/web/application/1234"));
+        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
 

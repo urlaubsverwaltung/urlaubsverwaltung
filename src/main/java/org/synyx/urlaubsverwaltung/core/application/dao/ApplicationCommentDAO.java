@@ -11,8 +11,6 @@ import java.util.List;
 
 /**
  * Repository for {@link ApplicationComment} entities.
- *
- * @author  Aljona Murygina
  */
 public interface ApplicationCommentDAO extends CrudRepository<ApplicationComment, Integer> {
 

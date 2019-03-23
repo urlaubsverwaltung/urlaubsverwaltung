@@ -14,8 +14,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 
 /**
  * Unit test for {@link ApplicationCommentValidator}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationCommentValidatorTest {
 

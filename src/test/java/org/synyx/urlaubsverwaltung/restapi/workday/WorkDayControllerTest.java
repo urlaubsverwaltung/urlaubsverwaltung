@@ -34,9 +34,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.core.period.DayLength.FULL;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
 @RunWith(MockitoJUnitRunner.class)
 public class WorkDayControllerTest {
 

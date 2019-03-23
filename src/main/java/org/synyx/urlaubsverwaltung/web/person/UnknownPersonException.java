@@ -5,8 +5,6 @@ import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 
 /**
  * Thrown in case no person found for a certain ID.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UnknownPersonException extends AbstractNoResultFoundException {
 

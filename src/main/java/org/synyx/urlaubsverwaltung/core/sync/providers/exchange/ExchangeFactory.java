@@ -5,8 +5,6 @@ import microsoft.exchange.webservices.data.core.service.item.Appointment;
 
 /**
  * Provides exchange specific objects.
- *
- * @author  Christian Lange - <lange@synyx.de>
  */
 class ExchangeFactory {
 

@@ -17,8 +17,6 @@
           href="<spring:url value='/lib/jquery/css/ui-lightness/jquery.timepicker-1.11.13.min.css' />"/>
     <script type="text/javascript"
             src="<spring:url value='/lib/jquery/js/jquery.timepicker-1.11.13.min.js' />"></script>
-    <script type="text/javascript" src="<spring:url value='/lib/moment/moment-2.5.1.min.js' />"></script>
-    <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de-2.5.1.js' />"></script>
 
     <%@include file="include/app-form-elements/datepicker.jsp" %>
     <%@include file="include/app-form-elements/day-length-selector.jsp" %>
@@ -132,7 +130,7 @@
 
                 <div class="col-md-4 col-md-push-8">
             <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
+                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                 <spring:message code="application.data.description"/>
             </span>
                     <span id="departmentVacations" class="help-block info"></span>
@@ -300,7 +298,7 @@
                 <c:if test="${overtimeActive}">
                     <div class="col-md-4 col-md-push-8">
             	<span class="help-block">
-                	<i class="fa fa-fw fa-info-circle"></i>
+                	<i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                 	<spring:message code="application.data.hours.description"/>
             	</span>
                     </div>
@@ -327,7 +325,7 @@
                 </div>
                 <div class="col-md-4 col-md-push-8">
             <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
+                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                 <spring:message code="application.data.furtherInformation.description"/>
             </span>
                 </div>

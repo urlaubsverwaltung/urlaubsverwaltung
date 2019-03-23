@@ -12,8 +12,6 @@ import java.util.List;
 
 /**
  * Service to retrieve {@link DayAvailability} information.
- *
- * @author  Timo Eifler - eifler@synyx.de
  */
 @Service
 public class AvailabilityService {

@@ -18,9 +18,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
 public class AvailabilityServiceTest {
 
     private static final int DAYS_IN_TEST_DATE_RANGE = 8;

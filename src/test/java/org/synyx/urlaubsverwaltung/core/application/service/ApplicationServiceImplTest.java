@@ -18,8 +18,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link ApplicationServiceImpl}.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationServiceImplTest {
 

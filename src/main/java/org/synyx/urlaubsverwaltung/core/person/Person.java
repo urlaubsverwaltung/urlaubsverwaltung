@@ -17,9 +17,6 @@ import java.util.Collections;
 
 /**
  * This class describes a person.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
 
 @Entity

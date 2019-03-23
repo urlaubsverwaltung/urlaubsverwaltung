@@ -23,9 +23,6 @@ import java.util.Date;
 
 /**
  * This class describes an application for leave.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
 @Entity
 public class Application extends AbstractPersistable<Integer> {

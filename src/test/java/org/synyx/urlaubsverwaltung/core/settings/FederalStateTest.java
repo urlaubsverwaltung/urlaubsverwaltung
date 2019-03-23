@@ -6,8 +6,6 @@ import org.junit.Test;
 
 /**
  * Unit test for {@link FederalState}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class FederalStateTest {
 

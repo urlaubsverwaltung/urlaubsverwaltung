@@ -8,9 +8,6 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class AbstractCommentTest {
 
     @Test

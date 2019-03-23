@@ -8,8 +8,6 @@ import java.math.BigDecimal;
 
 /**
  * Provides interactions with {@link org.synyx.urlaubsverwaltung.core.account.domain.Account}s like creating or editing.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 public interface AccountInteractionService {
 

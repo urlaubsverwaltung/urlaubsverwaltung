@@ -1,0 +1,131 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "urlaubsverwaltung.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "urlaubsverwaltung.name" . }}
+    helm.sh/chart: {{ include "urlaubsverwaltung.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "urlaubsverwaltung.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "urlaubsverwaltung.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.environment.serverPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 10
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          env:
+            - name: JAVA_OPTIONS
+              value: {{ .Values.environment.javaOptions | quote }}
+            - name: SERVER_PORT
+              value: {{ .Values.environment.serverPort| quote }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.environment.springProfilesActive}}
+            {{- if .Values.deployMariaDb }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://{{ .Release.Name }}-mariadb:{{ .Values.mariadb.service.port }}/{{ .Values.mariadb.db.name }}"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ .Values.mariadb.db.user}}
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-mariadb
+                  key: mariadb-password
+            {{ else }}
+            - name: SPRING_DATASOURCE_URL
+              value: {{ .Values.environment.springDatasourceUrl | quote}}
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "urlaubsverwaltung.fullname" . }}-mariadb
+                  key: databaseUser
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "urlaubsverwaltung.fullname" . }}-mariadb
+                  key: databasePassword
+            {{- end }}
+            {{- if .Values.secrets.ldapManagerDn }}
+            - name: UV_SECURITY_LDAP_MANAGER_DN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-manager
+                  key: ldapManagerDn
+            {{- end }}
+            {{- if .Values.secrets.ldapManagerPassword }}
+            - name: UV_SECURITY_LDAP_MANAGER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-manager
+                  key: ldapManagerPassword
+            {{- end }}
+            {{- if .Values.secrets.ldapSyncUserDn }}
+            - name: UV_SECURITY_LDAP_SYNC_USERDN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-sync
+                  key: ldapSyncUserDn
+            {{- end }}
+            {{- if .Values.secrets.ldapSyncPassword }}
+            - name: UV_SECURITY_LDAP_SYNC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-sync
+                  key: ldapSyncPassword
+            {{- end }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "urlaubsverwaltung.fullname" . }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

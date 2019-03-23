@@ -8,10 +8,10 @@
     <span class="box-icon bg-yellow hidden-print">
         <c:choose>
             <c:when test="${application.vacationType.category == 'HOLIDAY'}">
-                <i class="fa fa-sun-o"></i>
+                <i class="fa fa-sun-o" aria-hidden="true"></i>
             </c:when>
             <c:otherwise>
-                <i class="fa fa-flag-o"></i>
+                <i class="fa fa-flag-o" aria-hidden="true"></i>
             </c:otherwise>
         </c:choose>
     </span>
@@ -24,19 +24,19 @@
                   title="<spring:message code='${application.status}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
-                    <i class="fa fa-question"></i>
+                    <i class="fa fa-question" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
-                    <i class="fa fa-check"></i>
+                    <i class="fa fa-check" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'ALLOWED'}">
-                    <i class="fa fa-check"></i>
+                    <i class="fa fa-check" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'REJECTED'}">
-                    <i class="fa fa-ban"></i>
+                    <i class="fa fa-ban" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
-                    <i class="fa fa-trash"></i>
+                    <i class="fa fa-trash" aria-hidden="true"></i>
                 </c:when>
                 <c:otherwise>
                     &nbsp;
@@ -200,11 +200,11 @@
         <td>
             <c:choose>
                 <c:when test="${application.teamInformed == true}">
-                    <i class="fa fa-check positive hidden-print"></i>
+                    <i class="fa fa-check positive hidden-print" aria-hidden="true"></i>
                     <spring:message code='application.data.teamInformed.true'/>
                 </c:when>
                 <c:otherwise>
-                    <i class="fa fa-remove hidden-print"></i>
+                    <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
                     <spring:message code='application.data.teamInformed.false'/>
                 </c:otherwise>
             </c:choose>

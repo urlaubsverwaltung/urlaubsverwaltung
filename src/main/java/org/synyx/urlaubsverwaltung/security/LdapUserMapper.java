@@ -20,8 +20,6 @@ import java.util.Optional;
 
 /**
  * Maps LDAP attributes to {@link LdapUser} class.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")

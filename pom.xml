@@ -11,21 +11,8 @@
 
   <organization>
     <name>synyx</name>
-    <url>http://synyx.de</url>
+    <url>https://synyx.de</url>
   </organization>
-
-  <developers>
-    <developer>
-      <id>murygina</id>
-      <name>Aljona Murygina</name>
-      <email>murygina@synyx.de</email>
-    </developer>
-    <developer>
-      <id>honnel</id>
-      <name>Daniel Hammann</name>
-      <email>hammann@synyx.de</email>
-    </developer>
-  </developers>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -34,7 +21,6 @@
   </parent>
 
   <properties>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
@@ -312,6 +298,22 @@
       </testResource>
     </testResources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <doclint>none</doclint>
+          <failOnError>false</failOnError>
+          <!-- Silence error javax.interceptor.InterceptorBinding not found -->
+          <additionalDependencies>
+            <additionalDependency>
+              <groupId>javax.interceptor</groupId>
+              <artifactId>javax.interceptor-api</artifactId>
+              <version>1.2</version>
+            </additionalDependency>
+          </additionalDependencies>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>

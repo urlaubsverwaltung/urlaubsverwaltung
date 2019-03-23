@@ -43,33 +43,56 @@ $(function() {
         selectable : 'datepickerSelectable'
     };
 
+    // 0=sunday, 1=monday
+    const weekStartsOn = 1;
+
+    const {
+        addDays,
+        addMonths,
+        addWeeks,
+        getYear,
+        isBefore,
+        isPast,
+        isToday,
+        isWeekend,
+        isWithinRange,
+        format,
+        getDay,
+        getMonth,
+        parse,
+        startOfMonth,
+        subMonths,
+    } = dateFns;
+
+    const startOfWeek = function startOfWeek(date) {
+      return dateFns.startOfWeek(date, { weekStartsOn });
+    };
 
     var Assertion = (function() {
-
         var holidayService;
 
         var assert = {
             isToday: function(date) {
-                return date.format('DD.MM.YY') === moment().format('DD.MM.YY');
+                return isToday(date);
             },
             isWeekend: function(date) {
-                return date.day() === 0 || date.day() === 6;
+                return isWeekend(date);
             },
             isPast: function(date) {
                 /* NOTE: Today is not in the past! */
-                return date.isBefore( moment(), 'day' );
+                return !isToday(date) && isPast(date);
             },
             isPublicHoliday: function(date) {
                 return holidayService.isPublicHoliday(date);
             },
             isPersonalHoliday: function(date) {
-                return !assert.isWeekend(date) && holidayService.isPersonalHoliday(date);
+                return !isWeekend(date) && holidayService.isPersonalHoliday(date);
             },
             isSickDay: function(date) {
-                return !assert.isWeekend(date) && holidayService.isSickDay(date);
+                return !isWeekend(date) && holidayService.isSickDay(date);
             },
             isHalfDay: function(date) {
-              return !assert.isWeekend(date) && holidayService.isHalfDay(date);
+              return !isWeekend(date) && holidayService.isHalfDay(date);
             },
             title: function(date) {
               return holidayService.getDescription(date);
@@ -171,9 +194,8 @@ $(function() {
 
         function isOfType(type) {
           return function (date) {
-
-            var year = date.year();
-            var formattedDate = date.format('YYYY-MM-DD');
+            var year = getYear(date);
+            var formattedDate = format(date, 'YYYY-MM-DD');
 
             if (!_CACHE[type]) {
                 return false;
@@ -204,9 +226,8 @@ $(function() {
             isPublicHoliday: isOfType('publicHoliday'),
 
             isHalfDay: function (date) {
-
-              var year = date.year();
-              var formattedDate = date.format('YYYY-MM-DD');
+              var year = getYear(date);
+              var formattedDate = format(date, 'YYYY-MM-DD');
 
               if (!_CACHE['publicHoliday']) {
                   return false;
@@ -246,9 +267,8 @@ $(function() {
             },
 
             getDescription: function (date) {
-
-              var year = date.year();
-              var formattedDate = date.format('YYYY-MM-DD');
+              var year = getYear(date);
+              var formattedDate = format(date, 'YYYY-MM-DD');
 
               if (!_CACHE['publicHoliday']) {
                   return '';
@@ -269,9 +289,8 @@ $(function() {
             },
 
             getStatus: function (date) {
-
-              var year = date.year();
-              var formattedDate = date.format('YYYY-MM-DD');
+              var year = getYear(date);
+              var formattedDate = format(date, 'YYYY-MM-DD');
 
               if (!_CACHE['holiday']) {
                   return null;
@@ -294,9 +313,8 @@ $(function() {
 
 
             getAbsenceId: function (date) {
-
-              var year = date.year();
-              var formattedDate = date.format('YYYY-MM-DD');
+              var year = getYear(date);
+              var formattedDate = format(date, 'YYYY-MM-DD');
 
               if (!_CACHE['holiday']) {
                   return '-1';
@@ -327,9 +345,8 @@ $(function() {
             },
 
             getAbsenceType: function (date) {
-
-                var year = date.year();
-                var formattedDate = date.format('YYYY-MM-DD');
+                var year = getYear(date);
+                var formattedDate = format(date, 'YYYY-MM-DD');
 
                 if (!_CACHE['holiday']) {
                     return '';
@@ -361,15 +378,14 @@ $(function() {
 
             /**
              *
-             * @param {moment} from
-             * @param {moment} [to]
+             * @param {Date} from
+             * @param {Date} [to]
              */
             bookHoliday: function(from, to) {
-
                 var params = {
                     personId: personId,
-                    from :      from.format('YYYY-MM-DD'),
-                    to   : to ? to  .format('YYYY-MM-DD') : undefined
+                    from: format(from, 'YYYY-MM-DD'),
+                    to: to ? format(to, 'YYYY-MM-DD') : undefined
                 };
 
                 document.location.href = webPrefix + '/application/new' + paramize( params );
@@ -490,15 +506,15 @@ $(function() {
 
             return render(TMPL.container, {
 
-                prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left"></i>'),
-                nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right"></i>'),
+                prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left" aria-hidden="true"></i>'),
+                nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right" aria-hidden="true"></i>'),
 
                 months: function() {
                     var html = '';
-                    var d = moment(date).subtract ('M', 4);
+                    var d = subMonths(date, 4);
                     while(monthsToShow--) {
                         html += renderMonth(d);
-                        d.add('M', 1);
+                        d = addMonths(d, 1);
                     }
                     return html;
                 }
@@ -514,26 +530,23 @@ $(function() {
 
         function renderMonth(date, cssClasses) {
 
-            var m = date.month();
-            var d = moment(date);
-
-            // first day of month
-            d.date(1);
+            var m = getMonth(date);
+            var d = startOfMonth(date);
 
             return render(TMPL.month, {
 
                 css     : cssClasses || '',
-                month   : d.month(),
-                year    : d.year(),
+                month   : getMonth(d),
+                year    : getYear(d),
                 title   : renderMonthTitle(d),
                 weekdays: renderWeekdaysHeader(d),
 
                 weeks: function() {
                     var html = '';
-                    while(d.month() === m) {
+                    while(getMonth(d) === m) {
                         html += renderWeek(d);
-                        d.add('w', 1);
-                        d.weekday(0);
+                        d = addWeeks(d, 1);
+                        d = startOfWeek(d);
                     }
                     return html;
                 }
@@ -542,39 +555,40 @@ $(function() {
 
         function renderMonthTitle(date) {
             return render(TMPL.title, {
-                title: date.format('MMMM YYYY')
+                title: format(date, 'MMMM YYYY')
             });
         }
 
         function renderWeekdaysHeader(date) {
-
-            // 'de'   : 0 == Monday
-            // 'en-ca': 0 == Sunday
-            var d = moment(date).weekday(0);
+            var d = startOfWeek(date);
 
             return render(TMPL.weekdays, {
-                0: d.format('dd'),
-                1: d.add('d', 1).format('dd'),
-                2: d.add('d', 1).format('dd'),
-                3: d.add('d', 1).format('dd'),
-                4: d.add('d', 1).format('dd'),
-                5: d.add('d', 1).format('dd'),
-                6: d.add('d', 1).format('dd')
+                0: format(d, 'dd'),
+                1: format(addDays(d, 1), 'dd'),
+                2: format(addDays(d, 2), 'dd'),
+                3: format(addDays(d, 3), 'dd'),
+                4: format(addDays(d, 4), 'dd'),
+                5: format(addDays(d, 5), 'dd'),
+                6: format(addDays(d, 6), 'dd'),
             });
         }
 
         function renderWeek(date) {
-
-            var d = moment(date);
-            var m = d.month();
+            var d = date;
+            var m = getMonth(d);
 
             return render(TMPL.week, function(_, dayIdx) {
 
+                let dayIndexToRender = Number(dayIdx) + weekStartsOn;
+                if (dayIndexToRender === 7) {
+                    dayIndexToRender = 0;
+                }
+
                 var html = '&nbsp;';
 
-                if (Number (dayIdx) === d.weekday() && m === d.month()) {
+                if (dayIndexToRender === getDay(d) && m === getMonth(d)) {
                     html = renderDay(d);
-                    d.add('d', 1);
+                    d = addDays(d, 1);
                 }
 
                 return html;
@@ -619,8 +633,8 @@ $(function() {
             }
 
             return render(TMPL.day, {
-                date: date.format('YYYY-MM-DD'),
-                day : date.format('DD'),
+                date: format(date, 'YYYY-MM-DD'),
+                day : format(date, 'DD'),
                 css : classes(),
                 selectable: isSelectable(),
                 title: assert.title(date),
@@ -647,7 +661,7 @@ $(function() {
                 var month = Number ($lastMonth.data(DATA.month));
                 var year  = Number ($lastMonth.data(DATA.year));
 
-                var $nextMonth = $(renderMonth( moment().year(year).month(month).add('M', 1)));
+                var $nextMonth = $(renderMonth( addMonths(new Date(year, month), 1)));
 
                 $lastMonth.after($nextMonth);
                 tooltip();
@@ -664,7 +678,7 @@ $(function() {
                 var month = Number ($firstMonth.data(DATA.month));
                 var year  = Number ($firstMonth.data(DATA.year));
 
-                var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract('M', 1)));
+                var $prevMonth = $(renderMonth( subMonths(new Date(year, month), 1)));
 
                 $firstMonth.before($prevMonth);
                 tooltip();
@@ -697,7 +711,7 @@ $(function() {
 
                 var dateThis = getDateFromEl(this);
 
-                if ( !sameOrBetween(dateThis, selectionFrom(), selectionTo()) ) {
+                if ( !isWithinRange(dateThis, selectionFrom(), selectionTo()) ) {
 
                     clearSelection();
 
@@ -718,7 +732,7 @@ $(function() {
                     var dateThis     = getDateFromEl(this);
                     var dateSelected = $datepicker.data(DATA.selected);
 
-                    var isThisBefore = dateThis.isBefore(dateSelected);
+                    var isThisBefore = isBefore(dateThis, dateSelected);
 
                     selectionFrom( isThisBefore ? dateThis     : dateSelected );
                     selectionTo  ( isThisBefore ? dateSelected : dateThis     );
@@ -740,7 +754,7 @@ $(function() {
                     holidayService.navigateToApplicationForLeave(absenceId);
                 } else if(isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
                     holidayService.navigateToSickNote(absenceId);
-                } else if(isSelectable === "true" && sameOrBetween(dateThis, dateFrom, dateTo)) {
+                } else if(isSelectable === "true" && isWithinRange(dateThis, dateFrom, dateTo)) {
                     holidayService.bookHoliday(dateFrom, dateTo);
                 }
 
@@ -751,16 +765,16 @@ $(function() {
                 // last month of calendar
                 var $month = $( $datepicker.find('.' + CSS.month)[numberOfMonths-1] );
 
+                const y = $month.data(DATA.year);
+                const m = $month.data(DATA.month);
+
                 // to load data for the new (invisible) prev month
-                var date = moment()
-                    .year ($month.data(DATA.year))
-                    .month($month.data(DATA.month))
-                    .add('M', 1);
+                var date = addMonths(new Date(y, m, 1), 1);
 
                 $.when(
-                    holidayService.fetchPublic   ( date.year() ),
-                    holidayService.fetchPersonal ( date.year() ),
-                    holidayService.fetchSickDays ( date.year() )
+                    holidayService.fetchPublic   ( getYear(date) ),
+                    holidayService.fetchPersonal ( getYear(date) ),
+                    holidayService.fetchSickDays ( getYear(date) )
                 ).then(view.displayNext);
             },
 
@@ -769,39 +783,39 @@ $(function() {
                 // first month of calendar
                 var $month = $( $datepicker.find('.' + CSS.month)[0] );
 
+                const y = $month.data(DATA.year);
+                const m = $month.data(DATA.month);
+
                 // to load data for the new (invisible) prev month
-                var date = moment()
-                    .year ($month.data(DATA.year))
-                    .month($month.data(DATA.month))
-                    .subtract('M', 1);
+                var date = subMonths(new Date(y, m, 1), 1);
 
                 $.when(
-                    holidayService.fetchPublic   ( date.year() ),
-                    holidayService.fetchPersonal ( date.year() ),
-                    holidayService.fetchSickDays ( date.year() )
+                    holidayService.fetchPublic   ( getYear(date) ),
+                    holidayService.fetchPersonal ( getYear(date) ),
+                    holidayService.fetchSickDays ( getYear(date) )
                 ).then(view.displayPrev);
             }
         };
 
         function getDateFromEl(el) {
-            return moment( $(el).data(DATA.date) );
+            return parse($(el).data(DATA.date));
         }
 
         function selectionFrom(date) {
             if (!date) {
-                return moment( $datepicker.data(DATA.selectFrom) );
+                return parse($datepicker.data(DATA.selectFrom));
             }
 
-            $datepicker.data(DATA.selectFrom, date.format('YYYY-MM-DD'));
+            $datepicker.data(DATA.selectFrom, format(date, 'YYYY-MM-DD'));
             refreshDatepicker();
         }
 
         function selectionTo(date) {
             if (!date) {
-                return moment( $datepicker.data(DATA.selectTo) );
+                return parse($datepicker.data(DATA.selectTo));
             }
 
-            $datepicker.data(DATA.selectTo, date.format('YYYY-MM-DD'));
+            $datepicker.data(DATA.selectTo, format(date, 'YYYY-MM-DD'));
             refreshDatepicker();
         }
 
@@ -811,18 +825,14 @@ $(function() {
             refreshDatepicker();
         }
 
-        function sameOrBetween(current, from, to) {
-            return current.isSame(from) || current.isSame(to) || ( current.isAfter(from) && current.isBefore(to) );
-        }
-
         function refreshDatepicker() {
 
             var from = selectionFrom();
             var to   = selectionTo();
 
             $('.' + CSS.day).each(function() {
-                var d = moment( $(this).data(DATA.date) );
-                select(this, sameOrBetween(d, from, to));
+                var d = parse( $(this).data(DATA.date) );
+                select(this, isWithinRange(d, from, to));
             });
         }
 

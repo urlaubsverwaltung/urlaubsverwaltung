@@ -1,18 +1,15 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.NowService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -23,21 +20,40 @@ import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.joda.time.DateTimeConstants.APRIL;
+import static org.joda.time.DateTimeConstants.DECEMBER;
+import static org.joda.time.DateTimeConstants.FEBRUARY;
+import static org.joda.time.DateTimeConstants.FRIDAY;
+import static org.joda.time.DateTimeConstants.JANUARY;
+import static org.joda.time.DateTimeConstants.MARCH;
+import static org.joda.time.DateTimeConstants.MONDAY;
+import static org.joda.time.DateTimeConstants.SEPTEMBER;
+import static org.joda.time.DateTimeConstants.THURSDAY;
+import static org.joda.time.DateTimeConstants.TUESDAY;
+import static org.joda.time.DateTimeConstants.WEDNESDAY;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.UNPAIDLEAVE;
+import static org.synyx.urlaubsverwaltung.core.period.DayLength.FULL;
 
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class VacationDaysServiceTest {
 
@@ -56,9 +72,9 @@ public class VacationDaysServiceTest {
 
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
-        workingTime.setWorkingDays(workingDays, DayLength.FULL);
+        List<Integer> workingDays = Arrays.asList(MONDAY, TUESDAY,
+                WEDNESDAY, THURSDAY, FRIDAY);
+        workingTime.setWorkingDays(workingDays, FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
                     any(DateMidnight.class)))
@@ -79,43 +95,43 @@ public class VacationDaysServiceTest {
 
         Person person = TestDataCreator.createPerson("horscht");
 
-        DateMidnight firstMilestone = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
-        DateMidnight lastMilestone = new DateMidnight(2012, DateTimeConstants.MARCH, 31);
+        DateMidnight firstMilestone = new DateMidnight(2012, JANUARY, 1);
+        DateMidnight lastMilestone = new DateMidnight(2012, MARCH, 31);
 
         // 4 days at all: 2 before January + 2 after January
         Application a1 = new Application();
-        a1.setStartDate(new DateMidnight(2011, DateTimeConstants.DECEMBER, 29));
-        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 3));
-        a1.setDayLength(DayLength.FULL);
-        a1.setStatus(ApplicationStatus.ALLOWED);
-        a1.setVacationType(getVacationType(VacationCategory.HOLIDAY));
+        a1.setStartDate(new DateMidnight(2011, DECEMBER, 29));
+        a1.setEndDate(new DateMidnight(2012, JANUARY, 3));
+        a1.setDayLength(FULL);
+        a1.setStatus(ALLOWED);
+        a1.setVacationType(getVacationType(HOLIDAY));
         a1.setPerson(person);
 
         // 5 days
         Application a2 = new Application();
-        a2.setStartDate(new DateMidnight(2012, DateTimeConstants.MARCH, 12));
-        a2.setEndDate(new DateMidnight(2012, DateTimeConstants.MARCH, 16));
-        a2.setDayLength(DayLength.FULL);
-        a2.setStatus(ApplicationStatus.ALLOWED);
-        a2.setVacationType(getVacationType(VacationCategory.HOLIDAY));
+        a2.setStartDate(new DateMidnight(2012, MARCH, 12));
+        a2.setEndDate(new DateMidnight(2012, MARCH, 16));
+        a2.setDayLength(FULL);
+        a2.setStatus(ALLOWED);
+        a2.setVacationType(getVacationType(HOLIDAY));
         a2.setPerson(person);
 
         // 4 days
         Application a3 = new Application();
-        a3.setStartDate(new DateMidnight(2012, DateTimeConstants.FEBRUARY, 6));
-        a3.setEndDate(new DateMidnight(2012, DateTimeConstants.FEBRUARY, 9));
-        a3.setDayLength(DayLength.FULL);
-        a3.setStatus(ApplicationStatus.WAITING);
-        a3.setVacationType(getVacationType(VacationCategory.HOLIDAY));
+        a3.setStartDate(new DateMidnight(2012, FEBRUARY, 6));
+        a3.setEndDate(new DateMidnight(2012, FEBRUARY, 9));
+        a3.setDayLength(FULL);
+        a3.setStatus(WAITING);
+        a3.setVacationType(getVacationType(HOLIDAY));
         a3.setPerson(person);
 
         // 6 days at all: 2 before April + 4 after April
         Application a4 = new Application();
-        a4.setStartDate(new DateMidnight(2012, DateTimeConstants.MARCH, 29));
-        a4.setEndDate(new DateMidnight(2012, DateTimeConstants.APRIL, 5));
-        a4.setDayLength(DayLength.FULL);
-        a4.setStatus(ApplicationStatus.WAITING);
-        a4.setVacationType(getVacationType(VacationCategory.HOLIDAY));
+        a4.setStartDate(new DateMidnight(2012, MARCH, 29));
+        a4.setEndDate(new DateMidnight(2012, APRIL, 5));
+        a4.setDayLength(FULL);
+        a4.setStatus(WAITING);
+        a4.setVacationType(getVacationType(HOLIDAY));
         a4.setPerson(person);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
@@ -135,35 +151,35 @@ public class VacationDaysServiceTest {
 
         Person person = TestDataCreator.createPerson("horscht");
 
-        DateMidnight firstMilestone = new DateMidnight(2012, DateTimeConstants.APRIL, 1);
-        DateMidnight lastMilestone = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+        DateMidnight firstMilestone = new DateMidnight(2012, APRIL, 1);
+        DateMidnight lastMilestone = new DateMidnight(2012, DECEMBER, 31);
 
         // 4 days at all: 2.5 before January + 2 after January
         Application a1 = new Application();
-        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.DECEMBER, 27));
-        a1.setEndDate(new DateMidnight(2013, DateTimeConstants.JANUARY, 3));
-        a1.setDayLength(DayLength.FULL);
+        a1.setStartDate(new DateMidnight(2012, DECEMBER, 27));
+        a1.setEndDate(new DateMidnight(2013, JANUARY, 3));
+        a1.setDayLength(FULL);
         a1.setPerson(person);
-        a1.setStatus(ApplicationStatus.ALLOWED);
-        a1.setVacationType(getVacationType(VacationCategory.HOLIDAY));
+        a1.setStatus(ALLOWED);
+        a1.setVacationType(getVacationType(HOLIDAY));
 
         // 5 days
         Application a2 = new Application();
-        a2.setStartDate(new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 3));
-        a2.setEndDate(new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7));
-        a2.setDayLength(DayLength.FULL);
+        a2.setStartDate(new DateMidnight(2012, SEPTEMBER, 3));
+        a2.setEndDate(new DateMidnight(2012, SEPTEMBER, 7));
+        a2.setDayLength(FULL);
         a2.setPerson(person);
-        a2.setStatus(ApplicationStatus.ALLOWED);
-        a2.setVacationType(getVacationType(VacationCategory.HOLIDAY));
+        a2.setStatus(ALLOWED);
+        a2.setVacationType(getVacationType(HOLIDAY));
 
         // 6 days at all: 2 before April + 4 after April
         Application a4 = new Application();
-        a4.setStartDate(new DateMidnight(2012, DateTimeConstants.MARCH, 29));
-        a4.setEndDate(new DateMidnight(2012, DateTimeConstants.APRIL, 5));
-        a4.setDayLength(DayLength.FULL);
+        a4.setStartDate(new DateMidnight(2012, MARCH, 29));
+        a4.setEndDate(new DateMidnight(2012, APRIL, 5));
+        a4.setDayLength(FULL);
         a4.setPerson(person);
-        a4.setStatus(ApplicationStatus.WAITING);
-        a4.setVacationType(getVacationType(VacationCategory.HOLIDAY));
+        a4.setStatus(WAITING);
+        a4.setVacationType(getVacationType(HOLIDAY));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
                     any(DateMidnight.class), any(Person.class)))
@@ -182,40 +198,40 @@ public class VacationDaysServiceTest {
 
         Person person = TestDataCreator.createPerson("horscht");
 
-        DateMidnight firstMilestone = new DateMidnight(2012, DateTimeConstants.APRIL, 1);
-        DateMidnight lastMilestone = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+        DateMidnight firstMilestone = new DateMidnight(2012, APRIL, 1);
+        DateMidnight lastMilestone = new DateMidnight(2012, DECEMBER, 31);
 
         Application cancelledHoliday = new Application();
-        cancelledHoliday.setVacationType(getVacationType(VacationCategory.HOLIDAY));
-        cancelledHoliday.setStatus(ApplicationStatus.CANCELLED);
+        cancelledHoliday.setVacationType(getVacationType(HOLIDAY));
+        cancelledHoliday.setStatus(CANCELLED);
 
         Application rejectedHoliday = new Application();
-        rejectedHoliday.setVacationType(getVacationType(VacationCategory.HOLIDAY));
-        rejectedHoliday.setStatus(ApplicationStatus.REJECTED);
+        rejectedHoliday.setVacationType(getVacationType(HOLIDAY));
+        rejectedHoliday.setStatus(REJECTED);
 
         Application waitingSpecialLeave = new Application();
-        waitingSpecialLeave.setVacationType(getVacationType(VacationCategory.SPECIALLEAVE));
-        waitingSpecialLeave.setStatus(ApplicationStatus.WAITING);
+        waitingSpecialLeave.setVacationType(getVacationType(SPECIALLEAVE));
+        waitingSpecialLeave.setStatus(WAITING);
 
         Application allowedSpecialLeave = new Application();
-        allowedSpecialLeave.setVacationType(getVacationType(VacationCategory.SPECIALLEAVE));
-        allowedSpecialLeave.setStatus(ApplicationStatus.ALLOWED);
+        allowedSpecialLeave.setVacationType(getVacationType(SPECIALLEAVE));
+        allowedSpecialLeave.setStatus(ALLOWED);
 
         Application waitingUnpaidLeave = new Application();
-        waitingUnpaidLeave.setVacationType(getVacationType(VacationCategory.UNPAIDLEAVE));
-        waitingUnpaidLeave.setStatus(ApplicationStatus.WAITING);
+        waitingUnpaidLeave.setVacationType(getVacationType(UNPAIDLEAVE));
+        waitingUnpaidLeave.setStatus(WAITING);
 
         Application allowedUnpaidLeave = new Application();
-        allowedUnpaidLeave.setVacationType(getVacationType(VacationCategory.UNPAIDLEAVE));
-        allowedUnpaidLeave.setStatus(ApplicationStatus.ALLOWED);
+        allowedUnpaidLeave.setVacationType(getVacationType(UNPAIDLEAVE));
+        allowedUnpaidLeave.setStatus(ALLOWED);
 
         Application waitingOvertime = new Application();
-        waitingOvertime.setVacationType(getVacationType(VacationCategory.OVERTIME));
-        waitingOvertime.setStatus(ApplicationStatus.WAITING);
+        waitingOvertime.setVacationType(getVacationType(OVERTIME));
+        waitingOvertime.setStatus(WAITING);
 
         Application allowedOvertime = new Application();
-        allowedOvertime.setVacationType(getVacationType(VacationCategory.OVERTIME));
-        allowedOvertime.setStatus(ApplicationStatus.ALLOWED);
+        allowedOvertime.setVacationType(getVacationType(OVERTIME));
+        allowedOvertime.setStatus(ALLOWED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
                     any(DateMidnight.class), any(Person.class)))
@@ -240,7 +256,7 @@ public class VacationDaysServiceTest {
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
 
-        VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account);
+        VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, Optional.empty());
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft);
 
@@ -253,7 +269,8 @@ public class VacationDaysServiceTest {
             vacationDaysLeft.getRemainingVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
             vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-        Assert.assertEquals("Wrong number of vacation days already used for next year", BigDecimal.ZERO, vacationDaysLeft.getVacationDaysUsedNextYear());
+        Assert.assertEquals("Wrong number of vacation days already used for next year", BigDecimal.ZERO,
+            vacationDaysLeft.getVacationDaysUsedNextYear());
 
     }
 
@@ -289,7 +306,34 @@ public class VacationDaysServiceTest {
                 vacationDaysLeft.getRemainingVacationDaysNotExpiring());
     }
 
+    @Test
+    public void testGetVacationDaysUsedOfEmptyAccount() {
 
+        Assert.assertEquals(BigDecimal.ZERO, vacationDaysService.getRemainingVacationDaysAlreadyUsed(Optional.empty()));
+    }
+
+    @Test
+    public void testGetVacationDaysUsedOfZeroRemainingVacationDays() {
+
+        Optional<Account> account = Optional.of(new Account());
+        account.get().setRemainingVacationDays(BigDecimal.ZERO);
+
+        Assert.assertEquals(BigDecimal.ZERO, vacationDaysService.getRemainingVacationDaysAlreadyUsed(account));
+    }
+
+    @Test
+    public void testGetVacationDaysUsedOfOneRemainingVacationDays() {
+
+        initCustomService("20", "20");
+
+        Optional<Account> account = Optional.of(new Account());
+        account.get().setAnnualVacationDays(new BigDecimal("30"));
+        account.get().setVacationDays(new BigDecimal("30"));
+        account.get().setRemainingVacationDays(new BigDecimal("10"));
+        account.get().setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
+
+        Assert.assertEquals(BigDecimal.TEN, vacationDaysService.getRemainingVacationDaysAlreadyUsed(account));
+    }
 
     @Test
     public void testGetTotalVacationDaysForPastYear() {
@@ -319,6 +363,7 @@ public class VacationDaysServiceTest {
     public void testGetTotalVacationDaysForThisYearBeforeApril() {
 
         when(nowService.now()).thenReturn(new DateMidnight(2015, 3, 2));
+        when(nowService.currentYear()).thenReturn(2015);
 
         initCustomService("4", "1");
 
@@ -338,11 +383,11 @@ public class VacationDaysServiceTest {
         Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("32"), leftDays);
     }
 
-
     @Test
     public void testGetTotalVacationDaysForThisYearAfterApril() {
 
         when(nowService.now()).thenReturn(new DateMidnight(2015, 4, 2));
+        when(nowService.currentYear()).thenReturn(2015);
 
         initCustomService("4", "3");
 
@@ -362,6 +407,67 @@ public class VacationDaysServiceTest {
         Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("30"), leftDays);
     }
 
+    @Test
+    public void testGetUsedDaysBeforeApril() {
+
+        String expectedUsedDays = "4";
+        Person person = TestDataCreator.createPerson("horscht");
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
+            .thenReturn(Collections.singletonList(getSomeApplication(person)));
+
+        WorkDaysService workDaysService = mock(WorkDaysService.class);
+        when(workDaysService.getWorkDays(any(),any(),any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+
+        VacationDaysService vacationDaysService = new VacationDaysService(
+            workDaysService,
+            nowService,
+            applicationService);
+
+        Account account = new Account();
+        account.setPerson(person);
+
+        BigDecimal usedDaysBeforeApril = vacationDaysService.getUsedDaysBeforeApril(account);
+
+        Assert.assertEquals("Wrong number of used vacation days before april", new BigDecimal(expectedUsedDays), usedDaysBeforeApril);
+    }
+
+    @Test
+    public void testGetUsedDaysAfterApril() {
+
+        String expectedUsedDays = "4";
+        Person person = TestDataCreator.createPerson("horscht");
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
+            .thenReturn(Collections.singletonList(getSomeApplication(person)));
+
+        WorkDaysService workDaysService = mock(WorkDaysService.class);
+        when(workDaysService.getWorkDays(any(),any(),any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+
+        VacationDaysService vacationDaysService = new VacationDaysService(
+            workDaysService,
+            nowService,
+            applicationService);
+
+        Account account = new Account();
+        account.setPerson(person);
+
+        BigDecimal usedDaysAfterApril = vacationDaysService.getUsedDaysAfterApril(account);
+
+        Assert.assertEquals("Wrong number of used vacation days after april", new BigDecimal(expectedUsedDays), usedDaysAfterApril);
+    }
+
+    private Application getSomeApplication(Person person) {
+
+        Application application = new Application();
+        application.setStartDate(new DateMidnight(2015, JANUARY, 1));
+        application.setEndDate(new DateMidnight(2015, JANUARY, 3));
+        application.setDayLength(FULL);
+        application.setStatus(ALLOWED);
+        application.setVacationType(getVacationType(HOLIDAY));
+        application.setPerson(person);
+        return application;
+    }
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 

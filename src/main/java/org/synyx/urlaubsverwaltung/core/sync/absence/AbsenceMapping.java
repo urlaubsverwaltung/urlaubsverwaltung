@@ -10,8 +10,6 @@ import javax.persistence.Enumerated;
 
 /**
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
- *
- * <p>Daniel Hammann - <hammann@synyx.de>.</p>
  */
 @Entity
 public class AbsenceMapping extends AbstractPersistable<Integer> {

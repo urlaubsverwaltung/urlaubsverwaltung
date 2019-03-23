@@ -45,7 +45,7 @@
             <div class="input-group search-field">
                 <%-- NOTE: class 'search' is needed for list.js --%>
                 <input type="text" class="search form-control" placeholder="<spring:message code='action.search'/>"/>
-                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
             </div>
         </div>
     </form>
@@ -144,7 +144,7 @@
                 <td class="hidden-print hidden-xs">
                     <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}"
                        data-title="<spring:message code="action.details" />">
-                        <i class="fa fa-fw fa-list-alt"></i>
+                        <i class="fa fa-fw fa-list-alt" aria-hidden="true"></i>
                     </a>
                 </td>
             </tr>

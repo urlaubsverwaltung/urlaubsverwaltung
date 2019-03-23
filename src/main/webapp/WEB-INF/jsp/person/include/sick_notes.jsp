@@ -19,10 +19,10 @@
         <td class="is-centered hidden-print state ${sickNote.sickNoteType}">
             <c:choose>
                 <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                    <i class="fa fa-child"></i>
+                    <i class="fa fa-child" aria-hidden="true"></i>
                 </c:when>
                 <c:otherwise>
-                    <i class="fa fa-medkit"></i>
+                    <i class="fa fa-medkit" aria-hidden="true"></i>
                 </c:otherwise>
             </c:choose>
         </td>
@@ -55,7 +55,7 @@
                 <c:if test="${sickNote.aubPresent == true}">
                     <span
                         class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
-                       (<i class="fa fa-check positive"></i> <spring:message code="sicknote.data.aub.short"/>)
+                       (<i class="fa fa-check positive" aria-hidden="true"></i> <spring:message code="sicknote.data.aub.short"/>)
                     </span>
                 </c:if>
             </p>
@@ -64,7 +64,7 @@
             <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days"/></span>
         </td>
         <td class="hidden-print is-centered hidden-xs">
-            <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.progress.lastEdited"/> <uv:date
+            <i class="fa fa-clock-o" aria-hidden="true"></i> <span><spring:message code="sicknote.progress.lastEdited"/> <uv:date
             date="${sickNote.lastEdited}"/></span>
         </td>
         </c:forEach>

@@ -22,8 +22,6 @@ import java.util.Optional;
 
 /**
  * Entity representing the working time of a person.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
 public class WorkingTime extends AbstractPersistable<Integer> {

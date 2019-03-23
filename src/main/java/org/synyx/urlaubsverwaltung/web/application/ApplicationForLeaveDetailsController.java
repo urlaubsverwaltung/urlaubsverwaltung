@@ -45,8 +45,6 @@ import java.util.Optional;
 
 /**
  * Controller to manage applications for leave.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @RequestMapping("/web/application")
 @Controller
@@ -147,9 +145,11 @@ public class ApplicationForLeaveDetailsController {
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 
         if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountService.getHolidaysAccount(year+1, application.getPerson())));
-            model.addAttribute("account", account.get());
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
+            final Account acc = account.get();
+            final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
+            model.addAttribute("account", acc);
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now(), acc.getYear()));
         }
 
         // UNSPECIFIC ATTRIBUTES

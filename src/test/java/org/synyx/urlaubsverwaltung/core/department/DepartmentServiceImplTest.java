@@ -27,10 +27,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author Daniel Hammann - hammann@synyx.de
- * @author Aljona Murygina - murygina@synyx.de
- */
 public class DepartmentServiceImplTest {
 
     private DepartmentServiceImpl sut;

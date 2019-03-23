@@ -33,8 +33,6 @@ import java.util.List;
 
 /**
  * Util class to create data for tests.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 public final class TestDataCreator {
 

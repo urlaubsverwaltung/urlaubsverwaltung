@@ -32,8 +32,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionServiceImpl}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteInteractionServiceImplTest {
 

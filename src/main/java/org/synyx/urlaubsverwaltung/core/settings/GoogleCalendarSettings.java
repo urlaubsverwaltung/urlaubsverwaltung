@@ -7,8 +7,6 @@ import java.util.Objects;
 
 /**
  * Settings to sync absences with a Google calendar.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class GoogleCalendarSettings {

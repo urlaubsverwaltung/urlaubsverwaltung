@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Controller("restApiBaseController")
 @RequestMapping("/api")
 public class BaseController {
