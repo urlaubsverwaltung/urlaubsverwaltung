@@ -11,13 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
 @Service
 class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
-    private SickNoteService sickNoteService;
+    private final SickNoteService sickNoteService;
 
     @Autowired
     SickDayAbsenceProvider(VacationAbsenceProvider nextPriorityProvider, SickNoteService sickNoteService) {

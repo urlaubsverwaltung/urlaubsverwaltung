@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.workingtime;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
@@ -10,10 +10,8 @@ import java.util.List;
 
 /**
  * Repository for accessing {@link WorkingTime} entities.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
-interface WorkingTimeDAO extends JpaRepository<WorkingTime, Integer> {
+interface WorkingTimeDAO extends CrudRepository<WorkingTime, Integer> {
 
     @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 ORDER BY x.validFrom")
     List<WorkingTime> findByPerson(Person person);

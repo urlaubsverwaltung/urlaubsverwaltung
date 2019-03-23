@@ -22,9 +22,6 @@ import java.util.stream.Collectors;
 
 /**
  * Implementation for {@link DepartmentService}.
- *
- * @author  Daniel Hammann - <hammann@synyx.de>
- * @author  Aljona Murygina - <murygina@synyx.de>
  */
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -43,8 +40,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Optional<Department> getDepartmentById(Integer departmentId) {
-
-        return Optional.ofNullable(departmentDAO.findOne(departmentId));
+        return departmentDAO.findById(departmentId);
     }
 
 
@@ -71,10 +67,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void delete(Integer departmentId) {
 
-        if (departmentDAO.findOne(departmentId) == null) {
-            LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
+        if (departmentDAO.findById(departmentId).isPresent()) {
+            departmentDAO.deleteById(departmentId);
         } else {
-            departmentDAO.delete(departmentId);
+            LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
         }
     }
 
@@ -109,7 +105,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
-        DateMidnight startDate, DateMidnight endDate) {
+                                                                                   DateMidnight startDate, DateMidnight endDate) {
 
         List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
         List<Application> departmentApplications = new ArrayList<>();
@@ -117,15 +113,15 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentMembers.stream()
             .filter(departmentMember -> !departmentMember.equals(member))
             .forEach(departmentMember ->
-                    departmentApplications.addAll(
-                        applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate,
-                                departmentMember)
-                            .stream()
-                            .filter(application ->
-                                        application.hasStatus(ApplicationStatus.ALLOWED)
-                                        || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-                                        || application.hasStatus(ApplicationStatus.WAITING))
-                            .collect(Collectors.toList())));
+                departmentApplications.addAll(
+                    applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate,
+                        departmentMember)
+                        .stream()
+                        .filter(application ->
+                            application.hasStatus(ApplicationStatus.ALLOWED)
+                                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
+                                || application.hasStatus(ApplicationStatus.WAITING))
+                        .collect(Collectors.toList())));
 
         return departmentApplications;
     }
@@ -181,9 +177,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
             List<Person> members = getManagedMembersOfDepartmentHead(departmentHead);
 
-            if (members.contains(person)) {
-                return true;
-            }
+            return members.contains(person);
         }
 
         return false;
@@ -196,9 +190,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (secondStageAuthority.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
             List<Person> members = getMembersForSecondStageAuthority(secondStageAuthority);
 
-            if (members.contains(person)) {
-                return true;
-            }
+            return members.contains(person);
         }
 
         return false;

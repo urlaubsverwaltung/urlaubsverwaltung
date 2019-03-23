@@ -4,64 +4,51 @@
 
   <groupId>org.synyx</groupId>
   <artifactId>urlaubsverwaltung</artifactId>
-  <version>2.35.0</version>
+  <version>2.39.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>Urlaubsverwaltung</name>
 
   <organization>
     <name>synyx</name>
-    <url>http://synyx.de</url>
+    <url>https://synyx.de</url>
   </organization>
-
-  <developers>
-    <developer>
-      <id>murygina</id>
-      <name>Aljona Murygina</name>
-      <email>murygina@synyx.de</email>
-    </developer>
-    <developer>
-      <id>honnel</id>
-      <name>Daniel Hammann</name>
-      <email>hammann@synyx.de</email>
-    </developer>
-  </developers>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.19.RELEASE</version>
-    <relativePath />
+    <version>2.1.3.RELEASE</version>
   </parent>
 
   <properties>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+    <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>1.8</java.version>
     <joda.time.version>2.7</joda.time.version>
     <mail.version>1.4.7</mail.version>
     <mock-javamail.version>1.9</mock-javamail.version>
     <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
     <jollyday.version>0.4.7</jollyday.version>
-    <swagger-springmvc.version>1.0.2</swagger-springmvc.version>
     <ews-java-api.version>2.0</ews-java-api.version>
     <httpcore.version>4.4.1</httpcore.version>
     <httpclient.version>4.5</httpclient.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-    <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-    <google-api-client.version>1.23.0</google-api-client.version>
-    <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
+    <google-api-client.version>1.25.0</google-api-client.version>
+    <google-api-services-calendar.version>v3-rev370-1.25.0</google-api-services-calendar.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
     <docker-maven-plugin.version>0.28.0</docker-maven-plugin.version>
     <run-java-sh.version>1.3.4</run-java-sh.version>
+    <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+    <swagger-annotations.version>1.5.21</swagger-annotations.version>
   </properties>
 
   <scm>
     <url>https://github.com/synyx/urlaubsverwaltung</url>
     <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
     <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
-    <tag>urlaubsverwaltung-2.35.0</tag>
+    <tag>urlaubsverwaltung-2.38.2</tag>
   </scm>
 
   <distributionManagement>
@@ -99,21 +86,15 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
+      <artifactId>spring-boot-starter-logging</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-logging</artifactId>
+      <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-ldap</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.ldap</groupId>
-          <artifactId>spring-ldap-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.ldap</groupId>
@@ -155,6 +136,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
       <scope>test</scope>
@@ -170,6 +156,11 @@
       <version>${commons-collections.version}</version>
     </dependency>
 
+    <!-- METRICS -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
 
     <!-- DATABASE -->
     <dependency>
@@ -235,9 +226,34 @@
 
     <!-- API DOCUMENTATION -->
     <dependency>
-      <groupId>com.mangofactory</groupId>
-      <artifactId>swagger-springmvc</artifactId>
-      <version>${swagger-springmvc.version}</version>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>${springfox-swagger2.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-models</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <version>${springfox-swagger2.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger-annotations.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-models</artifactId>
+      <version>${swagger-annotations.version}</version>
     </dependency>
 
     <!-- EXCHANGE SYNC -->
@@ -284,14 +300,24 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <doclint>none</doclint>
+          <failOnError>false</failOnError>
+          <!-- Silence error javax.interceptor.InterceptorBinding not found -->
+          <additionalDependencies>
+            <additionalDependency>
+              <groupId>javax.interceptor</groupId>
+              <artifactId>javax.interceptor-api</artifactId>
+              <version>1.2</version>
+            </additionalDependency>
+          </additionalDependencies>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>${maven-release-plugin.version}</version>
-      </plugin>
-      <!-- Coveralls.io -->
-      <plugin>
-        <groupId>org.eluder.coveralls</groupId>
-        <artifactId>coveralls-maven-plugin</artifactId>
-        <version>${coveralls-maven-plugin.version}</version>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -316,8 +342,8 @@
             </goals>
             <phase>generate-test-resources</phase>
             <configuration>
-              <nodeVersion>v8.11.1</nodeVersion>
-              <npmVersion>5.6.0</npmVersion>
+              <nodeVersion>v10.15.3</nodeVersion>
+              <npmVersion>6.4.1</npmVersion>
             </configuration>
           </execution>
           <execution>
@@ -343,6 +369,18 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <version>${docker-maven-plugin.version}</version>
@@ -356,7 +394,7 @@
         <configuration>
           <images>
             <image>
-              <name>registry.hub.docker.com/synyx/urlaubsverwaltung:${project.version}</name>
+              <name>registry.hub.docker.com/synyx/urlaubsverwaltung</name>
               <external>
                 <type>properties</type>
                 <prefix>docker</prefix>
@@ -368,9 +406,10 @@
                 <assembly>
                   <descriptorRef>artifact</descriptorRef>
                 </assembly>
-                <!--<tags>
+                <tags>
                     <tag>${project.version}</tag>
-                </tags>-->
+                    <tag>latest</tag>
+                </tags>
               </build>
               <run>
                 <ports>

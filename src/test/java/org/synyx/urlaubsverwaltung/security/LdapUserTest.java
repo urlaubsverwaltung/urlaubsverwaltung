@@ -9,16 +9,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class LdapUserTest {
 
     @Test
     public void ensureCanBeInitializedWithEmptyAttributes() {
 
-        LdapUser ldapUser = new LdapUser("username", Optional.<String>empty(), Optional.<String>empty(),
-                Optional.<String>empty());
+        LdapUser ldapUser = new LdapUser("username", Optional.empty(), Optional.empty(),
+                Optional.empty());
 
         Assert.assertEquals("Wrong username", "username", ldapUser.getUsername());
         Assert.assertEquals("First name should be empty", Optional.<String>empty(), ldapUser.getFirstName());
@@ -98,7 +95,7 @@ public class LdapUserTest {
 
         Consumer<String> assertThrowsOnEmptyUsername = (username) -> {
             try {
-                new LdapUser(username, Optional.<String>empty(), Optional.<String>empty(), Optional.<String>empty());
+                new LdapUser(username, Optional.empty(), Optional.empty(), Optional.empty());
                 Assert.fail("Should throw on empty username!");
             } catch (IllegalArgumentException ex) {
                 // Expected

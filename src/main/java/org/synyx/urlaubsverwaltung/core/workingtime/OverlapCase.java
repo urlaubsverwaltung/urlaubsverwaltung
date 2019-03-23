@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.workingtime;
 
 /**
- * @author  Aljona Murygina
- *
  *          <p>This enum describes what kind of overlap occurs if two (or more) applications are overlapping. There are
  *          three possible cases: (1) The period of the new application has no overlap at all with existent
  *          applications; i.e. you can calculate the normal way and save the application if there are enough vacation

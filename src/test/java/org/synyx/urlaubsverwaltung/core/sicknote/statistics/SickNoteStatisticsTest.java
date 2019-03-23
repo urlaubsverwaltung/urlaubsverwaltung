@@ -5,7 +5,6 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -18,11 +17,12 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link SickNoteStatistics}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteStatisticsTest {
 
@@ -32,10 +32,10 @@ public class SickNoteStatisticsTest {
     private List<SickNote> sickNotes;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
-        calendarService = Mockito.mock(WorkDaysService.class);
-        sickNoteDAO = Mockito.mock(SickNoteDAO.class);
+        calendarService = mock(WorkDaysService.class);
+        sickNoteDAO = mock(SickNoteDAO.class);
         sickNotes = new ArrayList<>();
 
         Person person = TestDataCreator.createPerson();
@@ -51,14 +51,14 @@ public class SickNoteStatisticsTest {
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
 
-        Mockito.when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
-        Mockito.when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
+        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
+        when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
 
-        Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
+        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
                     new DateMidnight(2013, DateTimeConstants.OCTOBER, 11), person))
             .thenReturn(new BigDecimal("5"));
 
-        Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
+        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
                     new DateMidnight(2013, DateTimeConstants.DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 
@@ -67,21 +67,21 @@ public class SickNoteStatisticsTest {
 
 
     @Test
-    public void testGetTotalNumberOfSickNotes() throws Exception {
+    public void testGetTotalNumberOfSickNotes() {
 
         Assert.assertEquals(2, statistics.getTotalNumberOfSickNotes());
     }
 
 
     @Test
-    public void testGetTotalNumberOfSickDays() throws Exception {
+    public void testGetTotalNumberOfSickDays() {
 
         Assert.assertEquals(new BigDecimal("14"), statistics.getTotalNumberOfSickDays());
     }
 
 
     @Test
-    public void testGetAverageDurationOfDiseasePerPerson() throws Exception {
+    public void testGetAverageDurationOfDiseasePerPerson() {
 
         // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
         // 14 workdays / 7 persons = 2 workdays per person
@@ -94,9 +94,9 @@ public class SickNoteStatisticsTest {
 
 
     @Test
-    public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() throws Exception {
+    public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
 
-        Mockito.when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
+        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
 
         statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
 
@@ -105,9 +105,9 @@ public class SickNoteStatisticsTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetTotalNumberOfSickDaysInvalidDateRange() throws Exception {
+    public void testGetTotalNumberOfSickDaysInvalidDateRange() {
 
-        Mockito.when(sickNoteDAO.findAllActiveByYear(2015)).thenReturn(sickNotes);
+        when(sickNoteDAO.findAllActiveByYear(2015)).thenReturn(sickNotes);
 
         statistics = new SickNoteStatistics(2015, sickNoteDAO, calendarService);
 

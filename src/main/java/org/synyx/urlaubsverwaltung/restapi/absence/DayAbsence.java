@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 
 /**
  * Represents an absence for a day.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class DayAbsence {
 

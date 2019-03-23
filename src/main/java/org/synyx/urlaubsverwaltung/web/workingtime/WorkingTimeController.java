@@ -7,11 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -34,24 +35,23 @@ import java.util.Optional;
 /**
  * Controller to manage {@link org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime}s of
  * {@link org.synyx.urlaubsverwaltung.core.person.Person}s.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
 public class WorkingTimeController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final WorkingTimeService workingTimeService;
+    private final SettingsService settingsService;
+    private final WorkingTimeValidator validator;
 
     @Autowired
-    private WorkingTimeService workingTimeService;
-
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private WorkingTimeValidator validator;
+    public WorkingTimeController(PersonService personService, WorkingTimeService workingTimeService, SettingsService settingsService, WorkingTimeValidator validator) {
+        this.personService = personService;
+        this.workingTimeService = workingTimeService;
+        this.settingsService = settingsService;
+        this.validator = validator;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -62,7 +62,7 @@ public class WorkingTimeController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/workingtime", method = RequestMethod.GET)
+    @GetMapping("/staff/{personId}/workingtime")
     public String editWorkingTime(@PathVariable("personId") Integer personId, Model model)
         throws UnknownPersonException {
 
@@ -93,7 +93,7 @@ public class WorkingTimeController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/workingtime", method = RequestMethod.POST)
+    @PostMapping("/staff/{personId}/workingtime")
     public String updateWorkingTime(@PathVariable("personId") Integer personId,
                                     @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm,
                                     Model model,

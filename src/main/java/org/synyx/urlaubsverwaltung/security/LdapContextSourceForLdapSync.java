@@ -9,10 +9,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Context source for syncing data from LDAP.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
-@Component("ldapContextSource")
+@Component("ldapContextSourceSync")
 @ConditionalOnExpression("'${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true'")
 public class LdapContextSourceForLdapSync extends LdapContextSource {
 

@@ -10,8 +10,6 @@ import java.util.Optional;
 
 /**
  * Implementation for {@link SickNoteCommentService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class SickNoteCommentServiceImpl implements SickNoteCommentService {
@@ -33,9 +31,7 @@ public class SickNoteCommentServiceImpl implements SickNoteCommentService {
         comment.setAction(action);
         comment.setPerson(author);
 
-        if (text.isPresent()) {
-            comment.setText(text.get());
-        }
+        text.ifPresent(comment::setText);
 
         commentDAO.save(comment);
 

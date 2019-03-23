@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
@@ -14,10 +13,12 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
+
 public class MailSenderTest {
 
     private MailSender mailSender;
@@ -26,17 +27,17 @@ public class MailSenderTest {
     private Settings settings;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
-        javaMailSender = Mockito.mock(JavaMailSenderImpl.class);
+        javaMailSender = mock(JavaMailSenderImpl.class);
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        SettingsService settingsService = mock(SettingsService.class);
         mailSender = new MailSender(javaMailSender);
 
         settings = new Settings();
         settings.getMailSettings().setActive(true);
 
-        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 
 
@@ -47,7 +48,7 @@ public class MailSenderTest {
 
         mailSender.sendEmail(settings.getMailSettings(), Collections.singletonList("foo@bar.de"), "subject", "text");
 
-        Mockito.verifyZeroInteractions(javaMailSender);
+        verifyZeroInteractions(javaMailSender);
     }
 
 
@@ -58,10 +59,10 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, Collections.singletonList("foo@bar.de"), "subject", "text");
 
-        Mockito.verify(javaMailSender).setHost(mailSettings.getHost());
-        Mockito.verify(javaMailSender).setPort(mailSettings.getPort());
-        Mockito.verify(javaMailSender).setUsername(mailSettings.getUsername());
-        Mockito.verify(javaMailSender).setPassword(mailSettings.getPassword());
+        verify(javaMailSender).setHost(mailSettings.getHost());
+        verify(javaMailSender).setPort(mailSettings.getPort());
+        verify(javaMailSender).setUsername(mailSettings.getUsername());
+        verify(javaMailSender).setPassword(mailSettings.getPassword());
     }
 
 
@@ -77,7 +78,7 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, Arrays.asList("max@firma.test", "marlene@firma.test"), subject, body);
 
-        Mockito.verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
+        verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
 
         SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
 
@@ -95,7 +96,7 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, null, "subject", "text");
 
-        Mockito.verifyZeroInteractions(javaMailSender);
+        verifyZeroInteractions(javaMailSender);
     }
 
 
@@ -106,6 +107,6 @@ public class MailSenderTest {
 
         mailSender.sendEmail(mailSettings, Collections.emptyList(), "subject", "text");
 
-        Mockito.verifyZeroInteractions(javaMailSender);
+        verifyZeroInteractions(javaMailSender);
     }
 }

@@ -6,9 +6,6 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 
-/**
- * @author  Aljona Murygina <murygina@synyx.de>
- */
 class PublicHolidayResponse {
 
     private String date;

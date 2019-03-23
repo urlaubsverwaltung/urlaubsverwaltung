@@ -16,8 +16,6 @@ import java.util.Optional;
 
 /**
  * Service for calendar purpose.
- *
- * @author  Aljona Murygina
  */
 @Service
 public class WorkDaysService {

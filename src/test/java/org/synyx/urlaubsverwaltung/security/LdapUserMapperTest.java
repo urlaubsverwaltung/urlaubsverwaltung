@@ -3,17 +3,19 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.ldap.core.DirContextOperations;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
+
 public class LdapUserMapperTest {
 
     private static final String IDENTIFIER_ATTRIBUTE = "uid";
@@ -40,8 +42,8 @@ public class LdapUserMapperTest {
     public void ensureThrowsIfTryingToCreateLdapUserFromAttributesWithInvalidIdentifierAttribute()
         throws NamingException {
 
-        Attributes attributes = Mockito.mock(Attributes.class);
-        Mockito.when(attributes.get(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
+        Attributes attributes = mock(Attributes.class);
+        when(attributes.get(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
 
         try {
             ldapUserMapper.mapFromAttributes(attributes);
@@ -50,29 +52,29 @@ public class LdapUserMapperTest {
             // Expected
         }
 
-        Mockito.verify(attributes, Mockito.atLeastOnce()).get(IDENTIFIER_ATTRIBUTE);
-        Mockito.verify(attributes, Mockito.never()).get(FIRST_NAME_ATTRIBUTE);
-        Mockito.verify(attributes, Mockito.never()).get(LAST_NAME_ATTRIBUTE);
-        Mockito.verify(attributes, Mockito.never()).get(MAIL_ADDRESS_ATTRIBUTE);
+        verify(attributes, atLeastOnce()).get(IDENTIFIER_ATTRIBUTE);
+        verify(attributes, never()).get(FIRST_NAME_ATTRIBUTE);
+        verify(attributes, never()).get(LAST_NAME_ATTRIBUTE);
+        verify(attributes, never()).get(MAIL_ADDRESS_ATTRIBUTE);
     }
 
 
     @Test
     public void ensureCreatesLdapUserFromAttributesWithOnlyUsernameGiven() throws NamingException {
 
-        Attributes attributes = Mockito.mock(Attributes.class);
-        Mockito.when(attributes.get(IDENTIFIER_ATTRIBUTE))
+        Attributes attributes = mock(Attributes.class);
+        when(attributes.get(IDENTIFIER_ATTRIBUTE))
             .thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "username"));
-        Mockito.when(attributes.get(FIRST_NAME_ATTRIBUTE)).thenReturn(null);
-        Mockito.when(attributes.get(LAST_NAME_ATTRIBUTE)).thenReturn(null);
-        Mockito.when(attributes.get(MAIL_ADDRESS_ATTRIBUTE)).thenReturn(null);
+        when(attributes.get(FIRST_NAME_ATTRIBUTE)).thenReturn(null);
+        when(attributes.get(LAST_NAME_ATTRIBUTE)).thenReturn(null);
+        when(attributes.get(MAIL_ADDRESS_ATTRIBUTE)).thenReturn(null);
 
         LdapUser ldapUser = ldapUserMapper.mapFromAttributes(attributes);
 
-        Mockito.verify(attributes).get(IDENTIFIER_ATTRIBUTE);
-        Mockito.verify(attributes).get(FIRST_NAME_ATTRIBUTE);
-        Mockito.verify(attributes).get(LAST_NAME_ATTRIBUTE);
-        Mockito.verify(attributes).get(MAIL_ADDRESS_ATTRIBUTE);
+        verify(attributes).get(IDENTIFIER_ATTRIBUTE);
+        verify(attributes).get(FIRST_NAME_ATTRIBUTE);
+        verify(attributes).get(LAST_NAME_ATTRIBUTE);
+        verify(attributes).get(MAIL_ADDRESS_ATTRIBUTE);
 
         Assert.assertEquals("Wrong username", "username", ldapUser.getUsername());
         Assert.assertFalse("First name should be empty", ldapUser.getFirstName().isPresent());
@@ -84,22 +86,22 @@ public class LdapUserMapperTest {
     @Test
     public void ensureCreatesLdapUserFromAttributes() throws NamingException {
 
-        Attributes attributes = Mockito.mock(Attributes.class);
-        Mockito.when(attributes.get(IDENTIFIER_ATTRIBUTE))
+        Attributes attributes = mock(Attributes.class);
+        when(attributes.get(IDENTIFIER_ATTRIBUTE))
             .thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "geralt"));
-        Mockito.when(attributes.get(FIRST_NAME_ATTRIBUTE))
+        when(attributes.get(FIRST_NAME_ATTRIBUTE))
             .thenReturn(new BasicAttribute(FIRST_NAME_ATTRIBUTE, "Geralt"));
-        Mockito.when(attributes.get(LAST_NAME_ATTRIBUTE))
+        when(attributes.get(LAST_NAME_ATTRIBUTE))
             .thenReturn(new BasicAttribute(LAST_NAME_ATTRIBUTE, "von Riva"));
-        Mockito.when(attributes.get(MAIL_ADDRESS_ATTRIBUTE))
+        when(attributes.get(MAIL_ADDRESS_ATTRIBUTE))
             .thenReturn(new BasicAttribute(MAIL_ADDRESS_ATTRIBUTE, "geralt@riva.de"));
 
         LdapUser ldapUser = ldapUserMapper.mapFromAttributes(attributes);
 
-        Mockito.verify(attributes).get(IDENTIFIER_ATTRIBUTE);
-        Mockito.verify(attributes).get(FIRST_NAME_ATTRIBUTE);
-        Mockito.verify(attributes).get(LAST_NAME_ATTRIBUTE);
-        Mockito.verify(attributes).get(MAIL_ADDRESS_ATTRIBUTE);
+        verify(attributes).get(IDENTIFIER_ATTRIBUTE);
+        verify(attributes).get(FIRST_NAME_ATTRIBUTE);
+        verify(attributes).get(LAST_NAME_ATTRIBUTE);
+        verify(attributes).get(MAIL_ADDRESS_ATTRIBUTE);
 
         Assert.assertEquals("Wrong username", "geralt", ldapUser.getUsername());
         Assert.assertEquals("Wrong first name", "Geralt", ldapUser.getFirstName().get());
@@ -114,8 +116,8 @@ public class LdapUserMapperTest {
     public void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
-        Mockito.when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
+        DirContextOperations ctx = mock(DirContextOperations.class);
+        when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
 
         try {
             ldapUserMapper.mapFromContext(ctx);
@@ -124,29 +126,29 @@ public class LdapUserMapperTest {
             // Expected
         }
 
-        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
-        Mockito.verify(ctx, Mockito.never()).getStringAttribute(LAST_NAME_ATTRIBUTE);
-        Mockito.verify(ctx, Mockito.never()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
-        Mockito.verify(ctx, Mockito.never()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
+        verify(ctx, never()).getStringAttribute(LAST_NAME_ATTRIBUTE);
+        verify(ctx, never()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
+        verify(ctx, never()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
     }
 
 
     @Test
     public void ensureCreatesLdapUserFromContext() throws NamingException, UnsupportedMemberAffiliationException {
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
-        Mockito.when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
-        Mockito.when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
-        Mockito.when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
-        Mockito.when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
-        Mockito.when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[] { MEMBER_OF_FILTER });
+        DirContextOperations ctx = mock(DirContextOperations.class);
+        when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
+        when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
+        when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
+        when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[] { MEMBER_OF_FILTER });
 
         LdapUser ldapUser = ldapUserMapper.mapFromContext(ctx);
 
-        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
-        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(LAST_NAME_ATTRIBUTE);
-        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
-        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(LAST_NAME_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
+        verify(ctx, atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
 
         Assert.assertEquals("Wrong username", "rick", ldapUser.getUsername());
         Assert.assertEquals("Wrong first name", "Rick", ldapUser.getFirstName().get());
@@ -159,13 +161,13 @@ public class LdapUserMapperTest {
     public void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
-        Mockito.when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
-        Mockito.when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
-        Mockito.when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
-        Mockito.when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
+        DirContextOperations ctx = mock(DirContextOperations.class);
+        when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
+        when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
+        when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
+        when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
 
-        Mockito.when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
             .thenReturn(new String[] { "CN=foo, DC=mydomain, DC=com" });
 
         ldapUserMapper.mapFromContext(ctx);
@@ -178,13 +180,13 @@ public class LdapUserMapperTest {
         ldapUserMapper = new LdapUserMapper(IDENTIFIER_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE,
                 MAIL_ADDRESS_ATTRIBUTE, null);
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
-        Mockito.when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
-        Mockito.when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
-        Mockito.when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
-        Mockito.when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
+        DirContextOperations ctx = mock(DirContextOperations.class);
+        when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
+        when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
+        when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
+        when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
 
-        Mockito.when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
             .thenReturn(new String[] { "CN=foo, DC=mydomain, DC=com" });
 
         try {
@@ -193,7 +195,7 @@ public class LdapUserMapperTest {
             Assert.fail("Should not throw on empty memberOf filter!");
         }
 
-        Mockito.verify(ctx, Mockito.never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);
+        verify(ctx, never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);
     }
 
 
@@ -203,13 +205,13 @@ public class LdapUserMapperTest {
         ldapUserMapper = new LdapUserMapper(IDENTIFIER_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE,
                 MAIL_ADDRESS_ATTRIBUTE, "");
 
-        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
-        Mockito.when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
-        Mockito.when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
-        Mockito.when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
-        Mockito.when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
+        DirContextOperations ctx = mock(DirContextOperations.class);
+        when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
+        when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
+        when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
+        when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
 
-        Mockito.when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
             .thenReturn(new String[] { "CN=foo, DC=mydomain, DC=com" });
 
         try {
@@ -218,6 +220,6 @@ public class LdapUserMapperTest {
             Assert.fail("Should not throw on empty memberOf filter!");
         }
 
-        Mockito.verify(ctx, Mockito.never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);
+        verify(ctx, never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);
     }
 }

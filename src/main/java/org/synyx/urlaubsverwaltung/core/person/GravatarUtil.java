@@ -12,8 +12,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This class creates a Gravatar URL for a mail address.
- *
- * @author  Aljona Murygina
  */
 final class GravatarUtil {
 

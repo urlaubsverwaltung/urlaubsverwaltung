@@ -20,7 +20,7 @@
 
     <div class="form-group">
         <div class="control-label">
-            <b><spring:message code='action.delete.confirm'/></b>
+            <strong><spring:message code='action.delete.confirm'/></strong>
         </div>
     </div>
 
@@ -28,7 +28,8 @@
         <div class="control-label">
             <c:choose>
                 <%-- comment is obligat if it's not the own application or if the application is in status allowed --%>
-                <c:when test="${application.person.id != signedInUser.id || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED'}">
+                <c:when
+                    test="${application.person.id != signedInUser.id || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED'}">
                     <spring:message code="action.comment.mandatory"/>
                 </c:when>
                 <%-- otherwise comment is not obligat --%>

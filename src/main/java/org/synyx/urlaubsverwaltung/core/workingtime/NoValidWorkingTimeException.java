@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.core.workingtime;
 
 /**
  * Exception that is thrown when no valid {@link WorkingTime} can be found for a period.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class NoValidWorkingTimeException extends IllegalStateException {
 

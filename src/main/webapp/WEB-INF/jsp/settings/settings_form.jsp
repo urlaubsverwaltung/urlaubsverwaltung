@@ -99,7 +99,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.vacation.description"/>
                         </span>
                     </div>
@@ -131,23 +131,28 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="absenceSettings.remindForWaitingApplications.true">
+                                    <label class="control-label col-md-4"
+                                           for="absenceSettings.remindForWaitingApplications.true">
                                 <spring:message code='settings.vacation.remindForWaitingApplications'/>:
                             </label>
                             <div class="col-md-8 radio">
                                 <label class="halves">
-                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications.true" path="absenceSettings.remindForWaitingApplications" value="true"/>
+                                            <form:radiobutton id="absenceSettings.remindForWaitingApplications.true"
+                                                              path="absenceSettings.remindForWaitingApplications"
+                                                              value="true"/>
                                     <spring:message code="settings.vacation.remindForWaitingApplications.true"/>
                                 </label>
                                 <label class="halves">
-                                    <form:radiobutton id="absenceSettings.remindForWaitingApplications.false" path="absenceSettings.remindForWaitingApplications" value="false"/>
+                                            <form:radiobutton id="absenceSettings.remindForWaitingApplications.false"
+                                                              path="absenceSettings.remindForWaitingApplications"
+                                                              value="false"/>
                                     <spring:message code="settings.vacation.remindForWaitingApplications.false"/>
                                 </label>
                             </div>
@@ -172,7 +177,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.sickDays.description"/>
                         </span>
                     </div>
@@ -206,7 +211,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.publicHolidays.description"/>
                         </span>
                     </div>
@@ -217,7 +222,9 @@
                             </label>
 
                             <div class="col-md-8">
-                                <form:select path="workingTimeSettings.workingDurationForChristmasEve" id="dayLengthTypesChristmasEve" class="form-control" cssErrorClass="form-control error">
+                                        <form:select path="workingTimeSettings.workingDurationForChristmasEve"
+                                                     id="dayLengthTypesChristmasEve" class="form-control"
+                                                     cssErrorClass="form-control error">
                                     <c:forEach items="${dayLengthTypes}" var="dayLengthType">
                                         <form:option value="${dayLengthType}"><spring:message code="${dayLengthType}" /></form:option>
                                     </c:forEach>
@@ -230,7 +237,9 @@
                             </label>
 
                             <div class="col-md-8">
-                                <form:select path="workingTimeSettings.workingDurationForNewYearsEve" id="dayLengthTypesNewYearsEve" class="form-control" cssErrorClass="form-control error">
+                                        <form:select path="workingTimeSettings.workingDurationForNewYearsEve"
+                                                     id="dayLengthTypesNewYearsEve" class="form-control"
+                                                     cssErrorClass="form-control error">
                                     <c:forEach items="${dayLengthTypes}" var="dayLengthType">
                                         <form:option value="${dayLengthType}"><spring:message code="${dayLengthType}" /></form:option>
                                     </c:forEach>
@@ -259,23 +268,25 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.overtime.description"/>
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="workingTimeSettings.overtimeActive.true">
+                                    <label class="control-label col-md-4" for="workingTimeSettings.overtimeActive.true">
                                 <spring:message code='settings.overtime.overtimeActive'/>:
                             </label>
                             <div class="col-md-8 radio">
                                 <label class="halves">
-                                    <form:radiobutton id="workingTimeSettings.overtimeActive.true" path="workingTimeSettings.overtimeActive" value="true"/>
+                                            <form:radiobutton id="workingTimeSettings.overtimeActive.true"
+                                                              path="workingTimeSettings.overtimeActive" value="true"/>
                                     <spring:message code="settings.overtime.overtimeActive.true"/>
                                 </label>
                                 <label class="halves">
-                                    <form:radiobutton id="workingTimeSettings.overtimeActive.false" path="workingTimeSettings.overtimeActive" value="false"/>
+                                            <form:radiobutton id="workingTimeSettings.overtimeActive.false"
+                                                              path="workingTimeSettings.overtimeActive" value="false"/>
                                     <spring:message code="settings.overtime.overtimeActive.false"/>
                                 </label>
                             </div>
@@ -310,22 +321,24 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.mail.description"/>
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="mailSettings.active.true">
+                                    <label class="control-label col-md-4" for="mailSettings.active.true">
                                 <spring:message code='settings.mail.active'/>:
                             </label>
                             <div class="col-md-8 radio">
                                 <label class="halves">
-                                    <form:radiobutton id="mailSettings.active.true" path="mailSettings.active" value="true"/>
+                                            <form:radiobutton id="mailSettings.active.true" path="mailSettings.active"
+                                                              value="true"/>
                                     <spring:message code="settings.mail.active.true"/>
                                 </label>
                                 <label class="halves">
-                                    <form:radiobutton id="mailSettings.active.false" path="mailSettings.active" value="false"/>
+                                            <form:radiobutton id="mailSettings.active.false" path="mailSettings.active"
+                                                              value="false"/>
                                     <spring:message code="settings.mail.active.false"/>
                                 </label>
                             </div>
@@ -404,7 +417,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.calendar.description"/>
                         </span>
                     </div>
@@ -424,63 +437,106 @@
                             </label>
                             <div class="col-md-8">
                                 <form:input id="calendarSettings.workDayEndHour" path="calendarSettings.workDayEndHour" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="calendarSettings.workDayEndHour" cssClass="error"/></span>
-                            </div>
-                        </div>
-                        <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="calendarSettings.provider">
-                                <spring:message code='settings.calendar.provider'/>:
-                            </label>
-                            <div class="col-md-8">
-                                <form:select id="calendarSettings.provider" path="calendarSettings.provider" class="form-control" cssErrorClass="form-control error">
-                                    <c:forEach items="${providers}" var="provider">
-                                        <form:option value="${provider}"><spring:message code="settings.calendar.provider.${provider}" /></form:option>
-                                    </c:forEach>
-                                </form:select>
-                                <span class="help-inline"><form:errors path="calendarSettings.provider" cssClass="error"/></span>
+                                        <span class="help-inline"><form:errors path="calendarSettings.workDayEndHour"
+                                                                               cssClass="error"/></span>
+                                    </div>
+                                </div>
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="calendarSettings.provider">
+                                        <spring:message code='settings.calendar.provider'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:select id="calendarSettings.provider" path="calendarSettings.provider"
+                                                     class="form-control" cssErrorClass="form-control error">
+                                            <c:forEach items="${providers}" var="provider">
+                                                <form:option value="${provider}"><spring:message
+                                                    code="settings.calendar.provider.${provider}"/></form:option>
+                                            </c:forEach>
+                                        </form:select>
+                                        <span class="help-inline"><form:errors path="calendarSettings.provider"
+                                                                               cssClass="error"/></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-section" id="exchange-calendar">
+                        <div class="form-section" id="exchange-calendar">
                     <div class="col-xs-12">
                         <legend><spring:message code="settings.calendar.ews.title" /></legend>
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.calendar.ews.description"/>
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
-                        <div class="form-group">
-                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.email">
-                                <spring:message code='settings.calendar.ews.email'/>:
+                                <div class="form-group">
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.exchangeCalendarSettings.email">
+                                        <spring:message code='settings.calendar.ews.email'/>:
                             </label>
-                            <div class="col-md-8">
-                                <form:input id="calendarSettings.exchangeCalendarSettings.email" path="calendarSettings.exchangeCalendarSettings.email" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.email" cssClass="error"/></span>
+                                    <div class="col-md-8">
+                                        <form:input id="calendarSettings.exchangeCalendarSettings.email"
+                                                    path="calendarSettings.exchangeCalendarSettings.email"
+                                                    class="form-control" cssErrorClass="form-control error"/>
+                                        <span class="help-inline"><form:errors
+                                            path="calendarSettings.exchangeCalendarSettings.email"
+                                            cssClass="error"/></span>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.password">
-                                <spring:message code='settings.calendar.ews.password'/>:
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.exchangeCalendarSettings.password">
+                                        <spring:message code='settings.calendar.ews.password'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:password showPassword="true" id="calendarSettings.exchangeCalendarSettings.password" path="calendarSettings.exchangeCalendarSettings.password" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.password" cssClass="error"/></span>
+                                        <form:password showPassword="true"
+                                                       id="calendarSettings.exchangeCalendarSettings.password"
+                                                       path="calendarSettings.exchangeCalendarSettings.password"
+                                                       class="form-control" cssErrorClass="form-control error"/>
+                                        <span class="help-inline"><form:errors
+                                            path="calendarSettings.exchangeCalendarSettings.password"
+                                            cssClass="error"/></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.exchangeCalendarSettings.ewsUrl">
+                                        <spring:message code='settings.calendar.ews.url'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="calendarSettings.exchangeCalendarSettings.ewsUrl"
+                                                    path="calendarSettings.exchangeCalendarSettings.ewsUrl"
+                                                    class="form-control" cssErrorClass="form-control error"/>
+                                        <span class="help-inline"><form:errors
+                                            path="calendarSettings.exchangeCalendarSettings.ewsUrl" cssClass="error"/></span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.calendar">
-                                <spring:message code='settings.calendar.ews.calendar'/>:
+                                        <spring:message code='settings.calendar.ews.calendar'/>:
                             </label>
                             <div class="col-md-8">
                                 <form:input id="calendarSettings.exchangeCalendarSettings.calendar" path="calendarSettings.exchangeCalendarSettings.calendar" class="form-control" cssErrorClass="form-control error" />
                                 <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.calendar" cssClass="error"/></span>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.timeZoneId">
+                                <spring:message code='settings.calendar.ews.timeZoneId'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:select id="calendarSettings.exchangeCalendarSettings.timeZoneId" path="calendarSettings.exchangeCalendarSettings.timeZoneId" class="form-control chosenCombo" cssErrorClass="form-control error">
+                                    <c:forEach items="${availableTimezones}" var="timeZoneId">
+                                        <form:option value="${timeZoneId}">${timeZoneId}</form:option>
+                                    </c:forEach>
+                                </form:select>
+                                <span class="help-inline"><form:errors path="calendarSettings.provider" cssClass="error"/></span>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.sendInvitationActive">
                                 <spring:message code='settings.calendar.ews.notification'/>:
@@ -492,78 +548,97 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
-                </div>
+                            </div>
+                        </div>
 
-                <div class="form-section" id="google-calendar">
-                    <div class="col-xs-12">
-                        <legend><spring:message code="settings.calendar.google.title" /></legend>
-                    </div>
-                    <div class="col-md-4 col-md-push-8">
+                        <div class="form-section" id="google-calendar">
+                            <div class="col-xs-12">
+                                <legend><spring:message code="settings.calendar.google.title"/></legend>
+                            </div>
+                            <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle"></i>
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                             <spring:message code="settings.calendar.google.description"/>
                         </span>
-                    </div>
-                    <div class="col-md-8 col-md-pull-4">
+                            </div>
+                            <div class="col-md-8 col-md-pull-4">
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.clientId">
-                                <spring:message code='settings.calendar.google.clientid'/>:
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.googleCalendarSettings.clientId">
+                                        <spring:message code='settings.calendar.google.clientid'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="calendarSettings.googleCalendarSettings.clientId" path="calendarSettings.googleCalendarSettings.clientId" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.clientId" cssClass="error"/></span>
+                                        <form:input id="calendarSettings.googleCalendarSettings.clientId"
+                                                    path="calendarSettings.googleCalendarSettings.clientId"
+                                                    class="form-control" cssErrorClass="form-control error"/>
+                                        <span class="help-inline"><form:errors
+                                            path="calendarSettings.googleCalendarSettings.clientId"
+                                            cssClass="error"/></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.googleCalendarSettings.clientSecret">
+                                        <spring:message code='settings.calendar.google.clientsecret'/>:
+                            </label>
+                            <div class="col-md-8">
+                                        <form:input id="calendarSettings.googleCalendarSettings.clientSecret"
+                                                    path="calendarSettings.googleCalendarSettings.clientSecret"
+                                                    class="form-control" cssErrorClass="form-control error"/>
+                                        <span class="help-inline"><form:errors
+                                            path="calendarSettings.googleCalendarSettings.clientSecret"
+                                            cssClass="error"/></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.googleCalendarSettings.calendarId">
+                                        <spring:message code='settings.calendar.google.calendarid'/>:
+                            </label>
+                                    <div class="col-md-8">
+                                        <form:input id="calendarSettings.googleCalendarSettings.calendarId"
+                                                    path="calendarSettings.googleCalendarSettings.calendarId"
+                                                    class="form-control" cssErrorClass="form-control error"/>
+                                        <span class="help-inline"><form:errors
+                                            path="calendarSettings.googleCalendarSettings.calendarId"
+                                            cssClass="error"/></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-4">
+                                        <spring:message code='settings.calendar.google.redirecturl'/>:
+                                </label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="text"
+                                               name="calendarSettings.googleCalendarSettings.authorizedRedirectUrl"
+                                               value="${authorizedRedirectUrl}" readonly/>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.clientSecret">
-                                <spring:message code='settings.calendar.google.clientsecret'/>:
-                            </label>
-                            <div class="col-md-8">
-                                <form:input id="calendarSettings.googleCalendarSettings.clientSecret" path="calendarSettings.googleCalendarSettings.clientSecret" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.clientSecret" cssClass="error"/></span>
-                            </div>
-                        </div>
+                                <div class="form-group">
+                                    <c:if test="${not empty oautherrors}">
+                                        <p class="text-danger col-md-8 col-md-push-4">
+                                                ${oautherrors}
+                                        </p>
+                                    </c:if>
 
-                        <div class="form-group">
-                            <label class="control-label col-md-4" for="calendarSettings.googleCalendarSettings.calendarId">
-                                <spring:message code='settings.calendar.google.calendarid'/>:
-                            </label>
-                            <div class="col-md-8">
-                                <form:input id="calendarSettings.googleCalendarSettings.calendarId" path="calendarSettings.googleCalendarSettings.calendarId" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="calendarSettings.googleCalendarSettings.calendarId" cssClass="error"/></span>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label col-md-4">
-                                <spring:message code='settings.calendar.google.redirecturl'/>:
-                            </label>
-                            <div class="col-md-8">
-                                <input class="form-control" type="text" name="calendarSettings.googleCalendarSettings.authorizedRedirectUrl" value="${authorizedRedirectUrl}" readonly/>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <c:if test="${not empty oautherrors}">
-                                <p class="text-danger col-md-8 col-md-push-4">
-                                    ${oautherrors}
-                                </p>
-                            </c:if>
-
-                            <c:choose>
-                                <c:when test="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
-                                    <p class="text-danger col-md-5 col-md-push-4"><spring:message code="settings.calendar.google.action.authenticate.description"/></p>
-                                    <button id="googleOAuthButton" value="oauth" name="googleOAuthButton" type="submit" class="btn btn-primary col-md-3 col-md-push-4">
-                                        <spring:message code='settings.calendar.google.action.authenticate'/>
-                                    </button>
-                                </c:when>
-                                <c:otherwise>
-                                    <p class="text-success col-md-8 col-md-push-4"><spring:message code="settings.calendar.google.action.authenticate.success"/></p>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
+                                    <c:choose>
+                                        <c:when
+                                            test="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
+                                            <p class="text-danger col-md-5 col-md-push-4"><spring:message
+                                                code="settings.calendar.google.action.authenticate.description"/></p>
+                                            <button id="googleOAuthButton" value="oauth" name="googleOAuthButton"
+                                                    type="submit" class="btn btn-primary col-md-3 col-md-push-4">
+                                                <spring:message code='settings.calendar.google.action.authenticate'/>
+                                            </button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p class="text-success col-md-8 col-md-push-4"><spring:message
+                                                code="settings.calendar.google.action.authenticate.success"/></p>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
                     </div>
                 </div>
             </div>
@@ -618,6 +693,15 @@
 
         document.getElementById('google-calendar').hidden = value !== 'GoogleCalendarSyncProvider';
         document.getElementById('exchange-calendar').hidden = value !== 'ExchangeCalendarProvider';
+
+        if (value === 'ExchangeCalendarProvider') {
+           // problem if div is not displayed
+           // https://github.com/harvesthq/chosen/issues/92
+           $(".chosenCombo").chosen({width: "100%"});
+        } else {
+            // if not visible deactivate
+            $(".chosenCombo").chosen('destroy');
+        }
     }
 
     // initial run to update view

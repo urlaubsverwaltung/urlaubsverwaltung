@@ -14,8 +14,6 @@ import java.util.Optional;
  * This service provides access to the {@link Application} entities. Except for saving, the access is read-only.
  * Business interactions are found in
  * {@link org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface ApplicationService {
 

@@ -9,10 +9,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Context source for syncing data from Active Directory.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
-@Component("ldapContextSource")
+@Component("ldapContextSourceSync")
 @ConditionalOnExpression("'${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true'")
 public class LdapContextSourceForActiveDirectorySync extends LdapContextSource {
 

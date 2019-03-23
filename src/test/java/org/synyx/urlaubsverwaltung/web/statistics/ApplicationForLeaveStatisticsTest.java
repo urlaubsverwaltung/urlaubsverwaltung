@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
@@ -13,11 +12,12 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationForLeaveStatisticsTest {
 
@@ -30,9 +30,9 @@ public class ApplicationForLeaveStatisticsTest {
     @Before
     public void setUp() {
 
-        vacationTypeService = Mockito.mock(VacationTypeService.class);
+        vacationTypeService = mock(VacationTypeService.class);
         vacationTypes = TestDataCreator.createVacationTypes();
-        Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
     }
 
 
@@ -46,7 +46,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test
     public void ensureHasDefaultValues() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -91,7 +91,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test
     public void ensureCanSetTotalLeftVacationDays() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -104,7 +104,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfSettingTotalLeftVacationDaysToNull() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -117,7 +117,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfAddingWaitingVacationDaysWithNullVacationType() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -128,7 +128,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfAddingWaitingVacationDaysWithNullDays() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -139,7 +139,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfAddingAllowedVacationDaysWithNullVacationType() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -150,7 +150,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfAddingAllowedVacationDaysWithNullDays() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -161,7 +161,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test
     public void ensureCanAddWaitingVacationDays() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -184,7 +184,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test
     public void ensureCanAddAllowedVacationDays() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -209,7 +209,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test
     public void ensureCanCalculateTotalWaitingVacationDays() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -234,7 +234,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test
     public void ensureCanCalculateTotalAllowedVacationDays() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -259,7 +259,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test
     public void ensureCanSetTotalLeftOvertime() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
@@ -272,7 +272,7 @@ public class ApplicationForLeaveStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfSettingTotalLeftOvertimeToNull() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = mock(Person.class);
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 

@@ -1,15 +1,14 @@
 package org.synyx.urlaubsverwaltung.restapi.vacation;
 
-import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -26,11 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
-@Api(value = "Vacations", description = "Get all vacations for a certain period")
+
+@Api("Vacations: Get all vacations for a certain period")
 @RestController("restApiVacationController")
 @RequestMapping("/api")
 public class VacationController {
@@ -56,7 +54,7 @@ public class VacationController {
             + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched. "
             + "Information only reachable for users with role office."
     )
-    @RequestMapping(value = "/vacations", method = RequestMethod.GET)
+    @GetMapping("/vacations")
     public ResponseWrapper<VacationListResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
@@ -100,7 +98,7 @@ public class VacationController {
             }
         }
 
-        List<AbsenceResponse> vacationResponses = Lists.transform(applications, AbsenceResponse::new);
+        List<AbsenceResponse> vacationResponses = applications.stream().map(AbsenceResponse::new).collect(toList());
 
         return new ResponseWrapper<>(new VacationListResponse(vacationResponses));
     }

@@ -4,17 +4,20 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
+
 public class AvailabilityServiceTest {
 
     private static final int DAYS_IN_TEST_DATE_RANGE = 8;
@@ -31,12 +34,12 @@ public class AvailabilityServiceTest {
     @Before
     public void setUp() {
 
-        freeTimeAbsenceProvider = Mockito.mock(FreeTimeAbsenceProvider.class);
-        timedAbsenceSpansMock = Mockito.mock(TimedAbsenceSpans.class);
+        freeTimeAbsenceProvider = mock(FreeTimeAbsenceProvider.class);
+        timedAbsenceSpansMock = mock(TimedAbsenceSpans.class);
 
-        Mockito.when(freeTimeAbsenceProvider.checkForAbsence(
-                Mockito.any(Person.class),
-                Mockito.any(DateMidnight.class)))
+        when(freeTimeAbsenceProvider.checkForAbsence(
+                any(Person.class),
+                any(DateMidnight.class)))
             .thenReturn(timedAbsenceSpansMock);
 
         availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
@@ -52,8 +55,8 @@ public class AvailabilityServiceTest {
 
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
-        Mockito.verify(freeTimeAbsenceProvider, Mockito.times(DAYS_IN_TEST_DATE_RANGE))
-            .checkForAbsence(Mockito.eq(testPerson), Mockito.any(DateMidnight.class));
+        verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE))
+            .checkForAbsence(eq(testPerson), any(DateMidnight.class));
     }
 
 
@@ -64,12 +67,12 @@ public class AvailabilityServiceTest {
 
         BigDecimal expectedAvailabilityRatio = BigDecimal.ONE;
 
-        Mockito.when(timedAbsenceSpansMock.calculatePresenceRatio()).thenReturn(expectedAvailabilityRatio);
+        when(timedAbsenceSpansMock.calculatePresenceRatio()).thenReturn(expectedAvailabilityRatio);
 
         AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(dayToTest, dayToTest,
                 testPerson);
 
-        Mockito.verify(timedAbsenceSpansMock, Mockito.times(1)).calculatePresenceRatio();
+        verify(timedAbsenceSpansMock, times(1)).calculatePresenceRatio();
 
         List<DayAvailability> availabilityList = personsAvailabilities.getAvailabilities();
         Assert.assertEquals("Wrong number of Availabilities returned", 1, availabilityList.size());

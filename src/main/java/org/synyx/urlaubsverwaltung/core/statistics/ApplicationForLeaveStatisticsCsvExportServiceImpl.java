@@ -20,20 +20,14 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements Applic
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";
 
-    // made fields package private to enable testing
-    // normally it would be good to use private fields
-    // and constructor injection, but at the moment this
-    // is not possible in combination with the used spring
-    // version 1.4.2.RELEASE and the spring version is defined
-    // by the usage of JSPs (older spring versions does not
-    // support JSPs)
-    // So this is a workaround that should be removed as soon
-    // as the spring-version is updated.
-    @Autowired
-    MessageSource messageSource;
+    private final MessageSource messageSource;
+    private final VacationTypeService vacationTypeService;
 
     @Autowired
-    VacationTypeService vacationTypeService;
+    public ApplicationForLeaveStatisticsCsvExportServiceImpl(MessageSource messageSource, VacationTypeService vacationTypeService) {
+        this.messageSource = messageSource;
+        this.vacationTypeService = vacationTypeService;
+    }
 
     @Override
     public void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
@@ -79,7 +73,7 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements Applic
 
                 String[] csvRowVacationTypes = new String[csvHeader.length];
 
-                csvRowVacationTypes[2] = type.getDisplayName();
+                csvRowVacationTypes[2] = getTranslation(type.getMessageKey());
                 csvRowVacationTypes[3] = decimalFormat
                         .format(applicationForLeaveStatistics.getAllowedVacationDays().get(type));
                 csvRowVacationTypes[4] = decimalFormat

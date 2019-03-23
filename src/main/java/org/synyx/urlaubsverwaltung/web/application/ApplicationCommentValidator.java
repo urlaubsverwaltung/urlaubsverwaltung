@@ -8,8 +8,6 @@ import org.springframework.validation.Validator;
 
 /**
  * Validates the content of {@link ApplicationCommentForm}s.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 public class ApplicationCommentValidator implements Validator {

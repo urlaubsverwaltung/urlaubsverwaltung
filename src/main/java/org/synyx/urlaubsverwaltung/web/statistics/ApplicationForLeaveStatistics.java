@@ -13,8 +13,6 @@ import java.util.Map;
 /**
  * Encapsulates information about a person and the corresponding vacation days information (how many applications for
  * leave are waiting, how many are allowed, how many vacation days has the person left for using).
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationForLeaveStatistics {
 

@@ -7,8 +7,6 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 /**
  * Contains all crypto relevant util methods, like generating key pair for person or signing with key pair.
- *
- * @author  Aljona Murygina
  */
 public final class CryptoUtil {
 

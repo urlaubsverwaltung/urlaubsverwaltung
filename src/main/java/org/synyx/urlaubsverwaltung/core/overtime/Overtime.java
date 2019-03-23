@@ -18,7 +18,6 @@ import java.util.Date;
 /**
  * Represents the overtime of a person for a certain period of time.
  *
- * @author  Aljona Murygina - murygina@synyx.de
  * @since  2.11.0
  */
 @Entity
@@ -96,6 +95,11 @@ public class Overtime extends AbstractPersistable<Integer> {
         return hours;
     }
 
+    @Override
+    public void setId(Integer id) { // NOSONAR - make it public instead of protected
+
+        super.setId(id);
+    }
 
     public void setPerson(Person person) {
 

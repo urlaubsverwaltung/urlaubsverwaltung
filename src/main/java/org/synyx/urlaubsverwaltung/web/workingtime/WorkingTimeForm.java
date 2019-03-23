@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 class WorkingTimeForm {
 
     private DateMidnight validFrom;

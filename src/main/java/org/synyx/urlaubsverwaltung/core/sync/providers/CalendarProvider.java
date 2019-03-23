@@ -8,8 +8,6 @@ import java.util.Optional;
 
 /**
  * Syncs vacations and sick notes with calendar providers like Exchange or Google Calendar.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface CalendarProvider {
 

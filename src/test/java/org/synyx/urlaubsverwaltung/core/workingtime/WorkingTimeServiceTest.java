@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -16,10 +15,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
+
 public class WorkingTimeServiceTest {
 
     private WorkingTimeService workingTimeService;
@@ -30,8 +32,8 @@ public class WorkingTimeServiceTest {
     @Before
     public void setUp() {
 
-        workingTimeDAOMock = Mockito.mock(WorkingTimeDAO.class);
-        settingsServiceMock = Mockito.mock(SettingsService.class);
+        workingTimeDAOMock = mock(WorkingTimeDAO.class);
+        settingsServiceMock = mock(SettingsService.class);
 
         workingTimeService = new WorkingTimeService(workingTimeDAOMock, settingsServiceMock);
     }
@@ -49,15 +51,15 @@ public class WorkingTimeServiceTest {
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(FederalState.BAYERN);
 
-        Mockito.when(settingsServiceMock.getSettings()).thenReturn(settings);
-        Mockito.when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(Date.class)))
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(Date.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
-        Mockito.verifyZeroInteractions(settingsServiceMock);
-        Mockito.verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
+        verifyZeroInteractions(settingsServiceMock);
+        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BAYERN, federalState);
@@ -76,15 +78,15 @@ public class WorkingTimeServiceTest {
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(null);
 
-        Mockito.when(settingsServiceMock.getSettings()).thenReturn(settings);
-        Mockito.when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(Date.class)))
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(Date.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
+        verify(settingsServiceMock).getSettings();
+        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BADEN_WUERTTEMBERG, federalState);
@@ -100,15 +102,15 @@ public class WorkingTimeServiceTest {
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
-        Mockito.when(settingsServiceMock.getSettings()).thenReturn(settings);
-        Mockito.when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(Date.class)))
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+                    any(Date.class)))
             .thenReturn(null);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
+        verify(settingsServiceMock).getSettings();
+        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now.toDate());
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BADEN_WUERTTEMBERG, federalState);
@@ -124,7 +126,7 @@ public class WorkingTimeServiceTest {
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), DateMidnight.now(), person);
 
-        Mockito.verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 
@@ -140,7 +142,7 @@ public class WorkingTimeServiceTest {
         WorkingTime existentWorkingTime = TestDataCreator.createWorkingTime();
         existentWorkingTime.setFederalStateOverride(FederalState.BAYERN);
 
-        Mockito.when(workingTimeDAOMock.findByPersonAndValidityDate(Mockito.any(Person.class), Mockito.any(Date.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDate(any(Person.class), any(Date.class)))
             .thenReturn(existentWorkingTime);
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
@@ -149,7 +151,7 @@ public class WorkingTimeServiceTest {
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), DateMidnight.now(), person);
 
-        Mockito.verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 

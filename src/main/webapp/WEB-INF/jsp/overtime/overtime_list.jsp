@@ -4,6 +4,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
+<!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
@@ -27,8 +28,9 @@
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
 
                     <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
-                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
-                            <i class="fa fa-plus-circle"></i>
+                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right"
+                           data-title="<spring:message code="action.overtime.new"/>">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
                         </a>
                     </c:if>
                 </legend>
@@ -58,23 +60,24 @@
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
-                                        <span class="hidden-print"><i class="fa fa-history"></i></span>
+                                        <span class="hidden-print"><i class="fa fa-history" aria-hidden="true"></i></span>
                                     </td>
                                     <td>
                                         <h4 class="visible-print">
-                                            <spring:message code="overtime.title" />
+                                            <spring:message code="overtime.title"/>
                                         </h4>
                                         <a class="hidden-print" href="${URL_PREFIX}/overtime/${record.id}">
                                             <h4><spring:message code="overtime.title"/></h4>
                                         </a>
-                                        <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
+                                        <p><uv:date date="${record.startDate}"/> - <uv:date
+                                            date="${record.endDate}"/></p>
                                     </td>
                                     <td class="is-centered hidden-xs">
                                         <uv:number number="${record.hours}"/>
                                         <spring:message code="duration.hours"/>
                                     </td>
                                     <td class="hidden-print is-centered hidden-xs">
-                                        <i class="fa fa-clock-o"></i>
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
                                         <spring:message code="overtime.progress.lastEdited"/>
                                         <uv:date date="${record.lastModificationDate}"/>
                                     </td>
@@ -86,9 +89,12 @@
                 </c:choose>
             </div>
 
-        </div><%-- End of row --%>
-    </div><%-- End of container --%>
-</div><%-- End of content --%>
+        </div>
+        <%-- End of row --%>
+    </div>
+    <%-- End of container --%>
+</div>
+<%-- End of content --%>
 
 </body>
 </html>

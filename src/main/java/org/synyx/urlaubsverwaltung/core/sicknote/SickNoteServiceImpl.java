@@ -13,9 +13,7 @@ import java.util.Optional;
 
 
 /**
- * Implentation for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
+ * Implementation for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService}.
  */
 @Service
 public class SickNoteServiceImpl implements SickNoteService {
@@ -40,7 +38,7 @@ public class SickNoteServiceImpl implements SickNoteService {
     @Override
     public Optional<SickNote> getById(Integer id) {
 
-        return Optional.ofNullable(sickNoteDAO.findOne(id));
+        return sickNoteDAO.findById(id);
     }
 
 

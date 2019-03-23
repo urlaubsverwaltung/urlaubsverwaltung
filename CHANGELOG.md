@@ -1,5 +1,47 @@
-### master / unreleased
-* ...
+### master/unreleased
+* Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/#372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/#551)
+* Verbesserung Urlaubsübersicht durch dynamische Sortierung [#395](https://github.com/synyx/urlaubsverwaltung/issues/395)
+* Kleine inhaltliche Verbesserungen in den E-Mail-Templates
+
+### [urlaubsverwaltung-2.38.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.3)
+* Bugfix: Fehlende englische Übersetzung für die Urlaubsübersicht [#559](https://github.com/synyx/urlaubsverwaltung/pull/559)
+* Bugfix: Falls der 'server.servlet.context-path' gesetzt wird kann man sich nicht einloggen [#565](https://github.com/synyx/urlaubsverwaltung/pull/565)
+
+### [urlaubsverwaltung-2.38.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.2)
+* Bugfix: Fehlerhafte Übersetzung in den Email-Templates des Urlaubtypes [#560](https://github.com/synyx/urlaubsverwaltung/pull/560)
+
+### [urlaubsverwaltung-2.38.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.1)
+* Bugfix: Fehlende englishe Übersetzung für Exchange (EWS) URL ergänzt [#557](https://github.com/synyx/urlaubsverwaltung/pull/557)
+* Bugfix: Caching von statischen Resourcen reaktiviert [#556](https://github.com/synyx/urlaubsverwaltung/pull/556)
+
+### [urlaubsverwaltung-2.38.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.0)
+* Replace request mapping [#544](https://github.com/synyx/urlaubsverwaltung/pull/544)
+* Bugfix: DockerHub label `latest` wurde nicht veröffentlicht [#549](https://github.com/synyx/urlaubsverwaltung/pull/549)
+
+### [urlaubsverwaltung-2.37.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.1)
+* Fix basic auth Zugriff auf die API [#545](https://github.com/synyx/urlaubsverwaltung/pull/545)
+
+### [urlaubsverwaltung-2.37.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.0)
+* Exchange Kalender Integration: Manuelle Pflege der EWS URL ermöglicht [#524](https://github.com/synyx/urlaubsverwaltung/pull/524)
+* Exchange Kalender Integration: Kalender für Synchronisation konfigurierbar gemacht [#527](https://github.com/synyx/urlaubsverwaltung/pull/527)
+* Exchange Kalender Integration: Timezone für Exchange-Kalender hinzugefügt [#452](https://github.com/synyx/urlaubsverwaltung/pull/452)
+* Englische Übersetzung hinzugefügt [#516](https://github.com/synyx/urlaubsverwaltung/pull/516) 
+* Neues buntes Favicon hinzugefügt [#536](https://github.com/synyx/urlaubsverwaltung/pull/536) 
+
+### [urlaubsverwaltung-2.36.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.2)
+* Fixup Release: Veröffentlichung der Dockercontainer berichtigt
+
+### [urlaubsverwaltung-2.36.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.1)
+* Bugfix: Dependency Conflicts
+
+### [urlaubsverwaltung-2.36.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.0)
+* Upgrade auf Spring Boot 2.1.3 [#501](https://github.com/synyx/urlaubsverwaltung/pull/501) 
+* Fix Bug bei dem die Überstunden trotz Deaktivierung angezeigt wurden [#511](https://github.com/synyx/urlaubsverwaltung/pull/511) 
+* Fix Bug beim Generieren von Links in Emails [#517](https://github.com/synyx/urlaubsverwaltung/pull/517)
+* Upgrade Swagger API Spezifikation von Version 1.2 zu 2 [#523](https://github.com/synyx/urlaubsverwaltung/pull/523)
+
+### [urlaubsverwaltung-2.35.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.35.0)
+* Fix mariadb -> mysql connector [#509](https://github.com/synyx/urlaubsverwaltung/pull/509) 
 
 ### [urlaubsverwaltung-2.34.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.34.0)
 * Bug: Gravatar reaktiviert [#502](https://github.com/synyx/urlaubsverwaltung/pull/502)  

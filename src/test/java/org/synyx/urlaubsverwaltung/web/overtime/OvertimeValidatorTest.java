@@ -19,10 +19,15 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
+
 public class OvertimeValidatorTest {
 
     private OvertimeValidator validator;
@@ -37,11 +42,11 @@ public class OvertimeValidatorTest {
     @Before
     public void setUp() {
 
-        overtimeServiceMock = Mockito.mock(OvertimeService.class);
-        settingsServiceMock = Mockito.mock(SettingsService.class);
+        overtimeServiceMock = mock(OvertimeService.class);
+        settingsServiceMock = mock(SettingsService.class);
 
         validator = new OvertimeValidator(overtimeServiceMock, settingsServiceMock);
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
 
         Overtime overtimeRecord = TestDataCreator.createOvertimeRecord();
         overtimeForm = new OvertimeForm(overtimeRecord);
@@ -49,9 +54,9 @@ public class OvertimeValidatorTest {
         settings = new Settings();
         settings.getWorkingTimeSettings().setOvertimeActive(true);
 
-        Mockito.when(settingsServiceMock.getSettings()).thenReturn(settings);
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(BigDecimal.ZERO);
     }
 
@@ -79,7 +84,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -92,7 +97,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("startDate", "error.entry.mandatory");
+        verify(errors).rejectValue("startDate", "error.entry.mandatory");
     }
 
 
@@ -103,7 +108,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("endDate", "error.entry.mandatory");
+        verify(errors).rejectValue("endDate", "error.entry.mandatory");
     }
 
 
@@ -117,7 +122,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -128,35 +133,35 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+        verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
 
 
     @Test
     public void ensureNoErrorMessageForMandatoryIfStartDateIsNullBecauseOfTypeMismatch() {
 
-        Mockito.when(errors.hasFieldErrors("startDate")).thenReturn(true);
+        when(errors.hasFieldErrors("startDate")).thenReturn(true);
 
         overtimeForm.setStartDate(null);
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).hasFieldErrors("startDate");
-        Mockito.verify(errors, Mockito.never()).rejectValue("startDate", "error.entry.mandatory");
+        verify(errors).hasFieldErrors("startDate");
+        verify(errors, never()).rejectValue("startDate", "error.entry.mandatory");
     }
 
 
     @Test
     public void ensureNoErrorMessageForMandatoryIfEndDateIsNullBecauseOfTypeMismatch() {
 
-        Mockito.when(errors.hasFieldErrors("endDate")).thenReturn(true);
+        when(errors.hasFieldErrors("endDate")).thenReturn(true);
 
         overtimeForm.setEndDate(null);
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).hasFieldErrors("endDate");
-        Mockito.verify(errors, Mockito.never()).rejectValue("endDate", "error.entry.mandatory");
+        verify(errors).hasFieldErrors("endDate");
+        verify(errors, never()).rejectValue("endDate", "error.entry.mandatory");
     }
 
 
@@ -169,7 +174,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("numberOfHours", "error.entry.mandatory");
+        verify(errors).rejectValue("numberOfHours", "error.entry.mandatory");
     }
 
 
@@ -180,7 +185,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -191,7 +196,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -202,21 +207,21 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
     @Test
     public void ensureNoErrorMessageForMandatoryIfNumberOfHoursIsNullBecauseOfTypeMismatch() {
 
-        Mockito.when(errors.hasFieldErrors("numberOfHours")).thenReturn(true);
+        when(errors.hasFieldErrors("numberOfHours")).thenReturn(true);
 
         overtimeForm.setNumberOfHours(null);
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).hasFieldErrors("numberOfHours");
-        Mockito.verify(errors, Mockito.never()).rejectValue("endDate", "error.entry.mandatory");
+        verify(errors).hasFieldErrors("numberOfHours");
+        verify(errors, never()).rejectValue("endDate", "error.entry.mandatory");
     }
 
 
@@ -229,7 +234,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).reject("overtime.record.error.deactivated");
+        verify(errors).reject("overtime.record.error.deactivated");
     }
 
 
@@ -238,7 +243,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(0);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(BigDecimal.ZERO);
 
         // just not important how many number of hours, can not record overtime!
@@ -246,10 +251,10 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).reject("overtime.record.error.deactivated");
+        verify(errors).reject("overtime.record.error.deactivated");
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verifyZeroInteractions(overtimeServiceMock);
+        verify(settingsServiceMock).getSettings();
+        verifyZeroInteractions(overtimeServiceMock);
     }
 
 
@@ -258,17 +263,17 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(16);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("8"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("8"));
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(settingsServiceMock).getSettings();
+        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -277,19 +282,19 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(16);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("8"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("8.5"));
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors)
+        verify(errors)
             .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertime",
                 new Object[] { new BigDecimal("16") }, null);
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(settingsServiceMock).getSettings();
+        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -298,19 +303,19 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMinimumOvertime(10);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("-9"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("-1.5"));
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors)
+        verify(errors)
             .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.minOvertime",
                 new Object[] { new BigDecimal("10") }, null);
 
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(settingsServiceMock).getSettings();
+        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -321,7 +326,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(100);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("99.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("2"));
@@ -334,16 +339,16 @@ public class OvertimeValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("3"));
 
-        Mockito.when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+        when(overtimeServiceMock.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
-        Mockito.verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
+        verify(settingsServiceMock).getSettings();
+        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -352,7 +357,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(4);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("3.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("3"));
@@ -365,16 +370,16 @@ public class OvertimeValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("2.5"));
 
-        Mockito.when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+        when(overtimeServiceMock.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
-        Mockito.verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
+        verify(settingsServiceMock).getSettings();
+        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -383,7 +388,7 @@ public class OvertimeValidatorTest {
 
         settings.getWorkingTimeSettings().setMinimumOvertime(4);
 
-        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("-3.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("-3"));
@@ -396,16 +401,16 @@ public class OvertimeValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
 
-        Mockito.when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+        when(overtimeServiceMock.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
 
-        Mockito.verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
-        Mockito.verify(settingsServiceMock).getSettings();
-        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
+        verify(settingsServiceMock).getSettings();
+        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -419,7 +424,7 @@ public class OvertimeValidatorTest {
 
             validator.validate(overtimeForm, errors);
 
-            Mockito.verifyZeroInteractions(errors);
+            verifyZeroInteractions(errors);
         };
 
         assertMayBeEmpty.accept(null);
@@ -436,6 +441,6 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("comment", "error.entry.tooManyChars");
+        verify(errors).rejectValue("comment", "error.entry.tooManyChars");
     }
 }

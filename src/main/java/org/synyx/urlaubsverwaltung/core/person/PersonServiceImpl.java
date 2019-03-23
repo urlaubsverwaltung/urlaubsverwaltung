@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 
 /**
  * Implementation for {@link PersonService}.
- *
- * @author Aljona Murygina
- * @author Johannes Reuter
  */
 @Service("personService")
 class PersonServiceImpl implements PersonService {
@@ -106,7 +103,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> getPersonByID(Integer id) {
 
-        return Optional.ofNullable(personDAO.findOne(id));
+        return personDAO.findById(id);
     }
 
 
@@ -130,7 +127,7 @@ class PersonServiceImpl implements PersonService {
 
     private Comparator<Person> personComparator() {
 
-        return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
+        return Comparator.comparing(p -> p.getNiceName().toLowerCase());
     }
 
 

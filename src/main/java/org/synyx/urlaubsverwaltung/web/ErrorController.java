@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.BasicErrorController;
-import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Customize default Spring Boot error page.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 public class ErrorController extends BasicErrorController {

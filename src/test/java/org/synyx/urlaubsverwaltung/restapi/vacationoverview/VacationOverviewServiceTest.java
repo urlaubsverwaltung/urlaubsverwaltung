@@ -12,14 +12,14 @@ import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
-import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WORKDAY;
@@ -33,7 +33,7 @@ public class VacationOverviewServiceTest {
     private PublicHolidaysService publicHolidayService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.departmentService = mock(DepartmentService.class);
         this.workingTimeService = mock(WorkingTimeService.class);
         this.publicHolidayService = mock(PublicHolidaysService.class);
@@ -41,17 +41,17 @@ public class VacationOverviewServiceTest {
     }
 
     @Test
-    public void assertVacationOverviewsForExistingDepartment() throws Exception {
+    public void assertVacationOverviewsForExistingDepartment() {
         Department department = new Department();
         String departmentName = "Admins";
         department.setName(departmentName);
         String email = "muster@firma.test";
         Person person = new Person("test", "Muster", "Max", email);
-        department.setMembers(Arrays.asList(person));
+        department.setMembers(singletonList(person));
         DateMidnight testDate = DateMidnight.parse("2017-09-01");
         FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
-        when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(department));
+        when(departmentService.getAllDepartments()).thenReturn(singletonList(department));
         when(workingTimeService.getFederalStateForPerson(eq(person), any(DateMidnight.class))).thenReturn(federalState);
         when(publicHolidayService.getWorkingDurationOfDate(any(DateMidnight.class), any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 

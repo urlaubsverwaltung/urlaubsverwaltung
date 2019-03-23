@@ -5,8 +5,6 @@ import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 
 /**
  * Thrown in case no sick note found for a certain ID.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UnknownSickNoteException extends AbstractNoResultFoundException {
 

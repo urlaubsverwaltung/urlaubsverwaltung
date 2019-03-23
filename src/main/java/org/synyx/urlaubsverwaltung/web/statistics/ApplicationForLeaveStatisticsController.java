@@ -29,8 +29,6 @@ import java.util.Optional;
 
 /**
  * Controller to generate applications for leave statistics.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping(ApplicationForLeaveStatisticsController.STATISTICS_REL)
@@ -38,14 +36,16 @@ public class ApplicationForLeaveStatisticsController {
 
     static final String STATISTICS_REL = "/web/application/statistics";
 
-    @Autowired
-    private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
+    private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
+    private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
+    private final VacationTypeService vacationTypeService;
 
     @Autowired
-    private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
-
-    @Autowired
-    private VacationTypeService vacationTypeService;
+    public ApplicationForLeaveStatisticsController(ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService, ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService, VacationTypeService vacationTypeService) {
+        this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
+        this.applicationForLeaveStatisticsCsvExportService = applicationForLeaveStatisticsCsvExportService;
+        this.vacationTypeService = vacationTypeService;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder) {

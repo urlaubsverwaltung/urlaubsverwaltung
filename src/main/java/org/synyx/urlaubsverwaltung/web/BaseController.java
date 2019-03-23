@@ -1,19 +1,15 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 @Controller
 public class BaseController {
 
     private static final String ROOT_URL = "/";
 
-    @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
+    @GetMapping(ROOT_URL)
     public String index() {
 
         return "redirect:/web/overview";

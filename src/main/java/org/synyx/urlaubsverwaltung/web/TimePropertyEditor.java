@@ -7,8 +7,6 @@ import java.sql.Time;
 
 /**
  * Converts a {@link String} to {@link Time} and vice versa.
- *
- * @author  Marc Sommer - sommer@synyx.de
  */
 public class TimePropertyEditor extends PropertyEditorSupport {
 

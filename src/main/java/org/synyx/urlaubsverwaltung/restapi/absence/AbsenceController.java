@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.restapi.absence;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -25,11 +25,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.lang.Integer.parseInt;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
-@Api(value = "Absences", description = "Get all absences for a certain period")
+
+@Api("Absences: Get all absences for a certain period")
 @RestController("restApiAbsenceController")
 @RequestMapping("/api")
 public class AbsenceController {
@@ -51,7 +50,7 @@ public class AbsenceController {
         value = "Get all absences for a certain period and person",
         notes = "Get all absences for a certain period and person"
     )
-    @RequestMapping(value = "/absences", method = RequestMethod.GET)
+    @GetMapping("/absences")
     public ResponseWrapper<DayAbsenceList> personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
@@ -93,21 +92,17 @@ public class AbsenceController {
 
     private static DateMidnight getStartDate(String year, Optional<String> optionalMonth) {
 
-        if (optionalMonth.isPresent()) {
-            return DateUtil.getFirstDayOfMonth(Integer.parseInt(year), Integer.parseInt(optionalMonth.get()));
-        }
+        return optionalMonth.map(s -> DateUtil.getFirstDayOfMonth(parseInt(year), parseInt(s)))
+            .orElseGet(() -> DateUtil.getFirstDayOfYear(parseInt(year)));
 
-        return DateUtil.getFirstDayOfYear(Integer.parseInt(year));
     }
 
 
     private static DateMidnight getEndDate(String year, Optional<String> optionalMonth) {
 
-        if (optionalMonth.isPresent()) {
-            return DateUtil.getLastDayOfMonth(Integer.parseInt(year), Integer.parseInt(optionalMonth.get()));
-        }
+        return optionalMonth.map(s -> DateUtil.getLastDayOfMonth(parseInt(year), parseInt(s)))
+            .orElseGet(() -> DateUtil.getLastDayOfYear(parseInt(year)));
 
-        return DateUtil.getLastDayOfYear(Integer.parseInt(year));
     }
 
 

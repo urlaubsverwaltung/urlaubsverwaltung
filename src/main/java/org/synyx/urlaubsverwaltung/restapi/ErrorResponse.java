@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 
 /**
  * Represents an API error.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 class ErrorResponse {
 

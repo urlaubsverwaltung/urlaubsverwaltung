@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.cron;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
@@ -16,10 +15,15 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
+
 public class TurnOfTheYearAccountUpdaterServiceTest {
 
     private static final int NEW_YEAR = DateMidnight.now().getYear();
@@ -35,10 +39,10 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
     @Before
     public void setUp() {
 
-        personServiceMock = Mockito.mock(PersonService.class);
-        accountServiceMock = Mockito.mock(AccountService.class);
-        accountInteractionServiceMock = Mockito.mock(AccountInteractionService.class);
-        mailServiceMock = Mockito.mock(MailService.class);
+        personServiceMock = mock(PersonService.class);
+        accountServiceMock = mock(AccountService.class);
+        accountInteractionServiceMock = mock(AccountInteractionService.class);
+        mailServiceMock = mock(MailService.class);
 
         sut = new TurnOfTheYearAccountUpdaterService(personServiceMock, accountServiceMock,
                 accountInteractionServiceMock, mailServiceMock);
@@ -56,33 +60,33 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         Account account2 = TestDataCreator.createHolidaysAccount(user2, LAST_YEAR);
         Account account3 = TestDataCreator.createHolidaysAccount(user3, LAST_YEAR);
 
-        Mockito.when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(user1, user2, user3));
-        Mockito.when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user1)).thenReturn(Optional.of(account1));
-        Mockito.when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user2)).thenReturn(Optional.of(account2));
-        Mockito.when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user3)).thenReturn(Optional.of(account3));
+        when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(user1, user2, user3));
+        when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user1)).thenReturn(Optional.of(account1));
+        when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user2)).thenReturn(Optional.of(account2));
+        when(accountServiceMock.getHolidaysAccount(LAST_YEAR, user3)).thenReturn(Optional.of(account3));
 
-        Account newAccount = Mockito.mock(Account.class);
-        Mockito.when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
-        Mockito.when(accountInteractionServiceMock.autoCreateOrUpdateNextYearsHolidaysAccount(
-                    Mockito.any(Account.class)))
+        Account newAccount = mock(Account.class);
+        when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
+        when(accountInteractionServiceMock.autoCreateOrUpdateNextYearsHolidaysAccount(
+                    any(Account.class)))
             .thenReturn(newAccount);
 
         sut.updateHolidaysAccounts();
 
-        Mockito.verify(personServiceMock).getActivePersons();
+        verify(personServiceMock).getActivePersons();
 
-        Mockito.verify(accountServiceMock, Mockito.times(3))
-            .getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class));
-        Mockito.verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user1);
-        Mockito.verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user2);
-        Mockito.verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user3);
+        verify(accountServiceMock, times(3))
+            .getHolidaysAccount(anyInt(), any(Person.class));
+        verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user1);
+        verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user2);
+        verify(accountServiceMock).getHolidaysAccount(LAST_YEAR, user3);
 
-        Mockito.verify(accountInteractionServiceMock, Mockito.times(3))
-            .autoCreateOrUpdateNextYearsHolidaysAccount(Mockito.any(Account.class));
-        Mockito.verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
-        Mockito.verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
-        Mockito.verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
+        verify(accountInteractionServiceMock, times(3))
+            .autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class));
+        verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
+        verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
+        verify(accountInteractionServiceMock).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
 
-        Mockito.verify(mailServiceMock).sendSuccessfullyUpdatedAccountsNotification(Mockito.anyListOf(Account.class));
+        verify(mailServiceMock).sendSuccessfullyUpdatedAccountsNotification(anyList());
     }
 }

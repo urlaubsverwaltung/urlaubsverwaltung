@@ -23,9 +23,6 @@ import java.util.Date;
 
 /**
  * This class describes an application for leave.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
 @Entity
 public class Application extends AbstractPersistable<Integer> {
@@ -159,6 +156,12 @@ public class Application extends AbstractPersistable<Integer> {
      * @since  2.11.0
      */
     private BigDecimal hours;
+
+    @Override
+    public void setId(Integer id) { // NOSONAR - make it public instead of protected
+
+        super.setId(id);
+    }
 
     public String getAddress() {
 

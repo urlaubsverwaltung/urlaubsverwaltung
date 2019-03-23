@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.web.department;
 
 /**
  * Constants concerning {@link DepartmentController}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public final class DepartmentConstants {
 

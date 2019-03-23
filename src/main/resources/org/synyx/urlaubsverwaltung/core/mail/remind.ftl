@@ -1,6 +1,5 @@
 Hallo ${recipient.niceName},
 
-${application.person.niceName} bittet darum, dass sich jemand um den am ${application.applicationDate.toString("dd.MM.yyyy")} gestellten Urlaubsantrag kümmert,
-andernfalls kann es passieren, dass ihr weitere Erinnerungen erhaltet ;-)
+${application.person.niceName} bittet um die Bearbeitung des Urlaubsantrags vom ${application.applicationDate.toString("dd.MM.yyyy")}.
 
-Den Urlaubsantrag findet ihr hier: ${settings.baseLinkURL}web/application/<#if application.id??>${application.id}</#if>
+Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id?c}

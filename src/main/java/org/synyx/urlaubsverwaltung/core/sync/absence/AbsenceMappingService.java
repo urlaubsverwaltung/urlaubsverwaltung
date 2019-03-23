@@ -5,8 +5,6 @@ import java.util.Optional;
 
 /**
  * Service provides access to {@link AbsenceMapping}.
- *
- * <p>Daniel Hammann - <hammann@synyx.de>.</p>
  */
 public interface AbsenceMappingService {
 

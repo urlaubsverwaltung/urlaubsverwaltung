@@ -8,14 +8,15 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <sec:authorize access="hasAuthority('USER')">
-  <c:set var="IS_USER" value="${true}"/>
+    <c:set var="IS_USER" value="${true}"/>
 </sec:authorize>
 
 <sec:authorize access="hasAuthority('OFFICE')">
-  <c:set var="IS_OFFICE" value="${true}"/>
+    <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
 
-<c:if test="${application.status == 'WAITING' || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED' }">
+<c:if
+    test="${application.status == 'WAITING' || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED' }">
 
     <c:if test="${application.status == 'WAITING'}">
         <sec:authorize access="hasAuthority('USER')">

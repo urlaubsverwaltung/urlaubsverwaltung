@@ -7,10 +7,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -44,47 +45,39 @@ import java.util.Optional;
 
 /**
  * Controller to manage applications for leave.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @RequestMapping("/web/application")
 @Controller
 public class ApplicationForLeaveDetailsController {
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final ApplicationService applicationService;
+    private final ApplicationInteractionService applicationInteractionService;
+    private final VacationDaysService vacationDaysService;
+    private final ApplicationCommentService commentService;
+    private final WorkDaysService workDaysService;
+    private final ApplicationCommentValidator commentValidator;
+    private final DepartmentService departmentService;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
-    private PersonService personService;
+    public ApplicationForLeaveDetailsController(VacationDaysService vacationDaysService, SessionService sessionService, PersonService personService, AccountService accountService, ApplicationService applicationService, ApplicationInteractionService applicationInteractionService, ApplicationCommentService commentService, WorkDaysService workDaysService, ApplicationCommentValidator commentValidator, DepartmentService departmentService, WorkingTimeService workingTimeService) {
+        this.vacationDaysService = vacationDaysService;
+        this.sessionService = sessionService;
+        this.personService = personService;
+        this.accountService = accountService;
+        this.applicationService = applicationService;
+        this.applicationInteractionService = applicationInteractionService;
+        this.commentService = commentService;
+        this.workDaysService = workDaysService;
+        this.commentValidator = commentValidator;
+        this.departmentService = departmentService;
+        this.workingTimeService = workingTimeService;
+    }
 
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
-    private ApplicationInteractionService applicationInteractionService;
-
-    @Autowired
-    private VacationDaysService vacationDaysService;
-
-    @Autowired
-    private ApplicationCommentService commentService;
-
-    @Autowired
-    private WorkDaysService workDaysService;
-
-    @Autowired
-    private ApplicationCommentValidator commentValidator;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private WorkingTimeService workingTimeService;
-
-    @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
+    @GetMapping("/{applicationId}")
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
@@ -140,9 +133,7 @@ public class ApplicationForLeaveDetailsController {
         Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
                 application.getPerson(), application.getStartDate());
 
-        if (optionalWorkingTime.isPresent()) {
-            model.addAttribute("workingTime", optionalWorkingTime.get());
-        }
+        optionalWorkingTime.ifPresent(workingTime -> model.addAttribute("workingTime", workingTime));
 
         // DEPARTMENT APPLICATIONS FOR LEAVE
         List<Application> departmentApplications =
@@ -154,9 +145,11 @@ public class ApplicationForLeaveDetailsController {
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 
         if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountService.getHolidaysAccount(year+1, application.getPerson())));
-            model.addAttribute("account", account.get());
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
+            final Account acc = account.get();
+            final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
+            model.addAttribute("account", acc);
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now(), acc.getYear()));
         }
 
         // UNSPECIFIC ATTRIBUTES
@@ -170,7 +163,7 @@ public class ApplicationForLeaveDetailsController {
      * Allow a not yet allowed application for leave (Privileged user only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
-    @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/allow")
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
@@ -225,7 +218,7 @@ public class ApplicationForLeaveDetailsController {
      * to decide about this application (an email is sent).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
-    @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException, AccessDeniedException {
@@ -260,7 +253,7 @@ public class ApplicationForLeaveDetailsController {
      * Reject an application for leave (Boss only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
-    @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/reject")
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
@@ -310,7 +303,7 @@ public class ApplicationForLeaveDetailsController {
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
      * Office.
      */
-    @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/cancel")
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, AccessDeniedException {
@@ -357,7 +350,7 @@ public class ApplicationForLeaveDetailsController {
     /**
      * Remind the bosses about the decision of an application for leave.
      */
-    @RequestMapping(value = "/{applicationId}/remind", method = RequestMethod.POST)
+    @PostMapping("/{applicationId}/remind")
     public String remindBoss(@PathVariable("applicationId") Integer applicationId,
         RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 

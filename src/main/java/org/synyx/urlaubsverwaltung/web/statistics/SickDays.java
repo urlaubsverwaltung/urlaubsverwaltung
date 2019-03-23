@@ -7,8 +7,6 @@ import java.util.Map;
 
 /**
  * Represents number of days for specific sick note types.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickDays {
 

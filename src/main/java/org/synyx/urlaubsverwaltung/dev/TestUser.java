@@ -5,8 +5,6 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 
 /**
  * Test users that can be used to sign in with when test data is created.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 enum TestUser {
 
@@ -17,7 +15,7 @@ enum TestUser {
     OFFICE("test"),
     ADMIN("admin");
 
-    private String login;
+    private final String login;
 
     TestUser(String login) {
 

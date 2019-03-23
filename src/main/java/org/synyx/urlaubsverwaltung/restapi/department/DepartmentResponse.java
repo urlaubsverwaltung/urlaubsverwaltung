@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-/**
- * @author  Daniel Hammann - <hammann@synyx.de>
- */
 class DepartmentResponse {
 
     private String name;

@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.department;
 import java.util.List;
 
 
-/**
- * @author  David Schilling - schilling@synyx.de
- */
 class DepartmentsListWrapper {
 
     private final List<DepartmentResponse> departments;

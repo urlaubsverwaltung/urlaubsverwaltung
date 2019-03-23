@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -26,24 +26,23 @@ import java.util.stream.Collectors;
 
 /**
  * Controller for showing applications for leave in a certain state.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
 public class ApplicationForLeaveController {
 
-    @Autowired
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
+    private final WorkDaysService calendarService;
+    private final DepartmentService departmentService;
+    private final SessionService sessionService;
 
     @Autowired
-    private WorkDaysService calendarService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private SessionService sessionService;
+    public ApplicationForLeaveController(ApplicationService applicationService, WorkDaysService calendarService, DepartmentService departmentService, SessionService sessionService) {
+        this.applicationService = applicationService;
+        this.calendarService = calendarService;
+        this.departmentService = departmentService;
+        this.sessionService = sessionService;
+    }
 
     /**
      * Show waiting applications for leave.
@@ -51,7 +50,7 @@ public class ApplicationForLeaveController {
      * @return  waiting applications for leave page
      */
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/application", method = RequestMethod.GET)
+    @GetMapping("/application")
     public String showWaiting(Model model) {
 
         List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
@@ -86,7 +85,7 @@ public class ApplicationForLeaveController {
             return getApplicationsForLeaveForSecondStageAuthority(user);
         }
 
-        return Collections.<ApplicationForLeave>emptyList();
+        return Collections.emptyList();
     }
 
 
@@ -112,7 +111,7 @@ public class ApplicationForLeaveController {
 
     private Comparator<ApplicationForLeave> dateComparator() {
 
-        return (o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate());
+        return Comparator.comparing(Application::getStartDate);
     }
 
 

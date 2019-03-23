@@ -5,9 +5,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class PeriodTest {
 
     @Test(expected = IllegalArgumentException.class)

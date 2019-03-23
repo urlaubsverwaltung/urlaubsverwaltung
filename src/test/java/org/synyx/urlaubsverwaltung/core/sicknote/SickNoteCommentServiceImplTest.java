@@ -3,17 +3,18 @@ package org.synyx.urlaubsverwaltung.core.sicknote;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 
 /**
  * Unit test for {@link SickNoteCommentServiceImpl}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteCommentServiceImplTest {
 
@@ -24,7 +25,7 @@ public class SickNoteCommentServiceImplTest {
     @Before
     public void setUp() {
 
-        commentDAO = Mockito.mock(SickNoteCommentDAO.class);
+        commentDAO = mock(SickNoteCommentDAO.class);
 
         sickNoteCommentService = new SickNoteCommentServiceImpl(commentDAO);
     }
@@ -37,7 +38,7 @@ public class SickNoteCommentServiceImplTest {
         SickNote sickNote = TestDataCreator.createSickNote(author);
 
         SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.EDITED,
-                Optional.<String>empty(), author);
+                Optional.empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
 
@@ -52,7 +53,7 @@ public class SickNoteCommentServiceImplTest {
 
         Assert.assertNull("Text should not be set", comment.getText());
 
-        Mockito.verify(commentDAO).save(Mockito.eq(comment));
+        verify(commentDAO).save(eq(comment));
     }
 
 
@@ -78,6 +79,6 @@ public class SickNoteCommentServiceImplTest {
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
 
-        Mockito.verify(commentDAO).save(Mockito.eq(comment));
+        verify(commentDAO).save(eq(comment));
     }
 }

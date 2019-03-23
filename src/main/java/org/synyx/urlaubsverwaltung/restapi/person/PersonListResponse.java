@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.restapi.person;
 import java.util.List;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class PersonListResponse {
 
     private List<PersonResponse> persons;

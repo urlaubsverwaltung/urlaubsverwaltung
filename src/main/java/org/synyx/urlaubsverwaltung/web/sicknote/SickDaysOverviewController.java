@@ -6,10 +6,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -33,21 +34,21 @@ import java.util.stream.Collectors;
 
 /**
  * Controller for overview about the sick days of all users.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
 public class SickDaysOverviewController {
 
-    @Autowired
-    private SickNoteService sickNoteService;
+    private final SickNoteService sickNoteService;
+    private final PersonService personService;
+    private final WorkDaysService calendarService;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private WorkDaysService calendarService;
+    public SickDaysOverviewController(SickNoteService sickNoteService, PersonService personService, WorkDaysService calendarService) {
+        this.sickNoteService = sickNoteService;
+        this.personService = personService;
+        this.calendarService = calendarService;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder) {
@@ -57,7 +58,7 @@ public class SickDaysOverviewController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
+    @PostMapping("/sicknote/filter")
     public String filterSickNotes(@ModelAttribute("period") FilterPeriod period) {
 
         return "redirect:/web/sicknote?from=" + period.getStartDateAsString() + "&to=" + period.getEndDateAsString();
@@ -65,7 +66,7 @@ public class SickDaysOverviewController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
+    @GetMapping("/sicknote")
     public String periodsSickNotes(@RequestParam(value = "from", required = false) String from,
         @RequestParam(value = "to", required = false) String to, Model model) {
 

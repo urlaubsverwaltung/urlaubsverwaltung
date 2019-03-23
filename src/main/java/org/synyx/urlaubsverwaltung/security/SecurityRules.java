@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.security;
 /**
  * Spring Security rules that can be used within {@link org.springframework.security.access.prepost.PreAuthorize}
  * annotations.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public final class SecurityRules {
 

@@ -6,8 +6,6 @@ import org.junit.Test;
 
 /**
  * Unit test for {@link ExchangeCalendarSettings}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ExchangeCalendarSettingsTest {
 
@@ -22,7 +20,7 @@ public class ExchangeCalendarSettingsTest {
 
         // Default values
         Assert.assertNotNull("Should be set", calendarSettings.getCalendar());
-        Assert.assertEquals("Wrong calendar name", "Urlaubsverwaltung", calendarSettings.getCalendar());
+        Assert.assertEquals("Wrong calendar name", "", calendarSettings.getCalendar());
         Assert.assertFalse("Should not send invitations", calendarSettings.isSendInvitationActive());
     }
 }

@@ -13,8 +13,6 @@ import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteAlreadyInactiveException
 
 /**
  * Handles exceptions and redirects to error page.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.web")
 public class ExceptionHandlerControllerAdvice {
@@ -35,8 +33,6 @@ public class ExceptionHandlerControllerAdvice {
         ModelAndView modelAndView = new ModelAndView(ERROR_PAGE_NAME);
         modelAndView.addObject("exception", exception);
         modelAndView.addObject("statusCode", httpStatus.value());
-
-        exception.printStackTrace();
 
         return modelAndView;
     }

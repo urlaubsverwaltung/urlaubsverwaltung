@@ -7,9 +7,6 @@ import org.junit.Test;
 import java.util.function.Consumer;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class WeekDayTest {
 
     @Test

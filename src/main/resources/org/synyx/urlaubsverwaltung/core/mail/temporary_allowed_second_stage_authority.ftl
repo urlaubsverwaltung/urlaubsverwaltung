@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-es liegt ein neuer zu genehmigender Antrag vor: ${settings.baseLinkURL}web/application/<#if application.id??>${application.id}</#if>
+es liegt ein neuer zu genehmigender Antrag vor: ${settings.baseLinkURL}web/application/${application.id?c}
 
 Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden.
 <#if (comment.text)??>
@@ -14,7 +14,7 @@ Informationen zum Urlaubsantrag:
 Mitarbeiter: ${application.person.niceName}
 Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
-Art des Urlaubs: ${application.vacationType.displayName}
+Art des Urlaubs: ${vacationType}
 <#if application.reason?has_content>
 Grund: ${application.reason}
 </#if>

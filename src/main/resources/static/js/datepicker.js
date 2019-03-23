@@ -77,7 +77,7 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
       var date;
 
       if ($(input).datepicker("getDate") == null) {
-        date = Date.today();
+        date = new Date();
       } else {
         date = $(input).datepicker("getDate");
       }
@@ -149,8 +149,7 @@ function getPublicHolidays(data) {
 
 function colorizeDate(date, publicHolidays, absences) {
 
-  // if day is saturday or sunday, highlight it
-  if (date.getDay() == 6 || date.getDay() == 0) {
+  if (dateFns.isWeekend(date)) {
     return [true, "notworkday"];
   } else {
 

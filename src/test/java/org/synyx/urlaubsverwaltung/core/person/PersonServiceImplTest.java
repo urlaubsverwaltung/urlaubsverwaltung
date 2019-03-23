@@ -3,18 +3,19 @@ package org.synyx.urlaubsverwaltung.core.person;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
-/**
- * @author Aljona Murygina
- * @author Johannes Reuter
- */
 public class PersonServiceImplTest {
 
     private PersonService sut;
@@ -24,7 +25,7 @@ public class PersonServiceImplTest {
     @Before
     public void setUp() {
 
-        personDAO = Mockito.mock(PersonDAO.class);
+        personDAO = mock(PersonDAO.class);
 
         sut = new PersonServiceImpl(personDAO);
     }
@@ -46,9 +47,9 @@ public class PersonServiceImplTest {
 
         Assert.assertEquals("Wrong number of notifications", 2, createdPerson.getNotifications().size());
         Assert.assertTrue("Missing notification",
-                createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
+            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
         Assert.assertTrue("Missing notification",
-                createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
+            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
 
         Assert.assertEquals("Wrong number of permissions", 2, createdPerson.getPermissions().size());
         Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(Role.USER));
@@ -63,7 +64,7 @@ public class PersonServiceImplTest {
 
         Person createdPerson = sut.create(person);
 
-        Mockito.verify(personDAO).save(createdPerson);
+        verify(personDAO).save(createdPerson);
     }
 
     @Test
@@ -71,11 +72,11 @@ public class PersonServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personDAO.findOne(Mockito.anyInt())).thenReturn(person);
+        when(personDAO.findById(anyInt())).thenReturn(Optional.of(person));
 
         Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
-                Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
-                Arrays.asList(Role.USER, Role.BOSS));
+            Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
+            Arrays.asList(Role.USER, Role.BOSS));
 
         Assert.assertEquals("Wrong login name", "rick", updatedPerson.getLoginName());
         Assert.assertEquals("Wrong first name", "Rick", updatedPerson.getFirstName());
@@ -84,15 +85,15 @@ public class PersonServiceImplTest {
 
         Assert.assertEquals("Wrong number of notifications", 2, updatedPerson.getNotifications().size());
         Assert.assertTrue("Missing notification",
-                updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
+            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
         Assert.assertTrue("Missing notification",
-                updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
+            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
 
         Assert.assertEquals("Wrong number of permissions", 2, updatedPerson.getPermissions().size());
         Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(Role.USER));
         Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(Role.BOSS));
 
-  }
+    }
 
 
     @Test
@@ -103,7 +104,7 @@ public class PersonServiceImplTest {
 
         sut.update(person);
 
-        Mockito.verify(personDAO).save(person);
+        verify(personDAO).save(person);
     }
 
 
@@ -122,7 +123,7 @@ public class PersonServiceImplTest {
 
         Person personToSave = TestDataCreator.createPerson();
         sut.save(personToSave);
-        Mockito.verify(personDAO).save(personToSave);
+        verify(personDAO).save(personToSave);
     }
 
 
@@ -130,7 +131,7 @@ public class PersonServiceImplTest {
     public void ensureGetPersonByIDCallsCorrectDaoMethod() {
 
         sut.getPersonByID(123);
-        Mockito.verify(personDAO).findOne(123);
+        verify(personDAO).findById(123);
     }
 
 
@@ -141,7 +142,7 @@ public class PersonServiceImplTest {
 
         sut.getPersonByLogin(login);
 
-        Mockito.verify(personDAO).findByLoginName(login);
+        verify(personDAO).findByLoginName(login);
     }
 
 
@@ -162,7 +163,7 @@ public class PersonServiceImplTest {
 
         List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
 
-        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+        when(personDAO.findAll()).thenReturn(allPersons);
 
         List<Person> activePersons = sut.getActivePersons();
 
@@ -191,7 +192,7 @@ public class PersonServiceImplTest {
 
         List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
 
-        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+        when(personDAO.findAll()).thenReturn(allPersons);
 
         List<Person> inactivePersons = sut.getInactivePersons();
 
@@ -215,7 +216,7 @@ public class PersonServiceImplTest {
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
 
-        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+        when(personDAO.findAll()).thenReturn(allPersons);
 
         List<Person> filteredList = sut.getPersonsByRole(Role.BOSS);
 
@@ -240,11 +241,11 @@ public class PersonServiceImplTest {
         Person office = TestDataCreator.createPerson("office");
         office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
         office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS,
-                MailNotification.NOTIFICATION_OFFICE));
+            MailNotification.NOTIFICATION_OFFICE));
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
 
-        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+        when(personDAO.findAll()).thenReturn(allPersons);
 
         List<Person> filteredList = sut.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
 
@@ -264,7 +265,7 @@ public class PersonServiceImplTest {
 
         List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
 
-        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personDAO.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getActivePersons();
 
@@ -285,7 +286,7 @@ public class PersonServiceImplTest {
         List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setPermissions(Collections.singletonList(Role.INACTIVE)));
 
-        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personDAO.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getInactivePersons();
 
@@ -306,7 +307,7 @@ public class PersonServiceImplTest {
         List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setPermissions(Collections.singletonList(Role.USER)));
 
-        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personDAO.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getPersonsByRole(Role.USER);
 
@@ -326,9 +327,9 @@ public class PersonServiceImplTest {
 
         List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
         unsortedPersons.forEach(person ->
-                person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER)));
+            person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER)));
 
-        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personDAO.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getPersonsWithNotificationType(MailNotification.NOTIFICATION_USER);
 

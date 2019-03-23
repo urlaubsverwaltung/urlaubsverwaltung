@@ -1,0 +1,17 @@
+{
+  "buildpacks": [
+    {
+      "url": "heroku/java"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "name": "urlaubsverwaltung",
+  "repository": "https://github.com/synyx/urlaubsverwaltung",
+  "logo": "https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/static/images/urlaubaer.png",
+  "stack": "heroku-18"
+}

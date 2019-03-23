@@ -17,8 +17,6 @@ import java.util.Optional;
 
 /**
  * Provides sick note test data.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnProperty("testdata.create")

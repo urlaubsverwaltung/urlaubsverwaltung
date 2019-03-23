@@ -9,20 +9,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -38,11 +42,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-
 /**
  * Controller to apply for leave.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
@@ -50,23 +51,25 @@ public class ApplyForLeaveController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplyForLeaveController.class);
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final VacationTypeService vacationTypeService;
+    private final ApplicationInteractionService applicationInteractionService;
+    private final ApplicationValidator applicationValidator;
+    private final SettingsService settingsService;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private VacationTypeService vacationTypeService;
-
-    @Autowired
-    private ApplicationInteractionService applicationInteractionService;
-
-    @Autowired
-    private ApplicationValidator applicationValidator;
+    public ApplyForLeaveController(SessionService sessionService, PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
+                                   ApplicationInteractionService applicationInteractionService, ApplicationValidator applicationValidator, SettingsService settingsService) {
+        this.sessionService = sessionService;
+        this.personService = personService;
+        this.accountService = accountService;
+        this.vacationTypeService = vacationTypeService;
+        this.applicationInteractionService = applicationInteractionService;
+        this.applicationValidator = applicationValidator;
+        this.settingsService = settingsService;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -86,10 +89,10 @@ public class ApplyForLeaveController {
      *
      * @return  form to apply for leave
      */
-    @RequestMapping(value = "/application/new", method = RequestMethod.GET)
+    @GetMapping("/application/new")
     public String newApplicationForm(
         @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
-        throws UnknownPersonException, AccessDeniedException {
+        throws UnknownPersonException {
 
         Person signedInUser = sessionService.getSignedInUser();
 
@@ -125,19 +128,27 @@ public class ApplyForLeaveController {
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
         List<Person> persons = personService.getActivePersons();
-
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+
+        boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
+        model.addAttribute("overtimeActive", overtimeActive);
+
+        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+        if(!overtimeActive) {
+            vacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
+        }
+        model.addAttribute("vacationTypes", vacationTypes);
+
         model.addAttribute("application", appForm);
-        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
     }
 
 
-    @RequestMapping(value = "/application", method = RequestMethod.POST)
+    @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
-        Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+        Model model, RedirectAttributes redirectAttributes) {
 
-        LOG.info("POST new application received: " + appForm.toString());
+        LOG.info("POST new application received: {}", appForm);
 
         Person applier = sessionService.getSignedInUser();
 
@@ -149,7 +160,7 @@ public class ApplyForLeaveController {
                 model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             }
 
-            LOG.info(String.format("new application (%s) has errors: %s", appForm.toString(), errors.toString()));
+            LOG.info("new application ({}) has errors: {}", appForm, errors);
 
             return "application/app_form";
         }
@@ -159,7 +170,7 @@ public class ApplyForLeaveController {
         Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
                 Optional.ofNullable(appForm.getComment()));
 
-        LOG.info("new application with sucess applied" + savedApplicationForLeave.toString());
+        LOG.info("new application with success applied {}", savedApplicationForLeave);
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 

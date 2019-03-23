@@ -20,14 +20,13 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
+
 @Service
 @ConditionalOnProperty("testdata.create")
 public class TestDataCreationService {
@@ -37,30 +36,27 @@ public class TestDataCreationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestDataCreationService.class);
 
-    @Autowired
-    private PersonDataProvider personDataProvider;
-
-    @Autowired
-    private ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
-
-    @Autowired
-    private SickNoteDataProvider sickNoteDataProvider;
-
-    @Autowired
-    private SickNoteTypeService sickNoteTypeService;
-
-    @Autowired
-    private VacationTypeService vacationTypeService;
-
-    @Autowired
-    private OvertimeRecordDataProvider overtimeRecordDataProvider;
-
-    @Autowired
-    private DepartmentDataProvider departmentDataProvider;
+    private final PersonDataProvider personDataProvider;
+    private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
+    private final SickNoteDataProvider sickNoteDataProvider;
+    private final SickNoteTypeService sickNoteTypeService;
+    private final VacationTypeService vacationTypeService;
+    private final OvertimeRecordDataProvider overtimeRecordDataProvider;
+    private final DepartmentDataProvider departmentDataProvider;
 
     private Person boss;
     private Person office;
-    private Person admin;
+
+    @Autowired
+    public TestDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider, SickNoteDataProvider sickNoteDataProvider, SickNoteTypeService sickNoteTypeService, VacationTypeService vacationTypeService, OvertimeRecordDataProvider overtimeRecordDataProvider, DepartmentDataProvider departmentDataProvider) {
+        this.personDataProvider = personDataProvider;
+        this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
+        this.sickNoteDataProvider = sickNoteDataProvider;
+        this.sickNoteTypeService = sickNoteTypeService;
+        this.vacationTypeService = vacationTypeService;
+        this.overtimeRecordDataProvider = overtimeRecordDataProvider;
+        this.departmentDataProvider = departmentDataProvider;
+    }
 
     @PostConstruct
     public void createTestData() throws NoSuchAlgorithmException {
@@ -69,45 +65,42 @@ public class TestDataCreationService {
 
         // Users to be able to sign in with
         Person user = personDataProvider.createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller",
-                "user@firma.test", TestUser.USER.getRoles());
+            "user@firma.test", TestUser.USER.getRoles());
         Person departmentHead = personDataProvider.createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD,
-                "Thorsten", "Krüger", "departmentHead@firma.test", TestUser.DEPARTMENT_HEAD.getRoles());
+            "Thorsten", "Krüger", "departmentHead@firma.test", TestUser.DEPARTMENT_HEAD.getRoles());
         boss = personDataProvider.createTestPerson(TestUser.BOSS.getLogin(), PASSWORD, "Max", "Mustermann",
-                "boss@firma.test", TestUser.BOSS.getRoles());
+            "boss@firma.test", TestUser.BOSS.getRoles());
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
-                "office@firma.test", TestUser.OFFICE.getRoles());
-
-        admin = personDataProvider.createTestPerson("admin", PASSWORD, "Senor", "Operation", "admin@firma.test", TestUser.ADMIN.getRoles());
+            "office@firma.test", TestUser.OFFICE.getRoles());
 
         Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
-                "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
+            "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
 
         // Users
         Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test",
-                Role.USER);
+            Role.USER);
         Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier",
-                "baier@firma.test", Role.USER);
+            "baier@firma.test", Role.USER);
         Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider",
-                "schneider@firma.test", Role.USER);
+            "schneider@firma.test", Role.USER);
         Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel",
-                "haendel@firma.test", Role.USER);
+            "haendel@firma.test", Role.USER);
         Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt",
-                "schmidt@firma.test", Role.USER);
+            "schmidt@firma.test", Role.USER);
 
         personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@firma.test",
             Role.INACTIVE);
 
         // Departments
         departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
-            Arrays.asList(hans, brigitte, departmentHead, manager), Collections.singletonList(departmentHead),
-            Collections.singletonList(manager));
+            asList(hans, brigitte, departmentHead, manager), singletonList(departmentHead), singletonList(manager));
         departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln",
-            Arrays.asList(user, niko, departmentHead), Collections.emptyList(), Collections.emptyList());
+            asList(user, niko, departmentHead), emptyList(), emptyList());
         departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
-            Arrays.asList(guenther, elena), Collections.emptyList(), Collections.emptyList());
+            asList(guenther, elena), emptyList(), emptyList());
         departmentDataProvider.createTestDepartment("Geschäftsführung",
-            "Das sind die, die so Geschäftsführung Sachen machen", Arrays.asList(boss, office), Collections.emptyList(),
-            Collections.emptyList());
+            "Das sind die, die so Geschäftsführung Sachen machen", asList(boss, office), emptyList(),
+            emptyList());
 
         // Applications for leave and sick notes
         createTestData(user);

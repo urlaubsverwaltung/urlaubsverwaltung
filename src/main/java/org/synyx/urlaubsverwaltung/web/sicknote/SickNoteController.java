@@ -8,11 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -39,42 +40,35 @@ import java.util.Optional;
 
 /**
  * Controller for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNote} purposes.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
 public class SickNoteController {
 
-    @Autowired
-    private SickNoteService sickNoteService;
+    private final SickNoteService sickNoteService;
+    private final SickNoteInteractionService sickNoteInteractionService;
+    private final SickNoteCommentService sickNoteCommentService;
+    private final SickNoteTypeService sickNoteTypeService;
+    private final VacationTypeService vacationTypeService;
+    private final PersonService personService;
+    private final WorkDaysService calendarService;
+    private final SickNoteValidator validator;
+    private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
+    private final SessionService sessionService;
 
     @Autowired
-    private SickNoteInteractionService sickNoteInteractionService;
-
-    @Autowired
-    private SickNoteCommentService sickNoteCommentService;
-
-    @Autowired
-    private SickNoteTypeService sickNoteTypeService;
-
-    @Autowired
-    private VacationTypeService vacationTypeService;
-
-    @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private WorkDaysService calendarService;
-
-    @Autowired
-    private SickNoteValidator validator;
-
-    @Autowired
-    private SickNoteConvertFormValidator sickNoteConvertFormValidator;
-
-    @Autowired
-    private SessionService sessionService;
+    public SickNoteController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService, SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService, VacationTypeService vacationTypeService, PersonService personService, WorkDaysService calendarService, SickNoteValidator validator, SickNoteConvertFormValidator sickNoteConvertFormValidator, SessionService sessionService) {
+        this.sickNoteService = sickNoteService;
+        this.sickNoteInteractionService = sickNoteInteractionService;
+        this.sickNoteCommentService = sickNoteCommentService;
+        this.sickNoteTypeService = sickNoteTypeService;
+        this.vacationTypeService = vacationTypeService;
+        this.personService = personService;
+        this.calendarService = calendarService;
+        this.validator = validator;
+        this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
+        this.sessionService = sessionService;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder) {
@@ -84,7 +78,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.GET)
+    @GetMapping("/sicknote/{id}")
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException {
 
         Person signedInUser = sessionService.getSignedInUser();
@@ -108,7 +102,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/new", method = RequestMethod.GET)
+    @GetMapping("/sicknote/new")
     public String newSickNote(Model model) {
 
         model.addAttribute("sickNote", new SickNote());
@@ -120,7 +114,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote", method = RequestMethod.POST)
+    @PostMapping("/sicknote")
     public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
         validator.validate(sickNote, errors);
@@ -141,7 +135,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.GET)
+    @GetMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException,
         SickNoteAlreadyInactiveException {
 
@@ -159,7 +153,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.POST)
+    @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id,
         @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
@@ -180,7 +174,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/{id}/comment", method = RequestMethod.POST)
+    @PostMapping("/sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Integer id,
         @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors)
         throws UnknownSickNoteException {
@@ -201,7 +195,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.GET)
+    @GetMapping("/sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model)
         throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
@@ -220,7 +214,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
+    @PostMapping("/sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
         @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
         throws UnknownSickNoteException {
@@ -246,7 +240,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
+    @PostMapping("/sicknote/{id}/cancel")
     public String cancelSickNote(@PathVariable("id") Integer id) throws UnknownSickNoteException {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));

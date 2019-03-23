@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.test;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -20,6 +19,8 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 
@@ -32,8 +33,6 @@ import java.util.List;
 
 /**
  * Util class to create data for tests.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
 public final class TestDataCreator {
 
@@ -103,7 +102,9 @@ public final class TestDataCreator {
         DateMidnight startDate = DateMidnight.now();
         DateMidnight endDate = startDate.plusDays(7);
 
-        return new Overtime(person, startDate, endDate, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, startDate, endDate, BigDecimal.ONE);
+        overtime.setId(1234);
+        return overtime;
     }
 
     // Application for leave -------------------------------------------------------------------------------------------
@@ -115,9 +116,9 @@ public final class TestDataCreator {
     }
 
     public static Application createApplication(Person person, DateMidnight startDate, DateMidnight endDate,
-        DayLength dayLength) {
+                                                DayLength dayLength) {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub");
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 
         Application application = new Application();
         application.setPerson(person);
@@ -131,7 +132,7 @@ public final class TestDataCreator {
     }
 
     public static Application createApplication(Person person, VacationType vacationType, DateMidnight startDate,
-        DateMidnight endDate, DayLength dayLength) {
+                                                DateMidnight endDate, DayLength dayLength) {
 
         Application application = new Application();
         application.setPerson(person);
@@ -144,7 +145,24 @@ public final class TestDataCreator {
         return application;
     }
 
+    public static Application anyFullDayApplication(Person person) {
+        Application application = anyApplication();
+        application.setPerson(person);
+        return application;
+    }
+
+    public static Application anyApplication() {
+        Application application = new Application();
+        application.setPerson(createPerson());
+        application.setDayLength(DayLength.FULL);
+        return application;
+    }
+
     // Sick note -------------------------------------------------------------------------------------------------------
+
+    public static SickNote anySickNote() {
+        return createSickNote(createPerson());
+    }
 
     public static SickNote createSickNote(Person person) {
 
@@ -152,11 +170,11 @@ public final class TestDataCreator {
     }
 
     public static SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate,
-        DayLength dayLength) {
+                                          DayLength dayLength) {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
-        sickNoteType.setDisplayName("Krankmeldung");
+        sickNoteType.setMessageKey("Krankmeldung");
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
@@ -192,11 +210,6 @@ public final class TestDataCreator {
 
     // Holidays account ------------------------------------------------------------------------------------------------
 
-    public static Account createHolidaysAccount(Person person) {
-
-        return createHolidaysAccount(person, DateTime.now().getYear());
-    }
-
     public static Account createHolidaysAccount(Person person, int year) {
 
         return createHolidaysAccount(person, year, new BigDecimal("30"), new BigDecimal("3"), BigDecimal.ZERO,
@@ -204,7 +217,7 @@ public final class TestDataCreator {
     }
 
     public static Account createHolidaysAccount(Person person, int year, BigDecimal annualVacationDays,
-        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
+                                                BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         DateMidnight firstDayOfYear = DateUtil.getFirstDayOfYear(year);
         DateMidnight lastDayOfYear = DateUtil.getLastDayOfYear(year);
@@ -228,15 +241,15 @@ public final class TestDataCreator {
 
     public static VacationType createVacationType(VacationCategory category) {
 
-        return createVacationType(category, category.toString());
+        return createVacationType(category, category.getMessageKey());
     }
 
-    public static VacationType createVacationType(VacationCategory category, String displayName) {
+    public static VacationType createVacationType(VacationCategory category, String messageKey) {
 
         VacationType vacationType = new VacationType();
 
         vacationType.setCategory(category);
-        vacationType.setDisplayName(displayName);
+        vacationType.setMessageKey(messageKey);
 
         return vacationType;
     }
@@ -248,27 +261,34 @@ public final class TestDataCreator {
         VacationType vacationType1 = new VacationType();
         vacationType1.setId(1000);
         vacationType1.setCategory(VacationCategory.HOLIDAY);
-        vacationType1.setDisplayName("Erholungsurlaub");
+        vacationType1.setMessageKey("application.data.vacationType.holiday");
         vacationTypes.add(vacationType1);
 
         VacationType vacationType2 = new VacationType();
         vacationType2.setCategory(VacationCategory.SPECIALLEAVE);
-        vacationType2.setDisplayName("Sonderurlaub");
+        vacationType2.setMessageKey("application.data.vacationType.specialleave");
         vacationType2.setId(2000);
         vacationTypes.add(vacationType2);
 
         VacationType vacationType3 = new VacationType();
         vacationType3.setCategory(VacationCategory.UNPAIDLEAVE);
-        vacationType3.setDisplayName("Unbezahlter Urlaub");
+        vacationType3.setMessageKey("application.data.vacationType.unpaidleave");
         vacationType3.setId(3000);
         vacationTypes.add(vacationType3);
 
         VacationType vacationType4 = new VacationType();
         vacationType4.setCategory(VacationCategory.OVERTIME);
-        vacationType4.setDisplayName("Überstundenabbau");
+        vacationType4.setMessageKey("application.data.vacationType.overtime");
         vacationType4.setId(4000);
         vacationTypes.add(vacationType4);
 
         return vacationTypes;
+    }
+
+    public static AbsenceMapping anyAbsenceMapping() {
+        AbsenceMapping absenceMapping = new AbsenceMapping();
+        absenceMapping.setEventId("eventId");
+        absenceMapping.setAbsenceType(AbsenceType.VACATION);
+        return absenceMapping;
     }
 }

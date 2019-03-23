@@ -12,8 +12,6 @@ import java.util.function.Consumer;
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNote}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteTest {
 
@@ -24,7 +22,7 @@ public class SickNoteTest {
 
         Assert.assertNotNull("Last modification date should be set", sickNote.getLastEdited());
         Assert.assertEquals("Wrong last modification date", DateTime.now().withTimeAtStartOfDay(),
-            sickNote.getLastEdited());
+            sickNote.getLastEdited().toDateTime());
     }
 
 

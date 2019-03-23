@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.core.sync;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -10,13 +9,15 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.providers.exchange.ExchangeCalendarProvider;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
 /**
  * Unit test for {@link CalendarSyncServiceImpl}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class CalendarSyncServiceImplTest {
 
@@ -29,14 +30,14 @@ public class CalendarSyncServiceImplTest {
     @Before
     public void setUp() {
 
-        settingsService = Mockito.mock(SettingsService.class);
+        settingsService = mock(SettingsService.class);
         settings = new Settings();
         settings.setCalendarSettings(new CalendarSettings());
         when(settingsService.getSettings()).thenReturn(settings);
 
-        calendarService = Mockito.mock(CalendarService.class);
+        calendarService = mock(CalendarService.class);
 
-        when(calendarService.getCalendarProvider()).thenReturn(Mockito.mock(ExchangeCalendarProvider.class));
+        when(calendarService.getCalendarProvider()).thenReturn(mock(ExchangeCalendarProvider.class));
 
         calendarSyncService = new CalendarSyncServiceImpl(settingsService, calendarService);
 
@@ -48,12 +49,12 @@ public class CalendarSyncServiceImplTest {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
 
-        Absence absence = Mockito.mock(Absence.class);
+        Absence absence = mock(Absence.class);
 
         calendarSyncService.addAbsence(absence);
 
-        Mockito.verify(calendarService.getCalendarProvider())
-            .add(Mockito.eq(absence), Mockito.eq(settings.getCalendarSettings()));
+        verify(calendarService.getCalendarProvider())
+            .add(eq(absence), eq(settings.getCalendarSettings()));
     }
 
 
@@ -62,13 +63,13 @@ public class CalendarSyncServiceImplTest {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
 
-        Absence absence = Mockito.mock(Absence.class);
+        Absence absence = mock(Absence.class);
         String eventId = "event-1";
 
         calendarSyncService.update(absence, eventId);
 
-        Mockito.verify(calendarService.getCalendarProvider())
-            .update(Mockito.eq(absence), Mockito.eq(eventId), Mockito.eq(settings.getCalendarSettings()));
+        verify(calendarService.getCalendarProvider())
+            .update(eq(absence), eq(eventId), eq(settings.getCalendarSettings()));
     }
 
 
@@ -81,8 +82,8 @@ public class CalendarSyncServiceImplTest {
 
         calendarSyncService.deleteAbsence(eventId);
 
-        Mockito.verify(calendarService.getCalendarProvider())
-            .delete(Mockito.eq(eventId), Mockito.eq(settings.getCalendarSettings()));
+        verify(calendarService.getCalendarProvider())
+            .delete(eq(eventId), eq(settings.getCalendarSettings()));
     }
 
 
@@ -93,8 +94,8 @@ public class CalendarSyncServiceImplTest {
 
         calendarSyncService.checkCalendarSyncSettings();
 
-        Mockito.verify(calendarService.getCalendarProvider())
-                .checkCalendarSyncSettings(Mockito.any(CalendarSettings.class));
+        verify(calendarService.getCalendarProvider())
+                .checkCalendarSyncSettings(any(CalendarSettings.class));
     }
 
 

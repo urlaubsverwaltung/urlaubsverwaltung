@@ -7,7 +7,9 @@
 <%@attribute name="beforeApril" type="java.lang.Boolean" required="true" %>
 
 <div class="box">
-    <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
+    <span class="box-icon bg-green">
+        <i class="fa fa-bar-chart" aria-hidden="true"></i>
+    </span>
     <span class="box-text">
         <c:choose>
             <c:when test="${account != null}">
@@ -25,7 +27,8 @@
                 <c:choose>
                     <c:when test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
                         <br/>
-                        <b><spring:message code="person.account.vacation.left.alreadyUsedNextYear" arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" /></b>
+                        <spring:message code="person.account.vacation.left.alreadyUsedNextYear"
+                                           arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" />
                     </c:when>
                 </c:choose>
             </c:when>

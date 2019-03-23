@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.web.account;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -13,11 +12,12 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class AccountValidatorTest {
 
     private AccountValidator validator;
@@ -29,16 +29,16 @@ public class AccountValidatorTest {
     @Before
     public void setUp() {
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        SettingsService settingsService = mock(SettingsService.class);
 
         settings = new Settings();
-        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(settings);
 
         validator = new AccountValidator(settingsService);
 
         form = new AccountForm(2013);
 
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
     }
 
 
@@ -67,7 +67,7 @@ public class AccountValidatorTest {
 
         form.setAnnualVacationDays(null);
         validator.validateAnnualVacation(form, errors);
-        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry.mandatory");
+        verify(errors).rejectValue("annualVacationDays", "error.entry.mandatory");
     }
 
 
@@ -81,7 +81,7 @@ public class AccountValidatorTest {
         form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
 
         validator.validateAnnualVacation(form, errors);
-        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry.invalid");
+        verify(errors).rejectValue("annualVacationDays", "error.entry.invalid");
     }
 
 
@@ -90,7 +90,7 @@ public class AccountValidatorTest {
 
         form.setAnnualVacationDays(new BigDecimal("28"));
         validator.validateAnnualVacation(form, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -101,7 +101,7 @@ public class AccountValidatorTest {
 
         form.setActualVacationDays(null);
         validator.validateActualVacation(form, errors);
-        Mockito.verify(errors).rejectValue("actualVacationDays", "error.entry.mandatory");
+        verify(errors).rejectValue("actualVacationDays", "error.entry.mandatory");
     }
 
 
@@ -112,7 +112,7 @@ public class AccountValidatorTest {
         form.setActualVacationDays(new BigDecimal("31"));
 
         validator.validateActualVacation(form, errors);
-        Mockito.verify(errors).rejectValue("actualVacationDays", "error.entry.invalid");
+        verify(errors).rejectValue("actualVacationDays", "error.entry.invalid");
     }
 
 
@@ -123,7 +123,7 @@ public class AccountValidatorTest {
         form.setActualVacationDays(new BigDecimal("28"));
 
         validator.validateActualVacation(form, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -134,7 +134,7 @@ public class AccountValidatorTest {
 
         form.setRemainingVacationDays(null);
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry.mandatory");
+        verify(errors).rejectValue("remainingVacationDays", "error.entry.mandatory");
     }
 
 
@@ -143,7 +143,7 @@ public class AccountValidatorTest {
 
         form.setRemainingVacationDays(new BigDecimal("367"));
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry.invalid");
+        verify(errors).rejectValue("remainingVacationDays", "error.entry.invalid");
     }
 
 
@@ -153,7 +153,7 @@ public class AccountValidatorTest {
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5"));
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -164,7 +164,7 @@ public class AccountValidatorTest {
 
         form.setRemainingVacationDaysNotExpiring(null);
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
     }
 
 
@@ -174,7 +174,7 @@ public class AccountValidatorTest {
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.invalid");
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.invalid");
     }
 
 
@@ -187,7 +187,7 @@ public class AccountValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).rejectValue("holidaysAccountValidFrom", "error.entry.mandatory");
+        verify(errors).rejectValue("holidaysAccountValidFrom", "error.entry.mandatory");
     }
 
 
@@ -198,7 +198,7 @@ public class AccountValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).rejectValue("holidaysAccountValidTo", "error.entry.mandatory");
+        verify(errors).rejectValue("holidaysAccountValidTo", "error.entry.mandatory");
     }
 
 
@@ -212,7 +212,7 @@ public class AccountValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+        verify(errors).reject("error.entry.invalidPeriod");
     }
 
 
@@ -226,7 +226,7 @@ public class AccountValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+        verify(errors).reject("error.entry.invalidPeriod");
     }
 
 
@@ -240,7 +240,7 @@ public class AccountValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+        verify(errors).reject("error.entry.invalidPeriod");
     }
 
 
@@ -254,7 +254,7 @@ public class AccountValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
     @Test
@@ -265,7 +265,7 @@ public class AccountValidatorTest {
 
         validator.validateComment(form, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
     @Test
@@ -279,7 +279,7 @@ public class AccountValidatorTest {
 
         validator.validateComment(form, errors);
 
-        Mockito.verify(errors).rejectValue("comment","error.entry.commentTooLong");
+        verify(errors).rejectValue("comment","error.entry.commentTooLong");
 
     }
 

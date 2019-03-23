@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.restapi.workday;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -22,10 +22,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
-@Api(value = "Work Days", description = "Get information about work day in a certain period")
+@Api("Work Days: Get information about work day in a certain period")
 @RestController("restApiWorkDayController")
 @RequestMapping("/api")
 public class WorkDayController {
@@ -54,20 +51,20 @@ public class WorkDayController {
         value = "Calculate the work days for a certain period and person",
         notes = "The calculation depends on the working time of the person."
     )
-    @RequestMapping(value = "/workdays", method = RequestMethod.GET)
+    @GetMapping("/workdays")
     public ResponseWrapper<WorkDayResponse> workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
-        String from,
+            String from,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-08")
         @RequestParam("to")
-        String to,
+            String to,
         @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")
         @RequestParam("length")
-        String length,
+            String length,
         @ApiParam(value = "ID of the person")
         @RequestParam("person")
-        Integer personId) {
+            Integer personId) {
 
         DateTimeFormatter fmt = DateTimeFormat.forPattern(RestApiDateFormat.DATE_PATTERN);
         DateMidnight startDate = DateMidnight.parse(from, fmt);

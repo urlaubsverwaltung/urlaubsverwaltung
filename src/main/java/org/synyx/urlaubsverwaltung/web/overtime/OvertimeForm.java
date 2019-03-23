@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 
 /**
  * View class to record overtime for a certain period of time.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class OvertimeForm {
 

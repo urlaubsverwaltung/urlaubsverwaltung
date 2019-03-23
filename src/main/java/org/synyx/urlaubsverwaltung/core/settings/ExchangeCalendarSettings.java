@@ -7,8 +7,6 @@ import java.util.Base64;
 
 /**
  * Settings to sync absences with a Microsoft Exchange calendar.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Embeddable
 public class ExchangeCalendarSettings {
@@ -20,10 +18,16 @@ public class ExchangeCalendarSettings {
     private String password;
 
     @Column(name = "calendar_ews_calendar")
-    private String calendar = "Urlaubsverwaltung";
+    private String calendar = "";
 
     @Column(name = "calendar_ews_sendInvitationActive")
     private boolean sendInvitationActive = false;
+
+    @Column(name = "calendar_ews_url")
+    private String ewsUrl;
+
+    @Column(name = "calendar_ews_timezoneid")
+    private String timeZoneId;
 
 
     public String getEmail() {
@@ -79,5 +83,32 @@ public class ExchangeCalendarSettings {
     public void setSendInvitationActive(boolean sendInvitationActive) {
 
         this.sendInvitationActive = sendInvitationActive;
+    }
+
+    public String getEwsUrl() {
+
+        if (ewsUrl == null || ewsUrl.isEmpty()) {
+            return null;
+        }
+
+        return ewsUrl;
+    }
+
+
+    public void setEwsUrl(String ewsUrl) {
+
+        if (ewsUrl == null || ewsUrl.isEmpty()) {
+            this.ewsUrl = null;
+        } else {
+            this.ewsUrl = ewsUrl;
+        }
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
+    }
+
+    public void setTimeZoneId(String timeZoneId) {
+        this.timeZoneId = timeZoneId;
     }
 }

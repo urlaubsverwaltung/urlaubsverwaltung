@@ -6,9 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class DateMidnightPropertyEditorTest {
 
     private DateMidnightPropertyEditor editor;

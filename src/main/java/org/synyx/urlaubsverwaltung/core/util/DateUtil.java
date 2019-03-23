@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.core.util;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
-/**
- * @author Aljona Murygina
- */
 public final class DateUtil {
 
     private static final int DAY_OF_NEW_YEARS_EVE = 31;
@@ -30,16 +27,18 @@ public final class DateUtil {
     }
 
     /**
-     * Check if given date is before April.
+     * Check if given date is before April of the given year
      *
      * @param date
      *            to check
+     * @param year
+     *            the year whose April the date will be compared to
      *
-     * @return {@code true} if the given date is before April, {@code false} if it is after April
+     * @return {@code true} if the given date is before April of the given year, {@code false} if it is in or after that April
      */
-    public static boolean isBeforeApril(DateMidnight date) {
+    public static boolean isBeforeApril(DateMidnight date, int year) {
 
-        return date.getMonthOfYear() < DateTimeConstants.APRIL;
+        return date.getMonthOfYear() < DateTimeConstants.APRIL || date.getYear() < year;
     }
 
     /**

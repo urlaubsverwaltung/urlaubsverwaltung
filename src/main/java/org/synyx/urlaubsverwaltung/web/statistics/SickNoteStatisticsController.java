@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatisticsService;
@@ -15,18 +15,20 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
 public class SickNoteStatisticsController {
 
+    private final SickNoteStatisticsService statisticsService;
+
     @Autowired
-    private SickNoteStatisticsService statisticsService;
+    public SickNoteStatisticsController(SickNoteStatisticsService statisticsService) {
+        this.statisticsService = statisticsService;
+    }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET)
+    @GetMapping("/sicknote/statistics")
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
         Model model) {
 

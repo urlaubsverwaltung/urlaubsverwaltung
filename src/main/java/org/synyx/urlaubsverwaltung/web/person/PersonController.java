@@ -6,9 +6,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
@@ -31,6 +31,7 @@ import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.web.department.UnknownDepartmentException;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,35 +41,31 @@ import java.util.stream.Collectors;
 
 /**
  * Controller for management of {@link Person} entities.
- *
- * @author  Aljona Murygina
  */
 @Controller
 @RequestMapping("/web")
 public class PersonController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final VacationDaysService vacationDaysService;
+    private final DepartmentService departmentService;
+    private final WorkingTimeService workingTimeService;
+    private final SettingsService settingsService;
+    private final SessionService sessionService;
 
     @Autowired
-    private AccountService accountService;
+    public PersonController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, DepartmentService departmentService, WorkingTimeService workingTimeService, SettingsService settingsService, SessionService sessionService) {
+        this.personService = personService;
+        this.accountService = accountService;
+        this.vacationDaysService = vacationDaysService;
+        this.departmentService = departmentService;
+        this.workingTimeService = workingTimeService;
+        this.settingsService = settingsService;
+        this.sessionService = sessionService;
+    }
 
-    @Autowired
-    private VacationDaysService vacationDaysService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private WorkingTimeService workingTimeService;
-
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private SessionService sessionService;
-
-    @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
+    @GetMapping("/staff/{personId}")
     public String showStaffInformation(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownPersonException, AccessDeniedException {
@@ -82,7 +79,7 @@ public class PersonController {
                     signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
+        Integer year = requestedYear.orElseGet(() -> DateMidnight.now().getYear());
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
@@ -106,17 +103,14 @@ public class PersonController {
         }
 
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
-
-        if (account.isPresent()) {
-            model.addAttribute("account", account.get());
-        }
+        account.ifPresent(account1 -> model.addAttribute("account", account1));
 
         return PersonConstants.PERSON_DETAIL_JSP;
     }
 
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/staff", method = RequestMethod.GET)
+    @GetMapping("/staff")
     public String showStaff() {
 
         return "redirect:/web/staff?active=true";
@@ -124,13 +118,13 @@ public class PersonController {
 
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/staff", method = RequestMethod.GET, params = "active")
+    @GetMapping(value = "/staff", params = "active")
     public String showStaff(@RequestParam(value = "active") Boolean active,
         @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownDepartmentException {
 
-        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
+        Integer year = requestedYear.orElseGet(() -> DateMidnight.now().getYear());
 
         Person signedInUser = sessionService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)
@@ -175,7 +169,7 @@ public class PersonController {
             return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
         }
 
-        return Collections.<Person>emptyList();
+        return Collections.emptyList();
     }
 
 
@@ -201,7 +195,7 @@ public class PersonController {
             return members.stream().filter(person -> person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
         }
 
-        return Collections.<Person>emptyList();
+        return Collections.emptyList();
     }
 
 
@@ -245,12 +239,12 @@ public class PersonController {
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
-        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
+        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now(), year));
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute("now", DateMidnight.now());
 
         List<Department> departments = getRelevantDepartments(signedInUser);
-        Collections.sort(departments, (a, b) -> a.getName().compareTo(b.getName()));
+        departments.sort(Comparator.comparing(Department::getName));
         model.addAttribute("departments", departments);
     }
 }

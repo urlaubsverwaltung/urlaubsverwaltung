@@ -17,9 +17,6 @@ import java.util.Collections;
 
 /**
  * This class describes a person.
- *
- * @author  Johannes Reuter
- * @author  Aljona Murygina
  */
 
 @Entity
@@ -138,7 +135,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     public boolean hasRole(final Role role) {
 
-        return getPermissions().stream().filter(permission -> permission.equals(role)).findFirst().isPresent();
+        return getPermissions().stream().anyMatch(permission -> permission.equals(role));
     }
 
 
@@ -160,7 +157,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     public boolean hasNotificationType(final MailNotification notification) {
 
-        return getNotifications().stream().filter(element -> element.equals(notification)).findFirst().isPresent();
+        return getNotifications().stream().anyMatch(element -> element.equals(notification));
     }
 
 

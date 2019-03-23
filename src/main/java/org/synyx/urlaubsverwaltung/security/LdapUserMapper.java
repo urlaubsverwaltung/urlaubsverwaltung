@@ -20,8 +20,6 @@ import java.util.Optional;
 
 /**
  * Maps LDAP attributes to {@link LdapUser} class.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
 @ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
@@ -33,7 +31,6 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
     private final String firstNameAttribute;
     private final String lastNameAttribute;
     private final String mailAddressAttribute;
-
     private final String memberOfFilter;
 
     @Autowired
@@ -76,7 +73,7 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
             }
         }
 
-        return new LdapUser(username, firstName, lastName, email, groups.stream().toArray(String[]::new));
+        return new LdapUser(username, firstName, lastName, email, groups.toArray(new String[0]));
     }
 
 

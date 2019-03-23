@@ -2,18 +2,18 @@ package org.synyx.urlaubsverwaltung.web.application;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 
 /**
  * Unit test for {@link ApplicationCommentValidator}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationCommentValidatorTest {
 
@@ -24,7 +24,7 @@ public class ApplicationCommentValidatorTest {
     public void setUp() {
 
         validator = new ApplicationCommentValidator();
-        errors = Mockito.mock(Errors.class);
+        errors = mock(Errors.class);
     }
 
 
@@ -58,7 +58,7 @@ public class ApplicationCommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -71,7 +71,7 @@ public class ApplicationCommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verifyZeroInteractions(errors);
+        verifyZeroInteractions(errors);
     }
 
 
@@ -84,7 +84,7 @@ public class ApplicationCommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("text", "error.entry.mandatory");
+        verify(errors).rejectValue("text", "error.entry.mandatory");
     }
 
 
@@ -97,7 +97,7 @@ public class ApplicationCommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("text", "error.entry.mandatory");
+        verify(errors).rejectValue("text", "error.entry.mandatory");
     }
 
 
@@ -113,6 +113,6 @@ public class ApplicationCommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("text", "error.entry.tooManyChars");
+        verify(errors).rejectValue("text", "error.entry.tooManyChars");
     }
 }

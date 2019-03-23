@@ -11,8 +11,6 @@ import java.util.Optional;
 
 /**
  * Implementation of {@link AccountService}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class AccountServiceImpl implements AccountService {

@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * @author  Daniel Hammann - <hammann@synyx.de>
- */
 public class DepartmentTest {
 
     @Test
@@ -27,7 +24,7 @@ public class DepartmentTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureCanNotSetLastModificationDateToNull() throws Exception {
+    public void ensureCanNotSetLastModificationDateToNull() {
 
         new Department().setLastModification(null);
     }

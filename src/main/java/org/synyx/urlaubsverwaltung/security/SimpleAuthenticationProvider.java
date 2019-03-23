@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,8 +23,6 @@ import java.util.stream.Collectors;
 
 /**
  * Provides authentication with password, which is saved in database.
- *
- * @author  Daniel Hammann - <hammann@synyx.de>
  */
 public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
@@ -31,6 +30,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
     private final PersonService personService;
 
+    @Autowired
     public SimpleAuthenticationProvider(PersonService personService) {
 
         this.personService = personService;
@@ -38,6 +38,8 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) {
+
+        // TODO replace StandardPasswordEncoder
 
         StandardPasswordEncoder encoder = new StandardPasswordEncoder();
 
@@ -61,7 +63,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
         Collection<Role> permissions = person.getPermissions();
         Collection<GrantedAuthority> grantedAuthorities = permissions.stream().map((role) ->
-                    new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
+            new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
 
         String userPassword = person.getPassword();
 

@@ -7,11 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
@@ -35,24 +36,23 @@ import java.util.Optional;
 
 /**
  * Manage overtime of persons.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 @RequestMapping("/web")
 public class OvertimeController {
 
-    @Autowired
-    private OvertimeService overtimeService;
+    private final OvertimeService overtimeService;
+    private final PersonService personService;
+    private final SessionService sessionService;
+    private final OvertimeValidator validator;
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private SessionService sessionService;
-
-    @Autowired
-    private OvertimeValidator validator;
+    public OvertimeController(OvertimeService overtimeService, PersonService personService, SessionService sessionService, OvertimeValidator validator) {
+        this.overtimeService = overtimeService;
+        this.personService = personService;
+        this.sessionService = sessionService;
+        this.validator = validator;
+    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -63,7 +63,7 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime", method = RequestMethod.GET)
+    @GetMapping("/overtime")
     public String showPersonalOvertime() {
 
         Person signedInUser = sessionService.getSignedInUser();
@@ -72,9 +72,9 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime", method = RequestMethod.GET, params = PersonConstants.PERSON_ATTRIBUTE)
+    @GetMapping(value = "/overtime", params = PersonConstants.PERSON_ATTRIBUTE)
     public String showOvertime(
-        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = true) Integer personId,
+        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE) Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
@@ -98,7 +98,7 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime/{id}", method = RequestMethod.GET)
+    @GetMapping("/overtime/{id}")
     public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException,
         AccessDeniedException {
 
@@ -123,7 +123,7 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime/new", method = RequestMethod.GET)
+    @GetMapping("/overtime/new")
     public String recordOvertime(
         @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException {
@@ -149,7 +149,7 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime", method = RequestMethod.POST)
+    @PostMapping("/overtime")
     public String recordOvertime(@ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
         RedirectAttributes redirectAttributes) {
 
@@ -179,7 +179,7 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime/{id}/edit", method = RequestMethod.GET)
+    @GetMapping("/overtime/{id}/edit")
     public String editOvertime(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
 
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
@@ -199,7 +199,7 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime/{id}", method = RequestMethod.POST)
+    @PostMapping("/overtime/{id}")
     public String updateOvertime(@PathVariable("id") Integer id,
         @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
         RedirectAttributes redirectAttributes) throws UnknownOvertimeException {

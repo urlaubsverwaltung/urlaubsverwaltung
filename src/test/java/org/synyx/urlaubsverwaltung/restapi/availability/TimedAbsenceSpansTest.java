@@ -10,9 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
 public class TimedAbsenceSpansTest {
 
     @Test

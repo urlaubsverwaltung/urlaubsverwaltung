@@ -12,19 +12,13 @@ import java.util.List;
 
 /**
  * A statistic containing information about sick notes of a year.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteStatistics {
 
     private final DateMidnight created;
-
     private final int year;
-
     private final int totalNumberOfSickNotes;
-
     private final BigDecimal totalNumberOfSickDays;
-
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
     public SickNoteStatistics(int year, SickNoteDAO sickNoteDAO, WorkDaysService calendarService) {

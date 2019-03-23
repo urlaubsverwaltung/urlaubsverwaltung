@@ -16,10 +16,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-/**
- * @author  Timo Eifler - eifler@synyx.de
- */
+
 public class SickDayAbsenceProviderTest {
 
     private SickDayAbsenceProvider sickDayAbsenceProvider;
@@ -43,7 +45,7 @@ public class SickDayAbsenceProviderTest {
         standardWorkingDay = new DateMidnight(2016, 1, 5);
 
         setupSickNoteServiceMock();
-        vacationAbsenceProvider = Mockito.mock(VacationAbsenceProvider.class);
+        vacationAbsenceProvider = mock(VacationAbsenceProvider.class);
 
         sickDayAbsenceProvider = new SickDayAbsenceProvider(vacationAbsenceProvider, sickNoteService);
     }
@@ -51,12 +53,12 @@ public class SickDayAbsenceProviderTest {
 
     private void setupSickNoteServiceMock() {
 
-        sickNoteService = Mockito.mock(SickNoteService.class);
+        sickNoteService = mock(SickNoteService.class);
 
-        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, sickDay, sickDay))
+        when(sickNoteService.getByPersonAndPeriod(testPerson, sickDay, sickDay))
             .thenReturn(Collections.singletonList(sickNote));
 
-        Mockito.when(sickNoteService.getByPersonAndPeriod(testPerson, standardWorkingDay, standardWorkingDay))
+        when(sickNoteService.getByPersonAndPeriod(testPerson, standardWorkingDay, standardWorkingDay))
             .thenReturn(Collections.emptyList());
     }
 
@@ -91,7 +93,7 @@ public class SickDayAbsenceProviderTest {
 
         sickDayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 
-        Mockito.verify(vacationAbsenceProvider, Mockito.times(1))
+        verify(vacationAbsenceProvider, times(1))
             .checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
     }
 }
