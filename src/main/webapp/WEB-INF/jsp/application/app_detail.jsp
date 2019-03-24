@@ -12,7 +12,17 @@
 
 <head>
     <uv:head/>
-    <script defer type="text/javascript" src="<spring:url value='/js/custom.js' />"></script>
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        window.uv.dayLength = "<c:out value="${application.dayLength}" />";
+        window.uv.startDate = "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
+        window.uv.endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
+    </script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form.564b98d802eef3e65abd.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail.b5a49c42c5dce2aa5540.min.js' />"></script>
 </head>
 
 <body>

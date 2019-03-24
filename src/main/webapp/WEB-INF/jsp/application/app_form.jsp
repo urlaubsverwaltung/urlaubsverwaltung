@@ -18,14 +18,18 @@
         window.uv.personId = '<c:out value="${person.id}" />';
         window.uv.webPrefix = "<spring:url value='/web' />";
         window.uv.apiPrefix = "<spring:url value='/api' />";
+        // 0=sunday, 1=monday
+        window.uv.weekStartsOn = 1;
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/timepicker.css' />"/>
-    <script type="text/javascript" src="<spring:url value='/lib/timepicker.min.js' />"></script>
-
-    <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-    <script src="<spring:url value='/js/datepicker.js'/>" type="text/javascript"></script>
-    <script defer type="text/javascript" src="<spring:url value='/js/application/app_form.js' />"></script>
-    <script defer type="text/javascript" src="<spring:url value='/js/application/day-length-selector.js' />"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.14d0a75394fc92805828.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.timepicker.8d00c375214cf44b209e.css' />" />
+    <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.f977abd85880a1f57b92.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.f82489a9e7eb2a4806ba.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.timepicker.19ed420af47efdda8173.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form.564b98d802eef3e65abd.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.deaa072109f5dfc5b6d8.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form.1ce45aaa90076d7ae542.min.js' />"></script>
 </head>
 
 <body>

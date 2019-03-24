@@ -10,6 +10,7 @@
 <html>
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/workingtime_form.f5085ca270da56bec542.min.js' />"></script>
 </head>
 
 <body>

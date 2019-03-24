@@ -12,6 +12,7 @@
 
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/department_form.e407f8952fc7a5a2a211.min.js' />"></script>
 </head>
 
 <body>

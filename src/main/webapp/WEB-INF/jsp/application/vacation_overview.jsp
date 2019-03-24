@@ -27,7 +27,8 @@
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/js/vacation_overview.js' />" type="text/javascript" ></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/vacation_overview.cf912a7a1743066cb5f2.min.js' />"></script>
 </head>
 
 <body>

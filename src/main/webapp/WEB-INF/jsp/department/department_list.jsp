@@ -13,7 +13,8 @@
 
 <head>
     <uv:head/>
-    <script src="<spring:url value='/js/popover.js' />" type="text/javascript" ></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/department_list.68221658b5ee982febf5.min.js' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>
 </head>
 
@@ -65,17 +66,6 @@
                         </c:when>
                     </c:choose>
                 </div>
-
-                <script type="text/javascript">
-                    $(document).ready(function () {
-
-                        $("table.sortable").tablesorter({
-                            sortList: [[0, 0]]
-                        });
-
-                    });
-                </script>
-
 
                 <c:choose>
                     <c:when test="${empty departments}">

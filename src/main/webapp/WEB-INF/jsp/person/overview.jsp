@@ -17,9 +17,12 @@
         window.uv.personId = '<c:out value="${person.id}" />';
         window.uv.webPrefix = "<spring:url value='/web' />";
         window.uv.apiPrefix = "<spring:url value='/api' />";
+        // 0=sunday, 1=monday
+        window.uv.weekStartsOn = 1;
     </script>
-    <script src="<spring:url value='/js/calendar.js' />" type="text/javascript"></script>
-    <script defer src="<spring:url value='/js/person/overview.js' />" type="text/javascript"></script>
+    <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.f977abd85880a1f57b92.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/person_overview.71e93f953940b4069c0c.min.js' />"></script>
 </head>
 
 <body>
@@ -91,67 +94,6 @@
                 </div>
             </div>
         </c:if>
-
-        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript"></script>
-        <script>
-            $(function () {
-
-                var datepickerLocale = "${pageContext.response.locale.language}";
-                var personId = '<c:out value="${person.id}" />';
-                var webPrefix = "<spring:url value='/web' />";
-                var apiPrefix = "<spring:url value='/api' />";
-
-                function initCalendar() {
-                    const { getYear, setYear, firstOfYear, subMonths, addMonths } = dateFns;
-
-                    var year = getUrlParam("year");
-                    var date = new Date();
-
-                    if (year.length > 0 && year != getYear(date)) {
-                        date = firstOfYear(setYear(date, year));
-                    }
-
-                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
-
-                    var shownNumberOfMonths = 10;
-                    var startDate = subMonths(date, shownNumberOfMonths / 2);
-                    var endDate = addMonths(date, shownNumberOfMonths / 2);
-
-                    var yearOfStartDate = getYear(startDate);
-                    var yearOfEndDate = getYear(endDate);
-
-                    $.when(
-                        holidayService.fetchPublic(yearOfStartDate),
-                        holidayService.fetchPersonal(yearOfStartDate),
-                        holidayService.fetchSickDays(yearOfStartDate),
-
-                        holidayService.fetchPublic(yearOfEndDate),
-                        holidayService.fetchPersonal(yearOfEndDate),
-                        holidayService.fetchSickDays(yearOfEndDate)
-                    ).always(function () {
-                        Urlaubsverwaltung.Calendar.init(holidayService, date);
-                    });
-                }
-
-                initCalendar();
-
-                var resizeTimer = null;
-
-                $(window).on('resize', function () {
-
-                    if (resizeTimer !== null) {
-                        clearTimeout(resizeTimer);
-                    }
-
-                    resizeTimer = setTimeout(function () {
-                        Urlaubsverwaltung.Calendar.reRender();
-                        resizeTimer = null;
-                    }, 30)
-
-                });
-
-            });
-        </script>
 
         <div class="row">
             <div class="col-xs-12">

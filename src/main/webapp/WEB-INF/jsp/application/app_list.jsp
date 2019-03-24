@@ -33,6 +33,7 @@
 
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/app_list.e88fa9f227e8448bdb84.min.js' />"></script>
 </head>
 
 <body>

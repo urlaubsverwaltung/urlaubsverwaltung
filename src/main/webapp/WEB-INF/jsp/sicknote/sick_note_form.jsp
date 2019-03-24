@@ -8,56 +8,24 @@
 <html>
 <head>
     <uv:head/>
-
-    <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            var person = '${param.person}';
-            $("#employee").val(person);
-
-            <%-- DATEPICKER --%>
-
-            var datepickerLocale = "${pageContext.response.locale.language}";
-            var urlPrefix = "<spring:url value='/api' />";
-
-            <c:choose>
-            <c:when test="${sickNote.id == null}">
-            var getPersonId = function () {
-                return $("#employee option:selected").val();
-            };
-            </c:when>
-            <c:otherwise>
-            var getPersonId = function () {
-                var personId = "<c:out value="${sickNote.person.id}" />";
-                return personId;
-            };
-            </c:otherwise>
-            </c:choose>
-
-            var onSelect = function (selectedDate) {
-                if (this.id == "from" && $("#to").val() === "") {
-                    $("#to").datepicker("setDate", selectedDate);
-                }
-            };
-
-            var onSelectAUB = function (selectedDate) {
-                if (this.id == "aubFrom" && $("#aubTo").val() === "") {
-                    $("#aubTo").datepicker("setDate", selectedDate);
-                }
-            };
-
-            createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
-            createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
-
-            <%-- DATEPICKER END --%>
-
-        });
-
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        window.uv.sickNote = {};
+        window.uv.sickNote.id = "<c:out value="${sickNote.id}" />";
+        window.uv.sickNote.person = {};
+        window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
+        window.uv.params = {};
+        window.uv.params.person = "${param.person}";
     </script>
-
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.14d0a75394fc92805828.css' />" />
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.f82489a9e7eb2a4806ba.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.f977abd85880a1f57b92.min' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.deaa072109f5dfc5b6d8.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/sick_note_form.cf8ee78b7a527500f985.min.js' />"></script>
 </head>
 <body>
 

@@ -15,8 +15,9 @@
 <head>
     <uv:head/>
     <c:if test="${not empty persons}">
-    <script defer src="<spring:url value='/lib/list-1.3.0.min.js' />" type="text/javascript"></script>
-    <script defer src="<spring:url value='/js/person/staff_list.js' />" type="text/javascript"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.list.js.f99528737e0785c70c44.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/staff_view.47592582cbb9b114666e.min.js' />"></script>
     </c:if>
 </head>
 

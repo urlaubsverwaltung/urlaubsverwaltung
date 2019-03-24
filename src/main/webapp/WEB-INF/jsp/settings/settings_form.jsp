@@ -12,7 +12,8 @@
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/js/settings/settings_form.js' />" type="text/javascript"></script>
+    <script defer src="<spring:url value='/assets/npm.chosen-js.c085a91741e359a10486.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/settings_form.29973fa72c85534a7de9.min.js' />"></script>
 </head>
 
 <body>
