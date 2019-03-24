@@ -1,7 +1,7 @@
 ### master/unreleased
 * Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/#372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/#551)
 * Verbesserung Urlaubsübersicht durch dynamische Sortierung [#395](https://github.com/synyx/urlaubsverwaltung/issues/395)
-* Kleine inhaltliche Verbesserungen in den E-Mail-Templates
+* Kleine inhaltliche Verbesserungen in den E-Mail-Templates [#580](https://github.com/synyx/urlaubsverwaltung/issues/580)
 
 ### [urlaubsverwaltung-2.38.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.3)
 * Bugfix: Fehlende englische Übersetzung für die Urlaubsübersicht [#559](https://github.com/synyx/urlaubsverwaltung/pull/559)
