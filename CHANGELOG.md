@@ -1,7 +1,7 @@
 ### master/unreleased
 * Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/#372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/#551)
 * Verbesserung Urlaubsübersicht durch dynamische Sortierung [#395](https://github.com/synyx/urlaubsverwaltung/issues/395)
-* Kleine inhaltliche Verbesserungen in den E-Mail-Templates [#580](https://github.com/synyx/urlaubsverwaltung/issues/580)
+* Kleine inhaltliche Verbesserungen in den E-Mail-Templates [#580](https://github.com/synyx/urlaubsverwaltung/issues/580) & [#584](https://github.com/synyx/urlaubsverwaltung/issues/584)
 * Fix for double account creation [#457](https://github.com/synyx/urlaubsverwaltung/issues/457)
 * Add a separat security config for rest api [#571](https://github.com/synyx/urlaubsverwaltung/pull/571)
 
