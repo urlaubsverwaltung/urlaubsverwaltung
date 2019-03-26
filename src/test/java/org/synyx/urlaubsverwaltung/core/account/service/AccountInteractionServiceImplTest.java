@@ -173,4 +173,40 @@ public class AccountInteractionServiceImplTest {
         verify(vacationDaysService).calculateTotalLeftVacationDays(referenceAccount);
         verify(accountService).getHolidaysAccount(nextYear, person);
     }
+
+    @Test
+    public void createHolidaysAccount() {
+
+        DateMidnight validFrom = new DateMidnight(2014, JANUARY, 1);
+        DateMidnight validTo = new DateMidnight(2014, DECEMBER, 31);
+
+        when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.empty());
+
+        Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
+        assertThat(expectedAccount.getPerson()).isEqualTo(person);
+        assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(TEN);
+        assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ZERO);
+        assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(TEN);
+
+        verify(accountService).save(expectedAccount);
+    }
+
+    @Test
+    public void updateHolidaysAccount() {
+
+        DateMidnight validFrom = new DateMidnight(2014, JANUARY, 1);
+        DateMidnight validTo = new DateMidnight(2014, DECEMBER, 31);
+        Account account = new Account(person, validFrom.toDate(), validTo.toDate(), TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
+
+        Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, ONE, ONE, ONE, ONE, "new comment");
+        assertThat(expectedAccount.getPerson()).isEqualTo(person);
+        assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(ONE);
+        assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ONE);
+        assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ONE);
+
+        verify(accountService).save(expectedAccount);
+    }
 }
