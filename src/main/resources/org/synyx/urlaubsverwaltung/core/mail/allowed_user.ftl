@@ -8,5 +8,4 @@ Einen schönen Urlaub!
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 
 </#if>
-
 Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id?c}
