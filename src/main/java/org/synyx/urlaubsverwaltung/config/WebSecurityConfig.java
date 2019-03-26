@@ -29,17 +29,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .csrf()
                 .disable()
-            .httpBasic()
-                .and()
             .authorizeRequests()
                 // TODO move to common url static or resources
                 .antMatchers("/css/**").permitAll()
                 .antMatchers("/fonts/**").permitAll()
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/lib/**").permitAll()
-                // API
-                .antMatchers("/api/sicknotes/**").hasAuthority("OFFICE")
-                .antMatchers("/api/**").authenticated()
                 // WEB
                 .antMatchers("/web/overview").hasAuthority("USER")
                 .antMatchers("/web/application/**").hasAuthority("USER")
