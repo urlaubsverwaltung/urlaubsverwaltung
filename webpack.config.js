@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const WebpackAssetsManifest = require('webpack-assets-manifest');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -77,6 +78,13 @@ module.exports = {
     // https://webpack.js.org/guides/caching/#module-identifiers
     // include HashedModuleIdsPlugin so that file hashes don't change unexpectedly
     new webpack.HashedModuleIdsPlugin(),
+    // This Webpack plugin will generate a JSON file that matches
+    // the original filename with the hashed version.
+    isProd && new WebpackAssetsManifest({
+      // output path is relative to webpack.output.path
+      output: path.resolve(__dirname, 'assets-manifest.json'),
+      publicPath: true,
+    }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
@@ -85,7 +93,7 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: isProd ? "../assets/[name].[contenthash].css" : "../assets/[name].css",
     })
-  ],
+  ].filter(Boolean),
 
   optimization: {
     runtimeChunk: 'single',
