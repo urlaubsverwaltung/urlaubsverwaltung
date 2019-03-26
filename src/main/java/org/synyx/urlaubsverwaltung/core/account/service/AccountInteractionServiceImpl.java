@@ -33,12 +33,24 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
-        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-        BigDecimal remainingDaysNotExpiring, String comment) {
+    public Account updateOrCreateHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
+                                                 BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+                                                 BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring,
+                                                 String comment) {
 
-        Account account = new Account(person, validFrom.toDate(), validTo.toDate(), annualVacationDays, remainingDays,
-            remainingDaysNotExpiring, comment);
+        Optional<Account> optionalAccount = accountService.getHolidaysAccount(validFrom.getYear(), person);
+        Account account;
+
+        if (optionalAccount.isPresent()) {
+            account = optionalAccount.get();
+            account.setAnnualVacationDays(annualVacationDays);
+            account.setRemainingVacationDays(remainingDays);
+            account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
+            account.setComment(comment);
+        } else {
+            account = new Account(person, validFrom.toDate(), validTo.toDate(), annualVacationDays, remainingDays,
+                remainingDaysNotExpiring, comment);
+        }
 
         account.setVacationDays(actualVacationDays);
 
@@ -51,8 +63,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     @Override
     public Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo,
-        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-        BigDecimal remainingDaysNotExpiring, String comment) {
+                                       BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
+                                       BigDecimal remainingDaysNotExpiring, String comment) {
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
@@ -98,10 +110,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     /**
      * Updates the remaining vacation days of the given new account by using data of the given last account.
      *
-     * @param newAccount
-     *            to calculate and update remaining vacation days for
-     * @param lastAccount
-     *            as reference to be used for calculation of remaining vacation days
+     * @param newAccount  to calculate and update remaining vacation days for
+     * @param lastAccount as reference to be used for calculation of remaining vacation days
      */
     private void updateRemainingVacationDays(Account newAccount, Account lastAccount) {
 
@@ -136,7 +146,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
 
-        return createHolidaysAccount(referenceAccount.getPerson(), DateUtil.getFirstDayOfYear(nextYear),
+        return updateOrCreateHolidaysAccount(referenceAccount.getPerson(), DateUtil.getFirstDayOfYear(nextYear),
             DateUtil.getLastDayOfYear(nextYear), referenceAccount.getAnnualVacationDays(),
             referenceAccount.getAnnualVacationDays(), leftVacationDays, BigDecimal.ZERO, referenceAccount.getComment());
     }

@@ -33,9 +33,9 @@ public interface AccountInteractionService {
      *
      * @return the created holidays account
      */
-    Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
-        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-        BigDecimal remainingDaysNotExpiring, String comment);
+    Account updateOrCreateHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
+                                          BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
+                                          BigDecimal remainingDaysNotExpiring, String comment);
 
     /**
      * Edits the given {@link Account} with the given params.
