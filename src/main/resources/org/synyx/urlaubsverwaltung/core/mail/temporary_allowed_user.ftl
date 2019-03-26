@@ -7,6 +7,6 @@ Bitte beachte, dass dieser erst noch von einem entsprechend Verantwortlichen fre
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 
 </#if>
-Es handelt sich um den Zeitraum von ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
+Es handelt sich um den Zeitraum von ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}.
 
 Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id?c}
