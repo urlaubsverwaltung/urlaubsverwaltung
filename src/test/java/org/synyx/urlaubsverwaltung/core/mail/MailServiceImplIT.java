@@ -508,7 +508,7 @@ public class MailServiceImplIT {
         // check content of email
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Lieschen Müller"));
-        assertTrue(content.contains("dein Urlaubsantrag wurde von Marlene Muster für dich storniert"));
+        assertTrue(content.contains("Marlene Muster hat einen deiner Urlaubsanträge storniert."));
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
         assertTrue(content.contains("Es handelt sich um folgenden Urlaubsantrag: http://urlaubsverwaltung/web/application/1234"));
