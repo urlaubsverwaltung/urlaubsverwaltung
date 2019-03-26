@@ -4,6 +4,7 @@ Urlaubsverwaltung contributors in alphabetical order:
 * Daniel Fuchs <github@honnel.de>
 * Tobias Schneider <Tobias.Schneider@Tobsch.org>
 * Christian Lange <Christian.Lange@posteo.de>
+* Benjamin Seber <benjamin.seber@mailbox.org>
 
 By adding your name to this list, you grant full and irrevocable copyright  
 and patent indemnity to the Urlaubsverwaltung and all use of the Urlaubsverwaltung,  
