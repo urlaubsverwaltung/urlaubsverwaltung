@@ -173,7 +173,7 @@ Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürli
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
 
 ```bash
-java -jar urlaubsverwaltung.jar
+java -jar urlaubsverwaltung.war
 ```
 
 #### Authentifizierung
