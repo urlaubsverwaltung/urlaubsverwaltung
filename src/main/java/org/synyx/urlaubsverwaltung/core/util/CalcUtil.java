@@ -15,7 +15,7 @@ public final class CalcUtil {
 
     public static boolean isZero(BigDecimal number) {
 
-        /**
+        /*
          * NOTE: {@link BigDecimal#signum()} returns:
          * -1 if the number is negative,
          * 0 if the number is zero,
