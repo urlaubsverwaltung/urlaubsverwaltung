@@ -27,8 +27,9 @@
 
 <head>
     <uv:head/>
+    <link rel="stylesheet" href="<spring:url value='/assets/vacation_overview.3eaa522c0f599a5c9435.css' />" />
     <script defer src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/vacation_overview.cf912a7a1743066cb5f2.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/vacation_overview.727922da194083080a56.min.js' />"></script>
 </head>
 
 <body>

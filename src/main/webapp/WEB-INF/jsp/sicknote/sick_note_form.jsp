@@ -20,6 +20,7 @@
         window.uv.params = {};
         window.uv.params.person = "${param.person}";
     </script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.28f2739d827299b4c8a8' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.14d0a75394fc92805828.css' />" />
     <script defer src="<spring:url value='/assets/npm.jquery-ui.f82489a9e7eb2a4806ba.min.js' />"></script>
     <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>

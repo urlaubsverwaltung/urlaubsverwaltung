@@ -12,6 +12,7 @@
 
 <head>
     <uv:head/>
+    <link rel="stylesheet" href="<spring:url value='/assets/person_overview.43f9d5c1a638dd5265f8.css' />" />
     <script>
         window.uv = {};
         window.uv.personId = '<c:out value="${person.id}" />';
@@ -22,7 +23,7 @@
     </script>
     <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>
     <script defer src="<spring:url value='/assets/date-fns-localized.f977abd85880a1f57b92.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/person_overview.71e93f953940b4069c0c.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/person_overview.c556caf7e44509374523.min.js' />"></script>
 </head>
 
 <body>

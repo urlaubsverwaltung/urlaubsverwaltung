@@ -21,6 +21,7 @@
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
     </script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.28f2739d827299b4c8a8' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.14d0a75394fc92805828.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.timepicker.8d00c375214cf44b209e.css' />" />
     <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>

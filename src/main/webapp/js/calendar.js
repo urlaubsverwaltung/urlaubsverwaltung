@@ -17,6 +17,7 @@ import {
 import format from '../lib/date-fns/format'
 import startOfWeek from '../lib/date-fns/startOfWeek'
 import tooltip from './tooltip';
+import '../css/calendar.css';
 
 $(function() {
 

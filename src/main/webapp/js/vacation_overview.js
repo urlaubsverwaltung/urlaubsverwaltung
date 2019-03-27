@@ -1,4 +1,5 @@
 import 'tablesorter'
+import '../css/vacation_overview.css'
 
 $(function () {
 
