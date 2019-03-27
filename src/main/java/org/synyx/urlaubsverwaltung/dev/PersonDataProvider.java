@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
@@ -10,7 +11,6 @@ import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
@@ -48,9 +48,7 @@ class PersonDataProvider {
         List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
         Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
-
-        // workaround for non generated password
-        person.setPassword(CryptoUtil.encodePassword(password));
+        person.setPassword(new StandardPasswordEncoder().encode(password));
         personService.save(person);
 
         int currentYear = DateMidnight.now().getYear();
