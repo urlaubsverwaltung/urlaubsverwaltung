@@ -1,3 +1,5 @@
+### master/unreleased
+
 ### [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0)
 * Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/#372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/#551)
 * Verbesserung Urlaubsübersicht durch dynamische Sortierung [#395](https://github.com/synyx/urlaubsverwaltung/issues/395)
