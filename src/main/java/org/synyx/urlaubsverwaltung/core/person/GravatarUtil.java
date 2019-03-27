@@ -2,12 +2,13 @@ package org.synyx.urlaubsverwaltung.core.person;
 
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
@@ -18,7 +19,7 @@ final class GravatarUtil {
     private static final String BASE_URL = "https://gravatar.com/avatar/";
     private static final String DIGEST_ALGORITHM = "MD5";
 
-    private static final Logger LOG = LoggerFactory.getLogger(GravatarUtil.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private GravatarUtil() {
 

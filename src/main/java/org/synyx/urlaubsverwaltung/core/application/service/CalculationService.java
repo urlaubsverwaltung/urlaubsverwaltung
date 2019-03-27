@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -24,6 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * This service calculates if a {@link Person} may apply for leave, i.e. if he/she has enough vacation days to apply for
@@ -32,7 +34,7 @@ import java.util.Optional;
 @Service
 public class CalculationService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalculationService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final VacationDaysService vacationDaysService;
     private final AccountInteractionService accountInteractionService;

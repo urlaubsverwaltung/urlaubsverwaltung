@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.cron;
 
 import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Service to send emails at a particular time. (Cronjob)
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class CronMailService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CronMailService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationService applicationService;
     private final SettingsService settingsService;

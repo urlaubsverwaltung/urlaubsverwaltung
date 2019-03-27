@@ -2,13 +2,15 @@
 package org.synyx.urlaubsverwaltung.core.util;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
@@ -18,7 +20,7 @@ import java.util.Arrays;
 @Service
 public class StartupService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StartupService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final String dbUser;
     private final String dbUrl;

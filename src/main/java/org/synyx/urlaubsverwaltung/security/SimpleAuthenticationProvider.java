@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,13 +19,16 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Provides authentication with password, which is saved in database.
  */
 public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimpleAuthenticationProvider.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
 

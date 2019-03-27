@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,9 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.EventType;
 
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Implementation for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService}.
@@ -29,7 +31,7 @@ import java.util.Optional;
 @Transactional
 public class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SickNoteInteractionServiceImpl.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SickNoteService sickNoteService;
     private final SickNoteCommentService commentService;

@@ -18,7 +18,6 @@ import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -33,6 +32,9 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Provides sync of absences with exchange server calendar.
@@ -40,7 +42,7 @@ import java.util.TimeZone;
 @Service
 public class ExchangeCalendarProvider implements CalendarProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExchangeCalendarProvider.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final MailService mailService;
     private final ExchangeService exchangeService;

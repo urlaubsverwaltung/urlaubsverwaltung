@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +14,9 @@ import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Service for handling {@link WorkingTime} entities.
@@ -23,7 +25,7 @@ import java.util.Optional;
 @Transactional
 public class WorkingTimeService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WorkingTimeService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final WorkingTimeDAO workingTimeDAO;
     private final SettingsService settingsService;

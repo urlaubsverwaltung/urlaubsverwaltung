@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
@@ -10,6 +9,9 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Implementation of {@link CalendarSyncService}.
@@ -17,7 +19,7 @@ import java.util.Optional;
 @Service
 public class CalendarSyncServiceImpl implements CalendarSyncService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalendarSyncServiceImpl.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsService settingsService;
     private final CalendarService calendarService;

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Implementation for {@link PersonService}.
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 @Service("personService")
 class PersonServiceImpl implements PersonService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PersonServiceImpl.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonDAO personDAO;
 

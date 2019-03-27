@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.department;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -19,6 +18,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Implementation for {@link DepartmentService}.
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DepartmentServiceImpl.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final DepartmentDAO departmentDAO;
     private final ApplicationService applicationService;
