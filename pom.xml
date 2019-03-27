@@ -302,7 +302,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <doclint>none</doclint>
           <failOnError>false</failOnError>
           <!-- Silence error javax.interceptor.InterceptorBinding not found -->
           <additionalDependencies>
