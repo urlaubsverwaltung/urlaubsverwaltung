@@ -14,7 +14,9 @@ import java.util.Optional;
 public interface DepartmentService {
 
     /**
-     * @param  departmentId
+     * Returns a department by its unique identifier
+     *
+     * @param  departmentId the unique identifier to of a department
      *
      * @return  department to given id
      */
@@ -24,7 +26,7 @@ public interface DepartmentService {
     /**
      * adds the given department to repository.
      *
-     * @param  department
+     * @param  department the {@link Department} to create
      */
     void create(Department department);
 
@@ -32,7 +34,7 @@ public interface DepartmentService {
     /**
      * Updates a given department in repository.
      *
-     * @param  department
+     * @param  department the {@link Department} to update
      */
     void update(Department department);
 
@@ -40,7 +42,7 @@ public interface DepartmentService {
     /**
      * Deletes department with given id.
      *
-     * @param  departmentId
+     * @param  departmentId the unique identifier to delete a department
      */
     void delete(Integer departmentId);
 

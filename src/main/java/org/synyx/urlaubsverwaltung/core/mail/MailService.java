@@ -20,29 +20,32 @@ import java.util.List;
 public interface MailService {
 
     /**
-     * sends an email to the applicant that the application has been made successfully.
+     * Sends an email to the applicant that the application
+     * has been made successfully.
      *
-     * @param  application
-     * @param  comment
+     * @param  application confirmed application
+     * @param  comment additional comment for the confirming application
      */
     void sendConfirmation(Application application, ApplicationComment comment);
 
 
     /**
-     * sends an email to the person of the given application that the office has applied for leave on behalf of himself.
+     * Sends an email to the person of the given application
+     * that the office has applied for leave on behalf of himself.
      *
-     * @param  application
-     * @param  comment
+     * @param  application confirmed application on behalf
+     * @param  comment additional comment for the application
      */
     void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment);
 
 
     /**
-     * sends an email to the bosses notifying that there is a new application for leave which has to be allowed or
-     * rejected by a boss.
+     * Sends an email to the bosses notifying
+     * that there is a new application for leave
+     * which has to be allowed or rejected by a boss.
      *
-     * @param  application
-     * @param  comment
+     * @param  application to allow or reject
+     * @param  comment additional comment for the application
      */
     void sendNewApplicationNotification(Application application, ApplicationComment comment);
 
@@ -79,9 +82,9 @@ public interface MailService {
      * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide
      * about this application via a generated email.
      *
-     * @param  application
-     * @param  recipient
-     * @param  sender
+     * @param  application to ask for support
+     * @param  recipient to request for a second opinion
+     * @param  sender person that asks for a second opinion
      */
     void sendReferApplicationNotification(Application application, Person recipient, Person sender);
 
@@ -90,7 +93,7 @@ public interface MailService {
      * If an application has status waiting and no boss has decided about it after a certain time, the bosses receive a
      * reminding notification.
      *
-     * @param  application
+     * @param  application to receive a reminding notification
      */
     void sendRemindBossNotification(Application application);
 
@@ -146,6 +149,8 @@ public interface MailService {
 
     /**
      * Sends mail to the tool's manager if settings has been updated to ensure that the mail configuration works.
+     *
+     * @param settings the updated {@link Settings} to notify via mail
      */
     void sendSuccessfullyUpdatedSettingsNotification(Settings settings);
 
@@ -153,7 +158,7 @@ public interface MailService {
     /**
      * Sends mail to the affected person if sick note is converted to vacation.
      *
-     * @param  application
+     * @param  application the application that has been converted from sick note to vacation
      */
     void sendSickNoteConvertedToVacationNotification(Application application);
 
@@ -161,16 +166,17 @@ public interface MailService {
     /**
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      *
-     * @param  sickNote
+     * @param  sickNote that is about to end
      */
     void sendEndOfSickPayNotification(SickNote sickNote);
 
 
     /**
-     * Sends mail to person to inform that he/she has been selected as holiday replacement that stands in while someone
-     * is on holiday.
+     * Sends mail to person to inform that he/she
+     * has been selected as holiday replacement
+     * that stands in while someone is on holiday.
      *
-     * @param  application
+     * @param  application to inform the holiday replacement
      */
     void notifyHolidayReplacement(Application application);
 
@@ -186,10 +192,11 @@ public interface MailService {
 
 
     /**
-     * Sends mail to office and informs about a cancellation request of an already allowed application.
+     * Sends mail to office and informs about
+     * a cancellation request of an already allowed application.
      *
-     * @param  application
-     * @param  createdComment
+     * @param  application cancelled application
+     * @param  createdComment additional comment for the confirming application
      */
     void sendCancellationRequest(Application application, ApplicationComment createdComment);
 

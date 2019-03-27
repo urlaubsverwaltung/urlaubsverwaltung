@@ -34,13 +34,13 @@ public class WorkDaysService {
     }
 
     /**
+     * This method calculates how many weekdays are between declared start date and end date
+     * (official holidays are ignored here)
+     *
      * Note: the start date must be before or equal the end date; this is validated prior to that method
      *
-     * <p>This method calculates how many weekdays are between declared start date and end date (official holidays are
-     * ignored here)</p>
-     *
-     * @param  startDate
-     * @param  endDate
+     * @param  startDate the first day of the time period to calculate workdays
+     * @param  endDate the last day of the time period to calculate workdays
      *
      * @return  number of weekdays
      */
@@ -74,12 +74,12 @@ public class WorkDaysService {
      * holidays within the personal workdays period. Number of workdays results from difference between personal
      * workdays and official holidays.
      *
-     * @param  dayLength
-     * @param  startDate
-     * @param  endDate
-     * @param  person
+     * @param  dayLength personal daily working time of the given person
+     * @param  startDate start day of the period to calculate the working days
+     * @param  endDate last day of the period to calculate the working days
+     * @param  person to calculate workdays in a certain time period
      *
-     * @return  number of workdays
+     * @return  number of workdays in a certain time period
      */
     public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
 
