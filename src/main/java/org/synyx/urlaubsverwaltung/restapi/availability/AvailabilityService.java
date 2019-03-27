@@ -26,6 +26,12 @@ public class AvailabilityService {
 
     /**
      * Fetch an {@link AvailabilityList} for the given person on all days in the given period of time.
+     *
+     * @param startDate start date of the of the requested availability duration
+     * @param endDate end date of the of the requested availability duration
+     * @param person to receive the availability information
+     *
+     * @return a {@link AvailabilityList availability list} of the requested person
      */
     public AvailabilityList getPersonsAvailabilities(DateMidnight startDate, DateMidnight endDate, Person person) {
 

@@ -159,7 +159,7 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    /**
+    /*
      * Allow a not yet allowed application for leave (Privileged user only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
@@ -213,7 +213,7 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    /**
+    /*
      * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
      * to decide about this application (an email is sent).
      */
@@ -249,9 +249,6 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    /**
-     * Reject an application for leave (Boss only!).
-     */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/reject")
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
@@ -299,7 +296,7 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    /**
+    /*
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
      * Office.
      */
@@ -347,7 +344,7 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    /**
+    /*
      * Remind the bosses about the decision of an application for leave.
      */
     @PostMapping("/{applicationId}/remind")

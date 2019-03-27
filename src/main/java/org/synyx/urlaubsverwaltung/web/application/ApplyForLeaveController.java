@@ -81,14 +81,6 @@ public class ApplyForLeaveController {
     }
 
 
-    /**
-     * Show form to apply for leave.
-     *
-     * @param  personId  of the person that applies for leave
-     * @param  model  to be filled
-     *
-     * @return  form to apply for leave
-     */
     @GetMapping("/application/new")
     public String newApplicationForm(
         @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)

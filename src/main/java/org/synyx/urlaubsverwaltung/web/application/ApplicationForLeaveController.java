@@ -44,10 +44,8 @@ public class ApplicationForLeaveController {
         this.sessionService = sessionService;
     }
 
-    /**
+    /*
      * Show waiting applications for leave.
-     *
-     * @return  waiting applications for leave page
      */
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping("/application")
