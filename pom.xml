@@ -4,7 +4,7 @@
 
   <groupId>org.synyx</groupId>
   <artifactId>urlaubsverwaltung</artifactId>
-  <version>2.39.0</version>
+  <version>2.40.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>Urlaubsverwaltung</name>
@@ -48,7 +48,7 @@
     <url>https://github.com/synyx/urlaubsverwaltung</url>
     <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
     <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
-    <tag>urlaubsverwaltung-2.39.0</tag>
+    <tag>urlaubsverwaltung-2.38.2</tag>
   </scm>
 
   <distributionManagement>
