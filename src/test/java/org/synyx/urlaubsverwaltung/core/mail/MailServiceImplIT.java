@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import freemarker.template.Configuration;
@@ -8,7 +7,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
+import org.slf4j.Logger;
 import org.springframework.context.support.StaticMessageSource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -29,7 +30,6 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
-import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import javax.mail.Address;
@@ -44,6 +44,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
 import static org.junit.Assert.assertEquals;
@@ -52,24 +53,29 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 public class MailServiceImplIT {
 
+    private static final Logger LOGGER = getLogger(lookup().lookupClass());
+
     private static final StaticMessageSource MESSAGE_SOURCE;
+
 
     static {
         MESSAGE_SOURCE = new StaticMessageSource();
 
         try {
-            Properties messageProperties = PropertiesUtil.load("messages_de.properties");
+            Properties messageProperties = new Properties();
+            messageProperties.load(new ClassPathResource("messages_de.properties").getInputStream());
 
             Map<String, String> messages = messageProperties.entrySet().stream()
                 .collect(toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
 
             MESSAGE_SOURCE.addMessages(messages, Locale.GERMAN);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.debug("Could not load messages properties file from classpath", e);
         }
     }
 
