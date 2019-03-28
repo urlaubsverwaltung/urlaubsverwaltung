@@ -1,4 +1,4 @@
-import 'jquery-ui/ui/widgets/datepicker';
+import $ from 'jquery';
 import datepicker from "jquery-ui/ui/widgets/datepicker";
 
 $(document).ready(async function () {
