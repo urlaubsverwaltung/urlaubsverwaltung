@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class SimpleAuthenticationProviderTest {
 
         String username = "user";
         String rawPassword = "secret";
-        String encodedPassword = CryptoUtil.encodePassword(rawPassword);
+        String encodedPassword = "2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec";
 
         Person user = TestDataCreator.createPerson(username, Role.USER, Role.OFFICE);
         user.setPassword(encodedPassword);
@@ -81,7 +80,7 @@ public class SimpleAuthenticationProviderTest {
 
         String username = "user";
         String rawPassword = "secret";
-        String encodedPassword = CryptoUtil.encodePassword(rawPassword);
+        String encodedPassword = "2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec";
 
         Person user = TestDataCreator.createPerson(username, Role.INACTIVE);
         user.setPassword(encodedPassword);
@@ -97,7 +96,7 @@ public class SimpleAuthenticationProviderTest {
     public void ensureExceptionIsThrownIfPasswordIsInvalid() {
 
         String username = "user";
-        String encodedPassword = CryptoUtil.encodePassword("secret");
+        String encodedPassword = "2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec";
 
         Person user = TestDataCreator.createPerson(username, Role.USER, Role.OFFICE);
         user.setPassword(encodedPassword);

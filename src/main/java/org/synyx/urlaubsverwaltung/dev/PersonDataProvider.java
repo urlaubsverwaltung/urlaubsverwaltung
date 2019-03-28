@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
@@ -10,12 +11,10 @@ import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,16 +40,13 @@ class PersonDataProvider {
         this.accountInteractionService = accountInteractionService;
     }
 
-    Person createTestPerson(String login, String password, String firstName, String lastName, String email,
-                            Role... roles) throws NoSuchAlgorithmException {
+    Person createTestPerson(String login, String password, String firstName, String lastName, String email, Role... roles) {
 
         List<Role> permissions = Arrays.asList(roles);
         List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
         Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
-
-        // workaround for non generated password
-        person.setPassword(CryptoUtil.encodePassword(password));
+        person.setPassword(new StandardPasswordEncoder().encode(password));
         personService.save(person);
 
         int currentYear = DateMidnight.now().getYear();
@@ -66,7 +62,7 @@ class PersonDataProvider {
         return person;
     }
 
-    List<MailNotification> getNotificationsForRoles(List<Role> roles) {
+    private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
         List<MailNotification> notifications = new ArrayList<>();
 
