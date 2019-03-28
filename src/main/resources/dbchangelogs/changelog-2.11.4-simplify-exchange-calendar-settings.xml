@@ -1,28 +1,28 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="rename_calendar_ews_username_back_to_email">
-        <preConditions>
-            <tableExists tableName="Settings"/>
-            <columnExists tableName="Settings" columnName="calendar_ews_username"/>
-        </preConditions>
+  <changeSet author="murygina" id="rename_calendar_ews_username_back_to_email">
+    <preConditions>
+      <tableExists tableName="Settings"/>
+      <columnExists tableName="Settings" columnName="calendar_ews_username"/>
+    </preConditions>
 
-        <renameColumn tableName="Settings"
-                      oldColumnName="calendar_ews_username"
-                      newColumnName="calendar_ews_email"
-                      columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="Settings"
+                  oldColumnName="calendar_ews_username"
+                  newColumnName="calendar_ews_email"
+                  columnDataType="VARCHAR(255)"/>
 
-    </changeSet>
+  </changeSet>
 
-    <changeSet author="murygina" id="remove_column_calendar_ews_domain">
-        <preConditions>
-            <tableExists tableName="Settings"/>
-            <columnExists tableName="Settings" columnName="calendar_ews_domain"/>
-        </preConditions>
+  <changeSet author="murygina" id="remove_column_calendar_ews_domain">
+    <preConditions>
+      <tableExists tableName="Settings"/>
+      <columnExists tableName="Settings" columnName="calendar_ews_domain"/>
+    </preConditions>
 
-        <dropColumn tableName="Settings" columnName="calendar_ews_domain"/>
-    </changeSet>
+    <dropColumn tableName="Settings" columnName="calendar_ews_domain"/>
+  </changeSet>
 
 </databaseChangeLog>

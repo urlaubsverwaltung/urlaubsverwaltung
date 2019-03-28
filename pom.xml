@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.synyx</groupId>
@@ -406,8 +407,8 @@
                   <descriptorRef>artifact</descriptorRef>
                 </assembly>
                 <tags>
-                    <tag>${project.version}</tag>
-                    <tag>latest</tag>
+                  <tag>${project.version}</tag>
+                  <tag>latest</tag>
                 </tags>
               </build>
               <run>
@@ -417,6 +418,29 @@
               </run>
             </image>
           </images>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.ec4j.maven</groupId>
+        <artifactId>editorconfig-maven-plugin</artifactId>
+        <version>0.0.10</version>
+        <executions>
+          <execution>
+            <id>check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <excludes>
+            <exclude>node/**</exclude>
+            <exclude>node_modules/**</exclude>
+            <exclude>.mvn/**</exclude>
+            <exclude>mvnw.cmd</exclude>
+            <exclude>src/main/resources/static/lib/**</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
