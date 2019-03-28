@@ -59,6 +59,8 @@
     "merge": "1.2.1",
     "mini-css-extract-plugin": "0.5.0",
     "moment": "2.22.2",
+    "optimize-css-assets-webpack-plugin": "5.0.1",
+    "terser-webpack-plugin": "1.2.3",
     "url-loader": "1.1.2",
     "webpack": "4.28.4",
     "webpack-assets-manifest": "3.1.1",
