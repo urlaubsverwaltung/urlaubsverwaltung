@@ -307,6 +307,42 @@ Testbenutzern anmelden:
 * `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
 * `test/secret`: Benutzer mit der Rolle `Office`
 
+### Fontend Entwicklung
+
+Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
+
+Assets sind in `<root>/src/main/webapp` zu finden
+
+* `bundles` sind in den JSPs zu integrieren
+* `components` sind einzelne Komponenten zur Wiederverwendung wie z. B. der _datepicker_
+* `js` beinhaltet Seitenspezifische Dinge 
+* `lib` sind third-party Bibliotheken
+
+Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auch auf der Kommandozeile gebaut werden.
+
+* `npm run build`
+  * baut optimierte, minifizierte Assets
+  * Info: der Dateiname beinhaltet einen Hash welcher eindeutig zum Inhalt des Assets passt 
+* `npm run build:dev`
+  * baut nicht minifizierte Assets
+* `npm run build:watch`
+  * baut automatisch nach dem editieren von JavaScript / CSS Dateien neue Assets 
+
+#### Long term caching von Assets
+
+Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `asstes-mannifest.json` angelegt.
+Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
+in den JSPs integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
+Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert werden.
+
+```jsp
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
+
+<assets:hash var="jquery_js" asset="npm.jquery.js" />
+<script defer src="<spring:url value='${jquery_js}' />"></script>
+```
+
+
 ### Anlegen von Testdaten deaktivieren
 
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
