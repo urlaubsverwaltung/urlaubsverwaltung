@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -42,6 +41,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * Controller to apply for leave.
  */
@@ -49,7 +51,7 @@ import java.util.Optional;
 @RequestMapping("/web")
 public class ApplyForLeaveController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplyForLeaveController.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SessionService sessionService;
     private final PersonService personService;

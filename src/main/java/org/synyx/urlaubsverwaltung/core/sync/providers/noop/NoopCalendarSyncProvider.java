@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sync.providers.noop;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
@@ -9,10 +8,13 @@ import org.synyx.urlaubsverwaltung.core.sync.providers.CalendarProvider;
 
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Service
 public class NoopCalendarSyncProvider implements CalendarProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NoopCalendarSyncProvider.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {

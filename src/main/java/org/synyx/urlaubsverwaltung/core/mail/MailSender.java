@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.MailException;
@@ -13,6 +12,9 @@ import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Sends mails using {@link JavaMailSenderImpl}.
@@ -20,7 +22,7 @@ import java.util.List;
 @Service
 class MailSender {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MailSender.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final JavaMailSenderImpl mailSender;
 

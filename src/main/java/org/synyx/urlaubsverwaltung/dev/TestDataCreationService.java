@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -22,9 +21,11 @@ import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 @Service
@@ -34,7 +35,7 @@ public class TestDataCreationService {
     private static final String PASSWORD = "secret";
     private static final String NO_PASSWORD = "";
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestDataCreationService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonDataProvider personDataProvider;
     private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;

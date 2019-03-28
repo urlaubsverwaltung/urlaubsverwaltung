@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.cron;
 
 import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * Is to be scheduled every turn of the year: calculates the remaining vacation days for the new year.
@@ -25,7 +27,7 @@ import java.util.Optional;
 @Service
 public class TurnOfTheYearAccountUpdaterService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TurnOfTheYearAccountUpdaterService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
     private final AccountService accountService;

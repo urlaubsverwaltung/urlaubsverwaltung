@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -15,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
  * @since  2.11.0
@@ -23,7 +25,7 @@ import java.util.Optional;
 @Service
 public class OvertimeServiceImpl implements OvertimeService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OvertimeServiceImpl.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final OvertimeDAO overtimeDAO;
     private final OvertimeCommentDAO commentDAO;
