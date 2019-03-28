@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,8 +40,7 @@ class PersonDataProvider {
         this.accountInteractionService = accountInteractionService;
     }
 
-    Person createTestPerson(String login, String password, String firstName, String lastName, String email,
-                            Role... roles) throws NoSuchAlgorithmException {
+    Person createTestPerson(String login, String password, String firstName, String lastName, String email, Role... roles) {
 
         List<Role> permissions = Arrays.asList(roles);
         List<MailNotification> notifications = getNotificationsForRoles(permissions);
