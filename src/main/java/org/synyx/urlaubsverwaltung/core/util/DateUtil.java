@@ -129,7 +129,7 @@ public final class DateUtil {
 
     /**
      * Get the German name of a month as text.
-     * 
+     *
      * @param month
      *            month as number from 1 to 12
      * @return month as String

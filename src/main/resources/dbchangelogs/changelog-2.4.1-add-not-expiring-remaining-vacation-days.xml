@@ -1,38 +1,38 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="add_number_of_not_expiring_remaining_vacation_days">
+  <changeSet author="murygina" id="add_number_of_not_expiring_remaining_vacation_days">
 
-        <preConditions>
-            <tableExists tableName="Account"/>
-            <columnExists tableName="Account" columnName="remainingVacationDaysExpire"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Account"/>
+      <columnExists tableName="Account" columnName="remainingVacationDaysExpire"/>
+    </preConditions>
 
-        <addColumn tableName="Account">
-            <column name="remainingVacationDaysNotExpiring" type="DECIMAL(19, 2)"/>
-        </addColumn>
+    <addColumn tableName="Account">
+      <column name="remainingVacationDaysNotExpiring" type="DECIMAL(19, 2)"/>
+    </addColumn>
 
-        <sql>
-            UPDATE Account SET remainingVacationDaysNotExpiring = 0.00 WHERE remainingVacationDaysExpire = true;
+    <sql>
+      UPDATE Account SET remainingVacationDaysNotExpiring = 0.00 WHERE remainingVacationDaysExpire = true;
 
-            UPDATE Account SET remainingVacationDaysNotExpiring = remainingVacationDays WHERE
-            remainingVacationDaysExpire = false;
-        </sql>
+      UPDATE Account SET remainingVacationDaysNotExpiring = remainingVacationDays WHERE
+      remainingVacationDaysExpire = false;
+    </sql>
 
-    </changeSet>
+  </changeSet>
 
-    <changeSet author="murygina" id="remove_deprecated_column_remainingVacationDaysExpire">
+  <changeSet author="murygina" id="remove_deprecated_column_remainingVacationDaysExpire">
 
-        <preConditions>
-            <tableExists tableName="Account"/>
-            <columnExists tableName="Account" columnName="remainingVacationDaysExpire"/>
-            <columnExists tableName="Account" columnName="remainingVacationDaysNotExpiring"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Account"/>
+      <columnExists tableName="Account" columnName="remainingVacationDaysExpire"/>
+      <columnExists tableName="Account" columnName="remainingVacationDaysNotExpiring"/>
+    </preConditions>
 
-        <dropColumn tableName="Account" columnName="remainingVacationDaysExpire"/>
+    <dropColumn tableName="Account" columnName="remainingVacationDaysExpire"/>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

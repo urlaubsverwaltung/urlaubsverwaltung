@@ -1,22 +1,22 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="hammann" id="insert_default_settings">
-        <preConditions>
-            <tableExists tableName="Settings"/>
-        </preConditions>
-        <insert tableName="Settings">
-            <column name="id" valueNumeric="1" />
-            <column name="maximumAnnualVacationDays" valueNumeric="40" />
-            <column name="maximumMonthsToApplyForLeaveInAdvance" valueNumeric="12" />
-            <column name="maximumSickPayDays" valueNumeric="42" />
-            <column name="daysBeforeEndOfSickPayNotification" valueNumeric="7" />
-            <column name="workingDurationForNewYearsEve" value="MORNING" />
-            <column name="workingDurationForChristmasEve" value="MORNING" />
-            <column name="federalState" value="BADEN_WUERTTEMBERG" />
-        </insert>
-    </changeSet>
-    
+  <changeSet author="hammann" id="insert_default_settings">
+    <preConditions>
+      <tableExists tableName="Settings"/>
+    </preConditions>
+    <insert tableName="Settings">
+      <column name="id" valueNumeric="1"/>
+      <column name="maximumAnnualVacationDays" valueNumeric="40"/>
+      <column name="maximumMonthsToApplyForLeaveInAdvance" valueNumeric="12"/>
+      <column name="maximumSickPayDays" valueNumeric="42"/>
+      <column name="daysBeforeEndOfSickPayNotification" valueNumeric="7"/>
+      <column name="workingDurationForNewYearsEve" value="MORNING"/>
+      <column name="workingDurationForChristmasEve" value="MORNING"/>
+      <column name="federalState" value="BADEN_WUERTTEMBERG"/>
+    </insert>
+  </changeSet>
+
 </databaseChangeLog>

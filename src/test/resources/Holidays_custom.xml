@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:Configuration xmlns:tns="http://www.example.org/Holiday" hierarchy="custom" description="custom"
 >
-    <tns:Holidays>
-        <tns:Fixed month="JANUARY" day="1" descriptionPropertiesKey="NEW_YEAR"/> <!-- Neujahr -->
-        <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/> <!-- Hl. 3 Koenige -->
-        <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/> <!-- Tag der Arbeit -->
-        <tns:Fixed month="OCTOBER" day="3" validFrom="1990" descriptionPropertiesKey="UNIFICATION"/> <!-- Tag der dt. Einheit -->
-        <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/> <!-- Allerheiligen -->
-        <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/> <!-- 1. Weihnachtstag -->
-        <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/> <!-- 2. Weihnachtstag -->
-        <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>  Heiligabend
-        <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>  Silvester
-        <tns:ChristianHoliday type="CORPUS_CHRISTI" />
-        <tns:ChristianHoliday type="EASTER" />
-        <tns:ChristianHoliday type="GOOD_FRIDAY"/> <!-- Karfreitag -->
-        <tns:ChristianHoliday type="EASTER_MONDAY"/> <!-- Ostermontag -->
-        <tns:ChristianHoliday type="ASCENSION_DAY"/> <!-- Christi Himmelfahrt -->
-        <tns:ChristianHoliday type="WHIT_MONDAY" /> <!-- Pfingstmontag -->
-    </tns:Holidays>
+  <tns:Holidays>
+    <tns:Fixed month="JANUARY" day="1" descriptionPropertiesKey="NEW_YEAR"/> <!-- Neujahr -->
+    <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/> <!-- Hl. 3 Koenige -->
+    <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/> <!-- Tag der Arbeit -->
+    <tns:Fixed month="OCTOBER" day="3" validFrom="1990" descriptionPropertiesKey="UNIFICATION"/> <!-- Tag der dt. Einheit -->
+    <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/> <!-- Allerheiligen -->
+    <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/> <!-- 1. Weihnachtstag -->
+    <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/> <!-- 2. Weihnachtstag -->
+    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>  Heiligabend
+    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>  Silvester
+    <tns:ChristianHoliday type="CORPUS_CHRISTI" />
+    <tns:ChristianHoliday type="EASTER" />
+    <tns:ChristianHoliday type="GOOD_FRIDAY"/> <!-- Karfreitag -->
+    <tns:ChristianHoliday type="EASTER_MONDAY"/> <!-- Ostermontag -->
+    <tns:ChristianHoliday type="ASCENSION_DAY"/> <!-- Christi Himmelfahrt -->
+    <tns:ChristianHoliday type="WHIT_MONDAY" /> <!-- Pfingstmontag -->
+  </tns:Holidays>
 
 </tns:Configuration>
