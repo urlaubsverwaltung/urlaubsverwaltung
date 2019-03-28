@@ -62,7 +62,7 @@ class PersonDataProvider {
         return person;
     }
 
-    List<MailNotification> getNotificationsForRoles(List<Role> roles) {
+    private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
         List<MailNotification> notifications = new ArrayList<>();
 
