@@ -5,7 +5,7 @@
  *
  * @example
  * ```
- * import { setup, cleanup } from './TestSetupHelper';
+ * import { setup, cleanup } from './TestSetupHelper';
  *
  * describe('myTestSuite', () => {
  *   beforeEach(setup)
@@ -45,7 +45,7 @@ export async function setup () {
  *
  * ```
  * // myModule.spec.js
- * import { setup, waitForFinishedJQueryReadyCallbacks } from './TestSetupHelper';
+ * import { setup, waitForFinishedJQueryReadyCallbacks } from './TestSetupHelper';
  *
  * beforeEach(async function() {
  *   // setup jquery etc

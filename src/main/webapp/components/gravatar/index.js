@@ -1,3 +1,5 @@
+import $ from 'jquery'
+
 $(function () {
 
   // set background as style attribute for each gravatar element

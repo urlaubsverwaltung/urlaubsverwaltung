@@ -1,5 +1,6 @@
 // thanks to http://www.jaqe.de/2009/01/16/url-parameter-mit-javascript-auslesen/
 export default function getUrlParam(name) {
+  // eslint-disable-next-line no-useless-escape
   name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 
   var regexS = "[\\?&]" + name + "=([^&#]*)";

@@ -28,10 +28,18 @@ import 'bootstrap/js/tab'
    *   * Anbindung an Microsoft Exchange Kalender
    */
   function updateVisibiltyCalendar() {
-    var value = document.getElementById('calendarSettings.provider').value;
+    const calenderSettingsProvider = document.querySelector('#calendarSettings.provider');
+    var value = calenderSettingsProvider ? calenderSettingsProvider.value : '';
 
-    document.getElementById('google-calendar').hidden = value !== 'GoogleCalendarSyncProvider';
-    document.getElementById('exchange-calendar').hidden = value !== 'ExchangeCalendarProvider';
+    const googleCalendar = document.querySelector('#google-calendar');
+    if (googleCalendar) {
+      googleCalendar.hidden = value !== 'GoogleCalendarSyncProvider';
+    }
+
+    const exchangeCalendar = document.querySelector('#google-calendar');
+    if (exchangeCalendar) {
+      exchangeCalendar.hidden = value !== 'ExchangeCalendarProvider';
+    }
 
     if (value === 'ExchangeCalendarProvider') {
       // problem if div is not displayed
@@ -49,7 +57,12 @@ import 'bootstrap/js/tab'
     // initial run to update view
     updateVisibiltyCalendar();
 
-    document.getElementById('calendarSettings.provider').onchange = updateVisibiltyCalendar;
+    const calendarSettingsProvider = document.querySelector('#calendarSettings.provider');
+    if (calendarSettingsProvider) {
+      calendarSettingsProvider.addEventListener('change', () => {
+        updateVisibiltyCalendar();
+      })
+    }
   });
 
 })();

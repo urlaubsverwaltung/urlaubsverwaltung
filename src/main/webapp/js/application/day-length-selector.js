@@ -1,5 +1,6 @@
-import sendGetDaysRequest from '../sendGetDaysRequest';
-import sendGetDepartmentVacationsRequest from '../sendGetDepartmentVacationsRequest';
+import $ from 'jquery';
+import sendGetDaysRequest from '../send-get-days-request';
+import sendGetDepartmentVacationsRequest from '../send-get-department-vacations-request';
 
 $(document).ready(function () {
 

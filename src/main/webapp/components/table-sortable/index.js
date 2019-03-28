@@ -5,7 +5,7 @@ $(document).ready(function () {
 
   $.tablesorter.addParser({
     id: 'germanDate',
-    is: function (s) {
+    is: function () {
       return false;
     },
     format: function (s) {
@@ -27,15 +27,15 @@ $(document).ready(function () {
 
   $.tablesorter.addParser({
     id: 'commaNumber',
-    is: function (s) {
+    is: function () {
       return false;
     },
     format: function (s) {
 
-      var reg = new RegExp("[0-9]+");
+      var reg = new RegExp('\\d+');
 
       if (reg.test(s)) {
-        s = s.replace(/[\,\.]/g, '.');
+        s = s.replace(/[,.]/g, '.');
 
         // possible that string is sth like that: 30 + 2
         return eval(s);

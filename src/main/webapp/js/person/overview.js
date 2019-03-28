@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { getYear, setYear, firstOfYear, subMonths, addMonths } from 'date-fns';
 
-import getUrlParam from '../getUrlParam';
+import getUrlParam from '../get-url-param';
 import '../../components/calendar';
 
 $(document).ready(function () {

@@ -12,7 +12,7 @@
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/department_form.e407f8952fc7a5a2a211.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/department_form.22ee3e30348554a9509e.min.js' />"></script>
 </head>
 
 <body>

@@ -11,8 +11,8 @@
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_statistics.c323ea54edf40190ccf5.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.4196ea7c9c92849cd792.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_statistics.f4ec219696dff4c46627.min.js' />"></script>
 </head>
 
 <body>

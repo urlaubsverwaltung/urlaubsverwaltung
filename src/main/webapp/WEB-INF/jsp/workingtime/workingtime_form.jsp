@@ -10,7 +10,7 @@
 <html>
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/workingtime_form.d7b6ff0b47ad83595d3a.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/workingtime_form.e1434e5e36c464d5fecb.min.js' />"></script>
 </head>
 
 <body>

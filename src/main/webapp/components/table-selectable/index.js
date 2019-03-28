@@ -1,3 +1,5 @@
+import $ from 'jquery'
+
 $(function () {
 
   // do avoid clickable table cell if there is an action within

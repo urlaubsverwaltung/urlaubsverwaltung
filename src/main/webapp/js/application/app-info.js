@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import sendGetDaysRequestForTurnOfTheYear from '../sendGetDaysRequestForTurnOfTheYear';
+import sendGetDaysRequestForTurnOfTheYear from '../send-get-days-request-for-turn-of-the-year';
 
 $(document).ready(function() {
   var dayLength = window.uv.dayLength;

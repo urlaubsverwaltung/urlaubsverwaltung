@@ -1,20 +1,15 @@
-$(function () {
+const standardNumberOfRows = 1;
+const expandedNumberOfRows = 4;
 
-  var standardNumberOfRows = 1;
-  var expandedNumberOfRows = 4;
+[...document.querySelectorAll("textarea")].forEach(textarea => {
 
-  var $textarea = $("textarea");
-
-  $textarea.on("focus", function () {
-    this.rows = expandedNumberOfRows;
+  textarea.addEventListener('focus', () => {
+    textarea.rows = expandedNumberOfRows;
   });
 
-  $textarea.on("blur", function () {
-
-    if (this.value == "") {
-      this.rows = standardNumberOfRows;
+  textarea.addEventListener('blur', () => {
+    if (textarea.value == '') {
+      textarea.rows = standardNumberOfRows;
     }
   });
-
 });
-

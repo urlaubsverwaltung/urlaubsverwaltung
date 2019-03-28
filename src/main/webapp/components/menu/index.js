@@ -1,3 +1,4 @@
+import $ from 'jquery'
 import './navbar.css'
 
 // UGLY FIX BECAUSE BOOTSTRAP DROPDOWN IN NAVBAR NOT WORKING ON SOME MOBILE PHONES

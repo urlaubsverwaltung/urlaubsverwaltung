@@ -8,8 +8,8 @@ import '../components/gravatar';
 import '../components/feedback';
 import tooltip from '../components/tooltip';
 
-global.$ = $;
-global.jQuery = $;
+window.$ = $;
+window.jQuery = $;
 
 tooltip();
 

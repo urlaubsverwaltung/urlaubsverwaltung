@@ -20,13 +20,13 @@
         window.uv.params = {};
         window.uv.params.person = "${param.person}";
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.28f2739d827299b4c8a8' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.28f2739d827299b4c8a8.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.14d0a75394fc92805828.css' />" />
-    <script defer src="<spring:url value='/assets/npm.jquery-ui.f82489a9e7eb2a4806ba.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/date-fns-localized.f977abd85880a1f57b92.min' />"></script>
-    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.ea5e0aee3b0e21443855.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/sick_note_form.a4fa812224bfb88265b4.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.6959b43e855edd474ba6.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.date-fns.7a29840def9ca2f1646b.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.e52ac48f0198b29060b7.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.bb7f0e50b8b0faba1d20.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/sick_note_form.03922f9cdb895be836f8.min.js' />"></script>
 </head>
 <body>
 

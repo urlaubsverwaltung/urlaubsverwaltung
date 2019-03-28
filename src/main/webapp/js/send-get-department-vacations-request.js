@@ -1,6 +1,7 @@
+import $ from 'jquery'
 import format from '../lib/date-fns/format'
 
-export default function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, el) {
+export default function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, element) {
 
   var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
   var toDateString = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate();
@@ -12,7 +13,7 @@ export default function sendGetDepartmentVacationsRequest(urlPrefix, startDate, 
 
     var vacations = data.response.vacations;
 
-    var $vacations = $(el);
+    var $vacations = $(element);
 
     $vacations.html("Antr&auml;ge von Mitarbeitern:");
 

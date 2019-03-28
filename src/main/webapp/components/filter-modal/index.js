@@ -5,17 +5,23 @@ $(document).ready(async function () {
 
   const locale = window.navigator.language;
   switch(locale) {
-    case 'de':
+    case 'de': {
       const de = await import('jquery-ui/ui/i18n/datepicker-de');
-      de.weekHeader = 'Wo';
-      datepicker.setDefaults(de);
+      datepicker.setDefaults({
+        ...de,
+        weekHeader: 'Wo'
+      });
       break;
+    }
 
-    default:
+    default: {
       const en = await import('jquery-ui/ui/i18n/datepicker-en-GB');
-      en.dateFormat = 'dd.mm.yy';
-      datepicker.setDefaults(en);
+      datepicker.setDefaults({
+        ...en,
+        dateFormat: 'dd.mm.yy'
+      });
       break;
+    }
   }
 
   $('#startDate').datepicker();

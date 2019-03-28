@@ -1,13 +1,13 @@
+import $ from 'jquery'
 import 'tablesorter'
-import '../css/vacation_overview.css'
+import '../css/vacation-overview.css'
 
 $(function () {
 
     function selectedItemChange() {
-      var selectedYear = document.getElementById('yearSelect');
-      var selectedMonth = document.getElementById('monthSelect');
-      var selectedDepartment = document
-        .getElementById('departmentSelect');
+      var selectedYear = document.querySelector('#yearSelect');
+      var selectedMonth = document.querySelector('#monthSelect');
+      var selectedDepartment = document.querySelector('#departmentSelect');
       var selectedDepartmentValue = selectedDepartment.options[selectedDepartment.selectedIndex].text;
       var selectedYearValue = selectedYear.options[selectedYear.selectedIndex].text;
       var selectedMonthValue = selectedMonth.options[selectedMonth.selectedIndex].value;
@@ -31,7 +31,7 @@ $(function () {
 
           var overViewList = holyDayOverviewResponse.response.list;
           overViewList
-            .forEach(function (listItem, index, array) {
+            .forEach(function (listItem) {
               var personId = listItem.personID;
               var url = location.protocol + "//"
                 + location.host + "/api/absences?year="
@@ -48,14 +48,10 @@ $(function () {
 
                 listItem.days
                   .forEach(
-                    function (currentDay, index,
-                              array) {
+                    function (currentDay) {
                       if (response.response.absences
                         .find(
-                          function (
-                            currentValue,
-                            index,
-                            array) {
+                          function (currentValue) {
                             if (this.toString() == currentValue.date
                               && currentValue.status === "WAITING"
                               && currentValue.type === "VACATION"
@@ -68,10 +64,7 @@ $(function () {
                       }
                       if (response.response.absences
                         .find(
-                          function (
-                            currentValue,
-                            index,
-                            array) {
+                          function (currentValue) {
                             if (this.toString() == currentValue.date
                               && currentValue.status === "WAITING"
                               && currentValue.type === "VACATION"
@@ -86,9 +79,7 @@ $(function () {
                       if (response.response.absences
                         .find(
                           function (
-                            currentValue,
-                            index,
-                            array) {
+                            currentValue) {
                             if (this.toString() == currentValue.date
                               && currentValue.status === "ALLOWED"
                               && currentValue.dayLength < 1
@@ -101,10 +92,7 @@ $(function () {
                       }
                       if (response.response.absences
                         .find(
-                          function (
-                            currentValue,
-                            index,
-                            array) {
+                          function (currentValue) {
                             if (this.toString() == currentValue.date
                               && currentValue.status === "ALLOWED"
                               && currentValue.dayLength === 1
@@ -117,10 +105,7 @@ $(function () {
                       }
                       if (response.response.absences
                         .find(
-                          function (
-                            currentValue,
-                            index,
-                            array) {
+                          function (currentValue) {
                             if (this.toString() == currentValue.date
                               && currentValue.type === 'SICK_NOTE'
                               && currentValue.dayLength === 1) {
@@ -132,10 +117,7 @@ $(function () {
                       }
                       if (response.response.absences
                         .find(
-                          function (
-                            currentValue,
-                            index,
-                            array) {
+                          function (currentValue) {
                             if (this.toString() == currentValue.date
                               && currentValue.type === 'SICK_NOTE'
                               && currentValue.dayLength < 1) {
@@ -156,7 +138,7 @@ $(function () {
           outputTable += "<th class='sortable-field'><spring:message code='person.data.lastName'/></th>";
           overViewList[0].days
             .forEach(
-              function (item, index, array) {
+              function (item) {
                 let defaultClasses = "non-sortable vactionOverview-day-item";
                 if (item.typeOfDay === "WEEKEND") {
                   outputTable += "<th class='" + defaultClasses + "vacationOverview-day-weekend'>" + item.dayNumber + "</th>";
@@ -167,7 +149,7 @@ $(function () {
           outputTable += "</tr><tbody class='vacationOverview-tbody'>";
           overViewList
             .forEach(
-              function (item, index, array) {
+              function (item) {
                 outputTable += "<tr>";
                 outputTable += "<td class='hidden-xs'>"
                   + item.person.firstName
@@ -177,9 +159,7 @@ $(function () {
                   + "</td>";
                 item.days
                   .forEach(
-                    function (dayItem,
-                              dayIndex,
-                              dayArray) {
+                    function (dayItem) {
                       if (dayItem.typeOfDay === "WEEKEND") {
                         dayItem.cssClass = ' vacationOverview-day-weekend vactionOverview-day-item';
                       } else {
@@ -193,7 +173,7 @@ $(function () {
               }, outputTable);
 
           outputTable += "</tbody></table>";
-          var element = document.getElementById("vacationOverview");
+          var element = document.querySelector("#vacationOverview");
           element.innerHTML = outputTable;
         }
       }
@@ -208,9 +188,9 @@ $(function () {
       });
     }
 
-    var selectedYear = document.getElementById('yearSelect');
-    var selectedMonth = document.getElementById('monthSelect');
-    var selectedDepartment = document.getElementById('departmentSelect');
+    var selectedYear = document.querySelector('#yearSelect');
+    var selectedMonth = document.querySelector('#monthSelect');
+    var selectedDepartment = document.querySelector('#departmentSelect');
 
     selectedYear.addEventListener("change", function () {
       selectedItemChange();
@@ -221,10 +201,11 @@ $(function () {
     selectedDepartment.addEventListener("change", function () {
       selectedItemChange();
     });
+    var event;
     if (typeof (Event) === "function") {
-      var event = new Event("change");
+      event = new Event("change");
     } else {
-      var event = document.createEvent("Event");
+      event = document.createEvent("Event");
       event.initEvent("change", true, true);
     }
     selectedYear.dispatchEvent(event);

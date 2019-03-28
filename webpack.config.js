@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   devtool: false,
@@ -12,30 +12,30 @@ module.exports = {
     polyfill: '@babel/polyfill',
     'date-fns-localized': './src/main/webapp/bundles/date-fns-localized.js',
     login: './src/main/webapp/bundles/login.js',
-    app_detail: './src/main/webapp/bundles/app_detail.js',
-    app_form: './src/main/webapp/bundles/app_form.js',
-    app_list: './src/main/webapp/bundles/app_list.js',
-    app_statistics: './src/main/webapp/bundles/app_statistics.js',
+    app_detail: './src/main/webapp/bundles/app-detail.js',
+    app_form: './src/main/webapp/bundles/app-form.js',
+    app_list: './src/main/webapp/bundles/app-list.js',
+    app_statistics: './src/main/webapp/bundles/app-statistics.js',
     common: './src/main/webapp/bundles/common.js',
-    person_overview: './src/main/webapp/bundles/person_overview.js',
-    person_form: './src/main/webapp/bundles/person_form.js',
-    sick_note_form: './src/main/webapp/bundles/sick_note_form.js',
-    sick_note: './src/main/webapp/bundles/sick_note.js',
-    sick_note_convert: './src/main/webapp/bundles/sick_note_convert.js',
-    sick_notes: './src/main/webapp/bundles/sick_notes.js',
-    staff_view: './src/main/webapp/bundles/staff_view.js',
-    vacation_overview: './src/main/webapp/bundles/vacation_overview.js',
-    department_form: './src/main/webapp/bundles/department_form.js',
-    department_list: './src/main/webapp/bundles/department_list.js',
-    overtime_form: './src/main/webapp/bundles/overtime_form.js',
-    settings_form: './src/main/webapp/bundles/settings_form.js',
-    account_form: './src/main/webapp/bundles/account_form.js',
-    workingtime_form: './src/main/webapp/bundles/workingtime_form.js',
+    person_overview: './src/main/webapp/bundles/person-overview.js',
+    person_form: './src/main/webapp/bundles/person-form.js',
+    sick_note_form: './src/main/webapp/bundles/sick-note-form.js',
+    sick_note: './src/main/webapp/bundles/sick-note.js',
+    sick_note_convert: './src/main/webapp/bundles/sick-note-convert.js',
+    sick_notes: './src/main/webapp/bundles/sick-notes.js',
+    staff_view: './src/main/webapp/bundles/staff-view.js',
+    vacation_overview: './src/main/webapp/bundles/vacation-overview.js',
+    department_form: './src/main/webapp/bundles/department-form.js',
+    department_list: './src/main/webapp/bundles/department-list.js',
+    overtime_form: './src/main/webapp/bundles/overtime-form.js',
+    settings_form: './src/main/webapp/bundles/settings-form.js',
+    account_form: './src/main/webapp/bundles/account-form.js',
+    workingtime_form: './src/main/webapp/bundles/workingtime-form.js',
   },
 
   output: {
     path: path.resolve(__dirname, 'target/classes/static/assets'),
-    filename: isProd ? '[name].[contenthash].min.js' : '[name].min.js',
+    filename: isProduction ? '[name].[contenthash].min.js' : '[name].min.js',
     publicPath: '/assets/'
   },
 
@@ -91,7 +91,7 @@ module.exports = {
     new webpack.HashedModuleIdsPlugin(),
     // This Webpack plugin will generate a JSON file that matches
     // the original filename with the hashed version.
-    isProd && new WebpackAssetsManifest({
+    isProduction && new WebpackAssetsManifest({
       // output path is relative to webpack.output.path
       output: path.resolve(__dirname, 'assets-manifest.json'),
       publicPath: true,
@@ -101,7 +101,7 @@ module.exports = {
       jQuery: 'jquery',
     }),
     new MiniCssExtractPlugin({
-      filename: isProd ? "../assets/[name].[contenthash].css" : "../assets/[name].css",
+      filename: isProduction ? "../assets/[name].[contenthash].css" : "../assets/[name].css",
     })
   ].filter(Boolean),
 

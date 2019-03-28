@@ -21,8 +21,8 @@
         window.uv.sickNote.person = {};
         window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
     </script>
-    <script defer type="text/javascript" src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
-    <script defer type="text/javascript" src="<spring:url value='/assets/sick_notes.d41980c4cf47dc687d75.min.js' />"></script>
+    <script defer type="text/javascript" src="<spring:url value='/assets/npm.tablesorter.4196ea7c9c92849cd792.min.js' />"></script>
+    <script defer type="text/javascript" src="<spring:url value='/assets/sick_notes.a4eec5046ff068854297.min.js' />"></script>
 </head>
 
 <body>

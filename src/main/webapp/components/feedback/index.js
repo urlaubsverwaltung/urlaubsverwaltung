@@ -1,3 +1,5 @@
+import $ from 'jquery'
+
 $(function () {
 
   // FIXME: get rid of interval

@@ -1,10 +1,11 @@
-import buildUrl from './buildUrl';
-import formatNumber from './formatNumber';
-import sendGetDaysRequestForTurnOfTheYear from './sendGetDaysRequestForTurnOfTheYear';
+import $ from 'jquery';
+import buildUrl from './build-url';
+import formatNumber from './format-number';
+import sendGetDaysRequestForTurnOfTheYear from './send-get-days-request-for-turn-of-the-year';
 
-export default function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, el) {
+export default function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, element) {
 
-  $(el).empty();
+  $(element).empty();
 
   if (startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
 
@@ -29,11 +30,11 @@ export default function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLeng
         text = formatNumber(workDays) + " Tage";
       }
 
-      $(el).html(text);
+      $(element).html(text);
 
       if (startDate.getFullYear() != toDate.getFullYear()) {
-        $(el).append('<span class="days-turn-of-the-year"></span>');
-        sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, el + ' .days-turn-of-the-year');
+        $(element).append('<span class="days-turn-of-the-year"></span>');
+        sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, element + ' .days-turn-of-the-year');
       }
 
     });

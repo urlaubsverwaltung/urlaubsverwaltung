@@ -1,7 +1,8 @@
+import $ from 'jquery';
 import { createDatepickerInstances } from '../../components/datepicker';
 import '../../components/timepicker';
-import sendGetDaysRequest from '../sendGetDaysRequest';
-import sendGetDepartmentVacationsRequest from '../sendGetDepartmentVacationsRequest';
+import sendGetDaysRequest from '../send-get-days-request';
+import sendGetDepartmentVacationsRequest from '../send-get-department-vacations-request';
 
 $(document).ready(async function () {
 
@@ -14,13 +15,6 @@ $(document).ready(async function () {
   };
 
   var onSelect = function (selectedDate) {
-
-    var instance = $(this).data("datepicker"),
-      date = $.datepicker.parseDate(
-        instance.settings.dateFormat ||
-        $.datepicker._defaults.dateFormat,
-        selectedDate, instance.settings);
-
 
     var $from = $("#from");
     var $to = $("#to");
@@ -56,8 +50,8 @@ $(document).ready(async function () {
     return new Date(y, m, d);
   }
 
-  var from = document.getElementById('from').value;
-  var to = document.getElementById('to').value;
+  var from = document.querySelector('#from').value;
+  var to = document.querySelector('#to').value;
 
   if (from) {
     var startDate = valueToDate(from);

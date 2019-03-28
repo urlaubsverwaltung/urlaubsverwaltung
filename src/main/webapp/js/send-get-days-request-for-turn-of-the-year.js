@@ -1,9 +1,10 @@
-import buildUrl from './buildUrl';
-import formatNumber from './formatNumber'
+import $ from 'jquery';
+import buildUrl from './build-url';
+import formatNumber from './format-number';
 
-export default function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, el) {
+export default function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, element) {
 
-  $(el).empty();
+  $(element).empty();
 
   if (startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
 
@@ -48,7 +49,7 @@ export default function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate,
         text = "<br />(" + daysBefore + " in " + before.getFullYear()
           + " und " + daysAfter + " in " + after.getFullYear() + ")";
 
-        $(el).html(text);
+        $(element).html(text);
       });
 
     });

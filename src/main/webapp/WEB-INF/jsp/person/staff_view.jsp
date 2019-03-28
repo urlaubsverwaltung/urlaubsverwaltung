@@ -15,9 +15,9 @@
 <head>
     <uv:head/>
     <c:if test="${not empty persons}">
-    <script defer src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.4196ea7c9c92849cd792.min.js' />"></script>
     <script defer src="<spring:url value='/assets/npm.list.js.f99528737e0785c70c44.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/staff_view.47592582cbb9b114666e.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/staff_view.7bb5b692239e2cf1677f.min.js' />"></script>
     </c:if>
 </head>
 

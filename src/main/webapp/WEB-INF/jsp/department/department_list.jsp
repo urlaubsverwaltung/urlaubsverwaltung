@@ -13,8 +13,8 @@
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/npm.tablesorter.cfda1fa12e0bcfc37471.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/department_list.2ce63ea371e2ab702166.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.4196ea7c9c92849cd792.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/department_list.7eac09aa68627b308b7c.min.js' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>
 </head>
 

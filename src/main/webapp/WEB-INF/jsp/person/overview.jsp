@@ -21,9 +21,9 @@
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
     </script>
-    <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/date-fns-localized.f977abd85880a1f57b92.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/person_overview.427f2d0898cdf0a5c6cb.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.date-fns.7a29840def9ca2f1646b.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.e52ac48f0198b29060b7.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/person_overview.1f8d6812f1702eae5979.min.js' />"></script>
 </head>
 
 <body>

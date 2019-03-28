@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import { findWhere } from 'underscore';
 import {
   addDays,
@@ -16,7 +17,7 @@ import {
   subMonths,
 } from 'date-fns';
 import format from '../../lib/date-fns/format'
-import startOfWeek from '../../lib/date-fns/startOfWeek'
+import startOfWeek from '../../lib/date-fns/start-of-week'
 import tooltip from '../tooltip';
 import './calendar.css';
 
@@ -50,7 +51,7 @@ $(function() {
         daySickDay            : 'datepicker-day-sick-note',
         dayStatus             : 'datepicker-day-status-{{status}}',
         next                  : 'datepicker-next',
-        prev                  : 'datepicker-prev',
+        previous              : 'datepicker-prev',
         month                 : 'datepicker-month',
         mousedown             : 'mousedown'
     };
@@ -468,7 +469,7 @@ $(function() {
 
         var TMPL = {
 
-            container: '{{prevBtn}}<div class="datepicker-months-container">{{months}}</div>{{nextBtn}}',
+            container: '{{previousButton}}<div class="datepicker-months-container">{{months}}</div>{{nextButton}}',
 
             button: '<button class="{{css}}">{{text}}</button>',
 
@@ -492,8 +493,8 @@ $(function() {
                     return data.apply(this, arguments);
                 }
 
-                var val = data[type];
-                return typeof val === 'function' ? val() : val;
+                var value = data[type];
+                return typeof value === 'function' ? value() : value;
             });
         }
 
@@ -503,8 +504,8 @@ $(function() {
 
             return render(TMPL.container, {
 
-                prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left" aria-hidden="true"></i>'),
-                nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right" aria-hidden="true"></i>'),
+                previousButton: renderButton ( CSS.previous, '<i class="fa fa-chevron-left" aria-hidden="true"></i>'),
+                nextButton: renderButton ( CSS.next, '<i class="fa fa-chevron-right" aria-hidden="true"></i>'),
 
                 months: function() {
                     var html = '';
@@ -650,11 +651,11 @@ $(function() {
             displayNext: function() {
 
                 var elements = $datepicker.find('.' + CSS.month).get();
-                var len      = elements.length;
+                var length_      = elements.length;
 
                 $(elements[0]).remove();
 
-                var $lastMonth = $(elements[len - 1]);
+                var $lastMonth = $(elements[length_ - 1]);
                 var month = Number ($lastMonth.data(DATA.month));
                 var year  = Number ($lastMonth.data(DATA.year));
 
@@ -664,20 +665,20 @@ $(function() {
                 tooltip();
             },
 
-            displayPrev: function() {
+            displayPrevious: function() {
 
                 var elements = $datepicker.find('.' + CSS.month).get();
-                var len = elements.length;
+                var length_ = elements.length;
 
-                $(elements[len - 1]).remove();
+                $(elements[length_ - 1]).remove();
 
                 var $firstMonth = $(elements[0]);
                 var month = Number ($firstMonth.data(DATA.month));
                 var year  = Number ($firstMonth.data(DATA.year));
 
-                var $prevMonth = $(renderMonth( subMonths(new Date(year, month), 1)));
+                var previousMonth = $(renderMonth( subMonths(new Date(year, month), 1)));
 
-                $firstMonth.before($prevMonth);
+                $firstMonth.before(previousMonth);
                 tooltip();
             }
         };
@@ -706,7 +707,7 @@ $(function() {
 
                 $(document.body).addClass(CSS.mousedown);
 
-                var dateThis = getDateFromEl(this);
+                var dateThis = getDateFromElement(this);
 
                 if ( !isWithinRange(dateThis, selectionFrom(), selectionTo()) ) {
 
@@ -726,7 +727,7 @@ $(function() {
             mouseover: function() {
                 if ( $(document.body).hasClass(CSS.mousedown) ) {
 
-                    var dateThis     = getDateFromEl(this);
+                    var dateThis     = getDateFromElement(this);
                     var dateSelected = $datepicker.data(DATA.selected);
 
                     var isThisBefore = isBefore(dateThis, dateSelected);
@@ -741,7 +742,7 @@ $(function() {
                 var dateFrom = selectionFrom();
                 var dateTo   = selectionTo  ();
 
-                var dateThis = getDateFromEl(this);
+                var dateThis = getDateFromElement(this);
 
                 var isSelectable = $(this).attr("data-datepicker-selectable");
                 var absenceId = $(this).attr('data-datepicker-absence-id');
@@ -775,7 +776,7 @@ $(function() {
                 ).then(view.displayNext);
             },
 
-            clickPrev: function() {
+            clickPrevious: function() {
 
                 // first month of calendar
                 var $month = $( $datepicker.find('.' + CSS.month)[0] );
@@ -790,12 +791,12 @@ $(function() {
                     holidayService.fetchPublic   ( getYear(date) ),
                     holidayService.fetchPersonal ( getYear(date) ),
                     holidayService.fetchSickDays ( getYear(date) )
-                ).then(view.displayPrev);
+                ).then(view.displayPrevious);
             }
         };
 
-        function getDateFromEl(el) {
-            return parse($(el).data(DATA.date));
+        function getDateFromElement(element) {
+            return parse($(element).data(DATA.date));
         }
 
         function selectionFrom(date) {
@@ -833,19 +834,19 @@ $(function() {
             });
         }
 
-        function select(el, select) {
+        function select(element, select) {
 
-            var $el = $(el);
+            var element_ = $(element);
 
-            if ( ! $el.data(DATA.selectable) ) {
+            if ( ! element_.data(DATA.selectable) ) {
                 return;
             }
 
-            if (!!select) {
-                $el.addClass(CSS.daySelected);
+            if (select) {
+                element_.addClass(CSS.daySelected);
             }
             else {
-                $el.removeClass(CSS.daySelected);
+                element_.removeClass(CSS.daySelected);
             }
         }
 
@@ -856,12 +857,12 @@ $(function() {
                 $datepicker.on('mouseover', '.' + CSS.day , datepickerHandlers.mouseover);
                 $datepicker.on('click'    , '.' + CSS.day , datepickerHandlers.click    );
 
-                $datepicker.on('click'    , '.' + CSS.prev, datepickerHandlers.clickPrev);
+                $datepicker.on('click'    , '.' + CSS.previous, datepickerHandlers.clickPrevious);
                 $datepicker.on('click'    , '.' + CSS.next, datepickerHandlers.clickNext);
 
 
-                $(document.body).on('keyup', function(e) {
-                    if (e.keyCode === keyCodes.escape) {
+                $(document.body).on('keyup', function(event) {
+                    if (event.keyCode === keyCodes.escape) {
                         clearSelection();
                     }
                 });

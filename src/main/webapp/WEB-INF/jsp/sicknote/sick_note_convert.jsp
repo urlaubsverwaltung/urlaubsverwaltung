@@ -9,7 +9,7 @@
 <html>
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/sick_note_convert.8524b909d973cc4a733f.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/sick_note_convert.c7e4e91781e349b0f57a.min.js' />"></script>
 </head>
 <body>
 

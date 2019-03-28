@@ -1,0 +1,23 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended",
+    "plugin:unicorn/recommended",
+    "prettier"
+  ],
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "globals": {
+    "Urlaubsverwaltung": true
+  },
+  "overrides": [
+    {
+      "files": "webpack.config.js",
+      "env": {
+        "node": true
+      }
+    }
+  ]
+}

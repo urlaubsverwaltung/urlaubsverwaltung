@@ -1,4 +1,4 @@
-import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from '../../../../test/javascript/TestSetupHelper';
+import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from '../../../../test/javascript/test-setup-helper';
 
 describe ('calendar', () => {
     const RealDate = Date;
@@ -7,14 +7,16 @@ describe ('calendar', () => {
     // mocking Date with overridden instanceof operator o_O phew°°°
     // required since datefn verifies with foo instanceof Date
     function mockDate(isoDate) {
-      global.Date = class extends RealDate {
+      /* eslint-disable unicorn/prevent-abbreviations */
+
+      window.Date = class extends RealDate {
         static [Symbol.hasInstance](instance) {
           return instance[dateInstanceIdentifier];
         }
 
         // noinspection JSAnnotator
         constructor(...args) {
-          let d = args.length ? new RealDate(...args) : new RealDate(isoDate);
+          let d = args.length === 0 ? new RealDate(isoDate) : new RealDate(...args);
           d[dateInstanceIdentifier] = true;
           return d;
         }
@@ -22,7 +24,7 @@ describe ('calendar', () => {
     }
 
     afterEach(() => {
-      global.Date = RealDate;
+      window.Date = RealDate;
     });
 
     beforeEach (calendarTestSetup);
@@ -67,9 +69,6 @@ describe ('calendar', () => {
     });
 
     function createHolidayService () {
-        const webPrefix = 'webPrefix';
-        const apiPrefix = 'apiPrefix';
-        const personId = 'personId';
         return window.Urlaubsverwaltung.HolidayService.create();
     }
 
