@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { findWhere } from 'underscore';
 import datepicker from './datepicker';
 import { isWeekend } from 'date-fns';
 
@@ -158,7 +159,7 @@ function colorizeDate(date, publicHolidays, absences) {
 
 function isSpecialDay(formattedDate, specialDays) {
 
-  var day = _.findWhere(specialDays, {date: formattedDate});
+  var day = findWhere(specialDays, {date: formattedDate});
 
   return day !== undefined && day.dayLength <= 1;
 
@@ -166,14 +167,14 @@ function isSpecialDay(formattedDate, specialDays) {
 
 function getAbsenceType(formattedDate, absences) {
 
-  var absence = _.findWhere(absences, {date: formattedDate});
+  var absence = findWhere(absences, {date: formattedDate});
 
   return absence.type;
 }
 
 function isHalfWorkday(formattedDate, holidays) {
 
-  return _.findWhere(holidays, {date: formattedDate, dayLength: 0.5}) !== undefined;
+  return findWhere(holidays, {date: formattedDate, dayLength: 0.5}) !== undefined;
 
 }
 

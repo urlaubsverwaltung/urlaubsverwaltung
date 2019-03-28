@@ -99,7 +99,6 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
-      _: 'underscore',
     }),
     new MiniCssExtractPlugin({
       filename: isProd ? "../assets/[name].[contenthash].css" : "../assets/[name].css",

@@ -1,3 +1,4 @@
+import { findWhere } from 'underscore';
 import {
   addDays,
   addMonths,
@@ -199,7 +200,7 @@ $(function() {
 
             if(_CACHE[type][year]) {
 
-              var holiday = _.findWhere(_CACHE[type][year], {date: formattedDate});
+              var holiday = findWhere(_CACHE[type][year], {date: formattedDate});
 
               if (type === 'publicHoliday') {
                 return holiday !== undefined && holiday.dayLength < 1;
@@ -231,7 +232,7 @@ $(function() {
 
               if(_CACHE['publicHoliday'][year]) {
 
-                var publicHoliday = _.findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
+                var publicHoliday = findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
 
                 if(publicHoliday && publicHoliday.dayLength === 0.5) {
                   return true;
@@ -241,7 +242,7 @@ $(function() {
 
               if(_CACHE['holiday'][year]) {
 
-                var personalHoliday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+                var personalHoliday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
 
                 if(personalHoliday && personalHoliday.dayLength === 0.5) {
                   return true;
@@ -251,7 +252,7 @@ $(function() {
 
               if(_CACHE['sick'][year]) {
 
-                  var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
+                  var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
 
                   if(sickDay && sickDay.dayLength === 0.5) {
                       return true;
@@ -272,7 +273,7 @@ $(function() {
 
               if(_CACHE['publicHoliday'][year]) {
 
-                var publicHoliday = _.findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
+                var publicHoliday = findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
 
                 if(publicHoliday) {
                   return publicHoliday.description;
@@ -294,7 +295,7 @@ $(function() {
 
               if(_CACHE['holiday'][year]) {
 
-                var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+                var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
 
                 if(holiday) {
                   return holiday.status;
@@ -318,7 +319,7 @@ $(function() {
 
               if(_CACHE['holiday'][year]) {
 
-                var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+                var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
 
                 if(holiday) {
                   return holiday.href;
@@ -328,7 +329,7 @@ $(function() {
 
               if(_CACHE['sick'][year]) {
 
-                  var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
+                  var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
 
                   if(sickDay) {
                       return sickDay.href;
@@ -350,7 +351,7 @@ $(function() {
 
                 if(_CACHE['holiday'][year]) {
 
-                    var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+                    var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
 
                     if(holiday) {
                         return holiday.type;
@@ -360,7 +361,7 @@ $(function() {
 
                 if(_CACHE['sick'][year]) {
 
-                    var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
+                    var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
 
                     if(sickDay) {
                         return sickDay.type;

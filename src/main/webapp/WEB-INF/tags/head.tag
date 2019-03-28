@@ -14,6 +14,6 @@
 <script defer src="<spring:url value='/assets/npm.webpack.91802970971ff5d43c6f.min.js' />"></script>
 <script defer src="<spring:url value='/assets/npm.jquery.2f1759edfbe2b896f16c.min.js' />"></script>
 <script defer src="<spring:url value='/assets/npm.bootstrap.c26a525e0f32a7cb6fc5.min.js' />"></script>
-<script defer src="<spring:url value='/assets/npm.underscore.33b5bbf6104494b62cf5.min.js' />"></script>
+<script defer src="<spring:url value='/assets/npm.underscore.9a3ce650e77c5c4b8004.min.js' />"></script>
 <script defer src="<spring:url value='/assets/npm.font-awesome.77ab9b96300633620553.min.js' />"></script>
 <script defer src="<spring:url value='/assets/common.d1ca1050004f5e8c9616.min.js' />"></script>

@@ -21,7 +21,7 @@
         window.uv.startDate = "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
         window.uv.endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
     </script>
-    <script defer src="<spring:url value='/assets/app_detail~app_form.564b98d802eef3e65abd.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form.14dd515e05ac76994f29.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_detail.b5a49c42c5dce2aa5540.min.js' />"></script>
 </head>
 
