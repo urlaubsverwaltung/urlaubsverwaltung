@@ -6,13 +6,19 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
+
+<assets:hash var="person_overview_css" asset="person_overview.css" />
+<assets:hash var="npm_date_fn_js" asset="npm.date-fns.js" />
+<assets:hash var="date_fn_localized_js" asset="date-fns-localized.js" />
+<assets:hash var="person_overview_js" asset="person_overview.js" />
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <link rel="stylesheet" href="<spring:url value='/assets/person_overview.43f9d5c1a638dd5265f8.css' />" />
+    <link rel="stylesheet" href="<spring:url value='${person_overview_css}' />" />
     <script>
         window.uv = {};
         window.uv.personId = '<c:out value="${person.id}" />';
@@ -21,9 +27,9 @@
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
     </script>
-    <script defer src="<spring:url value='/assets/npm.date-fns.7a29840def9ca2f1646b.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/date-fns-localized.e52ac48f0198b29060b7.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/person_overview.1f8d6812f1702eae5979.min.js' />"></script>
+    <script defer src="<spring:url value='${npm_date_fn_js}' />"></script>
+    <script defer src="<spring:url value='${date_fn_localized_js}' />"></script>
+    <script defer src="<spring:url value='${person_overview_js}' />"></script>
 </head>
 
 <body>

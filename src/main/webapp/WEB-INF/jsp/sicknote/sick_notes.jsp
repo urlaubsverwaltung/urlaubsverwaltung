@@ -4,6 +4,10 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
+
+<assets:hash var="npm_tablesorter_js" asset="npm.tablesorter.js" />
+<assets:hash var="sicknotes_js" asset="sick_notes.js" />
 
 
 <!DOCTYPE html>
@@ -21,8 +25,8 @@
         window.uv.sickNote.person = {};
         window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
     </script>
-    <script defer type="text/javascript" src="<spring:url value='/assets/npm.tablesorter.4196ea7c9c92849cd792.min.js' />"></script>
-    <script defer type="text/javascript" src="<spring:url value='/assets/sick_notes.a4eec5046ff068854297.min.js' />"></script>
+    <script defer type="text/javascript" src="<spring:url value='${npm_tablesorter_js}' />"></script>
+    <script defer type="text/javascript" src="<spring:url value='${sicknotes_js}' />"></script>
 </head>
 
 <body>

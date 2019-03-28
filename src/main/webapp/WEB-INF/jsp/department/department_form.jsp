@@ -5,14 +5,16 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
 
+<assets:hash var="department_form_js" asset="department_form.js" />
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/department_form.22ee3e30348554a9509e.min.js' />"></script>
+    <script defer src="<spring:url value='${department_form_js}' />"></script>
 </head>
 
 <body>

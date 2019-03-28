@@ -5,12 +5,15 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
+
+<assets:hash var="sicknote_js" asset="sick_note.js" />
 
 <!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/sick_note.7666205afb725bebb8d0.min.js' />"></script>
+    <script defer src="<spring:url value='${sicknote_js}' />"></script>
 </head>
 <body>
 

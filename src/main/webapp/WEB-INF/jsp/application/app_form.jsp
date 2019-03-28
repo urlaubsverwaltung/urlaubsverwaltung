@@ -6,7 +6,18 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
 
+<assets:hash var="app_overtime__sicknote_form_css" asset="app_form~overtime_form~sick_note_form.css" />
+<assets:hash var="npm_jquery_ui_css" asset="npm.jquery-ui.css" />
+<assets:hash var="npm_timepicker_css" asset="npm.timepicker.css" />
+<assets:hash var="npm_date_fn_js" asset="npm.date-fns.js" />
+<assets:hash var="date_fn_localized_js" asset="date-fns-localized.js" />
+<assets:hash var="npm_jquery_ui_js" asset="npm.jquery-ui.js" />
+<assets:hash var="npm_timepicker_js" asset="npm.timepicker.js" />
+<assets:hash var="app_detail_app_form_js" asset="app_detail~app_form.js" />
+<assets:hash var="app_overtime_sicknote_form_js" asset="app_form~overtime_form~sick_note_form.js" />
+<assets:hash var="app_form_js" asset="app_form.js" />
 
 <!DOCTYPE html>
 <html>
@@ -21,16 +32,16 @@
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.28f2739d827299b4c8a8.css' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.14d0a75394fc92805828.css' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.timepicker.8d00c375214cf44b209e.css' />" />
-    <script defer src="<spring:url value='/assets/npm.date-fns.7a29840def9ca2f1646b.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/date-fns-localized.e52ac48f0198b29060b7.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/npm.jquery-ui.6959b43e855edd474ba6.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/npm.timepicker.d654237dd26c765b074c.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_detail~app_form.793bc6fb3d72a456d679.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.bb7f0e50b8b0faba1d20.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_form.718f76f0416953da76be.min.js' />"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='${app_overtime__sicknote_form_css}' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='${npm_jquery_ui_css}' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='${npm_timepicker_css}' />" />
+    <script defer src="<spring:url value='${npm_date_fn_js}' />"></script>
+    <script defer src="<spring:url value='${date_fn_localized_js}' />"></script>
+    <script defer src="<spring:url value='${npm_jquery_ui_js}' />"></script>
+    <script defer src="<spring:url value='${npm_timepicker_js}' />"></script>
+    <script defer src="<spring:url value='${app_detail_app_form_js}' />"></script>
+    <script defer src="<spring:url value='${app_overtime_sicknote_form_js}' />"></script>
+    <script defer src="<spring:url value='${app_form_js}' />"></script>
 </head>
 
 <body>

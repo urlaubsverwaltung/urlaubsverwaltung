@@ -91,9 +91,10 @@ module.exports = {
     new webpack.HashedModuleIdsPlugin(),
     // This Webpack plugin will generate a JSON file that matches
     // the original filename with the hashed version.
-    isProduction && new WebpackAssetsManifest({
+    // This file is read by the taglib AssetsHashResolverTag.java to ease asset handling in templates
+    new WebpackAssetsManifest({
       // output path is relative to webpack.output.path
-      output: path.resolve(__dirname, 'assets-manifest.json'),
+      output: path.resolve(__dirname, 'src/main/webapp/WEB-INF/assets-manifest.json'),
       publicPath: true,
     }),
     new webpack.ProvidePlugin({
@@ -103,7 +104,7 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: isProduction ? "../assets/[name].[contenthash].css" : "../assets/[name].css",
     })
-  ].filter(Boolean),
+  ],
 
   optimization: {
     runtimeChunk: 'single',

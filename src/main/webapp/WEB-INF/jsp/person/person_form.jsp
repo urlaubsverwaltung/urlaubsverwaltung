@@ -3,13 +3,16 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
+
+<assets:hash var="person_form_js" asset="person_form.js" />
 
 
 <!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/person_form.c05e9911c6f916b9fe09.min.js' />"></script>
+    <script defer src="<spring:url value='${person_form_js}' />"></script>
 </head>
 
 <body>

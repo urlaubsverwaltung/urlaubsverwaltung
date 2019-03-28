@@ -5,6 +5,9 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
+
+<assets:hash var="app_list_js" asset="app_list.js" />
 
 <sec:authorize access="hasAuthority('USER')">
     <c:set var="IS_USER" value="${true}"/>
@@ -33,7 +36,7 @@
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/app_list.e3a55cc4ca98dd6346ee.min.js' />"></script>
+    <script defer src="<spring:url value='${app_list_js}' />"></script>
 </head>
 
 <body>

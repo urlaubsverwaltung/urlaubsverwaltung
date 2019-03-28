@@ -6,15 +6,18 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
 
+<assets:hash var="npm_tablesorter_js" asset="npm.tablesorter.js" />
+<assets:hash var="department_list_js" asset="department_list.js" />
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/npm.tablesorter.4196ea7c9c92849cd792.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/department_list.7eac09aa68627b308b7c.min.js' />"></script>
+    <script defer src="<spring:url value='${npm_tablesorter_js}' />"></script>
+    <script defer src="<spring:url value='${department_list_js}' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>
 </head>
 
