@@ -1,6 +1,5 @@
 import $ from 'jquery'
-import '../../lib/datepicker'
-import createDatepickerInstances from '../createDatepickerInstances'
+import { createDatepickerInstances } from '../../components/datepicker'
 
 $(document).ready(function () {
   var locale = window.navigator.language;

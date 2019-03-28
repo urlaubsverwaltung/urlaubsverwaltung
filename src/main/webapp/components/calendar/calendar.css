@@ -101,7 +101,7 @@
 
 .datepicker-table td {
     border: 1px solid #FFF;
-    background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url("../images/schraffur.png");
+    background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url("./schraffur.png");
 }
 
 .datepicker-table thead tr th {

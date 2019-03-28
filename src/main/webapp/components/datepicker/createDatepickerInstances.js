@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import datepicker from '../lib/datepicker';
+import datepicker from './datepicker';
 import { isWeekend } from 'date-fns';
 
 export default async function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, onSelect) {

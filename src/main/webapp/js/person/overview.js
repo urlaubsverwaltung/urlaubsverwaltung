@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { getYear, setYear, firstOfYear, subMonths, addMonths } from 'date-fns';
 
 import getUrlParam from '../getUrlParam';
-import '../calendar';
+import '../../components/calendar';
 
 $(document).ready(function () {
 

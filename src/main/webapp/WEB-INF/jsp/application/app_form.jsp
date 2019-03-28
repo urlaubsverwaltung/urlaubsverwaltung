@@ -29,8 +29,8 @@
     <script defer src="<spring:url value='/assets/npm.jquery-ui.f82489a9e7eb2a4806ba.min.js' />"></script>
     <script defer src="<spring:url value='/assets/npm.timepicker.19ed420af47efdda8173.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_detail~app_form.564b98d802eef3e65abd.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.deaa072109f5dfc5b6d8.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_form.1ce45aaa90076d7ae542.min.js' />"></script>
+    <script defer src="<spring:url value='/assets//app_form~overtime_form~sick_note_form.521b6dd44d7691f214bf.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form.be289417e21ccd1cea13.js' />"></script>
 </head>
 
 <body>

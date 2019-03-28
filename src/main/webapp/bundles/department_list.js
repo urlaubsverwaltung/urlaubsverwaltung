@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import 'tablesorter';
-import '../js/popover'
+import '../components/popover'
 
 $(document).ready(function () {
 

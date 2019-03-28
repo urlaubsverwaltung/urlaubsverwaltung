@@ -1,6 +1,5 @@
-import '../../lib/datepicker';
-import '../../lib/timepicker';
-import createDatepickerInstances from '../createDatepickerInstances'
+import { createDatepickerInstances } from '../../components/datepicker';
+import '../../components/timepicker';
 import sendGetDaysRequest from '../sendGetDaysRequest';
 import sendGetDepartmentVacationsRequest from '../sendGetDepartmentVacationsRequest';
 

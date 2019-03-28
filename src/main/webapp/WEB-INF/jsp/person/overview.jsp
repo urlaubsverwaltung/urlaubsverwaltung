@@ -23,7 +23,7 @@
     </script>
     <script defer src="<spring:url value='/assets/npm.date-fns.5a87bdcafa645ad64030.min.js' />"></script>
     <script defer src="<spring:url value='/assets/date-fns-localized.f977abd85880a1f57b92.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/person_overview.c556caf7e44509374523.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/person_overview.7ee5399489b13e24625e.min.js' />"></script>
 </head>
 
 <body>

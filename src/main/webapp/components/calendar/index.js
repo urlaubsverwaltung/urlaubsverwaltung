@@ -14,10 +14,10 @@ import {
   startOfMonth,
   subMonths,
 } from 'date-fns';
-import format from '../lib/date-fns/format'
-import startOfWeek from '../lib/date-fns/startOfWeek'
-import tooltip from './tooltip';
-import '../css/calendar.css';
+import format from '../../lib/date-fns/format'
+import startOfWeek from '../../lib/date-fns/startOfWeek'
+import tooltip from '../tooltip';
+import './calendar.css';
 
 $(function() {
 

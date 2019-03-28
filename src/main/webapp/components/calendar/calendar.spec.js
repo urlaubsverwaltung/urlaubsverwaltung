@@ -1,4 +1,4 @@
-import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from './TestSetupHelper';
+import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from '../../../../test/javascript/TestSetupHelper';
 
 describe ('calendar', () => {
     const RealDate = Date;
@@ -94,7 +94,7 @@ describe ('calendar', () => {
 
         // loading calendar.js registers a jQuery ready callback
         // which will be executed asynchronously
-        await import('../../main/webapp/js/calendar.js');
+        await import('./index.js');
 
         // therefore we have to wait till ready callbacks are invoked
         return waitForFinishedJQueryReadyCallbacks();

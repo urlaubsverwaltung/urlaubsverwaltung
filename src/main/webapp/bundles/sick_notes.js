@@ -1,2 +1,2 @@
 import '../js/navigate'
-import '../js/table.sortable'
+import '../components/table-sortable'
