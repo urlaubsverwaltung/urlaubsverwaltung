@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.workingtime;
+package org.synyx.urlaubsverwaltung.workingtime.web;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

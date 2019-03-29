@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.workday;
+package org.synyx.urlaubsverwaltung.workingtime.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

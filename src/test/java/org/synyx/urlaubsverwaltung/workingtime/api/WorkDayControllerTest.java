@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.workday;
+package org.synyx.urlaubsverwaltung.workingtime.api;
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;
