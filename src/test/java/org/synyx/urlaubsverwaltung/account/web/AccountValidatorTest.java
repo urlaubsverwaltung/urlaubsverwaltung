@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.account;
+package org.synyx.urlaubsverwaltung.account.web;
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;
