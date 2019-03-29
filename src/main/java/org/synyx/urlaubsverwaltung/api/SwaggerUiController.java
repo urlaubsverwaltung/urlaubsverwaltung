@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi;
+package org.synyx.urlaubsverwaltung.api;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

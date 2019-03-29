@@ -17,8 +17,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
-import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
 import java.util.ArrayList;
 import java.util.List;

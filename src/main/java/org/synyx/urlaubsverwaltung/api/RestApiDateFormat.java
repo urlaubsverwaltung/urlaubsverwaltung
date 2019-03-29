@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi;
+package org.synyx.urlaubsverwaltung.api;
 
 public final class RestApiDateFormat {
 

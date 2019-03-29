@@ -15,8 +15,8 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
-import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
-import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
 import java.math.BigDecimal;
 import java.util.Optional;

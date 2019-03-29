@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.department.api;
 
 import org.synyx.urlaubsverwaltung.department.Department;
-import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.person.api.PersonListResponse;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 

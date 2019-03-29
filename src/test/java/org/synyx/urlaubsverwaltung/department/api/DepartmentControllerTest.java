@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.restapi.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 
 import java.util.Collections;
 

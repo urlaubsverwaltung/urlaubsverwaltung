@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi;
+package org.synyx.urlaubsverwaltung.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;

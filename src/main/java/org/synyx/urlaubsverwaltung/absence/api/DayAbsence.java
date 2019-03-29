@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.absence.api;
 
 import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
 import java.math.BigDecimal;
 

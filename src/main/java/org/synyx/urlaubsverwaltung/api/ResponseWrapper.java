@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi;
+package org.synyx.urlaubsverwaltung.api;
 
 /**
  * REST-API Wrapper class. Exists for historical reasons. It simulates a @ModelAttribute("response").
