@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 

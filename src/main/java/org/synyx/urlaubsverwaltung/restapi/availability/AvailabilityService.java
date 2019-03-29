@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.restapi.availability;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

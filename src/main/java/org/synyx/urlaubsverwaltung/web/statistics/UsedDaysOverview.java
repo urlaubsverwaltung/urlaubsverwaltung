@@ -2,13 +2,13 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.util.List;

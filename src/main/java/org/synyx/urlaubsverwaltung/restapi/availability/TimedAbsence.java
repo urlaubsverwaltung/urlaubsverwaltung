@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi.availability;
 
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.math.BigDecimal;
 

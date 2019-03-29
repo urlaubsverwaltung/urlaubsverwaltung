@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 
 import java.math.BigDecimal;
 import java.util.Map;

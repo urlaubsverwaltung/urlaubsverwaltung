@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
 import java.math.BigDecimal;
 import java.util.Optional;

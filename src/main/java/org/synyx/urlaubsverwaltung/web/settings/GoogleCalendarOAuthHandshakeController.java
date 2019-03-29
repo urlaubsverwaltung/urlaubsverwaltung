@@ -21,10 +21,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.core.settings.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
@@ -35,7 +35,7 @@ import java.util.Collections;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.core.sync.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
+import static org.synyx.urlaubsverwaltung.sync.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
 
 @Controller
 @RequestMapping("/web")

@@ -4,18 +4,18 @@ import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.account.domain.Account;
+import org.synyx.urlaubsverwaltung.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.Optional;
 
 /**
  * Builds a {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics} for the given
- * {@link org.synyx.urlaubsverwaltung.core.person.Person} and period.
+ * {@link org.synyx.urlaubsverwaltung.person.Person} and period.
  */
 @Component
 public class ApplicationForLeaveStatisticsBuilder {

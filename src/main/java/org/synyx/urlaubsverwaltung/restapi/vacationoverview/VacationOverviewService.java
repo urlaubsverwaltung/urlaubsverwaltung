@@ -4,22 +4,22 @@ import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.core.department.Department;
-import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth;
-import org.synyx.urlaubsverwaltung.core.holiday.VacationOverview;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.settings.FederalState;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.holiday.DayOfMonth;
+import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WEEKEND;
-import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WORKDAY;
+import static org.synyx.urlaubsverwaltung.holiday.DayOfMonth.TypeOfDay.WEEKEND;
+import static org.synyx.urlaubsverwaltung.holiday.DayOfMonth.TypeOfDay.WORKDAY;
 
 @Component
 public class VacationOverviewService {

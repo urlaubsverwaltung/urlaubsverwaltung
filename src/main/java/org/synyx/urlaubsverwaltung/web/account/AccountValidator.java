@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 

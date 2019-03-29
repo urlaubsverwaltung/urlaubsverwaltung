@@ -1,7 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<%@attribute name="person" type="org.synyx.urlaubsverwaltung.core.person.Person" required="true" %>
+<%@attribute name="person" type="org.synyx.urlaubsverwaltung.person.Person" required="true" %>
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 <%@attribute name="nameIsNoLink" type="java.lang.Boolean" required="false" %>
 

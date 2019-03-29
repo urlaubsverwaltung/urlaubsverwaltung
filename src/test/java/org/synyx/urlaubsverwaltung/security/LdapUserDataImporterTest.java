@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Collections;

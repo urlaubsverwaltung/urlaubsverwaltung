@@ -3,9 +3,9 @@ package org.synyx.urlaubsverwaltung.restapi.availability;
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.util.List;
 import java.util.Optional;

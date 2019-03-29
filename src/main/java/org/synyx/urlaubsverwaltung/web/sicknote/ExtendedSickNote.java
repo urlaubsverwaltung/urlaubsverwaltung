@@ -1,15 +1,15 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.springframework.beans.BeanUtils;
-import org.synyx.urlaubsverwaltung.core.period.WeekDay;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.period.WeekDay;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 
 
 /**
- * Represents an extended {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNote} with information about the number
+ * Represents an extended {@link org.synyx.urlaubsverwaltung.sicknote.SickNote} with information about the number
  * of work days. (depending on working time of the person)
  */
 public class ExtendedSickNote extends SickNote {

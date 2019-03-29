@@ -4,9 +4,9 @@ import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 

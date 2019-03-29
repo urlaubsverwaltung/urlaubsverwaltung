@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Collection;
 

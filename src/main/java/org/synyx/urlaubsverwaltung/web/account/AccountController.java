@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.account.domain.Account;
+import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -31,7 +31,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * Controller to manage {@link org.synyx.urlaubsverwaltung.core.account.domain.Account}s of {@link org.synyx.urlaubsverwaltung.core.person.Person}s.
+ * Controller to manage {@link org.synyx.urlaubsverwaltung.account.domain.Account}s of {@link org.synyx.urlaubsverwaltung.person.Person}s.
  */
 @Controller
 @RequestMapping("/web")

@@ -3,14 +3,14 @@ package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.core.department.Department;
-import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.holiday.VacationOverview;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.settings.FederalState;
-import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.core.holiday.DayOfMonth.TypeOfDay.WORKDAY;
+import static org.synyx.urlaubsverwaltung.holiday.DayOfMonth.TypeOfDay.WORKDAY;
 
 public class VacationOverviewServiceTest {
 

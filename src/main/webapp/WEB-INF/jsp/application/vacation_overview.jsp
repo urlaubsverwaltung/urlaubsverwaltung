@@ -86,7 +86,7 @@
                                     <c:if test="${currentMonth == i }">
                                         <option value="${i}" selected="${i}">
                                             <spring:eval
-                                                expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)"
+                                                expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)"
                                                 var="month"/>
                                             <c:out value="${month}"/>
                                         </option>
@@ -94,7 +94,7 @@
                                     <c:if test="${currentMonth != i }">
                                         <option value="${i}">
                                             <spring:eval
-                                                expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)"
+                                                expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)"
                                                 var="month"/>
                                             <c:out value="${month}"/>
                                         </option>

@@ -9,19 +9,18 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.Optional;
@@ -38,11 +37,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus.REVOKED;
-import static org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.core.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OverviewControllerTest {

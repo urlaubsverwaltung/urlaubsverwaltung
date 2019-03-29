@@ -5,11 +5,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.settings.FederalState;
-import org.synyx.urlaubsverwaltung.core.workingtime.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;

@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.util.List;

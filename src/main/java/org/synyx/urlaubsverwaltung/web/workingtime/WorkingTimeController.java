@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.core.period.WeekDay;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.settings.FederalState;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.period.WeekDay;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
@@ -33,8 +33,8 @@ import java.util.Optional;
 
 
 /**
- * Controller to manage {@link org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime}s of
- * {@link org.synyx.urlaubsverwaltung.core.person.Person}s.
+ * Controller to manage {@link org.synyx.urlaubsverwaltung.workingtime.WorkingTime}s of
+ * {@link org.synyx.urlaubsverwaltung.person.Person}s.
  */
 @Controller
 @RequestMapping("/web")

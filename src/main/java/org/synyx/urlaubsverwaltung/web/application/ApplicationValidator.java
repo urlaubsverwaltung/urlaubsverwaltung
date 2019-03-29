@@ -6,21 +6,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
-import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
-import org.synyx.urlaubsverwaltung.core.workingtime.OverlapCase;
-import org.synyx.urlaubsverwaltung.core.workingtime.OverlapService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.workingtime.OverlapCase;
+import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -271,7 +271,7 @@ public class ApplicationValidator implements Validator {
 
         /**
          * Ensure that the person has enough vacation days left if the vacation type is
-         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.HOLIDAY}
+         * {@link org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY}
          */
         if (!enoughVacationDaysLeft(application)) {
             errors.reject(ERROR_NOT_ENOUGH_DAYS);
@@ -279,7 +279,7 @@ public class ApplicationValidator implements Validator {
 
         /**
          * Ensure that the person has enough overtime hours left if the vacation type is
-         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.OVERTIME}
+         * {@link org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME}
          */
         if (!enoughOvertimeHoursLeft(application, settings)) {
             errors.reject(ERROR_NOT_ENOUGH_OVERTIME);

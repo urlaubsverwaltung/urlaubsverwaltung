@@ -15,18 +15,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteAction;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCommentService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteAction;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -39,7 +39,7 @@ import java.util.Optional;
 
 
 /**
- * Controller for {@link org.synyx.urlaubsverwaltung.core.sicknote.SickNote} purposes.
+ * Controller for {@link org.synyx.urlaubsverwaltung.sicknote.SickNote} purposes.
  */
 @Controller
 @RequestMapping("/web")

@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.web.sicknote;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

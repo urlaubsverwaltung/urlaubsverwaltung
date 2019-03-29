@@ -8,8 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatistics;
-import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatisticsService;
+import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
+import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 

@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.workingtime;
 
 import org.joda.time.DateMidnight;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.period.WeekDay;
-import org.synyx.urlaubsverwaltung.core.settings.FederalState;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.period.WeekDay;
+import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,10 +3,10 @@ package org.synyx.urlaubsverwaltung.web.department;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.department.Department;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Collections;

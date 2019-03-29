@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi.department;
 
-import org.synyx.urlaubsverwaltung.core.department.Department;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonListResponse;
 import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
