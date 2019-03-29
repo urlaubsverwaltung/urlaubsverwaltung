@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.web;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,7 +17,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Handles exceptions and redirects to error page.
  */
-@ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.web")
+@ControllerAdvice(annotations = Controller.class)
 public class ExceptionHandlerControllerAdvice {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
