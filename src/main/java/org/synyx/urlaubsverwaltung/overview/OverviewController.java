@@ -29,8 +29,8 @@ import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
-import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
-import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
+import org.synyx.urlaubsverwaltung.statistics.web.SickDaysOverview;
+import org.synyx.urlaubsverwaltung.statistics.web.UsedDaysOverview;
 
 import java.util.Comparator;
 import java.util.List;

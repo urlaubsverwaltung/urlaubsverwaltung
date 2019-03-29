@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.junit.Assert;
 import org.junit.Test;

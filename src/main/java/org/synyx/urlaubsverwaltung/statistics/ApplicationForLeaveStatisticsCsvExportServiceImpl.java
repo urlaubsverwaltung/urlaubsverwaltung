@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

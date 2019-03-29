@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.statistics.SickDays;
+import org.synyx.urlaubsverwaltung.statistics.web.SickDays;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

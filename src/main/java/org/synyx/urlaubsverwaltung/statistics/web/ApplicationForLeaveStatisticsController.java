@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import liquibase.util.csv.CSVWriter;
 import org.joda.time.DateMidnight;

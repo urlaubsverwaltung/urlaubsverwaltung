@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics}.
  */
 public class ApplicationForLeaveStatisticsTest {
 

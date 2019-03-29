@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

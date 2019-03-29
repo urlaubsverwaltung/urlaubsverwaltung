@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Optional;
 
 
 /**
- * Builds a {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics} for the given
+ * Builds a {@link org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics} for the given
  * {@link org.synyx.urlaubsverwaltung.person.Person} and period.
  */
 @Component

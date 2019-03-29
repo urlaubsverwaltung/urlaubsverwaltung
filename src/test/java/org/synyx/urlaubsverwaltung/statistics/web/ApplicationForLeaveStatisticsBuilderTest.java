@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatisticsBuilder}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatisticsBuilder}.
  */
 public class ApplicationForLeaveStatisticsBuilderTest {
 

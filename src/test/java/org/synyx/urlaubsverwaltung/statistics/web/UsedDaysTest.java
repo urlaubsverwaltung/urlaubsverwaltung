@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import java.util.Map;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.UsedDays}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.statistics.web.UsedDays}.
  */
 public class UsedDaysTest {
 
