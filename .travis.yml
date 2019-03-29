@@ -8,6 +8,7 @@ jdk:
 cache:
   directories:
     - $HOME/.m2
+    - node
 
 branches:
   only:
