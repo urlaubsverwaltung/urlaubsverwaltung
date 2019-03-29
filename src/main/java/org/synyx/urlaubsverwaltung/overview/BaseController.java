@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web;
+package org.synyx.urlaubsverwaltung.overview;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
