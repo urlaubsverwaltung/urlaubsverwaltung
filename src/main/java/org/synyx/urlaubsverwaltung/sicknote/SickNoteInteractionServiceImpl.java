@@ -10,13 +10,13 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionSer
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sync.CalendarSyncService;
-import org.synyx.urlaubsverwaltung.sync.absence.Absence;
-import org.synyx.urlaubsverwaltung.sync.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.sync.absence.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.sync.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.sync.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.sync.absence.EventType;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
 
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.synyx.urlaubsverwaltung.sync.providers.noop.NoopCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalendarSyncProvider;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

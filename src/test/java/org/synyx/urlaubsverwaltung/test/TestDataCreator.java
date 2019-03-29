@@ -19,8 +19,8 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.sync.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.sync.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 

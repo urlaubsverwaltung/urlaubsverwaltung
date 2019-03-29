@@ -9,7 +9,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 
 import java.util.List;
 

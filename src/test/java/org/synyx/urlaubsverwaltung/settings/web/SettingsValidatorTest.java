@@ -11,8 +11,8 @@ import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.sync.providers.exchange.ExchangeCalendarProvider;
-import org.synyx.urlaubsverwaltung.sync.providers.google.GoogleCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

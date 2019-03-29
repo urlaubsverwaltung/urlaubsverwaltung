@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 
 import java.util.AbstractMap;
 import java.util.Collections;
