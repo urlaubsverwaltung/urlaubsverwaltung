@@ -8,7 +8,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("restApiBaseController")
 @RequestMapping("/api")
-public class BaseController {
+public class SwaggerUiController {
 
     private static final boolean RELATIVE_CONTEXT = true;
 
