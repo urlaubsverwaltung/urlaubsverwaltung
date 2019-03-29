@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.department.api;
 
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.restapi.person.PersonListResponse;
-import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonListResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;

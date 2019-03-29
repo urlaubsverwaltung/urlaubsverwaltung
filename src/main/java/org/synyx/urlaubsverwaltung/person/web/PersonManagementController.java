@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.person;
+package org.synyx.urlaubsverwaltung.person.web;
 
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;

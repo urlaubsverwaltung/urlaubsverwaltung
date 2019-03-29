@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.person;
+package org.synyx.urlaubsverwaltung.person.api;
 
 import org.junit.Before;
 import org.junit.Test;

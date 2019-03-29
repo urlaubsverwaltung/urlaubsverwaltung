@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
 
 import java.math.BigDecimal;
 import java.util.Locale;

@@ -32,7 +32,7 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 
 import java.util.List;
 import java.util.Optional;

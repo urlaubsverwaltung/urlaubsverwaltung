@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.restapi.person.PersonResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -32,8 +32,8 @@ import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
-import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
+import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
 
 import java.math.BigDecimal;
 import java.sql.Time;

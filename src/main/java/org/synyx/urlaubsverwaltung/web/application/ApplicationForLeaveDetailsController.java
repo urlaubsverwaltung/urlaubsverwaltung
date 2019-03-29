@@ -36,8 +36,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
+import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
 
 import java.util.List;
 import java.util.Optional;
