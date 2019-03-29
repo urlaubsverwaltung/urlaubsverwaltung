@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.config;
+package org.synyx.urlaubsverwaltung.mail.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

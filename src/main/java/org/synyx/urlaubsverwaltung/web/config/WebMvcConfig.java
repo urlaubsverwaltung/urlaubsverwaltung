@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.config;
+package org.synyx.urlaubsverwaltung.web.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

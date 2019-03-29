@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.config;
+package org.synyx.urlaubsverwaltung.api.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;

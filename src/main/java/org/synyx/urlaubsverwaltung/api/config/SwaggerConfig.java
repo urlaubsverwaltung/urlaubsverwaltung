@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.config;
+package org.synyx.urlaubsverwaltung.api.config;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Value;
