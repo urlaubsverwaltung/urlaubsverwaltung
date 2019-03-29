@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Collections;
 import java.util.Optional;

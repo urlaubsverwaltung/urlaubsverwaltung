@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Arrays;
 import java.util.Collections;

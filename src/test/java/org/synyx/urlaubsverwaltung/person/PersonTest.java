@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

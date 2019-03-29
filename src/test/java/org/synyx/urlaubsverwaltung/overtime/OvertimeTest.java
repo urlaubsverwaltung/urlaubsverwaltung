@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

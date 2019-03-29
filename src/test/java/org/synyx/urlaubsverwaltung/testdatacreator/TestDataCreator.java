@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.test;
+package org.synyx.urlaubsverwaltung.testdatacreator;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;

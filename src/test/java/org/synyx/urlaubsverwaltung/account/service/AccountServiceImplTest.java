@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.account.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Optional;
 

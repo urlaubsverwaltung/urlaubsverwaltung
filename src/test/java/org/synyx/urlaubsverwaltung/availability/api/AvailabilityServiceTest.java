@@ -4,13 +4,8 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.availability.api.AvailabilityList;
-import org.synyx.urlaubsverwaltung.availability.api.AvailabilityService;
-import org.synyx.urlaubsverwaltung.availability.api.DayAvailability;
-import org.synyx.urlaubsverwaltung.availability.api.FreeTimeAbsenceProvider;
-import org.synyx.urlaubsverwaltung.availability.api.TimedAbsenceSpans;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.util.List;

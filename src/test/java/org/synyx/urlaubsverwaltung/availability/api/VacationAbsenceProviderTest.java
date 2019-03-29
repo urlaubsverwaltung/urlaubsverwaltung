@@ -6,12 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.availability.api.TimedAbsence;
-import org.synyx.urlaubsverwaltung.availability.api.TimedAbsenceSpans;
-import org.synyx.urlaubsverwaltung.availability.api.VacationAbsenceProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDAO;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import static java.math.BigDecimal.TEN;
 import static org.joda.time.DateTimeConstants.DECEMBER;

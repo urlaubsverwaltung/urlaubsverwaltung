@@ -5,16 +5,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.synyx.urlaubsverwaltung.availability.api.FreeTimeAbsenceProvider;
-import org.synyx.urlaubsverwaltung.availability.api.HolidayAbsenceProvider;
-import org.synyx.urlaubsverwaltung.availability.api.TimedAbsence;
-import org.synyx.urlaubsverwaltung.availability.api.TimedAbsenceSpans;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

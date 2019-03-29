@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.util.Optional;
