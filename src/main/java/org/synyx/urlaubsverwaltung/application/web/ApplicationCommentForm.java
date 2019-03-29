@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.application;
+package org.synyx.urlaubsverwaltung.application.web;
 
 /**
  * Represents a comment.

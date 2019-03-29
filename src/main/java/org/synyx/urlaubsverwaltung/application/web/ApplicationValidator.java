@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.application;
+package org.synyx.urlaubsverwaltung.application.web;
 
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import java.util.Optional;
 
 
 /**
- * This class validate if an {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} is filled
+ * This class validate if an {@link org.synyx.urlaubsverwaltung.application.web.ApplicationForLeaveForm} is filled
  * correctly by the user, else it saves error messages in errors object.
  */
 @Component

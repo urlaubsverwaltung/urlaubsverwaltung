@@ -25,7 +25,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
