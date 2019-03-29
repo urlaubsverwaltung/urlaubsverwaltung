@@ -6,6 +6,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +22,8 @@ class AssetFilenameHashMapper {
 
     String getHashedAssetFilename(String assetNameWithoutHash) {
 
-        File manifest = getManifestFile();
-        HashMap<String, String> assets = getAssets(manifest);
+        InputStream manifestFileStream = getManifestFile();
+        HashMap<String, String> assets = getAssets(manifestFileStream);
 
         if (!assets.containsKey(assetNameWithoutHash)) {
             throw new IllegalStateException(String.format("could not resolve given asset name=%s", assetNameWithoutHash));
@@ -32,7 +33,7 @@ class AssetFilenameHashMapper {
 
     }
 
-    private HashMap<String, String> getAssets(File manifest) {
+    private HashMap<String, String> getAssets(InputStream manifest) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -42,9 +43,9 @@ class AssetFilenameHashMapper {
         }
     }
 
-    private File getManifestFile() {
+    private InputStream getManifestFile() {
         try {
-            return resourceLoader.getResource(ASSETS_MANIFEST_FILE).getFile();
+            return resourceLoader.getResource(ASSETS_MANIFEST_FILE).getInputStream();
         } catch (IOException e) {
             throw new IllegalStateException(String.format("could not read %s file", ASSETS_MANIFEST_FILE));
         }
