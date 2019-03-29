@@ -15,7 +15,7 @@ describe ('calendar', () => {
         }
 
         // noinspection JSAnnotator
-        constructor(...args) {
+        constructor(...args) { // NOSONAR
           let d = args.length === 0 ? new RealDate(isoDate) : new RealDate(...args);
           d[dateInstanceIdentifier] = true;
           return d;
