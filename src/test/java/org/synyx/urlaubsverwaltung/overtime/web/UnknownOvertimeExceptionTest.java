@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.overtime;
+package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.junit.Assert;
 import org.junit.Test;

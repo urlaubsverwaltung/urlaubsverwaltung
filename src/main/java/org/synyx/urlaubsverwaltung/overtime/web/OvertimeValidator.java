@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.overtime;
+package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
