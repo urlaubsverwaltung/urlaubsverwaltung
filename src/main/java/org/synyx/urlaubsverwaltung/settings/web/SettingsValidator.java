@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.settings;
+package org.synyx.urlaubsverwaltung.settings.web;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;

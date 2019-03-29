@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.settings;
+package org.synyx.urlaubsverwaltung.settings.web;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;

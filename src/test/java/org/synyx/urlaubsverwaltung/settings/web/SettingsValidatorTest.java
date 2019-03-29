@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.settings;
+package org.synyx.urlaubsverwaltung.settings.web;
 
 import org.junit.Assert;
 import org.junit.Before;
