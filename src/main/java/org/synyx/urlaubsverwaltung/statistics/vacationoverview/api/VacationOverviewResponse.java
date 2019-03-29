@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
+package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
 import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
 

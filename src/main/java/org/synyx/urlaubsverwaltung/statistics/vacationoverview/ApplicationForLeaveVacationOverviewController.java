@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.statistics.vacationoverview;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;

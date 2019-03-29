@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
+package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
 import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,9 @@ public class VacationOverviewService {
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     @Autowired
-    VacationOverviewService(DepartmentService departmentService,
-                            WorkingTimeService workingTimeService,
-                            PublicHolidaysService publicHolidayService) {
+    public VacationOverviewService(DepartmentService departmentService,
+                                   WorkingTimeService workingTimeService,
+                                   PublicHolidaysService publicHolidayService) {
 
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;

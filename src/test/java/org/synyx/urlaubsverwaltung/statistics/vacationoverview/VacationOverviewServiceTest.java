@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.vacationoverview;
+package org.synyx.urlaubsverwaltung.statistics.vacationoverview;
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;
@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.VacationOverviewService;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
