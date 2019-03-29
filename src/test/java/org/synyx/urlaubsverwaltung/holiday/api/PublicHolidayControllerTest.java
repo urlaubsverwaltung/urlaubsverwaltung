@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.holiday;
+package org.synyx.urlaubsverwaltung.holiday.api;
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;
@@ -139,7 +139,7 @@ public class PublicHolidayControllerTest {
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByID(any())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("person", "23"))
             .andExpect(status().isBadRequest());

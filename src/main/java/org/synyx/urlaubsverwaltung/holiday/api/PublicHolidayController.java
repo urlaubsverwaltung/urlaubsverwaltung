@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.holiday;
+package org.synyx.urlaubsverwaltung.holiday.api;
 
 import de.jollyday.Holiday;
 import io.swagger.annotations.Api;

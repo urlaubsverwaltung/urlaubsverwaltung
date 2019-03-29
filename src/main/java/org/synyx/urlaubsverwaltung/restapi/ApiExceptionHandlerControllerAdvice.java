@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -15,7 +16,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 /**
  * Handles exceptions and redirects to error page.
  */
-@ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.restapi")
+@ControllerAdvice(annotations = RestController.class)
 public class ApiExceptionHandlerControllerAdvice {
 
     @ResponseStatus(BAD_REQUEST)

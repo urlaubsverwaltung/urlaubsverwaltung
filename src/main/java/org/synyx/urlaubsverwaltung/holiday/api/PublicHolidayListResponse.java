@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.holiday;
+package org.synyx.urlaubsverwaltung.holiday.api;
 
 import java.util.ArrayList;
 import java.util.List;
