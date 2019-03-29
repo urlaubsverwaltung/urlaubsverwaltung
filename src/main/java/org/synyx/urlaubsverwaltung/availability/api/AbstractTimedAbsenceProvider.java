@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.availability;
+package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.person.Person;

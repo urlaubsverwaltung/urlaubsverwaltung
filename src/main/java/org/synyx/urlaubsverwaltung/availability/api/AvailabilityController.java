@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.availability;
+package org.synyx.urlaubsverwaltung.availability.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -1,7 +1,9 @@
-package org.synyx.urlaubsverwaltung.restapi.availability;
+package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.availability.api.TimedAbsence;
+import org.synyx.urlaubsverwaltung.availability.api.TimedAbsenceSpans;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.math.BigDecimal;

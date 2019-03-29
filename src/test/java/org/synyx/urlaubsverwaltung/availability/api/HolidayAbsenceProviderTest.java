@@ -1,10 +1,14 @@
-package org.synyx.urlaubsverwaltung.restapi.availability;
+package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.synyx.urlaubsverwaltung.availability.api.HolidayAbsenceProvider;
+import org.synyx.urlaubsverwaltung.availability.api.SickDayAbsenceProvider;
+import org.synyx.urlaubsverwaltung.availability.api.TimedAbsence;
+import org.synyx.urlaubsverwaltung.availability.api.TimedAbsenceSpans;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
