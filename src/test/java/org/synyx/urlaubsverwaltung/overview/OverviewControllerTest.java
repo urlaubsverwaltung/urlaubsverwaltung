@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.overview;
+package org.synyx.urlaubsverwaltung.overview;
 
 
 import org.joda.time.DateMidnight;
