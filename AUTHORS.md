@@ -6,6 +6,7 @@ Urlaubsverwaltung contributors in alphabetical order:
 * Christian Lange <Christian.Lange@posteo.de>
 * Benjamin Seber <benjamin.seber@mailbox.org>
 * David Schilling <davejs92@gmail.com>
+* Robin de Silva Jayasinghe <robin@jayasinghe.de>
 
 By adding your name to this list, you grant full and irrevocable copyright  
 and patent indemnity to the Urlaubsverwaltung and all use of the Urlaubsverwaltung,  
