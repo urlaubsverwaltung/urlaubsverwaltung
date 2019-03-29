@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteAlreadyInactiveException;
+import org.synyx.urlaubsverwaltung.sicknote.web.SickNoteAlreadyInactiveException;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;

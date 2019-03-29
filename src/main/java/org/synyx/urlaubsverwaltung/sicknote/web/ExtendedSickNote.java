@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.period.WeekDay;

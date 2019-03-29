@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

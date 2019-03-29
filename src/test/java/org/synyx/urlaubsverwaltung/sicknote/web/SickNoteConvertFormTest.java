@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.sicknote.web.SickNoteConvertForm}.
  */
 public class SickNoteConvertFormTest {
 

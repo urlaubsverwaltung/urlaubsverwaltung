@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.junit.Before;
 import org.junit.Test;

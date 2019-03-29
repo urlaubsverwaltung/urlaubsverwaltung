@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 

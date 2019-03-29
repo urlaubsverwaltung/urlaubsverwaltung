@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.api;
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;

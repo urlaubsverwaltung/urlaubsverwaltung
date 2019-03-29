@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.web;
 
 /**
  * Thrown in case trying to execute action on an already inactive sick note.

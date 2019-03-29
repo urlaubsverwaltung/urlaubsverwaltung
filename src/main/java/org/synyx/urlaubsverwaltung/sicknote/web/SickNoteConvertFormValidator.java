@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -7,7 +7,7 @@ import org.springframework.validation.Validator;
 
 
 /**
- * Class for validating {@link org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm} object.
+ * Class for validating {@link org.synyx.urlaubsverwaltung.sicknote.web.SickNoteConvertForm} object.
  */
 @Component
 public class SickNoteConvertFormValidator implements Validator {
