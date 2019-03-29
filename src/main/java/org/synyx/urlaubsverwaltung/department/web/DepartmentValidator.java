@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.department;
+package org.synyx.urlaubsverwaltung.department.web;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

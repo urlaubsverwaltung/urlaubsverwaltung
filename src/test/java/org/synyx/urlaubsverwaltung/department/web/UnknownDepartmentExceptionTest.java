@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.department;
+package org.synyx.urlaubsverwaltung.department.web;
 
 import org.junit.Assert;
 import org.junit.Test;

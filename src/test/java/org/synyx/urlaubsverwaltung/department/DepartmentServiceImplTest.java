@@ -31,16 +31,16 @@ public class DepartmentServiceImplTest {
 
     private DepartmentServiceImpl sut;
 
-    private DepartmentDAO departmentDAO;
+    private DepartmentRepository departmentRepository;
     private ApplicationService applicationService;
 
     @Before
     public void setUp() {
 
-        departmentDAO = mock(DepartmentDAO.class);
+        departmentRepository = mock(DepartmentRepository.class);
         applicationService = mock(ApplicationService.class);
 
-        sut = new DepartmentServiceImpl(departmentDAO, applicationService);
+        sut = new DepartmentServiceImpl(departmentRepository, applicationService);
     }
 
 
@@ -51,7 +51,7 @@ public class DepartmentServiceImplTest {
 
         sut.create(department);
 
-        verify(departmentDAO).save(eq(department));
+        verify(departmentRepository).save(eq(department));
     }
 
 
@@ -59,7 +59,7 @@ public class DepartmentServiceImplTest {
     public void ensureCallDepartmentDAOfindById() {
 
         sut.getDepartmentById(42);
-        verify(departmentDAO).findById(eq(42));
+        verify(departmentRepository).findById(eq(42));
     }
 
 
@@ -70,7 +70,7 @@ public class DepartmentServiceImplTest {
 
         sut.update(department);
 
-        verify(departmentDAO).save(eq(department));
+        verify(departmentRepository).save(eq(department));
     }
 
 
@@ -79,7 +79,7 @@ public class DepartmentServiceImplTest {
 
         sut.getAllDepartments();
 
-        verify(departmentDAO).findAll();
+        verify(departmentRepository).findAll();
     }
 
 
@@ -90,7 +90,7 @@ public class DepartmentServiceImplTest {
 
         sut.getManagedDepartmentsOfDepartmentHead(person);
 
-        verify(departmentDAO).getManagedDepartments(person);
+        verify(departmentRepository).getManagedDepartments(person);
     }
 
 
@@ -101,7 +101,7 @@ public class DepartmentServiceImplTest {
 
         sut.getManagedDepartmentsOfSecondStageAuthority(person);
 
-        verify(departmentDAO).getDepartmentsForSecondStageAuthority(person);
+        verify(departmentRepository).getDepartmentsForSecondStageAuthority(person);
     }
 
 
@@ -112,7 +112,7 @@ public class DepartmentServiceImplTest {
 
         sut.getAssignedDepartmentsOfMember(person);
 
-        verify(departmentDAO).getAssignedDepartments(person);
+        verify(departmentRepository).getAssignedDepartments(person);
     }
 
 
@@ -120,11 +120,11 @@ public class DepartmentServiceImplTest {
     public void ensureDeletionIsNotExecutedIfDepartmentWithGivenIDDoesNotExist() {
 
         int id = 0;
-        when(departmentDAO.findById(id)).thenReturn(Optional.empty());
+        when(departmentRepository.findById(id)).thenReturn(Optional.empty());
 
         sut.delete(id);
 
-        verify(departmentDAO, never()).deleteById(anyInt());
+        verify(departmentRepository, never()).deleteById(anyInt());
     }
 
 
@@ -132,12 +132,12 @@ public class DepartmentServiceImplTest {
     public void ensureDeleteCallFindOneAndDelete() {
 
         int id = 0;
-        when(departmentDAO.findById(id)).thenReturn(Optional.of(TestDataCreator.createDepartment()));
+        when(departmentRepository.findById(id)).thenReturn(Optional.of(TestDataCreator.createDepartment()));
 
         sut.delete(id);
 
-        verify(departmentDAO).findById(eq(id));
-        verify(departmentDAO).deleteById(eq(id));
+        verify(departmentRepository).findById(eq(id));
+        verify(departmentRepository).deleteById(eq(id));
     }
 
 
@@ -170,7 +170,7 @@ public class DepartmentServiceImplTest {
         Department marketing = TestDataCreator.createDepartment("marketing");
         marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, departmentHead));
 
-        when(departmentDAO.getManagedDepartments(departmentHead)).thenReturn(Arrays.asList(admins, marketing));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Arrays.asList(admins, marketing));
 
         List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
 
@@ -184,7 +184,7 @@ public class DepartmentServiceImplTest {
 
         Person departmentHead = mock(Person.class);
 
-        when(departmentDAO.getManagedDepartments(departmentHead)).thenReturn(Collections.emptyList());
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Collections.emptyList());
 
         List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
 
@@ -205,7 +205,7 @@ public class DepartmentServiceImplTest {
         Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
-        when(departmentDAO.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, admin1);
 
@@ -227,7 +227,7 @@ public class DepartmentServiceImplTest {
 
         Person marketing1 = TestDataCreator.createPerson("marketing1");
 
-        when(departmentDAO.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, marketing1);
 
@@ -247,7 +247,7 @@ public class DepartmentServiceImplTest {
         Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, noDepartmentHead));
 
-        when(departmentDAO.getManagedDepartments(noDepartmentHead))
+        when(departmentRepository.getManagedDepartments(noDepartmentHead))
             .thenReturn(Collections.singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(noDepartmentHead, admin1);
@@ -262,14 +262,14 @@ public class DepartmentServiceImplTest {
         Person person = mock(Person.class);
         DateMidnight date = DateMidnight.now();
 
-        when(departmentDAO.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
+        when(departmentRepository.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
 
         Assert.assertNotNull("Should not be null", applications);
         Assert.assertTrue("Should be empty", applications.isEmpty());
 
-        verify(departmentDAO).getAssignedDepartments(person);
+        verify(departmentRepository).getAssignedDepartments(person);
         verifyZeroInteractions(applicationService);
     }
 
@@ -293,7 +293,7 @@ public class DepartmentServiceImplTest {
         Department marketing = TestDataCreator.createDepartment("marketing");
         marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, person));
 
-        when(departmentDAO.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
+        when(departmentRepository.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
             any(DateMidnight.class), any(Person.class)))
             .thenReturn(Collections.emptyList());
@@ -305,7 +305,7 @@ public class DepartmentServiceImplTest {
         Assert.assertTrue("Should be empty", applications.isEmpty());
 
         // Ensure fetches departments of person
-        verify(departmentDAO).getAssignedDepartments(person);
+        verify(departmentRepository).getAssignedDepartments(person);
 
         // Ensure fetches applications for leave for every department member
         verify(applicationService)
@@ -352,7 +352,7 @@ public class DepartmentServiceImplTest {
         when(otherApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(false);
         when(otherApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(false);
 
-        when(departmentDAO.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
+        when(departmentRepository.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
             any(DateMidnight.class), eq(admin1)))

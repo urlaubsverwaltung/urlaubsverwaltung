@@ -30,26 +30,26 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final DepartmentDAO departmentDAO;
+    private final DepartmentRepository departmentRepository;
     private final ApplicationService applicationService;
 
     @Autowired
-    public DepartmentServiceImpl(DepartmentDAO departmentDAO, ApplicationService applicationService) {
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService) {
 
-        this.departmentDAO = departmentDAO;
+        this.departmentRepository = departmentRepository;
         this.applicationService = applicationService;
     }
 
     @Override
     public Optional<Department> getDepartmentById(Integer departmentId) {
-        return departmentDAO.findById(departmentId);
+        return departmentRepository.findById(departmentId);
     }
 
 
     @Override
     public void create(Department department) {
 
-        departmentDAO.save(department);
+        departmentRepository.save(department);
 
         LOG.info("Created department: {}", department);
     }
@@ -60,7 +60,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         department.setLastModification(DateTime.now());
 
-        departmentDAO.save(department);
+        departmentRepository.save(department);
 
         LOG.info("Updated department: {}", department);
     }
@@ -69,8 +69,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void delete(Integer departmentId) {
 
-        if (departmentDAO.findById(departmentId).isPresent()) {
-            departmentDAO.deleteById(departmentId);
+        if (departmentRepository.findById(departmentId).isPresent()) {
+            departmentRepository.deleteById(departmentId);
         } else {
             LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
         }
@@ -80,28 +80,28 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public List<Department> getAllDepartments() {
 
-        return departmentDAO.findAll();
+        return departmentRepository.findAll();
     }
 
 
     @Override
     public List<Department> getAssignedDepartmentsOfMember(Person member) {
 
-        return departmentDAO.getAssignedDepartments(member);
+        return departmentRepository.getAssignedDepartments(member);
     }
 
 
     @Override
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
 
-        return departmentDAO.getManagedDepartments(departmentHead);
+        return departmentRepository.getManagedDepartments(departmentHead);
     }
 
 
     @Override
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
 
-        return departmentDAO.getDepartmentsForSecondStageAuthority(secondStageAuthority);
+        return departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority);
     }
 
 

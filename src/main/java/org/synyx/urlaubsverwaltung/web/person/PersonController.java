@@ -27,8 +27,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
-import org.synyx.urlaubsverwaltung.web.department.UnknownDepartmentException;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
+import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 
 import java.util.Collections;
 import java.util.Comparator;

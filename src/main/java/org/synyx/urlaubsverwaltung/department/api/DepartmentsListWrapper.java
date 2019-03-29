@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.department;
+package org.synyx.urlaubsverwaltung.department.api;
 
 import java.util.List;
 

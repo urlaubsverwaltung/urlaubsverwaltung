@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
 
 import java.math.BigDecimal;
 import java.util.Locale;

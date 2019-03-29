@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.web.department;
+package org.synyx.urlaubsverwaltung.department.web;
 
 /**
  * Constants concerning {@link DepartmentController}.

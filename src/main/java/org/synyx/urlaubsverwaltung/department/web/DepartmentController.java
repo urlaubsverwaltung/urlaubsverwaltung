@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.department;
+package org.synyx.urlaubsverwaltung.department.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

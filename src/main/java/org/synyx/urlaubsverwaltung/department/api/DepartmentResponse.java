@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.department;
+package org.synyx.urlaubsverwaltung.department.api;
 
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
