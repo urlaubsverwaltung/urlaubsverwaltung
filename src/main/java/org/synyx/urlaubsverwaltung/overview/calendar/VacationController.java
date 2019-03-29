@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.vacation;
+package org.synyx.urlaubsverwaltung.overview.calendar;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

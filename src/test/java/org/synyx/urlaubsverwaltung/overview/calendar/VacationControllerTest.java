@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.vacation;
+package org.synyx.urlaubsverwaltung.overview.calendar;
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;

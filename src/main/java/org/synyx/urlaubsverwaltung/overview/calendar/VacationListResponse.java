@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.vacation;
+package org.synyx.urlaubsverwaltung.overview.calendar;
 
 import org.synyx.urlaubsverwaltung.restapi.absence.AbsenceResponse;
 
