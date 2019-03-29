@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.absence;
+package org.synyx.urlaubsverwaltung.absence.api;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;

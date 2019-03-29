@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.restapi.absence.AbsenceResponse;
+import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
 
 import java.util.ArrayList;
 import java.util.List;

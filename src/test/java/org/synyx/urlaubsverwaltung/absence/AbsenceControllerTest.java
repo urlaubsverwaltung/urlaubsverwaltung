@@ -1,10 +1,11 @@
-package org.synyx.urlaubsverwaltung.restapi.absence;
+package org.synyx.urlaubsverwaltung.absence;
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.synyx.urlaubsverwaltung.absence.api.AbsenceController;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;

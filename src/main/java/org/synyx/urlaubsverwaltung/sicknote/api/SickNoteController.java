@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.restapi.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.restapi.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.restapi.absence.AbsenceResponse;
+import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
 
 import java.util.List;
 import java.util.Optional;

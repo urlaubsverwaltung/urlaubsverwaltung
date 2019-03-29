@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.restapi.absence;
+package org.synyx.urlaubsverwaltung.absence.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,8 +38,8 @@ public class AbsenceController {
     private final SickNoteService sickNoteService;
 
     @Autowired
-    AbsenceController(PersonService personService, ApplicationService applicationService,
-        SickNoteService sickNoteService) {
+    public AbsenceController(PersonService personService, ApplicationService applicationService,
+                             SickNoteService sickNoteService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
