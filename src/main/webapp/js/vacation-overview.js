@@ -24,10 +24,7 @@ $(function () {
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send();
         var holyDayOverviewResponse = JSON.parse(xhttp.responseText);
-        if (holyDayOverviewResponse != null
-          && holyDayOverviewResponse != undefined
-          && holyDayOverviewResponse.response != null
-          && holyDayOverviewResponse.response != undefined) {
+        if (holyDayOverviewResponse && holyDayOverviewResponse.response) {
 
           var overViewList = holyDayOverviewResponse.response.list;
           overViewList
@@ -44,7 +41,7 @@ $(function () {
                 "application/json");
               xhttp.send();
               var response = JSON.parse(xhttp.responseText);
-              if (response != null && response != undefined) {
+              if (response) {
 
                 listItem.days
                   .forEach(

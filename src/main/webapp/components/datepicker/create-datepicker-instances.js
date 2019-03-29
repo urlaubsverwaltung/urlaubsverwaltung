@@ -10,23 +10,19 @@ export default async function createDatepickerInstances(selectors, regional, url
 
   var selector = selectors.join(",");
 
-  switch(regional) {
-    case 'de': {
-      const de = await import(/* webpackChunkName: "jquery-ui-datepicker-de" */'jquery-ui/ui/i18n/datepicker-de');
-      datepicker.setDefaults({
-        ...de,
-        weekHeader: 'Wo'
-      });
-      break;
-    }
-
-    default: {
-      const en = await import(/* webpackChunkName: "jquery-ui-datepicker-en" */'jquery-ui/ui/i18n/datepicker-en-GB');
-      datepicker.setDefaults({
-        ...en,
-        dateFormat: 'dd.mm.yy'
-      });
-    }
+  if (regional === 'de') {
+    const de = await import(/* webpackChunkName: "jquery-ui-datepicker-de" */'jquery-ui/ui/i18n/datepicker-de');
+    datepicker.setDefaults({
+      ...de,
+      weekHeader: 'Wo'
+    });
+  }
+  else {
+    const en = await import(/* webpackChunkName: "jquery-ui-datepicker-en" */'jquery-ui/ui/i18n/datepicker-en-GB');
+    datepicker.setDefaults({
+      ...en,
+      dateFormat: 'dd.mm.yy'
+    });
   }
 
   $(selector).datepicker({

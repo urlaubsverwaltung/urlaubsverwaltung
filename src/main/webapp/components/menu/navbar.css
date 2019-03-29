@@ -95,13 +95,11 @@
     }
     .navbar-nav > li > a {
         border-top: 1px solid #e5e5e5 !important;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
     .navbar-nav:first-of-type > li:first-child > a {
         border: none !important;
-    }
-    .navbar-nav > li > a {
-        padding-top: 10px;
-        padding-bottom: 10px;
     }
     .navbar .dropdown-menu li.divider {
         display: none;

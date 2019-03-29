@@ -1,7 +1,7 @@
-import format from 'date-fns/format'
+import dateFnsFormat from 'date-fns/format'
 import resolveDateFnsLocale from './locale-resolver'
 
-export default function formatI18nified(date, formatString, options = {}) {
+export default function format(date, formatString, options = {}) {
   options.locale = resolveDateFnsLocale();
-  return format(date, formatString, options);
+  return dateFnsFormat(date, formatString, options);
 }

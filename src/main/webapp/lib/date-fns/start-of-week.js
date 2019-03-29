@@ -1,9 +1,9 @@
-import startOfWeek from 'date-fns/start_of_week'
+import dateFnsStartOfWeek from 'date-fns/start_of_week'
 
-export default function startOfWeekI18nified(date, options = {}) {
+export default function startOfWeek(date, options = {}) {
   if (options.weekStartsOn == undefined) {
     options.weekStartsOn = window.uv.weekStartsOn;
   }
 
-  return startOfWeek(date, options);
+  return dateFnsStartOfWeek(date, options);
 }
