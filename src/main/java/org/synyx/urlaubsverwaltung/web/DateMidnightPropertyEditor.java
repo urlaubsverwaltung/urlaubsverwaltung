@@ -6,7 +6,7 @@ import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.util.StringUtils;
-import org.synyx.urlaubsverwaltung.core.util.DateFormat;
+import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import java.beans.PropertyEditorSupport;
 

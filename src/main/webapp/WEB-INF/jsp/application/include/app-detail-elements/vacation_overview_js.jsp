@@ -59,7 +59,7 @@
                                                                 && currentValue.status === "WAITING"
                                                                 && currentValue.type === "VACATION"
                                                                 && currentValue.dayLength === 1) {
-                                                                return "test";
+                                                                return "testdatacreator";
                                                             }
                                                         },
                                                         currentDay.dayText)) {
@@ -75,7 +75,7 @@
                                                                 && currentValue.status === "WAITING"
                                                                 && currentValue.type === "VACATION"
                                                                 && currentValue.dayLength < 1) {
-                                                                return "test";
+                                                                return "testdatacreator";
                                                             }
                                                         },
                                                         currentDay.dayText)) {
@@ -92,7 +92,7 @@
                                                                 && currentValue.status === "ALLOWED"
                                                                 && currentValue.dayLength < 1
                                                                 && currentValue.type === "VACATION") {
-                                                                return "test";
+                                                                return "testdatacreator";
                                                             }
                                                         },
                                                         currentDay.dayText)) {
@@ -108,7 +108,7 @@
                                                                 && currentValue.status === "ALLOWED"
                                                                 && currentValue.dayLength === 1
                                                                 && currentValue.type === "VACATION") {
-                                                                return "test";
+                                                                return "testdatacreator";
                                                             }
                                                         },
                                                         currentDay.dayText)) {
@@ -123,7 +123,7 @@
                                                             if (this.toString() == currentValue.date
                                                                 && currentValue.type === 'SICK_NOTE'
                                                                 && currentValue.dayLength === 1) {
-                                                                return "test";
+                                                                return "testdatacreator";
                                                             }
                                                         },
                                                         currentDay.dayText)) {
@@ -138,7 +138,7 @@
                                                             if (this.toString() == currentValue.date
                                                                 && currentValue.type === 'SICK_NOTE'
                                                                 && currentValue.dayLength < 1) {
-                                                                return "test";
+                                                                return "testdatacreator";
                                                             }
                                                         },
                                                         currentDay.dayText)) {
