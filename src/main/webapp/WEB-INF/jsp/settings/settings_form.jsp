@@ -120,7 +120,8 @@
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.maximumAnnualVacationDays" cssClass="error"/></span>
+                                            path="absenceSettings.maximumAnnualVacationDays"
+                                            cssClass="error"/></span>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
@@ -143,8 +144,9 @@
 
                         <div class="form-section">
                             <div class="col-xs-12">
-                                <legend><spring:message
-                                    code="settings.vacation.remindForWaitingApplications.title"/></legend>
+                                <legend>
+                                    <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
+                                </legend>
                             </div>
                             <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
