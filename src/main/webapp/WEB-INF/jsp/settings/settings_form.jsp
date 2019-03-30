@@ -117,7 +117,8 @@
                                     <div class="col-md-8">
                                         <form:input id="absenceSettings.maximumAnnualVacationDays"
                                                     path="absenceSettings.maximumAnnualVacationDays"
-                                                    class="form-control" cssErrorClass="form-control error"/>
+                                                    class="form-control" cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors
                                             path="absenceSettings.maximumAnnualVacationDays" cssClass="error"/></span>
                                     </div>
@@ -130,7 +131,8 @@
                                     <div class="col-md-8">
                                         <form:input id="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
                                                     path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
-                                                    class="form-control" cssErrorClass="form-control error"/>
+                                                    class="form-control" cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors
                                             path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
                                             cssClass="error"/></span>
@@ -183,7 +185,8 @@
                                     <div class="col-md-8">
                                         <form:input id="absenceSettings.daysBeforeRemindForWaitingApplications"
                                                     path="absenceSettings.daysBeforeRemindForWaitingApplications"
-                                                    class="form-control" cssErrorClass="form-control error"/>
+                                                    class="form-control" cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors
                                             path="absenceSettings.daysBeforeRemindForWaitingApplications"
                                             cssClass="error"/></span>
@@ -211,7 +214,8 @@
                                     <div class="col-md-8">
                                         <form:input id="absenceSettings.maximumSickPayDays"
                                                     path="absenceSettings.maximumSickPayDays" class="form-control"
-                                                    cssErrorClass="form-control error"/>
+                                                    cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors path="absenceSettings.maximumSickPayDays"
                                                                                cssClass="error"/></span>
                                     </div>
@@ -224,7 +228,8 @@
                                     <div class="col-md-8">
                                         <form:input id="absenceSettings.daysBeforeEndOfSickPayNotification"
                                                     path="absenceSettings.daysBeforeEndOfSickPayNotification"
-                                                    class="form-control" cssErrorClass="form-control error"/>
+                                                    class="form-control" cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors
                                             path="absenceSettings.daysBeforeEndOfSickPayNotification"
                                             cssClass="error"/></span>
@@ -335,7 +340,8 @@
                                     <div class="col-md-8">
                                         <form:input id="workingTimeSettings.maximumOvertime"
                                                     path="workingTimeSettings.maximumOvertime" class="form-control"
-                                                    cssErrorClass="form-control error"/>
+                                                    cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors
                                             path="workingTimeSettings.maximumOvertime" cssClass="error"/></span>
                                     </div>
@@ -347,7 +353,8 @@
                                     <div class="col-md-8">
                                         <form:input id="workingTimeSettings.minimumOvertime"
                                                     path="workingTimeSettings.minimumOvertime" class="form-control"
-                                                    cssErrorClass="form-control error"/>
+                                                    cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors
                                             path="workingTimeSettings.minimumOvertime" cssClass="error"/></span>
                                     </div>
@@ -391,7 +398,7 @@
                                     </label>
                                     <div class="col-md-8">
                                         <form:input id="mailSettings.from" path="mailSettings.from" class="form-control"
-                                                    cssErrorClass="form-control error"/>
+                                                    cssErrorClass="form-control error" type="email"/>
                                         <span class="help-inline"><form:errors path="mailSettings.from"
                                                                                cssClass="error"/></span>
                                     </div>
@@ -402,7 +409,8 @@
                                     </label>
                                     <div class="col-md-8">
                                         <form:input id="mailSettings.administrator" path="mailSettings.administrator"
-                                                    class="form-control" cssErrorClass="form-control error"/>
+                                                    class="form-control" cssErrorClass="form-control error"
+                                                    type="email"/>
                                         <span class="help-inline"><form:errors path="mailSettings.administrator"
                                                                                cssClass="error"/></span>
                                     </div>
@@ -487,7 +495,8 @@
                                     <div class="col-md-8">
                                         <form:input id="calendarSettings.workDayBeginHour"
                                                     path="calendarSettings.workDayBeginHour" class="form-control"
-                                                    cssErrorClass="form-control error"/>
+                                                    cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors path="calendarSettings.workDayBeginHour"
                                                                                cssClass="error"/></span>
                                     </div>
@@ -499,7 +508,8 @@
                                     <div class="col-md-8">
                                         <form:input id="calendarSettings.workDayEndHour"
                                                     path="calendarSettings.workDayEndHour" class="form-control"
-                                                    cssErrorClass="form-control error"/>
+                                                    cssErrorClass="form-control error"
+                                                    type="number"/>
                                         <span class="help-inline"><form:errors path="calendarSettings.workDayEndHour"
                                                                                cssClass="error"/></span>
                                     </div>
