@@ -96,7 +96,7 @@
                             <div class="col-md-9">
                                 <form:input path="annualVacationDays" class="form-control"
                                             cssErrorClass="form-control error" size="1"
-                                            id="annualVacationDays"/>
+                                            id="annualVacationDays" type="number"/>
                                 <span class="help-inline">
                                     <form:errors path="annualVacationDays" cssClass="error"/>
                                 </span>
@@ -111,7 +111,7 @@
                             <div class="col-md-9">
                                 <form:input path="actualVacationDays" class="form-control"
                                             cssErrorClass="form-control error" size="1"
-                                            id="actualVacationDays"/>
+                                            id="actualVacationDays" type="number"/>
                                 <span class="help-inline">
                                     <form:errors path="actualVacationDays" cssClass="error"/>
                                 </span>
@@ -126,7 +126,7 @@
                             <div class="col-md-9">
                                 <form:input path="remainingVacationDays" class="form-control"
                                             cssErrorClass="form-control error"
-                                            size="1" id="remainingVacationDays"/>
+                                            size="1" id="remainingVacationDays" type="number"/>
                                 <span class="help-inline">
                                     <form:errors path="remainingVacationDays" cssClass="error"/>
                                 </span>
@@ -140,7 +140,7 @@
 
                             <div class="col-md-9">
                                 <form:input path="remainingVacationDaysNotExpiring" class="form-control"
-                                            cssErrorClass="form-control error" size="1"
+                                            cssErrorClass="form-control error" size="1" type="number"
                                             id="remainingVacationDaysNotExpiring"/>
                                 <span class="help-inline">
                                     <form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/>
