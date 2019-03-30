@@ -118,7 +118,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="numberOfHours" cssClass="form-control"
-                                            cssErrorClass="form-control error"/>
+                                            cssErrorClass="form-control error" type="number"/>
                                 <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
                             </div>
                         </div>
