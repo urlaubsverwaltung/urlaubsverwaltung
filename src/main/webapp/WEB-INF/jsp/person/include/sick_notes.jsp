@@ -55,7 +55,8 @@
                 <c:if test="${sickNote.aubPresent == true}">
                     <span
                         class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
-                       (<i class="fa fa-check positive" aria-hidden="true"></i> <spring:message code="sicknote.data.aub.short"/>)
+                       (<i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
+                        code="sicknote.data.aub.short"/>)
                     </span>
                 </c:if>
             </p>

@@ -38,13 +38,13 @@
                 <h2 class="error-description">
                     <c:choose>
                         <c:when test="${statusCode == 403}">
-                          <spring:message code="errorPage.403"/>
+                            <spring:message code="errorPage.403"/>
                         </c:when>
                         <c:when test="${statusCode == 404}">
-                          <spring:message code="errorPage.404"/>
+                            <spring:message code="errorPage.404"/>
                         </c:when>
                         <c:otherwise>
-                          <spring:message code="errorPage.other"/>
+                            <spring:message code="errorPage.other"/>
                         </c:otherwise>
                     </c:choose>
                 </h2>

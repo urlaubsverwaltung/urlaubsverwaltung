@@ -94,7 +94,7 @@
                 var apiPrefix = "<spring:url value='/api' />";
 
                 function initCalendar() {
-                    const { getYear, setYear, firstOfYear, subMonths, addMonths } = dateFns;
+                    const {getYear, setYear, firstOfYear, subMonths, addMonths} = dateFns;
 
                     var year = getUrlParam("year");
                     var date = new Date();
@@ -205,8 +205,9 @@
                     <span class="box-icon bg-yellow hidden-print"><i class="fa fa-flag-o" aria-hidden="true"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}"/>
-                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message code="overview.vacations.otherLeaveAllowed"
-                                                                             arguments="${otherLeaveAllowed}"/>
+                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
+                        code="overview.vacations.otherLeaveAllowed"
+                        arguments="${otherLeaveAllowed}"/>
                     </span>
                 </div>
             </div>

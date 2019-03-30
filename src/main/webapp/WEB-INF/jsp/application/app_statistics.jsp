@@ -136,7 +136,7 @@
                                     <td class="hidden-xs hidden-sm number">
                                         <strong class="sortable">
                                             <uv:number
-                                            number="${statistic.totalAllowedVacationDays}"/>
+                                                number="${statistic.totalAllowedVacationDays}"/>
                                         </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
@@ -149,7 +149,7 @@
                                     <td class="hidden-xs hidden-sm number">
                                         <strong class="sortable">
                                             <uv:number
-                                            number="${statistic.totalWaitingVacationDays}"/>
+                                                number="${statistic.totalWaitingVacationDays}"/>
                                         </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">

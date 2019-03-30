@@ -28,8 +28,8 @@
 <div class="content">
     <div class="container">
 
-        <form:form method="POST" action="${URL_PREFIX}/staff/${person.id}/account" modelAttribute="account"
-                   class="form-horizontal">
+        <form:form method="POST" action="${URL_PREFIX}/staff/${person.id}/account"
+                   modelAttribute="account" class="form-horizontal">
 
             <div class="row">
 
@@ -51,10 +51,10 @@
                     <form:hidden path="holidaysAccountYear"/>
 
                     <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-            <spring:message code="person.form.annualVacation.description"/>
-        </span>
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="person.form.annualVacation.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
@@ -67,8 +67,9 @@
                                 <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom"
                                             class="form-control"
                                             cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="holidaysAccountValidFrom"
-                                                                       cssClass="error"/></span>
+                                <span class="help-inline">
+                                    <form:errors path="holidaysAccountValidFrom" cssClass="error"/>
+                                </span>
                             </div>
                         </div>
 
@@ -81,8 +82,9 @@
                                 <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo"
                                             class="form-control"
                                             cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="holidaysAccountValidTo"
-                                                                       cssClass="error"/></span>
+                                <span class="help-inline">
+                                    <form:errors path="holidaysAccountValidTo" cssClass="error"/>
+                                </span>
                             </div>
                         </div>
 
@@ -95,8 +97,9 @@
                                 <form:input path="annualVacationDays" class="form-control"
                                             cssErrorClass="form-control error" size="1"
                                             id="annualVacationDays"/>
-                                <span class="help-inline"><form:errors path="annualVacationDays"
-                                                                       cssClass="error"/></span>
+                                <span class="help-inline">
+                                    <form:errors path="annualVacationDays" cssClass="error"/>
+                                </span>
                             </div>
                         </div>
 
@@ -109,8 +112,9 @@
                                 <form:input path="actualVacationDays" class="form-control"
                                             cssErrorClass="form-control error" size="1"
                                             id="actualVacationDays"/>
-                                <span class="help-inline"><form:errors path="actualVacationDays"
-                                                                       cssClass="error"/></span>
+                                <span class="help-inline">
+                                    <form:errors path="actualVacationDays" cssClass="error"/>
+                                </span>
                             </div>
                         </div>
 
@@ -123,8 +127,9 @@
                                 <form:input path="remainingVacationDays" class="form-control"
                                             cssErrorClass="form-control error"
                                             size="1" id="remainingVacationDays"/>
-                                <span class="help-inline"><form:errors path="remainingVacationDays"
-                                                                       cssClass="error"/></span>
+                                <span class="help-inline">
+                                    <form:errors path="remainingVacationDays" cssClass="error"/>
+                                </span>
                             </div>
                         </div>
 
@@ -137,8 +142,9 @@
                                 <form:input path="remainingVacationDaysNotExpiring" class="form-control"
                                             cssErrorClass="form-control error" size="1"
                                             id="remainingVacationDaysNotExpiring"/>
-                                <span class="help-inline"><form:errors path="remainingVacationDaysNotExpiring"
-                                                                       cssClass="error"/></span>
+                                <span class="help-inline">
+                                    <form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/>
+                                </span>
                             </div>
                         </div>
 
@@ -172,12 +178,8 @@
                 </div>
 
             </div>
-
         </form:form>
-
     </div>
 </div>
-
 </body>
-
 </html>
