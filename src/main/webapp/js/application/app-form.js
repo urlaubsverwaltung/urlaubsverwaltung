@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import parseQueryString from '../parse-query-string';
 import { createDatepickerInstances } from '../../components/datepicker';
 import '../../components/timepicker';
 import sendGetDaysRequest from '../send-get-days-request';
@@ -50,9 +51,7 @@ $(document).ready(async function () {
     return new Date(y, m, d);
   }
 
-  var from = document.querySelector('#from').value;
-  var to = document.querySelector('#to').value;
-
+  const { from, to } = parseQueryString(window.location.search);
   if (from) {
     var startDate = valueToDate(from);
     var endDate = valueToDate(to || from);

@@ -185,7 +185,7 @@
                         <div class="col-md-5">
                             <form:input id="from" path="startDate" class="form-control"
                                         cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
-                                        autocomplete="off" value="${param.from}"/>
+                                        autocomplete="off"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="startTime" path="startTime" class="form-control"
@@ -200,7 +200,7 @@
                         </label>
                         <div class="col-md-5">
                             <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error"
-                                        placeholder="${DATE_PATTERN}" autocomplete="off" value="${param.to}"/>
+                                        placeholder="${DATE_PATTERN}" autocomplete="off"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="endTime" path="endTime" class="form-control"
