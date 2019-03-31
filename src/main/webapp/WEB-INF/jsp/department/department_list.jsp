@@ -108,7 +108,8 @@
                                                      title="<spring:message code='department.data.info'/>"
                                                      data-content="${department.description}">
                                                     <c:out value="${department.name}"/>
-                                                    <i class="fa fa-fw fa-info-circle hidden-print" aria-hidden="true"></i>
+                                                    <i class="fa fa-fw fa-info-circle hidden-print"
+                                                       aria-hidden="true"></i>
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
@@ -133,7 +134,8 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal"
-                                                                        aria-hidden="true"><i class="fa fa-remove" aria-hidden="true"></i>
+                                                                        aria-hidden="true"><i class="fa fa-remove"
+                                                                                              aria-hidden="true"></i>
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
                                                                     <spring:message

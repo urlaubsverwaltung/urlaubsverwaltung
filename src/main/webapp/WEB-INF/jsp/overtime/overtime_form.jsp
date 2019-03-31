@@ -37,6 +37,10 @@
 
 <uv:menu/>
 
+<c:set var="DATE_PATTERN">
+    <spring:message code="pattern.date"/>
+</c:set>
+
 <div class="content">
     <div class="container">
         <div class="row">
@@ -96,7 +100,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="startDate" cssClass="form-control" cssErrorClass="form-control error"
-                                            autocomplete="off"/>
+                                            autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -107,7 +111,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="endDate" cssClass="form-control" cssErrorClass="form-control error"
-                                            autocomplete="off"/>
+                                            autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -118,7 +122,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="numberOfHours" cssClass="form-control"
-                                            cssErrorClass="form-control error"/>
+                                            cssErrorClass="form-control error" type="number"/>
                                 <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
                             </div>
                         </div>

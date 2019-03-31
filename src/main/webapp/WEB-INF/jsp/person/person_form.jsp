@@ -102,7 +102,7 @@
 
                             <div class="col-md-9">
                                 <form:input id="email" path="email" class="form-control"
-                                            cssErrorClass="form-control error"/>
+                                            cssErrorClass="form-control error" type="email"/>
                                 <span class="help-inline"><form:errors path="email" cssClass="error"/></span>
                             </div>
                         </div>

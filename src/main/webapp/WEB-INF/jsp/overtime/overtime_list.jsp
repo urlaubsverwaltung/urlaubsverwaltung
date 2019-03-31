@@ -60,7 +60,8 @@
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
-                                        <span class="hidden-print"><i class="fa fa-history" aria-hidden="true"></i></span>
+                                        <span class="hidden-print"><i class="fa fa-history"
+                                                                      aria-hidden="true"></i></span>
                                     </td>
                                     <td>
                                         <h4 class="visible-print">

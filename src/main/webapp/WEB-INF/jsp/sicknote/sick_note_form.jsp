@@ -65,6 +65,10 @@
 
 <uv:menu/>
 
+<c:set var="DATE_PATTERN">
+    <spring:message code="pattern.date"/>
+</c:set>
+
 <div class="content">
 
     <div class="container">
@@ -203,7 +207,8 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input id="from" path="startDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -214,7 +219,8 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input id="to" path="endDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -243,7 +249,8 @@
 
                             <div class="col-md-9">
                                 <form:input id="aubFrom" path="aubStartDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -254,7 +261,8 @@
 
                             <div class="col-md-9">
                                 <form:input id="aubTo" path="aubEndDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="aubEndDate" cssClass="error"/></span>
                             </div>
                         </div>
