@@ -7,6 +7,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.synyx.urlaubsverwaltung.web.UserInterceptor;
@@ -33,11 +34,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-            .addResourceHandler("/assets/**")
-            .addResourceLocations("classpath:static/assets/")
+            .addResourceHandler("/assets/**", "/css/**", "/images/**")
+            .addResourceLocations("classpath:static/assets/", "classpath:static/css/", "classpath:static/images/")
             .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .resourceChain(false)
-            .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+            .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"))
+            .addTransformer(new CssLinkResourceTransformer());
     }
 
     @Bean
