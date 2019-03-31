@@ -5,12 +5,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="npm_tablesorter_js" asset="npm.tablesorter.js" />
-<assets:hash var="npm_list_js" asset="npm.list.js.js" />
-<assets:hash var="staff_view_js" asset="staff_view.js" />
-
 
 <!DOCTYPE html>
 <html>
@@ -20,9 +14,9 @@
 <head>
     <uv:head/>
     <c:if test="${not empty persons}">
-    <script defer src="<spring:url value='${npm_tablesorter_js}' />"></script>
-    <script defer src="<spring:url value='${npm_list_js}' />"></script>
-    <script defer src="<spring:url value='${staff_view_js}' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.list.js.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/staff_view.min.js' />"></script>
     </c:if>
 </head>
 

@@ -3,15 +3,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="npm_jquery_ui_css" asset="npm.jquery-ui.css" />
-<assets:hash var="app_overtime_sicknote_form_css" asset="app_form~overtime_form~sick_note_form.css" />
-<assets:hash var="npm_jquery_ui_js" asset="npm.jquery-ui.js" />
-<assets:hash var="npm_date_fn_js" asset="npm.date-fns.js" />
-<assets:hash var="date_fn_localized_js" asset="date-fns-localized.js" />
-<assets:hash var="app_overtime_sicknote_form_js" asset="app_form~overtime_form~sick_note_form.js" />
-<assets:hash var="sicknote_form_js" asset="sick_note_form.js" />
 
 <!DOCTYPE html>
 <html>
@@ -29,13 +20,13 @@
         window.uv.params = {};
         window.uv.params.person = "${param.person}";
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${npm_jquery_ui_css}' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${app_overtime_sicknote_form_css}' />" />
-    <script defer src="<spring:url value='${npm_jquery_ui_js}' />"></script>
-    <script defer src="<spring:url value='${npm_date_fn_js}' />"></script>
-    <script defer src="<spring:url value='${date_fn_localized_js}' />"></script>
-    <script defer src="<spring:url value='${app_overtime_sicknote_form_js}' />"></script>
-    <script defer src="<spring:url value='${sicknote_form_js}' />"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/sick_note_form.min.js' />"></script>
 </head>
 <body>
 

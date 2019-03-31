@@ -6,19 +6,6 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="app_overtime__sicknote_form_css" asset="app_form~overtime_form~sick_note_form.css" />
-<assets:hash var="npm_jquery_ui_css" asset="npm.jquery-ui-themes.css" />
-<assets:hash var="npm_jquery_ui_theme_js" asset="npm.jquery-ui-themes.js" />
-<assets:hash var="npm_timepicker_css" asset="npm.timepicker.css" />
-<assets:hash var="npm_date_fn_js" asset="npm.date-fns.js" />
-<assets:hash var="date_fn_localized_js" asset="date-fns-localized.js" />
-<assets:hash var="npm_jquery_ui_js" asset="npm.jquery-ui.js" />
-<assets:hash var="npm_timepicker_js" asset="npm.timepicker.js" />
-<assets:hash var="app_detail_app_form_js" asset="app_detail~app_form.js" />
-<assets:hash var="app_overtime_sicknote_form_js" asset="app_form~overtime_form~sick_note_form.js" />
-<assets:hash var="app_form_js" asset="app_form.js" />
 
 <!DOCTYPE html>
 <html>
@@ -33,17 +20,17 @@
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${app_overtime__sicknote_form_css}' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${npm_jquery_ui_css}' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${npm_timepicker_css}' />" />
-    <script defer src="<spring:url value='${npm_date_fn_js}' />"></script>
-    <script defer src="<spring:url value='${date_fn_localized_js}' />"></script>
-    <script defer src="<spring:url value='${npm_jquery_ui_js}' />"></script>
-    <script defer src="<spring:url value='${npm_jquery_ui_theme_js}' />"></script>
-    <script defer src="<spring:url value='${npm_timepicker_js}' />"></script>
-    <script defer src="<spring:url value='${app_detail_app_form_js}' />"></script>
-    <script defer src="<spring:url value='${app_overtime_sicknote_form_js}' />"></script>
-    <script defer src="<spring:url value='${app_form_js}' />"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.timepicker.css' />" />
+    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui-themes.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.timepicker.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form.min.js' />"></script>
 </head>
 
 <body>
@@ -187,7 +174,7 @@
                         <div class="col-md-5">
                             <form:input id="from" path="startDate" class="form-control"
                                         cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
-                                        autocomplete="off"/>
+                                        autocomplete="off" value="${param.from}"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="startTime" path="startTime" class="form-control"
@@ -202,7 +189,7 @@
                         </label>
                         <div class="col-md-5">
                             <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error"
-                                        placeholder="${DATE_PATTERN}" autocomplete="off"/>
+                                        placeholder="${DATE_PATTERN}" autocomplete="off" value="${param.to}"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="endTime" path="endTime" class="form-control"

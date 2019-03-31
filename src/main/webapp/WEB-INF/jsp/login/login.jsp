@@ -3,11 +3,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="npm_fontawesome_css" asset="npm.font-awesome.css" />
-<assets:hash var="common_css" asset="common.css" />
-<assets:hash var="login_css" asset="login.css" />
 
 <!DOCTYPE html>
 <html>
@@ -17,10 +12,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
     <title><spring:message code="login.title"/></title>
     <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />"/>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${npm_fontawesome_css}' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${common_css}' />"/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.font-awesome.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/common.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='${login_css}' />"/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/login.css' />"/>
 </head>
 
 <body>

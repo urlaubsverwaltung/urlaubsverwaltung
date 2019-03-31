@@ -4,18 +4,14 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="npm_tablesorter_js" asset="npm.tablesorter.js" />
-<assets:hash var="app_statistics_js" asset="app_statistics.js" />
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='${npm_tablesorter_js}' />"></script>
-    <script defer src="<spring:url value='${app_statistics_js}' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_statistics.min.js' />"></script>
 </head>
 
 <body>

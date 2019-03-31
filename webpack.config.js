@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -37,7 +36,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'target/classes/static/assets'),
-    filename: isProduction ? '[name].[contenthash].min.js' : '[name].min.js',
+    filename: '[name].min.js',
     publicPath: '/assets/'
   },
 
@@ -91,20 +90,12 @@ module.exports = {
     // https://webpack.js.org/guides/caching/#module-identifiers
     // include HashedModuleIdsPlugin so that file hashes don't change unexpectedly
     new webpack.HashedModuleIdsPlugin(),
-    // This Webpack plugin will generate a JSON file that matches
-    // the original filename with the hashed version.
-    // This file is read by the taglib AssetsHashResolverTag.java to ease asset handling in templates
-    new WebpackAssetsManifest({
-      // output path is relative to webpack.output.path
-      output: path.resolve(__dirname, 'src/main/webapp/WEB-INF/assets-manifest.json'),
-      publicPath: true,
-    }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
     }),
     new MiniCssExtractPlugin({
-      filename: isProduction ? "../assets/[name].[contenthash].css" : "../assets/[name].css",
+      filename: "../assets/[name].css",
     })
   ],
 

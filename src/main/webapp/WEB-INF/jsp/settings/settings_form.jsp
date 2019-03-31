@@ -6,18 +6,14 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="person" tagdir="/WEB-INF/tags/person" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="npm_chosen_asset" asset="npm.chosen-js.js" />
-<assets:hash var="settings_form_asset" asset="settings_form.js" />
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='${npm_chosen_asset}' />"></script>
-    <script defer src="<spring:url value='${settings_form_asset}' />"></script>
+    <script defer src="<spring:url value='/assets/npm.chosen-js.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/settings_form.min.js' />"></script>
 </head>
 
 <body>

@@ -7,11 +7,6 @@
 <%@taglib prefix="sec"
           uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="npm_tablesorter_js" asset="npm.tablesorter.js" />
-<assets:hash var="vacation_overview_css" asset="vacation_overview.css" />
-<assets:hash var="vacation_overview_js" asset="vacation_overview.js" />
 
 <sec:authorize access="hasAuthority('USER')">
     <c:set var="IS_USER" value="${true}"/>
@@ -32,9 +27,9 @@
 
 <head>
     <uv:head/>
-    <link rel="stylesheet" href="<spring:url value='${vacation_overview_css}' />" />
-    <script defer src="<spring:url value='${npm_tablesorter_js}' />"></script>
-    <script defer src="<spring:url value='${vacation_overview_js}' />"></script>
+    <link rel="stylesheet" href="<spring:url value='/assets/vacation_overview.css' />" />
+    <script defer src="<spring:url value='/assets/vacation_overview.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
 </head>
 
 <body>

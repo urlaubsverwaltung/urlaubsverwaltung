@@ -6,7 +6,6 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
 
 <!DOCTYPE html>
 <html>
@@ -22,10 +21,8 @@
         window.uv.startDate = "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
         window.uv.endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
     </script>
-    <assets:hash var="app_detail_app_form_asset" asset="app_detail~app_form.js" />
-    <assets:hash var="app_detail_asset" asset="app_detail.js" />
-    <script defer src="<spring:url value='${app_detail_app_form_asset}' />"></script>
-    <script defer src="<spring:url value='${app_detail_asset}' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail.min.js' />"></script>
 </head>
 
 <body>

@@ -4,15 +4,12 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
-
-<assets:hash var="sicknote_convert_js" asset="sick_note_convert.js" />
 
 <!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='${sicknote_convert_js}' />"></script>
+    <script defer src="<spring:url value='/assets/sick_note_convert.min.js' />"></script>
 </head>
 <body>
 
