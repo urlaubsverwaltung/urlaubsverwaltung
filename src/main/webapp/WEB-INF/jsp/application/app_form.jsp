@@ -9,7 +9,8 @@
 <%@taglib prefix="assets" uri = "/WEB-INF/assets.tld"%>
 
 <assets:hash var="app_overtime__sicknote_form_css" asset="app_form~overtime_form~sick_note_form.css" />
-<assets:hash var="npm_jquery_ui_css" asset="npm.jquery-ui.css" />
+<assets:hash var="npm_jquery_ui_css" asset="npm.jquery-ui-themes.css" />
+<assets:hash var="npm_jquery_ui_theme_js" asset="npm.jquery-ui-themes.js" />
 <assets:hash var="npm_timepicker_css" asset="npm.timepicker.css" />
 <assets:hash var="npm_date_fn_js" asset="npm.date-fns.js" />
 <assets:hash var="date_fn_localized_js" asset="date-fns-localized.js" />
@@ -38,6 +39,7 @@
     <script defer src="<spring:url value='${npm_date_fn_js}' />"></script>
     <script defer src="<spring:url value='${date_fn_localized_js}' />"></script>
     <script defer src="<spring:url value='${npm_jquery_ui_js}' />"></script>
+    <script defer src="<spring:url value='${npm_jquery_ui_theme_js}' />"></script>
     <script defer src="<spring:url value='${npm_timepicker_js}' />"></script>
     <script defer src="<spring:url value='${app_detail_app_form_js}' />"></script>
     <script defer src="<spring:url value='${app_overtime_sicknote_form_js}' />"></script>

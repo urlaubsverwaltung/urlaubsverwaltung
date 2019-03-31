@@ -32,6 +32,7 @@
     "font-awesome": "4.5.0",
     "jquery": "3.3.1",
     "jquery-ui": "1.12.1",
+    "jquery-ui-themes": "1.12.0",
     "list.js": "1.3.0",
     "tablesorter": "2.29.4",
     "timepicker": "1.11.14",
