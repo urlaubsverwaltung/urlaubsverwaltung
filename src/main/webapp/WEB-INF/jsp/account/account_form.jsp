@@ -9,6 +9,7 @@
 <html>
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/account_form.min.js' />"></script>
 </head>
 
 <body>

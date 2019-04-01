@@ -5,38 +5,13 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            $("table.sortable").tablesorter({
-                sortList: [[1, 0]],
-                headers: {
-                    0: {sorter: false},
-                    3: {sorter: false},
-                    4: {sorter: false},
-                    5: {sorter: 'commaNumber'},
-                    6: {sorter: 'commaNumber'},
-                    7: {sorter: 'commaNumber'}
-                },
-                textExtraction: function (node) {
-                    var sortable = $(node).find('.sortable');
-
-                    if (sortable.length > 0) {
-                        return sortable[0].innerHTML;
-                    }
-
-                    return node.innerHTML;
-                }
-            });
-
-        });
-    </script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_statistics.min.js' />"></script>
 </head>
 
 <body>

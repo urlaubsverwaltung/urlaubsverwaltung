@@ -27,7 +27,9 @@
 
 <head>
     <uv:head/>
-    <%@include file="include/app-detail-elements/vacation_overview_js.jsp" %>
+    <link rel="stylesheet" href="<spring:url value='/assets/vacation_overview.css' />" />
+    <script defer src="<spring:url value='/assets/vacation_overview.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
 </head>
 
 <body>

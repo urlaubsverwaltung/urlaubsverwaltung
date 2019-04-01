@@ -7,74 +7,30 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <link rel="stylesheet" type="text/css"
-          href="<spring:url value='/lib/jquery/css/ui-lightness/jquery.timepicker-1.11.13.min.css' />"/>
-    <script type="text/javascript"
-            src="<spring:url value='/lib/jquery/js/jquery.timepicker-1.11.13.min.js' />"></script>
-
-    <%@include file="include/app-form-elements/datepicker.jsp" %>
-    <%@include file="include/app-form-elements/day-length-selector.jsp" %>
-
-    <script type="text/javascript">
-        $(function () {
-            <%-- CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY --%>
-
-            function preset(id, dateString) {
-
-                var match = dateString.match(/\d+/g);
-
-                var y = match[0];
-                var m = match[1] - 1;
-                var d = match[2];
-
-                $(id).datepicker('setDate', new Date(y, m, d));
-            }
-
-            var from = '${param.from}';
-            var to = '${param.to}';
-
-            if (from) {
-                preset('#from', from);
-                preset('#to', to || from);
-
-                var urlPrefix = "<spring:url value='/api' />";
-                var personId = "<c:out value='${person.id}' />";
-                var startDate = $("#from").datepicker("getDate");
-                var endDate = $("#to").datepicker("getDate");
-
-                sendGetDaysRequest(urlPrefix,
-                    startDate,
-                    endDate,
-                    $('input:radio[name=dayLength]:checked').val(),
-                    personId, ".days");
-
-                sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
-            }
-
-            <%-- Timepicker for optional startTime and endTime --%>
-
-            $('#startTime').timepicker({
-                'step': 15,
-                'timeFormat': 'H:i',
-                'forceRoundTime': true,
-                'scrollDefault': 'now'
-            });
-            $('#endTime').timepicker({
-                'step': 15,
-                'timeFormat': 'H:i',
-                'forceRoundTime': true,
-                'scrollDefault': 'now'
-            });
-
-        });
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        // 0=sunday, 1=monday
+        window.uv.weekStartsOn = 1;
     </script>
-
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.timepicker.css' />" />
+    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui-themes.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.timepicker.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form.min.js' />"></script>
 </head>
 
 <body>
@@ -218,7 +174,7 @@
                         <div class="col-md-5">
                             <form:input id="from" path="startDate" class="form-control"
                                         cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
-                                        autocomplete="off"/>
+                                        autocomplete="off" value="${param.from}"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="startTime" path="startTime" class="form-control"
@@ -233,7 +189,7 @@
                         </label>
                         <div class="col-md-5">
                             <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error"
-                                        placeholder="${DATE_PATTERN}" autocomplete="off"/>
+                                        placeholder="${DATE_PATTERN}" autocomplete="off" value="${param.to}"/>
                         </div>
                         <div class="col-md-4">
                             <form:input id="endTime" path="endTime" class="form-control"

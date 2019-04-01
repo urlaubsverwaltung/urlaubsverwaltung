@@ -8,28 +8,18 @@
 <html>
 <head>
     <uv:head/>
-    <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var locale = "${pageContext.response.locale.language}";
-            var urlPrefix = "<spring:url value='/api' />";
-
-            var onSelect = function (selectedDate) {
-                var $endDate = $("#endDate");
-                if (this.id == "startDate" && $endDate.val() === "") {
-                    $endDate.datepicker("setDate", selectedDate);
-                }
-            };
-
-            var getPersonId = function () {
-                return "<c:out value="${overtime.person.id}" />";
-            };
-
-            createDatepickerInstances(["#startDate", "#endDate"], locale, urlPrefix, getPersonId, onSelect);
-        });
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
+    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/overtime_form.min.js' />"></script>
 </head>
 <body>
 

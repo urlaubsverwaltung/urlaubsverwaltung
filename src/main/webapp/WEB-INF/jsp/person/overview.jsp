@@ -12,6 +12,18 @@
 
 <head>
     <uv:head/>
+    <link rel="stylesheet" href="<spring:url value='/assets/person_overview.css' />" />
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        // 0=sunday, 1=monday
+        window.uv.weekStartsOn = 1;
+    </script>
+    <script defer src="<spring:url value="/assets/npm.date-fns.min.js" />"></script>
+    <script defer src="<spring:url value="/assets/date-fns-localized.min.js" />"></script>
+    <script defer src="<spring:url value="/assets/person_overview.min.js" />"></script>
 </head>
 
 <body>
@@ -84,67 +96,6 @@
             </div>
         </c:if>
 
-        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript"></script>
-        <script>
-            $(function () {
-
-                var datepickerLocale = "${pageContext.response.locale.language}";
-                var personId = '<c:out value="${person.id}" />';
-                var webPrefix = "<spring:url value='/web' />";
-                var apiPrefix = "<spring:url value='/api' />";
-
-                function initCalendar() {
-                    const {getYear, setYear, firstOfYear, subMonths, addMonths} = dateFns;
-
-                    var year = getUrlParam("year");
-                    var date = new Date();
-
-                    if (year.length > 0 && year != getYear(date)) {
-                        date = firstOfYear(setYear(date, year));
-                    }
-
-                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
-
-                    var shownNumberOfMonths = 10;
-                    var startDate = subMonths(date, shownNumberOfMonths / 2);
-                    var endDate = addMonths(date, shownNumberOfMonths / 2);
-
-                    var yearOfStartDate = getYear(startDate);
-                    var yearOfEndDate = getYear(endDate);
-
-                    $.when(
-                        holidayService.fetchPublic(yearOfStartDate),
-                        holidayService.fetchPersonal(yearOfStartDate),
-                        holidayService.fetchSickDays(yearOfStartDate),
-
-                        holidayService.fetchPublic(yearOfEndDate),
-                        holidayService.fetchPersonal(yearOfEndDate),
-                        holidayService.fetchSickDays(yearOfEndDate)
-                    ).always(function () {
-                        Urlaubsverwaltung.Calendar.init(holidayService, date);
-                    });
-                }
-
-                initCalendar();
-
-                var resizeTimer = null;
-
-                $(window).on('resize', function () {
-
-                    if (resizeTimer !== null) {
-                        clearTimeout(resizeTimer);
-                    }
-
-                    resizeTimer = setTimeout(function () {
-                        Urlaubsverwaltung.Calendar.reRender();
-                        resizeTimer = null;
-                    }, 30)
-
-                });
-
-            });
-        </script>
-
         <div class="row">
             <div class="col-xs-12">
                 <hr/>
@@ -205,9 +156,8 @@
                     <span class="box-icon bg-yellow hidden-print"><i class="fa fa-flag-o" aria-hidden="true"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}"/>
-                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
-                        code="overview.vacations.otherLeaveAllowed"
-                        arguments="${otherLeaveAllowed}"/>
+                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message code="overview.vacations.otherLeaveAllowed"
+                                                                             arguments="${otherLeaveAllowed}"/>
                     </span>
                 </div>
             </div>

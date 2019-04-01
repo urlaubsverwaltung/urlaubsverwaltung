@@ -5,22 +5,23 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            $("table.sortable").tablesorter({
-                sortList: [[1, 0]]
-            });
-
-        });
-
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        window.uv.sickNote = {};
+        window.uv.sickNote.id = "<c:out value="${sickNote.id}" />";
+        window.uv.sickNote.person = {};
+        window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
     </script>
+    <script defer type="text/javascript" src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
+    <script defer type="text/javascript" src="<spring:url value='/assets/sick_notes.min.js' />"></script>
 </head>
 
 <body>

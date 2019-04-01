@@ -5,11 +5,11 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/workingtime_form.min.js' />"></script>
 </head>
 
 <body>

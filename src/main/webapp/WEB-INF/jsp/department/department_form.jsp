@@ -6,12 +6,12 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/department_form.min.js' />"></script>
 </head>
 
 <body>

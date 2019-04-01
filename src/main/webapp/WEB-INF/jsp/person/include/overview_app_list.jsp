@@ -102,25 +102,22 @@
                 <c:if test="${app.startDate.year != app.endDate.year}">
                     <span class="days-${loopStatus.index}">
                         <%--is filled by javascript--%>
-                        <script type="text/javascript">
-
-                          $(document).ready(function () {
-
-                              var dayLength = '<c:out value="${app.dayLength}" />';
-                              var personId = '<c:out value="${app.person.id}" />';
-
-                              var startDate = "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";
-                              var endDate = "<joda:format pattern='yyyy/MM/dd' value='${app.endDate}' />";
-
-                              var from = new Date(startDate);
-                              var to = new Date(endDate);
-
-                              sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
-
-                          });
-
-                        </script>
                     </span>
+                    <script type="text/javascript">
+                      $(document).ready(function () {
+
+                          var dayLength = '<c:out value="${app.dayLength}" />';
+                          var personId = '<c:out value="${app.person.id}" />';
+
+                          var startDate = "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";
+                          var endDate = "<joda:format pattern='yyyy/MM/dd' value='${app.endDate}' />";
+
+                          var from = new Date(startDate);
+                          var to = new Date(endDate);
+
+                          sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
+                      });
+                    </script>
                 </c:if>
             </td>
             <td class="is-centered hidden-xs hidden-print">

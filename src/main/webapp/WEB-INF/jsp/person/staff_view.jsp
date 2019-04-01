@@ -6,7 +6,6 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 
@@ -14,7 +13,11 @@
 
 <head>
     <uv:head/>
-    <script src="<spring:url value='/lib/list-1.3.0.min.js' />" type="text/javascript"></script>
+    <c:if test="${not empty persons}">
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.list.js.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/staff_view.min.js' />"></script>
+    </c:if>
 </head>
 
 <body>

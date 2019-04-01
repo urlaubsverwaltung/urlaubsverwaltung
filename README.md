@@ -307,6 +307,27 @@ Testbenutzern anmelden:
 * `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
 * `test/secret`: Benutzer mit der Rolle `Office`
 
+### Fontend Entwicklung
+
+Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
+
+Assets sind in `<root>/src/main/webapp` zu finden
+
+* `bundles` sind in den JSPs zu integrieren
+* `components` sind einzelne Komponenten zur Wiederverwendung wie z. B. der _datepicker_
+* `js` beinhaltet Seitenspezifische Dinge 
+* `lib` sind third-party Bibliotheken
+
+Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auch auf der Kommandozeile gebaut werden.
+
+* `npm run build`
+  * baut optimierte, minifizierte Assets
+* `npm run build:dev`
+  * baut nicht minifizierte Assets
+* `npm run build:watch`
+  * baut automatisch nach dem editieren von JavaScript / CSS Dateien neue Assets 
+
+
 ### Anlegen von Testdaten deaktivieren
 
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`

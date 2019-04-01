@@ -5,13 +5,13 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<c:if test="${action == 'allow'}">
 <script type="text/javascript">
-    $(document).ready(function () {
-        <c:if test="${action == 'allow'}">
+    document.addEventListener('DOMContentLoaded', function() {
         $("#allow").show();
-        </c:if>
-    });
+    })
 </script>
+</c:if>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 

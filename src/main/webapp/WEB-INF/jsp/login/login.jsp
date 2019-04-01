@@ -4,7 +4,6 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-
 <!DOCTYPE html>
 <html>
 
@@ -13,12 +12,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
     <title><spring:message code="login.title"/></title>
     <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />"/>
-    <link rel="stylesheet" href="<spring:url value='/lib/bootstrap/bootstrap-3.3.7.min.css' />">
-    <link rel="stylesheet" href="<spring:url value='/lib/font-awesome/css/font-awesome-4.5.0.min.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.font-awesome.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/common.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />"/>
-    <script src="<spring:url value='/lib/jquery/js/jquery-3.3.1.min.js' />" type="text/javascript"></script>
-    <script src="<spring:url value='/lib/bootstrap/bootstrap-3.3.7.min.js' />" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/login.css' />"/>
 </head>
 
 <body>

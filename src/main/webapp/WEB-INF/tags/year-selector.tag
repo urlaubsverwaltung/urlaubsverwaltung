@@ -4,30 +4,17 @@
 <%@attribute name="year" type="java.lang.String" required="true" %>
 <%@attribute name="hrefPrefix" type="java.lang.String" required="true" %>
 
-<script type="text/javascript">
-
-    $(function () {
-
-        var currentYear = new Date().getFullYear();
-
-        var $dropdown = $('#year-selection').find('.dropdown-menu');
-
-        $dropdown.append('<li><a href="${hrefPrefix}' + (currentYear + 1) + '">' + (currentYear + 1) + '</a></li>');
-        $dropdown.append('<li><a href="${hrefPrefix}' + currentYear + '">' + currentYear + '</a></li>');
-
-        for (var i = 1; i < 10; i++) {
-            $dropdown.append('<li><a href="${hrefPrefix}' + (currentYear - i) + '">' + (currentYear - i) + '</a></li>');
-        }
-
-    });
-
-</script>
+<jsp:useBean id="date" class="java.util.Date" />
 
 <div id="year-selection" class="legend-dropdown dropdown">
     <a id="dropdownLabel" href="#" data-toggle="dropdown"
        aria-haspopup="true" role="button" aria-expanded="false">
         <c:out value="${year}" /><span class="caret"></span>
     </a>
-
-    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel"></ul>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel">
+        <c:forEach begin="0" end="10" varStatus="loop">
+            <c:set var="y" value="${date.year + 1900 + 2 - loop.count}" />
+            <li><a href="${hrefPrefix.concat(y)}"><c:out value="${y}" /></a></li>
+        </c:forEach>
+    </ul>
 </div>

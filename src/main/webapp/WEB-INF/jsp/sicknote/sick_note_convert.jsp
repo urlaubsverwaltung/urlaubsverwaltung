@@ -9,6 +9,7 @@
 <html>
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/sick_note_convert.min.js' />"></script>
 </head>
 <body>
 

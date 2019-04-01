@@ -10,6 +10,7 @@
 <html>
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/sick_note.min.js' />"></script>
 </head>
 <body>
 

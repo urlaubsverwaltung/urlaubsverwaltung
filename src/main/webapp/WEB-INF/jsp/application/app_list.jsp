@@ -33,6 +33,7 @@
 
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/app_list.min.js' />"></script>
 </head>
 
 <body>
