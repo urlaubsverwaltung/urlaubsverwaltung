@@ -458,7 +458,8 @@
                                     </label>
                                     <div class="col-md-8">
                                         <form:input id="mailSettings.username" path="mailSettings.username"
-                                                    class="form-control" cssErrorClass="form-control error"/>
+                                                    class="form-control" cssErrorClass="form-control error"
+                                                    autocomplete="new-password"/>
                                         <span class="help-inline"><form:errors path="mailSettings.username"
                                                                                cssClass="error"/></span>
                                     </div>
@@ -470,7 +471,8 @@
                                     <div class="col-md-8">
                                         <form:password showPassword="true" id="mailSettings.password"
                                                        path="mailSettings.password" class="form-control"
-                                                       cssErrorClass="form-control error"/>
+                                                       cssErrorClass="form-control error"
+                                                       autocomplete="new-password"/>
                                         <span class="help-inline"><form:errors path="mailSettings.password"
                                                                                cssClass="error"/></span>
                                     </div>
