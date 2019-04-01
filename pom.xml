@@ -346,13 +346,13 @@
         </configuration>
         <executions>
           <execution>
-            <id>install node and npm</id>
+            <id>install-node-and-npm</id>
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
           </execution>
           <execution>
-            <id>install npm dependencies</id>
+            <id>install-npm-dependencies</id>
             <goals>
               <goal>npm</goal>
             </goals>
@@ -361,7 +361,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>npm build</id>
+            <id>npm-build</id>
             <goals>
               <goal>npm</goal>
             </goals>
@@ -370,7 +370,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>npm test</id>
+            <id>npm-test</id>
             <goals>
               <goal>npm</goal>
             </goals>
