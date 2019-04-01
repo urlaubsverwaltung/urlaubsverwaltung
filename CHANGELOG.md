@@ -6,6 +6,7 @@
 * Improve javadoc [#589](https://github.com/synyx/urlaubsverwaltung/pull/589) [#593](https://github.com/synyx/urlaubsverwaltung/pull/593)
 * Optimierung der JavaScript / CSS Assets [#572](https://github.com/synyx/urlaubsverwaltung/pull/572)
 * Integration des maven frontend plugin und js/css tooling [#390](https://github.com/synyx/urlaubsverwaltung/issues/390)
+* Upgrade bootstrap to 3.4.1 [#603](https://github.com/synyx/urlaubsverwaltung/pull/603)
 
 ### [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0)
 * Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/551)
