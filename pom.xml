@@ -339,7 +339,7 @@
         <!-- frontend-maven-plugin installs node and npm locally in the project directory -->
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.7.5</version>
         <configuration>
           <nodeVersion>v10.15.3</nodeVersion>
           <npmVersion>6.4.1</npmVersion>
