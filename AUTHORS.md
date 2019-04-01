@@ -2,12 +2,12 @@ Urlaubsverwaltung contributors in alphabetical order:
 
 * Aljona Buchloh <aljona.buchloh@gmail.com>
 * Daniel Fuchs <github@honnel.de>
+* Florian 'punycode' Krupicka <zh@punyco.de>
 * Tobias Schneider <Tobias.Schneider@Tobsch.org>
 * Christian Lange <Christian.Lange@posteo.de>
 * Benjamin Seber <benjamin.seber@mailbox.org>
 * David Schilling <davejs92@gmail.com>
 * Robin de Silva Jayasinghe <robin@jayasinghe.de>
-* Florian 'punycode' Krupicka <zh@punyco.de>
 
 By adding your name to this list, you grant full and irrevocable copyright  
 and patent indemnity to the Urlaubsverwaltung and all use of the Urlaubsverwaltung,  
