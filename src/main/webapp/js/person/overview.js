@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { getYear, setYear, firstOfYear, subMonths, addMonths } from 'date-fns';
+import { getYear, setYear, startOfYear, subMonths, addMonths } from 'date-fns';
 
 import getUrlParam from '../get-url-param';
 import '../../components/calendar';
@@ -16,7 +16,7 @@ $(document).ready(function () {
     var date = new Date();
 
     if (year.length > 0 && year != getYear(date)) {
-      date = firstOfYear(setYear(date, year));
+      date = startOfYear(setYear(date, year));
     }
 
     var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
