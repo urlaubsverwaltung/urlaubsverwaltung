@@ -165,7 +165,6 @@ public class AbsenceControllerTest {
         mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
-            .andDo(print())
             .andExpect(jsonPath("$.response").exists())
             .andExpect(jsonPath("$.response.absences").exists())
             .andExpect(jsonPath("$.response.absences", hasSize(2)))
