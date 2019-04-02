@@ -5,6 +5,7 @@ Urlaubsverwaltung contributors in alphabetical order:
 * Michael Herbold <mikemcherby@gmail.com>
 * Florian 'punycode' Krupicka <zh@punyco.de>
 * Christian Lange <Christian.Lange@posteo.de>
+* Sascha Rüssel <zivi@opferindustries.de>
 * David Schilling <davejs92@gmail.com>
 * Tobias Schneider <Tobias.Schneider@Tobsch.org>
 * Benjamin Seber <benjamin.seber@mailbox.org>
