@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -43,7 +42,7 @@ public class WorkingTimeServiceTest {
     @Test
     public void ensureReturnsOverriddenFederalStateIfPersonHasSpecialFederalState() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
@@ -69,7 +68,7 @@ public class WorkingTimeServiceTest {
     @Test
     public void ensureReturnsSystemFederalStateIfPersonHasNoSpecialFederalState() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
@@ -95,7 +94,7 @@ public class WorkingTimeServiceTest {
     @Test
     public void ensureReturnsSystemFederalStateIfPersonHasNoMatchingWorkingTime() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
         Person person = TestDataCreator.createPerson();
 
         Settings settings = new Settings();
@@ -122,7 +121,7 @@ public class WorkingTimeServiceTest {
 
         Person person = TestDataCreator.createPerson();
 
-        workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), ZonedDateTime.now(UTC).toLocalDate(), person);
+        workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), LocalDate.now(UTC), person);
 
         verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
 
@@ -147,7 +146,7 @@ public class WorkingTimeServiceTest {
 
         Person person = TestDataCreator.createPerson();
 
-        workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), ZonedDateTime.now(UTC).toLocalDate(), person);
+        workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 
         verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
 

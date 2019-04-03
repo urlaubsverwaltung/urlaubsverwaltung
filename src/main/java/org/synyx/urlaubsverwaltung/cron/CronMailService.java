@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -81,7 +80,7 @@ public class CronMailService {
                 mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 
                 for (Application longWaitingApplication : longWaitingApplications) {
-                    longWaitingApplication.setRemindDate(ZonedDateTime.now(UTC).toLocalDate());
+                    longWaitingApplication.setRemindDate(LocalDate.now(UTC));
                     applicationService.save(longWaitingApplication);
                 }
 
@@ -108,11 +107,11 @@ public class CronMailService {
 
                 // true -> remind!
                 // false -> to early for notification
-                return minDateForNotification.isBefore(ZonedDateTime.now(UTC).toLocalDate());
+                return minDateForNotification.isBefore(LocalDate.now(UTC));
             } else {
                 // true -> not reminded today
                 // false -> already reminded today
-                return !remindDate.isEqual(ZonedDateTime.now(UTC).toLocalDate());
+                return !remindDate.isEqual(LocalDate.now(UTC));
             }
         };
     }

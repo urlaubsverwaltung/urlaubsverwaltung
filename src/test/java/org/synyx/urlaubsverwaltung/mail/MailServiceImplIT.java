@@ -163,7 +163,7 @@ public class MailServiceImplIT {
 
     private Application createApplication(Person person) {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
         Application application = new Application();
         application.setId(1234);
         application.setPerson(person);

@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
@@ -241,9 +242,9 @@ public class PersonController {
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
-        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(ZonedDateTime.now(UTC).toLocalDate(), year));
+        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
-        model.addAttribute("now", ZonedDateTime.now(UTC).toLocalDate());
+        model.addAttribute("now", LocalDate.now(UTC));
 
         List<Department> departments = getRelevantDepartments(signedInUser);
         departments.sort(Comparator.comparing(Department::getName));

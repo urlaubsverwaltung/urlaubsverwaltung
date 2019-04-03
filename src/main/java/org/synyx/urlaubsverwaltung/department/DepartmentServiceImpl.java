@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +58,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void update(Department department) {
 
-        department.setLastModification(ZonedDateTime.now(UTC).toLocalDate());
+        department.setLastModification(LocalDate.now(UTC));
 
         departmentRepository.save(department);
 

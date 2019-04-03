@@ -74,7 +74,7 @@ public class ApplicationTest {
 
         Application application = new Application();
         application.setStartDate(null);
-        application.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setEndDate(LocalDate.now(UTC));
         application.setDayLength(DayLength.FULL);
 
         application.getPeriod();
@@ -85,7 +85,7 @@ public class ApplicationTest {
     public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
 
         Application application = new Application();
-        application.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setStartDate(LocalDate.now(UTC));
         application.setEndDate(null);
         application.setDayLength(DayLength.FULL);
 
@@ -97,8 +97,8 @@ public class ApplicationTest {
     public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
 
         Application application = new Application();
-        application.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
-        application.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setStartDate(LocalDate.now(UTC));
+        application.setEndDate(LocalDate.now(UTC));
         application.setDayLength(null);
 
         application.getPeriod();
@@ -108,7 +108,7 @@ public class ApplicationTest {
     @Test
     public void ensureGetPeriodReturnsCorrectPeriod() {
 
-        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate startDate = LocalDate.now(UTC);
         LocalDate endDate = startDate.plusDays(2);
 
         Application application = new Application();
@@ -147,7 +147,7 @@ public class ApplicationTest {
     public void ensureGetStartDateWithTimeReturnsNullIfStartTimeIsNull() {
 
         Application application = new Application();
-        application.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setStartDate(LocalDate.now(UTC));
         application.setStartTime(null);
 
         ZonedDateTime startDateWithTime = application.getStartDateWithTime();
@@ -189,7 +189,7 @@ public class ApplicationTest {
     public void ensureGetEndDateWithTimeReturnsNullIfEndTimeIsNull() {
 
         Application application = new Application();
-        application.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setEndDate(LocalDate.now(UTC));
         application.setEndTime(null);
 
         ZonedDateTime endDateWithTime = application.getEndDateWithTime();

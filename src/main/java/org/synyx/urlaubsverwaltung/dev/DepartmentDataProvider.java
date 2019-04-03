@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -34,7 +34,7 @@ class DepartmentDataProvider {
         Department department = new Department();
         department.setName(name);
         department.setDescription(description);
-        department.setLastModification(ZonedDateTime.now(UTC).toLocalDate());
+        department.setLastModification(LocalDate.now(UTC));
         department.setMembers(members);
         department.setDepartmentHeads(departmentHeads);
         department.setSecondStageAuthorities(secondStageAuthorities);

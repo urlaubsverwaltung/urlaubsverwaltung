@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -58,7 +58,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     public SickNote create(SickNote sickNote, Person creator) {
 
         sickNote.setStatus(SickNoteStatus.ACTIVE);
-        sickNote.setLastEdited(ZonedDateTime.now(UTC).toLocalDate());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CREATED, Optional.empty(), creator);
@@ -81,7 +81,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     public SickNote update(SickNote sickNote, Person editor) {
 
         sickNote.setStatus(SickNoteStatus.ACTIVE);
-        sickNote.setLastEdited(ZonedDateTime.now(UTC).toLocalDate());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.EDITED, Optional.empty(), editor);
@@ -107,7 +107,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         // make sick note inactive
         sickNote.setStatus(SickNoteStatus.CONVERTED_TO_VACATION);
-        sickNote.setLastEdited(ZonedDateTime.now(UTC).toLocalDate());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, Optional.empty(), converter);
@@ -137,7 +137,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     public SickNote cancel(SickNote sickNote, Person canceller) {
 
         sickNote.setStatus(SickNoteStatus.CANCELLED);
-        sickNote.setLastEdited(ZonedDateTime.now(UTC).toLocalDate());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CANCELLED, Optional.empty(), canceller);

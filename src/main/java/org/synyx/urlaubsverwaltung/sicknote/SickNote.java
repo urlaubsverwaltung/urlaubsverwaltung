@@ -13,7 +13,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static java.time.ZoneOffset.UTC;
@@ -70,7 +69,7 @@ public class SickNote extends AbstractPersistable<Integer> {
 
     public SickNote() {
 
-        this.lastEdited = ZonedDateTime.now(UTC).toLocalDate();
+        this.lastEdited = LocalDate.now(UTC);
     }
 
     public Person getPerson() {

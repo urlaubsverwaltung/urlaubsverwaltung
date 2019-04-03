@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -30,7 +29,7 @@ public class SickNoteStatistics {
 
         this.year = year;
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
-        this.created = ZonedDateTime.now(UTC).toLocalDate();
+        this.created = LocalDate.now(UTC);
 
         List<SickNote> sickNotes = sickNoteDAO.findAllActiveByYear(year);
 

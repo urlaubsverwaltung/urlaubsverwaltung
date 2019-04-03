@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -129,8 +128,8 @@ public class SickNoteConvertForm {
         applicationForLeave.setEndDate(endDate);
 
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate());
-        applicationForLeave.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
+        applicationForLeave.setApplicationDate(LocalDate.now(UTC));
+        applicationForLeave.setEditedDate(LocalDate.now(UTC));
 
         return applicationForLeave;
     }

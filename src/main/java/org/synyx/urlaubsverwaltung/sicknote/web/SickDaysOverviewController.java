@@ -25,7 +25,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,7 @@ public class SickDaysOverviewController {
 
     private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period) {
 
-        model.addAttribute("today", ZonedDateTime.now(UTC).toLocalDate());
+        model.addAttribute("today", LocalDate.now(UTC));
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
         model.addAttribute("period", period);

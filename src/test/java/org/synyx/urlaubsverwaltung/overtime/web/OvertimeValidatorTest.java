@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -116,7 +115,7 @@ public class OvertimeValidatorTest {
     @Test
     public void ensureStartAndEndDateCanBeEquals() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         overtimeForm.setStartDate(now);
         overtimeForm.setEndDate(now);

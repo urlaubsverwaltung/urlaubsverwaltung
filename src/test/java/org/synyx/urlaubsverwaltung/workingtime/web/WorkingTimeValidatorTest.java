@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -33,7 +33,7 @@ public class WorkingTimeValidatorTest {
 
         form = new WorkingTimeForm();
         form.setFederalState(FederalState.BAYERN);
-        form.setValidFrom(ZonedDateTime.now(UTC).toLocalDate());
+        form.setValidFrom(LocalDate.now(UTC));
         form.setWorkingDays(Arrays.asList(1, 2, 3, 4, 5));
     }
 

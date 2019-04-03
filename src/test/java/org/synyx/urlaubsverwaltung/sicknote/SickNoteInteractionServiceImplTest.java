@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -71,8 +71,8 @@ public class SickNoteInteractionServiceImplTest {
         sickNote = new SickNote();
         sickNote.setId(42);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
-        sickNote.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
-        sickNote.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        sickNote.setStartDate(LocalDate.now(UTC));
+        sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setPerson(TestDataCreator.createPerson());
 
@@ -161,8 +161,8 @@ public class SickNoteInteractionServiceImplTest {
     public void ensureConvertedSickNoteIsPersisted() {
 
         Application applicationForLeave = new Application();
-        applicationForLeave.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
-        applicationForLeave.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        applicationForLeave.setStartDate(LocalDate.now(UTC));
+        applicationForLeave.setEndDate(LocalDate.now(UTC));
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
         applicationForLeave.setPerson(TestDataCreator.createPerson());
@@ -189,8 +189,8 @@ public class SickNoteInteractionServiceImplTest {
     public void ensureConvertingSickNoteToVacationUpdatesCalendarEvent() {
 
         Application applicationForLeave = new Application();
-        applicationForLeave.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
-        applicationForLeave.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        applicationForLeave.setStartDate(LocalDate.now(UTC));
+        applicationForLeave.setEndDate(LocalDate.now(UTC));
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
         applicationForLeave.setPerson(person);

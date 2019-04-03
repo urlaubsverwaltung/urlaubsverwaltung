@@ -79,7 +79,7 @@ public class ApplicationValidatorTest {
 
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
+        appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(2).toLocalDate());
         appForm.setPerson(TestDataCreator.createPerson());
 
@@ -195,7 +195,7 @@ public class ApplicationValidatorTest {
     public void ensureMorningApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.MORNING);
-        appForm.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
+        appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
 
         validator.validate(appForm, errors);
@@ -208,7 +208,7 @@ public class ApplicationValidatorTest {
     public void ensureNoonApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
+        appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
 
         validator.validate(appForm, errors);
@@ -220,7 +220,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
 
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(date);
@@ -235,7 +235,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
 
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDate(date);
@@ -250,7 +250,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
 
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDate(date);
@@ -303,7 +303,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartTimeMustBeBeforeEndTime() {
 
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDate(date);
@@ -320,7 +320,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartTimeAndEndTimeMustNotBeEquals() {
 
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
         Time time = Time.valueOf("13:30:00");
 
         appForm.setDayLength(DayLength.MORNING);
@@ -458,8 +458,8 @@ public class ApplicationValidatorTest {
     public void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
-        appForm.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(LocalDate.now(UTC));
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
@@ -628,8 +628,8 @@ public class ApplicationValidatorTest {
         appForm.setStartDate(null);
         appForm.setEndDate(null);
 
-        appForm.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
-        appForm.setEndDate(ZonedDateTime.now(UTC).toLocalDate());
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(LocalDate.now(UTC));
         appForm.setDayLength(DayLength.MORNING);
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);

@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -59,7 +58,7 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.endDate = endDate;
         this.hours = numberOfHours;
 
-        this.lastModificationDate = ZonedDateTime.now(UTC).toLocalDate();
+        this.lastModificationDate = LocalDate.now(UTC);
     }
 
     public Person getPerson() {
@@ -146,7 +145,7 @@ public class Overtime extends AbstractPersistable<Integer> {
      */
     public void onUpdate() {
 
-        this.lastModificationDate = ZonedDateTime.now(UTC).toLocalDate();
+        this.lastModificationDate = LocalDate.now(UTC);
     }
 
 

@@ -21,7 +21,7 @@ public class DepartmentTest {
         Department department = new Department();
 
         Assert.assertNotNull("Last modification date should be set", department.getLastModification());
-        Assert.assertEquals("Wrong last modification date", ZonedDateTime.now(UTC).toLocalDate(),
+        Assert.assertEquals("Wrong last modification date", LocalDate.now(UTC),
             department.getLastModification());
     }
 

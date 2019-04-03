@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +53,7 @@ public class Department extends AbstractPersistable<Integer> {
 
     public Department() {
 
-        this.lastModification = ZonedDateTime.now(UTC).toLocalDate();
+        this.lastModification = LocalDate.now(UTC);
     }
 
     public String getName() {

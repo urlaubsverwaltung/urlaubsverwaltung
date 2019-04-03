@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class VacationOverviewService {
 
             for (Person person : department.getMembers()) {
 
-                LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+                LocalDate date = LocalDate.now(UTC);
                 int year = selectedYear != null ? selectedYear : date.getYear();
                 int month = selectedMonth != null ? selectedMonth : date.getMonthValue();
                 LocalDate lastDay = DateUtil.getLastDayOfMonth(year, month);

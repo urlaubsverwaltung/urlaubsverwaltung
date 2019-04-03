@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -57,7 +56,7 @@ public class ApplicationDAOIT {
         Person otherPerson = TestDataCreator.createPerson();
         personDAO.save(otherPerson);
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
         Application fullDayOvertimeReduction = TestDataCreator.createApplication(person,

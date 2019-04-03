@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -261,7 +260,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
         Person person = mock(Person.class);
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
 
@@ -279,7 +278,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
 
         Person person = mock(Person.class);
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person admin2 = TestDataCreator.createPerson("admin2");
@@ -330,7 +329,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsOnlyWaitingAndAllowedDepartmentApplicationsForLeave() {
 
         Person person = mock(Person.class);
-        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate date = LocalDate.now(UTC);
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person marketing1 = TestDataCreator.createPerson("marketing1");

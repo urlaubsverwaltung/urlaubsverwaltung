@@ -98,7 +98,7 @@ public final class TestDataCreator {
 
     public static Overtime createOvertimeRecord() {
 
-        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate startDate = LocalDate.now(UTC);
         LocalDate endDate = startDate.plusDays(7);
 
         return new Overtime(createPerson(), startDate, endDate, BigDecimal.ONE);
@@ -106,7 +106,7 @@ public final class TestDataCreator {
 
     public static Overtime createOvertimeRecord(Person person) {
 
-        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate startDate = LocalDate.now(UTC);
         LocalDate endDate = startDate.plusDays(7);
 
         Overtime overtime = new Overtime(person, startDate, endDate, BigDecimal.ONE);
@@ -118,7 +118,7 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, VacationType vacationType) {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         return createApplication(person, vacationType, now, now.plusDays(3),
             DayLength.FULL);
@@ -175,7 +175,7 @@ public final class TestDataCreator {
 
     public static SickNote createSickNote(Person person) {
 
-        return createSickNote(person, ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).plusDays(3).toLocalDate(), DayLength.FULL);
+        return createSickNote(person, LocalDate.now(UTC), ZonedDateTime.now(UTC).plusDays(3).toLocalDate(), DayLength.FULL);
     }
 
     public static SickNote createSickNote(Person person, LocalDate startDate, LocalDate endDate,

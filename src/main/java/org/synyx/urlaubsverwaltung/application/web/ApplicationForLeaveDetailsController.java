@@ -38,7 +38,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -151,7 +151,7 @@ public class ApplicationForLeaveDetailsController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(ZonedDateTime.now(UTC).toLocalDate(), acc.getYear()));
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
         }
 
         // UNSPECIFIC ATTRIBUTES

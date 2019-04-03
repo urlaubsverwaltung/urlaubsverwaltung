@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -34,7 +33,7 @@ public class OvertimeDAOIT {
         Person person = TestDataCreator.createPerson();
         personDAO.save(person);
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
         Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
 
         Assert.assertNull("Must not have ID", overtime.getId());
@@ -54,7 +53,7 @@ public class OvertimeDAOIT {
         Person otherPerson = TestDataCreator.createPerson();
         personDAO.save(otherPerson);
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         // Overtime for person
         overtimeDAO.save(new Overtime(person, now, now.plusDays(2), new BigDecimal("3")));

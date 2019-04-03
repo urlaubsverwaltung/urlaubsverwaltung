@@ -428,7 +428,7 @@ public class VacationDaysServiceTest {
 
         Account account = new Account();
         account.setPerson(person);
-        account.setValidFrom(ZonedDateTime.now(UTC).toLocalDate());
+        account.setValidFrom(LocalDate.now(UTC));
         account.setValidTo(ZonedDateTime.now(UTC).plusDays(10).toLocalDate());
 
         BigDecimal usedDaysBeforeApril = vacationDaysService.getUsedDaysBeforeApril(account);
@@ -455,7 +455,7 @@ public class VacationDaysServiceTest {
 
         Account account = new Account();
         account.setPerson(person);
-        account.setValidFrom(ZonedDateTime.now(UTC).toLocalDate());
+        account.setValidFrom(LocalDate.now(UTC));
         account.setValidTo(ZonedDateTime.now(UTC).plusDays(10).toLocalDate());
 
         BigDecimal usedDaysAfterApril = vacationDaysService.getUsedDaysAfterApril(account);

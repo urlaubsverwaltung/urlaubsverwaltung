@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Properties;
 
 import static java.time.ZoneOffset.UTC;
@@ -129,7 +129,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
 
         Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
-        Period period = new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.MORNING);
+        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.MORNING);
 
         AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(CalendarSettings.class));
         Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, config);

@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -44,7 +44,7 @@ public class OvertimeCommentTest {
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong overtime record", overtime, comment.getOvertime());
         Assert.assertEquals("Wrong action", OvertimeAction.CREATED, comment.getAction());
-        Assert.assertEquals("Wrong date", ZonedDateTime.now(UTC).toLocalDate(), comment.getDate());
+        Assert.assertEquals("Wrong date", LocalDate.now(UTC), comment.getDate());
 
         Assert.assertNull("Should not be set", comment.getText());
     }

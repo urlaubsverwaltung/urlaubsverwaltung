@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -19,21 +18,21 @@ public class FilterPeriodTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfInitializedWithNullStartDate() {
 
-        new FilterPeriod(null, ZonedDateTime.now(UTC).toLocalDate());
+        new FilterPeriod(null, LocalDate.now(UTC));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfInitializedWithNullEndDate() {
 
-        new FilterPeriod(ZonedDateTime.now(UTC).toLocalDate(), null);
+        new FilterPeriod(LocalDate.now(UTC), null);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfInitializedWithEndDateThatIsBeforeStartDate() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         new FilterPeriod(now, now.minusDays(1));
     }
@@ -42,7 +41,7 @@ public class FilterPeriodTest {
     @Test
     public void ensureCanBeInitializedWithStartAndEndDate() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
         LocalDate later = now.plusDays(2);
 
         FilterPeriod period = new FilterPeriod(now, later);
@@ -58,7 +57,7 @@ public class FilterPeriodTest {
     @Test
     public void ensureCanBeInitializedWithSameStartAndEndDate() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         FilterPeriod period = new FilterPeriod(now, now);
 
@@ -73,7 +72,7 @@ public class FilterPeriodTest {
     @Test
     public void ensureHasDefaultStartAndEndDateIfInitializedWithoutStartAndEndDate() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         FilterPeriod period = new FilterPeriod();
 
@@ -143,7 +142,7 @@ public class FilterPeriodTest {
     @Test
     public void ensureDefaultDatesForEmptyStrings() {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         FilterPeriod period = new FilterPeriod(Optional.empty(), Optional.empty());
 

@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
@@ -115,25 +115,25 @@ public class OverviewControllerTest {
         waitingApplication.setVacationType(vacationType);
         waitingApplication.setPerson(person);
         waitingApplication.setStatus(WAITING);
-        waitingApplication.setStartDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(1L));
-        waitingApplication.setEndDate(ZonedDateTime.now(UTC).toLocalDate().plusDays(1L));
+        waitingApplication.setStartDate(LocalDate.now(UTC).minusDays(1L));
+        waitingApplication.setEndDate(LocalDate.now(UTC).plusDays(1L));
 
         final Application allowedApplication = new Application();
         allowedApplication.setVacationType(vacationType);
         allowedApplication.setPerson(person);
         allowedApplication.setStatus(ALLOWED);
-        allowedApplication.setStartDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(10L));
-        allowedApplication.setEndDate(ZonedDateTime.now(UTC).toLocalDate().plusDays(10L));
+        allowedApplication.setStartDate(LocalDate.now(UTC).minusDays(10L));
+        allowedApplication.setEndDate(LocalDate.now(UTC).plusDays(10L));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(asList(waitingApplication, revokedApplication, allowedApplication));
 
         final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(1L));
-        sickNote.setEndDate(ZonedDateTime.now(UTC).toLocalDate().plusDays(1L));
+        sickNote.setStartDate(LocalDate.now(UTC).minusDays(1L));
+        sickNote.setEndDate(LocalDate.now(UTC).plusDays(1L));
         final SickNote sickNote2 = new SickNote();
-        sickNote2.setStartDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(10L));
-        sickNote2.setEndDate(ZonedDateTime.now(UTC).toLocalDate().plusDays(10L));
+        sickNote2.setStartDate(LocalDate.now(UTC).minusDays(10L));
+        sickNote2.setEndDate(LocalDate.now(UTC).plusDays(10L));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
         MockHttpServletRequestBuilder builder = get("/web/staff/1/overview");

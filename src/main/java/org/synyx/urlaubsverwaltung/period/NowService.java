@@ -16,7 +16,7 @@ public class NowService {
 
     public LocalDate now() {
 
-        return ZonedDateTime.now(UTC).toLocalDate();
+        return LocalDate.now(UTC);
     }
 
 

@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -18,7 +18,7 @@ public class AbstractCommentTest {
         TestComment comment = new TestComment();
 
         Assert.assertNotNull("Should not be null", comment.getDate());
-        Assert.assertEquals("Wrong date", ZonedDateTime.now(UTC).toLocalDate(), comment.getDate());
+        Assert.assertEquals("Wrong date", LocalDate.now(UTC), comment.getDate());
     }
 
 

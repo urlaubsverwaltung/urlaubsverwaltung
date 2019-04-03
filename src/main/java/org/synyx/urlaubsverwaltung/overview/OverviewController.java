@@ -15,22 +15,23 @@ import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
+import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
-import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.statistics.web.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.statistics.web.UsedDaysOverview;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -162,7 +163,7 @@ public class OverviewController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(ZonedDateTime.now(UTC).toLocalDate(), acc.getYear()));
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
         }
     }
 

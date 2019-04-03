@@ -88,7 +88,7 @@ public class AbsenceTest {
     @Test
     public void ensureCorrectTimeForMorningAbsence() {
 
-        LocalDateTime today = ZonedDateTime.now(UTC).toLocalDate().atStartOfDay();
+        LocalDateTime today = LocalDate.now(UTC).atStartOfDay();
 
         ZonedDateTime start = today.withHour(8).atZone(UTC);
         ZonedDateTime end = today.withHour(12).atZone(UTC);
@@ -105,7 +105,7 @@ public class AbsenceTest {
     @Test
     public void ensureCorrectTimeForNoonAbsence() {
 
-        LocalDateTime today = ZonedDateTime.now(UTC).toLocalDate().atStartOfDay();
+        LocalDateTime today = LocalDate.now(UTC).atStartOfDay();
 
         ZonedDateTime start = today.withHour(12).atZone(UTC);
         ZonedDateTime end = today.withHour(16).atZone(UTC);
@@ -122,7 +122,7 @@ public class AbsenceTest {
     @Test
     public void ensureIsAllDayForFullDayPeriod() {
 
-        LocalDate start = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate start = LocalDate.now(UTC);
         LocalDate end = start.plusDays(2);
 
         Period period = new Period(start, end, DayLength.FULL);
@@ -136,7 +136,7 @@ public class AbsenceTest {
     @Test
     public void ensureIsNotAllDayForMorningPeriod() {
 
-        LocalDate today = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate today = LocalDate.now(UTC);
 
         Period period = new Period(today, today, DayLength.MORNING);
 
@@ -149,7 +149,7 @@ public class AbsenceTest {
     @Test
     public void ensureIsNotAllDayForNoonPeriod() {
 
-        LocalDate today = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate today = LocalDate.now(UTC);
 
         Period period = new Period(today, today, DayLength.NOON);
 
@@ -169,7 +169,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullPerson() {
 
-        Period period = new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.FULL);
+        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
 
         new Absence(null, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
     }
@@ -178,7 +178,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullEventType() {
 
-        Period period = new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.FULL);
+        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
 
         new Absence(person, period, null, timeConfiguration);
     }
@@ -187,7 +187,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullConfiguration() {
 
-        Period period = new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.FULL);
+        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
 
         new Absence(person, period, EventType.ALLOWED_APPLICATION, null);
     }
@@ -196,7 +196,7 @@ public class AbsenceTest {
     @Test
     public void ensureCorrectEventSubject() {
 
-        LocalDate today = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate today = LocalDate.now(UTC);
         Period period = new Period(today, today, DayLength.FULL);
 
         BiConsumer<EventType, String> assertCorrectEventSubject = (type, subject) -> {

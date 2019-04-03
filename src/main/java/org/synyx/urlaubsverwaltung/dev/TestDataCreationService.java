@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -128,7 +127,7 @@ public class TestDataCreationService {
 
     private void createApplicationsForLeave(Person person, Person headOf) {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         VacationType holiday = null;
         VacationType overtime = null;
@@ -182,7 +181,7 @@ public class TestDataCreationService {
 
     private void createSickNotes(Person person) {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         SickNoteType sickNoteTypeStandard = null;
         SickNoteType sickNoteTypeChild = null;
@@ -214,7 +213,7 @@ public class TestDataCreationService {
 
     private void createOvertimeRecords(Person person) {
 
-        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate now = LocalDate.now(UTC);
 
         LocalDate lastWeek = now.minusWeeks(1);
         LocalDate weekBeforeLast = now.minusWeeks(2);

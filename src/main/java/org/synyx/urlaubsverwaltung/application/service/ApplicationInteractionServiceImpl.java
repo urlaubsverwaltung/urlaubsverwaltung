@@ -27,7 +27,6 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,7 +85,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         application.setStatus(ApplicationStatus.WAITING);
         application.setApplier(applier);
-        application.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setApplicationDate(LocalDate.now(UTC));
 
         applicationService.save(application);
 
@@ -179,7 +178,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
-        applicationForLeave.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
+        applicationForLeave.setEditedDate(LocalDate.now(UTC));
 
         applicationService.save(applicationForLeave);
 
@@ -207,7 +206,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
-        applicationForLeave.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
+        applicationForLeave.setEditedDate(LocalDate.now(UTC));
 
         applicationService.save(applicationForLeave);
 
@@ -241,7 +240,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         application.setStatus(ApplicationStatus.REJECTED);
         application.setBoss(privilegedUser);
-        application.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setEditedDate(LocalDate.now(UTC));
 
         applicationService.save(application);
 
@@ -270,7 +269,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         Person person = application.getPerson();
 
         application.setCanceller(canceller);
-        application.setCancelDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setCancelDate(LocalDate.now(UTC));
 
         if (application.hasStatus(ApplicationStatus.ALLOWED) ||
                 application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
@@ -379,18 +378,18 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             LocalDate minDateForNotification = application.getApplicationDate()
                 .plusDays(MIN_DAYS_LEFT_BEFORE_REMINDING_IS_POSSIBLE);
 
-            if (minDateForNotification.isAfter(ZonedDateTime.now(UTC).toLocalDate())) {
+            if (minDateForNotification.isAfter(LocalDate.now(UTC))) {
                 throw new ImpatientAboutApplicationForLeaveProcessException("It's too early to remind the bosses!");
             }
         }
 
-        if (remindDate != null && remindDate.isEqual(ZonedDateTime.now(UTC).toLocalDate())) {
+        if (remindDate != null && remindDate.isEqual(LocalDate.now(UTC))) {
             throw new RemindAlreadySentException("Reminding is possible maximum one time per day!");
         }
 
         mailService.sendRemindBossNotification(application);
 
-        application.setRemindDate(ZonedDateTime.now(UTC).toLocalDate());
+        application.setRemindDate(LocalDate.now(UTC));
         applicationService.save(application);
 
         return application;

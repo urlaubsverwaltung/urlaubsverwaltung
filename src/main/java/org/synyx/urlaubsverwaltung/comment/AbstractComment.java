@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -30,7 +29,7 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
     private String text;
 
     public AbstractComment() {
-        this.date = ZonedDateTime.now(UTC).toLocalDate();
+        this.date = LocalDate.now(UTC);
     }
 
     public Person getPerson() {
