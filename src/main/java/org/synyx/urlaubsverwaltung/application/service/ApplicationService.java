@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,8 +48,8 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
-     * @param  startDate {@link ZonedDateTime}
-     * @param  endDate {@link ZonedDateTime}
+     * @param  startDate {@link LocalDate}
+     * @param  endDate {@link LocalDate}
      * @param  person {@link Person}
      *
      * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y
@@ -62,8 +61,8 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
      *
-     * @param  startDate {@link ZonedDateTime}
-     * @param  endDate {@link ZonedDateTime}
+     * @param  startDate {@link LocalDate}
+     * @param  endDate {@link LocalDate}
      * @param  status {@link ApplicationStatus}
      *
      * @return  all {@link Application}s with the given state and vacation time between startDate x and endDate y
@@ -76,8 +75,8 @@ public interface ApplicationService {
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
      * state.
      *
-     * @param  startDate {@link ZonedDateTime}
-     * @param  endDate {@link ZonedDateTime}
+     * @param  startDate {@link LocalDate}
+     * @param  endDate {@link LocalDate}
      * @param  person {@link Person}
      * @param  status {@link ApplicationStatus}
      *
