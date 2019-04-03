@@ -16,7 +16,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.time.Month.*;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.OCTOBER;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

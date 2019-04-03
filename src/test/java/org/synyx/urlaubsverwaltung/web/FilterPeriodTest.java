@@ -8,7 +8,9 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static java.time.Month.*;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MAY;
 import static java.time.ZoneOffset.UTC;
 
 

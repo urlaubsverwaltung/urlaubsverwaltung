@@ -31,7 +31,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static java.time.DayOfWeek.*;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
 
 /**

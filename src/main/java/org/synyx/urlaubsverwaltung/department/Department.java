@@ -8,7 +8,10 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
