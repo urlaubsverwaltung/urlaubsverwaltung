@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.Period;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
