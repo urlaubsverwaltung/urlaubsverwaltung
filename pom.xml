@@ -26,11 +26,10 @@
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>1.8</java.version>
-    <joda.time.version>2.7</joda.time.version>
     <mail.version>1.4.7</mail.version>
     <mock-javamail.version>1.9</mock-javamail.version>
     <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
-    <jollyday.version>0.4.7</jollyday.version>
+    <jollyday.version>0.5.8</jollyday.version>
     <ews-java-api.version>2.0</ews-java-api.version>
     <httpcore.version>4.4.1</httpcore.version>
     <httpclient.version>4.5</httpclient.version>
@@ -43,6 +42,10 @@
     <run-java-sh.version>1.3.4</run-java-sh.version>
     <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
     <swagger-annotations.version>1.5.21</swagger-annotations.version>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
+    <jaxb-impl.version>2.3.1</jaxb-impl.version>
+    <jaxb-core.version>2.3.0.1</jaxb-core.version>
+    <freemarker-java8.version>1.3.0</freemarker-java8.version>
   </properties>
 
   <scm>
@@ -205,16 +208,10 @@
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
     </dependency>
-
-    <!-- JODA TIME -->
     <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time-jsptags</artifactId>
-      <version>${joda-time-jsptags.version}</version>
+      <groupId>no.api.freemarker</groupId>
+      <artifactId>freemarker-java8</artifactId>
+      <version>${freemarker-java8.version}</version>
     </dependency>
 
     <!-- PUBLIC HOLIDAYS INFORMATION -->
@@ -224,6 +221,22 @@
       <version>${jollyday.version}</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>${jaxb-impl.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>${jaxb-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.ws</groupId>
+      <artifactId>jaxws-api</artifactId>
+      <version>${jaxb-api.version}</version>
+    </dependency>
+
 
     <!-- SPRINGBOOT DEVTOOLS -->
     <dependency>

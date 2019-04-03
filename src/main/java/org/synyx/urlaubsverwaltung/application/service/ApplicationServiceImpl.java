@@ -1,7 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -11,6 +10,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,27 +51,26 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndPerson(DateMidnight startDate, DateMidnight endDate,
+    public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
                                                                        Person person) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate.toDate(), endDate.toDate(), person);
+        return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate,endDate, person);
     }
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndState(DateMidnight startDate, DateMidnight endDate,
+    public List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate,
                                                                       ApplicationStatus status) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndState(startDate.toDate(), endDate.toDate(), status);
+        return applicationDAO.getApplicationsForACertainTimeAndState(startDate, endDate, status);
     }
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate,
-                                                                               DateMidnight endDate, Person person, ApplicationStatus status) {
+    public List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate,
+                                                                               LocalDate endDate, Person person, ApplicationStatus status) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate.toDate(), endDate.toDate(),
-            person, status);
+        return applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status);
     }
 
 

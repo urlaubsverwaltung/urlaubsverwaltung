@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
 import liquibase.util.csv.CSVWriter;
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,11 +18,12 @@ import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsCsvEx
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ public class ApplicationForLeaveStatisticsController {
 
     @InitBinder
     public void initBinder(DataBinder binder) {
-        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
+        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
     }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)

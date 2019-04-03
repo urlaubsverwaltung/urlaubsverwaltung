@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -27,7 +27,7 @@ public interface ApplicationDAO extends CrudRepository<Application, Integer> {
         + "or (x.startDate < ?1 and x.endDate > ?2)) "
         + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndState(Date startDate, Date endDate, ApplicationStatus status);
+    List<Application> getApplicationsForACertainTimeAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
 
 
     @Query(
@@ -36,7 +36,7 @@ public interface ApplicationDAO extends CrudRepository<Application, Integer> {
         + "or (x.startDate < ?1 and x.endDate > ?2)) "
         + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndPerson(Date startDate, Date endDate, Person person);
+    List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
 
     @Query(
@@ -45,7 +45,7 @@ public interface ApplicationDAO extends CrudRepository<Application, Integer> {
         + "or (x.startDate < ?1 and x.endDate > ?2)) "
         + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndPersonAndState(Date startDate, Date endDate, Person person,
+    List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person,
         ApplicationStatus status);
 
 

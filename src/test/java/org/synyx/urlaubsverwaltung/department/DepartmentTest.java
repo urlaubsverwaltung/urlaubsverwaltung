@@ -1,13 +1,16 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.time.ZoneOffset.UTC;
 
 
 public class DepartmentTest {
@@ -18,7 +21,7 @@ public class DepartmentTest {
         Department department = new Department();
 
         Assert.assertNotNull("Last modification date should be set", department.getLastModification());
-        Assert.assertEquals("Wrong last modification date", DateTime.now().withTimeAtStartOfDay(),
+        Assert.assertEquals("Wrong last modification date", ZonedDateTime.now(UTC).toLocalDate(),
             department.getLastModification());
     }
 
@@ -33,7 +36,7 @@ public class DepartmentTest {
     @Test
     public void ensureReturnsCorrectLastModificationDate() {
 
-        DateTime lastModification = DateTime.now().minusDays(5).withTimeAtStartOfDay();
+        LocalDate lastModification = ZonedDateTime.now(UTC).minusDays(5).toLocalDate();
 
         Department department = new Department();
         department.setLastModification(lastModification);

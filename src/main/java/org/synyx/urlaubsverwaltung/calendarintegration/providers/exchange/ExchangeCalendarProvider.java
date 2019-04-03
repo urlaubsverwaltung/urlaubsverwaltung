@@ -29,6 +29,8 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 
 import java.net.URI;
+import java.sql.Date;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -214,9 +216,9 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
         OlsonTimeZoneDefinition timeZone = new OlsonTimeZoneDefinition(TimeZone.getTimeZone(exchangeTimeZoneId));
 
-        appointment.setStart(absence.getStartDate());
+        appointment.setStart(Date.from(absence.getStartDate().toInstant()));
         appointment.setStartTimeZone(timeZone);
-        appointment.setEnd(absence.getEndDate());
+        appointment.setEnd(Date.from(absence.getEndDate().toInstant()));
         appointment.setEndTimeZone(timeZone);
 
         appointment.setIsAllDayEvent(absence.isAllDay());

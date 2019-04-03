@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -89,8 +90,8 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements Applic
     public String getFileName(FilterPeriod period) {
         return String.format("%s_%s_%s.csv",
                 getTranslation("applications.statistics", "Statistik"),
-                period.getStartDate().toString(DATE_FORMAT),
-                period.getEndDate().toString(DATE_FORMAT));
+                period.getStartDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
+                period.getEndDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT)));
     }
 
     private String getTranslation(String key, Object... args) {

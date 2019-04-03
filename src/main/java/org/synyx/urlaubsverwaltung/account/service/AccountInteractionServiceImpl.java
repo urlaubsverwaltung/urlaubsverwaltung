@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
-import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -35,7 +35,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account updateOrCreateHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
+    public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
                                                  BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                                  BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring,
                                                  String comment) {
@@ -50,7 +50,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
             account.setComment(comment);
         } else {
-            account = new Account(person, validFrom.toDate(), validTo.toDate(), annualVacationDays, remainingDays,
+            account = new Account(person, validFrom, validTo, annualVacationDays, remainingDays,
                 remainingDaysNotExpiring, comment);
         }
 
@@ -64,7 +64,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo,
+    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo,
                                        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
                                        BigDecimal remainingDaysNotExpiring, String comment) {
 

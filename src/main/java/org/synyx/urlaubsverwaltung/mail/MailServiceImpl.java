@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 
+import java.time.ZonedDateTime;
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Optional.ofNullable;
 
 
@@ -301,7 +302,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("accounts", updatedAccounts);
-        model.put("today", DateMidnight.now());
+        model.put("today", ZonedDateTime.now(UTC).toLocalDate());
 
         String text = mailBuilder.buildMailBody("updated_accounts", model, LOCALE);
 

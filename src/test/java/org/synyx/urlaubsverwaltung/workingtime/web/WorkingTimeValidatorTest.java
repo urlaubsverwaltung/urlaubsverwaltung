@@ -1,20 +1,19 @@
 package org.synyx.urlaubsverwaltung.workingtime.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 
 
 public class WorkingTimeValidatorTest {
@@ -32,7 +31,7 @@ public class WorkingTimeValidatorTest {
 
         form = new WorkingTimeForm();
         form.setFederalState(FederalState.BAYERN);
-        form.setValidFrom(DateMidnight.now());
+        form.setValidFrom(ZonedDateTime.now(UTC).toLocalDate());
         form.setWorkingDays(Arrays.asList(1, 2, 3, 4, 5));
     }
 

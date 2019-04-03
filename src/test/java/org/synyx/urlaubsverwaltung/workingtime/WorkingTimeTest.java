@@ -1,12 +1,14 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.time.DayOfWeek.*;
 
 
 /**
@@ -35,11 +37,11 @@ public class WorkingTimeTest {
     @Test
     public void testHasWorkingDaysIdentical() {
 
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
 
-        List<Integer> workingDaysToCompare = Arrays.asList(DateTimeConstants.FRIDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.MONDAY, DateTimeConstants.THURSDAY);
+        List<Integer> workingDaysToCompare = Arrays.asList(FRIDAY.getValue(), TUESDAY.getValue(),
+                WEDNESDAY.getValue(), MONDAY.getValue(), THURSDAY.getValue());
 
         WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
@@ -53,11 +55,11 @@ public class WorkingTimeTest {
     @Test
     public void testHasWorkingDaysDifferent() {
 
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
 
-        List<Integer> workingDaysToCompare = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.SUNDAY);
+        List<Integer> workingDaysToCompare = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+                WEDNESDAY.getValue(), THURSDAY.getValue(), SUNDAY.getValue());
 
         WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, DayLength.FULL);

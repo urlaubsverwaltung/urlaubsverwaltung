@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.account.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -10,6 +9,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * Validates {@link AccountForm}.
@@ -69,8 +69,8 @@ class AccountValidator implements Validator {
 
     void validatePeriod(AccountForm form, Errors errors) {
 
-        DateMidnight holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
-        DateMidnight holidaysAccountValidTo = form.getHolidaysAccountValidTo();
+        LocalDate holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
+        LocalDate holidaysAccountValidTo = form.getHolidaysAccountValidTo();
 
         validateDateNotNull(holidaysAccountValidFrom, "holidaysAccountValidFrom", errors);
         validateDateNotNull(holidaysAccountValidTo, "holidaysAccountValidTo", errors);
@@ -87,7 +87,7 @@ class AccountValidator implements Validator {
         }
     }
 
-    private void validateDateNotNull(DateMidnight date, String field, Errors errors) {
+    private void validateDateNotNull(LocalDate date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && errors.getFieldErrors(field).isEmpty()) {

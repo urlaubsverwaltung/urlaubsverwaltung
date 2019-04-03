@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -56,7 +56,7 @@ public class SickNoteControllerTest {
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "2016-12-31"))
             .andExpect(status().isOk());
 
-        verify(sickNoteServiceMock).getByPeriod(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31));
+        verify(sickNoteServiceMock).getByPeriod(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
         verifyZeroInteractions(personServiceMock);
     }
 
@@ -73,8 +73,8 @@ public class SickNoteControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteServiceMock)
-            .getByPersonAndPeriod(any(Person.class), eq(new DateMidnight(2016, 1, 1)),
-                eq(new DateMidnight(2016, 12, 31)));
+            .getByPersonAndPeriod(any(Person.class), eq(LocalDate.of(2016, 1, 1)),
+                eq(LocalDate.of(2016, 12, 31)));
         verify(personServiceMock).getPersonByID(23);
     }
 
@@ -83,11 +83,11 @@ public class SickNoteControllerTest {
     public void ensureCorrectConversionOfSickNotes() throws Exception {
 
         SickNote sickNote1 = TestDataCreator.createSickNote(TestDataCreator.createPerson("foo"),
-                new DateMidnight(2016, 5, 19), new DateMidnight(2016, 5, 20), DayLength.FULL);
+                LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
         SickNote sickNote2 = TestDataCreator.createSickNote(TestDataCreator.createPerson("bar"));
         SickNote sickNote3 = TestDataCreator.createSickNote(TestDataCreator.createPerson("baz"));
 
-        when(sickNoteServiceMock.getByPeriod(any(DateMidnight.class), any(DateMidnight.class)))
+        when(sickNoteServiceMock.getByPeriod(any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Arrays.asList(sickNote1, sickNote2, sickNote3));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01").param("to", "2016-12-31"))

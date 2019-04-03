@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -32,10 +31,12 @@ import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.statistics.web.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.statistics.web.UsedDaysOverview;
 
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.web.ControllerConstants.YEAR_ATTRIBUTE;
 
@@ -98,15 +99,15 @@ public class OverviewController {
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
 
-        Integer yearToShow = year == null ? DateMidnight.now().getYear() : year;
+        Integer yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
 
-        model.addAttribute(YEAR_ATTRIBUTE, DateMidnight.now().getYear());
-        model.addAttribute("currentYear", DateMidnight.now().getYear());
-        model.addAttribute("currentMonth", DateMidnight.now().getMonthOfYear());
+        model.addAttribute(YEAR_ATTRIBUTE, ZonedDateTime.now(UTC).getYear());
+        model.addAttribute("currentYear", ZonedDateTime.now(UTC).getYear());
+        model.addAttribute("currentMonth", ZonedDateTime.now(UTC).getMonthValue());
 
         return "person/overview";
     }
@@ -161,7 +162,7 @@ public class OverviewController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now(), acc.getYear()));
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(ZonedDateTime.now(UTC).toLocalDate(), acc.getYear()));
         }
     }
 

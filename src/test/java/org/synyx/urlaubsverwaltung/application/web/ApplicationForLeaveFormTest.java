@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -11,7 +10,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.function.Consumer;
+
+import static java.time.ZoneOffset.UTC;
 
 
 public class ApplicationForLeaveFormTest {
@@ -19,8 +22,8 @@ public class ApplicationForLeaveFormTest {
     @Test
     public void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
 
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDate = startDate.plusDays(3);
+        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate endDate = startDate.plusDays(3);
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
 
@@ -40,7 +43,7 @@ public class ApplicationForLeaveFormTest {
     @Test
     public void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendarintegration.absence;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,9 +9,12 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.function.BiConsumer;
 
+import static java.time.ZoneOffset.UTC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -41,8 +43,8 @@ public class AbsenceTest {
     @Test
     public void ensureCanBeInstantiatedWithCorrectProperties() {
 
-        DateMidnight start = new DateMidnight(2015, 9, 21);
-        DateMidnight end = new DateMidnight(2015, 9, 23);
+        LocalDate start = LocalDate.of(2015, 9, 21);
+        LocalDate end = LocalDate.of(2015, 9, 23);
 
         Period period = new Period(start, end, DayLength.FULL);
 
@@ -53,8 +55,8 @@ public class AbsenceTest {
         Assert.assertNotNull("Person must not be null", absence.getPerson());
         Assert.assertNotNull("Event type must not be null", absence.getEventType());
 
-        Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
-        Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
+        Assert.assertEquals("Wrong start date", start.atStartOfDay(UTC), absence.getStartDate());
+        Assert.assertEquals("Wrong end date", end.atStartOfDay(UTC).plusDays(1), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
         Assert.assertEquals("Wrong event type", EventType.WAITING_APPLICATION, absence.getEventType());
     }
@@ -64,8 +66,8 @@ public class AbsenceTest {
     public void ensureCanBeInstantiatedWithCorrectPropertiesConsideringDaylightSavingTime() {
 
         // Date where daylight saving time is relevant
-        DateMidnight start = new DateMidnight(2015, 10, 23);
-        DateMidnight end = new DateMidnight(2015, 10, 25);
+        LocalDate start = LocalDate.of(2015, 10, 23);
+        LocalDate end = LocalDate.of(2015, 10, 25);
 
         Period period = new Period(start, end, DayLength.FULL);
 
@@ -76,8 +78,8 @@ public class AbsenceTest {
         Assert.assertNotNull("Person must not be null", absence.getPerson());
         Assert.assertNotNull("Event type must not be null", absence.getEventType());
 
-        Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
-        Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
+        Assert.assertEquals("Wrong start date", start.atStartOfDay(UTC), absence.getStartDate());
+        Assert.assertEquals("Wrong end date", end.atStartOfDay(UTC).plusDays(1), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
         Assert.assertEquals("Wrong event type", EventType.ALLOWED_APPLICATION, absence.getEventType());
     }
@@ -86,12 +88,12 @@ public class AbsenceTest {
     @Test
     public void ensureCorrectTimeForMorningAbsence() {
 
-        DateMidnight today = DateMidnight.now();
+        LocalDateTime today = ZonedDateTime.now(UTC).toLocalDate().atStartOfDay();
 
-        Date start = today.toDateTime().withHourOfDay(8).toDate();
-        Date end = today.toDateTime().withHourOfDay(12).toDate();
+        ZonedDateTime start = today.withHour(8).atZone(UTC);
+        ZonedDateTime end = today.withHour(12).atZone(UTC);
 
-        Period period = new Period(today, today, DayLength.MORNING);
+        Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.MORNING);
 
         Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
@@ -103,12 +105,12 @@ public class AbsenceTest {
     @Test
     public void ensureCorrectTimeForNoonAbsence() {
 
-        DateMidnight today = DateMidnight.now();
+        LocalDateTime today = ZonedDateTime.now(UTC).toLocalDate().atStartOfDay();
 
-        Date start = today.toDateTime().withHourOfDay(12).toDate();
-        Date end = today.toDateTime().withHourOfDay(16).toDate();
+        ZonedDateTime start = today.withHour(12).atZone(UTC);
+        ZonedDateTime end = today.withHour(16).atZone(UTC);
 
-        Period period = new Period(today, today, DayLength.NOON);
+        Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.NOON);
 
         Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
@@ -120,8 +122,8 @@ public class AbsenceTest {
     @Test
     public void ensureIsAllDayForFullDayPeriod() {
 
-        DateMidnight start = DateMidnight.now();
-        DateMidnight end = start.plusDays(2);
+        LocalDate start = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate end = start.plusDays(2);
 
         Period period = new Period(start, end, DayLength.FULL);
 
@@ -134,7 +136,7 @@ public class AbsenceTest {
     @Test
     public void ensureIsNotAllDayForMorningPeriod() {
 
-        DateMidnight today = DateMidnight.now();
+        LocalDate today = ZonedDateTime.now(UTC).toLocalDate();
 
         Period period = new Period(today, today, DayLength.MORNING);
 
@@ -147,7 +149,7 @@ public class AbsenceTest {
     @Test
     public void ensureIsNotAllDayForNoonPeriod() {
 
-        DateMidnight today = DateMidnight.now();
+        LocalDate today = ZonedDateTime.now(UTC).toLocalDate();
 
         Period period = new Period(today, today, DayLength.NOON);
 
@@ -167,7 +169,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullPerson() {
 
-        Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
+        Period period = new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.FULL);
 
         new Absence(null, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
     }
@@ -176,7 +178,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullEventType() {
 
-        Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
+        Period period = new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.FULL);
 
         new Absence(person, period, null, timeConfiguration);
     }
@@ -185,7 +187,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullConfiguration() {
 
-        Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
+        Period period = new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.FULL);
 
         new Absence(person, period, EventType.ALLOWED_APPLICATION, null);
     }
@@ -194,7 +196,7 @@ public class AbsenceTest {
     @Test
     public void ensureCorrectEventSubject() {
 
-        DateMidnight today = DateMidnight.now();
+        LocalDate today = ZonedDateTime.now(UTC).toLocalDate();
         Period period = new Period(today, today, DayLength.FULL);
 
         BiConsumer<EventType, String> assertCorrectEventSubject = (type, subject) -> {

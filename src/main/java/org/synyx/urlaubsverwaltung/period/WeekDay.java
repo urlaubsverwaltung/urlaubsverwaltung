@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.period;
 
-import org.joda.time.DateTimeConstants;
 import org.springframework.util.Assert;
+
+import java.time.DayOfWeek;
 
 
 /**
@@ -9,13 +10,13 @@ import org.springframework.util.Assert;
  */
 public enum WeekDay {
 
-    MONDAY(DateTimeConstants.MONDAY),
-    TUESDAY(DateTimeConstants.TUESDAY),
-    WEDNESDAY(DateTimeConstants.WEDNESDAY),
-    THURSDAY(DateTimeConstants.THURSDAY),
-    FRIDAY(DateTimeConstants.FRIDAY),
-    SATURDAY(DateTimeConstants.SATURDAY),
-    SUNDAY(DateTimeConstants.SUNDAY);
+    MONDAY(DayOfWeek.MONDAY.getValue()),
+    TUESDAY(DayOfWeek.TUESDAY.getValue()),
+    WEDNESDAY(DayOfWeek.WEDNESDAY.getValue()),
+    THURSDAY(DayOfWeek.THURSDAY.getValue()),
+    FRIDAY(DayOfWeek.FRIDAY.getValue()),
+    SATURDAY(DayOfWeek.SATURDAY.getValue()),
+    SUNDAY(DayOfWeek.SUNDAY.getValue());
 
     private static final int MIN_WEEK_DAY = 1;
     private static final int MAX_WEEK_DAY = 7;
@@ -36,7 +37,7 @@ public enum WeekDay {
     /**
      * Get the week day for the given day of week representation.
      *
-     * @param  dayOfWeek  to detect the week day for, use {@link org.joda.time.DateTimeConstants} by preference.
+     * @param  dayOfWeek  to detect the week day for, use {@link java.time.DayOfWeek} by preference.
      *
      * @return  the matching week day, never {@code null}
      */

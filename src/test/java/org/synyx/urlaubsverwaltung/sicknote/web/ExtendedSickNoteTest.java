@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +11,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -35,11 +35,11 @@ public class ExtendedSickNoteTest {
 
         Person person = TestDataCreator.createPerson();
 
-        SickNote sickNote = TestDataCreator.createSickNote(person, new DateMidnight(2015, 3, 3),
-                new DateMidnight(2015, 3, 6), DayLength.MORNING);
+        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2015, 3, 3),
+                LocalDate.of(2015, 3, 6), DayLength.MORNING);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
-                    any(DateMidnight.class), any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+                    any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);
@@ -67,11 +67,11 @@ public class ExtendedSickNoteTest {
 
         Person person = TestDataCreator.createPerson();
 
-        SickNote sickNote = TestDataCreator.createSickNote(person, new DateMidnight(2016, 3, 1),
-                new DateMidnight(2016, 3, 4), DayLength.FULL);
+        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 3, 1),
+                LocalDate.of(2016, 3, 4), DayLength.FULL);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
-                    any(DateMidnight.class), any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+                    any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);

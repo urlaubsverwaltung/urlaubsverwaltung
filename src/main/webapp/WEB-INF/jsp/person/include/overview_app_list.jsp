@@ -1,7 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
@@ -109,8 +108,8 @@
                           var dayLength = '<c:out value="${app.dayLength}" />';
                           var personId = '<c:out value="${app.person.id}" />';
 
-                          var startDate = "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";
-                          var endDate = "<joda:format pattern='yyyy/MM/dd' value='${app.endDate}' />";
+                              var startDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.startDate}' />";
+                              var endDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.endDate}' />";
 
                           var from = new Date(startDate);
                           var to = new Date(endDate);

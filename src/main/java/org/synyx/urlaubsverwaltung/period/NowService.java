@@ -1,7 +1,11 @@
 package org.synyx.urlaubsverwaltung.period;
 
-import org.joda.time.DateMidnight;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -10,14 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class NowService {
 
-    public DateMidnight now() {
+    public LocalDate now() {
 
-        return DateMidnight.now();
+        return ZonedDateTime.now(UTC).toLocalDate();
     }
 
 
     public int currentYear() {
 
-        return now().getYear();
+        return ZonedDateTime.now(UTC).getYear();
     }
 }

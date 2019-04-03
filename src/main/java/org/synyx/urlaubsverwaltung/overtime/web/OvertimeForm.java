@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 /**
@@ -17,9 +17,9 @@ public class OvertimeForm {
 
     private Person person;
 
-    private DateMidnight startDate;
+    private LocalDate startDate;
 
-    private DateMidnight endDate;
+    private LocalDate endDate;
 
     private BigDecimal numberOfHours;
 
@@ -74,25 +74,25 @@ public class OvertimeForm {
     }
 
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         return startDate;
     }
 
 
-    public void setStartDate(DateMidnight startDate) {
+    public void setStartDate(LocalDate startDate) {
 
         this.startDate = startDate;
     }
 
 
-    public DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         return endDate;
     }
 
 
-    public void setEndDate(DateMidnight endDate) {
+    public void setEndDate(LocalDate endDate) {
 
         this.endDate = endDate;
     }

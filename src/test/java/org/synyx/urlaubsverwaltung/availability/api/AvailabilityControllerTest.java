@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -60,8 +60,8 @@ public class AvailabilityControllerTest {
         verify(personService).getPersonByLogin(LOGIN);
 
         verify(availabilityService)
-            .getPersonsAvailabilities(eq(new DateMidnight(2016, 1, 1)),
-                eq(new DateMidnight(2016, 1, 31)), eq(testPerson));
+            .getPersonsAvailabilities(eq(LocalDate.of(2016, 1, 1)),
+                eq(LocalDate.of(2016, 1, 31)), eq(testPerson));
     }
 
 

@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -249,8 +251,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             startEventDateTime = new EventDateTime().setDate(startDateTime);
             endEventDateTime = new EventDateTime().setDate(endDateTime);
         } else {
-            DateTime dateTimeStart = new DateTime(absence.getStartDate());
-            DateTime dateTimeEnd = new DateTime(absence.getEndDate());
+            DateTime dateTimeStart = new DateTime(Date.from(absence.getStartDate().toInstant()));
+            DateTime dateTimeEnd = new DateTime(Date.from(absence.getEndDate().toInstant()));
 
             startEventDateTime = new EventDateTime().setDateTime(dateTimeStart);
             endEventDateTime = new EventDateTime().setDateTime(dateTimeEnd);

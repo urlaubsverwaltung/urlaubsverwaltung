@@ -1,8 +1,12 @@
 package org.synyx.urlaubsverwaltung.period;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 public class PeriodTest {
@@ -10,36 +14,36 @@ public class PeriodTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullStartDate() {
 
-        new Period(null, DateMidnight.now(), DayLength.FULL);
+        new Period(null, ZonedDateTime.now(UTC).toLocalDate(), DayLength.FULL);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullEndDate() {
 
-        new Period(DateMidnight.now(), null, DayLength.FULL);
+        new Period(ZonedDateTime.now(UTC).toLocalDate(), null, DayLength.FULL);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullDayLength() {
 
-        new Period(DateMidnight.now(), DateMidnight.now(), null);
+        new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), null);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnZeroDayLength() {
 
-        new Period(DateMidnight.now(), DateMidnight.now(), DayLength.ZERO);
+        new Period(ZonedDateTime.now(UTC).toLocalDate(), ZonedDateTime.now(UTC).toLocalDate(), DayLength.ZERO);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfEndDateIsBeforeStartDate() {
 
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDateBeforeStartDate = startDate.minusDays(1);
+        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate endDateBeforeStartDate = startDate.minusDays(1);
 
         new Period(startDate, endDateBeforeStartDate, DayLength.FULL);
     }
@@ -48,7 +52,7 @@ public class PeriodTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfStartAndEndDateAreNotSameForMorningDayLength() {
 
-        DateMidnight startDate = DateMidnight.now();
+        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
 
         new Period(startDate, startDate.plusDays(1), DayLength.MORNING);
     }
@@ -57,7 +61,7 @@ public class PeriodTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfStartAndEndDateAreNotSameForNoonDayLength() {
 
-        DateMidnight startDate = DateMidnight.now();
+        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
 
         new Period(startDate, startDate.plusDays(1), DayLength.NOON);
     }
@@ -66,8 +70,8 @@ public class PeriodTest {
     @Test
     public void ensureCanBeInitializedWithFullDay() {
 
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDate = startDate.plusDays(1);
+        LocalDate startDate = ZonedDateTime.now(UTC).toLocalDate();
+        LocalDate endDate = startDate.plusDays(1);
 
         Period period = new Period(startDate, endDate, DayLength.FULL);
 
@@ -80,7 +84,7 @@ public class PeriodTest {
     @Test
     public void ensureCanBeInitializedWithHalfDay() {
 
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
 
         Period period = new Period(date, date, DayLength.MORNING);
 

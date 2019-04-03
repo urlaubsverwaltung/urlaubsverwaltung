@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,16 +14,15 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.time.ZoneOffset.UTC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 public class OvertimeValidatorTest {
@@ -114,7 +112,7 @@ public class OvertimeValidatorTest {
     @Test
     public void ensureStartAndEndDateCanBeEquals() {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         overtimeForm.setStartDate(now);
         overtimeForm.setEndDate(now);

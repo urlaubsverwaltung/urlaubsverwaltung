@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overview.calendar;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -59,7 +59,7 @@ public class VacationControllerTest {
             .andExpect(status().isOk());
 
         verify(applicationServiceMock)
-            .getApplicationsForACertainPeriodAndState(new DateMidnight(2016, 1, 1), new DateMidnight(2016, 12, 31),
+            .getApplicationsForACertainPeriodAndState(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31),
                 ApplicationStatus.ALLOWED);
         verifyZeroInteractions(personServiceMock);
     }
@@ -77,8 +77,8 @@ public class VacationControllerTest {
             .andExpect(status().isOk());
 
         verify(applicationServiceMock)
-            .getApplicationsForACertainPeriodAndPersonAndState(new DateMidnight(2016, 1, 1),
-                new DateMidnight(2016, 12, 31), person, ApplicationStatus.ALLOWED);
+            .getApplicationsForACertainPeriodAndPersonAndState(LocalDate.of(2016, 1, 1),
+                LocalDate.of(2016, 12, 31), person, ApplicationStatus.ALLOWED);
         verify(personServiceMock).getPersonByID(23);
     }
 
@@ -87,14 +87,14 @@ public class VacationControllerTest {
     public void ensureCorrectConversionOfVacations() throws Exception {
 
         Application vacation1 = TestDataCreator.createApplication(TestDataCreator.createPerson("foo"),
-                new DateMidnight(2016, 5, 19), new DateMidnight(2016, 5, 20), DayLength.FULL);
+                LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
         vacation1.setStatus(ApplicationStatus.ALLOWED);
 
         Application vacation2 = TestDataCreator.createApplication(TestDataCreator.createPerson("bar"),
-                new DateMidnight(2016, 4, 5), new DateMidnight(2016, 4, 10), DayLength.FULL);
+                LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), DayLength.FULL);
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndState(any(DateMidnight.class),
-                    any(DateMidnight.class), any(ApplicationStatus.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndState(any(LocalDate.class),
+                    any(LocalDate.class), any(ApplicationStatus.class)))
             .thenReturn(Arrays.asList(vacation1, vacation2));
 
         mockMvc.perform(get("/api/vacations").param("from", "2016-01-01").param("to", "2016-12-31"))

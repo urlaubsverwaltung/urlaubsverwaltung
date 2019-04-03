@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +27,7 @@ public class VacationAbsenceProviderTest {
 
     private TimedAbsenceSpans emptyTimedAbsenceSpans;
     private Person testPerson;
-    private DateMidnight vacationDay;
+    private LocalDate vacationDay;
     private Application application;
 
     @Before
@@ -38,7 +38,7 @@ public class VacationAbsenceProviderTest {
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = TestDataCreator.createPerson();
         application = TestDataCreator.createApplication(testPerson, vacationDay, vacationDay, DayLength.FULL);
-        vacationDay = new DateMidnight(2016, 1, 4);
+        vacationDay = LocalDate.of(2016, 1, 4);
 
         vacationAbsenceProvider = new VacationAbsenceProvider(applicationService);
     }
@@ -66,7 +66,7 @@ public class VacationAbsenceProviderTest {
     @Test
     public void ensureReturnsGiveAbsenceSpansIfNoVacationFound() {
 
-        DateMidnight standardWorkingDay = new DateMidnight(2016, 1, 5);
+        LocalDate standardWorkingDay = LocalDate.of(2016, 1, 5);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(standardWorkingDay,
                     standardWorkingDay, testPerson))

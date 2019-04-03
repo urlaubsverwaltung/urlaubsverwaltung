@@ -1,12 +1,16 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -18,9 +22,9 @@ public class SickNoteConvertForm {
 
     private DayLength dayLength;
 
-    private DateMidnight startDate;
+    private LocalDate startDate;
 
-    private DateMidnight endDate;
+    private LocalDate endDate;
 
     private VacationType vacationType;
 
@@ -64,25 +68,25 @@ public class SickNoteConvertForm {
     }
 
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         return startDate;
     }
 
 
-    public void setStartDate(DateMidnight startDate) {
+    public void setStartDate(LocalDate startDate) {
 
         this.startDate = startDate;
     }
 
 
-    public DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         return endDate;
     }
 
 
-    public void setEndDate(DateMidnight endDate) {
+    public void setEndDate(LocalDate endDate) {
 
         this.endDate = endDate;
     }
@@ -125,8 +129,8 @@ public class SickNoteConvertForm {
         applicationForLeave.setEndDate(endDate);
 
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setApplicationDate(DateMidnight.now());
-        applicationForLeave.setEditedDate(DateMidnight.now());
+        applicationForLeave.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate());
+        applicationForLeave.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
 
         return applicationForLeave;
     }

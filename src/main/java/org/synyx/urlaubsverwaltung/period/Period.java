@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.period;
 
-import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
+
+import java.time.LocalDate;
 
 
 /**
@@ -9,11 +10,11 @@ import org.springframework.util.Assert;
  */
 public class Period {
 
-    private final DateMidnight startDate;
-    private final DateMidnight endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
     private final DayLength dayLength;
 
-    public Period(DateMidnight startDate, DateMidnight endDate, DayLength dayLength) {
+    public Period(LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
         Assert.notNull(startDate, "Start date must be given");
         Assert.notNull(endDate, "End date must be given");
@@ -37,13 +38,13 @@ public class Period {
         this.dayLength = dayLength;
     }
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         return startDate;
     }
 
 
-    public DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         return endDate;
     }

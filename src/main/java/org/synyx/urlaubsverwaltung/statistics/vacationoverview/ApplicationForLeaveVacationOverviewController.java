@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview;
 
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -13,6 +12,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 /**
  * Controller to generate applications for leave vacation overview.
@@ -45,8 +49,8 @@ public class ApplicationForLeaveVacationOverviewController {
 
         prepareDepartments(signedInUser, model);
 
-        model.addAttribute("currentYear", LocalDate.now().getYear());
-        model.addAttribute("currentMonth", LocalDate.now().getMonthOfYear());
+        model.addAttribute("currentYear", ZonedDateTime.now(UTC).getYear());
+        model.addAttribute("currentMonth", ZonedDateTime.now(UTC).getMonthValue());
         return "application/vacation_overview";
     }
 

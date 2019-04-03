@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,19 +10,16 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static java.time.ZoneOffset.UTC;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 
 public class DepartmentServiceImplTest {
@@ -148,7 +143,7 @@ public class DepartmentServiceImplTest {
 
         sut.update(department);
 
-        verify(department).setLastModification(any(DateTime.class));
+        verify(department).setLastModification(any(LocalDate.class));
     }
 
 
@@ -260,7 +255,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
         Person person = mock(Person.class);
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
 
@@ -278,7 +273,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
 
         Person person = mock(Person.class);
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person admin2 = TestDataCreator.createPerson("admin2");
@@ -294,8 +289,8 @@ public class DepartmentServiceImplTest {
         marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, person));
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
-            any(DateMidnight.class), any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(Collections.emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
@@ -329,7 +324,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsOnlyWaitingAndAllowedDepartmentApplicationsForLeave() {
 
         Person person = mock(Person.class);
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person marketing1 = TestDataCreator.createPerson("marketing1");
@@ -354,12 +349,12 @@ public class DepartmentServiceImplTest {
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
-            any(DateMidnight.class), eq(admin1)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
+            any(LocalDate.class), eq(admin1)))
             .thenReturn(Arrays.asList(waitingApplication, otherApplication));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
-            any(DateMidnight.class), eq(marketing1)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
+            any(LocalDate.class), eq(marketing1)))
             .thenReturn(Collections.singletonList(allowedApplication));
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);

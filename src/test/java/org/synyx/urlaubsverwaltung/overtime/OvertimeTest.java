@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
@@ -9,6 +8,10 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 public class OvertimeTest {
@@ -16,7 +19,7 @@ public class OvertimeTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullPerson() {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         new Overtime(null, now, now, BigDecimal.ONE);
     }
@@ -26,7 +29,7 @@ public class OvertimeTest {
     public void ensureThrowsOnNullStartDate() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         new Overtime(person, null, now, BigDecimal.ONE);
     }
@@ -36,7 +39,7 @@ public class OvertimeTest {
     public void ensureThrowsOnNullEndDate() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         new Overtime(person, now, null, BigDecimal.ONE);
     }
@@ -46,7 +49,7 @@ public class OvertimeTest {
     public void ensureThrowsOnNullNumberOfHours() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         new Overtime(person, now, now, null);
     }
@@ -56,7 +59,7 @@ public class OvertimeTest {
     public void ensureReturnsCorrectStartDate() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
 
@@ -69,7 +72,7 @@ public class OvertimeTest {
     public void ensureReturnsCorrectEndDate() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
 
@@ -82,7 +85,7 @@ public class OvertimeTest {
     public void ensureSetLastModificationDateOnInitialization() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), BigDecimal.ONE);
 
@@ -95,7 +98,7 @@ public class OvertimeTest {
     public void ensureThrowsIfGettingStartDateOnACorruptedOvertime() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
 
@@ -111,7 +114,7 @@ public class OvertimeTest {
     public void ensureThrowsIfGettingEndDateOnACorruptedOvertime() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
 
@@ -127,7 +130,7 @@ public class OvertimeTest {
     public void ensureThrowsIfGettingLastModificationDateOnACorruptedOvertime() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
 
@@ -143,14 +146,14 @@ public class OvertimeTest {
     public void ensureCallingOnUpdateChangesLastModificationDate() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = ZonedDateTime.now(UTC).toLocalDate();
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
 
         // Simulate that the overtime record has been created to an earlier time
         Field lastModificationDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
         lastModificationDateField.setAccessible(true);
-        lastModificationDateField.set(overtime, now.minusDays(3).toDate());
+        lastModificationDateField.set(overtime, now.minusDays(3));
 
         Assert.assertEquals("Wrong initial last modification date", now.minusDays(3),
             overtime.getLastModificationDate());

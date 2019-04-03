@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,15 +8,19 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.holiday.DayOfMonth;
 import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.holiday.DayOfMonth.TypeOfDay.WEEKEND;
 import static org.synyx.urlaubsverwaltung.holiday.DayOfMonth.TypeOfDay.WORKDAY;
 
@@ -50,18 +53,18 @@ public class VacationOverviewService {
 
             for (Person person : department.getMembers()) {
 
-                DateMidnight date = new DateMidnight();
+                LocalDate date = ZonedDateTime.now(UTC).toLocalDate();
                 int year = selectedYear != null ? selectedYear : date.getYear();
-                int month = selectedMonth != null ? selectedMonth : date.getMonthOfYear();
-                DateMidnight lastDay = DateUtil.getLastDayOfMonth(year, month);
+                int month = selectedMonth != null ? selectedMonth : date.getMonthValue();
+                LocalDate lastDay = DateUtil.getLastDayOfMonth(year, month);
 
                 VacationOverview holidayOverview = getVacationOverview(person);
 
-                for (int i = 1; i <= lastDay.toDate().getDate(); i++) {
+                for (int i = 1; i <= lastDay.getDayOfMonth(); i++) {
 
                     DayOfMonth dayOfMonth = new DayOfMonth();
-                    DateMidnight currentDay = new DateMidnight(year, month, i);
-                    dayOfMonth.setDayText(currentDay.toString(DATE_FORMAT));
+                    LocalDate currentDay = LocalDate.of(year, month, i);
+                    dayOfMonth.setDayText(currentDay.format(DateTimeFormatter.ofPattern(DATE_FORMAT)));
                     dayOfMonth.setDayNumber(i);
 
                     dayOfMonth.setTypeOfDay(getTypeOfDay(person, currentDay));
@@ -73,7 +76,7 @@ public class VacationOverviewService {
         return holidayOverviewList;
     }
 
-    private DayOfMonth.TypeOfDay getTypeOfDay(Person person, DateMidnight currentDay) {
+    private DayOfMonth.TypeOfDay getTypeOfDay(Person person, LocalDate currentDay) {
         DayOfMonth.TypeOfDay typeOfDay;
 
         FederalState state = workingTimeService.getFederalStateForPerson(person, currentDay);

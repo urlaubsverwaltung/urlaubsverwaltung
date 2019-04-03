@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,9 @@ import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Period;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -68,8 +70,8 @@ public class CalculationService {
 
         DayLength dayLength = application.getDayLength();
 
-        DateMidnight startDate = application.getStartDate();
-        DateMidnight endDate = application.getEndDate();
+        LocalDate startDate = application.getStartDate();
+        LocalDate endDate = application.getEndDate();
         int yearOfStartDate = startDate.getYear();
         int yearOfEndDate = endDate.getYear();
 
@@ -139,7 +141,7 @@ public class CalculationService {
     private BigDecimal getWorkdaysBeforeApril(int year, Application application) {
         List<Interval> beforeApril = overlapService.getListOfOverlaps(
             DateUtil.getFirstDayOfYear(year),
-            DateUtil.getLastDayOfMonth(year, DateTimeConstants.MARCH),
+            DateUtil.getLastDayOfMonth(year, Month.MARCH.getValue()),
             Collections.singletonList(application),
             Collections.emptyList()
         );
@@ -148,10 +150,12 @@ public class CalculationService {
     }
 
     private BigDecimal calculateWorkDaysBeforeApril(Application application, List<Interval> beforeApril) {
+        DateTime start = beforeApril.get(0).getStart();
+        DateTime end = beforeApril.get(0).getEnd();
         return calendarService.getWorkDays(
             application.getDayLength(),
-            beforeApril.get(0).getStart().toDateMidnight(),
-            beforeApril.get(0).getEnd().toDateMidnight(),
+            LocalDate.of(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth()),
+            LocalDate.of(end.getYear(), end.getMonthOfYear(), end.getDayOfMonth()),
             application.getPerson());
     }
 

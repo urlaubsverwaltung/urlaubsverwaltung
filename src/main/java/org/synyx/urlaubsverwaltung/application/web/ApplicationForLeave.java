@@ -36,12 +36,12 @@ public class ApplicationForLeave extends Application {
 
     public WeekDay getWeekDayOfStartDate() {
 
-        return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek());
+        return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek().getValue());
     }
 
 
     public WeekDay getWeekDayOfEndDate() {
 
-        return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek());
+        return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek().getValue());
     }
 }

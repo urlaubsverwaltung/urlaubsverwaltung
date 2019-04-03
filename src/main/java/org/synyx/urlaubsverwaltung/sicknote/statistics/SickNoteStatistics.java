@@ -1,13 +1,18 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
+
+import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 
 /**
@@ -15,7 +20,7 @@ import java.util.List;
  */
 public class SickNoteStatistics {
 
-    private final DateMidnight created;
+    private final LocalDate created;
     private final int year;
     private final int totalNumberOfSickNotes;
     private final BigDecimal totalNumberOfSickDays;
@@ -25,7 +30,7 @@ public class SickNoteStatistics {
 
         this.year = year;
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
-        this.created = DateMidnight.now();
+        this.created = ZonedDateTime.now(UTC).toLocalDate();
 
         List<SickNote> sickNotes = sickNoteDAO.findAllActiveByYear(year);
 
@@ -50,11 +55,11 @@ public class SickNoteStatistics {
         BigDecimal numberOfSickDays = BigDecimal.ZERO;
 
         for (SickNote sickNote : sickNotes) {
-            DateMidnight sickNoteStartDate = sickNote.getStartDate();
-            DateMidnight sickNoteEndDate = sickNote.getEndDate();
+            LocalDate sickNoteStartDate = sickNote.getStartDate();
+            LocalDate sickNoteEndDate = sickNote.getEndDate();
 
-            DateMidnight startDate;
-            DateMidnight endDate;
+            LocalDate startDate;
+            LocalDate endDate;
 
             Assert.isTrue(sickNoteStartDate.getYear() == this.year || sickNoteEndDate.getYear() == this.year,
                 "Start date OR end date of the sick note must be in the year " + this.year);
@@ -62,13 +67,13 @@ public class SickNoteStatistics {
             if (sickNoteStartDate.getYear() == this.year) {
                 startDate = sickNoteStartDate;
             } else {
-                startDate = sickNoteEndDate.dayOfYear().withMinimumValue();
+                startDate = sickNoteEndDate.with(firstDayOfYear());
             }
 
             if (sickNoteEndDate.getYear() == this.year) {
                 endDate = sickNoteEndDate;
             } else {
-                endDate = sickNoteStartDate.dayOfYear().withMaximumValue();
+                endDate = sickNoteStartDate.with(lastDayOfYear());
             }
 
             BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), startDate, endDate,
@@ -81,7 +86,7 @@ public class SickNoteStatistics {
     }
 
 
-    public DateMidnight getCreated() {
+    public LocalDate getCreated() {
 
         return this.created;
     }

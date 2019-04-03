@@ -56,8 +56,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         Assert.notNull(person, "Person to get overtime records for must be given.");
 
-        return overtimeDAO.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year).toDate(),
-                DateUtil.getLastDayOfYear(year).toDate());
+        return overtimeDAO.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
     }
 
 

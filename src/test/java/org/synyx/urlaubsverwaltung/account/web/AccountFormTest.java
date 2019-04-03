@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.account.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.time.LocalDate;
 
 
 public class AccountFormTest {
@@ -17,9 +18,9 @@ public class AccountFormTest {
         Assert.assertNotNull("Valid to date for holidays account must not be null",
             accountForm.getHolidaysAccountValidTo());
 
-        Assert.assertEquals("Wrong valid from date for holidays account", new DateMidnight(2014, 1, 1),
+        Assert.assertEquals("Wrong valid from date for holidays account", LocalDate.of(2014, 1, 1),
             accountForm.getHolidaysAccountValidFrom());
-        Assert.assertEquals("Wrong valid to date for holidays account", new DateMidnight(2014, 12, 31),
+        Assert.assertEquals("Wrong valid to date for holidays account", LocalDate.of(2014, 12, 31),
             accountForm.getHolidaysAccountValidTo());
     }
 }

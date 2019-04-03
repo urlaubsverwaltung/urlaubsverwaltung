@@ -1,18 +1,18 @@
 package org.synyx.urlaubsverwaltung.workingtime.web;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 
 class WorkingTimeForm {
 
-    private DateMidnight validFrom;
+    private LocalDate validFrom;
 
     private List<Integer> workingDays = new ArrayList<>();
 
@@ -40,13 +40,13 @@ class WorkingTimeForm {
         this.federalState = workingTime.getFederalStateOverride().orElse(null);
     }
 
-    public DateMidnight getValidFrom() {
+    public LocalDate getValidFrom() {
 
         return validFrom;
     }
 
 
-    public void setValidFrom(DateMidnight validFrom) {
+    public void setValidFrom(LocalDate validFrom) {
 
         this.validFrom = validFrom;
     }

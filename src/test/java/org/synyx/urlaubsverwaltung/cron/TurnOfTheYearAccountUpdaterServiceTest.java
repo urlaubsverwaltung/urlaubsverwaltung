@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.cron;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
@@ -12,21 +11,18 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static java.time.ZoneOffset.UTC;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 
 public class TurnOfTheYearAccountUpdaterServiceTest {
 
-    private static final int NEW_YEAR = DateMidnight.now().getYear();
+    private static final int NEW_YEAR = ZonedDateTime.now(UTC).getYear();
     private static final int LAST_YEAR = NEW_YEAR - 1;
 
     private PersonService personServiceMock;

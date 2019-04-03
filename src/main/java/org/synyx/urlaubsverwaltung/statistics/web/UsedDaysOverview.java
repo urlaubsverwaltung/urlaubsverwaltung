@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -11,6 +10,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -75,8 +75,8 @@ public class UsedDaysOverview {
         Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {
-            DateMidnight startDate = getStartDateForCalculation(application);
-            DateMidnight endDate = getEndDateForCalculation(application);
+            LocalDate startDate = getStartDateForCalculation(application);
+            LocalDate endDate = getEndDateForCalculation(application);
 
             return calendarService.getWorkDays(dayLength, startDate, endDate, person);
         }
@@ -85,7 +85,7 @@ public class UsedDaysOverview {
     }
 
 
-    private DateMidnight getStartDateForCalculation(Application application) {
+    private LocalDate getStartDateForCalculation(Application application) {
 
         if (application.getStartDate().getYear() != this.year) {
             return DateUtil.getFirstDayOfYear(application.getEndDate().getYear());
@@ -95,7 +95,7 @@ public class UsedDaysOverview {
     }
 
 
-    private DateMidnight getEndDateForCalculation(Application application) {
+    private LocalDate getEndDateForCalculation(Application application) {
 
         if (application.getEndDate().getYear() != this.year) {
             return DateUtil.getLastDayOfYear(application.getStartDate().getYear());

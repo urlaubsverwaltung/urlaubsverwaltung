@@ -1,7 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.cron;
 
-import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,11 +12,13 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -50,7 +51,7 @@ public class TurnOfTheYearAccountUpdaterService {
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
         // what's the new year?
-        int year = DateMidnight.now().getYear();
+        int year = ZonedDateTime.now(UTC).getYear();
 
         // get all persons
         List<Person> persons = personService.getActivePersons();

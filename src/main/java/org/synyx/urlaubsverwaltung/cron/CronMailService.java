@@ -1,7 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.cron;
 
-import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,11 +13,14 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -79,7 +81,7 @@ public class CronMailService {
                 mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 
                 for (Application longWaitingApplication : longWaitingApplications) {
-                    longWaitingApplication.setRemindDate(DateMidnight.now());
+                    longWaitingApplication.setRemindDate(ZonedDateTime.now(UTC).toLocalDate());
                     applicationService.save(longWaitingApplication);
                 }
 
@@ -95,22 +97,22 @@ public class CronMailService {
     private Predicate<Application> isLongWaitingApplications() {
         return application -> {
 
-            DateMidnight remindDate = application.getRemindDate();
+            LocalDate remindDate = application.getRemindDate();
             if (remindDate == null) {
                 Integer daysBeforeRemindForWaitingApplications =
                         settingsService.getSettings().getAbsenceSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
-                DateMidnight minDateForNotification = application.getApplicationDate()
+                LocalDate minDateForNotification = application.getApplicationDate()
                         .plusDays(daysBeforeRemindForWaitingApplications);
 
                 // true -> remind!
                 // false -> to early for notification
-                return minDateForNotification.isBeforeNow();
+                return minDateForNotification.isBefore(ZonedDateTime.now(UTC).toLocalDate());
             } else {
                 // true -> not reminded today
                 // false -> already reminded today
-                return !remindDate.isEqual(DateMidnight.now());
+                return !remindDate.isEqual(ZonedDateTime.now(UTC).toLocalDate());
             }
         };
     }

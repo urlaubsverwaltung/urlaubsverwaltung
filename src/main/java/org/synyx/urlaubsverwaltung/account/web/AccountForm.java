@@ -1,19 +1,22 @@
 package org.synyx.urlaubsverwaltung.account.web;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 class AccountForm {
 
     private int holidaysAccountYear;
 
-    private DateMidnight holidaysAccountValidFrom;
+    private LocalDate holidaysAccountValidFrom;
 
-    private DateMidnight holidaysAccountValidTo;
+    private LocalDate holidaysAccountValidTo;
 
     private BigDecimal annualVacationDays;
 
@@ -27,7 +30,7 @@ class AccountForm {
 
     AccountForm() {
 
-        this(DateMidnight.now().getYear());
+        this(ZonedDateTime.now(UTC).getYear());
     }
 
     AccountForm(int year) {
@@ -67,22 +70,22 @@ class AccountForm {
         this.holidaysAccountYear = holidaysAccountYear;
     }
 
-    public DateMidnight getHolidaysAccountValidFrom() {
+    public LocalDate getHolidaysAccountValidFrom() {
 
         return holidaysAccountValidFrom;
     }
 
-    public void setHolidaysAccountValidFrom(DateMidnight holidaysAccountValidFrom) {
+    public void setHolidaysAccountValidFrom(LocalDate holidaysAccountValidFrom) {
 
         this.holidaysAccountValidFrom = holidaysAccountValidFrom;
     }
 
-    public DateMidnight getHolidaysAccountValidTo() {
+    public LocalDate getHolidaysAccountValidTo() {
 
         return holidaysAccountValidTo;
     }
 
-    public void setHolidaysAccountValidTo(DateMidnight holidaysAccountValidTo) {
+    public void setHolidaysAccountValidTo(LocalDate holidaysAccountValidTo) {
 
         this.holidaysAccountValidTo = holidaysAccountValidTo;
     }

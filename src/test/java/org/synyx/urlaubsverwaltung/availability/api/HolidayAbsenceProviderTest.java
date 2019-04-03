@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +33,16 @@ public class HolidayAbsenceProviderTest {
 
     private TimedAbsenceSpans emptyTimedAbsenceSpans;
     private Person testPerson;
-    private DateMidnight newYearsDay;
-    private DateMidnight standardWorkingDay;
+    private LocalDate newYearsDay;
+    private LocalDate standardWorkingDay;
 
     @Before
     public void setUp() {
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = TestDataCreator.createPerson();
-        newYearsDay = new DateMidnight(2016, 1, 1);
-        standardWorkingDay = new DateMidnight(2016, 1, 4);
+        newYearsDay = LocalDate.of(2016, 1, 1);
+        standardWorkingDay = LocalDate.of(2016, 1, 4);
 
         sickDayAbsenceProvider = mock(SickDayAbsenceProvider.class);
         setupWorkingTimeServiceMock();
@@ -57,7 +57,7 @@ public class HolidayAbsenceProviderTest {
 
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getFederalStateForPerson(any(Person.class),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
 

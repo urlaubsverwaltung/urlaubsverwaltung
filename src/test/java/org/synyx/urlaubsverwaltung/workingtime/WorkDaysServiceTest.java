@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -15,6 +13,9 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,7 @@ public class WorkDaysServiceTest {
         workingTime = TestDataCreator.createWorkingTime();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
     }
 
@@ -70,8 +71,8 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWeekDays() {
 
-        DateMidnight start = new DateMidnight(2011, 11, 16);
-        DateMidnight end = new DateMidnight(2011, 11, 28);
+        LocalDate start = LocalDate.of(2011, 11, 16);
+        LocalDate end = LocalDate.of(2011, 11, 28);
 
         double returnValue = instance.getWeekDays(start, end);
 
@@ -94,8 +95,8 @@ public class WorkDaysServiceTest {
         // total days: 14
         // netto days: 10 (considering public holidays and weekends)
 
-        DateMidnight start = new DateMidnight(2010, 12, 17);
-        DateMidnight end = new DateMidnight(2010, 12, 31);
+        LocalDate start = LocalDate.of(2010, 12, 17);
+        LocalDate end = LocalDate.of(2010, 12, 31);
 
         BigDecimal returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
@@ -107,8 +108,8 @@ public class WorkDaysServiceTest {
         // total days: 14
         // netto days: 9 (considering public holidays and weekends)
 
-        start = new DateMidnight(2009, 12, 17);
-        end = new DateMidnight(2009, 12, 31);
+        start = LocalDate.of(2009, 12, 17);
+        end = LocalDate.of(2009, 12, 31);
 
         returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
@@ -116,8 +117,8 @@ public class WorkDaysServiceTest {
         assertEquals(BigDecimal.valueOf(9.0), returnValue);
 
         // start date and end date are not in the same year
-        start = new DateMidnight(2011, 12, 26);
-        end = new DateMidnight(2012, 1, 15);
+        start = LocalDate.of(2011, 12, 26);
+        end = LocalDate.of(2012, 1, 15);
 
         returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
@@ -125,8 +126,8 @@ public class WorkDaysServiceTest {
         assertEquals(BigDecimal.valueOf(13.0), returnValue);
 
         // Labour Day (1st May)
-        start = new DateMidnight(2009, 4, 27);
-        end = new DateMidnight(2009, 5, 2);
+        start = LocalDate.of(2009, 4, 27);
+        end = LocalDate.of(2009, 5, 2);
 
         returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
@@ -134,8 +135,8 @@ public class WorkDaysServiceTest {
         assertEquals(BigDecimal.valueOf(4.0), returnValue);
 
         // start date is Sunday, end date Saturday
-        start = new DateMidnight(2011, 1, 2);
-        end = new DateMidnight(2011, 1, 8);
+        start = LocalDate.of(2011, 1, 2);
+        end = LocalDate.of(2011, 1, 8);
 
         returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
@@ -145,8 +146,8 @@ public class WorkDaysServiceTest {
         // testing for half days
         application.setDayLength(DayLength.MORNING);
 
-        start = new DateMidnight(2011, 1, 4);
-        end = new DateMidnight(2011, 1, 8);
+        start = LocalDate.of(2011, 1, 4);
+        end = LocalDate.of(2011, 1, 8);
 
         returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
@@ -158,12 +159,12 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForTeilzeitStaff() {
 
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.WEDNESDAY,
-                DateTimeConstants.FRIDAY, DateTimeConstants.SATURDAY);
+        List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.WEDNESDAY.getValue(),
+                DayOfWeek.FRIDAY.getValue(), DayOfWeek.SATURDAY.getValue());
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 16);
-        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate startDate = LocalDate.of(2013, Month.DECEMBER, 16);
+        LocalDate endDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, startDate, endDate, person);
 
@@ -174,12 +175,12 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForVollzeitStaff() {
 
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.TUESDAY.getValue(),
+                DayOfWeek.WEDNESDAY.getValue(), DayOfWeek.THURSDAY.getValue(), DayOfWeek.FRIDAY.getValue());
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 16);
-        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate startDate = LocalDate.of(2013, Month.DECEMBER, 16);
+        LocalDate endDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, startDate, endDate, person);
 
@@ -191,8 +192,8 @@ public class WorkDaysServiceTest {
     public void testGetWorkDaysHalfDay() {
 
         // monday
-        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 25);
-        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 25);
+        LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 25);
+        LocalDate endDate = LocalDate.of(2013, Month.NOVEMBER, 25);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, startDate, endDate, person);
 
@@ -204,8 +205,8 @@ public class WorkDaysServiceTest {
     public void testGetWorkDaysZero() {
 
         // saturday
-        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
-        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
+        LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 23);
+        LocalDate endDate = LocalDate.of(2013, Month.NOVEMBER, 23);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, startDate, endDate, person);
 
@@ -217,8 +218,8 @@ public class WorkDaysServiceTest {
     public void testGetWorkDaysHalfDayZero() {
 
         // saturday
-        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
-        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
+        LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 23);
+        LocalDate endDate = LocalDate.of(2013, Month.NOVEMBER, 23);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, startDate, endDate, person);
 
@@ -229,7 +230,7 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForChristmasEve() {
 
-        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+        LocalDate date = LocalDate.of(2013, Month.DECEMBER, 24);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, date, date, person);
 
@@ -240,7 +241,7 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForChristmasEveDayLengthMorning() {
 
-        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+        LocalDate date = LocalDate.of(2013, Month.DECEMBER, 24);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, date, date, person);
 
@@ -251,7 +252,7 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForNewYearsEve() {
 
-        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate date = LocalDate.of(2013, Month.DECEMBER, 31);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, date, date, person);
 
@@ -262,7 +263,7 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForNewYearsEveDayLengthMorning() {
 
-        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate date = LocalDate.of(2013, Month.DECEMBER, 31);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, date, date, person);
 
@@ -273,8 +274,8 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForChristmasEveAndNewYearsHoliday() {
 
-        DateMidnight from = new DateMidnight(2013, DateTimeConstants.DECEMBER, 23);
-        DateMidnight to = new DateMidnight(2014, DateTimeConstants.JANUARY, 2);
+        LocalDate from = LocalDate.of(2013, Month.DECEMBER, 23);
+        LocalDate to = LocalDate.of(2014, Month.JANUARY, 2);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, from, to, person);
 
@@ -285,8 +286,8 @@ public class WorkDaysServiceTest {
     @Test
     public void testGetWorkDaysForChristmasEveAndNewYearsHolidayDayLengthMorning() {
 
-        DateMidnight from = new DateMidnight(2013, DateTimeConstants.DECEMBER, 23);
-        DateMidnight to = new DateMidnight(2014, DateTimeConstants.JANUARY, 2);
+        LocalDate from = LocalDate.of(2013, Month.DECEMBER, 23);
+        LocalDate to = LocalDate.of(2014, Month.JANUARY, 2);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, from, to, person);
 
@@ -297,8 +298,8 @@ public class WorkDaysServiceTest {
     @Test
     public void ensureCorrectWorkDaysForAssumptionDayForSystemDefaultFederalState() {
 
-        DateMidnight from = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
-        DateMidnight to = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
+        LocalDate from = LocalDate.of(2016, Month.AUGUST, 15);
+        LocalDate to = LocalDate.of(2016, Month.AUGUST, 15);
 
         BigDecimal workDays = instance.getWorkDays(DayLength.FULL, from, to, person);
 
@@ -309,13 +310,13 @@ public class WorkDaysServiceTest {
     @Test
     public void ensureCorrectWorkDaysForAssumptionDayForOverriddenFederalState() {
 
-        DateMidnight from = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
-        DateMidnight to = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
+        LocalDate from = LocalDate.of(2016, Month.AUGUST, 15);
+        LocalDate to = LocalDate.of(2016, Month.AUGUST, 15);
 
         workingTime.setFederalStateOverride(FederalState.BAYERN_AUGSBURG);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         BigDecimal workDays = instance.getWorkDays(DayLength.FULL, from, to, person);

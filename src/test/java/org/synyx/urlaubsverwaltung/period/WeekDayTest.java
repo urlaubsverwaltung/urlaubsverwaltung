@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.period;
 
-import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.DayOfWeek;
 import java.util.function.Consumer;
 
 
@@ -30,7 +30,7 @@ public class WeekDayTest {
     @Test
     public void ensureGetByDayOfWeekReturnsCorrectWeekDay() {
 
-        WeekDay weekDay = WeekDay.getByDayOfWeek(DateTimeConstants.MONDAY);
+        WeekDay weekDay = WeekDay.getByDayOfWeek(DayOfWeek.MONDAY.getValue());
 
         Assert.assertNotNull("Missing week day", weekDay);
         Assert.assertEquals("Wrong week day", WeekDay.MONDAY, weekDay);

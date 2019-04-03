@@ -1,11 +1,13 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%@attribute name="date" type="org.joda.time.DateMidnight" required="true" %>
+<%@attribute name="date" type="java.time.LocalDate" required="true" %>
 
 <c:set var="FORMAT_DATE_TIME_PATTERN">
     <spring:message code="pattern.date"/>
 </c:set>
 
-<joda:format pattern="${FORMAT_DATE_TIME_PATTERN}" value="${date}" />
+<fmt:parseDate value="${date}" pattern="yyyy-MM-dd" var="parsedDate" type="date"/>
+
+<fmt:formatDate pattern="${FORMAT_DATE_TIME_PATTERN}" value="${parsedDate}" type="date" />

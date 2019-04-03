@@ -1,10 +1,11 @@
 package org.synyx.urlaubsverwaltung.absence.api;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -24,9 +25,9 @@ public class DayAbsence {
     private final String status;
     private final String href;
 
-    public DayAbsence(DateMidnight date, DayLength dayLength, DayAbsence.Type type, String status, Integer id) {
+    public DayAbsence(LocalDate date, DayLength dayLength, Type type, String status, Integer id) {
 
-        this.date = date.toString(RestApiDateFormat.DATE_PATTERN);
+        this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
         this.dayLength = dayLength.getDuration();
         this.type = type.name();
         this.status = status;

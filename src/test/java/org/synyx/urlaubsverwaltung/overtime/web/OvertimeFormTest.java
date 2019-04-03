@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
@@ -10,6 +9,9 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 public class OvertimeFormTest {
@@ -46,8 +48,8 @@ public class OvertimeFormTest {
         Person person = TestDataCreator.createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
-        overtimeForm.setStartDate(DateMidnight.now());
-        overtimeForm.setEndDate(DateMidnight.now().plusDays(1));
+        overtimeForm.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
+        overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 
@@ -108,8 +110,8 @@ public class OvertimeFormTest {
         Person person = TestDataCreator.createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
-        overtimeForm.setStartDate(DateMidnight.now());
-        overtimeForm.setEndDate(DateMidnight.now().plusDays(1));
+        overtimeForm.setStartDate(ZonedDateTime.now(UTC).toLocalDate());
+        overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 

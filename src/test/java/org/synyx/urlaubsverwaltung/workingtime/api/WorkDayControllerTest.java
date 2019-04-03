@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.workingtime.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +15,7 @@ import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -52,7 +52,7 @@ public class WorkDayControllerTest {
 
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class), any(Person.class)))
+        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         perform(get("/api/workdays")
@@ -67,7 +67,7 @@ public class WorkDayControllerTest {
             .andExpect(jsonPath("$.response.workDays", is("1")));
 
         verify(personServiceMock).getPersonByID(23);
-        verify(workDaysServiceMock).getWorkDays(FULL, new DateMidnight(2016, 1, 4), new DateMidnight(2016, 1, 4), person);
+        verify(workDaysServiceMock).getWorkDays(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
     }
 
 

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,8 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySentException;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.*;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -19,18 +20,14 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -84,7 +81,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         application.setStatus(ApplicationStatus.WAITING);
         application.setApplier(applier);
-        application.setApplicationDate(DateMidnight.now());
+        application.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate());
 
         applicationService.save(application);
 
@@ -177,7 +174,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
-        applicationForLeave.setEditedDate(DateMidnight.now());
+        applicationForLeave.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
 
         applicationService.save(applicationForLeave);
 
@@ -205,7 +202,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
-        applicationForLeave.setEditedDate(DateMidnight.now());
+        applicationForLeave.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
 
         applicationService.save(applicationForLeave);
 
@@ -239,7 +236,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         application.setStatus(ApplicationStatus.REJECTED);
         application.setBoss(privilegedUser);
-        application.setEditedDate(DateMidnight.now());
+        application.setEditedDate(ZonedDateTime.now(UTC).toLocalDate());
 
         applicationService.save(application);
 
@@ -268,7 +265,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         Person person = application.getPerson();
 
         application.setCanceller(canceller);
-        application.setCancelDate(DateMidnight.now());
+        application.setCancelDate(ZonedDateTime.now(UTC).toLocalDate());
 
         if (application.hasStatus(ApplicationStatus.ALLOWED) ||
                 application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
@@ -371,24 +368,24 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     public Application remind(Application application) throws RemindAlreadySentException,
         ImpatientAboutApplicationForLeaveProcessException {
 
-        DateMidnight remindDate = application.getRemindDate();
+        LocalDate remindDate = application.getRemindDate();
 
         if (remindDate == null) {
-            DateMidnight minDateForNotification = application.getApplicationDate()
+            LocalDate minDateForNotification = application.getApplicationDate()
                 .plusDays(MIN_DAYS_LEFT_BEFORE_REMINDING_IS_POSSIBLE);
 
-            if (minDateForNotification.isAfterNow()) {
+            if (minDateForNotification.isAfter(ZonedDateTime.now(UTC).toLocalDate())) {
                 throw new ImpatientAboutApplicationForLeaveProcessException("It's too early to remind the bosses!");
             }
         }
 
-        if (remindDate != null && remindDate.isEqual(DateMidnight.now())) {
+        if (remindDate != null && remindDate.isEqual(ZonedDateTime.now(UTC).toLocalDate())) {
             throw new RemindAlreadySentException("Reminding is possible maximum one time per day!");
         }
 
         mailService.sendRemindBossNotification(application);
 
-        application.setRemindDate(DateMidnight.now());
+        application.setRemindDate(ZonedDateTime.now(UTC).toLocalDate());
         applicationService.save(application);
 
         return application;

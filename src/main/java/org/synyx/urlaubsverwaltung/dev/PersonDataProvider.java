@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
@@ -15,10 +14,14 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 /**
  * Provides person test data.
@@ -49,15 +52,15 @@ class PersonDataProvider {
         person.setPassword(new StandardPasswordEncoder().encode(password));
         personService.save(person);
 
-        int currentYear = DateMidnight.now().getYear();
+        int currentYear = ZonedDateTime.now(UTC).getYear();
         workingTimeService.touch(
-                Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek(),
-                        WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()),
-                Optional.empty(), new DateMidnight(currentYear - 1, 1, 1), person);
+            Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek(),
+                WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()),
+            Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), person);
 
         accountInteractionService.updateOrCreateHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),
-                DateUtil.getLastDayOfYear(currentYear), new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
-                BigDecimal.ZERO, null);
+            DateUtil.getLastDayOfYear(currentYear), new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
+            BigDecimal.ZERO, null);
 
         return person;
     }

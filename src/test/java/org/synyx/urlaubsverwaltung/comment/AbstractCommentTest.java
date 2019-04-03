@@ -1,11 +1,13 @@
 package org.synyx.urlaubsverwaltung.comment;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 public class AbstractCommentTest {
@@ -16,7 +18,7 @@ public class AbstractCommentTest {
         TestComment comment = new TestComment();
 
         Assert.assertNotNull("Should not be null", comment.getDate());
-        Assert.assertEquals("Wrong date", DateMidnight.now(), comment.getDate());
+        Assert.assertEquals("Wrong date", ZonedDateTime.now(UTC).toLocalDate(), comment.getDate());
     }
 
 

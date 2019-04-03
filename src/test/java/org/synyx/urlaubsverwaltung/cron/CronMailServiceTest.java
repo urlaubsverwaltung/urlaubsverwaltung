@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.cron;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -15,14 +14,14 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CronMailServiceTest {
 
@@ -73,22 +72,22 @@ public class CronMailServiceTest {
         prepareSettingsWithRemindForWaitingApplications(isActive);
 
         Application shortWaitingApplication = TestDataCreator.createApplication(TestDataCreator.createPerson("leo"), TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        shortWaitingApplication.setApplicationDate(DateMidnight.now());
+        shortWaitingApplication.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate());
 
         Application longWaitingApplicationA = TestDataCreator.createApplication(TestDataCreator.createPerson("lea"), TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        longWaitingApplicationA.setApplicationDate(DateMidnight.now().minusDays(3));
+        longWaitingApplicationA.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(3));
 
         Application longWaitingApplicationB = TestDataCreator.createApplication(TestDataCreator.createPerson("heinz"), TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        longWaitingApplicationB.setApplicationDate(DateMidnight.now().minusDays(3));
+        longWaitingApplicationB.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(3));
 
         Application longWaitingApplicationAlreadyRemindedToday = TestDataCreator.createApplication(TestDataCreator.createPerson("heinz"), TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        longWaitingApplicationAlreadyRemindedToday.setApplicationDate(DateMidnight.now().minusDays(3));
-        DateMidnight today = DateMidnight.now();
+        longWaitingApplicationAlreadyRemindedToday.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(3));
+        LocalDate today = ZonedDateTime.now(UTC).toLocalDate();
         longWaitingApplicationAlreadyRemindedToday.setRemindDate(today);
 
         Application longWaitingApplicationAlreadyRemindedEalier = TestDataCreator.createApplication(TestDataCreator.createPerson("heinz"), TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        longWaitingApplicationAlreadyRemindedEalier.setApplicationDate(DateMidnight.now().minusDays(5));
-        DateMidnight oldRemindDateEarlier = DateMidnight.now().minusDays(3);
+        longWaitingApplicationAlreadyRemindedEalier.setApplicationDate(ZonedDateTime.now(UTC).toLocalDate().minusDays(5));
+        LocalDate oldRemindDateEarlier = ZonedDateTime.now(UTC).toLocalDate().minusDays(3);
         longWaitingApplicationAlreadyRemindedEalier.setRemindDate(oldRemindDateEarlier);
 
         List<Application> waitingApplications = Arrays.asList(shortWaitingApplication,

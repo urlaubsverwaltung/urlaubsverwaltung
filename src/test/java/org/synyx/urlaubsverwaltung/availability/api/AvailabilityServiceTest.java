@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -27,8 +27,8 @@ public class AvailabilityServiceTest {
     private FreeTimeAbsenceProvider freeTimeAbsenceProvider;
 
     private Person testPerson;
-    private DateMidnight testDateRangeStart;
-    private DateMidnight testDateRangeEnd;
+    private LocalDate testDateRangeStart;
+    private LocalDate testDateRangeEnd;
     private TimedAbsenceSpans timedAbsenceSpansMock;
 
     @Before
@@ -39,14 +39,14 @@ public class AvailabilityServiceTest {
 
         when(freeTimeAbsenceProvider.checkForAbsence(
                 any(Person.class),
-                any(DateMidnight.class)))
+                any(LocalDate.class)))
             .thenReturn(timedAbsenceSpansMock);
 
         availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
 
         testPerson = TestDataCreator.createPerson();
-        testDateRangeStart = new DateMidnight(2016, 1, 1);
-        testDateRangeEnd = new DateMidnight(2016, 1, DAYS_IN_TEST_DATE_RANGE);
+        testDateRangeStart = LocalDate.of(2016, 1, 1);
+        testDateRangeEnd = LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE);
     }
 
 
@@ -56,14 +56,14 @@ public class AvailabilityServiceTest {
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
         verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE))
-            .checkForAbsence(eq(testPerson), any(DateMidnight.class));
+            .checkForAbsence(eq(testPerson), any(LocalDate.class));
     }
 
 
     @Test
     public void ensureReturnsDayAvailabilityWithCalculatedPresenceRatio() {
 
-        DateMidnight dayToTest = testDateRangeStart;
+        LocalDate dayToTest = testDateRangeStart;
 
         BigDecimal expectedAvailabilityRatio = BigDecimal.ONE;
 

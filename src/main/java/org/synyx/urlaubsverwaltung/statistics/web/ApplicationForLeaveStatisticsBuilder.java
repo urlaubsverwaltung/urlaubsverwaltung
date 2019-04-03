@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -18,6 +17,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ public class ApplicationForLeaveStatisticsBuilder {
         this.vacationTypeService = vacationTypeService;
     }
 
-    public ApplicationForLeaveStatistics build(Person person, DateMidnight from, DateMidnight to) {
+    public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to) {
 
         Assert.notNull(person, "Person must be given");
         Assert.notNull(from, "From must be given");
@@ -94,8 +94,8 @@ public class ApplicationForLeaveStatisticsBuilder {
         Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {
-            DateMidnight startDate = getStartDateForCalculation(application, relevantYear);
-            DateMidnight endDate = getEndDateForCalculation(application, relevantYear);
+            LocalDate startDate = getStartDateForCalculation(application, relevantYear);
+            LocalDate endDate = getEndDateForCalculation(application, relevantYear);
 
             return calendarService.getWorkDays(dayLength, startDate, endDate, person);
         }
@@ -104,7 +104,7 @@ public class ApplicationForLeaveStatisticsBuilder {
     }
 
 
-    private DateMidnight getStartDateForCalculation(Application application, int relevantYear) {
+    private LocalDate getStartDateForCalculation(Application application, int relevantYear) {
 
         if (application.getStartDate().getYear() != relevantYear) {
             return DateUtil.getFirstDayOfYear(application.getEndDate().getYear());
@@ -114,7 +114,7 @@ public class ApplicationForLeaveStatisticsBuilder {
     }
 
 
-    private DateMidnight getEndDateForCalculation(Application application, int relevantYear) {
+    private LocalDate getEndDateForCalculation(Application application, int relevantYear) {
 
         if (application.getEndDate().getYear() != relevantYear) {
             return DateUtil.getLastDayOfYear(application.getStartDate().getYear());

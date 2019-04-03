@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,14 +7,16 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.Month.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,12 +41,12 @@ public class SickNoteStatisticsTest {
         Person person = TestDataCreator.createPerson();
 
         SickNote sickNote1 = TestDataCreator.createSickNote(person,
-                new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
-                new DateMidnight(2013, DateTimeConstants.OCTOBER, 11), DayLength.FULL);
+                LocalDate.of(2013, OCTOBER, 7),
+                LocalDate.of(2013, OCTOBER, 11), DayLength.FULL);
 
         SickNote sickNote2 = TestDataCreator.createSickNote(person,
-                new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
-                new DateMidnight(2014, DateTimeConstants.JANUARY, 3), DayLength.FULL);
+                LocalDate.of(2013, DECEMBER, 18),
+                LocalDate.of(2014, JANUARY, 3), DayLength.FULL);
 
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
@@ -54,12 +54,12 @@ public class SickNoteStatisticsTest {
         when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
         when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
 
-        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
-                    new DateMidnight(2013, DateTimeConstants.OCTOBER, 11), person))
+        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
+                    LocalDate.of(2013, OCTOBER, 11), person))
             .thenReturn(new BigDecimal("5"));
 
-        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
-                    new DateMidnight(2013, DateTimeConstants.DECEMBER, 31), person))
+        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
+                    LocalDate.of(2013, DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 
         statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);

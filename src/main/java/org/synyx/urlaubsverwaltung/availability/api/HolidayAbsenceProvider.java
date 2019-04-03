@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -10,6 +9,7 @@ import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, DateMidnight date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
         Optional<TimedAbsence> holidayAbsence = checkForHolidays(date, person);
 
@@ -53,7 +53,7 @@ class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private Optional<TimedAbsence> checkForHolidays(DateMidnight currentDay, Person person) {
+    private Optional<TimedAbsence> checkForHolidays(LocalDate currentDay, Person person) {
 
         BigDecimal expectedWorkingDuration = publicHolidaysService.getWorkingDurationOfDate(currentDay,
                 getFederalState(currentDay, person));
@@ -73,7 +73,7 @@ class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private FederalState getFederalState(DateMidnight date, Person person) {
+    private FederalState getFederalState(LocalDate date, Person person) {
 
         return workingTimeService.getFederalStateForPerson(person, date);
     }

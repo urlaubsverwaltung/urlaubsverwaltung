@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -12,6 +11,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
+
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.sicknote.web.SickNoteConvertForm}.
@@ -22,8 +23,8 @@ public class SickNoteConvertFormTest {
     public void ensureCorrectProvidedValuesFromSickNote() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight startDate = new DateMidnight(2014, 1, 1);
-        DateMidnight endDate = new DateMidnight(2014, 1, 10);
+        LocalDate startDate = LocalDate.of(2014, 1, 1);
+        LocalDate endDate = LocalDate.of(2014, 1, 10);
 
         SickNote sickNote = TestDataCreator.createSickNote(person, startDate, endDate, DayLength.NOON);
 
@@ -45,8 +46,8 @@ public class SickNoteConvertFormTest {
     public void ensureGeneratesCorrectApplicationForLeave() {
 
         Person person = TestDataCreator.createPerson();
-        DateMidnight startDate = new DateMidnight(2014, 1, 1);
-        DateMidnight endDate = new DateMidnight(2014, 1, 10);
+        LocalDate startDate = LocalDate.of(2014, 1, 1);
+        LocalDate endDate = LocalDate.of(2014, 1, 10);
 
         SickNote sickNote = TestDataCreator.createSickNote(person, startDate, endDate, DayLength.FULL);
 

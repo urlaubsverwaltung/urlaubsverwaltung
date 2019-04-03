@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +9,8 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -58,7 +59,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void update(Department department) {
 
-        department.setLastModification(DateTime.now());
+        department.setLastModification(ZonedDateTime.now(UTC).toLocalDate());
 
         departmentRepository.save(department);
 
@@ -107,7 +108,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
-                                                                                   DateMidnight startDate, DateMidnight endDate) {
+                                                                                   LocalDate startDate, LocalDate endDate) {
 
         List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
         List<Application> departmentApplications = new ArrayList<>();

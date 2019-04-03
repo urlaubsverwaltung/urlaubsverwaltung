@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -14,8 +12,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -43,11 +44,9 @@ public class SickNote extends AbstractPersistable<Integer> {
     /**
      * Sick note period: start and end date of the period, the employee is sick.
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
+    private LocalDate startDate;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date endDate;
+    private LocalDate endDate;
 
     /**
      * Time of day for the sick note: morning, noon or full day
@@ -60,21 +59,18 @@ public class SickNote extends AbstractPersistable<Integer> {
     /**
      * Period of the AUB (Arbeitsunfähigkeitsbescheinigung), is optional.
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date aubStartDate;
+    private LocalDate aubStartDate;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date aubEndDate;
+    private LocalDate aubEndDate;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date lastEdited;
+    private LocalDate lastEdited;
 
     @Enumerated(EnumType.STRING)
     private SickNoteStatus status;
 
     public SickNote() {
 
-        this.lastEdited = DateTime.now().withTimeAtStartOfDay().toDate();
+        this.lastEdited = ZonedDateTime.now(UTC).toLocalDate();
     }
 
     public Person getPerson() {
@@ -101,42 +97,42 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         if (this.startDate == null) {
             return null;
         }
 
-        return new DateTime(this.startDate).toDateMidnight();
+        return this.startDate;
     }
 
 
-    public void setStartDate(DateMidnight startDate) {
+    public void setStartDate(LocalDate startDate) {
 
         if (startDate == null) {
             this.startDate = null;
         } else {
-            this.startDate = startDate.toDate();
+            this.startDate = startDate;
         }
     }
 
 
-    public final DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         if (this.endDate == null) {
             return null;
         }
 
-        return new DateTime(this.endDate).toDateMidnight();
+        return this.endDate;
     }
 
 
-    public void setEndDate(DateMidnight endDate) {
+    public void setEndDate(LocalDate endDate) {
 
         if (endDate == null) {
             this.endDate = null;
         } else {
-            this.endDate = endDate.toDate();
+            this.endDate = endDate;
         }
     }
 
@@ -159,62 +155,62 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getAubStartDate() {
+    public LocalDate getAubStartDate() {
 
         if (this.aubStartDate == null) {
             return null;
         }
 
-        return new DateTime(this.aubStartDate).toDateMidnight();
+        return this.aubStartDate;
     }
 
 
-    public void setAubStartDate(DateMidnight aubStartDate) {
+    public void setAubStartDate(LocalDate aubStartDate) {
 
         if (aubStartDate == null) {
             this.aubStartDate = null;
         } else {
-            this.aubStartDate = aubStartDate.toDate();
+            this.aubStartDate = aubStartDate;
         }
     }
 
 
-    public DateMidnight getAubEndDate() {
+    public LocalDate getAubEndDate() {
 
         if (this.aubEndDate == null) {
             return null;
         }
 
-        return new DateTime(this.aubEndDate).toDateMidnight();
+        return this.aubEndDate;
     }
 
 
-    public void setAubEndDate(DateMidnight aubEndDate) {
+    public void setAubEndDate(LocalDate aubEndDate) {
 
         if (aubEndDate == null) {
             this.aubEndDate = null;
         } else {
-            this.aubEndDate = aubEndDate.toDate();
+            this.aubEndDate = aubEndDate;
         }
     }
 
 
-    public DateMidnight getLastEdited() {
+    public LocalDate getLastEdited() {
 
         if (this.lastEdited == null) {
             return null;
         }
 
-        return new DateTime(this.lastEdited).toDateMidnight();
+        return this.lastEdited;
     }
 
 
-    public void setLastEdited(DateMidnight lastEdited) {
+    public void setLastEdited(LocalDate lastEdited) {
 
         if (lastEdited == null) {
             this.lastEdited = null;
         } else {
-            this.lastEdited = lastEdited.toDate();
+            this.lastEdited = lastEdited;
         }
     }
 
@@ -254,8 +250,8 @@ public class SickNote extends AbstractPersistable<Integer> {
     public String toString() {
 
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-            .append("startDate", getStartDate().toString(DateFormat.PATTERN))
-            .append("endDate", getEndDate().toString(DateFormat.PATTERN))
+            .append("startDate", getStartDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
+            .append("endDate", getEndDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
             .append("dayLength", getDayLength())
             .append("sickNoteType", getSickNoteType())
             .append("status", getStatus())
