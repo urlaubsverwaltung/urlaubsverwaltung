@@ -64,21 +64,6 @@ public class VacationDaysService {
         }
     }
 
-
-    /**
-     * @deprecated use instead {@link #getVacationDaysLeft(Account, Optional)}
-     * because the account for the following year may also be relevant for the calculation
-     *
-     * @param account the account for the year to calculate the vacation days for
-     *
-     * @return information about the vacation days left for that year
-     */
-    @Deprecated
-    public VacationDaysLeft getVacationDaysLeft(Account account) {
-
-       return getVacationDaysLeft(account, Optional.empty());
-    }
-
     /**
      * This version of the method also considers the account for next year,
      * so that it can adjust for vacation days carried over from this year to the next and then used there
