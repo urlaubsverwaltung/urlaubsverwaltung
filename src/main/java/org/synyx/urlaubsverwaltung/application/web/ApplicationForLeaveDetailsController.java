@@ -84,7 +84,7 @@ public class ApplicationForLeaveDetailsController {
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model)
-        throws UnknownApplicationForLeaveException, AccessDeniedException {
+        throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
@@ -169,7 +169,7 @@ public class ApplicationForLeaveDetailsController {
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
-        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException, AccessDeniedException {
+        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
@@ -223,7 +223,7 @@ public class ApplicationForLeaveDetailsController {
     @PostMapping("/{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
-        throws UnknownApplicationForLeaveException, UnknownPersonException, AccessDeniedException {
+        throws UnknownApplicationForLeaveException, UnknownPersonException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
@@ -256,7 +256,7 @@ public class ApplicationForLeaveDetailsController {
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
-        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException, AccessDeniedException {
+        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
@@ -305,7 +305,7 @@ public class ApplicationForLeaveDetailsController {
     @PostMapping("/{applicationId}/cancel")
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
-        throws UnknownApplicationForLeaveException, AccessDeniedException {
+        throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));

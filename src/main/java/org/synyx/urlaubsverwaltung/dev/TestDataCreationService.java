@@ -62,7 +62,7 @@ public class TestDataCreationService {
     }
 
     @PostConstruct
-    public void createTestData() throws NoSuchAlgorithmException {
+    public void createTestData() {
 
         LOG.info("STARTING CREATION OF TEST DATA --------------------------------------------------------------------");
 

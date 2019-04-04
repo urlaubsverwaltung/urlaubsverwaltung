@@ -71,7 +71,7 @@ public class PersonController {
     @GetMapping("/staff/{personId}")
     public String showStaffInformation(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
-        Model model) throws UnknownPersonException, AccessDeniedException {
+        Model model) throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = sessionService.getSignedInUser();

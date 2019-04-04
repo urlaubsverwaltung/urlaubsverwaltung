@@ -75,8 +75,6 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
         WorkingTime workingTime = workingTimeOrNot.get();
 
-        DayLength dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek().getValue());
-
-        return dayLengthForWeekDay;
+        return workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek().getValue());
     }
 }
