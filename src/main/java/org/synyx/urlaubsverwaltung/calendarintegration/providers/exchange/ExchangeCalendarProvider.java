@@ -286,37 +286,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
         ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         connectToExchange(exchangeCalendarSettings);
-        discover();
-    }
-
-
-    private void discover() {
-
-        try {
-            discoverFolders(WellKnownFolderName.Calendar);
-        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
-            LOG.info("An error occurred while trying to get calendar folders", ex);
-            LOG.info("Trying to discover which folders exist at all ...");
-
-            for (WellKnownFolderName folderName : WellKnownFolderName.values()) {
-                try {
-                    discoverFolders(folderName);
-                } catch (Exception e) { // NOSONAR - EWS Java API throws Exception, that's life
-                    LOG.info("An error occurred while trying to get folders for well known folder name: {}", folderName.name(), e);
-                }
-            }
-        }
-    }
-
-
-    private void discoverFolders(WellKnownFolderName wellKnownFolderName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
-
-        FindFoldersResults folders = exchangeService.findFolders(wellKnownFolderName,
-            new FolderView(Integer.MAX_VALUE));
-
-        for (Folder folder : folders.getFolders()) {
-            LOG.info("Found folder: {} - {}", wellKnownFolderName.name(), folder.getDisplayName());
-        }
     }
 
     private static class RedirectionUrlCallback implements IAutodiscoverRedirectionUrl {
