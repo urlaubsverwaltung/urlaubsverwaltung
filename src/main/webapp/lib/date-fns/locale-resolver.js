@@ -1,3 +1,4 @@
+// eslint-disable-next-line urlaubsverwaltung/no-date-fns
 import en from 'date-fns/locale/en';
 
 window.__datefnsLocale__ = window.__datefnsLocale__ || en;
