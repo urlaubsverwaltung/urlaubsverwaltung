@@ -9,7 +9,6 @@
 * Upgrade bootstrap to 3.4.1 [#603](https://github.com/synyx/urlaubsverwaltung/pull/603)
 * Exhange calendar delete discovery directory logging [#604](https://github.com/synyx/urlaubsverwaltung/pull/604)
 * Replace joda with java time [#613](https://github.com/synyx/urlaubsverwaltung/pull/613)
-* Upgrade to spring boot 2.1.4 [#614](https://github.com/synyx/urlaubsverwaltung/pull/614)
 
 ### [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0)
 * Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/551)
