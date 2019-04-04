@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,43 +48,43 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
+     * @param  startDate {@link LocalDate}
+     * @param  endDate {@link LocalDate}
      * @param  person {@link Person}
      *
      * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndPerson(DateMidnight startDate, DateMidnight endDate,
-        Person person);
+    List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
+                                                                Person person);
 
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
      *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
-     * @param  status {@link org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus}
+     * @param  startDate {@link LocalDate}
+     * @param  endDate {@link LocalDate}
+     * @param  status {@link ApplicationStatus}
      *
      * @return  all {@link Application}s with the given state and vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndState(DateMidnight startDate, DateMidnight endDate,
-        ApplicationStatus status);
+    List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate,
+                                                               ApplicationStatus status);
 
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
      * state.
      *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
+     * @param  startDate {@link LocalDate}
+     * @param  endDate {@link LocalDate}
      * @param  person {@link Person}
-     * @param  status {@link org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus}
+     * @param  status {@link ApplicationStatus}
      *
      * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y and
      *          with a certain state
      */
-    List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate, DateMidnight endDate,
-        Person person, ApplicationStatus status);
+    List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate,
+                                                                        Person person, ApplicationStatus status);
 
 
     /**

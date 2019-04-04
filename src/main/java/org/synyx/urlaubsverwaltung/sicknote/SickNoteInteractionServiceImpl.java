@@ -1,15 +1,11 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
@@ -17,10 +13,15 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingSer
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -57,7 +58,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     public SickNote create(SickNote sickNote, Person creator) {
 
         sickNote.setStatus(SickNoteStatus.ACTIVE);
-        sickNote.setLastEdited(DateMidnight.now());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CREATED, Optional.empty(), creator);
@@ -80,7 +81,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     public SickNote update(SickNote sickNote, Person editor) {
 
         sickNote.setStatus(SickNoteStatus.ACTIVE);
-        sickNote.setLastEdited(DateMidnight.now());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.EDITED, Optional.empty(), editor);
@@ -106,7 +107,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         // make sick note inactive
         sickNote.setStatus(SickNoteStatus.CONVERTED_TO_VACATION);
-        sickNote.setLastEdited(DateMidnight.now());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, Optional.empty(), converter);
@@ -136,7 +137,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     public SickNote cancel(SickNote sickNote, Person canceller) {
 
         sickNote.setStatus(SickNoteStatus.CANCELLED);
-        sickNote.setLastEdited(DateMidnight.now());
+        sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
         commentService.create(sickNote, SickNoteAction.CANCELLED, Optional.empty(), canceller);

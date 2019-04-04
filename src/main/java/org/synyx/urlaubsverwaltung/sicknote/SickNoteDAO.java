@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -19,7 +19,7 @@ public interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
         + "OR (x.startDate < ?2 and x.endDate > ?3)) "
         + "ORDER BY x.startDate"
     )
-    List<SickNote> findByPersonAndPeriod(Person person, Date startDate, Date endDate);
+    List<SickNote> findByPersonAndPeriod(Person person, LocalDate startDate, LocalDate endDate);
 
 
     @Query(
@@ -27,7 +27,7 @@ public interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
         + "OR (x.startDate < ?1 and x.endDate > ?2)) "
         + "ORDER BY x.startDate"
     )
-    List<SickNote> findByPeriod(Date startDate, Date endDate);
+    List<SickNote> findByPeriod(LocalDate startDate, LocalDate endDate);
 
 
     // NOTE: Following methods are to create statistic
@@ -46,5 +46,5 @@ public interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
         "SELECT x, x.endDate - x.startDate as diff FROM SickNote x WHERE (diff >= ?1 AND x.endDate = ?2) "
         + "AND x.status = 'ACTIVE'"
     )
-    List<SickNote> findSickNotesByMinimumLengthAndEndDate(int limit, Date endDate);
+    List<SickNote> findSickNotesByMinimumLengthAndEndDate(int limit, LocalDate endDate);
 }

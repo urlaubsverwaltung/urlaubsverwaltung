@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +10,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -225,10 +226,10 @@ public class OvertimeServiceImplTest {
 
         overtimeService.getOvertimeRecordsForPersonAndYear(person, 2015);
 
-        DateMidnight firstDay = new DateMidnight(2015, 1, 1);
-        DateMidnight lastDay = new DateMidnight(2015, 12, 31);
+        LocalDate firstDay = LocalDate.of(2015, 1, 1);
+        LocalDate lastDay = LocalDate.of(2015, 12, 31);
 
-        verify(overtimeDAO).findByPersonAndPeriod(person, firstDay.toDate(), lastDay.toDate());
+        verify(overtimeDAO).findByPersonAndPeriod(person, firstDay, lastDay);
     }
 
 
@@ -280,16 +281,15 @@ public class OvertimeServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(Date.class),
-            any(Date.class)))
+        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.emptyList());
 
         BigDecimal totalHours = overtimeService.getTotalOvertimeForPersonAndYear(person, 2016);
 
-        DateMidnight firstDayOfYear = new DateMidnight(2016, 1, 1);
-        DateMidnight lastDayOfYear = new DateMidnight(2016, 12, 31);
+        LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
+        LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
 
-        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", BigDecimal.ZERO, totalHours);
@@ -307,16 +307,15 @@ public class OvertimeServiceImplTest {
         Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
         otherOvertimeRecord.setHours(BigDecimal.TEN);
 
-        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(Date.class),
-            any(Date.class)))
+        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Arrays.asList(overtimeRecord, otherOvertimeRecord));
 
         BigDecimal totalHours = overtimeService.getTotalOvertimeForPersonAndYear(person, 2016);
 
-        DateMidnight firstDayOfYear = new DateMidnight(2016, 1, 1);
-        DateMidnight lastDayOfYear = new DateMidnight(2016, 12, 31);
+        LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
+        LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
 
-        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", new BigDecimal("11"), totalHours);

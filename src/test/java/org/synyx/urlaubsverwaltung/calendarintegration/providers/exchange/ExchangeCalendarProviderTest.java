@@ -13,12 +13,15 @@ import microsoft.exchange.webservices.data.property.complex.time.TimeZoneDefinit
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -103,6 +106,8 @@ public class ExchangeCalendarProviderTest {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(new Person("login", "lastName", "firstName", "abc@de.f"));
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
 
         CalendarSettings calendarSettings = getMockedCalendarSettings();
 

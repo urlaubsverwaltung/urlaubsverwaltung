@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -8,9 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
+
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -32,7 +35,7 @@ public class SickNoteStatisticsController {
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
         Model model) {
 
-        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
+        Integer year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
 
         SickNoteStatistics statistics = statisticsService.createStatistics(year);
 

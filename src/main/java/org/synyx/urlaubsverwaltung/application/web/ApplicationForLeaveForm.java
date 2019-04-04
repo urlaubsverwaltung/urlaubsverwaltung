@@ -1,7 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -10,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalDate;
 
 
 /**
@@ -21,11 +21,11 @@ public class ApplicationForLeaveForm {
     private Person person;
 
     // period: date and time
-    private DateMidnight startDate;
+    private LocalDate startDate;
 
     private Time startTime;
 
-    private DateMidnight endDate;
+    private LocalDate endDate;
 
     private Time endTime;
 
@@ -75,13 +75,13 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         return endDate;
     }
 
 
-    public void setEndDate(DateMidnight endDate) {
+    public void setEndDate(LocalDate endDate) {
 
         this.endDate = endDate;
     }
@@ -135,13 +135,13 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         return startDate;
     }
 
 
-    public void setStartDate(DateMidnight startDate) {
+    public void setStartDate(LocalDate startDate) {
 
         this.startDate = startDate;
     }

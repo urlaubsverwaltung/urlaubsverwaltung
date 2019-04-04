@@ -4,7 +4,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -13,12 +12,12 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -32,8 +31,7 @@ public class Department extends AbstractPersistable<Integer> {
 
     private String description;
 
-    @Temporal(TemporalType.DATE)
-    private Date lastModification;
+    private LocalDate lastModification;
 
     // flag for two stage approval process
     private boolean twoStageApproval;
@@ -55,7 +53,7 @@ public class Department extends AbstractPersistable<Integer> {
 
     public Department() {
 
-        this.lastModification = DateTime.now().withTimeAtStartOfDay().toDate();
+        this.lastModification = LocalDate.now(UTC);
     }
 
     public String getName() {
@@ -82,16 +80,16 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
-    public DateTime getLastModification() {
+    public LocalDate getLastModification() {
 
-        return new DateTime(lastModification);
+        return this.lastModification;
     }
 
 
-    public void setLastModification(DateTime lastModification) {
+    public void setLastModification(LocalDate lastModification) {
 
-        Assert.notNull(lastModification);
-        this.lastModification = lastModification.toDate();
+        Assert.notNull(lastModification, "Last modification date must be set.");
+        this.lastModification = lastModification;
     }
 
 

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +41,8 @@ public class UsedDaysOverviewTest {
 
         Application application = new Application();
         application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        application.setStartDate(new DateMidnight(2014, 10, 13));
-        application.setEndDate(new DateMidnight(2014, 10, 13));
+        application.setStartDate(LocalDate.of(2014, 10, 13));
+        application.setEndDate(LocalDate.of(2014, 10, 13));
         application.setStatus(ApplicationStatus.WAITING);
 
         new UsedDaysOverview(Collections.singletonList(application), 2015, calendarService);
@@ -54,58 +54,58 @@ public class UsedDaysOverviewTest {
 
         Application holiday = TestDataCreator.anyApplication();
         holiday.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        holiday.setStartDate(new DateMidnight(2014, 10, 13));
-        holiday.setEndDate(new DateMidnight(2014, 10, 13));
+        holiday.setStartDate(LocalDate.of(2014, 10, 13));
+        holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
         Application holidayAllowed = TestDataCreator.anyApplication();
         holidayAllowed.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
-        holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
+        holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
+        holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application specialLeave = TestDataCreator.anyApplication();
         specialLeave.setVacationType(TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE));
-        specialLeave.setStartDate(new DateMidnight(2014, 10, 15));
-        specialLeave.setEndDate(new DateMidnight(2014, 10, 15));
+        specialLeave.setStartDate(LocalDate.of(2014, 10, 15));
+        specialLeave.setEndDate(LocalDate.of(2014, 10, 15));
         specialLeave.setStatus(ApplicationStatus.WAITING);
 
         Application specialLeaveAllowed = TestDataCreator.anyApplication();
         specialLeaveAllowed.setVacationType(TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE));
-        specialLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 16));
-        specialLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 16));
+        specialLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 16));
+        specialLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 16));
         specialLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application unpaidLeave = TestDataCreator.anyApplication();
         unpaidLeave.setVacationType(TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE));
-        unpaidLeave.setStartDate(new DateMidnight(2014, 10, 17));
-        unpaidLeave.setEndDate(new DateMidnight(2014, 10, 17));
+        unpaidLeave.setStartDate(LocalDate.of(2014, 10, 17));
+        unpaidLeave.setEndDate(LocalDate.of(2014, 10, 17));
         unpaidLeave.setStatus(ApplicationStatus.WAITING);
 
         Application unpaidLeaveAllowed = TestDataCreator.anyApplication();
         unpaidLeaveAllowed.setVacationType(TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE));
-        unpaidLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 20));
-        unpaidLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 20));
+        unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 20));
+        unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 20));
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application overtimeLeave = TestDataCreator.anyApplication();
         overtimeLeave.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
-        overtimeLeave.setStartDate(new DateMidnight(2014, 10, 21));
-        overtimeLeave.setEndDate(new DateMidnight(2014, 10, 21));
+        overtimeLeave.setStartDate(LocalDate.of(2014, 10, 21));
+        overtimeLeave.setEndDate(LocalDate.of(2014, 10, 21));
         overtimeLeave.setStatus(ApplicationStatus.WAITING);
 
         Application overtimeLeaveAllowed = TestDataCreator.anyApplication();
         overtimeLeaveAllowed.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
-        overtimeLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 22));
-        overtimeLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 22));
+        overtimeLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 22));
+        overtimeLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         List<Application> applications = Arrays.asList(holiday, holidayAllowed, specialLeave, specialLeaveAllowed,
             unpaidLeave, unpaidLeaveAllowed, overtimeLeave, overtimeLeaveAllowed);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
-            any(DateMidnight.class), any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
@@ -131,14 +131,14 @@ public class UsedDaysOverviewTest {
 
         Person person = TestDataCreator.createPerson();
         DayLength fullDay = DayLength.FULL;
-        DateMidnight startDate = new DateMidnight(2013, 12, 24);
-        DateMidnight endDate = new DateMidnight(2014, 1, 6);
+        LocalDate startDate = LocalDate.of(2013, 12, 24);
+        LocalDate endDate = LocalDate.of(2014, 1, 6);
 
         // 3 days in 2013, 2 days in 2014
         Application holiday = TestDataCreator.createApplication(person,
             TestDataCreator.createVacationType(VacationCategory.HOLIDAY), startDate, endDate, fullDay);
 
-        when(calendarService.getWorkDays(fullDay, new DateMidnight(2014, 1, 1), endDate, person))
+        when(calendarService.getWorkDays(fullDay, LocalDate.of(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
 
         UsedDaysOverview usedDaysOverview = new UsedDaysOverview(Collections.singletonList(holiday), 2014,
@@ -163,27 +163,27 @@ public class UsedDaysOverviewTest {
 
         Application holiday = TestDataCreator.anyApplication();
         holiday.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        holiday.setStartDate(new DateMidnight(2014, 10, 13));
-        holiday.setEndDate(new DateMidnight(2014, 10, 13));
+        holiday.setStartDate(LocalDate.of(2014, 10, 13));
+        holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
         Application holidayAllowed = TestDataCreator.anyApplication();
         holidayAllowed.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
-        holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
+        holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
+        holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application holidayTemporaryAllowed = TestDataCreator.anyApplication();
         holidayTemporaryAllowed.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        holidayTemporaryAllowed.setStartDate(new DateMidnight(2014, 10, 15));
-        holidayTemporaryAllowed.setEndDate(new DateMidnight(2014, 10, 15));
+        holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, 10, 15));
+        holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, 10, 15));
         holidayTemporaryAllowed.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
 
         List<Application> applications = Arrays.asList(holiday, holidayTemporaryAllowed, holidayAllowed);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
-            any(DateMidnight.class), any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);

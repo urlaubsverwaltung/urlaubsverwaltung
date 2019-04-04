@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -76,8 +76,8 @@ public class OvertimeValidator implements Validator {
 
     private void validatePeriod(OvertimeForm overtimeForm, Errors errors) {
 
-        DateMidnight startDate = overtimeForm.getStartDate();
-        DateMidnight endDate = overtimeForm.getEndDate();
+        LocalDate startDate = overtimeForm.getStartDate();
+        LocalDate endDate = overtimeForm.getEndDate();
 
         validateDateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateDateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
@@ -88,7 +88,7 @@ public class OvertimeValidator implements Validator {
     }
 
 
-    private void validateDateNotNull(DateMidnight date, String field, Errors errors) {
+    private void validateDateNotNull(LocalDate date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && !errors.hasFieldErrors(field)) {

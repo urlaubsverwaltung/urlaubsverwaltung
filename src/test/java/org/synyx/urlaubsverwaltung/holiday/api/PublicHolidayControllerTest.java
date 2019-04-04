@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.holiday.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +14,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -78,13 +78,13 @@ public class PublicHolidayControllerTest {
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(FederalState.BAYERN);
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("person", "23")).andExpect(status().isOk());
 
         verify(publicHolidayServiceMock).getHolidays(2016, FederalState.BAYERN);
-        verify(workingTimeServiceMock).getFederalStateForPerson(person, new DateMidnight(2016, 1, 1));
+        verify(workingTimeServiceMock).getFederalStateForPerson(person, LocalDate.of(2016, 1, 1));
     }
 
 
@@ -95,14 +95,14 @@ public class PublicHolidayControllerTest {
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(FederalState.BAYERN);
 
         mockMvc.perform(get("/api/holidays").param("year", "2016").param("month", "4").param("person", "23"))
             .andExpect(status().isOk());
 
         verify(publicHolidayServiceMock).getHolidays(2016, 4, FederalState.BAYERN);
-        verify(workingTimeServiceMock).getFederalStateForPerson(person, new DateMidnight(2016, 4, 1));
+        verify(workingTimeServiceMock).getFederalStateForPerson(person, LocalDate.of(2016, 4, 1));
     }
 
 

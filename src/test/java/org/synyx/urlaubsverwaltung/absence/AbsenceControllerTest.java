@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.absence.api.AbsenceController;
+import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -13,9 +13,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -28,7 +28,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,11 +63,11 @@ public class AbsenceControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteServiceMock)
-            .getByPersonAndPeriod(any(Person.class), eq(new DateMidnight(2016, 1, 1)),
-                eq(new DateMidnight(2016, 12, 31)));
+            .getByPersonAndPeriod(any(Person.class), eq(LocalDate.of(2016, 1, 1)),
+                eq(LocalDate.of(2016, 12, 31)));
         verify(applicationServiceMock)
-            .getApplicationsForACertainPeriodAndPerson(eq(new DateMidnight(2016, 1, 1)),
-                eq(new DateMidnight(2016, 12, 31)), any(Person.class));
+            .getApplicationsForACertainPeriodAndPerson(eq(LocalDate.of(2016, 1, 1)),
+                eq(LocalDate.of(2016, 12, 31)), any(Person.class));
         verify(personServiceMock).getPersonByID(23);
     }
 
@@ -78,21 +77,21 @@ public class AbsenceControllerTest {
 
         Person person = TestDataCreator.createPerson("muster");
 
-        SickNote sickNote = TestDataCreator.createSickNote(person, new DateMidnight(2016, 5, 19),
-                new DateMidnight(2016, 5, 20), DayLength.FULL);
+        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 5, 19),
+                LocalDate.of(2016, 5, 20), DayLength.FULL);
         sickNote.setId(1);
 
-        Application vacation = TestDataCreator.createApplication(person, new DateMidnight(2016, 4, 6),
-                new DateMidnight(2016, 4, 6), DayLength.FULL);
+        Application vacation = TestDataCreator.createApplication(person, LocalDate.of(2016, 4, 6),
+            LocalDate.of(2016, 4, 6), DayLength.FULL);
 
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
-                    any(DateMidnight.class), any(DateMidnight.class)))
+                    any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.singletonList(sickNote));
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
-                    any(DateMidnight.class), any(Person.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
+                    any(LocalDate.class), any(Person.class)))
             .thenReturn(Collections.singletonList(vacation));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23"))
@@ -117,17 +116,17 @@ public class AbsenceControllerTest {
 
         Person person = TestDataCreator.createPerson("muster");
 
-        Application vacation = TestDataCreator.createApplication(person, new DateMidnight(2016, 4, 6),
-                new DateMidnight(2016, 4, 6), DayLength.FULL);
+        Application vacation = TestDataCreator.createApplication(person, LocalDate.of(2016, 4, 6),
+            LocalDate.of(2016, 4, 6), DayLength.FULL);
 
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
-                    any(DateMidnight.class), any(DateMidnight.class)))
+                    any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.singletonList(TestDataCreator.createSickNote(person)));
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
-                    any(DateMidnight.class), any(Person.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
+                    any(LocalDate.class), any(Person.class)))
             .thenReturn(Collections.singletonList(vacation));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "VACATION"))
@@ -146,20 +145,20 @@ public class AbsenceControllerTest {
 
         Person person = TestDataCreator.createPerson("muster");
 
-        Application vacation = TestDataCreator.createApplication(person, new DateMidnight(2016, 5, 30),
-                new DateMidnight(2016, 6, 1), DayLength.FULL);
+        Application vacation = TestDataCreator.createApplication(person, LocalDate.of(2016, 5, 30),
+            LocalDate.of(2016, 6, 1), DayLength.FULL);
 
-        SickNote sickNote = TestDataCreator.createSickNote(person, new DateMidnight(2016, 6, 30),
-                new DateMidnight(2016, 7, 6), DayLength.FULL);
+        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 6, 30),
+            LocalDate.of(2016, 7, 6), DayLength.FULL);
 
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
-                    any(DateMidnight.class), any(DateMidnight.class)))
+                    any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.singletonList(sickNote));
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(DateMidnight.class),
-                    any(DateMidnight.class), any(Person.class)))
+        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
+                    any(LocalDate.class), any(Person.class)))
             .thenReturn(Collections.singletonList(vacation));
 
         mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))

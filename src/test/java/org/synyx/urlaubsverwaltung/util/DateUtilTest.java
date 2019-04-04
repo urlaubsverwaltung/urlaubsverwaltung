@@ -1,9 +1,10 @@
 
 package org.synyx.urlaubsverwaltung.util;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.time.LocalDate;
 
 
 /**
@@ -15,7 +16,7 @@ public class DateUtilTest {
     public void ensureReturnsTrueIfGivenDayIsAWorkDay() {
 
         // Monday
-        DateMidnight date = new DateMidnight(2011, 12, 26);
+        LocalDate date = LocalDate.of(2011, 12, 26);
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
@@ -27,7 +28,7 @@ public class DateUtilTest {
     public void ensureReturnsFalseIfGivenDayIsNotAWorkDay() {
 
         // Sunday
-        DateMidnight date = new DateMidnight(2014, 11, 23);
+        LocalDate date = LocalDate.of(2014, 11, 23);
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
@@ -41,7 +42,7 @@ public class DateUtilTest {
         int year = 2014;
         int month = 11;
 
-        DateMidnight firstDayOfMonth = new DateMidnight(year, month, 1);
+        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
 
         Assert.assertEquals("Not the correct first day of month", firstDayOfMonth,
             DateUtil.getFirstDayOfMonth(year, month));
@@ -54,7 +55,7 @@ public class DateUtilTest {
         int year = 2014;
         int month = 11;
 
-        DateMidnight lastDayOfMonth = new DateMidnight(year, month, 30);
+        LocalDate lastDayOfMonth = LocalDate.of(year, month, 30);
 
         Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
             DateUtil.getLastDayOfMonth(year, month));
@@ -67,7 +68,7 @@ public class DateUtilTest {
         int year = 2014;
         int month = 2;
 
-        DateMidnight lastDayOfMonth = new DateMidnight(year, month, 28);
+        LocalDate lastDayOfMonth = LocalDate.of(year, month, 28);
 
         Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
             DateUtil.getLastDayOfMonth(year, month));
@@ -79,7 +80,7 @@ public class DateUtilTest {
 
         int year = 2014;
 
-        DateMidnight firstDayOfYear = new DateMidnight(year, 1, 1);
+        LocalDate firstDayOfYear = LocalDate.of(year, 1, 1);
 
         Assert.assertEquals("Not the correct first day of year", firstDayOfYear, DateUtil.getFirstDayOfYear(year));
     }
@@ -90,7 +91,7 @@ public class DateUtilTest {
 
         int year = 2014;
 
-        DateMidnight lastDayOfYear = new DateMidnight(year, 12, 31);
+        LocalDate lastDayOfYear = LocalDate.of(year, 12, 31);
 
         Assert.assertEquals("Not the correct last day of year", lastDayOfYear, DateUtil.getLastDayOfYear(year));
     }
@@ -99,7 +100,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsTrueForChristmasEve() {
 
-        DateMidnight date = new DateMidnight(2011, 12, 24);
+        LocalDate date = LocalDate.of(2011, 12, 24);
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
@@ -110,7 +111,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsFalseForNotChristmasEve() {
 
-        DateMidnight date = new DateMidnight(2011, 12, 25);
+        LocalDate date = LocalDate.of(2011, 12, 25);
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
@@ -121,7 +122,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsTrueForNewYearsEve() {
 
-        DateMidnight date = new DateMidnight(2014, 12, 31);
+        LocalDate date = LocalDate.of(2014, 12, 31);
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 
@@ -132,7 +133,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsFalseForNotNewYearsEve() {
 
-        DateMidnight date = new DateMidnight(2011, 12, 25);
+        LocalDate date = LocalDate.of(2011, 12, 25);
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 

@@ -3,16 +3,17 @@ package org.synyx.urlaubsverwaltung.availability.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 
@@ -54,8 +55,14 @@ public class AvailabilityController {
             throw new IllegalArgumentException("No person found for loginName = " + personLoginName);
         }
 
-        DateMidnight startDate = DateMidnight.parse(startDateString);
-        DateMidnight endDate = DateMidnight.parse(endDateString);
+        LocalDate startDate;
+        LocalDate endDate;
+        try{
+            startDate = LocalDate.parse(startDateString);
+            endDate = LocalDate.parse(endDateString);
+        } catch (DateTimeParseException exception) {
+            throw new IllegalArgumentException(exception.getMessage());
+        }
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("startdate " + startDateString + " must not be after endDate "

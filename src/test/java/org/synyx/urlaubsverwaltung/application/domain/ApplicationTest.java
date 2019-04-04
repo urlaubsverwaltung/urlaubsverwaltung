@@ -1,13 +1,15 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -72,7 +74,7 @@ public class ApplicationTest {
 
         Application application = new Application();
         application.setStartDate(null);
-        application.setEndDate(DateMidnight.now());
+        application.setEndDate(LocalDate.now(UTC));
         application.setDayLength(DayLength.FULL);
 
         application.getPeriod();
@@ -83,7 +85,7 @@ public class ApplicationTest {
     public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
 
         Application application = new Application();
-        application.setStartDate(DateMidnight.now());
+        application.setStartDate(LocalDate.now(UTC));
         application.setEndDate(null);
         application.setDayLength(DayLength.FULL);
 
@@ -95,8 +97,8 @@ public class ApplicationTest {
     public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
 
         Application application = new Application();
-        application.setStartDate(DateMidnight.now());
-        application.setEndDate(DateMidnight.now());
+        application.setStartDate(LocalDate.now(UTC));
+        application.setEndDate(LocalDate.now(UTC));
         application.setDayLength(null);
 
         application.getPeriod();
@@ -106,8 +108,8 @@ public class ApplicationTest {
     @Test
     public void ensureGetPeriodReturnsCorrectPeriod() {
 
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDate = startDate.plusDays(2);
+        LocalDate startDate = LocalDate.now(UTC);
+        LocalDate endDate = startDate.plusDays(2);
 
         Application application = new Application();
         application.setStartDate(startDate);
@@ -128,16 +130,16 @@ public class ApplicationTest {
     @Test
     public void ensureGetStartDateWithTimeReturnsCorrectDateTime() {
 
-        DateMidnight startDate = new DateMidnight(2016, 2, 1);
+        LocalDate startDate = LocalDate.of(2016, 2, 1);
 
         Application application = new Application();
         application.setStartDate(startDate);
         application.setStartTime(Time.valueOf("11:15:00"));
 
-        DateTime startDateWithTime = application.getStartDateWithTime();
+        ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
         Assert.assertNotNull("Should not be null", startDateWithTime);
-        Assert.assertEquals("Wrong start date with time", new DateTime(2016, 2, 1, 11, 15, 0), startDateWithTime);
+        Assert.assertEquals("Wrong start date with time", ZonedDateTime.of(2016, 2, 1, 11, 15, 0, 0, startDateWithTime.getZone()), startDateWithTime);
     }
 
 
@@ -145,10 +147,10 @@ public class ApplicationTest {
     public void ensureGetStartDateWithTimeReturnsNullIfStartTimeIsNull() {
 
         Application application = new Application();
-        application.setStartDate(DateMidnight.now());
+        application.setStartDate(LocalDate.now(UTC));
         application.setStartTime(null);
 
-        DateTime startDateWithTime = application.getStartDateWithTime();
+        ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
         Assert.assertNull("Should be null", startDateWithTime);
     }
@@ -161,7 +163,7 @@ public class ApplicationTest {
         application.setStartDate(null);
         application.setStartTime(Time.valueOf("10:15:00"));
 
-        DateTime startDateWithTime = application.getStartDateWithTime();
+        ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
         Assert.assertNull("Should be null", startDateWithTime);
     }
@@ -170,16 +172,16 @@ public class ApplicationTest {
     @Test
     public void ensureGetEndDateWithTimeReturnsCorrectDateTime() {
 
-        DateMidnight endDate = new DateMidnight(2016, 12, 21);
+        LocalDate endDate = LocalDate.of(2016, 12, 21);
 
         Application application = new Application();
         application.setEndDate(endDate);
         application.setEndTime(Time.valueOf("12:30:00"));
 
-        DateTime endDateWithTime = application.getEndDateWithTime();
+        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
         Assert.assertNotNull("Should not be null", endDateWithTime);
-        Assert.assertEquals("Wrong end date with time", new DateTime(2016, 12, 21, 12, 30, 0), endDateWithTime);
+        Assert.assertEquals("Wrong end date with time", ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, endDateWithTime.getZone()), endDateWithTime);
     }
 
 
@@ -187,10 +189,10 @@ public class ApplicationTest {
     public void ensureGetEndDateWithTimeReturnsNullIfEndTimeIsNull() {
 
         Application application = new Application();
-        application.setEndDate(DateMidnight.now());
+        application.setEndDate(LocalDate.now(UTC));
         application.setEndTime(null);
 
-        DateTime endDateWithTime = application.getEndDateWithTime();
+        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
         Assert.assertNull("Should be null", endDateWithTime);
     }
@@ -203,7 +205,7 @@ public class ApplicationTest {
         application.setEndDate(null);
         application.setEndTime(Time.valueOf("10:15:00"));
 
-        DateTime endDateWithTime = application.getEndDateWithTime();
+        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
         Assert.assertNull("Should be null", endDateWithTime);
     }

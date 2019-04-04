@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -11,6 +10,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -34,7 +34,7 @@ class OvertimeRecordDataProvider {
         settingsService.save(settings);
     }
 
-    Overtime createOvertimeRecord(Person person, DateMidnight startDate, DateMidnight endDate, BigDecimal hours) {
+    Overtime createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, BigDecimal hours) {
 
         Overtime overtime = new Overtime(person, startDate, endDate, hours);
 

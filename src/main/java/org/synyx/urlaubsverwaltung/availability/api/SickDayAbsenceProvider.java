@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, DateMidnight date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
         Optional<TimedAbsence> sickDayAbsence = checkForSickDay(date, person);
 
@@ -47,7 +47,7 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private Optional<TimedAbsence> checkForSickDay(DateMidnight date, Person person) {
+    private Optional<TimedAbsence> checkForSickDay(LocalDate date, Person person) {
 
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, date, date);
 

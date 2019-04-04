@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,10 +14,14 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -47,8 +49,8 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfOnlyInactiveApplicationsForLeaveInThePeriod() {
 
-        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
-        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 18);
+        LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
+        LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
 
         Application cancelledApplication = new Application();
         cancelledApplication.setDayLength(DayLength.FULL);
@@ -62,8 +64,8 @@ public class OverlapServiceTest {
         rejectedApplication.setEndDate(endDate);
         rejectedApplication.setStatus(ApplicationStatus.REJECTED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
-            any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(Arrays.asList(cancelledApplication, rejectedApplication));
 
         Application applicationToBeChecked = new Application();
@@ -81,12 +83,12 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfNoActiveApplicationsForLeaveInThePeriod() {
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
-            any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(new ArrayList<>());
 
-        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
-        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 18);
+        LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
+        LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
 
         // application for leave to check: 16.01. - 18.01.
         Application applicationToCheck = new Application();
@@ -107,26 +109,26 @@ public class OverlapServiceTest {
         // first application for leave: 16.01. - 18.01.
         Application waitingApplication = new Application();
         waitingApplication.setDayLength(DayLength.FULL);
-        waitingApplication.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
-        waitingApplication.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        waitingApplication.setStartDate(LocalDate.of(2012, JANUARY, 16));
+        waitingApplication.setEndDate(LocalDate.of(2012, JANUARY, 18));
         waitingApplication.setStatus(ApplicationStatus.WAITING);
 
         // second application for leave: 19.01. - 20.01.
         Application allowedApplication = new Application();
         allowedApplication.setDayLength(DayLength.FULL);
-        allowedApplication.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
-        allowedApplication.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+        allowedApplication.setStartDate(LocalDate.of(2012, JANUARY, 19));
+        allowedApplication.setEndDate(LocalDate.of(2012, JANUARY, 20));
         allowedApplication.setStatus(ApplicationStatus.ALLOWED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
-            any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(Arrays.asList(waitingApplication, allowedApplication));
 
         // application for leave to check: 18.01. - 19.01.
         Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
-        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
-        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+        applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
+        applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 19));
 
         OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
@@ -141,19 +143,19 @@ public class OverlapServiceTest {
         // application for leave: 16.01. - 18.01.
         Application waitingApplication = new Application();
         waitingApplication.setDayLength(DayLength.FULL);
-        waitingApplication.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
-        waitingApplication.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        waitingApplication.setStartDate(LocalDate.of(2012, JANUARY, 16));
+        waitingApplication.setEndDate(LocalDate.of(2012, JANUARY, 18));
         waitingApplication.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
-            any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(waitingApplication));
 
         // application for leave to check: 14.01. - 16.01.
         Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
-        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 14));
-        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 14));
+        applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 16));
 
         OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
@@ -168,19 +170,19 @@ public class OverlapServiceTest {
         // application for leave: 16.01. - 18.01.
         Application allowedApplication = new Application();
         allowedApplication.setDayLength(DayLength.FULL);
-        allowedApplication.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
-        allowedApplication.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        allowedApplication.setStartDate(LocalDate.of(2012, JANUARY, 16));
+        allowedApplication.setEndDate(LocalDate.of(2012, JANUARY, 18));
         allowedApplication.setStatus(ApplicationStatus.ALLOWED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class),
-            any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(allowedApplication));
 
         // application for leave to check: 18.01. - 20.01.
         Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
-        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
-        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+        applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
+        applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 20));
 
         OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
@@ -192,8 +194,8 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfOnlyInactiveSickNotesInThePeriod() {
 
-        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
-        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 18);
+        LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
+        LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
 
         SickNote inactiveSickNote = new SickNote();
         inactiveSickNote.setDayLength(DayLength.FULL);
@@ -201,15 +203,15 @@ public class OverlapServiceTest {
         inactiveSickNote.setEndDate(endDate);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class),
-            any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class),
+            any(LocalDate.class)))
             .thenReturn(singletonList(inactiveSickNote));
 
         // sick note to be checked: 16.01. - 18.01.
         SickNote sickNote = new SickNote();
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
-        sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
+        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
 
         OverlapCase overlapCase = service.checkOverlap(sickNote);
 
@@ -221,14 +223,14 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfNoActiveSickNotesInThePeriod() {
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class), any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(new ArrayList<>());
 
         // sick note to be checked: 16.01. - 18.01.
         SickNote sickNote = new SickNote();
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
-        sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
+        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
 
         OverlapCase overlapCase = service.checkOverlap(sickNote);
 
@@ -243,18 +245,18 @@ public class OverlapServiceTest {
         // sick note: 16.01. - 19.01.
         SickNote sickNote = new SickNote();
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
-        sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
+        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 19));
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class), any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
 
         // application for leave to check: 18.01. - 19.01.
         Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
-        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
-        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+        applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
+        applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 19));
 
         OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
@@ -269,18 +271,18 @@ public class OverlapServiceTest {
         // sick note: 16.01. - 18.01.
         SickNote sickNote = new SickNote();
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
-        sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
+        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class), any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
 
         // application for leave to check: 14.01. - 16.01.
         Application applicationToCheck = TestDataCreator.anyApplication();
         applicationToCheck.setDayLength(DayLength.FULL);
-        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 14));
-        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 14));
+        applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 16));
 
         OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
@@ -296,19 +298,19 @@ public class OverlapServiceTest {
         SickNote existentSickNote = new SickNote();
         existentSickNote.setId(23);
         existentSickNote.setDayLength(DayLength.FULL);
-        existentSickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
-        existentSickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
+        existentSickNote.setStartDate(LocalDate.of(2015, MARCH, 16));
+        existentSickNote.setEndDate(LocalDate.of(2015, MARCH, 16));
         existentSickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(Date.class), any(Date.class)))
+        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(existentSickNote));
 
         // sick note should be edited to: 16.03. - 17.03.
         SickNote sickNote = new SickNote();
         sickNote.setId(23);
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
-        sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 17));
+        sickNote.setStartDate(LocalDate.of(2015, MARCH, 16));
+        sickNote.setEndDate(LocalDate.of(2015, MARCH, 17));
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
         // edit sick note to: 16.03. - 17.03.
@@ -322,7 +324,7 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayButWithDifferentTimeOfDay() {
 
-        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
         Application morningVacation = new Application();
         morningVacation.setDayLength(DayLength.MORNING);
@@ -330,7 +332,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class), any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         Application noonVacation = new Application();
@@ -348,7 +350,7 @@ public class OverlapServiceTest {
     @Test
     public void ensureFullyOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayAndTimeOfDay() {
 
-        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
         Application morningVacation = new Application();
         morningVacation.setDayLength(DayLength.MORNING);
@@ -356,7 +358,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class), any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         Application otherMorningVacation = TestDataCreator.anyApplication();
@@ -374,7 +376,7 @@ public class OverlapServiceTest {
     @Test
     public void ensureFullyOverlappingIfApplyingForFullDayAlthoughThereIsAlreadyAHalfDayVacation() {
 
-        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
         Application morningVacation = new Application();
         morningVacation.setDayLength(DayLength.MORNING);
@@ -382,7 +384,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class), any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         Application fullDayVacation = TestDataCreator.anyApplication();
@@ -399,7 +401,7 @@ public class OverlapServiceTest {
     @Test
     public void ensureFullyOverlappingIfApplyingForHalfDayAlthoughThereIsAlreadyAFullDayVacation() {
 
-        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
         Application fullDayVacation = new Application();
         fullDayVacation.setDayLength(DayLength.FULL);
@@ -407,7 +409,7 @@ public class OverlapServiceTest {
         fullDayVacation.setEndDate(vacationDate);
         fullDayVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class), any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(fullDayVacation));
 
         Application morningVacation = TestDataCreator.anyApplication();
@@ -425,7 +427,7 @@ public class OverlapServiceTest {
     @Test
     public void ensureFullyOverlappingIfCreatingSickNoteOnADayWithHalfDayVacation() {
 
-        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
         Application morningVacation = new Application();
         morningVacation.setDayLength(DayLength.MORNING);
@@ -433,7 +435,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.ALLOWED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(Date.class), any(Date.class), any(Person.class)))
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         SickNote sickNote = TestDataCreator.anySickNote();

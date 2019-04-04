@@ -3,24 +3,24 @@ package org.synyx.urlaubsverwaltung.overview.calendar;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.joda.time.DateMidnight;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
+import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,9 +69,15 @@ public class VacationController {
         @RequestParam(value = "person", required = false)
         Integer personId) {
 
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.DATE_PATTERN);
-        DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
-        DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
+        LocalDate startDate;
+        LocalDate endDate;
+        try{
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
+            startDate = LocalDate.parse(from, fmt);
+            endDate = LocalDate.parse(to, fmt);
+        } catch (DateTimeParseException exception) {
+            throw new IllegalArgumentException(exception.getMessage());
+        }
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");

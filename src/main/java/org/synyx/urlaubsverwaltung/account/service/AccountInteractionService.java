@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * Provides interactions with {@link org.synyx.urlaubsverwaltung.account.domain.Account}s like creating or editing.
@@ -33,7 +33,7 @@ public interface AccountInteractionService {
      *
      * @return the created holidays account
      */
-    Account updateOrCreateHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
+    Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
                                           BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
                                           BigDecimal remainingDaysNotExpiring, String comment);
 
@@ -59,9 +59,9 @@ public interface AccountInteractionService {
      *
      * @return the updated holidays account
      */
-    Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo,
-        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-        BigDecimal remainingDaysNotExpiring, String comment);
+    Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo,
+                                BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
+                                BigDecimal remainingDaysNotExpiring, String comment);
 
     /**
      * Auto-creates a new {@link Account} or updates the existing {@link Account} for the next year, based on the information of the given reference account.

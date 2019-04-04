@@ -1,11 +1,12 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,17 +34,17 @@ public class AvailabilityService {
      *
      * @return a {@link AvailabilityList availability list} of the requested person
      */
-    public AvailabilityList getPersonsAvailabilities(DateMidnight startDate, DateMidnight endDate, Person person) {
+    public AvailabilityList getPersonsAvailabilities(LocalDate startDate, LocalDate endDate, Person person) {
 
         List<DayAvailability> availabilities = new ArrayList<>();
 
-        DateMidnight currentDay = startDate;
+        LocalDate currentDay = startDate;
 
         while (!currentDay.isAfter(endDate)) {
             TimedAbsenceSpans absences = freeTimeAbsenceProvider.checkForAbsence(person, currentDay);
             BigDecimal presenceRatio = absences.calculatePresenceRatio();
 
-            availabilities.add(new DayAvailability(presenceRatio, currentDay.toString("yyyy-MM-dd"), absences));
+            availabilities.add(new DayAvailability(presenceRatio, currentDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), absences));
 
             currentDay = currentDay.plusDays(1);
         }

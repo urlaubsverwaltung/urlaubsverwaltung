@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.comment;
 
-import org.joda.time.DateMidnight;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import java.util.Date;
+import java.time.LocalDate;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -23,15 +23,13 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
 
     // When has the comment be written?
     @Column(nullable = false)
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private final Date date;
+    private final LocalDate date;
 
     // What is the content of the comment?
     private String text;
 
     public AbstractComment() {
-
-        this.date = DateMidnight.now().toDate();
+        this.date = LocalDate.now(UTC);
     }
 
     public Person getPerson() {
@@ -46,13 +44,13 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getDate() {
+    public LocalDate getDate() {
 
         if (date == null) {
             throw new IllegalStateException("Date of comment can never be null!");
         }
 
-        return new DateMidnight(date.getTime());
+        return date;
     }
 
 

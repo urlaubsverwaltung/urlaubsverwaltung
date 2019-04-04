@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -14,22 +13,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.statistics.web.SickDays;
+import org.synyx.urlaubsverwaltung.web.FilterPeriod;
+import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -53,7 +55,7 @@ public class SickDaysOverviewController {
     @InitBinder
     public void initBinder(DataBinder binder) {
 
-        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
+        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
     }
 
 
@@ -82,7 +84,7 @@ public class SickDaysOverviewController {
 
     private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period) {
 
-        model.addAttribute("today", DateMidnight.now());
+        model.addAttribute("today", LocalDate.now(UTC));
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
         model.addAttribute("period", period);

@@ -1,13 +1,14 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 
+import java.time.LocalDate;
 import java.util.function.Consumer;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -21,8 +22,8 @@ public class SickNoteTest {
         SickNote sickNote = new SickNote();
 
         Assert.assertNotNull("Last modification date should be set", sickNote.getLastEdited());
-        Assert.assertEquals("Wrong last modification date", DateTime.now().withTimeAtStartOfDay(),
-            sickNote.getLastEdited().toDateTime());
+        Assert.assertEquals("Wrong last modification date", LocalDate.now(UTC),
+            sickNote.getLastEdited());
     }
 
 
@@ -30,8 +31,8 @@ public class SickNoteTest {
     public void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setAubStartDate(DateMidnight.now());
-        sickNote.setAubEndDate(DateMidnight.now());
+        sickNote.setAubStartDate(LocalDate.now(UTC));
+        sickNote.setAubEndDate(LocalDate.now(UTC));
 
         Assert.assertTrue("AUB should be present", sickNote.isAubPresent());
     }
@@ -41,7 +42,7 @@ public class SickNoteTest {
     public void ensureAUBIsNotPresentIfOnlyAUBStartDateIsSet() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setAubStartDate(DateMidnight.now());
+        sickNote.setAubStartDate(LocalDate.now(UTC));
 
         Assert.assertFalse("AUB should not be present", sickNote.isAubPresent());
     }
@@ -51,7 +52,7 @@ public class SickNoteTest {
     public void ensureAUBIsNotPresentIfOnlyAUBEndDateIsSet() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setAubEndDate(DateMidnight.now());
+        sickNote.setAubEndDate(LocalDate.now(UTC));
 
         Assert.assertFalse("AUB should not be present", sickNote.isAubPresent());
     }
@@ -98,7 +99,7 @@ public class SickNoteTest {
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(null);
-        sickNote.setEndDate(DateMidnight.now());
+        sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(DayLength.FULL);
 
         sickNote.getPeriod();
@@ -109,7 +110,7 @@ public class SickNoteTest {
     public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutEndDate() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setStartDate(DateMidnight.now());
+        sickNote.setStartDate(LocalDate.now(UTC));
         sickNote.setEndDate(null);
         sickNote.setDayLength(DayLength.FULL);
 
@@ -121,8 +122,8 @@ public class SickNoteTest {
     public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutDayLength() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setStartDate(DateMidnight.now());
-        sickNote.setEndDate(DateMidnight.now());
+        sickNote.setStartDate(LocalDate.now(UTC));
+        sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(null);
 
         sickNote.getPeriod();
@@ -132,8 +133,8 @@ public class SickNoteTest {
     @Test
     public void ensureGetPeriodReturnsCorrectPeriod() {
 
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDate = startDate.plusDays(2);
+        LocalDate startDate = LocalDate.now(UTC);
+        LocalDate endDate = startDate.plusDays(2);
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(startDate);

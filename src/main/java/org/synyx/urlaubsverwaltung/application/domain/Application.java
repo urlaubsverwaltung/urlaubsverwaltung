@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -15,10 +13,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 import java.math.BigDecimal;
 import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -63,8 +64,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Start date of the application for leave.
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
+    private LocalDate startDate;
 
     /**
      * Start time of the application for leave.
@@ -76,8 +76,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * End date of the application for leave.
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date endDate;
+    private LocalDate endDate;
 
     /**
      * End time of the application for leave.
@@ -118,26 +117,22 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Date of application for leave creation.
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date applicationDate;
+    private LocalDate applicationDate;
 
     /**
      * Date of application for leave cancellation.
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date cancelDate;
+    private LocalDate cancelDate;
 
     /**
      * Date of application for leave processing (allow or reject).
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date editedDate;
+    private LocalDate editedDate;
 
     /**
      * Last date of sending a remind notification that application for leave has to be processed.
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date remindDate;
+    private LocalDate remindDate;
 
     /**
      * Describes the current status of the application for leave (e.g. allowed, rejected etc.)
@@ -175,62 +170,62 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getApplicationDate() {
+    public LocalDate getApplicationDate() {
 
         if (this.applicationDate == null) {
             return null;
         }
 
-        return new DateTime(this.applicationDate).toDateMidnight();
+        return this.applicationDate;
     }
 
 
-    public void setApplicationDate(DateMidnight applicationDate) {
+    public void setApplicationDate(LocalDate applicationDate) {
 
         if (applicationDate == null) {
             this.applicationDate = null;
         } else {
-            this.applicationDate = applicationDate.toDate();
+            this.applicationDate = applicationDate;
         }
     }
 
 
-    public DateMidnight getCancelDate() {
+    public LocalDate getCancelDate() {
 
         if (this.cancelDate == null) {
             return null;
         }
 
-        return new DateTime(this.cancelDate).toDateMidnight();
+        return this.cancelDate;
     }
 
 
-    public void setCancelDate(DateMidnight cancelDate) {
+    public void setCancelDate(LocalDate cancelDate) {
 
         if (cancelDate == null) {
             this.cancelDate = null;
         } else {
-            this.cancelDate = cancelDate.toDate();
+            this.cancelDate = cancelDate;
         }
     }
 
 
-    public DateMidnight getEditedDate() {
+    public LocalDate getEditedDate() {
 
         if (this.editedDate == null) {
             return null;
         }
 
-        return new DateTime(this.editedDate).toDateMidnight();
+        return this.editedDate;
     }
 
 
-    public void setEditedDate(DateMidnight editedDate) {
+    public void setEditedDate(LocalDate editedDate) {
 
         if (editedDate == null) {
             this.editedDate = null;
         } else {
-            this.editedDate = editedDate.toDate();
+            this.editedDate = editedDate;
         }
     }
 
@@ -283,22 +278,22 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         if (this.endDate == null) {
             return null;
         }
 
-        return new DateTime(this.endDate).toDateMidnight();
+        return this.endDate;
     }
 
 
-    public void setEndDate(DateMidnight endDate) {
+    public void setEndDate(LocalDate endDate) {
 
         if (endDate == null) {
             this.endDate = null;
         } else {
-            this.endDate = endDate.toDate();
+            this.endDate = endDate;
         }
     }
 
@@ -375,22 +370,22 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         if (this.startDate == null) {
             return null;
         }
 
-        return new DateTime(this.startDate).toDateMidnight();
+        return this.startDate;
     }
 
 
-    public void setStartDate(DateMidnight startDate) {
+    public void setStartDate(LocalDate startDate) {
 
         if (startDate == null) {
             this.startDate = null;
         } else {
-            this.startDate = startDate.toDate();
+            this.startDate = startDate;
         }
     }
 
@@ -425,22 +420,22 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getRemindDate() {
+    public LocalDate getRemindDate() {
 
         if (this.remindDate == null) {
             return null;
         }
 
-        return new DateTime(this.remindDate).toDateMidnight();
+        return this.remindDate;
     }
 
 
-    public void setRemindDate(DateMidnight remindDate) {
+    public void setRemindDate(LocalDate remindDate) {
 
         if (remindDate == null) {
             this.remindDate = null;
         } else {
-            this.remindDate = remindDate.toDate();
+            this.remindDate = remindDate;
         }
     }
 
@@ -474,8 +469,8 @@ public class Application extends AbstractPersistable<Integer> {
 
         ToStringBuilder toStringBuilder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
         toStringBuilder.append("id", getId());
-        toStringBuilder.append("startDate", getStartDate().toString(DateFormat.PATTERN));
-        toStringBuilder.append("endDate", getEndDate().toString(DateFormat.PATTERN));
+        toStringBuilder.append("startDate", getStartDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
+        toStringBuilder.append("endDate", getEndDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
         toStringBuilder.append("vacationType", getVacationType());
         toStringBuilder.append("twoStageApproval", isTwoStageApproval());
         toStringBuilder.append("status", getStatus().toString());
@@ -529,13 +524,13 @@ public class Application extends AbstractPersistable<Integer> {
      *
      * @return  start date with time or {@code null} if start date or start time is missing
      */
-    public DateTime getStartDateWithTime() {
+    public ZonedDateTime getStartDateWithTime() {
 
-        DateMidnight date = getStartDate();
+        LocalDate date = getStartDate();
         Time time = getStartTime();
 
         if (date != null && time != null) {
-            return date.toDateTime().withHourOfDay(time.getHours()).withMinuteOfHour(time.getMinutes());
+            return ZonedDateTime.of(date, time.toLocalTime(), UTC);
         }
 
         return null;
@@ -547,13 +542,13 @@ public class Application extends AbstractPersistable<Integer> {
      *
      * @return  end date with time or {@code null} if end date or end time is missing
      */
-    public DateTime getEndDateWithTime() {
+    public ZonedDateTime getEndDateWithTime() {
 
-        DateMidnight date = getEndDate();
+        LocalDate date = getEndDate();
         Time time = getEndTime();
 
         if (date != null && time != null) {
-            return date.toDateTime().withHourOfDay(time.getHours()).withMinuteOfHour(time.getMinutes());
+            return ZonedDateTime.of(date, time.toLocalTime(), UTC);
         }
 
         return null;

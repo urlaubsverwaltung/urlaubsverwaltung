@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,10 +51,10 @@ public class FreeTimeAbsenceProviderTest {
         WorkingTime testWorkingTime = TestDataCreator.createWorkingTime();
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(Optional.of(testWorkingTime));
         when(workingTimeService.getFederalStateForPerson(any(Person.class),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
 
@@ -62,7 +62,7 @@ public class FreeTimeAbsenceProviderTest {
     @Test
     public void ensurePersonIsNotAvailableOnFreeDays() {
 
-        DateMidnight firstSundayIn2016 = new DateMidnight(2016, 1, 3);
+        LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
 
         TimedAbsenceSpans updatedTimedAbsenceSpans = freeTimeAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
                 testPerson, firstSundayIn2016);
@@ -80,7 +80,7 @@ public class FreeTimeAbsenceProviderTest {
     @Test
     public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
-        DateMidnight firstSundayIn2016 = new DateMidnight(2016, 1, 3);
+        LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, firstSundayIn2016);
 
@@ -91,7 +91,7 @@ public class FreeTimeAbsenceProviderTest {
     @Test
     public void ensureCallsHolidayAbsenceProviderIfNotAbsentForFreeTime() {
 
-        DateMidnight standardWorkingDay = new DateMidnight(2016, 1, 4);
+        LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 

@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.testdatacreator;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -19,17 +19,24 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.ZoneOffset.UTC;
 
 /**
  * Util class to create data for tests.
@@ -91,16 +98,16 @@ public final class TestDataCreator {
 
     public static Overtime createOvertimeRecord() {
 
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDate = startDate.plusDays(7);
+        LocalDate startDate = LocalDate.now(UTC);
+        LocalDate endDate = startDate.plusDays(7);
 
         return new Overtime(createPerson(), startDate, endDate, BigDecimal.ONE);
     }
 
     public static Overtime createOvertimeRecord(Person person) {
 
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDate = startDate.plusDays(7);
+        LocalDate startDate = LocalDate.now(UTC);
+        LocalDate endDate = startDate.plusDays(7);
 
         Overtime overtime = new Overtime(person, startDate, endDate, BigDecimal.ONE);
         overtime.setId(1234);
@@ -111,11 +118,13 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, VacationType vacationType) {
 
-        return createApplication(person, vacationType, DateMidnight.now(), DateMidnight.now().plusDays(3),
+        LocalDate now = LocalDate.now(UTC);
+
+        return createApplication(person, vacationType, now, now.plusDays(3),
             DayLength.FULL);
     }
 
-    public static Application createApplication(Person person, DateMidnight startDate, DateMidnight endDate,
+    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate,
                                                 DayLength dayLength) {
 
         VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
@@ -131,8 +140,8 @@ public final class TestDataCreator {
         return application;
     }
 
-    public static Application createApplication(Person person, VacationType vacationType, DateMidnight startDate,
-                                                DateMidnight endDate, DayLength dayLength) {
+    public static Application createApplication(Person person, VacationType vacationType, LocalDate startDate,
+                                                LocalDate endDate, DayLength dayLength) {
 
         Application application = new Application();
         application.setPerson(person);
@@ -166,10 +175,10 @@ public final class TestDataCreator {
 
     public static SickNote createSickNote(Person person) {
 
-        return createSickNote(person, DateMidnight.now(), DateMidnight.now().plusDays(3), DayLength.FULL);
+        return createSickNote(person, LocalDate.now(UTC), ZonedDateTime.now(UTC).plusDays(3).toLocalDate(), DayLength.FULL);
     }
 
-    public static SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate,
+    public static SickNote createSickNote(Person person, LocalDate startDate, LocalDate endDate,
                                           DayLength dayLength) {
 
         SickNoteType sickNoteType = new SickNoteType();
@@ -219,10 +228,10 @@ public final class TestDataCreator {
     public static Account createHolidaysAccount(Person person, int year, BigDecimal annualVacationDays,
                                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
-        DateMidnight firstDayOfYear = DateUtil.getFirstDayOfYear(year);
-        DateMidnight lastDayOfYear = DateUtil.getLastDayOfYear(year);
+        LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
+        LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
-        return new Account(person, firstDayOfYear.toDate(), lastDayOfYear.toDate(), annualVacationDays,
+        return new Account(person, firstDayOfYear, lastDayOfYear, annualVacationDays,
             remainingVacationDays, remainingVacationDaysNotExpiring, comment);
     }
 
@@ -232,8 +241,8 @@ public final class TestDataCreator {
 
         WorkingTime workingTime = new WorkingTime();
 
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-            DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         return workingTime;

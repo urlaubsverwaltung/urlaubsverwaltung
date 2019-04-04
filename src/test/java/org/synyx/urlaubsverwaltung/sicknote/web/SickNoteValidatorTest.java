@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,13 +8,17 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapCase;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.MARCH;
+import static java.time.Month.NOVEMBER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -48,12 +50,13 @@ public class SickNoteValidatorTest {
         Mockito.reset(errors);
 
         sickNote = TestDataCreator.createSickNote(TestDataCreator.createPerson(),
-                new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19),
-                new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20), DayLength.FULL);
+                LocalDate.of(2013, NOVEMBER, 19),
+                LocalDate.of(2013, NOVEMBER, 20),
+                DayLength.FULL);
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
     }
 
@@ -96,8 +99,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriod() {
 
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 1));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        sickNote.setStartDate(LocalDate.of(2013, DECEMBER, 1));
+        sickNote.setEndDate(LocalDate.of(2013, NOVEMBER, 19));
         validator.validate(sickNote, errors);
         verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
@@ -107,8 +110,8 @@ public class SickNoteValidatorTest {
     public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthNoon() {
 
         sickNote.setDayLength(DayLength.NOON);
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
+        sickNote.setStartDate(LocalDate.of(2013, NOVEMBER, 19));
+        sickNote.setEndDate(LocalDate.of(2013, NOVEMBER, 21));
         validator.validate(sickNote, errors);
         verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
     }
@@ -118,8 +121,8 @@ public class SickNoteValidatorTest {
     public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthMorning() {
 
         sickNote.setDayLength(DayLength.MORNING);
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
+        sickNote.setStartDate(LocalDate.of(2013, NOVEMBER, 19));
+        sickNote.setEndDate(LocalDate.of(2013, NOVEMBER, 21));
         validator.validate(sickNote, errors);
         verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
     }
@@ -129,8 +132,8 @@ public class SickNoteValidatorTest {
     public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthMorning() {
 
         sickNote.setDayLength(DayLength.MORNING);
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        sickNote.setStartDate(LocalDate.of(2013, NOVEMBER, 21));
+        sickNote.setEndDate(LocalDate.of(2013, NOVEMBER, 19));
         validator.validate(sickNote, errors);
         verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
@@ -140,8 +143,8 @@ public class SickNoteValidatorTest {
     public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthNoon() {
 
         sickNote.setDayLength(DayLength.NOON);
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 21));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        sickNote.setStartDate(LocalDate.of(2013, NOVEMBER, 21));
+        sickNote.setEndDate(LocalDate.of(2013, NOVEMBER, 19));
         validator.validate(sickNote, errors);
         verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
     }
@@ -185,8 +188,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
 
-        sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
-        sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 19));
         validator.validate(sickNote, errors);
         verify(errors).rejectValue("aubEndDate", "error.entry.invalidPeriod");
     }
@@ -195,8 +198,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureValidAUPeriodHasNoErrors() {
 
-        sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
-        sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 19));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 20));
         validator.validate(sickNote, errors);
         verifyZeroInteractions(errors);
     }
@@ -205,8 +208,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriod() {
 
-        sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 19));
-        sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 20));
+        sickNote.setAubStartDate(LocalDate.of(2013, DECEMBER, 19));
+        sickNote.setAubEndDate(LocalDate.of(2013, DECEMBER, 20));
         validator.validate(sickNote, errors);
         verify(errors).rejectValue("aubStartDate", "sicknote.error.aubInvalidPeriod");
         verify(errors).rejectValue("aubEndDate", "sicknote.error.aubInvalidPeriod");
@@ -216,8 +219,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureSickNoteMustNotHaveAnyOverlapping() {
 
-        sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 1));
-        sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 10));
+        sickNote.setStartDate(LocalDate.of(2015, MARCH, 1));
+        sickNote.setEndDate(LocalDate.of(2015, MARCH, 10));
 
         when(overlapService.checkOverlap(any(SickNote.class)))
             .thenReturn(OverlapCase.FULLY_OVERLAPPING);
@@ -231,14 +234,14 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
 
-        DateMidnight startDate = new DateMidnight(2015, DateTimeConstants.MARCH, 1);
-        DateMidnight endDate = new DateMidnight(2015, DateTimeConstants.MARCH, 10);
+        LocalDate startDate = LocalDate.of(2015, MARCH, 1);
+        LocalDate endDate = LocalDate.of(2015, MARCH, 10);
 
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(DateMidnight.class)))
+                    any(LocalDate.class)))
             .thenReturn(Optional.empty());
 
         validator.validate(sickNote, errors);
@@ -251,11 +254,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureInvalidPeriodWithValidAUBPeriodIsNotValid() {
 
-        DateMidnight startDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
-        DateMidnight endDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
+        LocalDate startDate = LocalDate.of(2016, MARCH, 16);
+        LocalDate endDate = LocalDate.of(2016, MARCH, 14);
 
-        DateMidnight aubStartDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
-        DateMidnight aubEndDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
+        LocalDate aubStartDate = LocalDate.of(2016, MARCH, 14);
+        LocalDate aubEndDate = LocalDate.of(2016, MARCH, 16);
 
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
@@ -272,11 +275,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
 
-        DateMidnight startDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
-        DateMidnight endDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
+        LocalDate startDate = LocalDate.of(2016, MARCH, 14);
+        LocalDate endDate = LocalDate.of(2016, MARCH, 16);
 
-        DateMidnight aubStartDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
-        DateMidnight aubEndDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
+        LocalDate aubStartDate = LocalDate.of(2016, MARCH, 16);
+        LocalDate aubEndDate = LocalDate.of(2016, MARCH, 14);
 
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);

@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -31,7 +31,5 @@ public interface OvertimeDAO extends CrudRepository<Overtime, Integer> {
         + "OR (overtime.startDate < :start and overtime.endDate > :end)) "
         + "ORDER BY overtime.startDate"
     )
-    List<Overtime> findByPersonAndPeriod(@Param("person") Person person,
-        @Param("start") Date start,
-        @Param("end") Date end);
+    List<Overtime> findByPersonAndPeriod(@Param("person") Person person, @Param("start") LocalDate start, @Param("end") LocalDate end);
 }

@@ -2,17 +2,15 @@ package org.synyx.urlaubsverwaltung.account.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
@@ -25,11 +23,9 @@ public class Account extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date validFrom;
+    private LocalDate validFrom;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date validTo;
+    private LocalDate validTo;
 
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
     // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
@@ -50,8 +46,8 @@ public class Account extends AbstractPersistable<Integer> {
         /* OK */
     }
 
-    public Account(Person person, Date validFrom, Date validTo, BigDecimal annualVacationDays,
-        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
+    public Account(Person person, LocalDate validFrom, LocalDate validTo, BigDecimal annualVacationDays,
+                   BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
@@ -112,45 +108,45 @@ public class Account extends AbstractPersistable<Integer> {
         this.vacationDays = vacationDays;
     }
 
-    public DateMidnight getValidFrom() {
+    public LocalDate getValidFrom() {
 
         if (this.validFrom == null) {
             return null;
         }
 
-        return new DateTime(this.validFrom).toDateMidnight();
+        return this.validFrom;
     }
 
-    public void setValidFrom(DateMidnight validFrom) {
+    public void setValidFrom(LocalDate validFrom) {
 
         if (validFrom == null) {
             this.validFrom = null;
         } else {
-            this.validFrom = validFrom.toDate();
+            this.validFrom = validFrom;
         }
     }
 
-    public DateMidnight getValidTo() {
+    public LocalDate getValidTo() {
 
         if (this.validTo == null) {
             return null;
         }
 
-        return new DateTime(this.validTo).toDateMidnight();
+        return this.validTo;
     }
 
-    public void setValidTo(DateMidnight validTo) {
+    public void setValidTo(LocalDate validTo) {
 
         if (validTo == null) {
             this.validTo = null;
         } else {
-            this.validTo = validTo.toDate();
+            this.validTo = validTo;
         }
     }
 
     public int getYear() {
 
-        return new DateTime(this.validFrom).toDateMidnight().getYear();
+        return this.validFrom.getYear();
     }
 
     @Override
@@ -159,8 +155,8 @@ public class Account extends AbstractPersistable<Integer> {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             // NOSONAR - Formatting issues
             .append("person", getPerson().getLoginName())
-            .append("validFrom", getValidFrom().toString(DateFormat.PATTERN))
-            .append("validTo", getValidTo().toString(DateFormat.PATTERN))
+            .append("validFrom", getValidFrom().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
+            .append("validTo", getValidTo().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
             .append("annualVacationDays", getAnnualVacationDays()).append("vacationDays", getVacationDays())
             .append("remainingVacationDays", getRemainingVacationDays())
             .append("remainingVacationDaysNotExpiring", getRemainingVacationDaysNotExpiring())

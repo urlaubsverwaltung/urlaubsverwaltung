@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,8 +93,8 @@ public interface DepartmentService {
      *
      * @return  list of waiting or allowed applications for leave of departments members
      */
-    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, DateMidnight startDate,
-        DateMidnight endDate);
+    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate,
+                                                                            LocalDate endDate);
 
 
     /**

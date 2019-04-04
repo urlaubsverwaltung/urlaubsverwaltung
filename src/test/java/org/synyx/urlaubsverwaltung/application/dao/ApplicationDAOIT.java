@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.dao;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +16,10 @@ import org.synyx.urlaubsverwaltung.person.PersonDAO;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+
+import static java.time.ZoneOffset.UTC;
 
 
 @RunWith(SpringRunner.class)
@@ -54,7 +56,7 @@ public class ApplicationDAOIT {
         Person otherPerson = TestDataCreator.createPerson();
         personDAO.save(otherPerson);
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
         Application fullDayOvertimeReduction = TestDataCreator.createApplication(person,

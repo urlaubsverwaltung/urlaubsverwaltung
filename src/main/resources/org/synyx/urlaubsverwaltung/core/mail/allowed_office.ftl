@@ -11,8 +11,8 @@ Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 Informationen zum Urlaubsantrag:
 
 Mitarbeiter: ${application.person.niceName}
-Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
-Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
+Antragsdatum: ${application.applicationDate.format("dd.MM.yyyy")}
+Zeitraum des beantragten Urlaubs: ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
 Art des Urlaubs: ${vacationType}
 <#if (application.reason)??>
 Grund: ${application.reason}

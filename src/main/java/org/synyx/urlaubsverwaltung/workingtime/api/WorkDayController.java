@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.workingtime.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.joda.time.DateMidnight;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +16,9 @@ import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 
@@ -66,9 +66,15 @@ public class WorkDayController {
         @RequestParam("person")
             Integer personId) {
 
-        DateTimeFormatter fmt = DateTimeFormat.forPattern(RestApiDateFormat.DATE_PATTERN);
-        DateMidnight startDate = DateMidnight.parse(from, fmt);
-        DateMidnight endDate = DateMidnight.parse(to, fmt);
+        LocalDate startDate;
+        LocalDate endDate;
+        try{
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
+            startDate = LocalDate.parse(from, fmt);
+            endDate = LocalDate.parse(to, fmt);
+        } catch (DateTimeParseException exception) {
+            throw new IllegalArgumentException(exception.getMessage());
+        }
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");

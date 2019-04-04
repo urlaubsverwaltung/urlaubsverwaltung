@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
@@ -16,6 +14,8 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -140,8 +140,8 @@ public class VacationDaysService {
 
     BigDecimal getUsedDaysBeforeApril(Account account) {
 
-        DateMidnight firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), DateTimeConstants.JANUARY);
-        DateMidnight lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), DateTimeConstants.MARCH);
+        LocalDate firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), Month.JANUARY.getValue());
+        LocalDate lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), Month.MARCH.getValue());
 
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
     }
@@ -149,14 +149,14 @@ public class VacationDaysService {
 
     BigDecimal getUsedDaysAfterApril(Account account) {
 
-        DateMidnight firstOfApril = DateUtil.getFirstDayOfMonth(account.getYear(), DateTimeConstants.APRIL);
-        DateMidnight lastOfDecember = DateUtil.getLastDayOfMonth(account.getYear(), DateTimeConstants.DECEMBER);
+        LocalDate firstOfApril = DateUtil.getFirstDayOfMonth(account.getYear(), Month.APRIL.getValue());
+        LocalDate lastOfDecember = DateUtil.getLastDayOfMonth(account.getYear(), Month.DECEMBER.getValue());
 
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
     }
 
 
-    BigDecimal getUsedDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone, DateMidnight lastMilestone) {
+    BigDecimal getUsedDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
 
         // get all applications for leave
         List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -173,8 +173,8 @@ public class VacationDaysService {
         BigDecimal usedDays = BigDecimal.ZERO;
 
         for (Application applicationForLeave : applicationsForLeave) {
-            DateMidnight startDate = applicationForLeave.getStartDate();
-            DateMidnight endDate = applicationForLeave.getEndDate();
+            LocalDate startDate = applicationForLeave.getStartDate();
+            LocalDate endDate = applicationForLeave.getEndDate();
 
             if (startDate.isBefore(firstMilestone)) {
                 startDate = firstMilestone;

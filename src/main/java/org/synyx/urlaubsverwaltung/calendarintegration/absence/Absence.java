@@ -2,12 +2,13 @@ package org.synyx.urlaubsverwaltung.calendarintegration.absence;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.DateTimeZone;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -15,8 +16,8 @@ import java.util.Date;
  */
 public class Absence {
 
-    private final Date startDate;
-    private final Date endDate;
+    private final ZonedDateTime startDate;
+    private final ZonedDateTime endDate;
     private final Person person;
     private final EventType eventType;
     private final boolean isAllDay;
@@ -32,25 +33,25 @@ public class Absence {
         this.person = person;
         this.eventType = eventType;
 
-        long startDateInMilliseconds = period.getStartDate().toDateTime(DateTimeZone.UTC).getMillis();
-        long endDateInMilliseconds = period.getEndDate().toDateTime(DateTimeZone.UTC).getMillis();
+        ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(UTC);
+        ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(UTC);
 
         switch (period.getDayLength()) {
             case FULL:
-                this.startDate = new Date(startDateInMilliseconds);
-                this.endDate = new Date(period.getEndDate().plusDays(1).toDateTime(DateTimeZone.UTC).getMillis());
+                this.startDate = periodStartDate;
+                this.endDate = periodEndDate.plusDays(1);
                 this.isAllDay = true;
                 break;
 
             case MORNING:
-                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStartAsMillis());
-                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEndAsMillis());
+                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getMorningStart());
+                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getMorningEnd());
                 this.isAllDay = false;
                 break;
 
             case NOON:
-                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getNoonStartAsMillis());
-                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getNoonEndAsMillis());
+                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getNoonStart());
+                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getNoonEnd());
                 this.isAllDay = false;
                 break;
 
@@ -65,13 +66,13 @@ public class Absence {
     }
 
 
-    public Date getStartDate() {
+    public ZonedDateTime getStartDate() {
 
         return startDate;
     }
 
 
-    public Date getEndDate() {
+    public ZonedDateTime getEndDate() {
 
         return endDate;
     }

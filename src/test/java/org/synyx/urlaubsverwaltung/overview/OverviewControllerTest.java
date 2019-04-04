@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,15 +16,17 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
+import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
@@ -114,25 +115,25 @@ public class OverviewControllerTest {
         waitingApplication.setVacationType(vacationType);
         waitingApplication.setPerson(person);
         waitingApplication.setStatus(WAITING);
-        waitingApplication.setStartDate(DateMidnight.now().minus(1L));
-        waitingApplication.setEndDate(DateMidnight.now().plus(1L));
+        waitingApplication.setStartDate(LocalDate.now(UTC).minusDays(1L));
+        waitingApplication.setEndDate(LocalDate.now(UTC).plusDays(1L));
 
         final Application allowedApplication = new Application();
         allowedApplication.setVacationType(vacationType);
         allowedApplication.setPerson(person);
         allowedApplication.setStatus(ALLOWED);
-        allowedApplication.setStartDate(DateMidnight.now().minus(10L));
-        allowedApplication.setEndDate(DateMidnight.now().plus(10L));
+        allowedApplication.setStartDate(LocalDate.now(UTC).minusDays(10L));
+        allowedApplication.setEndDate(LocalDate.now(UTC).plusDays(10L));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(asList(waitingApplication, revokedApplication, allowedApplication));
 
         final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(DateMidnight.now().minus(1L));
-        sickNote.setEndDate(DateMidnight.now().plus(1L));
+        sickNote.setStartDate(LocalDate.now(UTC).minusDays(1L));
+        sickNote.setEndDate(LocalDate.now(UTC).plusDays(1L));
         final SickNote sickNote2 = new SickNote();
-        sickNote2.setStartDate(DateMidnight.now().minus(10L));
-        sickNote2.setEndDate(DateMidnight.now().plus(10L));
+        sickNote2.setStartDate(LocalDate.now(UTC).minusDays(10L));
+        sickNote2.setEndDate(LocalDate.now(UTC).plusDays(10L));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
         MockHttpServletRequestBuilder builder = get("/web/staff/1/overview");

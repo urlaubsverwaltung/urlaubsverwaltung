@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -9,6 +8,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +27,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, DateMidnight date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
         Optional<TimedAbsence> freeTimeAbsence = checkForFreeTime(date, person);
 
@@ -49,7 +49,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private Optional<TimedAbsence> checkForFreeTime(DateMidnight currentDay, Person person) {
+    private Optional<TimedAbsence> checkForFreeTime(LocalDate currentDay, Person person) {
 
         DayLength expectedWorktime = getExpectedWorktimeFor(person, currentDay);
         BigDecimal expectedWorktimeDuration = expectedWorktime.getDuration();
@@ -64,7 +64,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private DayLength getExpectedWorktimeFor(Person person, DateMidnight currentDay) {
+    private DayLength getExpectedWorktimeFor(Person person, LocalDate currentDay) {
 
         Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
                 currentDay);
@@ -75,7 +75,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
         WorkingTime workingTime = workingTimeOrNot.get();
 
-        DayLength dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek());
+        DayLength dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek().getValue());
 
         return dayLengthForWeekDay;
     }

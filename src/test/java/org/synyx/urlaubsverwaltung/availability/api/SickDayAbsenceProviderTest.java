@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +11,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +32,8 @@ public class SickDayAbsenceProviderTest {
     private TimedAbsenceSpans emptyTimedAbsenceSpans;
     private Person testPerson;
     private SickNote sickNote;
-    private DateMidnight sickDay;
-    private DateMidnight standardWorkingDay;
+    private LocalDate sickDay;
+    private LocalDate standardWorkingDay;
 
     @Before
     public void setUp() {
@@ -41,8 +41,8 @@ public class SickDayAbsenceProviderTest {
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = TestDataCreator.createPerson();
         sickNote = TestDataCreator.createSickNote(testPerson, sickDay, sickDay, DayLength.FULL);
-        sickDay = new DateMidnight(2016, 1, 4);
-        standardWorkingDay = new DateMidnight(2016, 1, 5);
+        sickDay = LocalDate.of(2016, 1, 4);
+        standardWorkingDay = LocalDate.of(2016, 1, 5);
 
         setupSickNoteServiceMock();
         vacationAbsenceProvider = mock(VacationAbsenceProvider.class);

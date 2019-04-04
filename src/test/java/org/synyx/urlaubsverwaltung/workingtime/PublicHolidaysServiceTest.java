@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +10,8 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,7 +40,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCheckForPublicHolidayReturnsTrueForPublicHoliday() {
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 25);
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
@@ -51,7 +51,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCheckForPublicHolidayReturnsFalseForWorkDay() {
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 20);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 20);
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
@@ -62,7 +62,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorpusChristiIsRecognizedAsPublicHoliday() {
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.MAY, 30);
+        LocalDate testDate = LocalDate.of(2013, Month.MAY, 30);
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
@@ -73,7 +73,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureChristmasEveIsRecognizedAsPublicHoliday() {
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
@@ -84,7 +84,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureNewYearsEveIsRecognizedAsPublicHoliday() {
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
@@ -95,7 +95,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForWorkDay() {
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 27);
+        LocalDate testDate = LocalDate.of(2013, Month.NOVEMBER, 27);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -106,7 +106,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForPublicHoliday() {
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 25);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -122,7 +122,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -138,7 +138,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -154,7 +154,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -170,7 +170,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -186,7 +186,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -202,7 +202,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -213,7 +213,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureAssumptionDayIsAPublicHolidayForBayernMuenchen() {
 
-        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(LocalDate.of(2015, Month.AUGUST,
                     15), FederalState.BAYERN_MUENCHEN);
 
         Assert.assertTrue("Assumption Day should be recognized as public holiday", isPublicHoliday);
@@ -223,7 +223,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureAssumptionDayIsNoPublicHolidayForBerlin() {
 
-        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(LocalDate.of(2015, Month.AUGUST,
                     15), FederalState.BERLIN);
 
         Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
@@ -233,7 +233,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureAssumptionDayIsNoPublicHolidayForBadenWuerttemberg() {
 
-        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(LocalDate.of(2015, Month.AUGUST,
                     15), FederalState.BADEN_WUERTTEMBERG);
 
         Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
@@ -243,8 +243,8 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(new DateMidnight(2015,
-                    DateTimeConstants.AUGUST, 15), FederalState.BERLIN);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
+                    Month.AUGUST, 15), FederalState.BERLIN);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -253,8 +253,8 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(new DateMidnight(2015,
-                    DateTimeConstants.AUGUST, 15), FederalState.BADEN_WUERTTEMBERG);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
+                    Month.AUGUST, 15), FederalState.BADEN_WUERTTEMBERG);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -263,8 +263,8 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(new DateMidnight(2015,
-                    DateTimeConstants.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
+                    Month.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }

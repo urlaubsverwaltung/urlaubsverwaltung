@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.DateMidnight;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -10,9 +9,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -29,19 +29,16 @@ public class Overtime extends AbstractPersistable<Integer> {
     private Person person;
 
     @Column(nullable = false)
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date endDate;
+    private LocalDate endDate;
 
     @Column(nullable = false)
     private BigDecimal hours;
 
     @Column(nullable = false)
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date lastModificationDate;
+    private LocalDate lastModificationDate;
 
     Overtime() {
 
@@ -49,7 +46,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public Overtime(Person person, DateMidnight startDate, DateMidnight endDate, BigDecimal numberOfHours) {
+    public Overtime(Person person, LocalDate startDate, LocalDate endDate, BigDecimal numberOfHours) {
 
         Assert.notNull(person, "Person must be given.");
         Assert.notNull(startDate, "Start date must be given.");
@@ -57,11 +54,11 @@ public class Overtime extends AbstractPersistable<Integer> {
         Assert.notNull(numberOfHours, "Number of hours must be given.");
 
         this.person = person;
-        this.startDate = startDate.toDate();
-        this.endDate = endDate.toDate();
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.hours = numberOfHours;
 
-        this.lastModificationDate = DateMidnight.now().toDate();
+        this.lastModificationDate = LocalDate.now(UTC);
     }
 
     public Person getPerson() {
@@ -70,23 +67,23 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         if (startDate == null) {
             throw new IllegalStateException("Missing start date!");
         }
 
-        return new DateMidnight(startDate.getTime());
+        return startDate;
     }
 
 
-    public DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         if (endDate == null) {
             throw new IllegalStateException("Missing end date!");
         }
 
-        return new DateMidnight(endDate.getTime());
+        return endDate;
     }
 
 
@@ -109,19 +106,19 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public void setStartDate(DateMidnight startDate) {
+    public void setStartDate(LocalDate startDate) {
 
         Assert.notNull(startDate, "Start date must be given.");
 
-        this.startDate = startDate.toDate();
+        this.startDate = startDate;
     }
 
 
-    public void setEndDate(DateMidnight endDate) {
+    public void setEndDate(LocalDate endDate) {
 
         Assert.notNull(endDate, "End date must be given.");
 
-        this.endDate = endDate.toDate();
+        this.endDate = endDate;
     }
 
 
@@ -133,13 +130,13 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getLastModificationDate() {
+    public LocalDate getLastModificationDate() {
 
         if (lastModificationDate == null) {
             throw new IllegalStateException("Missing last modification date!");
         }
 
-        return new DateMidnight(lastModificationDate.getTime());
+        return this.lastModificationDate;
     }
 
 
@@ -148,7 +145,7 @@ public class Overtime extends AbstractPersistable<Integer> {
      */
     public void onUpdate() {
 
-        this.lastModificationDate = DateMidnight.now().toDate();
+        this.lastModificationDate = LocalDate.now(UTC);
     }
 
 

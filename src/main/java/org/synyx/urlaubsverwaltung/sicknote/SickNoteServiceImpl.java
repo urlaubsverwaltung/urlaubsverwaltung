@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -8,8 +7,12 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -43,16 +46,16 @@ public class SickNoteServiceImpl implements SickNoteService {
 
 
     @Override
-    public List<SickNote> getByPersonAndPeriod(Person person, DateMidnight from, DateMidnight to) {
+    public List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to) {
 
-        return sickNoteDAO.findByPersonAndPeriod(person, from.toDate(), to.toDate());
+        return sickNoteDAO.findByPersonAndPeriod(person, from, to);
     }
 
 
     @Override
-    public List<SickNote> getByPeriod(DateMidnight from, DateMidnight to) {
+    public List<SickNote> getByPeriod(LocalDate from, LocalDate to) {
 
-        return sickNoteDAO.findByPeriod(from.toDate(), to.toDate());
+        return sickNoteDAO.findByPeriod(from, to);
     }
 
 
@@ -62,9 +65,8 @@ public class SickNoteServiceImpl implements SickNoteService {
         Settings settings = settingsService.getSettings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        DateMidnight endDate = DateMidnight.now().plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification());
+        LocalDate endDate = ZonedDateTime.now(UTC).plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification()).toLocalDate();
 
-        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(),
-                endDate.toDate());
+        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(), endDate);
     }
 }

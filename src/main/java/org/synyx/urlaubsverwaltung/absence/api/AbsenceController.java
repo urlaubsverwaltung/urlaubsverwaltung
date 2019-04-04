@@ -3,12 +3,13 @@ package org.synyx.urlaubsverwaltung.absence.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -17,9 +18,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,8 +76,14 @@ public class AbsenceController {
         List<DayAbsence> absences = new ArrayList<>();
         Person person = optionalPerson.get();
 
-        DateMidnight startDate = getStartDate(year, Optional.ofNullable(month));
-        DateMidnight endDate = getEndDate(year, Optional.ofNullable(month));
+        LocalDate startDate;
+        LocalDate endDate;
+        try {
+            startDate = getStartDate(year, Optional.ofNullable(month));
+            endDate = getEndDate(year, Optional.ofNullable(month));
+        } catch (DateTimeException exception) {
+            throw new IllegalArgumentException(exception.getMessage());
+        }
 
         if (type == null || DayAbsence.Type.valueOf(type).equals(DayAbsence.Type.VACATION)) {
             absences.addAll(getVacations(startDate, endDate, person));
@@ -90,7 +97,7 @@ public class AbsenceController {
     }
 
 
-    private static DateMidnight getStartDate(String year, Optional<String> optionalMonth) {
+    private static LocalDate getStartDate(String year, Optional<String> optionalMonth) {
 
         return optionalMonth.map(s -> DateUtil.getFirstDayOfMonth(parseInt(year), parseInt(s)))
             .orElseGet(() -> DateUtil.getFirstDayOfYear(parseInt(year)));
@@ -98,7 +105,7 @@ public class AbsenceController {
     }
 
 
-    private static DateMidnight getEndDate(String year, Optional<String> optionalMonth) {
+    private static LocalDate getEndDate(String year, Optional<String> optionalMonth) {
 
         return optionalMonth.map(s -> DateUtil.getLastDayOfMonth(parseInt(year), parseInt(s)))
             .orElseGet(() -> DateUtil.getLastDayOfYear(parseInt(year)));
@@ -106,7 +113,7 @@ public class AbsenceController {
     }
 
 
-    private List<DayAbsence> getVacations(DateMidnight start, DateMidnight end, Person person) {
+    private List<DayAbsence> getVacations(LocalDate start, LocalDate end, Person person) {
 
         List<DayAbsence> absences = new ArrayList<>();
 
@@ -120,10 +127,10 @@ public class AbsenceController {
                 .collect(Collectors.toList());
 
         for (Application application : applications) {
-            DateMidnight startDate = application.getStartDate();
-            DateMidnight endDate = application.getEndDate();
+            LocalDate startDate = application.getStartDate();
+            LocalDate endDate = application.getEndDate();
 
-            DateMidnight day = startDate;
+            LocalDate day = startDate;
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
@@ -139,7 +146,7 @@ public class AbsenceController {
     }
 
 
-    private List<DayAbsence> getSickNotes(DateMidnight start, DateMidnight end, Person person) {
+    private List<DayAbsence> getSickNotes(LocalDate start, LocalDate end, Person person) {
 
         List<DayAbsence> absences = new ArrayList<>();
 
@@ -149,10 +156,10 @@ public class AbsenceController {
                 .collect(Collectors.toList());
 
         for (SickNote sickNote : sickNotes) {
-            DateMidnight startDate = sickNote.getStartDate();
-            DateMidnight endDate = sickNote.getEndDate();
+            LocalDate startDate = sickNote.getStartDate();
+            LocalDate endDate = sickNote.getEndDate();
 
-            DateMidnight day = startDate;
+            LocalDate day = startDate;
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {

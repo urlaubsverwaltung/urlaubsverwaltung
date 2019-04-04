@@ -1,25 +1,26 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -70,8 +71,8 @@ public class SickNoteInteractionServiceImplTest {
         sickNote = new SickNote();
         sickNote.setId(42);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
-        sickNote.setStartDate(DateMidnight.now());
-        sickNote.setEndDate(DateMidnight.now());
+        sickNote.setStartDate(LocalDate.now(UTC));
+        sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setPerson(TestDataCreator.createPerson());
 
@@ -160,8 +161,8 @@ public class SickNoteInteractionServiceImplTest {
     public void ensureConvertedSickNoteIsPersisted() {
 
         Application applicationForLeave = new Application();
-        applicationForLeave.setStartDate(DateMidnight.now());
-        applicationForLeave.setEndDate(DateMidnight.now());
+        applicationForLeave.setStartDate(LocalDate.now(UTC));
+        applicationForLeave.setEndDate(LocalDate.now(UTC));
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
         applicationForLeave.setPerson(TestDataCreator.createPerson());
@@ -188,8 +189,8 @@ public class SickNoteInteractionServiceImplTest {
     public void ensureConvertingSickNoteToVacationUpdatesCalendarEvent() {
 
         Application applicationForLeave = new Application();
-        applicationForLeave.setStartDate(DateMidnight.now());
-        applicationForLeave.setEndDate(DateMidnight.now());
+        applicationForLeave.setStartDate(LocalDate.now(UTC));
+        applicationForLeave.setEndDate(LocalDate.now(UTC));
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
         applicationForLeave.setPerson(person);

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,18 +28,21 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
+import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -149,7 +151,7 @@ public class ApplicationForLeaveDetailsController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now(), acc.getYear()));
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
         }
 
         // UNSPECIFIC ATTRIBUTES

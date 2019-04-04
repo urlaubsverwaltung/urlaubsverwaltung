@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.person.api.PersonListResponse;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ class DepartmentResponse {
 
         this.name = department.getName();
         this.description = department.getName();
-        this.lastModification = department.getLastModification().toString(RestApiDateFormat.DATE_PATTERN);
+        this.lastModification = department.getLastModification().format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
 
         List<PersonResponse> membersResponses = department.getMembers()
             .stream()

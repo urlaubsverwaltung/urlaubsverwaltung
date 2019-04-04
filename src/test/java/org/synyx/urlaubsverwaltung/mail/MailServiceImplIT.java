@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 import freemarker.template.Configuration;
-import org.joda.time.DateMidnight;
+import no.api.freemarker.java8.Java8ObjectWrapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeAction;
@@ -29,7 +30,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import javax.mail.Address;
@@ -38,6 +38,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +47,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
 import static org.junit.Assert.assertEquals;
@@ -98,6 +101,7 @@ public class MailServiceImplIT {
         freeMarkerConfigurationFactory.setDefaultEncoding("UTF-8");
         freeMarkerConfigurationFactory.setTemplateLoaderPath("classpath:/org/synyx/urlaubsverwaltung/core/mail/");
         Configuration configuration = freeMarkerConfigurationFactory.createConfiguration();
+        configuration.setObjectWrapper(new Java8ObjectWrapper(Configuration.VERSION_2_3_28));
         MailBuilder mailBuilder = new MailBuilder(configuration);
 
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
@@ -159,7 +163,7 @@ public class MailServiceImplIT {
 
     private Application createApplication(Person person) {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
         Application application = new Application();
         application.setId(1234);
         application.setPerson(person);
@@ -296,17 +300,17 @@ public class MailServiceImplIT {
 
         Person departmentMember = TestDataCreator.createPerson("muster", "Marlene", "Muster", "mmuster@foo.de");
         Application departmentApplication = TestDataCreator.createApplication(departmentMember, vacationType,
-            new DateMidnight(2015, 11, 5), new DateMidnight(2015, 11, 6), DayLength.FULL);
+            LocalDate.of(2015, 11, 5), LocalDate.of(2015, 11, 6), DayLength.FULL);
 
         Person otherDepartmentMember = TestDataCreator.createPerson("schmidt", "Niko", "Schmidt", "nschmidt@foo.de");
         Application otherDepartmentApplication = TestDataCreator.createApplication(otherDepartmentMember, vacationType,
-            new DateMidnight(2015, 11, 4), new DateMidnight(2015, 11, 4), DayLength.MORNING);
+            LocalDate.of(2015, 11, 4), LocalDate.of(2015, 11, 4), DayLength.MORNING);
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(singletonList(boss));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(eq(person),
-            any(DateMidnight.class), any(DateMidnight.class)))
+            any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Arrays.asList(departmentApplication, otherDepartmentApplication));
 
         mailService.sendNewApplicationNotification(application, null);
@@ -596,7 +600,7 @@ public class MailServiceImplIT {
 
         // check content
         String content = (String) mail.getContent();
-        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear()));
+        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + ZonedDateTime.now(UTC).getYear()));
         assertTrue(content.contains("Marlene Muster: 3"));
         assertTrue(content.contains("Max Mustermann: 5"));
         assertTrue(content.contains("Horst Dings: -1"));
@@ -637,8 +641,8 @@ public class MailServiceImplIT {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(DateMidnight.now().toDate());
-        when(absence.getEndDate()).thenReturn(DateMidnight.now().toDate());
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
 
         mailService.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
@@ -682,8 +686,8 @@ public class MailServiceImplIT {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(DateMidnight.now().toDate());
-        when(absence.getEndDate()).thenReturn(DateMidnight.now().toDate());
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
 
         mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 

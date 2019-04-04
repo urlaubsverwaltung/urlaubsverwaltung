@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +18,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -66,36 +66,36 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenPersonIsNull() {
 
-        builder.build(null, new DateMidnight(2015, 1, 1), new DateMidnight(2015, 12, 31));
+        builder.build(null, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenFromDateIsNull() {
 
-        builder.build(mock(Person.class), null, new DateMidnight(2015, 12, 31));
+        builder.build(mock(Person.class), null, LocalDate.of(2015, 12, 31));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenToDateIsNull() {
 
-        builder.build(mock(Person.class), new DateMidnight(2014, 1, 1), null);
+        builder.build(mock(Person.class), LocalDate.of(2014, 1, 1), null);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
 
-        builder.build(mock(Person.class), new DateMidnight(2014, 1, 1), new DateMidnight(2015, 1, 1));
+        builder.build(mock(Person.class), LocalDate.of(2014, 1, 1), LocalDate.of(2015, 1, 1));
     }
 
 
     @Test
     public void ensureUsesWaitingAndAllowedVacationOfAllHolidayTypesToBuildStatistics() {
 
-        DateMidnight from = new DateMidnight(2014, 1, 1);
-        DateMidnight to = new DateMidnight(2014, 12, 31);
+        LocalDate from = LocalDate.of(2014, 1, 1);
+        LocalDate to = LocalDate.of(2014, 12, 31);
 
         Person person = mock(Person.class);
         Account account = mock(Account.class);
@@ -108,44 +108,44 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         Application holidayWaiting = TestDataCreator.anyFullDayApplication(person);
         holidayWaiting.setVacationType(vacationTypes.get(0));
-        holidayWaiting.setStartDate(new DateMidnight(2014, 10, 13));
-        holidayWaiting.setEndDate(new DateMidnight(2014, 10, 13));
+        holidayWaiting.setStartDate(LocalDate.of(2014, 10, 13));
+        holidayWaiting.setEndDate(LocalDate.of(2014, 10, 13));
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
 
         Application holidayTemporaryAllowed = TestDataCreator.anyFullDayApplication(person);
         holidayTemporaryAllowed.setVacationType(vacationTypes.get(0));
-        holidayTemporaryAllowed.setStartDate(new DateMidnight(2014, 10, 12));
-        holidayTemporaryAllowed.setEndDate(new DateMidnight(2014, 10, 12));
+        holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, 10, 12));
+        holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, 10, 12));
         holidayTemporaryAllowed.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
 
         Application holidayAllowed = TestDataCreator.anyFullDayApplication(person);
         holidayAllowed.setVacationType(vacationTypes.get(0));
-        holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
-        holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
+        holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
+        holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application holidayRejected = TestDataCreator.anyFullDayApplication(person);
         holidayRejected.setVacationType(vacationTypes.get(0));
-        holidayRejected.setStartDate(new DateMidnight(2014, 11, 6));
-        holidayRejected.setEndDate(new DateMidnight(2014, 11, 6));
+        holidayRejected.setStartDate(LocalDate.of(2014, 11, 6));
+        holidayRejected.setEndDate(LocalDate.of(2014, 11, 6));
         holidayRejected.setStatus(ApplicationStatus.REJECTED);
 
         Application specialLeaveWaiting = TestDataCreator.anyFullDayApplication(person);
         specialLeaveWaiting.setVacationType(vacationTypes.get(1));
-        specialLeaveWaiting.setStartDate(new DateMidnight(2014, 10, 15));
-        specialLeaveWaiting.setEndDate(new DateMidnight(2014, 10, 15));
+        specialLeaveWaiting.setStartDate(LocalDate.of(2014, 10, 15));
+        specialLeaveWaiting.setEndDate(LocalDate.of(2014, 10, 15));
         specialLeaveWaiting.setStatus(ApplicationStatus.WAITING);
 
         Application unpaidLeaveAllowed = TestDataCreator.anyFullDayApplication(person);
         unpaidLeaveAllowed.setVacationType(vacationTypes.get(2));
-        unpaidLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 16));
-        unpaidLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 16));
+        unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 16));
+        unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 16));
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application overTimeWaiting = TestDataCreator.anyFullDayApplication(person);
         overTimeWaiting.setVacationType(vacationTypes.get(3));
-        overTimeWaiting.setStartDate(new DateMidnight(2014, 11, 3));
-        overTimeWaiting.setEndDate(new DateMidnight(2014, 11, 3));
+        overTimeWaiting.setStartDate(LocalDate.of(2014, 11, 3));
+        overTimeWaiting.setEndDate(LocalDate.of(2014, 11, 3));
         overTimeWaiting.setStatus(ApplicationStatus.WAITING);
 
         List<Application> applications = Arrays.asList(holidayWaiting, holidayTemporaryAllowed, holidayAllowed,
@@ -155,8 +155,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
             .thenReturn(applications);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class),
-                    any(DateMidnight.class), eq(person)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+                    any(LocalDate.class), eq(person)))
             .thenReturn(BigDecimal.ONE);
 
         ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
@@ -182,8 +182,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     @Test
     public void ensureCallsCalendarServiceToCalculatePartialVacationDaysOfVacationsSpanningTwoYears() {
 
-        DateMidnight from = new DateMidnight(2015, 1, 1);
-        DateMidnight to = new DateMidnight(2015, 12, 31);
+        LocalDate from = LocalDate.of(2015, 1, 1);
+        LocalDate to = LocalDate.of(2015, 12, 31);
 
         Person person = mock(Person.class);
         Account account = mock(Account.class);
@@ -196,14 +196,14 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         Application holidayAllowed = TestDataCreator.anyFullDayApplication(person);
         holidayAllowed.setVacationType(vacationTypes.get(0));
-        holidayAllowed.setStartDate(new DateMidnight(2014, 12, 29));
-        holidayAllowed.setEndDate(new DateMidnight(2015, 1, 9));
+        holidayAllowed.setStartDate(LocalDate.of(2014, 12, 29));
+        holidayAllowed.setEndDate(LocalDate.of(2015, 1, 9));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application holidayWaiting = TestDataCreator.anyFullDayApplication(person);
         holidayWaiting.setVacationType(vacationTypes.get(0));
-        holidayWaiting.setStartDate(new DateMidnight(2015, 12, 21));
-        holidayWaiting.setEndDate(new DateMidnight(2016, 1, 4));
+        holidayWaiting.setStartDate(LocalDate.of(2015, 12, 21));
+        holidayWaiting.setEndDate(LocalDate.of(2016, 1, 4));
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
 
         List<Application> applications = Arrays.asList(holidayWaiting, holidayAllowed);
@@ -211,11 +211,11 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
             .thenReturn(applications);
 
-        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 1, 1),
-                    new DateMidnight(2015, 1, 9), person))
+        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2015, 1, 1),
+                    LocalDate.of(2015, 1, 9), person))
             .thenReturn(new BigDecimal("5"));
-        when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 12, 21),
-                    new DateMidnight(2015, 12, 31), person))
+        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2015, 12, 21),
+                    LocalDate.of(2015, 12, 31), person))
             .thenReturn(new BigDecimal("7"));
 
         ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
@@ -237,8 +237,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     @Test
     public void ensureCalculatesLeftVacationDaysAndLeftOvertimeCorrectly() {
 
-        DateMidnight from = new DateMidnight(2015, 1, 1);
-        DateMidnight to = new DateMidnight(2015, 12, 31);
+        LocalDate from = LocalDate.of(2015, 1, 1);
+        LocalDate to = LocalDate.of(2015, 12, 31);
 
         Person person = mock(Person.class);
         Account account = mock(Account.class);

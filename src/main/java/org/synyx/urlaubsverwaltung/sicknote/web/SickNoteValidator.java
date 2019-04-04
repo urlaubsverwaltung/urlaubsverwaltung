@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +14,8 @@ import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Optional;
 
 
@@ -74,8 +75,8 @@ public class SickNoteValidator implements Validator {
     private void validateSickNotePeriod(SickNote sickNote, Errors errors) {
 
         DayLength dayLength = sickNote.getDayLength();
-        DateMidnight startDate = sickNote.getStartDate();
-        DateMidnight endDate = sickNote.getEndDate();
+        LocalDate startDate = sickNote.getStartDate();
+        LocalDate endDate = sickNote.getEndDate();
 
         validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
@@ -94,8 +95,8 @@ public class SickNoteValidator implements Validator {
     private void validateAUPeriod(SickNote sickNote, Errors errors) {
 
         DayLength dayLength = sickNote.getDayLength();
-        DateMidnight aubStartDate = sickNote.getAubStartDate();
-        DateMidnight aubEndDate = sickNote.getAubEndDate();
+        LocalDate aubStartDate = sickNote.getAubStartDate();
+        LocalDate aubEndDate = sickNote.getAubEndDate();
 
         validateNotNull(aubStartDate, ATTRIBUTE_AUB_START_DATE, errors);
         validateNotNull(aubEndDate, ATTRIBUTE_AUB_END_DATE, errors);
@@ -103,18 +104,19 @@ public class SickNoteValidator implements Validator {
         if (aubStartDate != null && aubEndDate != null) {
             validatePeriod(aubStartDate, aubEndDate, dayLength, ATTRIBUTE_AUB_END_DATE, errors);
 
-            DateMidnight startDate = sickNote.getStartDate();
-            DateMidnight endDate = sickNote.getEndDate();
+            LocalDate startDate = sickNote.getStartDate();
+            LocalDate endDate = sickNote.getEndDate();
 
             if (startDate != null && endDate != null && endDate.isAfter(startDate)) {
                 // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
-                Interval interval = new Interval(startDate, endDate.plusDays(1));
+                Interval interval = new Interval(startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+                    endDate.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
 
-                if (!interval.contains(aubStartDate)) {
+                if (!interval.contains(aubStartDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli())) {
                     errors.rejectValue(ATTRIBUTE_AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
                 }
 
-                if (!interval.contains(aubEndDate)) {
+                if (!interval.contains(aubEndDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli())) {
                     errors.rejectValue(ATTRIBUTE_AUB_END_DATE, ERROR_PERIOD_SICK_NOTE);
                 }
             }
@@ -122,7 +124,7 @@ public class SickNoteValidator implements Validator {
     }
 
 
-    private void validateNotNull(DateMidnight date, String field, Errors errors) {
+    private void validateNotNull(LocalDate date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && errors.getFieldErrors(field).isEmpty()) {
@@ -133,14 +135,13 @@ public class SickNoteValidator implements Validator {
 
     /**
      * Validate that the given start date is not after the given end date.
-     *
-     * @param  startDate
+     *  @param  startDate
      * @param  endDate
      * @param  field
      * @param  errors
      */
-    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, String field,
-        Errors errors) {
+    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, String field,
+                                Errors errors) {
 
         if (startDate.isAfter(endDate)) {
             errors.rejectValue(field, ERROR_PERIOD);

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.joda.time.DateMidnight;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +10,8 @@ import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +38,10 @@ public class WorkingTimeService {
         this.settingsService = settingsService;
     }
 
-    public void touch(List<Integer> workingDays, Optional<FederalState> federalState, DateMidnight validFrom,
-        Person person) {
+    public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom,
+                      Person person) {
 
-        WorkingTime workingTime = workingTimeDAO.findByPersonAndValidityDate(person, validFrom.toDate());
+        WorkingTime workingTime = workingTimeDAO.findByPersonAndValidityDate(person, validFrom);
 
         /*
          * create a new WorkingTime object if no one existent for the given person and date
@@ -73,9 +74,9 @@ public class WorkingTimeService {
     }
 
 
-    public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, DateMidnight date) {
+    public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
 
-        return Optional.ofNullable(workingTimeDAO.findByPersonAndValidityDateEqualsOrMinorDate(person, date.toDate()));
+        return Optional.ofNullable(workingTimeDAO.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
     }
 
 
@@ -85,13 +86,13 @@ public class WorkingTimeService {
     }
 
 
-    public FederalState getFederalStateForPerson(Person person, DateMidnight date) {
+    public FederalState getFederalStateForPerson(Person person, LocalDate date) {
 
         Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
 
         if (!optionalWorkingTime.isPresent()) {
             LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                    person.getLoginName(), date.toString(DateFormat.PATTERN));
+                    person.getLoginName(), date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
 
             return getSystemDefaultFederalState();
         }

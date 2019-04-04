@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.account.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.Errors;
@@ -9,6 +8,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -207,8 +207,8 @@ public class AccountValidatorTest {
 
         // invalid period: 1.5.2013 - 1.1.2013
 
-        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 5, 1));
-        form.setHolidaysAccountValidTo(new DateMidnight(2013, 1, 1));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2013, 1, 1));
 
         validator.validatePeriod(form, errors);
 
@@ -221,8 +221,8 @@ public class AccountValidatorTest {
 
         // invalid period: 5.1.2013 - 5.1.2013
 
-        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 5, 1));
-        form.setHolidaysAccountValidTo(new DateMidnight(2013, 5, 1));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 1));
 
         validator.validatePeriod(form, errors);
 
@@ -235,8 +235,8 @@ public class AccountValidatorTest {
 
         form = new AccountForm(2014);
 
-        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 1, 1));
-        form.setHolidaysAccountValidTo(new DateMidnight(2013, 5, 1));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 1, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 1));
 
         validator.validatePeriod(form, errors);
 
@@ -249,8 +249,8 @@ public class AccountValidatorTest {
 
         // valid period: 1.5.2013 - 5.5.2013
 
-        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 5, 1));
-        form.setHolidaysAccountValidTo(new DateMidnight(2013, 5, 5));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 5));
 
         validator.validatePeriod(form, errors);
 

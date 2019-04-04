@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public interface SickNoteService {
      *
      * @return  all the sick notes matching the given parameters
      */
-    List<SickNote> getByPersonAndPeriod(Person person, DateMidnight from, DateMidnight to);
+    List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to);
 
 
     /**
@@ -50,7 +50,7 @@ public interface SickNoteService {
      *
      * @return  all the sick notes matching the given parameters
      */
-    List<SickNote> getByPeriod(DateMidnight from, DateMidnight to);
+    List<SickNote> getByPeriod(LocalDate from, LocalDate to);
 
 
     /**

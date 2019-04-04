@@ -1,26 +1,27 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 
-public class DateMidnightPropertyEditorTest {
 
-    private DateMidnightPropertyEditor editor;
+public class LocalDatePropertyEditorTest {
+
+    private LocalDatePropertyEditor editor;
 
     @Before
     public void setUp() {
 
-        editor = new DateMidnightPropertyEditor();
+        editor = new LocalDatePropertyEditor();
     }
 
 
     @Test
     public void ensureCorrectFormatting() {
 
-        editor.setValue(new DateMidnight(2015, 12, 21));
+        editor.setValue(LocalDate.of(2015, 12, 21));
 
         Assert.assertNotNull("Should not be null", editor.getAsText());
         Assert.assertEquals("Wrong text representation", "21.12.2015", editor.getAsText());
@@ -42,7 +43,7 @@ public class DateMidnightPropertyEditorTest {
         editor.setAsText("13.12.2016");
 
         Assert.assertNotNull("Should not be null", editor.getValue());
-        Assert.assertEquals("Wrong date", new DateMidnight(2016, 12, 13), editor.getValue());
+        Assert.assertEquals("Wrong date", LocalDate.of(2016, 12, 13), editor.getValue());
     }
 
 

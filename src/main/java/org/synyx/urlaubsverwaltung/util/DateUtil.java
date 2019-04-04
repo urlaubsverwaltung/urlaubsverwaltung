@@ -1,7 +1,15 @@
 package org.synyx.urlaubsverwaltung.util;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 public final class DateUtil {
 
@@ -21,9 +29,9 @@ public final class DateUtil {
      *
      * @return {@code true} if the given date is a work day, else {@code false}
      */
-    public static boolean isWorkDay(DateMidnight date) {
+    public static boolean isWorkDay(LocalDate date) {
 
-        return !(date.getDayOfWeek() == DateTimeConstants.SATURDAY || date.getDayOfWeek() == DateTimeConstants.SUNDAY);
+        return !(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY);
     }
 
     /**
@@ -36,9 +44,9 @@ public final class DateUtil {
      *
      * @return {@code true} if the given date is before April of the given year, {@code false} if it is in or after that April
      */
-    public static boolean isBeforeApril(DateMidnight date, int year) {
+    public static boolean isBeforeApril(LocalDate date, int year) {
 
-        return date.getMonthOfYear() < DateTimeConstants.APRIL || date.getYear() < year;
+        return date.getMonth().getValue() < Month.APRIL.getValue() || date.getYear() < year;
     }
 
     /**
@@ -49,9 +57,9 @@ public final class DateUtil {
      *
      * @return {@code true} if the given date is on Christmas Eve, else {@code false}
      */
-    public static boolean isChristmasEve(DateMidnight date) {
+    public static boolean isChristmasEve(LocalDate date) {
 
-        return date.getDayOfMonth() == DAY_OF_CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER;
+        return date.getDayOfMonth() == DAY_OF_CHRISTMAS_EVE && date.getMonth() == Month.DECEMBER;
     }
 
     /**
@@ -62,9 +70,9 @@ public final class DateUtil {
      *
      * @return {@code true} if the given date is on New Year's Eve, else {@code false}
      */
-    public static boolean isNewYearsEve(DateMidnight date) {
+    public static boolean isNewYearsEve(LocalDate date) {
 
-        return date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER;
+        return date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonth() == Month.DECEMBER;
     }
 
     /**
@@ -75,9 +83,9 @@ public final class DateUtil {
      *
      * @return the first day of the given year
      */
-    public static DateMidnight getFirstDayOfYear(int year) {
+    public static LocalDate getFirstDayOfYear(int year) {
 
-        return getFirstDayOfMonth(year, DateTimeConstants.JANUARY);
+        return ZonedDateTime.now(UTC).withYear(year).with(firstDayOfYear()).toLocalDate();
     }
 
     /**
@@ -88,9 +96,9 @@ public final class DateUtil {
      *
      * @return the last day of the given year
      */
-    public static DateMidnight getLastDayOfYear(int year) {
+    public static LocalDate getLastDayOfYear(int year) {
 
-        return getLastDayOfMonth(year, DateTimeConstants.DECEMBER);
+        return ZonedDateTime.now(UTC).withYear(year).with(lastDayOfYear()).toLocalDate();
     }
 
     /**
@@ -103,11 +111,9 @@ public final class DateUtil {
      *
      * @return the first day of the given month in the given year
      */
-    public static DateMidnight getFirstDayOfMonth(int year, int month) {
+    public static LocalDate getFirstDayOfMonth(int year, int month) {
 
-        DateMidnight monthOfYear = DateMidnight.now().withYear(year).withMonthOfYear(month);
-
-        return monthOfYear.dayOfMonth().withMinimumValue();
+        return ZonedDateTime.now(UTC).withYear(year).withMonth(month).with(firstDayOfMonth()).toLocalDate();
     }
 
     /**
@@ -120,11 +126,9 @@ public final class DateUtil {
      *
      * @return the last day of the given month in the given year
      */
-    public static DateMidnight getLastDayOfMonth(int year, int month) {
+    public static LocalDate getLastDayOfMonth(int year, int month) {
 
-        DateMidnight monthOfYear = DateMidnight.now().withYear(year).withMonthOfYear(month);
-
-        return monthOfYear.dayOfMonth().withMaximumValue();
+        return ZonedDateTime.now(UTC).withYear(year).withMonth(month).with(lastDayOfMonth()).toLocalDate();
     }
 
     /**

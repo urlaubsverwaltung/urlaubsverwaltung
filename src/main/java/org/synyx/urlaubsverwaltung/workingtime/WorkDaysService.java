@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -11,6 +10,8 @@ import org.synyx.urlaubsverwaltung.util.DateFormat;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 
@@ -44,12 +45,12 @@ public class WorkDaysService {
      *
      * @return  number of weekdays
      */
-    public double getWeekDays(DateMidnight startDate, DateMidnight endDate) {
+    public double getWeekDays(LocalDate startDate, LocalDate endDate) {
 
         double workDays = 0.0;
 
         if (!startDate.equals(endDate)) {
-            DateMidnight day = startDate;
+            LocalDate day = startDate;
 
             while (!day.isAfter(endDate)) {
                 if (DateUtil.isWorkDay(day)) {
@@ -81,15 +82,15 @@ public class WorkDaysService {
      *
      * @return  number of workdays in a certain time period
      */
-    public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
+    public BigDecimal getWorkDays(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
         Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
                 person, startDate);
 
         if (!optionalWorkingTime.isPresent()) {
             throw new NoValidWorkingTimeException("No working time found for User '" + person.getLoginName()
-                + "' in period " + startDate.toString(DateFormat.PATTERN) + " - "
-                + endDate.toString(DateFormat.PATTERN));
+                + "' in period " + startDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) + " - "
+                + endDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
         }
 
         WorkingTime workingTime = optionalWorkingTime.get();
@@ -98,13 +99,13 @@ public class WorkDaysService {
 
         BigDecimal vacationDays = BigDecimal.ZERO;
 
-        DateMidnight day = startDate;
+        LocalDate day = startDate;
 
         while (!day.isAfter(endDate)) {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
             BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day, federalState);
 
-            int dayOfWeek = day.getDayOfWeek();
+            int dayOfWeek = day.getDayOfWeek().getValue();
             BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
 
             BigDecimal result = duration.multiply(workingDuration);

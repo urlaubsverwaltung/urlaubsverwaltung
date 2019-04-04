@@ -20,15 +20,16 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarNotCreatedException;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarNotCreatedException;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 
 import java.net.URI;
+import java.sql.Date;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -214,9 +215,9 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
         OlsonTimeZoneDefinition timeZone = new OlsonTimeZoneDefinition(TimeZone.getTimeZone(exchangeTimeZoneId));
 
-        appointment.setStart(absence.getStartDate());
+        appointment.setStart(Date.from(absence.getStartDate().toInstant()));
         appointment.setStartTimeZone(timeZone);
-        appointment.setEnd(absence.getEndDate());
+        appointment.setEnd(Date.from(absence.getEndDate().toInstant()));
         appointment.setEndTimeZone(timeZone);
 
         appointment.setIsAllDayEvent(absence.isAllDay());

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.Errors;
@@ -13,17 +12,20 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapCase;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -77,16 +79,16 @@ public class ApplicationValidatorTest {
 
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDate(DateMidnight.now());
-        appForm.setEndDate(DateMidnight.now().plusDays(2));
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(2).toLocalDate());
         appForm.setPerson(TestDataCreator.createPerson());
 
         // Default: everything is alright, override for negative cases
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(DateMidnight.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
                     any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
@@ -148,8 +150,8 @@ public class ApplicationValidatorTest {
     public void ensureStartDateMustBeBeforeEndDate() {
 
         appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDate(new DateMidnight(2012, 1, 17));
-        appForm.setEndDate(new DateMidnight(2012, 1, 12));
+        appForm.setStartDate(LocalDate.of(2012, 1, 17));
+        appForm.setEndDate(LocalDate.of(2012, 1, 12));
 
         validator.validate(appForm, errors);
 
@@ -160,7 +162,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureVeryPastDateIsNotValid() {
 
-        DateMidnight pastDate = DateMidnight.now().minusYears(10);
+        LocalDate pastDate = ZonedDateTime.now(UTC).minusYears(10).toLocalDate();
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(pastDate);
@@ -175,7 +177,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureVeryFutureDateIsNotValid() {
 
-        DateMidnight futureDate = DateMidnight.now().plusYears(10);
+        LocalDate futureDate = ZonedDateTime.now(UTC).plusYears(10).toLocalDate();
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(futureDate);
@@ -193,8 +195,8 @@ public class ApplicationValidatorTest {
     public void ensureMorningApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.MORNING);
-        appForm.setStartDate(DateMidnight.now());
-        appForm.setEndDate(DateMidnight.now().plusDays(1));
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
 
         validator.validate(appForm, errors);
 
@@ -206,8 +208,8 @@ public class ApplicationValidatorTest {
     public void ensureNoonApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDate(DateMidnight.now());
-        appForm.setEndDate(DateMidnight.now().plusDays(1));
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
 
         validator.validate(appForm, errors);
 
@@ -218,7 +220,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
 
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(date);
@@ -233,7 +235,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
 
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDate(date);
@@ -248,7 +250,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
 
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDate(date);
@@ -301,7 +303,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartTimeMustBeBeforeEndTime() {
 
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = LocalDate.now(UTC);
 
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDate(date);
@@ -318,7 +320,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartTimeAndEndTimeMustNotBeEquals() {
 
-        DateMidnight date = DateMidnight.now();
+        LocalDate date = LocalDate.now(UTC);
         Time time = Time.valueOf("13:30:00");
 
         appForm.setDayLength(DayLength.MORNING);
@@ -417,7 +419,7 @@ public class ApplicationValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
                     any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         validator.validate(appForm, errors);
@@ -433,13 +435,13 @@ public class ApplicationValidatorTest {
     public void ensureApplyingForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDate(DateMidnight.now());
-        appForm.setEndDate(DateMidnight.now());
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(LocalDate.now(UTC));
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
                     any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
@@ -456,8 +458,8 @@ public class ApplicationValidatorTest {
     public void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDate(DateMidnight.now());
-        appForm.setEndDate(DateMidnight.now());
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(LocalDate.now(UTC));
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
@@ -483,7 +485,7 @@ public class ApplicationValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(DateMidnight.class), any(DateMidnight.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
                     any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
@@ -626,8 +628,8 @@ public class ApplicationValidatorTest {
         appForm.setStartDate(null);
         appForm.setEndDate(null);
 
-        appForm.setStartDate(DateMidnight.now());
-        appForm.setEndDate(DateMidnight.now());
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(LocalDate.now(UTC));
         appForm.setDayLength(DayLength.MORNING);
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);

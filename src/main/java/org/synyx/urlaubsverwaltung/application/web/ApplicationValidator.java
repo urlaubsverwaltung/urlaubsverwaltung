@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -24,7 +23,11 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -119,8 +122,8 @@ public class ApplicationValidator implements Validator {
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
-        DateMidnight startDate = applicationForLeave.getStartDate();
-        DateMidnight endDate = applicationForLeave.getEndDate();
+        LocalDate startDate = applicationForLeave.getStartDate();
+        LocalDate endDate = applicationForLeave.getEndDate();
 
         validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
@@ -132,7 +135,7 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateNotNull(DateMidnight date, String field, Errors errors) {
+    private void validateNotNull(LocalDate date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && errors.getFieldErrors(field).isEmpty()) {
@@ -141,8 +144,8 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, Settings settings,
-        Errors errors) {
+    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, Settings settings,
+                                Errors errors) {
 
         // ensure that startDate < endDate
         if (startDate.isAfter(endDate)) {
@@ -157,10 +160,10 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateNotTooFarInTheFuture(DateMidnight date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInTheFuture(LocalDate date, AbsenceSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
+        LocalDate future = ZonedDateTime.now(UTC).plusMonths(maximumMonths).toLocalDate();
 
         if (date.isAfter(future)) {
             errors.reject(ERROR_TOO_LONG, new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance() }, null);
@@ -168,10 +171,10 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateNotTooFarInThePast(DateMidnight date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInThePast(LocalDate date, AbsenceSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);
+        LocalDate past = ZonedDateTime.now(UTC).minusMonths(maximumMonths).toLocalDate();
 
         if (date.isBefore(past)) {
             errors.reject(ERROR_PAST);
@@ -179,7 +182,7 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateSameDayIfHalfDayPeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength,
+    private void validateSameDayIfHalfDayPeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength,
         Errors errors) {
 
         boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;

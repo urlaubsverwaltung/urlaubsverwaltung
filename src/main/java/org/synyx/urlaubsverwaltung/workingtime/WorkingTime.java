@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
@@ -14,8 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import java.util.Date;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +47,7 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private DayLength sunday = DayLength.ZERO;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date validFrom;
+    private LocalDate validFrom;
 
     /**
      * If set, override the system-wide FederalState setting for this person. TODO: Maybe we should embed the whole
@@ -122,26 +118,26 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
     public DayLength getDayLengthForWeekDay(int weekDay) {
 
-        switch (weekDay) {
-            case DateTimeConstants.MONDAY:
+        switch (DayOfWeek.of(weekDay)) {
+            case MONDAY:
                 return this.monday;
 
-            case DateTimeConstants.TUESDAY:
+            case TUESDAY:
                 return this.tuesday;
 
-            case DateTimeConstants.WEDNESDAY:
+            case WEDNESDAY:
                 return this.wednesday;
 
-            case DateTimeConstants.THURSDAY:
+            case THURSDAY:
                 return this.thursday;
 
-            case DateTimeConstants.FRIDAY:
+            case FRIDAY:
                 return this.friday;
 
-            case DateTimeConstants.SATURDAY:
+            case SATURDAY:
                 return this.saturday;
 
-            case DateTimeConstants.SUNDAY:
+            case SUNDAY:
                 return this.sunday;
 
             default:
@@ -152,32 +148,32 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
     public void setDayLengthForWeekDay(int weekDay, DayLength dayLength) {
 
-        switch (weekDay) {
-            case DateTimeConstants.MONDAY:
+        switch (DayOfWeek.of(weekDay)) {
+            case MONDAY:
                 this.monday = dayLength;
                 break;
 
-            case DateTimeConstants.TUESDAY:
+            case TUESDAY:
                 this.tuesday = dayLength;
                 break;
 
-            case DateTimeConstants.WEDNESDAY:
+            case WEDNESDAY:
                 this.wednesday = dayLength;
                 break;
 
-            case DateTimeConstants.THURSDAY:
+            case THURSDAY:
                 this.thursday = dayLength;
                 break;
 
-            case DateTimeConstants.FRIDAY:
+            case FRIDAY:
                 this.friday = dayLength;
                 break;
 
-            case DateTimeConstants.SATURDAY:
+            case SATURDAY:
                 this.saturday = dayLength;
                 break;
 
-            case DateTimeConstants.SUNDAY:
+            case SUNDAY:
                 this.sunday = dayLength;
                 break;
 
@@ -187,22 +183,22 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getValidFrom() {
+    public LocalDate getValidFrom() {
 
         if (this.validFrom == null) {
             return null;
         }
 
-        return new DateTime(this.validFrom).toDateMidnight();
+        return this.validFrom;
     }
 
 
-    public void setValidFrom(DateMidnight validFrom) {
+    public void setValidFrom(LocalDate validFrom) {
 
         if (validFrom == null) {
             this.validFrom = null;
         } else {
-            this.validFrom = validFrom.toDate();
+            this.validFrom = validFrom;
         }
     }
 

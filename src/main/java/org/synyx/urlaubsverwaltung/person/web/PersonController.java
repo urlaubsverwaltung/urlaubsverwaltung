@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,20 +15,22 @@ import org.synyx.urlaubsverwaltung.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
+import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
-import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -79,7 +82,7 @@ public class PersonController {
                     signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        Integer year = requestedYear.orElseGet(() -> DateMidnight.now().getYear());
+        Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
@@ -124,7 +127,7 @@ public class PersonController {
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownDepartmentException {
 
-        Integer year = requestedYear.orElseGet(() -> DateMidnight.now().getYear());
+        Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
         Person signedInUser = sessionService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)
@@ -239,9 +242,9 @@ public class PersonController {
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
-        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now(), year));
+        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
-        model.addAttribute("now", DateMidnight.now());
+        model.addAttribute("now", LocalDate.now(UTC));
 
         List<Department> departments = getRelevantDepartments(signedInUser);
         departments.sort(Comparator.comparing(Department::getName));

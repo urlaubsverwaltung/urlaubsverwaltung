@@ -2,7 +2,8 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
-import org.joda.time.DateMidnight;
+import de.jollyday.ManagerParameter;
+import de.jollyday.ManagerParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -14,6 +15,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -37,8 +39,9 @@ public class PublicHolidaysService {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL url = cl.getResource(HOLIDAY_DEFINITION_FILE);
+        ManagerParameter managerParameter = ManagerParameters.create(url);
 
-        this.manager = HolidayManager.getInstance(url);
+        this.manager = HolidayManager.getInstance(managerParameter);
     }
 
     /**
@@ -49,9 +52,9 @@ public class PublicHolidaysService {
      *
      * @return  true if the given date is a public holiday, else false
      */
-    boolean isPublicHoliday(DateMidnight date, FederalState federalState) {
+    boolean isPublicHoliday(LocalDate date, FederalState federalState) {
 
-        return manager.isHoliday(date.toLocalDate(), federalState.getCodes());
+        return manager.isHoliday(date, federalState.getCodes());
     }
 
 
@@ -65,7 +68,7 @@ public class PublicHolidaysService {
      *
      * @return  working duration of the given date
      */
-    public BigDecimal getWorkingDurationOfDate(DateMidnight date, FederalState federalState) {
+    public BigDecimal getWorkingDurationOfDate(LocalDate date, FederalState federalState) {
 
         Settings settings = settingsService.getSettings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -100,6 +103,6 @@ public class PublicHolidaysService {
 
     private Predicate<Holiday> byMonth(int month) {
 
-        return holiday -> holiday.getDate().getMonthOfYear() == month;
+        return holiday -> holiday.getDate().getMonthValue() == month;
     }
 }

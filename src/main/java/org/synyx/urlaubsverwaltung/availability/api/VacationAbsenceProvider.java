@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -8,6 +7,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, DateMidnight date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
         Optional<TimedAbsence> vacationAbsence = checkForVacation(date, person);
 
@@ -49,7 +49,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private Optional<TimedAbsence> checkForVacation(DateMidnight date, Person person) {
+    private Optional<TimedAbsence> checkForVacation(LocalDate date, Person person) {
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date,
                     person)

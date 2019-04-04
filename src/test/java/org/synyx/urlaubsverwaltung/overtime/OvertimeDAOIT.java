@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +11,10 @@ import org.synyx.urlaubsverwaltung.person.PersonDAO;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+
+import static java.time.ZoneOffset.UTC;
 
 
 @RunWith(SpringRunner.class)
@@ -31,7 +33,7 @@ public class OvertimeDAOIT {
         Person person = TestDataCreator.createPerson();
         personDAO.save(person);
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
         Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
 
         Assert.assertNull("Must not have ID", overtime.getId());
@@ -51,7 +53,7 @@ public class OvertimeDAOIT {
         Person otherPerson = TestDataCreator.createPerson();
         personDAO.save(otherPerson);
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         // Overtime for person
         overtimeDAO.save(new Overtime(person, now, now.plusDays(2), new BigDecimal("3")));
@@ -88,19 +90,19 @@ public class OvertimeDAOIT {
         personDAO.save(person);
 
         // records for 2015
-        overtimeDAO.save(new Overtime(person, new DateMidnight(2014, 12, 30), new DateMidnight(2015, 1, 3),
+        overtimeDAO.save(new Overtime(person, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
                 new BigDecimal("1")));
-        overtimeDAO.save(new Overtime(person, new DateMidnight(2015, 10, 5), new DateMidnight(2015, 10, 20),
+        overtimeDAO.save(new Overtime(person, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
                 new BigDecimal("2")));
-        overtimeDAO.save(new Overtime(person, new DateMidnight(2015, 12, 28), new DateMidnight(2016, 1, 6),
+        overtimeDAO.save(new Overtime(person, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
                 new BigDecimal("3")));
 
         // record for 2014
-        overtimeDAO.save(new Overtime(person, new DateMidnight(2014, 12, 5), new DateMidnight(2014, 12, 31),
+        overtimeDAO.save(new Overtime(person, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
                 new BigDecimal("4")));
 
-        List<Overtime> records = overtimeDAO.findByPersonAndPeriod(person, new DateMidnight(2015, 1, 1).toDate(),
-                new DateMidnight(2015, 12, 31).toDate());
+        List<Overtime> records = overtimeDAO.findByPersonAndPeriod(person,
+            LocalDate.of(2015, 1, 1),LocalDate.of(2015, 12, 31));
 
         Assert.assertNotNull("Should not be null", records);
         Assert.assertEquals("Wrong number of records", 3, records.size());

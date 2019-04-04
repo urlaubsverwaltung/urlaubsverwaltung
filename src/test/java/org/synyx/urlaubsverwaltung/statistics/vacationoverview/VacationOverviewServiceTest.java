@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview;
 
-import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.VacationOverv
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -49,15 +49,15 @@ public class VacationOverviewServiceTest {
         String email = "muster@firma.test";
         Person person = new Person("test", "Muster", "Max", email);
         department.setMembers(singletonList(person));
-        DateMidnight testDate = DateMidnight.parse("2017-09-01");
+        LocalDate testDate = LocalDate.parse("2017-09-01");
         FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
         when(departmentService.getAllDepartments()).thenReturn(singletonList(department));
-        when(workingTimeService.getFederalStateForPerson(eq(person), any(DateMidnight.class))).thenReturn(federalState);
-        when(publicHolidayService.getWorkingDurationOfDate(any(DateMidnight.class), any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
+        when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(federalState);
+        when(publicHolidayService.getWorkingDurationOfDate(any(LocalDate.class), any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 
         List<VacationOverview> vacationOverviews =
-                sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthOfYear());
+                sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthValue());
 
         assertThat(vacationOverviews, hasSize(1));
         assertThat(vacationOverviews.get(0).getPerson().getEmail(), is(email));
