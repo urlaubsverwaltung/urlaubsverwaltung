@@ -30,7 +30,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Service
 @Transactional
-public class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
+class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
