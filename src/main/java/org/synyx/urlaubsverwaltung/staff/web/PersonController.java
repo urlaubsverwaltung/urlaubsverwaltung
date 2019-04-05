@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.staff.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -108,7 +109,7 @@ public class PersonController {
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
         account.ifPresent(account1 -> model.addAttribute("account", account1));
 
-        return PersonConstants.PERSON_DETAIL_JSP;
+        return "person/person_detail";
     }
 
 
@@ -146,7 +147,7 @@ public class PersonController {
 
         prepareStaffView(signedInUser, persons, year, model);
 
-        return PersonConstants.STAFF_JSP;
+        return "person/staff_view";
     }
 
 

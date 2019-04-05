@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.staff.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
+import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +30,8 @@ import java.util.Locale;
 @Controller
 @RequestMapping("/web")
 public class PersonManagementController {
+
+    private static final String PERSON_FORM_JSP = "person/person_form";
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -55,7 +58,7 @@ public class PersonManagementController {
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, new Person());
 
-        return PersonConstants.PERSON_FORM_JSP;
+        return PERSON_FORM_JSP;
     }
 
 
@@ -68,7 +71,7 @@ public class PersonManagementController {
         validator.validate(person, errors);
 
         if (errors.hasErrors()) {
-            return PersonConstants.PERSON_FORM_JSP;
+            return PERSON_FORM_JSP;
         }
 
         Person createdPerson = personService.create(person);
@@ -93,7 +96,7 @@ public class PersonManagementController {
         model.addAttribute(DepartmentConstants.SECOND_STAGE_DEPARTMENTS_ATTRIBUTE,
                 departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
-        return PersonConstants.PERSON_FORM_JSP;
+        return PERSON_FORM_JSP;
     }
 
 
@@ -106,7 +109,7 @@ public class PersonManagementController {
         validator.validate(person, errors);
 
         if (errors.hasErrors()) {
-            return PersonConstants.PERSON_FORM_JSP;
+            return PERSON_FORM_JSP;
         }
 
         personService.update(person);

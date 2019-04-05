@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person;
 
 import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 
