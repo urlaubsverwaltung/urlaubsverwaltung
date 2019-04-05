@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveStatisticsService {
+class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveStatisticsService {
 
     private final PersonService personService;
     private final DepartmentService departmentService;

@@ -27,7 +27,7 @@ import java.util.Optional;
  * {@link org.synyx.urlaubsverwaltung.person.Person} and period.
  */
 @Component
-public class ApplicationForLeaveStatisticsBuilder {
+class ApplicationForLeaveStatisticsBuilder {
 
     private final AccountService accountService;
     private final ApplicationService applicationService;
