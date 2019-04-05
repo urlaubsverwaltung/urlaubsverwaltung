@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence.api;
+package org.synyx.urlaubsverwaltung.sicknote.api;
 
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;

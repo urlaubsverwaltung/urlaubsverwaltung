@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.api;
 
-import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
-
 import java.util.List;
 
 

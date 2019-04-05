@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
