@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.statistics.web;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.overview.SickDays;
+import org.synyx.urlaubsverwaltung.overview.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;

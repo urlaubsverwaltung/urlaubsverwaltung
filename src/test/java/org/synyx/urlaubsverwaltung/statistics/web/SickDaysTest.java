@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.overview.SickDays;
 
 import java.math.BigDecimal;
 import java.util.Map;
