@@ -23,7 +23,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Transactional
 @Service
-public class OvertimeServiceImpl implements OvertimeService {
+class OvertimeServiceImpl implements OvertimeService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
