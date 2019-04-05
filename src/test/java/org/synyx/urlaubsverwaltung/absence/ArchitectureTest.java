@@ -23,7 +23,8 @@ public class ArchitectureTest {
     public void assertNoCyclicPackageDependenciesAtAll() {
 
         SliceRule rule = SlicesRuleDefinition.slices()
-            .matching("org.synyx.urlaubsverwaltung.(**)..")
+            .matching("org.synyx.(urlaubsverwaltung).(**)..")
+            .namingSlices("$2 of $1")
             .should()
             .beFreeOfCycles()
             .because("we want to be aware of dependency cycles between slices.");
