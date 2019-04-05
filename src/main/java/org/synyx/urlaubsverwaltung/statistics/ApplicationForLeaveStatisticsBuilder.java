@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,11 +23,11 @@ import java.util.Optional;
 
 
 /**
- * Builds a {@link org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics} for the given
+ * Builds a {@link ApplicationForLeaveStatistics} for the given
  * {@link org.synyx.urlaubsverwaltung.person.Person} and period.
  */
 @Component
-class ApplicationForLeaveStatisticsBuilder {
+public class ApplicationForLeaveStatisticsBuilder {
 
     private final AccountService accountService;
     private final ApplicationService applicationService;
