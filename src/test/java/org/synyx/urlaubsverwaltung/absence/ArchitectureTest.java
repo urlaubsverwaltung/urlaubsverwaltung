@@ -1,30 +1,33 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import com.tngtech.archunit.junit.AnalyzeClasses;
-import com.tngtech.archunit.junit.ArchTest;
-import com.tngtech.archunit.junit.ArchUnitRunner;
-import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.core.importer.ImportOptions;
+import com.tngtech.archunit.library.dependencies.SliceRule;
+import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
+import org.junit.Test;
 
-import org.junit.runner.RunWith;
 
-import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
-
-
-@RunWith(ArchUnitRunner.class)
-@AnalyzeClasses(packages = { "org.synyx.urlaubsverwaltung" })
 public class ArchitectureTest {
 
-    /*
-    @ArchTest
-    public static final ArchRule no_sicknote_in_absence = noClasses().that()
-            .resideInAPackage("..absence..")
-            .should()
-            .dependOnClassesThat()
-            .resideInAPackage("..sicknote..");
+    private ImportOptions options = new ImportOptions()
+        .with(ImportOption.Predefined.DO_NOT_INCLUDE_JARS)
+        .with(ImportOption.Predefined.DO_NOT_INCLUDE_ARCHIVES)
+        .with(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS);
 
-     */
-    @ArchTest
-    public static final ArchRule no_sicknote_in_absence = slices().matching("org.synyx.urlaubsverwaltung.(*)..")
+    private JavaClasses classes = new ClassFileImporter(options)
+        .importPackages("org.synyx.urlaubsverwaltung");
+
+    @Test
+    public void assertNoCyclicPackageDependenciesAtAll() {
+
+        SliceRule rule = SlicesRuleDefinition.slices()
+            .matching("org.synyx.urlaubsverwaltung.(**)..")
             .should()
-            .beFreeOfCycles();
+            .beFreeOfCycles()
+            .because("we want to be aware of dependency cycles between slices.");
+
+        rule.check(classes);
+    }
 }
