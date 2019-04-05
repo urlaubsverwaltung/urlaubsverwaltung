@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.staff.web;
 
 /**
- * Constants concerning {@link PersonController}.
+ * Constants concerning {@link StaffController}.
  */
 public final class PersonConstants {
 

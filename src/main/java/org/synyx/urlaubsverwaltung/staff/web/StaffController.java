@@ -48,7 +48,7 @@ import static java.time.ZoneOffset.UTC;
  */
 @Controller
 @RequestMapping("/web")
-public class PersonController {
+public class StaffController {
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -59,7 +59,7 @@ public class PersonController {
     private final SessionService sessionService;
 
     @Autowired
-    public PersonController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, DepartmentService departmentService, WorkingTimeService workingTimeService, SettingsService settingsService, SessionService sessionService) {
+    public StaffController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, DepartmentService departmentService, WorkingTimeService workingTimeService, SettingsService settingsService, SessionService sessionService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
