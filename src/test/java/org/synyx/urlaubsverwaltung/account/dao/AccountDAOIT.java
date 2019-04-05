@@ -10,7 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDAO;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
@@ -29,13 +29,13 @@ public class AccountDAOIT {
     private AccountDAO sut;
 
     @Autowired
-    private PersonDAO personDAO;
+    private PersonService personService;
 
     @Test(expected = DataIntegrityViolationException.class)
     public void ensureUniqueConstraintOfPersonAndValidFrom() {
 
         final Person person = TestDataCreator.createPerson("test user");
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);

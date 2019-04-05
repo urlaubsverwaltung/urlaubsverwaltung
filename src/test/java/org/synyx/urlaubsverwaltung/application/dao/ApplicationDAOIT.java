@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDAO;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
@@ -41,7 +41,7 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 public class ApplicationDAOIT {
 
     @Autowired
-    private PersonDAO personDAO;
+    private PersonService personService;
     @Autowired
     private ApplicationDAO applicationDAO;
     @Autowired
@@ -51,7 +51,7 @@ public class ApplicationDAOIT {
     public void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
         final Person person = TestDataCreator.createPerson();
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         BigDecimal totalHours = applicationDAO.calculateTotalOvertimeOfPerson(savedPerson);
         assertThat(totalHours).isNull();
@@ -62,10 +62,10 @@ public class ApplicationDAOIT {
     public void ensureCountsTotalOvertimeReductionCorrectly() {
 
         final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
-        final Person savedOtherPerson = personDAO.save(otherPerson);
+        final Person savedOtherPerson = personService.save(otherPerson);
 
         final LocalDate now = LocalDate.now(UTC);
 
