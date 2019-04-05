@@ -28,8 +28,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -51,6 +50,8 @@ import static java.time.ZoneOffset.UTC;
 @RequestMapping("/web/application")
 @Controller
 public class ApplicationForLeaveDetailsController {
+
+    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
 
     private final SessionService sessionService;
     private final PersonService personService;
@@ -151,7 +152,7 @@ public class ApplicationForLeaveDetailsController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
+            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
         }
 
         // UNSPECIFIC ATTRIBUTES

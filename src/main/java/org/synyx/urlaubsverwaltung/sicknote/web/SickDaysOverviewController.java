@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
@@ -40,6 +39,8 @@ import static java.time.ZoneOffset.UTC;
 @Controller
 @RequestMapping("/web")
 public class SickDaysOverviewController {
+
+    private static final String PERSONS_ATTRIBUTE = "persons";
 
     private final SickNoteService sickNoteService;
     private final PersonService personService;
@@ -130,7 +131,6 @@ public class SickDaysOverviewController {
 
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("childSickDays", childSickDays);
-
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
     }
 }

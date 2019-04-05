@@ -31,7 +31,6 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,6 +43,8 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/web")
 public class SickNoteController {
+
+    private static final String PERSONS_ATTRIBUTE = "persons";
 
     private final SickNoteService sickNoteService;
     private final SickNoteInteractionService sickNoteInteractionService;
@@ -106,7 +107,7 @@ public class SickNoteController {
     public String newSickNote(Model model) {
 
         model.addAttribute("sickNote", new SickNote());
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
+        model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         return "sicknote/sick_note_form";
@@ -122,7 +123,7 @@ public class SickNoteController {
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             model.addAttribute("sickNote", sickNote);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
+            model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             return "sicknote/sick_note_form";

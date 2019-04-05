@@ -1,7 +1,8 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.staff.web;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
 
 public class UnknownPersonExceptionTest {

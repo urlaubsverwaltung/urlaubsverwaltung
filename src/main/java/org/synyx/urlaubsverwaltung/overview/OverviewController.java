@@ -19,8 +19,7 @@ import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -48,6 +47,9 @@ import static org.synyx.urlaubsverwaltung.web.ControllerConstants.YEAR_ATTRIBUTE
 @Controller
 @RequestMapping("/web")
 public class OverviewController {
+
+    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -98,7 +100,7 @@ public class OverviewController {
                             signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         Integer yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
         prepareApplications(person, yearToShow, model);
@@ -163,7 +165,7 @@ public class OverviewController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
+            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
         }
     }
 

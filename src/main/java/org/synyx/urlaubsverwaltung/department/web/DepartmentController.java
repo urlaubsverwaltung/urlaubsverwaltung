@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +29,8 @@ import java.util.Optional;
 @Controller
 @RequestMapping(value = "/web")
 public class DepartmentController {
+
+    private static final String PERSONS_ATTRIBUTE = "persons";
 
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -68,7 +69,7 @@ public class DepartmentController {
         List<Person> persons = getPersons();
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, new Department());
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -91,7 +92,7 @@ public class DepartmentController {
             List<Person> persons = getPersons();
 
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+            model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }
@@ -115,7 +116,7 @@ public class DepartmentController {
         List<Person> persons = getPersons();
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -141,7 +142,7 @@ public class DepartmentController {
             List<Person> persons = getPersons();
 
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+            model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }

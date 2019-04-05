@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.staff.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -47,7 +48,11 @@ import static java.time.ZoneOffset.UTC;
  */
 @Controller
 @RequestMapping("/web")
-public class PersonController {
+public class StaffController {
+
+    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+    private static final String PERSONS_ATTRIBUTE = "persons";
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -58,7 +63,7 @@ public class PersonController {
     private final SessionService sessionService;
 
     @Autowired
-    public PersonController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, DepartmentService departmentService, WorkingTimeService workingTimeService, SettingsService settingsService, SessionService sessionService) {
+    public StaffController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, DepartmentService departmentService, WorkingTimeService workingTimeService, SettingsService settingsService, SessionService sessionService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -85,7 +90,7 @@ public class PersonController {
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
             departmentService.getAssignedDepartmentsOfMember(person));
@@ -108,7 +113,7 @@ public class PersonController {
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
         account.ifPresent(account1 -> model.addAttribute("account", account1));
 
-        return PersonConstants.PERSON_DETAIL_JSP;
+        return "person/person_detail";
     }
 
 
@@ -146,7 +151,7 @@ public class PersonController {
 
         prepareStaffView(signedInUser, persons, year, model);
 
-        return PersonConstants.STAFF_JSP;
+        return "person/staff_view";
     }
 
 
@@ -239,10 +244,10 @@ public class PersonController {
             }
         }
 
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
-        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
+        model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute("now", LocalDate.now(UTC));
 

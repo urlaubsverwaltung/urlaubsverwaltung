@@ -24,8 +24,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -54,6 +53,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ApplyForLeaveController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+    private static final String PERSONS_ATTRIBUTE = "persons";
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final SessionService sessionService;
     private final PersonService personService;
@@ -87,7 +88,7 @@ public class ApplyForLeaveController {
 
     @GetMapping("/application/new")
     public String newApplicationForm(
-        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
+        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException {
 
         Person signedInUser = sessionService.getSignedInUser();
@@ -124,8 +125,8 @@ public class ApplyForLeaveController {
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
         List<Person> persons = personService.getActivePersons();
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);

@@ -20,8 +20,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.person.web.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
@@ -43,6 +42,8 @@ import static java.time.ZoneOffset.UTC;
 @Controller
 @RequestMapping("/web")
 public class OvertimeController {
+
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
@@ -75,9 +76,9 @@ public class OvertimeController {
     }
 
 
-    @GetMapping(value = "/overtime", params = PersonConstants.PERSON_ATTRIBUTE)
+    @GetMapping(value = "/overtime", params = PERSON_ATTRIBUTE)
     public String showOvertime(
-        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE) Integer personId,
+        @RequestParam(value = PERSON_ATTRIBUTE) Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
@@ -128,7 +129,7 @@ public class OvertimeController {
 
     @GetMapping("/overtime/new")
     public String recordOvertime(
-        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
+        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException {
 
         Person signedInUser = sessionService.getSignedInUser();
