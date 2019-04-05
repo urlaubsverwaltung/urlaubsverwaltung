@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 
@@ -14,13 +14,13 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 @Transactional
 public class SickNoteStatisticsService {
 
-    private SickNoteDAO sickNoteDAO;
+    private SickNoteService sickNoteService;
     private WorkDaysService calendarService;
 
     @Autowired
-    public SickNoteStatisticsService(SickNoteDAO sickNoteDAO, WorkDaysService calendarService) {
+    public SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysService calendarService) {
 
-        this.sickNoteDAO = sickNoteDAO;
+        this.sickNoteService = sickNoteService;
         this.calendarService = calendarService;
     }
 
@@ -33,6 +33,6 @@ public class SickNoteStatisticsService {
 
     public SickNoteStatistics createStatistics(int year) {
 
-        return new SickNoteStatistics(year, sickNoteDAO, calendarService);
+        return new SickNoteStatistics(year, sickNoteService, calendarService);
     }
 }

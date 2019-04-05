@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Repository for {@link SickNote} entities.
  */
-public interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
+interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
 
     @Query(
         "SELECT x FROM SickNote x WHERE x.person = ?1 AND "
