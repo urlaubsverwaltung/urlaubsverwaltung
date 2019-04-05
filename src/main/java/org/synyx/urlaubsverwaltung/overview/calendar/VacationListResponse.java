@@ -1,26 +1,24 @@
 package org.synyx.urlaubsverwaltung.overview.calendar;
 
-import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
 
 import java.util.List;
 
 
 class VacationListResponse {
 
-    private List<AbsenceResponse> vacations;
+    private List<VacationResponse> vacations;
 
-    VacationListResponse(List<AbsenceResponse> vacations) {
+    VacationListResponse(List<VacationResponse> vacations) {
 
         this.vacations = vacations;
     }
 
-    public List<AbsenceResponse> getVacations() {
+    public List<VacationResponse> getVacations() {
 
         return vacations;
     }
 
-
-    public void setVacations(List<AbsenceResponse> vacations) {
+    public void setVacations(List<VacationResponse> vacations) {
 
         this.vacations = vacations;
     }
