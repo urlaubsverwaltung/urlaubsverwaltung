@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.api;
 
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
@@ -14,7 +12,8 @@ import java.util.Objects;
 
 public class SickNoteResponse {
 
-    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
+
     private String from;
     private String to;
     private BigDecimal dayLength;
