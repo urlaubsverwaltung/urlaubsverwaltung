@@ -54,6 +54,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ApplyForLeaveController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+    private static final String PERSONS_ATTRIBUTE = "persons";
 
     private final SessionService sessionService;
     private final PersonService personService;
@@ -125,7 +126,7 @@ public class ApplyForLeaveController {
 
         List<Person> persons = personService.getActivePersons();
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);

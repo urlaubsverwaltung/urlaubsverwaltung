@@ -41,6 +41,8 @@ import static java.time.ZoneOffset.UTC;
 @RequestMapping("/web")
 public class SickDaysOverviewController {
 
+    private static final String PERSONS_ATTRIBUTE = "persons";
+
     private final SickNoteService sickNoteService;
     private final PersonService personService;
     private final WorkDaysService calendarService;
@@ -130,7 +132,6 @@ public class SickDaysOverviewController {
 
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("childSickDays", childSickDays);
-
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
     }
 }

@@ -31,6 +31,8 @@ import java.util.Optional;
 @RequestMapping(value = "/web")
 public class DepartmentController {
 
+    private static final String PERSONS_ATTRIBUTE = "persons";
+
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final DepartmentValidator validator;
@@ -68,7 +70,7 @@ public class DepartmentController {
         List<Person> persons = getPersons();
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, new Department());
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -91,7 +93,7 @@ public class DepartmentController {
             List<Person> persons = getPersons();
 
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+            model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }
@@ -115,7 +117,7 @@ public class DepartmentController {
         List<Person> persons = getPersons();
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -141,7 +143,7 @@ public class DepartmentController {
             List<Person> persons = getPersons();
 
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+            model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }
