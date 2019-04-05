@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overview;
+package org.synyx.urlaubsverwaltung.sickdays.web;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

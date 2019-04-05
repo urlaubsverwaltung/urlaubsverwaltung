@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.web;
+package org.synyx.urlaubsverwaltung.sickdays.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.overview.SickDays;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;

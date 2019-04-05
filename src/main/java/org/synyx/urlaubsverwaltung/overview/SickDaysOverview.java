@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overview;
 
+import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
