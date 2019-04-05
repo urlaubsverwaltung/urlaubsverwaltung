@@ -11,13 +11,13 @@ import java.util.List;
 /**
  * Build a sick days statistic for a certain year and person.
  */
-public class SickDaysOverview {
+class SickDaysOverview {
 
     private final SickDays sickDays;
 
     private final SickDays childSickDays;
 
-    public SickDaysOverview(List<SickNote> sickNotes, WorkDaysService calendarService) {
+    SickDaysOverview(List<SickNote> sickNotes, WorkDaysService calendarService) {
 
         this.sickDays = new SickDays();
         this.childSickDays = new SickDays();
