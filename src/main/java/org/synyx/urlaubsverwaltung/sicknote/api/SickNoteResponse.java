@@ -12,31 +12,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 
-public class AbsenceResponse {
+public class SickNoteResponse {
 
+    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
     private String from;
     private String to;
     private BigDecimal dayLength;
     private PersonResponse person;
     private String type;
     private String status;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
 
-
-    public AbsenceResponse(Application application) {
-
-        this.from = application.getStartDate().format(formatter);
-        this.to = application.getEndDate().format(formatter);
-        this.dayLength = application.getDayLength().getDuration();
-        this.person = new PersonResponse(application.getPerson());
-        this.status = application.getStatus().name();
-
-        VacationType vacationType = application.getVacationType();
-        this.type = vacationType.getCategory().toString();
-    }
-
-
-    public AbsenceResponse(SickNote sickNote) {
+    public SickNoteResponse(SickNote sickNote) {
 
         this.from = sickNote.getStartDate().format(formatter);
         this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);

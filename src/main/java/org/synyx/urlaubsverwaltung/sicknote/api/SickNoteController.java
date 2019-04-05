@@ -79,9 +79,9 @@ public class SickNoteController {
             sickNotes = sickNoteService.getByPeriod(startDate, endDate);
         }
 
-        List<AbsenceResponse> sickNoteResponses = sickNotes.stream()
+        List<SickNoteResponse> sickNoteResponses = sickNotes.stream()
             .filter(SickNote::isActive)
-            .map(AbsenceResponse::new)
+            .map(SickNoteResponse::new)
             .collect(Collectors.toList());
 
         return new ResponseWrapper<>(new SickNoteListResponse(sickNoteResponses));

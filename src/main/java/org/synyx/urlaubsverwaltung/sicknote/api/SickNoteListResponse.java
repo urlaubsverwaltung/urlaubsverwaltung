@@ -5,20 +5,20 @@ import java.util.List;
 
 class SickNoteListResponse {
 
-    private List<AbsenceResponse> sickNotes;
+    private List<SickNoteResponse> sickNotes;
 
-    SickNoteListResponse(List<AbsenceResponse> sickNotes) {
+    SickNoteListResponse(List<SickNoteResponse> sickNotes) {
 
         this.sickNotes = sickNotes;
     }
 
-    public List<AbsenceResponse> getSickNotes() {
+    public List<SickNoteResponse> getSickNotes() {
 
         return sickNotes;
     }
 
 
-    public void setSickNotes(List<AbsenceResponse> sickNotes) {
+    public void setSickNotes(List<SickNoteResponse> sickNotes) {
 
         this.sickNotes = sickNotes;
     }
