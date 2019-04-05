@@ -52,7 +52,7 @@ public class StaffController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String PERSONS_ATTRIBUTE = "persons";
-
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -90,7 +90,7 @@ public class StaffController {
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
             departmentService.getAssignedDepartmentsOfMember(person));

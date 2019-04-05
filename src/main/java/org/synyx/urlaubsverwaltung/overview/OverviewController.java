@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.staff.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -50,6 +49,7 @@ import static org.synyx.urlaubsverwaltung.web.ControllerConstants.YEAR_ATTRIBUTE
 public class OverviewController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -100,7 +100,7 @@ public class OverviewController {
                             signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         Integer yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
         prepareApplications(person, yearToShow, model);

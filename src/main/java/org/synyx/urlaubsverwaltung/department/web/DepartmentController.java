@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.staff.web.PersonConstants;
 
 import java.util.List;
 import java.util.Optional;

@@ -32,6 +32,7 @@ import java.util.Locale;
 public class StaffManagementController {
 
     private static final String PERSON_FORM_JSP = "person/person_form";
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -56,7 +57,7 @@ public class StaffManagementController {
     @GetMapping("/staff/new")
     public String newPersonForm(Model model) {
 
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, new Person());
+        model.addAttribute(PERSON_ATTRIBUTE, new Person());
 
         return PERSON_FORM_JSP;
     }
@@ -64,7 +65,7 @@ public class StaffManagementController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/staff")
-    public String newPerson(@ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person,
+    public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE) Person person,
                             Errors errors,
                             RedirectAttributes redirectAttributes) {
 
@@ -90,7 +91,7 @@ public class StaffManagementController {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
                                 departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute(DepartmentConstants.SECOND_STAGE_DEPARTMENTS_ATTRIBUTE,
@@ -103,7 +104,7 @@ public class StaffManagementController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/staff/{personId}/edit")
     public String editPerson(@PathVariable("personId") Integer personId,
-        @ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
+        @ModelAttribute(PERSON_ATTRIBUTE) Person person, Errors errors,
         RedirectAttributes redirectAttributes) {
 
         validator.validate(person, errors);

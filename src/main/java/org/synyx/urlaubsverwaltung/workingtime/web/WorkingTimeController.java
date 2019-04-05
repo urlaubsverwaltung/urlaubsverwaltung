@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.staff.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
 import java.math.BigDecimal;
@@ -39,6 +38,8 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/web")
 public class WorkingTimeController {
+
+    private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
@@ -83,7 +84,7 @@ public class WorkingTimeController {
 
     private void fillModel(Model model, Person person) {
 
-        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
         model.addAttribute("weekDays", WeekDay.values());
         model.addAttribute("federalStateTypes", FederalState.values());
