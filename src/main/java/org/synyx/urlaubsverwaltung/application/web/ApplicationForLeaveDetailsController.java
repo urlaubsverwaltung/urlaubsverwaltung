@@ -52,6 +52,8 @@ import static java.time.ZoneOffset.UTC;
 @Controller
 public class ApplicationForLeaveDetailsController {
 
+    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+
     private final SessionService sessionService;
     private final PersonService personService;
     private final AccountService accountService;
@@ -151,7 +153,7 @@ public class ApplicationForLeaveDetailsController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
+            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
         }
 
         // UNSPECIFIC ATTRIBUTES

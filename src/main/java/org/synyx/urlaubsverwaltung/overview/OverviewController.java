@@ -49,6 +49,8 @@ import static org.synyx.urlaubsverwaltung.web.ControllerConstants.YEAR_ATTRIBUTE
 @RequestMapping("/web")
 public class OverviewController {
 
+    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+
     private final PersonService personService;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
@@ -163,7 +165,7 @@ public class OverviewController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
+            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
         }
     }
 

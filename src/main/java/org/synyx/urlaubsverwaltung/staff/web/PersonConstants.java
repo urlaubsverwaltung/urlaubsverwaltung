@@ -8,7 +8,6 @@ public final class PersonConstants {
     // Attributes
     public static final String PERSONS_ATTRIBUTE = "persons";
     public static final String PERSON_ATTRIBUTE = "person";
-    public static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
 
     private PersonConstants() {
 

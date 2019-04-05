@@ -50,6 +50,8 @@ import static java.time.ZoneOffset.UTC;
 @RequestMapping("/web")
 public class StaffController {
 
+    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+
     private final PersonService personService;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
@@ -243,7 +245,7 @@ public class StaffController {
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
-        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
+        model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute("now", LocalDate.now(UTC));
 
