@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -80,9 +79,9 @@ public class SickNoteController {
             sickNotes = sickNoteService.getByPeriod(startDate, endDate);
         }
 
-        List<AbsenceResponse> sickNoteResponses = sickNotes.stream()
+        List<SickNoteResponse> sickNoteResponses = sickNotes.stream()
             .filter(SickNote::isActive)
-            .map(AbsenceResponse::new)
+            .map(SickNoteResponse::new)
             .collect(Collectors.toList());
 
         return new ResponseWrapper<>(new SickNoteListResponse(sickNoteResponses));

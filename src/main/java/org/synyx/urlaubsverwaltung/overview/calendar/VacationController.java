@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.absence.api.AbsenceResponse;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -104,7 +103,7 @@ public class VacationController {
             }
         }
 
-        List<AbsenceResponse> vacationResponses = applications.stream().map(AbsenceResponse::new).collect(toList());
+        List<VacationResponse> vacationResponses = applications.stream().map(VacationResponse::new).collect(toList());
 
         return new ResponseWrapper<>(new VacationListResponse(vacationResponses));
     }

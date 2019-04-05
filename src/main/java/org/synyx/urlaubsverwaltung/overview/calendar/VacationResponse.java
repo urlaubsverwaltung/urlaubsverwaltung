@@ -1,29 +1,25 @@
-package org.synyx.urlaubsverwaltung.absence.api;
+package org.synyx.urlaubsverwaltung.overview.calendar;
 
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 
-public class AbsenceResponse {
+public class VacationResponse {
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
     private String from;
     private String to;
     private BigDecimal dayLength;
     private PersonResponse person;
     private String type;
     private String status;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
 
-
-    public AbsenceResponse(Application application) {
+    public VacationResponse(Application application) {
 
         this.from = application.getStartDate().format(formatter);
         this.to = application.getEndDate().format(formatter);
@@ -33,20 +29,6 @@ public class AbsenceResponse {
 
         VacationType vacationType = application.getVacationType();
         this.type = vacationType.getCategory().toString();
-    }
-
-
-    public AbsenceResponse(SickNote sickNote) {
-
-        this.from = sickNote.getStartDate().format(formatter);
-        this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);
-        this.dayLength = sickNote.getDayLength().getDuration();
-        this.person = new PersonResponse(sickNote.getPerson());
-        this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";
-
-        SickNoteType sickNoteType = sickNote.getSickNoteType();
-
-        this.type = sickNoteType.getCategory().toString();
     }
 
     public String getFrom() {
