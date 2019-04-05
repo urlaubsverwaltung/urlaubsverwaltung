@@ -29,7 +29,7 @@ import java.util.Locale;
 
 @Controller
 @RequestMapping("/web")
-public class PersonManagementController {
+public class StaffManagementController {
 
     private static final String PERSON_FORM_JSP = "person/person_form";
 
@@ -38,7 +38,7 @@ public class PersonManagementController {
     private final PersonValidator validator;
 
     @Autowired
-    public PersonManagementController(PersonService personService, DepartmentService departmentService, PersonValidator validator) {
+    public StaffManagementController(PersonService personService, DepartmentService departmentService, PersonValidator validator) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.validator = validator;
