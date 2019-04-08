@@ -74,7 +74,6 @@ public class GoogleCalendarOAuthHandshakeController {
     public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) {
 
         String redirectUrl = request.getRequestURL().toString();
-        String error = null;
 
         try {
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUrl).execute();
@@ -107,12 +106,6 @@ public class GoogleCalendarOAuthHandshakeController {
 
         StringBuilder buf = new StringBuilder();
         buf.append("redirect:/web/settings");
-        if (error != null) {
-            buf.append("?");
-            buf.append(ControllerConstants.OAUTH_ERROR_ATTRIBUTE);
-            buf.append("=");
-            buf.append(error);
-        }
         buf.append("#calendar");
 
         return buf.toString();
