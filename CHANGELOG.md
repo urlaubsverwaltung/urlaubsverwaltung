@@ -9,6 +9,7 @@
 * Upgrade bootstrap to 3.4.1 [#603](https://github.com/synyx/urlaubsverwaltung/pull/603)
 * Exhange calendar delete discovery directory logging [#604](https://github.com/synyx/urlaubsverwaltung/pull/604)
 * Replace joda with java time [#613](https://github.com/synyx/urlaubsverwaltung/pull/613)
+* Fix NPE when creating a SickNote [#627](https://github.com/synyx/urlaubsverwaltung/pull/627) [#625](https://github.com/synyx/urlaubsverwaltung/issues/625)
 
 ### [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0)
 * Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/551)

@@ -249,12 +249,16 @@ public class SickNote extends AbstractPersistable<Integer> {
     public String toString() {
 
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-            .append("startDate", getStartDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
-            .append("endDate", getEndDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
+            .append("startDate", formatNullable(getStartDate()))
+            .append("endDate", formatNullable(getEndDate()))
             .append("dayLength", getDayLength())
             .append("sickNoteType", getSickNoteType())
             .append("status", getStatus())
             .append("person", getPerson())
             .toString();
+    }
+
+    private Object formatNullable(LocalDate date) {
+        return date != null ? date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) : null;
     }
 }
