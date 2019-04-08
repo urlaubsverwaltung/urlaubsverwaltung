@@ -88,14 +88,7 @@ public class DepartmentController {
 
         validator.validate(department, errors);
 
-        if (errors.hasErrors()) {
-            List<Person> persons = getPersons();
-
-            model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PERSONS_ATTRIBUTE, persons);
-
-            return DepartmentConstants.DEPARTMENT_FORM_JSP;
-        }
+        if (returnModelErrorAttributes(department, errors, model)) return DepartmentConstants.DEPARTMENT_FORM_JSP;
 
         departmentService.create(department);
 
@@ -128,24 +121,17 @@ public class DepartmentController {
         @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
         RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
-        // Check if department exists
-        departmentService.getDepartmentById(departmentId).orElseThrow(() ->
-                new UnknownDepartmentException(departmentId));
+        Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
+            new UnknownDepartmentException(departmentId)).getId();
 
+        department.setId(persistedDepartmentId);
         validator.validate(department, errors);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         }
 
-        if (errors.hasErrors()) {
-            List<Person> persons = getPersons();
-
-            model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PERSONS_ATTRIBUTE, persons);
-
-            return DepartmentConstants.DEPARTMENT_FORM_JSP;
-        }
+        if (returnModelErrorAttributes(department, errors, model)) return DepartmentConstants.DEPARTMENT_FORM_JSP;
 
         departmentService.update(department);
 
@@ -168,4 +154,18 @@ public class DepartmentController {
 
         return "redirect:/web/department/";
     }
+
+
+    private boolean returnModelErrorAttributes(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model) {
+        if (errors.hasErrors()) {
+            List<Person> persons = getPersons();
+
+            model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
+            model.addAttribute(PERSONS_ATTRIBUTE, persons);
+
+            return true;
+        }
+        return false;
+    }
+
 }
