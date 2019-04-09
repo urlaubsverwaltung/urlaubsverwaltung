@@ -179,4 +179,14 @@ public final class VacationDaysLeft {
                     leftRemainingVacationDaysNotExpiring, vacationDaysUsedNextYear);
         }
     }
+
+    @Override
+    public String toString() {
+        return "VacationDaysLeft{" +
+            "vacationDays=" + vacationDays +
+            ", remainingVacationDays=" + remainingVacationDays +
+            ", remainingVacationDaysNotExpiring=" + remainingVacationDaysNotExpiring +
+            ", vacationDaysUsedNextYear=" + vacationDaysUsedNextYear +
+            '}';
+    }
 }
