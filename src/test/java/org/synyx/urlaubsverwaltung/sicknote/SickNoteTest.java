@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -147,5 +148,12 @@ public class SickNoteTest {
         Assert.assertEquals("Wrong period start date", startDate, period.getStartDate());
         Assert.assertEquals("Wrong period end date", endDate, period.getEndDate());
         Assert.assertEquals("Wrong period day length", DayLength.FULL, period.getDayLength());
+    }
+
+    @Test
+    public void nullsafeToString() {
+        SickNote sickNote = new SickNote();
+        String sickNoteString = sickNote.toString();
+        assertThat(sickNoteString).isEqualTo("SickNote[id=<null>,startDate=<null>,endDate=<null>,dayLength=<null>,sickNoteType=<null>,status=<null>,person=<null>]");
     }
 }
