@@ -7,6 +7,7 @@
 * Optimierung der JavaScript / CSS Assets [#572](https://github.com/synyx/urlaubsverwaltung/pull/572)
 * Integration des maven frontend plugin und js/css tooling [#390](https://github.com/synyx/urlaubsverwaltung/issues/390)
 * Upgrade bootstrap to 3.4.1 [#603](https://github.com/synyx/urlaubsverwaltung/pull/603)
+* No autocomplete on 'Email delivery' Settings username and password [#255](https://github.com/synyx/urlaubsverwaltung/issues/255)
 * Exchange calendar delete discovery directory logging [#604](https://github.com/synyx/urlaubsverwaltung/pull/604)
 * Replace joda with java time [#613](https://github.com/synyx/urlaubsverwaltung/pull/613)
 * Fix NPE when creating a SickNote [#627](https://github.com/synyx/urlaubsverwaltung/pull/627) [#625](https://github.com/synyx/urlaubsverwaltung/issues/625)
