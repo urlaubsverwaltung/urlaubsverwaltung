@@ -2,6 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <table class="list-table selectable-table">
@@ -108,8 +109,8 @@
                           var dayLength = '<c:out value="${app.dayLength}" />';
                           var personId = '<c:out value="${app.person.id}" />';
 
-                              var startDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.startDate}' />";
-                              var endDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.endDate}' />";
+                          var startDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.startDate}' />";
+                          var endDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.endDate}' />";
 
                           var from = new Date(startDate);
                           var to = new Date(endDate);
