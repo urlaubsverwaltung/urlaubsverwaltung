@@ -1,3 +1,5 @@
+### master/unreleased
+
 ### [urlaubsverwaltung-2.40.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.0)
 * Improve input fields [#597](https://github.com/synyx/urlaubsverwaltung/pull/597)
 * Architecture refactoring [#595](https://github.com/synyx/urlaubsverwaltung/pull/595)
