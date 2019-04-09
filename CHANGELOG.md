@@ -7,7 +7,7 @@
 * Optimierung der JavaScript / CSS Assets [#572](https://github.com/synyx/urlaubsverwaltung/pull/572)
 * Integration des maven frontend plugin und js/css tooling [#390](https://github.com/synyx/urlaubsverwaltung/issues/390)
 * Upgrade bootstrap to 3.4.1 [#603](https://github.com/synyx/urlaubsverwaltung/pull/603)
-* Exhange calendar delete discovery directory logging [#604](https://github.com/synyx/urlaubsverwaltung/pull/604)
+* Exchange calendar delete discovery directory logging [#604](https://github.com/synyx/urlaubsverwaltung/pull/604)
 * Replace joda with java time [#613](https://github.com/synyx/urlaubsverwaltung/pull/613)
 
 ### [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0)
