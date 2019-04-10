@@ -109,8 +109,8 @@
                           var dayLength = '<c:out value="${app.dayLength}" />';
                           var personId = '<c:out value="${app.person.id}" />';
 
-                          var startDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.startDate}' />";
-                          var endDate = "<fmt:parseDate pattern='yyyy/MM/dd' value='${app.endDate}' />";
+                          var startDate = "<fmt:parseDate pattern='yyyy-MM-dd' value='${app.startDate}' />";
+                          var endDate = "<fmt:parseDate pattern='yyyy-MM-dd' value='${app.endDate}' />";
 
                           var from = new Date(startDate);
                           var to = new Date(endDate);
