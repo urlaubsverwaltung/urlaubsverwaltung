@@ -8,52 +8,59 @@ export default function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate,
 
   if (startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
 
-    var requestUrl = urlPrefix + "/workdays";
+    if (startDate <= toDate) {
 
-    var text;
+      var requestUrl = urlPrefix + "/workdays";
 
-    var before;
-    var after;
+      var text;
 
-    if (startDate.getFullYear() < toDate.getFullYear()) {
-      before = startDate;
-      after = toDate;
-    } else {
-      before = toDate;
-      after = startDate;
-    }
+      var before;
+      var after;
 
-    // before - 31.12.
-    // 1.1.   - after
+      if (startDate.getFullYear() < toDate.getFullYear()) {
+        before = startDate;
+        after = toDate;
+      } else {
+        before = toDate;
+        after = startDate;
+      }
 
-    var daysBefore;
-    var daysAfter;
+      // before - 31.12.
+      // 1.1.   - after
 
-    var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
-    var toString = before.getFullYear() + '-12-31';
-    var url = buildUrl(requestUrl, startString, toString, dayLength, personId);
+      var daysBefore;
+      var daysAfter;
 
-    $.get(url, function (data) {
-      var workDaysBefore = data.response.workDays;
-
-      daysBefore = formatNumber(workDaysBefore);
-
-      startString = after.getFullYear() + '-1-1';
-      toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
-      url = buildUrl(requestUrl, startString, toString, dayLength, personId);
+      var startString = before.getFullYear() + "-" + padZeros(before.getMonth() + 1) + '-' + padZeros(before.getDate());
+      var toString = before.getFullYear() + '-12-31';
+      var url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
       $.get(url, function (data) {
-        var workDaysAfter = data.response.workDays;
-        daysAfter = formatNumber(workDaysAfter);
+        var workDaysBefore = data.response.workDays;
 
-        text = "<br />(" + daysBefore + " in " + before.getFullYear()
-          + " und " + daysAfter + " in " + after.getFullYear() + ")";
+        daysBefore = formatNumber(workDaysBefore);
 
-        $(element).html(text);
+        startString = after.getFullYear() + '-01-01';
+        toString = after.getFullYear() + "-" + padZeros(after.getMonth() + 1) + '-' + padZeros(after.getDate());
+        url = buildUrl(requestUrl, startString, toString, dayLength, personId);
+
+        $.get(url, function (data) {
+          var workDaysAfter = data.response.workDays;
+          daysAfter = formatNumber(workDaysAfter);
+
+          text = "<br />(" + daysBefore + " in " + before.getFullYear()
+            + " und " + daysAfter + " in " + after.getFullYear() + ")";
+
+          $(element).html(text);
+        });
+
       });
-
-    });
+    }
 
   }
 
+}
+
+function padZeros(number){
+  return number <10? '0'+ number:''+ number;
 }
