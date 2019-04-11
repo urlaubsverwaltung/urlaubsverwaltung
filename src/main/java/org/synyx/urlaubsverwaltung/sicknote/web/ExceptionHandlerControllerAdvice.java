@@ -1,13 +1,13 @@
-package org.synyx.urlaubsverwaltung.web;
+package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -41,9 +41,7 @@ public class ExceptionHandlerControllerAdvice {
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(
-        { AbstractNoResultFoundException.class, NumberFormatException.class }
-    )
+    @ExceptionHandler(SickNoteAlreadyInactiveException.class)
     public ModelAndView handleException(AbstractNoResultFoundException exception) {
 
         if(LOG.isDebugEnabled()) {
@@ -51,28 +49,5 @@ public class ExceptionHandlerControllerAdvice {
             LOG.debug("An error occurred: {}", exception.getMessage());
         }
         return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.BAD_REQUEST);
-    }
-
-
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(AccessDeniedException.class)
-    public ModelAndView handleException(AccessDeniedException exception) {
-
-        if(LOG.isDebugEnabled()) {
-            LOG.debug("An exception was thrown: {}", exception.getClass().getName());
-            LOG.debug("An error occurred: {}", exception.getMessage());
-        }
-        return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.FORBIDDEN);
-    }
-
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(Exception exception) {
-
-        LOG.info("An exception was thrown: {}", exception.getClass().getName());
-        LOG.info("An error occurred: {}", exception.getMessage());
-
-        return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
