@@ -14,6 +14,7 @@
 * Exchange calendar delete discovery directory logging [#604](https://github.com/synyx/urlaubsverwaltung/pull/604)
 * Replace joda with java time [#613](https://github.com/synyx/urlaubsverwaltung/pull/613)
 * Fix NPE when creating a SickNote [#627](https://github.com/synyx/urlaubsverwaltung/pull/627) [#625](https://github.com/synyx/urlaubsverwaltung/issues/625)
+* Fix #585 "Unausgefüllte Felder in E-Mails nicht ausgeblendet" [#630](https://github.com/synyx/urlaubsverwaltung/pull/630)
 
 ### [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0)
 * Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/551)
