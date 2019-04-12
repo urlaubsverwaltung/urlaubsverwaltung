@@ -28,8 +28,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
@@ -41,7 +40,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Service
 public class GoogleCalendarSyncProvider implements CalendarProvider {
 
-    public static final String DATE_PATTERN_YYYY_MM_DD = "yyyy-MM-dd";
+    private static final String DATE_PATTERN_YYYY_MM_DD = "yyyy-MM-dd";
     /**
      * Global instance of the JSON factory.
      */
@@ -240,9 +239,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
         if (absence.isAllDay()) {
             // To create an all-day event, you must use setDate() having created DateTime objects using a String
-            DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN_YYYY_MM_DD);
-            String startDateStr = dateFormat.format(absence.getStartDate());
-            String endDateStr = dateFormat.format(absence.getEndDate());
+            final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN_YYYY_MM_DD);
+            String startDateStr = dateTimeFormatter.format(absence.getStartDate());
+            String endDateStr = dateTimeFormatter.format(absence.getEndDate());
 
             DateTime startDateTime = new DateTime(startDateStr);
             DateTime endDateTime = new DateTime(endDateStr);
