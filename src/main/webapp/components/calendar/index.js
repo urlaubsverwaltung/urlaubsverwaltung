@@ -222,6 +222,14 @@ $(function() {
           };
         }
 
+        function isAbsenceOfDayLength(date, dayLength) {
+          const year = getYear(date);
+          const formattedDate = format(date, 'YYYY-MM-DD');
+          const validate = absenceType => _CACHE[absenceType] && where(_CACHE[absenceType][year], {date: formattedDate}).some(d => d.dayLength === dayLength);
+
+          return validate('publicHoliday') || validate('holiday') || validate('sick');
+        }
+
         var HolidayService = {
 
             isSickDay: isOfType('sick'),
@@ -235,67 +243,11 @@ $(function() {
             },
 
             isMorningAbsence: function (date) {
-              var year = getYear(date);
-              var formattedDate = format(date, 'YYYY-MM-DD');
-
-              if (!_CACHE['publicHoliday']) {
-                return false;
-              }
-
-              if(_CACHE['publicHoliday'][year]) {
-                const found = where(_CACHE['publicHoliday'][year], {date: formattedDate}).some(d => d.dayLength === 'MORNING');
-                if (found) {
-                  return true;
-                }
-              }
-
-              if(_CACHE['holiday'][year]) {
-                const found = where(_CACHE['holiday'][year], {date: formattedDate}).some(d => d.dayLength === 'MORNING');
-                if (found) {
-                  return true;
-                }
-              }
-
-              if(_CACHE['sick'][year]) {
-                const found = where(_CACHE['sick'][year], {date: formattedDate}).some(d => d.dayLength === 'MORNING');
-                if (found) {
-                  return true;
-                }
-              }
-
-              return false;
+              return isAbsenceOfDayLength(date, 'MORNING');
             },
 
             isNoonAbsence: function (date) {
-              var year = getYear(date);
-              var formattedDate = format(date, 'YYYY-MM-DD');
-
-              if (!_CACHE['publicHoliday']) {
-                return false;
-              }
-
-              if(_CACHE['publicHoliday'][year]) {
-                const found = where(_CACHE['publicHoliday'][year], {date: formattedDate}).some(d => d.dayLength === 'NOON');
-                if (found) {
-                  return true;
-                }
-              }
-
-              if(_CACHE['holiday'][year]) {
-                const found = where(_CACHE['holiday'][year], {date: formattedDate}).some(d => d.dayLength === 'NOON');
-                if (found) {
-                  return true;
-                }
-              }
-
-              if(_CACHE['sick'][year]) {
-                const found = where(_CACHE['sick'][year], {date: formattedDate}).some(d => d.dayLength === 'NOON');
-                if (found) {
-                  return true;
-                }
-              }
-
-              return false;
+              return isAbsenceOfDayLength(date, 'NOON');
             },
 
             getDescription: function (date) {
