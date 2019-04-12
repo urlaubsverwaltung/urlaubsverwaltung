@@ -3,7 +3,7 @@ Hallo ${recipient.niceName},
 es liegt ein neuer zu genehmigender Antrag vor: ${settings.baseLinkURL}web/application/${application.id?c}
 
 Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden.
-<#if (comment.text)??>
+<#if (comment.text)?has_content>
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 </#if>
 
@@ -18,10 +18,10 @@ Art des Urlaubs: ${vacationType}
 <#if application.reason?has_content>
 Grund: ${application.reason}
 </#if>
-<#if (application.holidayReplacement.niceName)?? >
+<#if (application.holidayReplacement.niceName)?has_content >
 Vertreter: ${application.holidayReplacement.niceName}
 </#if>
-<#if (application.address)??>
+<#if (application.address)?has_content>
 Anschrift/Telefon während des Urlaubs: ${application.address}
 </#if>
 

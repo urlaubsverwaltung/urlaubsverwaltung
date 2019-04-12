@@ -3,7 +3,7 @@ Hallo ${application.person.niceName},
 dein am ${application.applicationDate.format("dd.MM.yyyy")} gestellter Antrag wurde vorläufig genehmigt.
 Bitte beachte, dass dieser erst noch von einem entsprechend Verantwortlichen freigegeben werden muss.
 
-<#if (comment.text)??>
+<#if (comment.text)?has_content>
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 
 </#if>
