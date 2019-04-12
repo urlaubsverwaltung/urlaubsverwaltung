@@ -131,33 +131,75 @@
     background-color: #B5D0DF;
 }
 
-.datepicker-day-public-holiday.datepicker-day-half {
-    background: linear-gradient(-36deg, #B5D0DF 50%, #E5E5E5 50%);
+.datepicker-day-public-holiday.datepicker-day-absence-morning {
+    background: linear-gradient(90deg, #B5D0DF 50%, #E5E5E5 50%);
     color: #6F6F6F;
 }
+.datepicker-day-public-holiday.datepicker-day-absence-noon {
+    background: linear-gradient(-90deg, #B5D0DF 50%, #E5E5E5 50%);
+    color: #6F6F6F;
+}
+.datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon {
+    background: #B5D0DF;
+}
 
-.datepicker-day-public-holiday.datepicker-day-half:hover {
-    background: linear-gradient(-36deg, #B5D0DF 50%, #CFCFCF 50%);
+.datepicker-day-public-holiday.datepicker-day-absence-morning:hover {
+    background: linear-gradient(90deg, #B5D0DF 50%, #CFCFCF 50%);
     color: #FFF;
 }
+.datepicker-day-public-holiday.datepicker-day-absence-noon:hover {
+    background: linear-gradient(-90deg, #B5D0DF 50%, #CFCFCF 50%);
+    color: #FFF;
+}
+.datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon:hover {
+    background: #B5D0DF;
+}
 
-.datepicker-day-public-holiday.datepicker-day-half.datepicker-day-past {
-    background: linear-gradient(-36deg, #B5D0DF 50%, #EFEFEF 50%);
+.datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-past {
+    background: linear-gradient(90deg, #B5D0DF 50%, #EFEFEF 50%);
     color: #AFAFAF;
 }
-
-.datepicker-day-personal-holiday.datepicker-day-half {
-    background: linear-gradient(-36deg, #FFEDA0 50%, #EFEFEF 50%);
+.datepicker-day-public-holiday.datepicker-day-absence-noon.datepicker-day-past {
+    background: linear-gradient(-90deg, #B5D0DF 50%, #EFEFEF 50%);
+    color: #AFAFAF;
+}
+.datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past {
+    background: #B5D0DF;
 }
 
-.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-past {
-    background: linear-gradient(-36deg, #FFEDA0 50%, #EFEFEF 50%);
+.datepicker-day-personal-holiday.datepicker-day-absence-morning {
+    background: linear-gradient(90deg, #FFEDA0 50%, #EFEFEF 50%);
+}
+.datepicker-day-personal-holiday.datepicker-day-absence-noon {
+    background: linear-gradient(-90deg, #FFEDA0 50%, #EFEFEF 50%);
+}
+.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon {
+    background: #FFEDA0;
 }
 
-.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-status-ALLOWED,
-.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-past.datepicker-day-status-ALLOWED {
-    background: linear-gradient(-36deg, #FFE57F 50%, #EFEFEF 50%);
+.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-past {
+    background: linear-gradient(90deg, #FFEDA0 50%, #EFEFEF 50%);
+}
+.datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-past {
+    background: linear-gradient(-90deg, #FFEDA0 50%, #EFEFEF 50%);
+}
+.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past {
+    background: #FFEDA0;
+}
+
+.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-status-ALLOWED,
+.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-past.datepicker-day-status-ALLOWED {
+    background: linear-gradient(90deg, #FFE57F 50%, #EFEFEF 50%);
     color: #FF881F;
+}
+.datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-status-ALLOWED,
+.datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-past.datepicker-day-status-ALLOWED {
+    background: linear-gradient(-90deg, #FFE57F 50%, #EFEFEF 50%);
+    color: #FF881F;
+}
+.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-status-ALLOWED,
+.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past.datepicker-day-status-ALLOWED {
+    background: #FFE57F;
 }
 
 
@@ -173,7 +215,8 @@
 .datepicker-day-today.datepicker-day:not([data-datepicker-selectable=false]):hover,
 .datepicker-day-today.datepicker-day-selected,
 .datepicker-day-selected,
-.datepicker-day-selected.datepicker-day-half {
+.datepicker-day-selected.datepicker-day-absence-morning,
+.datepicker-day-selected.datepicker-day-absence-noon {
     color: #5F5F5F;
     background-color: #BFBFBF;
 }
@@ -191,26 +234,42 @@
     background-color: #FFDF5F;
 }
 
-.datepicker-day-personal-holiday.datepicker-day-half:hover,
+.datepicker-day-personal-holiday.datepicker-day-absence-morning:hover,
+.datepicker-day-personal-holiday.datepicker-day-absence-noon:hover,
 .datepicker-day-selected.datepicker-day-personal-holiday,
-.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-half {
+.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-morning,
+.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-noon {
     background: none;
     background-color: #FFDF5F;
 }
 
-.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-half.datepicker-day-status-ALLOWED:hover,
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-morning.datepicker-day-status-ALLOWED:hover,
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-noon.datepicker-day-status-ALLOWED:hover,
 .datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-status-ALLOWED,
-.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-status-ALLOWED {
+.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-status-ALLOWED,
+.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-status-ALLOWED {
     background: none;
     background-color: #FFE57F;
 }
 
-.datepicker-day-sick-note.datepicker-day-half {
-    background: linear-gradient(-36deg, #FFC5BF 50%, #EFEFEF 50%);
+.datepicker-day-sick-note.datepicker-day-absence-morning {
+    background: linear-gradient(90deg, #FFC5BF 50%, #EFEFEF 50%);
+}
+.datepicker-day-sick-note.datepicker-day-absence-noon {
+    background: linear-gradient(-90deg, #FFC5BF 50%, #EFEFEF 50%);
+}
+.datepicker-day-sick-note.datepicker-day-absence-morning.datepicker-day-absence-noon {
+    background: #FFC5BF;
 }
 
-.datepicker-day-sick-note.datepicker-day-half.datepicker-day-past {
-    background: linear-gradient(-36deg, #FFC5BF 50%, #EFEFEF 50%);
+.datepicker-day-sick-note.datepicker-day-absence-morning.datepicker-day-past {
+    background: linear-gradient(90deg, #FFC5BF 50%, #EFEFEF 50%);
+}
+.datepicker-day-sick-note.datepicker-day-absence-noon.datepicker-day-past {
+    background: linear-gradient(-90deg, #FFC5BF 50%, #EFEFEF 50%);
+}
+.datepicker-day-sick-note.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past {
+    background: #FFC5BF;
 }
 
 .datepicker-day-sick-note {
@@ -223,14 +282,21 @@
     background-color: #FFA89F;
 }
 
-.datepicker-day-sick-note.datepicker-day-half:hover {
+.datepicker-day-sick-note.datepicker-day-absence-morning:hover,
+.datepicker-day-sick-note.datepicker-day-absence-noon:hover {
     background: none;
     color: #DF4737;
     background-color: #FFA89F;
 }
 
-.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-half.datepicker-day-status-ALLOWED {
-    background: linear-gradient(-36deg, #FFE57F 50%, #EFEFEF 50%);
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-morning.datepicker-day-status-ALLOWED {
+    background: linear-gradient(90deg, #FFE57F 50%, #EFEFEF 50%);
+}
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-noon.datepicker-day-status-ALLOWED {
+    background: linear-gradient(-90deg, #FFE57F 50%, #EFEFEF 50%);
+}
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-status-ALLOWED {
+    background: #FFE57F;
 }
 
 /**************************************************************************

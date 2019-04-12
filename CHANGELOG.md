@@ -14,6 +14,7 @@
 * Allow half day input on account form for remaining vacation days [#652](https://github.com/synyx/urlaubsverwaltung/pull/652)
 * Replace … with ... [#656](https://github.com/synyx/urlaubsverwaltung/pull/656)
 * Fix workdays and vacations api usage [#651](https://github.com/synyx/urlaubsverwaltung/pull/651)
+* Bugfix: Fehlerhafte Anzeige im Kalender in der Übersicht bei zwei Halbtagsberulabungen [#624](https://github.com/synyx/urlaubsverwaltung/issues/624)
 
 ### [urlaubsverwaltung-2.40.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.3)
 * Fix autocompletion for sick note datepicker [#644](https://github.com/synyx/urlaubsverwaltung/pull/644)

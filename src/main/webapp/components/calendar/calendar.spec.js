@@ -37,13 +37,15 @@ describe ('calendar', () => {
 
     it ('does not set halfDay on a weekend', () => {
         const holidayService = createHolidayService();
-        jest.spyOn(holidayService, 'isHalfDay').mockReturnValue(true);
+        jest.spyOn(holidayService, 'isMorningAbsence').mockReturnValue(true);
+        jest.spyOn(holidayService, 'isNoonAbsence').mockReturnValue(true);
 
         renderCalendar(holidayService);
 
         const christmasEve = document.body.querySelector('[data-datepicker-date="2017-12-24"]');
         expect(christmasEve).not.toBeNull();
-        expect(christmasEve.classList).not.toContain('datepicker-day-half');
+        expect(christmasEve.classList).not.toContain('datepicker-day-absence-morning');
+        expect(christmasEve.classList).not.toContain('datepicker-day-absence-noon');
     });
 
     it ('does not set datepicker-day-personal-holiday on a weekend', () => {
