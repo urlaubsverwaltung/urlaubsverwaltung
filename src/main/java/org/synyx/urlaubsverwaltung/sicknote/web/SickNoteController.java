@@ -27,10 +27,9 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
-import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -55,10 +54,13 @@ public class SickNoteController {
     private final WorkDaysService calendarService;
     private final SickNoteValidator validator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
-    private final SessionService sessionService;
 
     @Autowired
-    public SickNoteController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService, SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService, VacationTypeService vacationTypeService, PersonService personService, WorkDaysService calendarService, SickNoteValidator validator, SickNoteConvertFormValidator sickNoteConvertFormValidator, SessionService sessionService) {
+    public SickNoteController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
+                              SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
+                              VacationTypeService vacationTypeService, PersonService personService,
+                              WorkDaysService calendarService, SickNoteValidator validator,
+                              SickNoteConvertFormValidator sickNoteConvertFormValidator) {
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
@@ -68,7 +70,6 @@ public class SickNoteController {
         this.calendarService = calendarService;
         this.validator = validator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
-        this.sessionService = sessionService;
     }
 
     @InitBinder
@@ -82,7 +83,7 @@ public class SickNoteController {
     @GetMapping("/sicknote/{id}")
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException {
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
@@ -129,7 +130,7 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
-        sickNoteInteractionService.create(sickNote, sessionService.getSignedInUser());
+        sickNoteInteractionService.create(sickNote, personService.getSignedInUser());
 
         return "redirect:/web/sicknote/" + sickNote.getId();
     }
@@ -168,7 +169,7 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
-        sickNoteInteractionService.update(sickNote, sessionService.getSignedInUser());
+        sickNoteInteractionService.update(sickNote, personService.getSignedInUser());
 
         return "redirect:/web/sicknote/" + id;
     }
@@ -188,7 +189,7 @@ public class SickNoteController {
             redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         } else {
             sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, Optional.ofNullable(comment.getText()),
-                sessionService.getSignedInUser());
+                personService.getSignedInUser());
         }
 
         return "redirect:/web/sicknote/" + id;
@@ -234,7 +235,7 @@ public class SickNoteController {
         }
 
         sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(),
-            sessionService.getSignedInUser());
+            personService.getSignedInUser());
 
         return "redirect:/web/sicknote/" + id;
     }
@@ -246,7 +247,7 @@ public class SickNoteController {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        sickNoteInteractionService.cancel(sickNote, sessionService.getSignedInUser());
+        sickNoteInteractionService.cancel(sickNote, personService.getSignedInUser());
 
         return "redirect:/web/sicknote/" + id;
     }

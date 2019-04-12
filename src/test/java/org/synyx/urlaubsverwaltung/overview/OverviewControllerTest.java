@@ -13,10 +13,10 @@ import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
@@ -56,7 +56,7 @@ public class OverviewControllerTest {
     @Mock
     private VacationDaysService vacationDaysService;
     @Mock
-    private SessionService sessionService;
+    private DepartmentService departmentService;
     @Mock
     private ApplicationService applicationService;
     @Mock
@@ -72,13 +72,14 @@ public class OverviewControllerTest {
 
     @Before
     public void setUp() {
-        sut = new OverviewController(personService, accountService, vacationDaysService, sessionService,
-            applicationService, calendarService, sickNoteService, overtimeService, settingsService);
+
+        sut = new OverviewController(personService, accountService, vacationDaysService,
+            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService);
 
         person = new Person();
         person.setId(1);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
-        when(sessionService.getSignedInUser()).thenReturn(person);
+        when(personService.getSignedInUser()).thenReturn(person);
     }
 
     @Test
@@ -102,7 +103,7 @@ public class OverviewControllerTest {
     @Test
     public void showPersonalOverview() throws Exception {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(sessionService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(calendarService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(ONE);
 
         final Application revokedApplication = new Application();

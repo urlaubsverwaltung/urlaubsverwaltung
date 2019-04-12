@@ -25,12 +25,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
-import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
 
 import java.math.BigDecimal;
@@ -56,7 +55,6 @@ public class ApplyForLeaveController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String PERSON_ATTRIBUTE = "person";
 
-    private final SessionService sessionService;
     private final PersonService personService;
     private final AccountService accountService;
     private final VacationTypeService vacationTypeService;
@@ -65,9 +63,8 @@ public class ApplyForLeaveController {
     private final SettingsService settingsService;
 
     @Autowired
-    public ApplyForLeaveController(SessionService sessionService, PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
+    public ApplyForLeaveController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
                                    ApplicationInteractionService applicationInteractionService, ApplicationValidator applicationValidator, SettingsService settingsService) {
-        this.sessionService = sessionService;
         this.personService = personService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
@@ -91,7 +88,7 @@ public class ApplyForLeaveController {
         @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException {
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         Person person;
 
@@ -147,7 +144,7 @@ public class ApplyForLeaveController {
 
         LOG.info("POST new application received: {}", appForm);
 
-        Person applier = sessionService.getSignedInUser();
+        Person applier = personService.getSignedInUser();
 
         applicationValidator.validate(appForm, errors);
 

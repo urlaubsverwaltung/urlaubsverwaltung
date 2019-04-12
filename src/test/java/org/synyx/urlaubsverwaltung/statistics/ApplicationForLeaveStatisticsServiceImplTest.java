@@ -6,7 +6,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatisticsServiceImpl;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatisticsBuilder;
@@ -21,7 +21,6 @@ import static org.mockito.Mockito.when;
 
 public class ApplicationForLeaveStatisticsServiceImplTest {
 
-    private SessionService sessionService;
     private PersonService personService;
     private DepartmentService departmentService;
     private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
@@ -30,12 +29,11 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
     @Before
     public void setUp() {
 
-        sessionService = mock(SessionService.class);
         personService = mock(PersonService.class);
         departmentService = mock(DepartmentService.class);
         applicationForLeaveStatisticsBuilder = mock(ApplicationForLeaveStatisticsBuilder.class);
 
-        sut = new ApplicationForLeaveStatisticsServiceImpl(sessionService, personService, departmentService, applicationForLeaveStatisticsBuilder);
+        sut = new ApplicationForLeaveStatisticsServiceImpl(personService, departmentService, applicationForLeaveStatisticsBuilder);
     }
 
     @Test
@@ -45,7 +43,7 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
 
         Person person = new Person();
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
-        when(sessionService.getSignedInUser()).thenReturn(person);
+        when(personService.getSignedInUser()).thenReturn(person);
 
         Person departmentMember = new Person();
         when(departmentService.getManagedMembersOfDepartmentHead(person)).thenReturn(Collections.singletonList(departmentMember));
@@ -65,7 +63,7 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
 
         Person person = new Person();
         person.setPermissions(Collections.singletonList(Role.BOSS));
-        when(sessionService.getSignedInUser()).thenReturn(person);
+        when(personService.getSignedInUser()).thenReturn(person);
 
         Person anyPerson = new Person();
         when(personService.getActivePersons()).thenReturn(Collections.singletonList(anyPerson));

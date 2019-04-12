@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,10 +6,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics;
-import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatisticsBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,17 +14,13 @@ import java.util.stream.Collectors;
 @Service
 public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveStatisticsService {
 
-    private final SessionService sessionService;
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
 
     @Autowired
-    public ApplicationForLeaveStatisticsServiceImpl(SessionService sessionService,
-                                                    PersonService personService,
-                                                    DepartmentService departmentService,
+    public ApplicationForLeaveStatisticsServiceImpl(PersonService personService, DepartmentService departmentService,
                                                     ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder) {
-        this.sessionService = sessionService;
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationForLeaveStatisticsBuilder = applicationForLeaveStatisticsBuilder;
@@ -44,7 +37,7 @@ public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForL
 
     private List<Person> getRelevantPersons() {
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
             return departmentService.getManagedMembersOfDepartmentHead(signedInUser);

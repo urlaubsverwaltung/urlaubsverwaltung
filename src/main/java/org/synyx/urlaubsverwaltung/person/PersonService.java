@@ -125,4 +125,11 @@ public interface PersonService {
      * @return  returns all inactive persons
      */
     List<Person> getInactivePersons();
+
+    /**
+     * This method allows to get the signed in user.
+     *
+     * @return  user that is signed in
+     */
+    Person getSignedInUser();
 }

@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.Optional;
 
@@ -38,8 +37,6 @@ public class ApplyForLeaveControllerTest {
     private ApplyForLeaveController sut;
 
     @Mock
-    private SessionService sessionService;
-    @Mock
     private PersonService personService;
     @Mock
     private AccountService accountService;
@@ -56,11 +53,11 @@ public class ApplyForLeaveControllerTest {
 
     @Before
     public void setUp() {
-        sut = new ApplyForLeaveController(sessionService, personService, accountService, vacationTypeService,
+        sut = new ApplyForLeaveController(personService, accountService, vacationTypeService,
             applicationInteractionService, applicationValidator, settingsService);
 
         person = new Person();
-        when(sessionService.getSignedInUser()).thenReturn(person);
+        when(personService.getSignedInUser()).thenReturn(person);
     }
 
     @Test

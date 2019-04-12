@@ -11,10 +11,10 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,14 +34,15 @@ public class ApplicationForLeaveController {
     private final ApplicationService applicationService;
     private final WorkDaysService calendarService;
     private final DepartmentService departmentService;
-    private final SessionService sessionService;
+    private final PersonService personService;
 
     @Autowired
-    public ApplicationForLeaveController(ApplicationService applicationService, WorkDaysService calendarService, DepartmentService departmentService, SessionService sessionService) {
+    public ApplicationForLeaveController(ApplicationService applicationService, WorkDaysService calendarService,
+                                         DepartmentService departmentService, PersonService personService) {
         this.applicationService = applicationService;
         this.calendarService = calendarService;
         this.departmentService = departmentService;
-        this.sessionService = sessionService;
+        this.personService = personService;
     }
 
     /*
@@ -61,7 +62,7 @@ public class ApplicationForLeaveController {
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
-        Person user = sessionService.getSignedInUser();
+        Person user = personService.getSignedInUser();
 
         boolean isHeadOf = user.hasRole(Role.DEPARTMENT_HEAD);
         boolean isSecondStage = user.hasRole(Role.SECOND_STAGE_AUTHORITY);

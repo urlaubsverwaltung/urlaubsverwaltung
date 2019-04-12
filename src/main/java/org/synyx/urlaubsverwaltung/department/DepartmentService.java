@@ -141,4 +141,14 @@ public interface DepartmentService {
      *          assigned to, else {@code false}
      */
     boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person);
+
+    /**
+     * Check if the given signed in user is allowed to access the data of the given person.
+     *
+     * @param  signedInUser  to check the permissions
+     * @param  person  which data should be accessed
+     *
+     * @return  {@code true} if the given user may access the data of the given person, else {@code false}
+     */
+    boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person);
 }

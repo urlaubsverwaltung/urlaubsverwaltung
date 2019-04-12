@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatisticsCsvExportServiceImpl;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics;
 

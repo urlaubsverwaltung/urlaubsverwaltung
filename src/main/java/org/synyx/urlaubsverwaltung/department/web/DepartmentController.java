@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 
 import java.util.List;
 import java.util.Optional;

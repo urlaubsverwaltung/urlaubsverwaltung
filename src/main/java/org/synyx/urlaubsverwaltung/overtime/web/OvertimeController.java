@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeAction;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
@@ -21,11 +22,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
-import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,15 +47,16 @@ public class OvertimeController {
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
-    private final SessionService sessionService;
     private final OvertimeValidator validator;
+    private final DepartmentService departmentService;
 
     @Autowired
-    public OvertimeController(OvertimeService overtimeService, PersonService personService, SessionService sessionService, OvertimeValidator validator) {
+    public OvertimeController(OvertimeService overtimeService, PersonService personService,
+                              OvertimeValidator validator, DepartmentService departmentService) {
         this.overtimeService = overtimeService;
         this.personService = personService;
-        this.sessionService = sessionService;
         this.validator = validator;
+        this.departmentService = departmentService;
     }
 
     @InitBinder
@@ -70,7 +71,7 @@ public class OvertimeController {
     @GetMapping("/overtime")
     public String showPersonalOvertime() {
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
@@ -84,9 +85,9 @@ public class OvertimeController {
 
         Integer year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
-        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to see overtime records of user '%s'",
                     signedInUser.getLoginName(), person.getLoginName()));
@@ -109,9 +110,9 @@ public class OvertimeController {
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
 
         Person person = overtime.getPerson();
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
-        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to see overtime records of user '%s'",
                     signedInUser.getLoginName(), person.getLoginName()));
@@ -132,7 +133,7 @@ public class OvertimeController {
         @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException {
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
         Person person;
 
         if (personId != null) {
@@ -157,7 +158,7 @@ public class OvertimeController {
     public String recordOvertime(@ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
         RedirectAttributes redirectAttributes) {
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
         Person person = overtimeForm.getPerson();
 
         if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
@@ -175,7 +176,7 @@ public class OvertimeController {
         }
 
         Overtime recordedOvertime = overtimeService.record(overtimeForm.generateOvertime(),
-                Optional.ofNullable(overtimeForm.getComment()), sessionService.getSignedInUser());
+                Optional.ofNullable(overtimeForm.getComment()), personService.getSignedInUser());
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.CREATED.name());
 
@@ -188,7 +189,7 @@ public class OvertimeController {
 
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
         Person person = overtime.getPerson();
 
         if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
@@ -210,7 +211,7 @@ public class OvertimeController {
 
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
         Person person = overtime.getPerson();
 
         if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
@@ -230,7 +231,7 @@ public class OvertimeController {
         overtimeForm.updateOvertime(overtime);
 
         overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()),
-            sessionService.getSignedInUser());
+            personService.getSignedInUser());
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.EDITED.name());
 

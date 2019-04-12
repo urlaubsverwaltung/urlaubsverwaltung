@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics;
 
 import java.util.List;
 

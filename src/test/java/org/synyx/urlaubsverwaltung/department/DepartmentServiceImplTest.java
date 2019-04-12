@@ -370,4 +370,151 @@ public class DepartmentServiceImplTest {
         Assert.assertFalse("Should not contain an application with other status",
             applications.contains(otherApplication));
     }
+
+    @Test
+    public void ensureSignedInOfficeUserCanAccessPersonData() throws IllegalAccessException {
+
+        Person person = TestDataCreator.createPerson(23, "person");
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        Person office = TestDataCreator.createPerson(42, "office");
+        office.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(office, person);
+
+        Assert.assertTrue("Office should be able to access any person data", isAllowed);
+    }
+
+
+    @Test
+    public void ensureSignedInBossUserCanAccessPersonData() throws IllegalAccessException {
+
+        Person person = TestDataCreator.createPerson(23, "person");
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        Person boss = TestDataCreator.createPerson(42, "boss");
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
+
+        Assert.assertTrue("Boss should be able to access any person data", isAllowed);
+    }
+
+
+    @Test
+    public void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() throws IllegalAccessException {
+
+        Person person = TestDataCreator.createPerson(23, "person");
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Department dep = TestDataCreator.createDepartment("dep");
+        dep.setMembers(Arrays.asList(person, departmentHead));
+
+        when(departmentRepository.getManagedDepartments(departmentHead))
+            .thenReturn(Collections.singletonList(dep));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
+
+        Assert.assertTrue("Department head of person should be able to access the person's data", isAllowed);
+    }
+
+
+    @Test
+    public void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData()
+        throws IllegalAccessException {
+
+        Person person = TestDataCreator.createPerson(23, "person");
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Department dep = TestDataCreator.createDepartment("dep");
+        dep.setMembers(Collections.singletonList(departmentHead));
+
+        when(departmentRepository.getManagedDepartments(departmentHead))
+            .thenReturn(Collections.singletonList(dep));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
+
+        Assert.assertFalse("Department head - but not of person - should not be able to access the person's data",
+            isAllowed);
+    }
+
+    @Test
+    public void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData()
+        throws IllegalAccessException {
+
+        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Department dep = TestDataCreator.createDepartment("dep");
+        dep.setMembers(Arrays.asList(secondStageAuthority, departmentHead));
+
+        when(departmentRepository.getManagedDepartments(departmentHead))
+            .thenReturn(Collections.singletonList(dep));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
+
+        Assert.assertFalse("Department head - but not of secondStageAuthority - should not be able to access the secondStageAuthority's data",
+            isAllowed);
+    }
+
+    @Test
+    public void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData()
+        throws IllegalAccessException {
+
+        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Department dep = TestDataCreator.createDepartment("dep");
+        dep.setMembers(Arrays.asList(secondStageAuthority, departmentHead));
+
+        when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority)).thenReturn(Collections.singletonList(dep));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(secondStageAuthority, departmentHead);
+
+        Assert.assertTrue("secondStageAuthority should be able to access the departmentHeads's data",
+            isAllowed);
+    }
+
+    @Test
+    public void ensureNotPrivilegedUserCanNotAccessPersonData() throws IllegalAccessException {
+
+        Person person = TestDataCreator.createPerson(23, "person");
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        Person user = TestDataCreator.createPerson(42, "user");
+        user.setPermissions(Collections.singletonList(Role.USER));
+
+        Department dep = TestDataCreator.createDepartment("dep");
+        dep.setMembers(Arrays.asList(person, user));
+        when(departmentRepository.getManagedDepartments(user))
+            .thenReturn(Collections.singletonList(dep));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, person);
+
+        Assert.assertFalse("User should not be able to access the data of other person", isAllowed);
+    }
+
+
+    @Test
+    public void ensureNotPrivilegedUserCanAccessOwnPersonData() throws IllegalAccessException {
+
+        Person user = TestDataCreator.createPerson(42, "user");
+        user.setPermissions(Collections.singletonList(Role.USER));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, user);
+
+        Assert.assertTrue("User should be able to access own data", isAllowed);
+    }
 }

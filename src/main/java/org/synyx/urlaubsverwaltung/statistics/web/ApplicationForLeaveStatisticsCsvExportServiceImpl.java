@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import liquibase.util.csv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

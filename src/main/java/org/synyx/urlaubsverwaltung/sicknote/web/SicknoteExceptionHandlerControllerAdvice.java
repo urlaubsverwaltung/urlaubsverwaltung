@@ -16,8 +16,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Handles exceptions and redirects to error page.
  */
-@ControllerAdvice(annotations = Controller.class)
-public class ExceptionHandlerControllerAdvice {
+@ControllerAdvice(basePackages = {"org.synyx.urlaubsverwaltung.sicknote.web"}, annotations = Controller.class)
+public class SicknoteExceptionHandlerControllerAdvice {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -48,6 +48,6 @@ public class ExceptionHandlerControllerAdvice {
             LOG.debug("An exception was thrown: {}", exception.getClass().getName());
             LOG.debug("An error occurred: {}", exception.getMessage());
         }
-        return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.BAD_REQUEST);
+        return getErrorPage(exception, HttpStatus.BAD_REQUEST);
     }
 }
