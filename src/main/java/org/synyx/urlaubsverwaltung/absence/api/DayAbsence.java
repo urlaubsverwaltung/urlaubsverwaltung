@@ -20,7 +20,7 @@ public class DayAbsence {
     }
 
     private final String date;
-    private final BigDecimal dayLength;
+    private final DayLength dayLength;
     private final String type;
     private final String status;
     private final String href;
@@ -28,7 +28,7 @@ public class DayAbsence {
     public DayAbsence(LocalDate date, DayLength dayLength, Type type, String status, Integer id) {
 
         this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
-        this.dayLength = dayLength.getDuration();
+        this.dayLength = dayLength;
         this.type = type.name();
         this.status = status;
         this.href = id == null ? "" : id.toString();
@@ -40,7 +40,7 @@ public class DayAbsence {
     }
 
 
-    public BigDecimal getDayLength() {
+    public DayLength getDayLength() {
 
         return dayLength;
     }

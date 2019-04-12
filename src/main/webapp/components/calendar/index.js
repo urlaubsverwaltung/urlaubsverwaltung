@@ -204,7 +204,7 @@ $(function() {
               var holiday = findWhere(_CACHE[type][year], {date: formattedDate});
 
               if (type === 'publicHoliday') {
-                return holiday !== undefined && holiday.dayLength < 1;
+                return holiday !== undefined && holiday.dayLength !== 'FULL';
               } else {
                 return holiday !== undefined;
               }
@@ -235,7 +235,7 @@ $(function() {
 
                 var publicHoliday = findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
 
-                if(publicHoliday && publicHoliday.dayLength === 0.5) {
+                if(publicHoliday && (publicHoliday.dayLength === 'MORNING' || publicHoliday.dayLength === 'NOON')) {
                   return true;
                 }
 
@@ -245,7 +245,7 @@ $(function() {
 
                 var personalHoliday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
 
-                if(personalHoliday && personalHoliday.dayLength === 0.5) {
+                if(personalHoliday && (personalHoliday.dayLength === 'MORNING' || personalHoliday.dayLength === 'NOON')) {
                   return true;
                 }
 
@@ -255,7 +255,7 @@ $(function() {
 
                   var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
 
-                  if(sickDay && sickDay.dayLength === 0.5) {
+                  if(sickDay && (sickDay.dayLength === 'MORNING' || sickDay.dayLength === 'NOON')) {
                       return true;
                   }
 
