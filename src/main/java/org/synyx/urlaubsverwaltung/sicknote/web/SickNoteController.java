@@ -107,7 +107,7 @@ public class SickNoteController {
     @GetMapping("/sicknote/new")
     public String newSickNote(Model model) {
 
-        model.addAttribute("sickNote", new SickNote());
+        model.addAttribute("sickNote", new SickNoteForm());
         model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
@@ -117,9 +117,14 @@ public class SickNoteController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote")
-    public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
+    public String newSickNote(@ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+
+        SickNote sickNote = sickNoteForm.generateSickNote();
+        SickNoteComment sickNoteComment = sickNoteForm.generateSickNoteComment(sickNote);
 
         validator.validate(sickNote, errors);
+
+        validator.validateComment(sickNoteComment, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
@@ -131,6 +136,9 @@ public class SickNoteController {
         }
 
         sickNoteInteractionService.create(sickNote, personService.getSignedInUser());
+
+        sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, Optional.ofNullable(sickNoteComment.getText()),
+            personService.getSignedInUser());
 
         return "redirect:/web/sicknote/" + sickNote.getId();
     }

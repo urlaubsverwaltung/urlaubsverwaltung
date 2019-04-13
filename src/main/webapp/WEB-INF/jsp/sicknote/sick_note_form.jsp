@@ -244,6 +244,36 @@
 
                 <div class="form-section">
                     <div class="col-xs-12">
+                        <legend>
+                            <spring:message code="sicknote.data.furtherInformation.title"/>
+                        </legend>
+                    </div>
+                    <div class="col-md-4 col-md-push-8">
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="sicknote.data.furtherInformation.description"/>
+                        </span>
+                    </div>
+                    <div class="col-md-8 col-md-pull-4">
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="comment">
+                                <spring:message code="sicknote.data.furtherInformation.comment"/>:
+                            </label>
+                            <div class="col-md-9">
+                                <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                <form:textarea id="comment" rows="1" path="comment" class="form-control"
+                                               cssErrorClass="form-control error"
+                                               onkeyup="count(this.value, 'text-comment');"
+                                               onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
+                                <form:errors path="comment" cssClass="error"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+                    <div class="col-xs-12">
                         <hr/>
                         <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
                             <spring:message code="action.save"/>

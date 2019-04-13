@@ -1,0 +1,145 @@
+package org.synyx.urlaubsverwaltung.sicknote.web;
+
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteAction;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
+
+import java.time.LocalDate;
+
+/**
+ * View class representing an sick note.
+ */
+public class SickNoteForm {
+
+    private Integer id;
+
+    private Person person;
+
+    private SickNoteType sickNoteType;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    private DayLength dayLength;
+
+    private LocalDate aubStartDate;
+
+    private LocalDate aubEndDate;
+
+    private String comment;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public SickNoteType getSickNoteType() {
+        return sickNoteType;
+    }
+
+    public void setSickNoteType(SickNoteType sickNoteType) {
+        this.sickNoteType = sickNoteType;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public DayLength getDayLength() {
+        return dayLength;
+    }
+
+    public void setDayLength(DayLength dayLength) {
+        this.dayLength = dayLength;
+    }
+
+    public LocalDate getAubStartDate() {
+        return aubStartDate;
+    }
+
+    public void setAubStartDate(LocalDate aubStartDate) {
+        this.aubStartDate = aubStartDate;
+    }
+
+    public LocalDate getAubEndDate() {
+        return aubEndDate;
+    }
+
+    public void setAubEndDate(LocalDate aubEndDate) {
+        this.aubEndDate = aubEndDate;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public SickNote generateSickNote() {
+        SickNote sickNote = new SickNote();
+        sickNote.setId(id);
+        sickNote.setPerson(person);
+        sickNote.setSickNoteType(sickNoteType);
+        sickNote.setStartDate(startDate);
+        sickNote.setEndDate(endDate);
+        sickNote.setDayLength(dayLength);
+        sickNote.setAubStartDate(aubStartDate);
+        sickNote.setAubEndDate(aubEndDate);
+
+        return sickNote;
+    }
+
+    public SickNoteComment generateSickNoteComment(SickNote sickNote) {
+        SickNoteComment sickNoteComment = new SickNoteComment();
+
+        sickNoteComment.setText(comment);
+        sickNoteComment.setAction(SickNoteAction.COMMENTED);
+        sickNoteComment.setSickNote(sickNote);
+
+        return sickNoteComment;
+    }
+
+    @Override
+    public String toString() {
+        return "SickNoteForm{" +
+            "id=" + id +
+            ", person=" + person +
+            ", sickNoteType=" + sickNoteType +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", dayLength=" + dayLength +
+            ", aubStartDate=" + aubStartDate +
+            ", aubEndDate=" + aubEndDate +
+            ", comment='" + comment + '\'' +
+            '}';
+    }
+}
