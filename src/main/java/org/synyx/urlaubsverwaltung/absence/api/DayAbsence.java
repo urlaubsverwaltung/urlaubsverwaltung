@@ -23,7 +23,7 @@ public class DayAbsence {
     private final String status;
     private final String href;
 
-    public DayAbsence(LocalDate date, DayLength dayLength, Type type, String status, Integer id) {
+    DayAbsence(LocalDate date, String dayLength, Type type, String status, Integer id) {
 
         this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
         this.dayLength = dayLength;
