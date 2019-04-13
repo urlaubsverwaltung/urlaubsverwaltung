@@ -1,6 +1,9 @@
 ### master/unreleased
 * Add missing fmt import in overview [#628](https://github.com/synyx/urlaubsverwaltung/pull/628)
 * Fix sicknote to vacation converting [#635](https://github.com/synyx/urlaubsverwaltung/pull/635)
+* Fix to use correct java 8 DateTimeFormatter [#631](https://github.com/synyx/urlaubsverwaltung/pull/631)
+* Fix to hide unused input fields in E-Mails [#585](https://github.com/synyx/urlaubsverwaltung/issues/585) [#633](https://github.com/synyx/urlaubsverwaltung/pull/630)
+* Add toString to VacationDaysLeft [#629](https://github.com/synyx/urlaubsverwaltung/pull/629)
 
 ### [urlaubsverwaltung-2.40.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.0)
 * Improve input fields [#597](https://github.com/synyx/urlaubsverwaltung/pull/597)
