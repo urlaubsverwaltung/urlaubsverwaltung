@@ -1,4 +1,6 @@
 ### master/unreleased
+* Allow overtime entries in 0.25 hour steps [#638](https://github.com/synyx/urlaubsverwaltung/pull/638)
+
 
 ### [urlaubsverwaltung-2.40.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.1)
 * Add missing fmt import in overview [#628](https://github.com/synyx/urlaubsverwaltung/pull/628)

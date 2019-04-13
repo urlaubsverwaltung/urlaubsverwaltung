@@ -252,10 +252,10 @@
                 </div>
                 <c:if test="${overtimeActive}">
                     <div class="col-md-4 col-md-push-8">
-            	<span class="help-block">
-                	<i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                	<spring:message code="application.data.hours.description"/>
-            	</span>
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="application.data.hours.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
@@ -266,7 +266,7 @@
                                 <spring:message code="application.data.hours"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="hours" class="form-control" cssErrorClass="form-control error"/>
+                                <form:input path="hours" class="form-control" cssErrorClass="form-control error" type="number" step="0.25"/>
                                 <form:errors path="hours" cssClass="error"/>
                             </div>
                         </div>
