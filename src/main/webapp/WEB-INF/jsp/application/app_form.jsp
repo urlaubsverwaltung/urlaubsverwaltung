@@ -252,10 +252,10 @@
                 </div>
                 <c:if test="${overtimeActive}">
                     <div class="col-md-4 col-md-push-8">
-            	<span class="help-block">
-                	<i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                	<spring:message code="application.data.hours.description"/>
-            	</span>
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="application.data.hours.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
