@@ -18,18 +18,13 @@ import static java.time.ZoneOffset.UTC;
 public class SickNoteConvertForm {
 
     private Person person;
-
     private DayLength dayLength;
-
     private LocalDate startDate;
-
     private LocalDate endDate;
-
     private VacationType vacationType;
-
     private String reason;
 
-    SickNoteConvertForm() {
+    public SickNoteConvertForm() {
 
         // needed for Spring magic
     }
