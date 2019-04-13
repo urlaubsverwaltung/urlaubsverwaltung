@@ -211,7 +211,7 @@ $(function() {
               var holiday = findWhere(_CACHE[type][year], {date: formattedDate});
 
               if (type === 'publicHoliday') {
-                return holiday !== undefined && holiday.dayLength !== 'FULL';
+                return holiday !== undefined && holiday.absencePeriodName !== 'FULL';
               } else {
                 return holiday !== undefined;
               }
@@ -222,10 +222,10 @@ $(function() {
           };
         }
 
-        function isAbsenceOfDayLength(date, dayLength) {
+        function isAbsenceOfDayLength(date, absencePeriodName) {
           const year = getYear(date);
           const formattedDate = format(date, 'YYYY-MM-DD');
-          const validate = absenceType => _CACHE[absenceType] && where(_CACHE[absenceType][year], {date: formattedDate}).some(d => d.dayLength === dayLength);
+          const validate = absenceType => _CACHE[absenceType] && where(_CACHE[absenceType][year], {date: formattedDate}).some(d => d.absencePeriodName === absencePeriodName);
 
           return validate('publicHoliday') || validate('holiday') || validate('sick');
         }
