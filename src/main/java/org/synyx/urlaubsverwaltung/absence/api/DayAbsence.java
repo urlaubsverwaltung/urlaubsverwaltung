@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence.api;
 
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -20,7 +18,7 @@ public class DayAbsence {
     }
 
     private final String date;
-    private final DayLength dayLength;
+    private final String dayLength;
     private final String type;
     private final String status;
     private final String href;
@@ -40,7 +38,7 @@ public class DayAbsence {
     }
 
 
-    public DayLength getDayLength() {
+    public String getDayLength() {
 
         return dayLength;
     }
