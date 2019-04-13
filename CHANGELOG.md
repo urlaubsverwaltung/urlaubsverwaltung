@@ -1,3 +1,5 @@
+### master/unreleased
+
 ### [urlaubsverwaltung-2.40.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.1)
 * Add missing fmt import in overview [#628](https://github.com/synyx/urlaubsverwaltung/pull/628)
 * Fix sicknote to vacation converting [#635](https://github.com/synyx/urlaubsverwaltung/pull/635)
