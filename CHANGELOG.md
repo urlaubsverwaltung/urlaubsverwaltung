@@ -2,6 +2,7 @@
 * Allow overtime entries in 0.25 hour steps [#638](https://github.com/synyx/urlaubsverwaltung/pull/638)
 * Fix jquery ui themes import [#639](https://github.com/synyx/urlaubsverwaltung/pull/639)
 * Fix datepicker for sick notes [#641](https://github.com/synyx/urlaubsverwaltung/pull/641)
+* Fix datepicker for overtime [#642](https://github.com/synyx/urlaubsverwaltung/pull/642)
 
 
 ### [urlaubsverwaltung-2.40.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.1)
