@@ -13,7 +13,7 @@
         window.uv.personId = '<c:out value="${person.id}" />';
         window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
     <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
     <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
