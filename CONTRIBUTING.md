@@ -26,7 +26,6 @@ learn how to disclose them responsibly.
 
 ## Pull Request Contribution
 
-Every contributor has to add herself/himself to [AUTHORS.md](AUTHORS.md) to grant full and irrevocable copyright to the Urlaubsverwaltung, otherwise a contribution is not possible.
 New pull requests will be labeled with status of process as shown below:
 
 ![Pull request workflow](docs/workflow-pullrequests.svg)
