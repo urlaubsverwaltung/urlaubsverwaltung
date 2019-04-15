@@ -1,13 +1,14 @@
 import $ from 'jquery'
 import { createDatepickerInstances } from '../../components/datepicker'
 
-$(document).ready(function () {
+$(document).ready(async function () {
   var locale = window.navigator.language;
   var urlPrefix = window.uv.apiPrefix;
 
   var onSelect = function (selectedDate) {
     var $endDate = $("#endDate");
-    if (this.id == "startDate" && $endDate.val() === "") {
+
+    if (this.id === "startDate" && $endDate.val() === "") {
       $endDate.datepicker("setDate", selectedDate);
     }
   };
@@ -16,5 +17,5 @@ $(document).ready(function () {
     return window.uv.personId;
   };
 
-  createDatepickerInstances(["#startDate", "#endDate"], locale, urlPrefix, getPersonId, onSelect);
+  await createDatepickerInstances(["#startDate", "#endDate"], locale, urlPrefix, getPersonId, onSelect);
 });
