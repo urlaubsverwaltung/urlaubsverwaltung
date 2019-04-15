@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { createDatepickerInstances } from '../../components/datepicker';
 
-$(document).ready(function () {
+$(document).ready(async function () {
 
   var person = window.uv.params.person;
   $("#employee").val(person);
@@ -19,18 +19,22 @@ $(document).ready(function () {
   }
 
   var onSelect = function (selectedDate) {
-    if (this.id == "from" && $("#to").val() === "") {
-      $("#to").datepicker("setDate", selectedDate);
+    var $to = $("#from");
+
+    if (this.id === "from") {
+      $to.datepicker("setDate", selectedDate);
     }
   };
 
   var onSelectAUB = function (selectedDate) {
-    if (this.id == "aubFrom" && $("#aubTo").val() === "") {
-      $("#aubTo").datepicker("setDate", selectedDate);
+    var $aubTo = $("#aubTo");
+
+    if (this.id === "aubFrom" && $aubTo.val() === "") {
+      $aubTo.datepicker("setDate", selectedDate);
     }
   };
 
-  createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
-  createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
+  await createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
+  await createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
 
 });
