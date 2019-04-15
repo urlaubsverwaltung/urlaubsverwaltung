@@ -1,3 +1,6 @@
+### master/unreleased
+* Fix autocompletion for sick note datepicker [#644](https://github.com/synyx/urlaubsverwaltung/pull/644)
+
 ### [urlaubsverwaltung-2.40.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.2)
 * Allow overtime entries in 0.25 hour steps [#638](https://github.com/synyx/urlaubsverwaltung/pull/638)
 * Fix jquery ui themes import [#639](https://github.com/synyx/urlaubsverwaltung/pull/639)

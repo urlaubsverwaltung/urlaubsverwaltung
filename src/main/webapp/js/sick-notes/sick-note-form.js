@@ -19,9 +19,9 @@ $(document).ready(async function () {
   }
 
   var onSelect = function (selectedDate) {
-    var $to = $("#from");
+    var $to = $("#to");
 
-    if (this.id === "from") {
+    if (this.id === "from" && $to.val() === "") {
       $to.datepicker("setDate", selectedDate);
     }
   };
