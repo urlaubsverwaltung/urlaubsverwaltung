@@ -9,3 +9,10 @@ import '../components/back-button'
 import vacationTypeChanged from '../js/application/vacation-type-changed'
 
 window.vacationTypeChanged = vacationTypeChanged;
+
+import count from '../js/count'
+import maxChars from '../js/max-chars'
+
+window.count = count;
+window.maxChars = maxChars;
+
