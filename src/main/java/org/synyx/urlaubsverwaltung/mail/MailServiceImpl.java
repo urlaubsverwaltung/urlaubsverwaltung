@@ -75,47 +75,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    private String getTranslation(String key, Object... args) {
-
-        return messageSource.getMessage(key, args, LOCALE);
-    }
-
-
-    private void sendMailToEachRecipient(Map<String, Object> model, List<Person> recipients, String template,
-        String subject) {
-
-        MailSettings mailSettings = getMailSettings();
-
-        for (Person recipient : recipients) {
-            model.put("recipient", recipient);
-
-            String text = mailBuilder.buildMailBody(template, model, LOCALE);
-            mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient), subject, text);
-        }
-    }
-
-
-    private MailSettings getMailSettings() {
-
-        return settingsService.getSettings().getMailSettings();
-    }
-
-
-    private Map<String, Object> createModelForApplicationStatusChangeMail(MailSettings mailSettings,
-        Application application, Optional<ApplicationComment> optionalComment) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("settings", mailSettings);
-
-        optionalComment.ifPresent(applicationComment -> model.put("comment", applicationComment));
-
-        return model;
-    }
-
-
     @Override
     public void sendRemindBossNotification(Application application) {
 
@@ -469,5 +428,44 @@ class MailServiceImpl implements MailService {
             mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient),
                 getTranslation("subject.application.cronRemind"), msg);
         }
+    }
+
+    private String getTranslation(String key, Object... args) {
+
+        return messageSource.getMessage(key, args, LOCALE);
+    }
+
+
+    private void sendMailToEachRecipient(Map<String, Object> model, List<Person> recipients, String template,
+                                         String subject) {
+
+        MailSettings mailSettings = getMailSettings();
+
+        for (Person recipient : recipients) {
+            model.put("recipient", recipient);
+
+            String text = mailBuilder.buildMailBody(template, model, LOCALE);
+            mailSender.sendEmail(mailSettings, RecipientUtil.getMailAddresses(recipient), subject, text);
+        }
+    }
+
+
+    private MailSettings getMailSettings() {
+
+        return settingsService.getSettings().getMailSettings();
+    }
+
+    private Map<String, Object> createModelForApplicationStatusChangeMail(MailSettings mailSettings,
+                                                                          Application application, Optional<ApplicationComment> optionalComment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
+        model.put("settings", mailSettings);
+
+        optionalComment.ifPresent(applicationComment -> model.put("comment", applicationComment));
+
+        return model;
     }
 }
