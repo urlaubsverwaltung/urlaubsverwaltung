@@ -16,11 +16,11 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
@@ -54,30 +54,34 @@ public class OverviewController {
     private final PersonService personService;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
-    private final SessionService sessionService;
     private final ApplicationService applicationService;
     private final WorkDaysService calendarService;
     private final SickNoteService sickNoteService;
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
+    private final DepartmentService departmentService;
 
     @Autowired
-    public OverviewController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, SessionService sessionService, ApplicationService applicationService, WorkDaysService calendarService, SickNoteService sickNoteService, OvertimeService overtimeService, SettingsService settingsService) {
+    public OverviewController(PersonService personService, AccountService accountService,
+                              VacationDaysService vacationDaysService,
+                              ApplicationService applicationService, WorkDaysService calendarService,
+                              SickNoteService sickNoteService, OvertimeService overtimeService,
+                              SettingsService settingsService, DepartmentService departmentService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
-        this.sessionService = sessionService;
         this.applicationService = applicationService;
         this.calendarService = calendarService;
         this.sickNoteService = sickNoteService;
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
+        this.departmentService = departmentService;
     }
 
     @GetMapping("/overview")
     public String showOverview(@RequestParam(value = YEAR_ATTRIBUTE, required = false) String year) {
 
-        Person user = sessionService.getSignedInUser();
+        Person user = personService.getSignedInUser();
 
         if (StringUtils.hasText(year)) {
             return "redirect:/web/staff/" + user.getId() + "/overview?year=" + year;
@@ -92,9 +96,9 @@ public class OverviewController {
             throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
-        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(
                     String.format("User '%s' has not the correct permissions to access the overview page of user '%s'",
                             signedInUser.getLoginName(), person.getLoginName()));

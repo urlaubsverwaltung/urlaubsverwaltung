@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -60,17 +59,17 @@ public class StaffController {
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
-    private final SessionService sessionService;
 
     @Autowired
-    public StaffController(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, DepartmentService departmentService, WorkingTimeService workingTimeService, SettingsService settingsService, SessionService sessionService) {
+    public StaffController(PersonService personService, AccountService accountService,
+                           VacationDaysService vacationDaysService, DepartmentService departmentService,
+                           WorkingTimeService workingTimeService, SettingsService settingsService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
-        this.sessionService = sessionService;
     }
 
     @GetMapping("/staff/{personId}")
@@ -79,9 +78,9 @@ public class StaffController {
         Model model) throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
-        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to access data of user '%s'",
                     signedInUser.getLoginName(), person.getLoginName()));
@@ -134,7 +133,7 @@ public class StaffController {
 
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)
                                             : getRelevantInactivePersons(signedInUser);
 

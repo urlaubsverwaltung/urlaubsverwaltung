@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.config;
+package org.synyx.urlaubsverwaltung.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;

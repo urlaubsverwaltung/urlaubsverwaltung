@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.person;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Arrays;
@@ -11,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +25,8 @@ public class PersonServiceImplTest {
     private PersonService sut;
 
     private PersonDAO personDAO;
+
+    private SecurityContext securityContext = mock(SecurityContext.class);
 
     @Before
     public void setUp() {
@@ -337,5 +343,38 @@ public class PersonServiceImplTest {
         Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
         Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
         Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureThrowsIfNoPersonCanBeFoundForTheCurrentlySignedInUser() {
+
+        when(personDAO.findByLoginName(anyString())).thenReturn(null);
+
+        sut.getSignedInUser();
+    }
+
+
+    @Test
+    public void ensureReturnsPersonForCurrentlySignedInUser() {
+
+        Person person = TestDataCreator.createPerson();
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(person.getNiceName());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(personDAO.findByLoginName(anyString())).thenReturn(person);
+
+        Person signedInUser = sut.getSignedInUser();
+
+        Assert.assertEquals("Wrong person", person, signedInUser);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureThrowsIllegalOnNullAuthentication() {
+
+        when(securityContext.getAuthentication()).thenReturn(null);
+        sut.getSignedInUser();
     }
 }

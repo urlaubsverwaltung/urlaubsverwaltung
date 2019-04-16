@@ -30,7 +30,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
@@ -53,7 +52,6 @@ public class ApplicationForLeaveDetailsController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
 
-    private final SessionService sessionService;
     private final PersonService personService;
     private final AccountService accountService;
     private final ApplicationService applicationService;
@@ -66,9 +64,13 @@ public class ApplicationForLeaveDetailsController {
     private final WorkingTimeService workingTimeService;
 
     @Autowired
-    public ApplicationForLeaveDetailsController(VacationDaysService vacationDaysService, SessionService sessionService, PersonService personService, AccountService accountService, ApplicationService applicationService, ApplicationInteractionService applicationInteractionService, ApplicationCommentService commentService, WorkDaysService workDaysService, ApplicationCommentValidator commentValidator, DepartmentService departmentService, WorkingTimeService workingTimeService) {
+    public ApplicationForLeaveDetailsController(VacationDaysService vacationDaysService, PersonService personService,
+                                                AccountService accountService, ApplicationService applicationService,
+                                                ApplicationInteractionService applicationInteractionService,
+                                                ApplicationCommentService commentService, WorkDaysService workDaysService,
+                                                ApplicationCommentValidator commentValidator,
+                                                DepartmentService departmentService, WorkingTimeService workingTimeService) {
         this.vacationDaysService = vacationDaysService;
-        this.sessionService = sessionService;
         this.personService = personService;
         this.accountService = accountService;
         this.applicationService = applicationService;
@@ -90,10 +92,10 @@ public class ApplicationForLeaveDetailsController {
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
         Person person = application.getPerson();
 
-        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to see application for leave of user '%s'",
                     signedInUser.getLoginName(), person.getLoginName()));
@@ -117,7 +119,7 @@ public class ApplicationForLeaveDetailsController {
         model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         boolean isNotYetAllowed = application.hasStatus(ApplicationStatus.WAITING)
             || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED);
@@ -175,7 +177,7 @@ public class ApplicationForLeaveDetailsController {
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
         Person person = application.getPerson();
 
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
@@ -233,7 +235,7 @@ public class ApplicationForLeaveDetailsController {
         Person recipient = personService.getPersonByLogin(referLoginName).orElseThrow(() ->
                     new UnknownPersonException(referLoginName));
 
-        Person sender = sessionService.getSignedInUser();
+        Person sender = personService.getSignedInUser();
 
         boolean isBoss = sender.hasRole(Role.BOSS);
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
@@ -263,7 +265,7 @@ public class ApplicationForLeaveDetailsController {
                     new UnknownApplicationForLeaveException(applicationId));
 
         Person person = application.getPerson();
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
@@ -311,7 +313,7 @@ public class ApplicationForLeaveDetailsController {
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
 
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);

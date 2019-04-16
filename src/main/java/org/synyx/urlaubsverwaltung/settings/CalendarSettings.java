@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalendarSyncProvider;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -23,7 +21,7 @@ public class CalendarSettings {
     private Integer workDayEndHour = 16; // NOSONAR
 
     @Column(name = "calendar_provider")
-    private String provider = NoopCalendarSyncProvider.class.getSimpleName();
+    private String provider = "NoopCalendarSyncProvider";
 
     public ExchangeCalendarSettings getExchangeCalendarSettings() {
 

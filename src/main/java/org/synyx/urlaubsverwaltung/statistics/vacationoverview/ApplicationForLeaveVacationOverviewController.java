@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.time.ZonedDateTime;
 
@@ -25,12 +25,12 @@ import static java.time.ZoneOffset.UTC;
 @Controller
 public class ApplicationForLeaveVacationOverviewController {
 
-    private final SessionService sessionService;
+    private final PersonService personService;
     private final DepartmentService departmentService;
 
     @Autowired
-    public ApplicationForLeaveVacationOverviewController(SessionService sessionService, DepartmentService departmentService) {
-        this.sessionService = sessionService;
+    public ApplicationForLeaveVacationOverviewController(PersonService personService, DepartmentService departmentService) {
+        this.personService = personService;
         this.departmentService = departmentService;
     }
 
@@ -44,7 +44,7 @@ public class ApplicationForLeaveVacationOverviewController {
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping("/vacationoverview")
     public String applicationForLeaveVacationOverview(Model model) {
-        Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = personService.getSignedInUser();
 
         prepareDepartments(signedInUser, model);
 

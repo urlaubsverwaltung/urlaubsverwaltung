@@ -11,17 +11,23 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 
 /**
@@ -34,14 +40,15 @@ public class ApplicationForLeaveController {
     private final ApplicationService applicationService;
     private final WorkDaysService calendarService;
     private final DepartmentService departmentService;
-    private final SessionService sessionService;
+    private final PersonService personService;
 
     @Autowired
-    public ApplicationForLeaveController(ApplicationService applicationService, WorkDaysService calendarService, DepartmentService departmentService, SessionService sessionService) {
+    public ApplicationForLeaveController(ApplicationService applicationService, WorkDaysService calendarService,
+                                         DepartmentService departmentService, PersonService personService) {
         this.applicationService = applicationService;
         this.calendarService = calendarService;
         this.departmentService = departmentService;
-        this.sessionService = sessionService;
+        this.personService = personService;
     }
 
     /*
@@ -52,7 +59,6 @@ public class ApplicationForLeaveController {
     public String showWaiting(Model model) {
 
         List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
-
         model.addAttribute("applications", applicationsForLeave);
 
         return "application/app_list";
@@ -61,12 +67,12 @@ public class ApplicationForLeaveController {
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
-        Person user = sessionService.getSignedInUser();
+        Person user = personService.getSignedInUser();
 
-        boolean isHeadOf = user.hasRole(Role.DEPARTMENT_HEAD);
-        boolean isSecondStage = user.hasRole(Role.SECOND_STAGE_AUTHORITY);
-        boolean isBoss = user.hasRole(Role.BOSS);
-        boolean isOffice = user.hasRole(Role.OFFICE);
+        boolean isHeadOf = user.hasRole(DEPARTMENT_HEAD);
+        boolean isSecondStage = user.hasRole(SECOND_STAGE_AUTHORITY);
+        boolean isBoss = user.hasRole(BOSS);
+        boolean isOffice = user.hasRole(OFFICE);
 
         if (isBoss || isOffice) {
             // Boss and Office can see all waiting and temporary allowed applications leave
@@ -83,41 +89,23 @@ public class ApplicationForLeaveController {
             return getApplicationsForLeaveForSecondStageAuthority(user);
         }
 
-        return Collections.emptyList();
+        return emptyList();
     }
 
 
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
 
-        List<Application> applications = new ArrayList<>();
-
-        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
-                ApplicationStatus.WAITING);
-
-        List<Application> temporaryAllowedApplications = applicationService.getApplicationsForACertainState(
-                ApplicationStatus.TEMPORARY_ALLOWED);
-
-        applications.addAll(waitingApplications);
-        applications.addAll(temporaryAllowedApplications);
+        List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
 
         return applications.stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
-            .collect(Collectors.toList());
+            .collect(toList());
     }
-
-
-    private Comparator<ApplicationForLeave> dateComparator() {
-
-        return Comparator.comparing(Application::getStartDate);
-    }
-
 
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
 
-        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
-                ApplicationStatus.WAITING);
-
+        List<Application> waitingApplications = getApplicationsByStates(WAITING);
         List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
 
         return waitingApplications.stream()
@@ -126,22 +114,12 @@ public class ApplicationForLeaveController {
             .filter(withoutSecondStageAuthorityApplications())
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
 
-        List<Application> applications = new ArrayList<>();
-
-        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
-                ApplicationStatus.WAITING);
-
-        List<Application> temporaryAllowedApplications = applicationService.getApplicationsForACertainState(
-                ApplicationStatus.TEMPORARY_ALLOWED);
-
-        applications.addAll(waitingApplications);
-        applications.addAll(temporaryAllowedApplications);
-
+        List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
         List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
 
         return applications.stream()
@@ -149,7 +127,7 @@ public class ApplicationForLeaveController {
             .filter(withoutOwnApplications(secondStage))
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private Predicate<Application> withoutOwnApplications(Person head) {
@@ -157,10 +135,20 @@ public class ApplicationForLeaveController {
     }
 
     private Predicate<Application> withoutSecondStageAuthorityApplications() {
-        return application -> !application.getPerson().getPermissions().contains(Role.SECOND_STAGE_AUTHORITY);
+        return application -> !application.getPerson().getPermissions().contains(SECOND_STAGE_AUTHORITY);
     }
 
     private Predicate<Application> includeDepartmentApplications(List<Person> members) {
         return application -> members.contains(application.getPerson());
+    }
+
+    private Comparator<ApplicationForLeave> dateComparator() {
+        return Comparator.comparing(Application::getStartDate);
+    }
+
+    private List<Application> getApplicationsByStates(ApplicationStatus... state) {
+        return stream(state)
+            .flatMap(applicationStatus -> applicationService.getApplicationsForACertainState(applicationStatus).stream())
+            .collect(toList());
     }
 }

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web;
+package org.synyx.urlaubsverwaltung.person.web;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;

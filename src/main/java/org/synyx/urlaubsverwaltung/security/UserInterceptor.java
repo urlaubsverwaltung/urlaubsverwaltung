@@ -1,10 +1,10 @@
-package org.synyx.urlaubsverwaltung.web;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class UserInterceptor implements HandlerInterceptor {
 
-    private final SessionService sessionService;
+    private final PersonService sessionService;
 
     @Autowired
-    public UserInterceptor(SessionService sessionService) {
+    public UserInterceptor(PersonService sessionService) {
 
         this.sessionService = sessionService;
     }

@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -157,5 +159,26 @@ class PersonServiceImpl implements PersonService {
         return getActivePersons().stream()
                 .filter(person -> person.hasNotificationType(notification))
                 .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public Person getSignedInUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null) {
+            throw new IllegalStateException("No authentication found in context.");
+        }
+
+        String user = authentication.getName();
+
+        Optional<Person> person = getPersonByLogin(user);
+
+        if (!person.isPresent()) {
+            throw new IllegalStateException("Can not get the person for the signed in user with username = " + user);
+        }
+
+        return person.get();
     }
 }
