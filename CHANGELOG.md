@@ -1,3 +1,6 @@
+### master/unreleased
+* Fix maximum sick pay days [#579](https://github.com/synyx/urlaubsverwaltung/issues/579) [#650](https://github.com/synyx/urlaubsverwaltung/pull/650)
+
 ### [urlaubsverwaltung-2.40.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.3)
 * Fix autocompletion for sick note datepicker [#644](https://github.com/synyx/urlaubsverwaltung/pull/644)
 * Fix character count in textareas of application form [#647](https://github.com/synyx/urlaubsverwaltung/issues/647)

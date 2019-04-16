@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -307,6 +308,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("sickNote", sickNote);
+        model.put("maximumSickPayDays", getAbsenceSettings().getMaximumSickPayDays());
 
         String text = mailBuilder.buildMailBody("sicknote_end_of_sick_pay", model, LOCALE);
 
@@ -453,6 +455,11 @@ class MailServiceImpl implements MailService {
     private MailSettings getMailSettings() {
 
         return settingsService.getSettings().getMailSettings();
+    }
+
+    private AbsenceSettings getAbsenceSettings() {
+
+        return settingsService.getSettings().getAbsenceSettings();
     }
 
     private Map<String, Object> createModelForApplicationStatusChangeMail(MailSettings mailSettings,

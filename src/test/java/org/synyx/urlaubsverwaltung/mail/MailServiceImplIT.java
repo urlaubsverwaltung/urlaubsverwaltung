@@ -955,7 +955,8 @@ public class MailServiceImplIT {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Lieschen Müller,\r\nHallo Office,"));
         assertTrue(content.contains(
-            "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal sechs Wochen"));
+            "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tag(e)"));
+        assertTrue(content.contains("erreicht in Kürze die 42 Tag(e) Grenze"));
     }
 
 
