@@ -1,5 +1,6 @@
 ### master/unreleased
 * Fix autocompletion for sick note datepicker [#644](https://github.com/synyx/urlaubsverwaltung/pull/644)
+* Fix character count in textareas of application form [#647](https://github.com/synyx/urlaubsverwaltung/issues/647)
 
 ### [urlaubsverwaltung-2.40.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.2)
 * Allow overtime entries in 0.25 hour steps [#638](https://github.com/synyx/urlaubsverwaltung/pull/638)
