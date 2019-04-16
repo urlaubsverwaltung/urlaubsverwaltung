@@ -83,7 +83,7 @@ public class SickNoteInteractionServiceImplTest {
     @Test
     public void ensureCreatedSickNoteIsPersisted() {
 
-        SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
+        SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person, Optional.empty());
 
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteAction.CREATED, Optional.empty(), person);
@@ -98,7 +98,7 @@ public class SickNoteInteractionServiceImplTest {
     @Test
     public void ensureCreatingSickNoteAddsEventToCalendar() {
 
-        sickNoteInteractionService.create(sickNote, person);
+        sickNoteInteractionService.create(sickNote, person, Optional.empty());
 
         verify(calendarSyncService).addAbsence(any(Absence.class));
         verify(absenceMappingService)

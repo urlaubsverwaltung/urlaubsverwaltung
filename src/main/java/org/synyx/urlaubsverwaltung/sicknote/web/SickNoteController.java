@@ -120,11 +120,8 @@ public class SickNoteController {
     public String newSickNote(@ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
 
         SickNote sickNote = sickNoteForm.generateSickNote();
-        SickNoteComment sickNoteComment = sickNoteForm.generateSickNoteComment(sickNote);
 
         validator.validate(sickNote, errors);
-
-        validator.validateComment(sickNoteComment, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
@@ -135,10 +132,8 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
-        sickNoteInteractionService.create(sickNote, personService.getSignedInUser());
-
-        sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, Optional.ofNullable(sickNoteComment.getText()),
-            personService.getSignedInUser());
+        sickNoteInteractionService.create(sickNote, personService.getSignedInUser(),
+            Optional.ofNullable(sickNoteForm.getComment()));
 
         return "redirect:/web/sicknote/" + sickNote.getId();
     }

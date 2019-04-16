@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.Optional;
+
 
 /**
  * Provides interactions with sick notes, i.e. create, edit etc.
@@ -14,10 +16,11 @@ public interface SickNoteInteractionService {
      *
      * @param  sickNote  to be saved
      * @param  creator  the person who creates the sick note
+     * @param  comment  giving further information (is optional)
      *
      * @return  the saved sick note
      */
-    SickNote create(SickNote sickNote, Person creator);
+    SickNote create(SickNote sickNote, Person creator, Optional<String> comment);
 
 
     /**

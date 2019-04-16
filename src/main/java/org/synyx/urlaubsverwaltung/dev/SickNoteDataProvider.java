@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 /**
@@ -49,7 +50,7 @@ class SickNoteDataProvider {
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNote = sickNoteInteractionService.create(sickNote, office);
+            sickNote = sickNoteInteractionService.create(sickNote, office, Optional.empty());
         }
 
         return sickNote;

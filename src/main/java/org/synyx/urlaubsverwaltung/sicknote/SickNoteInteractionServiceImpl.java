@@ -54,15 +54,15 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote create(SickNote sickNote, Person creator) {
+    public SickNote create(SickNote sickNote, Person creator, Optional<String> comment) {
 
         sickNote.setStatus(SickNoteStatus.ACTIVE);
         sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteAction.CREATED, Optional.empty(), creator);
+        commentService.create(sickNote, SickNoteAction.CREATED, comment, creator);
 
-        LOG.info("Created sick note: {}", sickNote);
+        LOG.info("Created sick note: {} with comment {}", sickNote, comment);
 
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
