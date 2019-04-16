@@ -94,6 +94,16 @@ public class SickNoteInteractionServiceImplTest {
         Assert.assertEquals("Wrong status", SickNoteStatus.ACTIVE, createdSickNote.getStatus());
     }
 
+    @Test
+    public void ensureCreatedSickNoteHasComment() {
+        Optional<String> comment = Optional.of("test comment");
+
+        SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person, comment);
+
+        verify(sickNoteService).save(sickNote);
+        verify(commentService).create(sickNote, SickNoteAction.CREATED, comment, person);
+    }
+
 
     @Test
     public void ensureCreatingSickNoteAddsEventToCalendar() {
@@ -109,7 +119,7 @@ public class SickNoteInteractionServiceImplTest {
     @Test
     public void ensureUpdatedSickNoteIsPersisted() {
 
-        SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
+        SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person, Optional.empty());
 
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteAction.EDITED, Optional.empty(), person);
@@ -120,11 +130,21 @@ public class SickNoteInteractionServiceImplTest {
         Assert.assertEquals("Wrong status", SickNoteStatus.ACTIVE, updatedSickNote.getStatus());
     }
 
+    @Test
+    public void ensureUpdatedSickHasComment() {
+        Optional<String> comment = Optional.of("test comment");
+
+        SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person, comment);
+
+        verify(sickNoteService).save(sickNote);
+        verify(commentService).create(sickNote, SickNoteAction.EDITED, comment, person);
+    }
+
 
     @Test
     public void ensureUpdatingSickNoteUpdatesCalendarEvent() {
 
-        sickNoteInteractionService.update(sickNote, person);
+        sickNoteInteractionService.update(sickNote, person, Optional.empty());
 
         verify(calendarSyncService).update(any(Absence.class), anyString());
         verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.SICKNOTE));

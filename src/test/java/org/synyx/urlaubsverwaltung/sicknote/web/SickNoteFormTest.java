@@ -15,13 +15,14 @@ import static org.junit.Assert.assertEquals;
 
 public class SickNoteFormTest {
 
+    private final LocalDate day2019_04_16 = LocalDate.of(2019, 4, 16);
+    private final Integer id = 1;
+    private final Person person = new Person();
+    private final SickNoteType type = new SickNoteType();
+    private final DayLength dayLength = DayLength.FULL;
+    private final String comment = "my comment";
+
     private SickNoteForm cut;
-    private LocalDate day2019_04_16 = LocalDate.of(2019, 4, 16);
-    private Integer id = 1;
-    private Person person = new Person();
-    private SickNoteType type = new SickNoteType();
-    private DayLength dayLength = DayLength.FULL;
-    private String comment = "my comment";
 
     @Before
     public void setUp() {
@@ -65,6 +66,22 @@ public class SickNoteFormTest {
         assertEquals(comment, sickNoteComment.getText());
         assertEquals(SickNoteAction.COMMENTED, sickNoteComment.getAction());
         assertEquals(sickNote, sickNoteComment.getSickNote());
+    }
+
+    @Test
+    public void checkCopyConstructur() {
+        SickNote sickNote = cut.generateSickNote();
+
+        SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
+
+        assertEquals(id, sickNoteForm.getId());
+        assertEquals(person, sickNoteForm.getPerson());
+        assertEquals(type, sickNoteForm.getSickNoteType());
+        assertEquals(day2019_04_16, sickNoteForm.getStartDate());
+        assertEquals(day2019_04_16, sickNoteForm.getEndDate());
+        assertEquals(dayLength, sickNoteForm.getDayLength());
+        assertEquals(day2019_04_16, sickNoteForm.getAubStartDate());
+        assertEquals(day2019_04_16, sickNoteForm.getAubEndDate());
     }
 
     @Test

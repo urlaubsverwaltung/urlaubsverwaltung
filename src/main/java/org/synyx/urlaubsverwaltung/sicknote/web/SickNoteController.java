@@ -146,11 +146,13 @@ public class SickNoteController {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
+        SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
+
         if (!sickNote.isActive()) {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
-        model.addAttribute("sickNote", sickNote);
+        model.addAttribute("sickNote", sickNoteForm);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         return "sicknote/sick_note_form";
@@ -160,7 +162,9 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id,
-        @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
+        @ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+
+        SickNote sickNote = sickNoteForm.generateSickNote();
 
         validator.validate(sickNote, errors);
 
@@ -172,7 +176,8 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
-        sickNoteInteractionService.update(sickNote, personService.getSignedInUser());
+        sickNoteInteractionService.update(sickNote, personService.getSignedInUser(),
+            Optional.ofNullable(sickNoteForm.getComment()));
 
         return "redirect:/web/sicknote/" + id;
     }

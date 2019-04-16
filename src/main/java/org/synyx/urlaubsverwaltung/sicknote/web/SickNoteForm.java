@@ -32,6 +32,21 @@ public class SickNoteForm {
 
     private String comment;
 
+    public SickNoteForm() {
+        // default constructor needed for empty object
+    }
+
+    public SickNoteForm(SickNote sickNote) {
+        this.id = sickNote.getId();
+        this.person = sickNote.getPerson();
+        this.sickNoteType = sickNote.getSickNoteType();
+        this.startDate = sickNote.getStartDate();
+        this.endDate = sickNote.getEndDate();
+        this.dayLength = sickNote.getDayLength();
+        this.aubStartDate = sickNote.getAubStartDate();
+        this.aubEndDate = sickNote.getAubEndDate();
+    }
+
     public Integer getId() {
         return id;
     }

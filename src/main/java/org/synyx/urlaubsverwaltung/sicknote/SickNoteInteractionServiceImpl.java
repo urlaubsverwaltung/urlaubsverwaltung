@@ -77,13 +77,13 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
 
     @Override
-    public SickNote update(SickNote sickNote, Person editor) {
+    public SickNote update(SickNote sickNote, Person editor, Optional<String> comment) {
 
         sickNote.setStatus(SickNoteStatus.ACTIVE);
         sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteAction.EDITED, Optional.empty(), editor);
+        commentService.create(sickNote, SickNoteAction.EDITED, comment, editor);
 
         LOG.info("Updated sick note: {}", sickNote);
 

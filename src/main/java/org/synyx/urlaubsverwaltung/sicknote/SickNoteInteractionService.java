@@ -27,11 +27,12 @@ public interface SickNoteInteractionService {
      * Update an existent sick note.
      *
      * @param  sickNote  to be updated
-     * @param  editor  the person who updates the sick note
+     * @param  editor    the person who updates the sick note
+     * @param  comment   giving further information (is optional)
      *
      * @return  the updated sick note
      */
-    SickNote update(SickNote sickNote, Person editor);
+    SickNote update(SickNote sickNote, Person editor, Optional<String> comment);
 
 
     /**
