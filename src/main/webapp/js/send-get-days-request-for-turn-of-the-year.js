@@ -4,6 +4,7 @@ import $ from 'jquery';
 import { isAfter, getYear, format, endOfYear, startOfYear } from 'date-fns'
 import buildUrl from './build-url';
 import formatNumber from './format-number';
+import { getJSON } from "../js/fetch"
 
 export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, element) {
 
@@ -45,15 +46,12 @@ export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, star
   $(element).html(`<br />(${daysBefore} in ${getYear(before)} und ${daysAfter} in ${getYear(after)})`);
 }
 
-function getWorkdaysForDateRange(requestUrl, dayLength, personId, fromDate, toDate) {
-  return new Promise(resolve => {
+async function getWorkdaysForDateRange(requestUrl, dayLength, personId, fromDate, toDate) {
+  const startString = format(fromDate, "YYYY-MM-DD");
+  const toString = format(toDate, "YYYY-MM-DD");
+  const url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
-    const startString = format(fromDate, "YYYY-MM-DD");
-    const toString = format(toDate, "YYYY-MM-DD");
-    const url = buildUrl(requestUrl, startString, toString, dayLength, personId);
+  const json = await getJSON(url);
 
-    $.get(url, function (data) {
-      resolve(data.response.workDays)
-    });
-  })
+  return json.response.workDays;
 }
