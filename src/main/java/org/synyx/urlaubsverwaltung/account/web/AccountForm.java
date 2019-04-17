@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 
-class AccountForm {
+public class AccountForm {
 
     private int holidaysAccountYear;
 

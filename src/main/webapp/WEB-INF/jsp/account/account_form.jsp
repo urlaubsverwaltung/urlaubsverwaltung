@@ -127,10 +127,9 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="remainingVacationDays"
-                                            path="remainingVacationDays" class="form-control"
-                                            cssErrorClass="form-control error"
-                                            type="number" step="0.5"/>
+                                <uv:input-number id="remainingVacationDays" path="remainingVacationDays" cssClass="form-control"
+                                                 cssErrorClass="form-control error" step="0.5"
+                                                 value="${account.remainingVacationDays}"/>
                                 <span class="help-inline">
                                     <form:errors path="remainingVacationDays" cssClass="error"/>
                                 </span>
@@ -143,10 +142,9 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="remainingVacationDaysNotExpiring"
-                                            path="remainingVacationDaysNotExpiring" class="form-control"
-                                            cssErrorClass="form-control error"
-                                            type="number" step="0.5"/>
+                                <uv:input-number id="remainingVacationDaysNotExpiring" path="remainingVacationDaysNotExpiring" cssClass="form-control"
+                                                 cssErrorClass="form-control error" step="0.5"
+                                                 value="${account.remainingVacationDaysNotExpiring}"/>
                                 <span class="help-inline">
                                     <form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/>
                                 </span>

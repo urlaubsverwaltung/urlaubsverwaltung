@@ -1,5 +1,6 @@
 ### master/unreleased
 * Fix maximum sick pay days [#579](https://github.com/synyx/urlaubsverwaltung/issues/579) [#650](https://github.com/synyx/urlaubsverwaltung/pull/650)
+* Allow half day input on account form for remaining vacation days [#652](https://github.com/synyx/urlaubsverwaltung/pull/652)
 
 ### [urlaubsverwaltung-2.40.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.3)
 * Fix autocompletion for sick note datepicker [#644](https://github.com/synyx/urlaubsverwaltung/pull/644)
