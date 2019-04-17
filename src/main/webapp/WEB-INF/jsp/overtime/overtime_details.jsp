@@ -88,7 +88,7 @@
             </div>
             <div class="col-xs-12 col-md-6">
                 <legend class="hidden-print">
-                    <spring:message code="overtime.data.staff"/>
+                    <spring:message code="overtime.data.person"/>
                 </legend>
                 <uv:person person="${record.person}" cssClass="hidden-print"/>
                 <uv:overtime-total hours="${overtimeTotal}"/>

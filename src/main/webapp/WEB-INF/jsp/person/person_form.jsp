@@ -23,10 +23,10 @@
 
         <c:choose>
             <c:when test="${person.id == null}">
-                <c:set var="ACTION" value="${URL_PREFIX}/staff"/>
+                <c:set var="ACTION" value="${URL_PREFIX}/person"/>
             </c:when>
             <c:otherwise>
-                <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}/edit"/>
+                <c:set var="ACTION" value="${URL_PREFIX}/person/${person.id}/edit"/>
             </c:otherwise>
         </c:choose>
 

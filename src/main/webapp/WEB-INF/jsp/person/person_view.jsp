@@ -17,7 +17,7 @@
     <c:if test="${not empty persons}">
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
     <script defer src="<asset:url value='npm.list.js.js' />"></script>
-    <script defer src="<asset:url value='staff_view.js' />"></script>
+    <script defer src="<asset:url value='person_view.js' />"></script>
     </c:if>
 </head>
 
@@ -59,7 +59,7 @@
                         </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                             <li>
-                                <a href="${URL_PREFIX}/staff?active=true&year=${year}">
+                                <a href="${URL_PREFIX}/person?active=true&year=${year}">
                                     <i class="fa fa-fw fa-toggle-on" aria-hidden="true"></i>
                                     <spring:message code="persons.active"/>
                                 </a>
@@ -67,7 +67,7 @@
                             <c:if test="${departments.size() > 1}">
                                 <c:forEach items="${departments}" var="department">
                                     <li>
-                                        <a href='${URL_PREFIX}/staff?active=true&year=${year}&department=${department.id}'>
+                                        <a href='${URL_PREFIX}/person?active=true&year=${year}&department=${department.id}'>
                                             <i class="fa fa-fw" aria-hidden="true"></i>
                                             <c:out value="${department.name}"/>
                                         </a>
@@ -76,7 +76,7 @@
                                 <li role="separator" class="divider"></li>
                             </c:if>
                             <li>
-                                <a href="${URL_PREFIX}/staff?active=false&year=${year}">
+                                <a href="${URL_PREFIX}/person?active=false&year=${year}">
                                     <i class="fa fa-fw fa-toggle-off" aria-hidden="true"></i>
                                     <spring:message code="persons.inactive"/>
                                 </a>
@@ -85,13 +85,13 @@
                     </div>
 
                     <uv:year-selector year="${year}"
-                                      hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&department=${department.id}&year="/>
+                                      hrefPrefix="${URL_PREFIX}/person?active=${param.active}&department=${department.id}&year="/>
 
                     <uv:print/>
 
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right" aria-hidden="true"
-                           data-title="<spring:message code="action.staff.create"/>">
+                        <a href="${URL_PREFIX}/person/new" class="fa-action pull-right" aria-hidden="true"
+                           data-title="<spring:message code="action.person.create"/>">
                             <i class="fa fa-fw fa-user-plus" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
@@ -105,7 +105,7 @@
                     </c:when>
 
                     <c:otherwise>
-                        <%@include file="include/staff_list.jsp" %>
+                        <%@include file="include/person_list.jsp" %>
                     </c:otherwise>
 
                 </c:choose>

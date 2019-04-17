@@ -253,7 +253,7 @@
                 </sec:authorize>
 
                 <legend class="hidden-print">
-                    <spring:message code="sicknote.data.staff"/>
+                    <spring:message code="sicknote.data.person"/>
                 </legend>
 
                 <uv:person person="${sickNote.person}" cssClass="hidden-print"/>
