@@ -50,7 +50,7 @@ class SickNoteDataProvider {
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNote = sickNoteInteractionService.create(sickNote, office, Optional.empty());
+            sickNote = sickNoteInteractionService.create(sickNote, office);
         }
 
         return sickNote;

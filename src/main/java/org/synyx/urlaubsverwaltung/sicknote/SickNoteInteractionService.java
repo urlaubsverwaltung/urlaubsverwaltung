@@ -16,23 +16,42 @@ public interface SickNoteInteractionService {
      *
      * @param  sickNote  to be saved
      * @param  creator  the person who creates the sick note
-     * @param  comment  giving further information (is optional)
      *
      * @return  the saved sick note
      */
-    SickNote create(SickNote sickNote, Person creator, Optional<String> comment);
+    SickNote create(SickNote sickNote, Person creator);
 
+    /**
+     * Creates a new sick note.
+     *
+     * @param  sickNote  to be saved
+     * @param  creator  the person who creates the sick note
+     * @param  comment  giving further information
+     *
+     * @return  the saved sick note
+     */
+    SickNote create(SickNote sickNote, Person creator, String comment);
 
     /**
      * Update an existent sick note.
      *
      * @param  sickNote  to be updated
      * @param  editor    the person who updates the sick note
-     * @param  comment   giving further information (is optional)
      *
      * @return  the updated sick note
      */
-    SickNote update(SickNote sickNote, Person editor, Optional<String> comment);
+    SickNote update(SickNote sickNote, Person editor);
+
+    /**
+     * Update an existent sick note with comment.
+     *
+     * @param  sickNote  to be updated
+     * @param  editor    the person who updates the sick note
+     * @param  comment   giving further information
+     *
+     * @return  the updated sick note
+     */
+    SickNote update(SickNote sickNote, Person editor, String comment);
 
 
     /**

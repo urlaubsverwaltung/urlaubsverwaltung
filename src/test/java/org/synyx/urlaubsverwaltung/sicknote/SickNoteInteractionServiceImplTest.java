@@ -83,10 +83,10 @@ public class SickNoteInteractionServiceImplTest {
     @Test
     public void ensureCreatedSickNoteIsPersisted() {
 
-        SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person, Optional.empty());
+        SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CREATED, Optional.empty(), person);
+        verify(commentService).create(sickNote, SickNoteAction.CREATED, person);
 
         Assert.assertNotNull("Should not be null", createdSickNote);
 
@@ -96,19 +96,19 @@ public class SickNoteInteractionServiceImplTest {
 
     @Test
     public void ensureCreatedSickNoteHasComment() {
-        Optional<String> comment = Optional.of("test comment");
+        String comment = "test comment";
 
-        SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person, comment);
+        sickNoteInteractionService.create(sickNote, person, comment);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CREATED, comment, person);
+        verify(commentService).create(sickNote, SickNoteAction.CREATED, person, comment);
     }
 
 
     @Test
     public void ensureCreatingSickNoteAddsEventToCalendar() {
 
-        sickNoteInteractionService.create(sickNote, person, Optional.empty());
+        sickNoteInteractionService.create(sickNote, person);
 
         verify(calendarSyncService).addAbsence(any(Absence.class));
         verify(absenceMappingService)
@@ -119,10 +119,10 @@ public class SickNoteInteractionServiceImplTest {
     @Test
     public void ensureUpdatedSickNoteIsPersisted() {
 
-        SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person, Optional.empty());
+        SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.EDITED, Optional.empty(), person);
+        verify(commentService).create(sickNote, SickNoteAction.EDITED, person);
 
         Assert.assertNotNull("Should not be null", updatedSickNote);
 
@@ -132,19 +132,19 @@ public class SickNoteInteractionServiceImplTest {
 
     @Test
     public void ensureUpdatedSickHasComment() {
-        Optional<String> comment = Optional.of("test comment");
+        final String comment = "test comment";
 
-        SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person, comment);
+        sickNoteInteractionService.update(sickNote, person, comment);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.EDITED, comment, person);
+        verify(commentService).create(sickNote, SickNoteAction.EDITED, person, comment);
     }
 
 
     @Test
     public void ensureUpdatingSickNoteUpdatesCalendarEvent() {
 
-        sickNoteInteractionService.update(sickNote, person, Optional.empty());
+        sickNoteInteractionService.update(sickNote, person);
 
         verify(calendarSyncService).update(any(Absence.class), anyString());
         verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.SICKNOTE));
@@ -157,7 +157,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CANCELLED, Optional.empty(), person);
+        verify(commentService).create(sickNote, SickNoteAction.CANCELLED, person);
 
         Assert.assertNotNull("Should not be null", cancelledSickNote);
 
@@ -193,7 +193,7 @@ public class SickNoteInteractionServiceImplTest {
 
         verify(sickNoteService).save(sickNote);
         verify(commentService)
-            .create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, Optional.empty(), person);
+            .create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, person);
 
         Assert.assertNotNull("Should not be null", convertedSickNote);
 
