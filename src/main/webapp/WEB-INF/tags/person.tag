@@ -17,7 +17,7 @@
                     <span class="hidden-print"><c:out value="${person.niceName}"/></span>
                 </c:when>
                 <c:otherwise>
-                    <a class="hidden-print" href="${URL_PREFIX}/staff/${person.id}/overview">
+                    <a class="hidden-print" href="${URL_PREFIX}/person/${person.id}/overview">
                         <c:out value="${person.niceName}"/>
                     </a>
                 </c:otherwise>

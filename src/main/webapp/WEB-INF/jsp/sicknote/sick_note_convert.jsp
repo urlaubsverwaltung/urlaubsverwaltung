@@ -36,7 +36,7 @@
                     <div class="form-group">
                         <form:hidden path="person" value="${sickNoteConvertForm.person.id}"/>
                         <label class="control-label col-sm-12 col-md-4">
-                            <spring:message code='sicknote.data.staff'/>:
+                            <spring:message code='sicknote.data.person'/>:
                         </label>
 
                         <div class="col-md-7">

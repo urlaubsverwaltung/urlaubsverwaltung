@@ -81,7 +81,7 @@
                         <c:if test="${signedInUser.id != overtime.person.id}">
                             <div class="form-group">
                                 <label class="control-label col-md-3">
-                                    <spring:message code="overtime.data.staff"/>:
+                                    <spring:message code="overtime.data.person"/>:
                                 </label>
                                 <div class="col-md-9">
                                     <p class="form-control-static"><c:out value="${overtime.person.niceName}"/></p>

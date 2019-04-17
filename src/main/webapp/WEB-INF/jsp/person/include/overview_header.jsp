@@ -17,11 +17,11 @@
         </c:otherwise>
     </c:choose>
 
-    <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/staff/${person.id}/overview?year="/>
+    <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/person/${person.id}/overview?year="/>
 
     <uv:print/>
 
-    <a href="${URL_PREFIX}/staff/${person.id}" class="fa-action pull-right" style="margin-top: 1px"
+    <a href="${URL_PREFIX}/person/${person.id}" class="fa-action pull-right" style="margin-top: 1px"
        data-title="<spring:message code="action.details"/>">
         <i class="fa fa-list-alt" aria-hidden="true"></i>
     </a>

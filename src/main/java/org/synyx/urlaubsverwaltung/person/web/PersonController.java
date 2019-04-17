@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.staff.web;
+package org.synyx.urlaubsverwaltung.person.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -47,7 +47,7 @@ import static java.time.ZoneOffset.UTC;
  */
 @Controller
 @RequestMapping("/web")
-public class StaffController {
+public class PersonController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String PERSONS_ATTRIBUTE = "persons";
@@ -61,9 +61,9 @@ public class StaffController {
     private final SettingsService settingsService;
 
     @Autowired
-    public StaffController(PersonService personService, AccountService accountService,
-                           VacationDaysService vacationDaysService, DepartmentService departmentService,
-                           WorkingTimeService workingTimeService, SettingsService settingsService) {
+    public PersonController(PersonService personService, AccountService accountService,
+                            VacationDaysService vacationDaysService, DepartmentService departmentService,
+                            WorkingTimeService workingTimeService, SettingsService settingsService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -72,10 +72,10 @@ public class StaffController {
         this.settingsService = settingsService;
     }
 
-    @GetMapping("/staff/{personId}")
-    public String showStaffInformation(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
-        Model model) throws UnknownPersonException {
+    @GetMapping("/person/{personId}")
+    public String showPersonInformation(@PathVariable("personId") Integer personId,
+                                        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
+                                        Model model) throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = personService.getSignedInUser();
@@ -117,19 +117,19 @@ public class StaffController {
 
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @GetMapping("/staff")
-    public String showStaff() {
+    @GetMapping("/person")
+    public String showPerson() {
 
-        return "redirect:/web/staff?active=true";
+        return "redirect:/web/person?active=true";
     }
 
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @GetMapping(value = "/staff", params = "active")
-    public String showStaff(@RequestParam(value = "active") Boolean active,
-        @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
-        Model model) throws UnknownDepartmentException {
+    @GetMapping(value = "/person", params = "active")
+    public String showPerson(@RequestParam(value = "active") Boolean active,
+                             @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
+                             @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
+                             Model model) throws UnknownDepartmentException {
 
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
@@ -148,9 +148,9 @@ public class StaffController {
             model.addAttribute(ControllerConstants.DEPARTMENT_ATTRIBUTE, department);
         }
 
-        prepareStaffView(signedInUser, persons, year, model);
+        preparePersonView(signedInUser, persons, year, model);
 
-        return "person/staff_view";
+        return "person/person_view";
     }
 
 
@@ -227,7 +227,7 @@ public class StaffController {
     }
 
 
-    private void prepareStaffView(Person signedInUser, List<Person> persons, int year, Model model) {
+    private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
 
         Map<Person, Account> accounts = new HashMap<>();
         Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();

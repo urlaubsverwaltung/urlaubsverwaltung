@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.staff.web;
+package org.synyx.urlaubsverwaltung.person.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

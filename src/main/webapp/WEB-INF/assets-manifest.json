@@ -48,6 +48,7 @@
   "overtime_form.js": "/assets/overtime_form.e6a041d60f5cf27e0932.min.js",
   "person_form.js": "/assets/person_form.519e34af375aed22945c.min.js",
   "person_overview.js": "/assets/person_overview.0ccffc4944244259fee6.min.js",
+  "person_view.js": "/assets/person_view.16a71dd78ec32ca49b91.min.js",
   "polyfill.js": "/assets/polyfill.7ce3a16d66072bb5cb3f.min.js",
   "runtime.js": "/assets/runtime.0b0e892f10e838efadf7.min.js",
   "settings_form.js": "/assets/settings_form.ae88ff99129176497309.min.js",
@@ -55,7 +56,6 @@
   "sick_note_convert.js": "/assets/sick_note_convert.ff1f10c61c2193298f39.min.js",
   "sick_note_form.js": "/assets/sick_note_form.20ba9d274c2f0451981e.min.js",
   "sick_notes.js": "/assets/sick_notes.b3fc0ab15991d1caf2ab.min.js",
-  "staff_view.js": "/assets/staff_view.16a71dd78ec32ca49b91.min.js",
   "vacation_overview.css": "/assets/vacation_overview.a654ff011af4efc60a2e.css",
   "vacation_overview.js": "/assets/vacation_overview.94b50fff696777a6ad43.min.js",
   "workingtime_form.js": "/assets/workingtime_form.30e001c3deeaafc6f2d7.min.js"

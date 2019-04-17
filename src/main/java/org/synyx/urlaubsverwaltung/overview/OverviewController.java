@@ -83,13 +83,13 @@ public class OverviewController {
         Person user = personService.getSignedInUser();
 
         if (StringUtils.hasText(year)) {
-            return "redirect:/web/staff/" + user.getId() + "/overview?year=" + year;
+            return "redirect:/web/person/" + user.getId() + "/overview?year=" + year;
         }
 
-        return "redirect:/web/staff/" + user.getId() + "/overview";
+        return "redirect:/web/person/" + user.getId() + "/overview";
     }
 
-    @GetMapping("/staff/{personId}/overview")
+    @GetMapping("/person/{personId}/overview")
     public String showOverview(@PathVariable("personId") Integer personId,
                                @RequestParam(value = YEAR_ATTRIBUTE, required = false) Integer year, Model model)
             throws UnknownPersonException, AccessDeniedException {

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.staff.web;
+package org.synyx.urlaubsverwaltung.person.web;
 
 import org.junit.Before;
 import org.junit.Test;

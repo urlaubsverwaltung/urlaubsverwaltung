@@ -43,7 +43,7 @@
         <%-- NOTE: class 'list' is needed for list.js --%>
         <tbody class="list">
         <c:forEach items="${persons}" var="person" varStatus="loopStatus">
-            <tr onclick="navigate('${URL_PREFIX}/staff/${person.id}/overview');">
+            <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview');">
                 <td class="is-centered">
                     <div class="gravatar img-circle hidden-print"
                          data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
@@ -113,7 +113,7 @@
                     </c:choose>
                 </td>
                 <td class="hidden-print hidden-xs">
-                    <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}"
+                    <a class="fa-action pull-right" href="${URL_PREFIX}/person/${person.id}"
                        data-title="<spring:message code="action.details" />">
                         <i class="fa fa-fw fa-list-alt" aria-hidden="true"></i>
                     </a>

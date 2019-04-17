@@ -133,7 +133,7 @@
                 <div class="col-md-8 col-md-pull-4">
                     <div class="form-group">
                         <label class="control-label col-md-3" for="members">
-                            <spring:message code='department.members.staff'/>:
+                            <spring:message code='department.members.person'/>:
                         </label>
                         <div class="col-md-9">
                             <div class="department--members">

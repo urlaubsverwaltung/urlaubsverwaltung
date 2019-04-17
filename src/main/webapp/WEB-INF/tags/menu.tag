@@ -54,9 +54,9 @@
 
         <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
-            <a href="${URL_PREFIX}/staff?active=true">
+            <a href="${URL_PREFIX}/person?active=true">
               <i class="fa fa-fw fa-user" aria-hidden="true"></i>
-              <spring:message code="nav.staff.title"/>
+              <spring:message code="nav.person.title"/>
             </a>
           </li>
         </sec:authorize>
