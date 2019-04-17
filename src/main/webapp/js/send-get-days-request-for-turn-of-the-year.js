@@ -1,4 +1,3 @@
-import $ from 'jquery';
 // disabling date-fns#format is ok since we're formatting dates for api requests
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import { isAfter, getYear, format, endOfYear, startOfYear } from 'date-fns'
@@ -6,9 +5,10 @@ import buildUrl from './build-url';
 import formatNumber from './format-number';
 import { getJSON } from "../js/fetch"
 
-export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, element) {
+export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, elementSelector) {
 
-  $(element).empty();
+  const element = document.querySelector(elementSelector);
+  element.innerHTML = "";
 
   if (!startDate && !toDate) {
     return;
@@ -43,7 +43,7 @@ export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, star
   const daysBefore = formatNumber(workDaysBefore);
   const daysAfter = formatNumber(workDaysAfter);
 
-  $(element).html(`<br />(${daysBefore} in ${getYear(before)} und ${daysAfter} in ${getYear(after)})`);
+  element.innerHTML = `<br />(${daysBefore} in ${getYear(before)} und ${daysAfter} in ${getYear(after)})`;
 }
 
 async function getWorkdaysForDateRange(requestUrl, dayLength, personId, fromDate, toDate) {
