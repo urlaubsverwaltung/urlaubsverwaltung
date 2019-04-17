@@ -23,7 +23,8 @@
         window.uv.startDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedStartDate}' type="date" />";
         window.uv.endDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedEndDate}' type="date" />";
     </script>
-    <script defer src="<spring:url value='/assets/app_detail~app_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form~person_overview.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_detail.min.js' />"></script>
 </head>
 
