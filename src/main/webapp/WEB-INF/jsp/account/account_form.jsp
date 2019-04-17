@@ -127,7 +127,7 @@
                             <div class="col-md-9">
                                 <form:input path="remainingVacationDays" class="form-control"
                                             cssErrorClass="form-control error"
-                                            size="1" id="remainingVacationDays" type="number"/>
+                                            size="1" id="remainingVacationDays" type="number" step="0.5"/>
                                 <span class="help-inline">
                                     <form:errors path="remainingVacationDays" cssClass="error"/>
                                 </span>
@@ -141,7 +141,7 @@
 
                             <div class="col-md-9">
                                 <form:input path="remainingVacationDaysNotExpiring" class="form-control"
-                                            cssErrorClass="form-control error" size="1" type="number"
+                                            cssErrorClass="form-control error" size="1" type="number" step="0.5"
                                             id="remainingVacationDaysNotExpiring"/>
                                 <span class="help-inline">
                                     <form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/>
