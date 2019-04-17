@@ -63,7 +63,7 @@ public class WorkingTimeController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping("/staff/{personId}/workingtime")
+    @GetMapping("/person/{personId}/workingtime")
     public String editWorkingTime(@PathVariable("personId") Integer personId, Model model)
         throws UnknownPersonException {
 
@@ -94,7 +94,7 @@ public class WorkingTimeController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @PostMapping("/staff/{personId}/workingtime")
+    @PostMapping("/person/{personId}/workingtime")
     public String updateWorkingTime(@PathVariable("personId") Integer personId,
                                     @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm,
                                     Model model,
@@ -116,6 +116,6 @@ public class WorkingTimeController {
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
 
-        return "redirect:/web/staff/" + personId;
+        return "redirect:/web/person/" + personId;
     }
 }

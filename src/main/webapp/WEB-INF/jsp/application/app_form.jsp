@@ -108,7 +108,7 @@
                         <%-- office applies for a user --%>
                         <div class="form-group">
                             <label class="control-label col-md-3">
-                                <spring:message code="application.data.staff"/>
+                                <spring:message code="application.data.person"/>
                             </label>
                             <div class="col-md-9">
                                 <select id="person-select" class="form-control"

@@ -93,7 +93,7 @@
 
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="employee">
-                                <spring:message code='sicknote.data.staff'/>:
+                                <spring:message code='sicknote.data.person'/>:
                             </label>
 
                             <div class="col-md-9">
@@ -211,7 +211,7 @@
                     <div class="col-md-4 col-md-push-8">
                 <span class="help-block">
                     <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                    <spring:message code="sicknote.data.aub.description"/>
+                    <spring:message code="person"/>
                 </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">

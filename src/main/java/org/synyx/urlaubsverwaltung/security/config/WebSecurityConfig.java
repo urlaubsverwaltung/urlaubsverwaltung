@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/web/overview").hasAuthority("USER")
                 .antMatchers("/web/application/**").hasAuthority("USER")
                 .antMatchers("/web/sicknote/**").hasAuthority("USER")
-                .antMatchers("/web/staff/**").hasAuthority("USER")
+                .antMatchers("/web/person/**").hasAuthority("USER")
                 .antMatchers("/web/overtime/**").hasAuthority("USER")
                 .antMatchers("/web/department/**").hasAnyAuthority("BOSS", "OFFICE")
                 .antMatchers("/web/settings/**").hasAuthority("OFFICE")

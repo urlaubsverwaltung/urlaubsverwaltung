@@ -166,7 +166,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForTeilzeitStaff() {
+    public void testGetWorkDaysForTeilzeitPersons() {
 
         List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.WEDNESDAY.getValue(),
                 DayOfWeek.FRIDAY.getValue(), DayOfWeek.SATURDAY.getValue());
@@ -182,7 +182,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForVollzeitStaff() {
+    public void testGetWorkDaysForVollzeitPersons() {
 
         List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.TUESDAY.getValue(),
                 DayOfWeek.WEDNESDAY.getValue(), DayOfWeek.THURSDAY.getValue(), DayOfWeek.FRIDAY.getValue());
