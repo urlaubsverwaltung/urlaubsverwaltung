@@ -104,19 +104,17 @@
                         <%--is filled by javascript--%>
                     </span>
                     <script type="text/javascript">
-                      $(document).ready(function () {
+                        document.addEventListener('DOMContentLoaded', function() {
+                          const dayLength = '<c:out value="${app.dayLength}" />';
+                          const personId = '<c:out value="${app.person.id}" />';
 
-                          var dayLength = '<c:out value="${app.dayLength}" />';
-                          var personId = '<c:out value="${app.person.id}" />';
+                          <fmt:parseDate value="${app.startDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date" />
+                          <fmt:parseDate value="${app.endDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date" />
+                          const startDate = "<fmt:formatDate value="${parsedStartDate}" type="date" pattern="yyyy-MM-dd" />";
+                          const endDate = "<fmt:formatDate value="${parsedEndDate}" type="date" pattern="yyyy-MM-dd" />";
 
-                          var startDate = "<fmt:parseDate pattern='yyyy-MM-dd' value='${app.startDate}' />";
-                          var endDate = "<fmt:parseDate pattern='yyyy-MM-dd' value='${app.endDate}' />";
-
-                          var from = new Date(startDate);
-                          var to = new Date(endDate);
-
-                          sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
-                      });
+                          sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", new Date(startDate), new Date(endDate), dayLength, personId, ".days-${loopStatus.index}");
+                        })
                     </script>
                 </c:if>
             </td>
