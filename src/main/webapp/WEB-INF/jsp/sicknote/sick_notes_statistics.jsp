@@ -65,7 +65,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <spring:message code="sicknotes.statistics.staffWithSickNotes"/>
+                            <spring:message code="sicknotes.statistics.personWithSickNotes"/>
                         </td>
                         <td>
                             <c:out value="${statistics.numberOfPersonsWithMinimumOneSickNote}"/>

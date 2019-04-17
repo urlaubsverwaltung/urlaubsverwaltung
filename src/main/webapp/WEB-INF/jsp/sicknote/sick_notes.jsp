@@ -80,7 +80,7 @@
                     </thead>
                     <tbody>
                     <c:forEach items="${persons}" var="person">
-                    <tr onclick="navigate('${URL_PREFIX}/staff/${person.id}/overview#anchorSickNotes');">
+                    <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered hidden-print">
                             <div class="gravatar img-circle hidden-print"
                                  data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>

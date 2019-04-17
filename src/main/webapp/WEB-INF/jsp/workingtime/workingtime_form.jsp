@@ -22,7 +22,7 @@
 <div class="content">
     <div class="container">
 
-        <form:form method="POST" action="${URL_PREFIX}/staff/${person.id}/workingtime" modelAttribute="workingTime"
+        <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/workingtime" modelAttribute="workingTime"
                    class="form-horizontal">
 
             <div class="row">

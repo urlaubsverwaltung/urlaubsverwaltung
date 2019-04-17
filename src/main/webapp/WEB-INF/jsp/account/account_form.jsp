@@ -30,7 +30,7 @@
 <div class="content">
     <div class="container">
 
-        <form:form method="POST" action="${URL_PREFIX}/staff/${person.id}/account"
+        <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/account"
                    modelAttribute="account" class="form-horizontal">
 
             <div class="row">
@@ -40,7 +40,7 @@
                         <legend>
                             <spring:message code="person.form.annualVacation.title" arguments="${person.niceName}"/>
                             <uv:year-selector year="${year}"
-                                              hrefPrefix="${URL_PREFIX}/staff/${person.id}/account?year="/>
+                                              hrefPrefix="${URL_PREFIX}/person/${person.id}/account?year="/>
                         </legend>
                     </div>
 

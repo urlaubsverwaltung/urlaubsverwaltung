@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.staff.web;
+package org.synyx.urlaubsverwaltung.person.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +29,7 @@ import java.util.Locale;
 
 @Controller
 @RequestMapping("/web")
-public class StaffManagementController {
+public class PersonManagementController {
 
     private static final String PERSON_FORM_JSP = "person/person_form";
     private static final String PERSON_ATTRIBUTE = "person";
@@ -39,7 +39,7 @@ public class StaffManagementController {
     private final PersonValidator validator;
 
     @Autowired
-    public StaffManagementController(PersonService personService, DepartmentService departmentService, PersonValidator validator) {
+    public PersonManagementController(PersonService personService, DepartmentService departmentService, PersonValidator validator) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.validator = validator;
@@ -54,7 +54,7 @@ public class StaffManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping("/staff/new")
+    @GetMapping("/person/new")
     public String newPersonForm(Model model) {
 
         model.addAttribute(PERSON_ATTRIBUTE, new Person());
@@ -64,7 +64,7 @@ public class StaffManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @PostMapping("/staff")
+    @PostMapping("/person")
     public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE) Person person,
                             Errors errors,
                             RedirectAttributes redirectAttributes) {
@@ -79,12 +79,12 @@ public class StaffManagementController {
 
         redirectAttributes.addFlashAttribute("createSuccess", true);
 
-        return "redirect:/web/staff/" + createdPerson.getId();
+        return "redirect:/web/person/" + createdPerson.getId();
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping("/staff/{personId}/edit")
+    @GetMapping("/person/{personId}/edit")
     public String editPersonForm(@PathVariable("personId") Integer personId,
                                  Model model)
         throws UnknownPersonException {
@@ -102,7 +102,7 @@ public class StaffManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @PostMapping("/staff/{personId}/edit")
+    @PostMapping("/person/{personId}/edit")
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute(PERSON_ATTRIBUTE) Person person, Errors errors,
         RedirectAttributes redirectAttributes) {
@@ -117,6 +117,6 @@ public class StaffManagementController {
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
 
-        return "redirect:/web/staff/" + personId;
+        return "redirect:/web/person/" + personId;
     }
 }

@@ -61,7 +61,7 @@ public class AccountController {
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping("/staff/{personId}/account")
+    @GetMapping("/person/{personId}/account")
     public String editAccount(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
         throws UnknownPersonException {
@@ -80,7 +80,7 @@ public class AccountController {
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @PostMapping("/staff/{personId}/account")
+    @PostMapping("/person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Integer personId,
         @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
         RedirectAttributes redirectAttributes) throws UnknownPersonException {
@@ -118,6 +118,6 @@ public class AccountController {
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
 
-        return "redirect:/web/staff/" + personId;
+        return "redirect:/web/person/" + personId;
     }
 }

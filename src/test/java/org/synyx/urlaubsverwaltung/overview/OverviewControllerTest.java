@@ -88,7 +88,7 @@ public class OverviewControllerTest {
 
         final ResultActions resultActions = perform(builder);
         resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/staff/1/overview?year=2017"));
+        resultActions.andExpect(view().name("redirect:/web/person/1/overview?year=2017"));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class OverviewControllerTest {
 
         final ResultActions resultActions = perform(builder);
         resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/staff/1/overview"));
+        resultActions.andExpect(view().name("redirect:/web/person/1/overview"));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class OverviewControllerTest {
         sickNote2.setEndDate(LocalDate.now(UTC).plusDays(10L));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
-        MockHttpServletRequestBuilder builder = get("/web/staff/1/overview");
+        MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
         final ResultActions resultActions = perform(builder);
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("person/overview"));
