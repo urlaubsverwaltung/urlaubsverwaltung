@@ -116,34 +116,29 @@ $(function () {
                 }
               }, outputTable);
           outputTable += "</tr><tbody class='vacationOverview-tbody'>";
-          overViewList
-            .forEach(
-              function (item) {
-                outputTable += "<tr>";
-                outputTable += "<td class='hidden-xs'>"
-                  + item.person.firstName
-                  + "</td>";
-                outputTable += "<td class='hidden-xs'>"
-                  + item.person.lastName
-                  + "</td>";
-                item.days
-                  .forEach(
-                    function (dayItem) {
-                      if (dayItem.typeOfDay === "WEEKEND") {
-                        dayItem.cssClass = ' vacationOverview-day-weekend vacationOverview-day-item';
-                      } else {
-                        if (!dayItem.cssClass) {
-                          dayItem.cssClass = ' vacationOverview-day vacationOverview-day-item ';
-                        }
-                      }
-                      outputTable += "<td class='" + dayItem.cssClass + "'></td>";
-                    }, outputTable);
-                outputTable += "</tr>";
-              }, outputTable);
 
+          overViewList
+            .forEach(item => {
+              outputTable += "<tr>";
+              outputTable += "<td class='hidden-xs'>"+ item.person.firstName+ "</td>";
+              outputTable += "<td class='hidden-xs'>" + item.person.lastName + "</td>";
+
+              item.days
+                .forEach(dayItem => {
+                  if (dayItem.typeOfDay === "WEEKEND") {
+                    dayItem.cssClass = 'vacationOverview-day-weekend vacationOverview-day-item';
+                  } else if (!dayItem.cssClass) {
+                    dayItem.cssClass = 'vacationOverview-day vacationOverview-day-item ';
+                  }
+
+                  outputTable += "<td class='" + dayItem.cssClass + "'></td>";
+                });
+
+              outputTable += "</tr>";
+            }, outputTable);
           outputTable += "</tbody></table>";
-          const element = document.querySelector("#vacationOverview");
-          element.innerHTML = outputTable;
+
+          document.querySelector("#vacationOverview").innerHTML = outputTable;
         }
       }
 
@@ -161,15 +156,9 @@ $(function () {
     const selectedMonth = document.querySelector('#monthSelect');
     const selectedDepartment = document.querySelector('#departmentSelect');
 
-    selectedYear.addEventListener("change", function () {
-      selectedItemChange();
-    });
-    selectedMonth.addEventListener("change", function () {
-      selectedItemChange();
-    });
-    selectedDepartment.addEventListener("change", function () {
-      selectedItemChange();
-    });
+    selectedYear.addEventListener("change", () => selectedItemChange());
+    selectedMonth.addEventListener("change", () => selectedItemChange());
+    selectedDepartment.addEventListener("change", () => selectedItemChange());
 
     let event;
     if (typeof (Event) === "function") {
