@@ -2,6 +2,7 @@
 * Fix maximum sick pay days [#579](https://github.com/synyx/urlaubsverwaltung/issues/579) [#650](https://github.com/synyx/urlaubsverwaltung/pull/650)
 * Allow half day input on account form for remaining vacation days [#652](https://github.com/synyx/urlaubsverwaltung/pull/652)
 * Replace … with ... [#656](https://github.com/synyx/urlaubsverwaltung/pull/656)
+* Fix workdays and vacations api usage [#651](https://github.com/synyx/urlaubsverwaltung/pull/651)
 
 ### [urlaubsverwaltung-2.40.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.3)
 * Fix autocompletion for sick note datepicker [#644](https://github.com/synyx/urlaubsverwaltung/pull/644)
