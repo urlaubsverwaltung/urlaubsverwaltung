@@ -86,7 +86,7 @@ $(function () {
               }
             });
 
-          let outputTable = "<table cellspacing='0' id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
+          let outputTable = "<table id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
           outputTable += "<thead class='hidden-xs'>";
           outputTable += "<tr>";
           outputTable += "<th class='sortable-field'><spring:message code='person.data.firstName'/></th>";
