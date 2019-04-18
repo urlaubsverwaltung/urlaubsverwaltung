@@ -21,6 +21,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
@@ -33,10 +34,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationForLeaveControllerTest {
@@ -63,6 +61,7 @@ public class ApplicationForLeaveControllerTest {
         final Person person = new Person();
         person.setFirstName("Atticus");
         final Application application = new Application();
+        application.setId(1);
         application.setPerson(person);
         application.setStatus(WAITING);
         application.setStartDate(LocalDate.MAX);
@@ -72,11 +71,13 @@ public class ApplicationForLeaveControllerTest {
         final Person headPerson = new Person();
         headPerson.setPermissions(singletonList(DEPARTMENT_HEAD));
         final Application applicationOfHead = new Application();
+        applicationOfHead.setId(2);
         applicationOfHead.setPerson(headPerson);
 
         final Person secondStagePerson = new Person();
         secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
+        applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
 
         when(personService.getSignedInUser()).thenReturn(headPerson);
@@ -97,6 +98,7 @@ public class ApplicationForLeaveControllerTest {
 
         final Person person = new Person();
         final Application application = new Application();
+        application.setId(1);
         application.setPerson(person);
         application.setStatus(WAITING);
         application.setStartDate(LocalDate.MAX);
@@ -106,6 +108,7 @@ public class ApplicationForLeaveControllerTest {
         final Person bossPerson = new Person();
         bossPerson.setPermissions(singletonList(BOSS));
         final Application applicationOfBoss = new Application();
+        applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(bossPerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
@@ -114,6 +117,7 @@ public class ApplicationForLeaveControllerTest {
         final Person secondStagePerson = new Person();
         secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
+        applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
@@ -134,6 +138,7 @@ public class ApplicationForLeaveControllerTest {
 
         final Person person = new Person();
         final Application application = new Application();
+        application.setId(1);
         application.setPerson(person);
         application.setStatus(TEMPORARY_ALLOWED);
         application.setStartDate(LocalDate.MAX);
@@ -143,6 +148,7 @@ public class ApplicationForLeaveControllerTest {
         final Person officePerson = new Person();
         officePerson.setPermissions(singletonList(OFFICE));
         final Application applicationOfBoss = new Application();
+        applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(officePerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
@@ -151,6 +157,7 @@ public class ApplicationForLeaveControllerTest {
         final Person secondStagePerson = new Person();
         secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
+        applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
@@ -173,6 +180,7 @@ public class ApplicationForLeaveControllerTest {
         final Person person = new Person();
         person.setFirstName("person");
         final Application application = new Application();
+        application.setId(1);
         application.setPerson(person);
         application.setStatus(TEMPORARY_ALLOWED);
         application.setStartDate(LocalDate.MAX);
@@ -183,6 +191,7 @@ public class ApplicationForLeaveControllerTest {
         officePerson.setFirstName("office");
         officePerson.setPermissions(singletonList(OFFICE));
         final Application applicationOfBoss = new Application();
+        applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(officePerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
@@ -191,6 +200,7 @@ public class ApplicationForLeaveControllerTest {
         final Person secondStagePerson = new Person();
         secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
+        applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
@@ -210,6 +220,98 @@ public class ApplicationForLeaveControllerTest {
             hasProperty("firstName", equalTo("person"))))));
         resultActions.andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))));
         resultActions.andExpect(view().name("application/app_list"));
+    }
+
+    @Test
+    public void departmentHeadAndSecondStageAuthorityOfDifferentDepartmentsGrantsApplications() throws Exception {
+
+        final Person departmentHeadAndSecondStageAuth = new Person();
+        departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
+        departmentHeadAndSecondStageAuth.setPermissions(asList(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final Person userOfDepartmentA = new Person();
+        userOfDepartmentA.setFirstName("userOfDepartmentA");
+        userOfDepartmentA.setPermissions(singletonList(USER));
+        final Application applicationOfUserA = new Application();
+        applicationOfUserA.setId(1);
+        applicationOfUserA.setPerson(userOfDepartmentA);
+        applicationOfUserA.setStatus(TEMPORARY_ALLOWED);
+        applicationOfUserA.setStartDate(LocalDate.MAX);
+        applicationOfUserA.setEndDate(LocalDate.MAX);
+
+        final Person userOfDepartmentB = new Person();
+        userOfDepartmentB.setFirstName("userOfDepartmentB");
+        userOfDepartmentB.setPermissions(singletonList(USER));
+        final Application applicationOfUserB = new Application();
+        applicationOfUserB.setId(2);
+        applicationOfUserB.setPerson(userOfDepartmentB);
+        applicationOfUserB.setStatus(WAITING);
+        applicationOfUserB.setStartDate(LocalDate.MAX);
+        applicationOfUserB.setEndDate(LocalDate.MAX);
+
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentA));
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentB));
+        when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
+            .thenReturn(singletonList(applicationOfUserA));
+        when(applicationService.getApplicationsForACertainState(WAITING))
+            .thenReturn(singletonList(applicationOfUserB));
+
+        perform(get("/web/application"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("applications", hasSize(2)))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person",
+                hasProperty("firstName", equalTo("userOfDepartmentA"))))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person",
+                hasProperty("firstName", equalTo("userOfDepartmentB"))))))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(view().name("application/app_list"));
+    }
+
+    @Test
+    public void departmentHeadAndSecondStageAuthorityOfSameDepartmentsGrantsApplications() throws Exception {
+
+        final Person departmentHeadAndSecondStageAuth = new Person();
+        departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
+        departmentHeadAndSecondStageAuth.setPermissions(asList(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final Person userOfDepartment = new Person();
+        userOfDepartment.setFirstName("userOfDepartment");
+        userOfDepartment.setPermissions(singletonList(USER));
+        final Application temporaryAllowedApplication = new Application();
+        temporaryAllowedApplication.setId(1);
+        temporaryAllowedApplication.setPerson(userOfDepartment);
+        temporaryAllowedApplication.setStatus(TEMPORARY_ALLOWED);
+        temporaryAllowedApplication.setStartDate(LocalDate.MAX);
+        temporaryAllowedApplication.setEndDate(LocalDate.MAX);
+
+        final Application waitingApplication = new Application();
+        waitingApplication.setId(2);
+        waitingApplication.setPerson(userOfDepartment);
+        waitingApplication.setStatus(WAITING);
+        waitingApplication.setStartDate(LocalDate.MAX);
+        waitingApplication.setEndDate(LocalDate.MAX);
+
+
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartment));
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartment));
+        when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
+            .thenReturn(singletonList(temporaryAllowedApplication));
+        when(applicationService.getApplicationsForACertainState(WAITING))
+            .thenReturn(singletonList(waitingApplication));
+
+        perform(get("/web/application"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("applications", hasSize(2)))
+            .andExpect(model().attribute("applications", hasItems(
+                hasProperty("person", hasProperty("firstName", equalTo("userOfDepartment"))),
+                hasProperty("status", equalTo(WAITING)),
+                hasProperty("person", hasProperty("firstName", equalTo("userOfDepartment"))),
+                hasProperty("status", equalTo(TEMPORARY_ALLOWED)))))
+
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(view().name("application/app_list"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
