@@ -21,8 +21,7 @@ $(function () {
         }
       }
 
-      if (selectedYearValue != null && selectedMonthValue != null
-        && selectedDepartmentValue != null) {
+      if (selectedYearValue != null && selectedMonthValue != null && selectedDepartmentValue != null) {
         const url = location.protocol + "//" + location.host
           + "/api/vacationoverview?selectedYear="
           + encodeURIComponent(selectedYearValue) + "&selectedMonth="
@@ -50,6 +49,7 @@ $(function () {
               xhttp.setRequestHeader("Content-type",
                 "application/json");
               xhttp.send();
+
               const response = JSON.parse(xhttp.responseText);
               if (response) {
 
@@ -58,27 +58,27 @@ $(function () {
                     function (currentDay) {
                       let absences = response.response.absences;
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue,"WAITING", "VACATION", 1))) {
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 1))) {
                         currentDay.cssClass = 'vacationOverview-day-personal-holiday-status-WAITING vactionOverview-day-item ';
                       }
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue,"WAITING", "VACATION", 0.5))) {
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 0.5))) {
                         currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-WAITING vactionOverview-day-item ';
                       }
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue,"ALLOWED", "VACATION", 0.5))) {
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "ALLOWED", "VACATION", 0.5))) {
                         currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-ALLOWED vactionOverview-day-item ';
                       }
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue,"ALLOWED", "VACATION", 1))) {
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "ALLOWED", "VACATION", 1))) {
                         currentDay.cssClass = ' vacationOverview-day-personal-holiday-status-ALLOWED vactionOverview-day-item ';
                       }
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue,"ACTIVE", "SICK_NOTE", 1))) {
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "ACTIVE", "SICK_NOTE", 1))) {
                         currentDay.cssClass = ' vacationOverview-day-sick-note vactionOverview-day-item ';
                       }
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue,"ACTIVE", "SICK_NOTE", 0.5))) {
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "ACTIVE", "SICK_NOTE", 0.5))) {
                         currentDay.cssClass = ' vacationOverview-day-sick-note-half-day vactionOverview-day-item ';
                       }
 
@@ -143,9 +143,9 @@ $(function () {
       });
     }
 
-  const selectedYear = document.querySelector('#yearSelect');
-  const selectedMonth = document.querySelector('#monthSelect');
-  const selectedDepartment = document.querySelector('#departmentSelect');
+    const selectedYear = document.querySelector('#yearSelect');
+    const selectedMonth = document.querySelector('#monthSelect');
+    const selectedDepartment = document.querySelector('#departmentSelect');
 
     selectedYear.addEventListener("change", function () {
       selectedItemChange();
@@ -156,8 +156,9 @@ $(function () {
     selectedDepartment.addEventListener("change", function () {
       selectedItemChange();
     });
-  let event;
-  if (typeof (Event) === "function") {
+
+    let event;
+    if (typeof (Event) === "function") {
       event = new Event("change");
     } else {
       event = document.createEvent("Event");
