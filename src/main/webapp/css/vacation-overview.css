@@ -1,12 +1,12 @@
 .vacationOverview-day {
-    background: #EFEFEF;
+    background: #e5e5e5;
     color: #6F6F6F;
 }
 
 .vacationOverview-day-public-holiday,
 .vacationOverview-day-weekend {
     color: #FFF;
-    background: #DCDCDC;
+    background: #B5D0DF;
 }
 
 .vacationOverview-legend-colorbox {
@@ -22,20 +22,20 @@
     background: #FFEDA0;
 }
 .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning {
-    background: linear-gradient(90deg, #FFEDA0 50%, #EFEFEF 50%);
+    background: linear-gradient(90deg, #FFEDA0 50%, #E5E5E5 50%);
 }
 .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
-    background: linear-gradient(-90deg, #FFEDA0 50%, #EFEFEF 50%);
+    background: linear-gradient(-90deg, #FFEDA0 50%, #E5E5E5 50%);
 }
 
 .vacationOverview-day-personal-holiday-status-WAITING {
-  background: #B5D0DF;
+  background: #F9CD13;
 }
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning {
-    background: linear-gradient(90deg, #B5D0DF 50%, #EFEFEF 50%);
+    background: linear-gradient(90deg, #F9CD13 50%, #E5E5E5 50%);
 }
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-    background: linear-gradient(-90deg, #B5D0DF 50%, #EFEFEF 50%);
+    background: linear-gradient(-90deg, #F9CD13 50%, #E5E5E5 50%);
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
@@ -43,25 +43,25 @@
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning.vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-    background: #B5D0DF;
+    background: #F9CD13;
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning.vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-    background: linear-gradient(90deg, #FFEDA0 50%, #B5D0DF 50%);
+    background: linear-gradient(90deg, #FFEDA0 50%, #F9CD13 50%);
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
-    background: linear-gradient(90deg, #B5D0DF 50%, #FFEDA0 50%);
+    background: linear-gradient(90deg, #F9CD13 50%, #FFEDA0 50%);
 }
 
 .vacationOverview-day-sick-note {
     background: #FFC5BF;
 }
 .vacationOverview-day-sick-note-half-day-morning {
-    background: linear-gradient(90deg, #FFC5BF 50%, #EFEFEF 50%);
+    background: linear-gradient(90deg, #FFC5BF 50%, #E5E5E5 50%);
 }
 .vacationOverview-day-sick-note-half-day-noon {
-    background: linear-gradient(-90deg, #FFC5BF 50%, #EFEFEF 50%);
+    background: linear-gradient(-90deg, #FFC5BF 50%, #E5E5E5 50%);
 }
 
 .vacationOverview-day-sick-note-half-day-morning.vacationOverview-day-sick-note-half-day-noon {
@@ -69,11 +69,11 @@
 }
 
 .vacationOverview-day-sick-note-half-day-morning.vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-    background: linear-gradient(90deg, #FFC5BF 50%, #B5D0DF 50%);
+    background: linear-gradient(90deg, #FFC5BF 50%, #F9CD13 50%);
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning.vacationOverview-day-sick-note-half-day-noon {
-    background: linear-gradient(90deg, #B5D0DF 50%, #FFC5BF 50%);
+    background: linear-gradient(90deg, #F9CD13 50%, #FFC5BF 50%);
 }
 
 .vacationOverview-day-sick-note-half-day-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
