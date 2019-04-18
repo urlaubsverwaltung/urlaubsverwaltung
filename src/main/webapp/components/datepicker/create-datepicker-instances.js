@@ -5,10 +5,10 @@ import { isWeekend } from 'date-fns';
 
 export default async function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, onSelect) {
 
-  var highlighted;
-  var highlightedAbsences;
+  let highlighted;
+  let highlightedAbsences;
 
-  var selector = selectors.join(",");
+  const selector = selectors.join(",");
 
   if (regional === 'de') {
     const de = await import(/* webpackChunkName: "jquery-ui-datepicker-de" */'jquery-ui/ui/i18n/datepicker-de');
@@ -31,14 +31,14 @@ export default async function createDatepickerInstances(selectors, regional, url
     selectOtherMonths: false,
     beforeShow: function (input, inst) {
 
-      var calendrier = inst.dpDiv;
-      var top = $(this).offset().top + $(this).outerHeight();
-      var left = $(this).offset().left;
+      const calendrier = inst.dpDiv;
+      const top = $(this).offset().top + $(this).outerHeight();
+      const left = $(this).offset().left;
       setTimeout(function () {
         calendrier.css({'top': top, 'left': left});
       }, 10);
 
-      var date;
+      let date;
 
       if ($(input).datepicker("getDate") == null) {
         date = new Date();
@@ -46,10 +46,10 @@ export default async function createDatepickerInstances(selectors, regional, url
         date = $(input).datepicker("getDate");
       }
 
-      var year = date.getFullYear();
-      var month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
 
-      var personId = getPerson();
+      const personId = getPerson();
 
       getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
@@ -62,7 +62,7 @@ export default async function createDatepickerInstances(selectors, regional, url
     },
     onChangeMonthYear: function (year, month) {
 
-      var personId = getPerson();
+      const personId = getPerson();
 
       getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
@@ -85,30 +85,28 @@ export default async function createDatepickerInstances(selectors, regional, url
 
 function getAbsences(data) {
 
-  var absences = [];
+  const absences = [];
 
-  for (var i = 0; i < data.response.absences.length; i++) {
-    var value = data.response.absences[i];
+  for (let i = 0; i < data.response.absences.length; i++) {
+    const value = data.response.absences[i];
     if ($.inArray(value, absences) == -1) {
       absences.push(value);
     }
   }
 
   return absences;
-
 }
 
 function getPublicHolidays(data) {
 
-  var publicHolidayDates = [];
+  const publicHolidayDates = [];
 
-  for (var i = 0; i < data.response.publicHolidays.length; i++) {
-    var value = data.response.publicHolidays[i];
+  for (let i = 0; i < data.response.publicHolidays.length; i++) {
+    const value = data.response.publicHolidays[i];
     publicHolidayDates.push(value);
   }
 
   return publicHolidayDates;
-
 }
 
 function colorizeDate(date, publicHolidays, absences) {
@@ -117,22 +115,22 @@ function colorizeDate(date, publicHolidays, absences) {
     return [true, "notworkday"];
   } else {
 
-    var dateString = $.datepicker.formatDate("yy-mm-dd", date);
+    const dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
-    var isPublicHoliday = isSpecialDay(dateString, publicHolidays);
+    const isPublicHoliday = isSpecialDay(dateString, publicHolidays);
 
-    var absenceType;
+    let absenceType;
     if (isSpecialDay(dateString, absences)) {
       absenceType = getAbsenceType(dateString, absences);
     }
 
-    var isSickDay = absenceType === "SICK_NOTE";
-    var isPersonalHoliday = absenceType === "VACATION";
+    const isSickDay = absenceType === "SICK_NOTE";
+    const isPersonalHoliday = absenceType === "VACATION";
 
-    var isHalfWorkDayMorning = isHalfWorkday(dateString, publicHolidays, 'MORNING') || isHalfWorkday(dateString, absences, 'MORNING');
-    var isHalfWorkDayNoon = isHalfWorkday(dateString, publicHolidays, 'NOON') || isHalfWorkday(dateString, absences, 'NOON');
+    const isHalfWorkDayMorning = isHalfWorkday(dateString, publicHolidays, 'MORNING') || isHalfWorkday(dateString, absences, 'MORNING');
+    const isHalfWorkDayNoon = isHalfWorkday(dateString, publicHolidays, 'NOON') || isHalfWorkday(dateString, absences, 'NOON');
 
-    var cssClasses = [];
+    const cssClasses = [];
 
     if (isPublicHoliday) {
       cssClasses.push("notworkday");
@@ -155,34 +153,24 @@ function colorizeDate(date, publicHolidays, absences) {
     }
 
     return [true, cssClasses.join(" ")];
-
   }
-
 }
 
 function isSpecialDay(formattedDate, specialDays) {
-
-  var day = findWhere(specialDays, {date: formattedDate});
-
+  const day = findWhere(specialDays, {date: formattedDate});
   return day !== undefined && day.dayLength <= 1;
-
 }
 
 function getAbsenceType(formattedDate, absences) {
-
-  var absence = findWhere(absences, {date: formattedDate});
-
+  const absence = findWhere(absences, {date: formattedDate});
   return absence.type;
 }
 
 function isHalfWorkday(formattedDate, holidays, absencePeriodName) {
-
   return findWhere(holidays, {date: formattedDate, absencePeriodName}) !== undefined;
-
 }
 
 function getHighlighted(url, callback) {
-
   $.ajax({
     url: url,
     async: false,
@@ -190,8 +178,6 @@ function getHighlighted(url, callback) {
     type: "GET",
     success: function (data) {
       callback(data);
-
     }
   });
-
 }
