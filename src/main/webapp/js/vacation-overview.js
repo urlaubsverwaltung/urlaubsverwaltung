@@ -59,27 +59,27 @@ $(function () {
                       let absences = response.response.absences;
 
                       if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 1))) {
-                        currentDay.cssClass = 'vacationOverview-day-personal-holiday-status-WAITING vactionOverview-day-item ';
+                        currentDay.cssClass = 'vacationOverview-day-personal-holiday-status-WAITING vacationOverview-day-item ';
                       }
 
                       if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 0.5))) {
-                        currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-WAITING vactionOverview-day-item ';
+                        currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-WAITING vacationOverview-day-item ';
                       }
 
                       if (absences.find(currentValue => compare(currentDay, currentValue, "ALLOWED", "VACATION", 0.5))) {
-                        currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-ALLOWED vactionOverview-day-item ';
+                        currentDay.cssClass = ' vacationOverview-day-personal-holiday-half-day-status-ALLOWED vacationOverview-day-item ';
                       }
 
                       if (absences.find(currentValue => compare(currentDay, currentValue, "ALLOWED", "VACATION", 1))) {
-                        currentDay.cssClass = ' vacationOverview-day-personal-holiday-status-ALLOWED vactionOverview-day-item ';
+                        currentDay.cssClass = ' vacationOverview-day-personal-holiday-status-ALLOWED vacationOverview-day-item ';
                       }
 
                       if (absences.find(currentValue => compare(currentDay, currentValue, "ACTIVE", "SICK_NOTE", 1))) {
-                        currentDay.cssClass = ' vacationOverview-day-sick-note vactionOverview-day-item ';
+                        currentDay.cssClass = ' vacationOverview-day-sick-note vacationOverview-day-item ';
                       }
 
                       if (absences.find(currentValue => compare(currentDay, currentValue, "ACTIVE", "SICK_NOTE", 0.5))) {
-                        currentDay.cssClass = ' vacationOverview-day-sick-note-half-day vactionOverview-day-item ';
+                        currentDay.cssClass = ' vacationOverview-day-sick-note-half-day vacationOverview-day-item ';
                       }
 
                     }, this);
@@ -94,7 +94,7 @@ $(function () {
           overViewList[0].days
             .forEach(
               function (item) {
-                let defaultClasses = "non-sortable vactionOverview-day-item";
+                let defaultClasses = "non-sortable vacationOverview-day-item";
                 if (item.typeOfDay === "WEEKEND") {
                   outputTable += "<th class='" + defaultClasses + "vacationOverview-day-weekend'>" + item.dayNumber + "</th>";
                 } else {
@@ -116,10 +116,10 @@ $(function () {
                   .forEach(
                     function (dayItem) {
                       if (dayItem.typeOfDay === "WEEKEND") {
-                        dayItem.cssClass = ' vacationOverview-day-weekend vactionOverview-day-item';
+                        dayItem.cssClass = ' vacationOverview-day-weekend vacationOverview-day-item';
                       } else {
                         if (!dayItem.cssClass) {
-                          dayItem.cssClass = ' vacationOverview-day vactionOverview-day-item ';
+                          dayItem.cssClass = ' vacationOverview-day vacationOverview-day-item ';
                         }
                       }
                       outputTable += "<td class='" + dayItem.cssClass + "'></td>";
