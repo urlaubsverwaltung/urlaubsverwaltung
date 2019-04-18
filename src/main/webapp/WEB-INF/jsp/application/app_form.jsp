@@ -27,7 +27,7 @@
     <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
     <script defer src="<spring:url value='/assets/npm.jquery-ui-themes.min.js' />"></script>
     <script defer src="<spring:url value='/assets/npm.timepicker.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_detail~app_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form~person_overview.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_form.min.js' />"></script>
 </head>

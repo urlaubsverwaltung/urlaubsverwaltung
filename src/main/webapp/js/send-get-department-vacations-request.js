@@ -1,39 +1,47 @@
-import $ from 'jquery'
-import format from '../lib/date-fns/format'
+// disabling date-fns#format is ok since we're formatting dates for api requests
+// eslint-disable-next-line @urlaubsverwaltung/no-date-fns
+import { isAfter, format } from 'date-fns'
+import { getJSON } from "../js/fetch"
 
-export default function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, element) {
+export default async function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, elementSelector) {
 
-  var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
-  var toDateString = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate();
+  if (!startDate && !endDate) {
+    return;
+  }
 
-  var requestUrl = urlPrefix + "/vacations?departmentMembers=true&from=" + startDateString + "&to=" + toDateString
-    + "&person=" + personId;
+  if (isAfter(startDate, endDate)) {
+    return;
+  }
 
-  $.get(requestUrl, function (data) {
+  const startDateString = format(startDate, "YYYY-MM-DD");
+  const toDateString = format(endDate, "YYYY-MM-DD");
 
-    var vacations = data.response.vacations;
+  const url = `${urlPrefix}/vacations?departmentMembers=true&from=${startDateString}&to=${toDateString}&person=${personId}`;
 
-    var $vacations = $(element);
+  const data = await getJSON(url);
+  const vacations = data.response.vacations;
 
-    $vacations.html("Antr&auml;ge von Mitarbeitern:");
+  const element = document.querySelector(elementSelector);
+  element.innerHTML = "Antr&auml;ge von Mitarbeitern:";
 
-    if(vacations.length > 0) {
-      $.each(vacations, function (idx, vacation) {
-        var startDate = format(vacation.from, "DD.MM.YYYY");
-        var endDate = format(vacation.to, "DD.MM.YYYY");
-        var person = vacation.person.niceName;
+  if(vacations.length > 0) {
+    const html = vacations.map(vacation => createHtmlForVacation(vacation));
+    element.innerHTML += html.join("<br />");
+  } else {
+    element.innerHTML += "&nbsp;Keine";
+  }
+}
 
-        $vacations.append("<br/>" + person + ": " + startDate + " - " + endDate);
+function createHtmlForVacation(vacation) {
+  const startDate = format(vacation.from, "DD.MM.YYYY");
+  const endDate = format(vacation.to, "DD.MM.YYYY");
+  const person = vacation.person.niceName;
 
-        if(vacation.status === "ALLOWED") {
-          $vacations.append(" <i class='fa fa-check positive' aria-hidden='true'></i>");
-        }
+  let html = `${person}: ${startDate} - ${endDate}`;
 
-      });
-    } else {
-      $vacations.append(" Keine");
-    }
+  if(vacation.status === "ALLOWED") {
+    html += "&nbsp;<i class='fa fa-check positive' aria-hidden='true'></i>"
+  }
 
-  });
-
+  return html;
 }

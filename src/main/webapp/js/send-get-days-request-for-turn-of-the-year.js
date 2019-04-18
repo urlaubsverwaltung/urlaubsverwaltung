@@ -1,59 +1,57 @@
-import $ from 'jquery';
+// disabling date-fns#format is ok since we're formatting dates for api requests
+// eslint-disable-next-line @urlaubsverwaltung/no-date-fns
+import { isAfter, getYear, format, endOfYear, startOfYear } from 'date-fns'
 import buildUrl from './build-url';
 import formatNumber from './format-number';
+import { getJSON } from "../js/fetch"
 
-export default function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, element) {
+export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, elementSelector) {
 
-  $(element).empty();
+  const element = document.querySelector(elementSelector);
+  element.innerHTML = "";
 
-  if (startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
-
-    var requestUrl = urlPrefix + "/workdays";
-
-    var text;
-
-    var before;
-    var after;
-
-    if (startDate.getFullYear() < toDate.getFullYear()) {
-      before = startDate;
-      after = toDate;
-    } else {
-      before = toDate;
-      after = startDate;
-    }
-
-    // before - 31.12.
-    // 1.1.   - after
-
-    var daysBefore;
-    var daysAfter;
-
-    var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
-    var toString = before.getFullYear() + '-12-31';
-    var url = buildUrl(requestUrl, startString, toString, dayLength, personId);
-
-    $.get(url, function (data) {
-      var workDaysBefore = data.response.workDays;
-
-      daysBefore = formatNumber(workDaysBefore);
-
-      startString = after.getFullYear() + '-1-1';
-      toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
-      url = buildUrl(requestUrl, startString, toString, dayLength, personId);
-
-      $.get(url, function (data) {
-        var workDaysAfter = data.response.workDays;
-        daysAfter = formatNumber(workDaysAfter);
-
-        text = "<br />(" + daysBefore + " in " + before.getFullYear()
-          + " und " + daysAfter + " in " + after.getFullYear() + ")";
-
-        $(element).html(text);
-      });
-
-    });
-
+  if (!startDate && !toDate) {
+    return;
   }
 
+  if (isAfter(startDate, toDate)) {
+    return;
+  }
+
+  const requestUrl = urlPrefix + "/workdays";
+
+  var before;
+  var after;
+
+  if (getYear(startDate) < getYear(toDate)) {
+    before = startDate;
+    after = toDate;
+  } else {
+    before = toDate;
+    after = startDate;
+  }
+
+  // before - 31.12.
+  // 1.1.   - after
+
+  const [workDaysBefore, workDaysAfter] = await Promise.all([
+    getWorkdaysForDateRange(requestUrl, dayLength, personId, before, endOfYear(before)),
+    getWorkdaysForDateRange(requestUrl, dayLength, personId, startOfYear(after), after)
+  ]);
+
+
+  const daysBefore = formatNumber(workDaysBefore);
+  const daysAfter = formatNumber(workDaysAfter);
+
+  element.innerHTML = `<br />(${daysBefore} in ${getYear(before)} und ${daysAfter} in ${getYear(after)})`;
+}
+
+async function getWorkdaysForDateRange(requestUrl, dayLength, personId, fromDate, toDate) {
+  const startString = format(fromDate, "YYYY-MM-DD");
+  const toString = format(toDate, "YYYY-MM-DD");
+  const url = buildUrl(requestUrl, startString, toString, dayLength, personId);
+
+  const json = await getJSON(url);
+
+  return json.response.workDays;
 }

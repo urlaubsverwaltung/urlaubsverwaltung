@@ -101,7 +101,7 @@ public class ApplicationForLeaveDetailsController {
                     signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
+        int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
 
         prepareDetailView(application, year, action, shortcut, model);
 

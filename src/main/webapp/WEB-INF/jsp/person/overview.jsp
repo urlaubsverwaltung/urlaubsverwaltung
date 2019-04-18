@@ -22,6 +22,7 @@
     </script>
     <script defer src="<spring:url value="/assets/npm.date-fns.min.js" />"></script>
     <script defer src="<spring:url value="/assets/date-fns-localized.min.js" />"></script>
+    <script defer src="<spring:url value="/assets/app_detail~app_form~person_overview.min.js" />"></script>
     <script defer src="<spring:url value="/assets/person_overview.min.js" />"></script>
 </head>
 
