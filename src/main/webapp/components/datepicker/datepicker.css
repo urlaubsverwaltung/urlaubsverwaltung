@@ -56,10 +56,13 @@
   color: #FFF !important;
   background: #B5D0DF !important;
 }
-
-.ui-datepicker-calendar td.notworkday.halfworkday a {
+.ui-datepicker-calendar td.notworkday.halfworkdaymorning a {
   color: #6F6F6F !important;
-  background: linear-gradient(-45deg, #B5D0DF 50%, #FAFAFA 50%) !important;
+  background: linear-gradient(90deg, #B5D0DF 50%, #FAFAFA 50%) !important;
+}
+.ui-datepicker-calendar td.notworkday.halfworkdaynoon a {
+  color: #6F6F6F !important;
+  background: linear-gradient(-90deg, #B5D0DF 50%, #FAFAFA 50%) !important;
 }
 
 /* VACATION */
@@ -67,10 +70,17 @@
   color: #FF881F !important;
   background: #FFEDA0 !important;
 }
-
-.ui-datepicker-calendar td.holiday.halfworkday a {
+.ui-datepicker-calendar td.holiday.halfworkdaymorning a {
   color: #FF881F !important;
-  background: linear-gradient(-45deg, #FFEDA0 50%, #FAFAFA 50%) !important;
+  background: linear-gradient(90deg, #FFEDA0 50%, #FAFAFA 50%) !important;
+}
+.ui-datepicker-calendar td.holiday.halfworkdaynoon a {
+  color: #FF881F !important;
+  background: linear-gradient(-90deg, #FFEDA0 50%, #FAFAFA 50%) !important;
+}
+.ui-datepicker-calendar td.holiday.halfworkdaymorning.holiday.halfworkdaynoon a {
+  color: #FF881F !important;
+  background: #FFEDA0 !important;
 }
 
 /* SICK DAY */
@@ -78,15 +88,23 @@
   color: #DF4737 !important;
   background: #FFC5BF !important;
 }
-
-.ui-datepicker-calendar td.sickday.halfworkday a {
+.ui-datepicker-calendar td.sickday.halfworkdaymorning a {
   color: #DF4737 !important;
-  background: linear-gradient(-45deg, #FFC5BF 50%, #FAFAFA 50%) !important;
+  background: linear-gradient(90deg, #FFC5BF 50%, #FAFAFA 50%) !important;
+}
+.ui-datepicker-calendar td.sickday.halfworkdaynoon a {
+  color: #DF4737 !important;
+  background: linear-gradient(-90deg, #FFC5BF 50%, #FAFAFA 50%) !important;
+}
+.ui-datepicker-calendar td.sickday.halfworkdaynoon.halfworkdaymorning a {
+  color: #DF4737 !important;
+  background: #FFC5BF !important;
 }
 
 /* INTERACTION / HOVER */
 .ui-datepicker-calendar td a:hover,
-.ui-datepicker-calendar td.halfworkday a:hover,
+.ui-datepicker-calendar td.halfworkdaymorning a:hover,
+.ui-datepicker-calendar td.halfworkdaynoon a:hover,
 .ui-datepicker-calendar .ui-state-default.ui-state-active {
   color: #FAFAFA !important;
   background: #7B7B7B !important;

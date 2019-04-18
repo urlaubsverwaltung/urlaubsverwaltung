@@ -129,7 +129,8 @@ function colorizeDate(date, publicHolidays, absences) {
     var isSickDay = absenceType === "SICK_NOTE";
     var isPersonalHoliday = absenceType === "VACATION";
 
-    var isHalfWorkDay = isHalfWorkday(dateString, publicHolidays) || isHalfWorkday(dateString, absences);
+    var isHalfWorkDayMorning = isHalfWorkday(dateString, publicHolidays, 'MORNING') || isHalfWorkday(dateString, absences, 'MORNING');
+    var isHalfWorkDayNoon = isHalfWorkday(dateString, publicHolidays, 'NOON') || isHalfWorkday(dateString, absences, 'NOON');
 
     var cssClasses = [];
 
@@ -137,8 +138,12 @@ function colorizeDate(date, publicHolidays, absences) {
       cssClasses.push("notworkday");
     }
 
-    if (isHalfWorkDay) {
-      cssClasses.push("halfworkday");
+    if (isHalfWorkDayMorning) {
+      cssClasses.push("halfworkdaymorning");
+    }
+
+    if (isHalfWorkDayNoon) {
+      cssClasses.push("halfworkdaynoon");
     }
 
     if (isSickDay) {
@@ -170,9 +175,9 @@ function getAbsenceType(formattedDate, absences) {
   return absence.type;
 }
 
-function isHalfWorkday(formattedDate, holidays) {
+function isHalfWorkday(formattedDate, holidays, absencePeriodName) {
 
-  return findWhere(holidays, {date: formattedDate, dayLength: 0.5}) !== undefined;
+  return findWhere(holidays, {date: formattedDate, absencePeriodName}) !== undefined;
 
 }
 
