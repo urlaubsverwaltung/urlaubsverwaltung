@@ -54,8 +54,7 @@ $(function () {
               if (response) {
 
                 listItem.days
-                  .forEach(
-                    function (currentDay) {
+                  .forEach(currentDay => {
                       let absences = response.response.absences;
 
                       if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 1))) {
@@ -82,7 +81,7 @@ $(function () {
                         currentDay.cssClass = 'vacationOverview-day-sick-note-half-day vacationOverview-day-item';
                       }
 
-                    }, this);
+                  }, this);
               }
             });
 
