@@ -5,12 +5,12 @@ import '../css/vacation-overview.css'
 $(function () {
 
     function selectedItemChange() {
-      var selectedYear = document.querySelector('#yearSelect');
-      var selectedMonth = document.querySelector('#monthSelect');
-      var selectedDepartment = document.querySelector('#departmentSelect');
-      var selectedDepartmentValue = selectedDepartment.options[selectedDepartment.selectedIndex].text;
-      var selectedYearValue = selectedYear.options[selectedYear.selectedIndex].text;
-      var selectedMonthValue = selectedMonth.options[selectedMonth.selectedIndex].value;
+      const selectedYear = document.querySelector('#yearSelect');
+      const selectedMonth = document.querySelector('#monthSelect');
+      const selectedDepartment = document.querySelector('#departmentSelect');
+      const selectedDepartmentValue = selectedDepartment.options[selectedDepartment.selectedIndex].text;
+      const selectedYearValue = selectedYear.options[selectedYear.selectedIndex].text;
+      const selectedMonthValue = selectedMonth.options[selectedMonth.selectedIndex].value;
 
       function compare(currentDay, currentValue, status, type, dayLength) {
         if (currentDay.dayText === currentValue.date
@@ -23,34 +23,34 @@ $(function () {
 
       if (selectedYearValue != null && selectedMonthValue != null
         && selectedDepartmentValue != null) {
-        var url = location.protocol + "//" + location.host
+        const url = location.protocol + "//" + location.host
           + "/api/vacationoverview?selectedYear="
           + encodeURIComponent(selectedYearValue) + "&selectedMonth="
           + encodeURIComponent(selectedMonthValue) + "&selectedDepartment="
           + encodeURIComponent(selectedDepartmentValue);
 
-        var xhttp = new XMLHttpRequest();
+        const xhttp = new XMLHttpRequest();
         xhttp.open("GET", url, false);
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send();
-        var holyDayOverviewResponse = JSON.parse(xhttp.responseText);
+        const holyDayOverviewResponse = JSON.parse(xhttp.responseText);
         if (holyDayOverviewResponse && holyDayOverviewResponse.response) {
 
-          var overViewList = holyDayOverviewResponse.response.list;
+          const overViewList = holyDayOverviewResponse.response.list;
           overViewList
             .forEach(function (listItem) {
-              var personId = listItem.personID;
-              var url = location.protocol + "//"
+              const personId = listItem.personID;
+              const url = location.protocol + "//"
                 + location.host + "/api/absences?year="
                 + encodeURIComponent(selectedYearValue) + "&month="
                 + encodeURIComponent(selectedMonthValue) + "&person="
                 + encodeURIComponent(personId);
-              var xhttp = new XMLHttpRequest();
+              const xhttp = new XMLHttpRequest();
               xhttp.open("GET", url, false);
               xhttp.setRequestHeader("Content-type",
                 "application/json");
               xhttp.send();
-              var response = JSON.parse(xhttp.responseText);
+              const response = JSON.parse(xhttp.responseText);
               if (response) {
 
                 listItem.days
@@ -86,7 +86,7 @@ $(function () {
               }
             });
 
-          var outputTable = "<table cellspacing='0' id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
+          let outputTable = "<table cellspacing='0' id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
           outputTable += "<thead class='hidden-xs'>";
           outputTable += "<tr>";
           outputTable += "<th class='sortable-field'><spring:message code='person.data.firstName'/></th>";
@@ -128,7 +128,7 @@ $(function () {
               }, outputTable);
 
           outputTable += "</tbody></table>";
-          var element = document.querySelector("#vacationOverview");
+          const element = document.querySelector("#vacationOverview");
           element.innerHTML = outputTable;
         }
       }
@@ -143,9 +143,9 @@ $(function () {
       });
     }
 
-    var selectedYear = document.querySelector('#yearSelect');
-    var selectedMonth = document.querySelector('#monthSelect');
-    var selectedDepartment = document.querySelector('#departmentSelect');
+  const selectedYear = document.querySelector('#yearSelect');
+  const selectedMonth = document.querySelector('#monthSelect');
+  const selectedDepartment = document.querySelector('#departmentSelect');
 
     selectedYear.addEventListener("change", function () {
       selectedItemChange();
@@ -156,8 +156,8 @@ $(function () {
     selectedDepartment.addEventListener("change", function () {
       selectedItemChange();
     });
-    var event;
-    if (typeof (Event) === "function") {
+  let event;
+  if (typeof (Event) === "function") {
       event = new Event("change");
     } else {
       event = document.createEvent("Event");
