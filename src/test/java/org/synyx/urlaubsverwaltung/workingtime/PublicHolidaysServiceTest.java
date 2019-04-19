@@ -277,4 +277,40 @@ public class PublicHolidaysServiceTest {
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
+
+    @Test
+    public void ensureGetAbsenceTypeOfDateReturnsZeroWhenDateIsNoPublicHoliday() {
+
+        final LocalDate date = LocalDate.of(2019, 1, 2);
+
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
+        Assert.assertEquals(null, DayLength.ZERO, actual);
+    }
+
+    @Test
+    public void ensureGetAbsenceTypeOfDateReturnsFullWhenDateIsPublicHoliday() {
+
+        final LocalDate date = LocalDate.of(2019, 1, 1);
+
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
+        Assert.assertEquals(null, DayLength.FULL, actual);
+    }
+
+    @Test
+    public void ensureGetAbsenceTypeOfDateReturnsForChristmasEve() {
+
+        final LocalDate date = LocalDate.of(2019, 12, 24);
+
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
+        Assert.assertEquals(null, DayLength.NOON, actual);
+    }
+
+    @Test
+    public void ensureGetAbsenceTypeOfDateReturnsForNewYearsEve() {
+
+        final LocalDate date = LocalDate.of(2019, 12, 31);
+
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
+        Assert.assertEquals(null, DayLength.NOON, actual);
+    }
 }

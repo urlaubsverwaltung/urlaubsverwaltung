@@ -205,15 +205,8 @@ $(function() {
             }
 
             if(_CACHE[type][year]) {
-
               var holiday = findWhere(_CACHE[type][year], {date: formattedDate});
-
-              if (type === 'publicHoliday') {
-                return holiday !== undefined && holiday.absencePeriodName !== 'FULL';
-              } else {
-                return holiday !== undefined;
-              }
-
+              return Boolean(holiday);
             }
 
             return false;

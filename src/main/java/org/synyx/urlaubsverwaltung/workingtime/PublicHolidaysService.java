@@ -63,20 +63,27 @@ public class PublicHolidaysService {
      */
     public BigDecimal getWorkingDurationOfDate(LocalDate date, FederalState federalState) {
 
+        return getAbsenceTypeOfDate(date, federalState).getInverse().getDuration();
+    }
+
+    public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
+
         Settings settings = settingsService.getSettings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
+        DayLength workingTime = DayLength.FULL;
+
         if (isPublicHoliday(date, federalState)) {
             if (DateUtil.isChristmasEve(date)) {
-                return workingTimeSettings.getWorkingDurationForChristmasEve().getDuration();
+                workingTime = workingTimeSettings.getWorkingDurationForChristmasEve();
             } else if (DateUtil.isNewYearsEve(date)) {
-                return workingTimeSettings.getWorkingDurationForNewYearsEve().getDuration();
+                workingTime = workingTimeSettings.getWorkingDurationForNewYearsEve();
             } else {
-                return DayLength.ZERO.getDuration();
+                workingTime = DayLength.ZERO;
             }
         }
 
-        return DayLength.FULL.getDuration();
+        return workingTime.getInverse();
     }
 
 
