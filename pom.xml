@@ -387,7 +387,7 @@
             </goals>
             <phase>test</phase>
             <configuration>
-              <arguments>run test</arguments>
+              <arguments>run test:coverage</arguments>
             </configuration>
           </execution>
         </executions>

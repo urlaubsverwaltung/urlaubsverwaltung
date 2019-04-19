@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "lint": "eslint src/main/webapp",
     "build": "NODE_ENV=production webpack --mode production",
     "build:dev": "NODE_ENV=development webpack --mode development",
@@ -106,8 +107,15 @@
   },
   "jest": {
     "roots": [
-      "<rootDir>/src"
+      "<rootDir>/src/main/webapp"
     ],
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!**/__tests__/**",
+      "!**/WEB-INF/**"
+    ],
+    "coverageDirectory": "<rootDir>/target/js-coverage",
     "testURL": "http://localhost",
     "testEnvironment": "jsdom",
     "moduleNameMapper": {
