@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
+import de.jollyday.HolidayManager;
+import de.jollyday.ManagerParameter;
+import de.jollyday.ManagerParameters;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +23,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -85,7 +89,12 @@ public class VacationDaysServiceTest {
         SettingsService settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService),
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        URL url = cl.getResource("Holidays_de.xml");
+        ManagerParameter managerParameter = ManagerParameters.create(url);
+        HolidayManager holidayManager = HolidayManager.getInstance(managerParameter);
+
+        WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService, holidayManager),
                 workingTimeService, settingsService);
 
         vacationDaysService = new VacationDaysService(calendarService, nowService, applicationService);

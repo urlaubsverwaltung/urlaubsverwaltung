@@ -27,21 +27,14 @@ import java.util.stream.Collectors;
 @Component
 public class PublicHolidaysService {
 
-    private static final String HOLIDAY_DEFINITION_FILE = "Holidays_de.xml";
-
     private final HolidayManager manager;
     private final SettingsService settingsService;
 
     @Autowired
-    public PublicHolidaysService(SettingsService settingsService) {
+    public PublicHolidaysService(SettingsService settingsService, HolidayManager holidayManager) {
 
         this.settingsService = settingsService;
-
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL url = cl.getResource(HOLIDAY_DEFINITION_FILE);
-        ManagerParameter managerParameter = ManagerParameters.create(url);
-
-        this.manager = HolidayManager.getInstance(managerParameter);
+        this.manager = holidayManager;
     }
 
     /**
