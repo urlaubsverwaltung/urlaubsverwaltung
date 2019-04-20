@@ -38,20 +38,6 @@ public class PublicHolidaysService {
     }
 
     /**
-     * Checks if the given date is a public holiday by lookup in the given set of public holidays.
-     *
-     * @param  date  to check if it is a public holiday
-     * @param  federalState  the federal state to consider holiday settings for
-     *
-     * @return  true if the given date is a public holiday, else false
-     */
-    boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-
-        return manager.isHoliday(date, federalState.getCodes());
-    }
-
-
-    /**
      * Returns the working duration for a date: may be full day (1.0) for a non public holiday or zero (0.0) for a
      * public holiday. The working duration for Christmas Eve and New Year's Eve are configured in the business
      * properties; normally the working duration for these holidays is a half day (0.5)
@@ -100,6 +86,10 @@ public class PublicHolidaysService {
         return holidays.stream().filter(byMonth(month)).collect(Collectors.toSet());
     }
 
+    private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+
+        return manager.isHoliday(date, federalState.getCodes());
+    }
 
     private Predicate<Holiday> byMonth(int month) {
 
