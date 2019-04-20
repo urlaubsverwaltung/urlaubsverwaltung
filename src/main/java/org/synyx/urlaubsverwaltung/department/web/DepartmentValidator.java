@@ -56,8 +56,7 @@ public class DepartmentValidator implements Validator {
         validateName(errors, department.getName());
         validateDescription(errors, department.getDescription());
         validateDepartmentHeads(errors, department.getMembers(), department.getDepartmentHeads());
-        validateSecondStageAuthorities(errors, department.isTwoStageApproval(), department.getMembers(),
-            department.getSecondStageAuthorities());
+        validateSecondStageAuthorities(errors, department.isTwoStageApproval(), department.getSecondStageAuthorities());
     }
 
 
@@ -101,25 +100,14 @@ public class DepartmentValidator implements Validator {
     }
 
 
-    private void validateSecondStageAuthorities(Errors errors, boolean twoStageApproval, List<Person> members,
-        List<Person> secondStageAuthorities) {
+    private void validateSecondStageAuthorities(Errors errors, boolean twoStageApproval, List<Person> secondStageAuthorities) {
 
         if (twoStageApproval) {
-            validateAtLeastOneSecondStageAuthoritySet(secondStageAuthorities, errors);
+            validateSecondStageAuthoritiesHaveRequiredRole(secondStageAuthorities, errors);
         } else {
             validateNoSecondStageAuthoritiesSet(secondStageAuthorities, errors);
         }
 
-        validateSecondStageAuthoritiesArePartOfDepartment(secondStageAuthorities, members, errors);
-    }
-
-
-    private void validateAtLeastOneSecondStageAuthoritySet(List<Person> secondStageAuthorities, Errors errors) {
-
-        // there must be at least one second stage authority
-        if (secondStageAuthorities == null || secondStageAuthorities.isEmpty()) {
-            errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_MISSING);
-        }
     }
 
 
@@ -132,21 +120,19 @@ public class DepartmentValidator implements Validator {
     }
 
 
-    private void validateSecondStageAuthoritiesArePartOfDepartment(List<Person> secondStageAuthorities,
-        List<Person> members, Errors errors) {
+    private void validateSecondStageAuthoritiesHaveRequiredRole(List<Person> secondStageAuthorities,
+                                                                Errors errors) {
 
-        if (secondStageAuthorities != null) {
+        if (secondStageAuthorities != null && !secondStageAuthorities.isEmpty()) {
             for (Person secondStage : secondStageAuthorities) {
-                // second stage authority must be member of department
-                if (members == null || !members.contains(secondStage)) {
-                    errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NOT_ASSIGNED);
-                }
 
                 // second stage authority must have required role
                 if (!secondStage.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
                     errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS);
                 }
             }
+        } else {
+            errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_MISSING);
         }
     }
 }

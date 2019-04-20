@@ -173,29 +173,14 @@ public class DepartmentValidatorTest {
 
 
     @Test
-    public void ensureCanNotSetAPersonAsSecondStageAuthorityWithoutSettingThePersonAsMember() {
-
-        Person person = TestDataCreator.createPerson("muster");
-        person.setPermissions(Collections.singletonList(Role.SECOND_STAGE_AUTHORITY));
-
-        Department department = TestDataCreator.createDepartment("Admins");
-        department.setSecondStageAuthorities(Collections.singletonList(person));
-        department.setMembers(Collections.singletonList(TestDataCreator.createPerson("member")));
-
-        sut.validate(department, errors);
-
-        verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageNotAssigned");
-    }
-
-
-    @Test
-    public void ensureCanNotSetAPersonWithoutSecondStageAuthorityRoleAsDepartmentHead() {
+    public void ensureCanNotSetAPersonWithoutSecondStageAuthorityRoleAsSecondStageAutority() {
 
         Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Department department = TestDataCreator.createDepartment("Admins");
         department.setSecondStageAuthorities(Collections.singletonList(person));
+        department.setTwoStageApproval(true);
 
         sut.validate(department, errors);
 
