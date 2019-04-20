@@ -4,7 +4,6 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -17,8 +16,12 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 
 
 /**
@@ -26,7 +29,7 @@ import static org.mockito.Mockito.when;
  */
 public class PublicHolidaysServiceTest {
 
-    private static final FederalState state = FederalState.BADEN_WUERTTEMBERG;
+    private static final FederalState state = BADEN_WUERTTEMBERG;
 
     private PublicHolidaysService publicHolidaysService;
     private SettingsService settingsService;
@@ -53,7 +56,7 @@ public class PublicHolidaysServiceTest {
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
-        Assert.assertTrue("Christmas should be recognized as public holiday", isPublicHoliday);
+        assertTrue("Christmas should be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -64,7 +67,7 @@ public class PublicHolidaysServiceTest {
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
-        Assert.assertFalse("Work day should not be recognized as public holiday", isPublicHoliday);
+        assertFalse("Work day should not be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -75,7 +78,7 @@ public class PublicHolidaysServiceTest {
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
-        Assert.assertTrue("Corpus Christi should be recognized as public holiday", isPublicHoliday);
+        assertTrue("Corpus Christi should be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -86,7 +89,7 @@ public class PublicHolidaysServiceTest {
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
-        Assert.assertTrue("Christmas Eve should be recognized as public holiday", isPublicHoliday);
+        assertTrue("Christmas Eve should be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -97,7 +100,7 @@ public class PublicHolidaysServiceTest {
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate, state);
 
-        Assert.assertTrue("New Years Eve should be recognized as public holiday", isPublicHoliday);
+        assertTrue("New Years Eve should be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -108,7 +111,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
 
 
@@ -119,7 +122,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
 
 
@@ -135,7 +138,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
 
 
@@ -151,7 +154,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
 
 
@@ -167,7 +170,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
+        assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
     }
 
 
@@ -183,7 +186,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
+        assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
     }
 
 
@@ -199,7 +202,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
 
 
@@ -215,7 +218,7 @@ public class PublicHolidaysServiceTest {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
 
 
@@ -225,7 +228,7 @@ public class PublicHolidaysServiceTest {
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(LocalDate.of(2015, Month.AUGUST,
                     15), FederalState.BAYERN_MUENCHEN);
 
-        Assert.assertTrue("Assumption Day should be recognized as public holiday", isPublicHoliday);
+        assertTrue("Assumption Day should be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -235,7 +238,7 @@ public class PublicHolidaysServiceTest {
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(LocalDate.of(2015, Month.AUGUST,
                     15), FederalState.BERLIN);
 
-        Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
+        assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -243,9 +246,9 @@ public class PublicHolidaysServiceTest {
     public void ensureAssumptionDayIsNoPublicHolidayForBadenWuerttemberg() {
 
         boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(LocalDate.of(2015, Month.AUGUST,
-                    15), FederalState.BADEN_WUERTTEMBERG);
+                    15), BADEN_WUERTTEMBERG);
 
-        Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
+        assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
     }
 
 
@@ -255,7 +258,7 @@ public class PublicHolidaysServiceTest {
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
                     Month.AUGUST, 15), FederalState.BERLIN);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
 
 
@@ -263,9 +266,9 @@ public class PublicHolidaysServiceTest {
     public void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-                    Month.AUGUST, 15), FederalState.BADEN_WUERTTEMBERG);
+                    Month.AUGUST, 15), BADEN_WUERTTEMBERG);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
 
 
@@ -275,7 +278,7 @@ public class PublicHolidaysServiceTest {
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
                     Month.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
 
-        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
 
     @Test
@@ -283,8 +286,8 @@ public class PublicHolidaysServiceTest {
 
         final LocalDate date = LocalDate.of(2019, 1, 2);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
-        Assert.assertEquals(null, DayLength.ZERO, actual);
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        assertEquals(null, DayLength.ZERO, actual);
     }
 
     @Test
@@ -292,8 +295,8 @@ public class PublicHolidaysServiceTest {
 
         final LocalDate date = LocalDate.of(2019, 1, 1);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
-        Assert.assertEquals(null, DayLength.FULL, actual);
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        assertEquals(null, DayLength.FULL, actual);
     }
 
     @Test
@@ -301,8 +304,8 @@ public class PublicHolidaysServiceTest {
 
         final LocalDate date = LocalDate.of(2019, 12, 24);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
-        Assert.assertEquals(null, DayLength.NOON, actual);
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        assertEquals(null, DayLength.NOON, actual);
     }
 
     @Test
@@ -310,7 +313,7 @@ public class PublicHolidaysServiceTest {
 
         final LocalDate date = LocalDate.of(2019, 12, 31);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, FederalState.BADEN_WUERTTEMBERG);
-        Assert.assertEquals(null, DayLength.NOON, actual);
+        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        assertEquals(null, DayLength.NOON, actual);
     }
 }
