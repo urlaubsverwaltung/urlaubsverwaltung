@@ -60,7 +60,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-01"
@@ -75,7 +75,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-02"
@@ -90,7 +90,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-03"
@@ -105,7 +105,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-04"
@@ -120,7 +120,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-05"
@@ -135,7 +135,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-06"
@@ -152,7 +152,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-07"
@@ -167,7 +167,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-08"
@@ -182,7 +182,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-09"
@@ -197,7 +197,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-10"
@@ -212,7 +212,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-11"
@@ -227,7 +227,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-12"
@@ -242,7 +242,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-13"
@@ -259,7 +259,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-14"
@@ -274,7 +274,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-15"
@@ -289,7 +289,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-16"
@@ -304,7 +304,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-17"
@@ -319,7 +319,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-18"
@@ -334,7 +334,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-19"
@@ -349,7 +349,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-20"
@@ -366,7 +366,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-21"
@@ -381,7 +381,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-22"
@@ -396,7 +396,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-23"
@@ -411,7 +411,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-24"
@@ -426,7 +426,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-25"
@@ -441,7 +441,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-26"
@@ -456,7 +456,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-27"
@@ -473,7 +473,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-28"
@@ -488,7 +488,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-29"
@@ -503,7 +503,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-30"
@@ -518,7 +518,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-08-31"
@@ -596,7 +596,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-01"
@@ -611,7 +611,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-02"
@@ -626,7 +626,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-03"
@@ -643,7 +643,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-04"
@@ -658,7 +658,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-05"
@@ -673,7 +673,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-06"
@@ -688,7 +688,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-07"
@@ -703,7 +703,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-08"
@@ -718,7 +718,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-09"
@@ -733,7 +733,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-10"
@@ -750,7 +750,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-11"
@@ -765,7 +765,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-12"
@@ -780,7 +780,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-13"
@@ -795,7 +795,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-14"
@@ -810,7 +810,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-15"
@@ -825,7 +825,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-16"
@@ -840,7 +840,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-17"
@@ -857,7 +857,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-18"
@@ -872,7 +872,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-19"
@@ -887,7 +887,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-20"
@@ -902,7 +902,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-21"
@@ -917,7 +917,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-22"
@@ -932,7 +932,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-23"
@@ -947,7 +947,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-24"
@@ -964,7 +964,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-25"
@@ -979,7 +979,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-26"
@@ -994,7 +994,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-27"
@@ -1009,7 +1009,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-28"
@@ -1024,7 +1024,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-29"
@@ -1039,7 +1039,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-09-30"
@@ -1117,7 +1117,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-01"
@@ -1134,7 +1134,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-02"
@@ -1149,7 +1149,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-03"
@@ -1164,7 +1164,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-04"
@@ -1179,7 +1179,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-05"
@@ -1194,7 +1194,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-06"
@@ -1209,7 +1209,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-07"
@@ -1224,7 +1224,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-08"
@@ -1241,7 +1241,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-09"
@@ -1256,7 +1256,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-10"
@@ -1271,7 +1271,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-11"
@@ -1286,7 +1286,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-12"
@@ -1301,7 +1301,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-13"
@@ -1316,7 +1316,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-14"
@@ -1331,7 +1331,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-15"
@@ -1348,7 +1348,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-16"
@@ -1363,7 +1363,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-17"
@@ -1378,7 +1378,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-18"
@@ -1393,7 +1393,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-19"
@@ -1408,7 +1408,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-20"
@@ -1423,7 +1423,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-21"
@@ -1438,7 +1438,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-22"
@@ -1455,7 +1455,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-23"
@@ -1470,7 +1470,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-24"
@@ -1485,7 +1485,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-25"
@@ -1500,7 +1500,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-26"
@@ -1515,7 +1515,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-27"
@@ -1530,7 +1530,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-28"
@@ -1545,7 +1545,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-29"
@@ -1562,7 +1562,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-30"
@@ -1577,7 +1577,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-10-31"
@@ -1655,7 +1655,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-01"
@@ -1670,7 +1670,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-02"
@@ -1685,7 +1685,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-03"
@@ -1700,7 +1700,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-04"
@@ -1715,7 +1715,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-05"
@@ -1732,7 +1732,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-06"
@@ -1747,7 +1747,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-07"
@@ -1762,7 +1762,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-08"
@@ -1777,7 +1777,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-09"
@@ -1792,7 +1792,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-10"
@@ -1807,7 +1807,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-11"
@@ -1822,7 +1822,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-12"
@@ -1839,7 +1839,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-13"
@@ -1854,7 +1854,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-14"
@@ -1869,7 +1869,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-15"
@@ -1884,7 +1884,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-16"
@@ -1899,7 +1899,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-17"
@@ -1914,7 +1914,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-18"
@@ -1929,7 +1929,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-19"
@@ -1946,7 +1946,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-20"
@@ -1961,7 +1961,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-21"
@@ -1976,7 +1976,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-22"
@@ -1991,7 +1991,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-23"
@@ -2006,7 +2006,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-24"
@@ -2021,7 +2021,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-25"
@@ -2036,7 +2036,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend datepicker-day-past      "
+                  class="datepicker-day datepicker-day-weekend datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-26"
@@ -2053,7 +2053,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-27"
@@ -2068,7 +2068,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-28"
@@ -2083,7 +2083,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-29"
@@ -2098,7 +2098,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day   datepicker-day-past      "
+                  class="datepicker-day datepicker-day-past"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-11-30"
@@ -2176,7 +2176,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day datepicker-day-today        "
+                  class="datepicker-day datepicker-day-today"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-01"
@@ -2191,7 +2191,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-02"
@@ -2206,7 +2206,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-03"
@@ -2223,7 +2223,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-04"
@@ -2238,7 +2238,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-05"
@@ -2253,7 +2253,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-06"
@@ -2268,7 +2268,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-07"
@@ -2283,7 +2283,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-08"
@@ -2298,7 +2298,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-09"
@@ -2313,7 +2313,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-10"
@@ -2330,7 +2330,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-11"
@@ -2345,7 +2345,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-12"
@@ -2360,7 +2360,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-13"
@@ -2375,7 +2375,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-14"
@@ -2390,7 +2390,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-15"
@@ -2405,7 +2405,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-16"
@@ -2420,7 +2420,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-17"
@@ -2437,7 +2437,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-18"
@@ -2452,7 +2452,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-19"
@@ -2467,7 +2467,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-20"
@@ -2482,7 +2482,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-21"
@@ -2497,7 +2497,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-22"
@@ -2512,7 +2512,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-23"
@@ -2527,7 +2527,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-24"
@@ -2544,7 +2544,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-25"
@@ -2559,7 +2559,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-26"
@@ -2574,7 +2574,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-27"
@@ -2589,7 +2589,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-28"
@@ -2604,7 +2604,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-29"
@@ -2619,7 +2619,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-30"
@@ -2634,7 +2634,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2017-12-31"
@@ -2691,7 +2691,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-01"
@@ -2706,7 +2706,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-02"
@@ -2721,7 +2721,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-03"
@@ -2736,7 +2736,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-04"
@@ -2751,7 +2751,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-05"
@@ -2766,7 +2766,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-06"
@@ -2781,7 +2781,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-07"
@@ -2798,7 +2798,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-08"
@@ -2813,7 +2813,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-09"
@@ -2828,7 +2828,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-10"
@@ -2843,7 +2843,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-11"
@@ -2858,7 +2858,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-12"
@@ -2873,7 +2873,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-13"
@@ -2888,7 +2888,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-14"
@@ -2905,7 +2905,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-15"
@@ -2920,7 +2920,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-16"
@@ -2935,7 +2935,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-17"
@@ -2950,7 +2950,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-18"
@@ -2965,7 +2965,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-19"
@@ -2980,7 +2980,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-20"
@@ -2995,7 +2995,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-21"
@@ -3012,7 +3012,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-22"
@@ -3027,7 +3027,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-23"
@@ -3042,7 +3042,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-24"
@@ -3057,7 +3057,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-25"
@@ -3072,7 +3072,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-26"
@@ -3087,7 +3087,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-27"
@@ -3102,7 +3102,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-28"
@@ -3119,7 +3119,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-29"
@@ -3134,7 +3134,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-30"
@@ -3149,7 +3149,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-01-31"
@@ -3227,7 +3227,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-01"
@@ -3242,7 +3242,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-02"
@@ -3257,7 +3257,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-03"
@@ -3272,7 +3272,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-04"
@@ -3289,7 +3289,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-05"
@@ -3304,7 +3304,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-06"
@@ -3319,7 +3319,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-07"
@@ -3334,7 +3334,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-08"
@@ -3349,7 +3349,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-09"
@@ -3364,7 +3364,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-10"
@@ -3379,7 +3379,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-11"
@@ -3396,7 +3396,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-12"
@@ -3411,7 +3411,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-13"
@@ -3426,7 +3426,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-14"
@@ -3441,7 +3441,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-15"
@@ -3456,7 +3456,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-16"
@@ -3471,7 +3471,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-17"
@@ -3486,7 +3486,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-18"
@@ -3503,7 +3503,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-19"
@@ -3518,7 +3518,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-20"
@@ -3533,7 +3533,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-21"
@@ -3548,7 +3548,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-22"
@@ -3563,7 +3563,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-23"
@@ -3578,7 +3578,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-24"
@@ -3593,7 +3593,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-25"
@@ -3610,7 +3610,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-26"
@@ -3625,7 +3625,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-27"
@@ -3640,7 +3640,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-02-28"
@@ -3718,7 +3718,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-01"
@@ -3733,7 +3733,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-02"
@@ -3748,7 +3748,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-03"
@@ -3763,7 +3763,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-04"
@@ -3780,7 +3780,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-05"
@@ -3795,7 +3795,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-06"
@@ -3810,7 +3810,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-07"
@@ -3825,7 +3825,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-08"
@@ -3840,7 +3840,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-09"
@@ -3855,7 +3855,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-10"
@@ -3870,7 +3870,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-11"
@@ -3887,7 +3887,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-12"
@@ -3902,7 +3902,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-13"
@@ -3917,7 +3917,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-14"
@@ -3932,7 +3932,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-15"
@@ -3947,7 +3947,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-16"
@@ -3962,7 +3962,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-17"
@@ -3977,7 +3977,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-18"
@@ -3994,7 +3994,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-19"
@@ -4009,7 +4009,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-20"
@@ -4024,7 +4024,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-21"
@@ -4039,7 +4039,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-22"
@@ -4054,7 +4054,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-23"
@@ -4069,7 +4069,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-24"
@@ -4084,7 +4084,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-25"
@@ -4101,7 +4101,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-26"
@@ -4116,7 +4116,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-27"
@@ -4131,7 +4131,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-28"
@@ -4146,7 +4146,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-29"
@@ -4161,7 +4161,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-30"
@@ -4176,7 +4176,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-03-31"
@@ -4254,7 +4254,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-01"
@@ -4271,7 +4271,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-02"
@@ -4286,7 +4286,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-03"
@@ -4301,7 +4301,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-04"
@@ -4316,7 +4316,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-05"
@@ -4331,7 +4331,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-06"
@@ -4346,7 +4346,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-07"
@@ -4361,7 +4361,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-08"
@@ -4378,7 +4378,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-09"
@@ -4393,7 +4393,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-10"
@@ -4408,7 +4408,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-11"
@@ -4423,7 +4423,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-12"
@@ -4438,7 +4438,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-13"
@@ -4453,7 +4453,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-14"
@@ -4468,7 +4468,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-15"
@@ -4485,7 +4485,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-16"
@@ -4500,7 +4500,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-17"
@@ -4515,7 +4515,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-18"
@@ -4530,7 +4530,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-19"
@@ -4545,7 +4545,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-20"
@@ -4560,7 +4560,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-21"
@@ -4575,7 +4575,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-22"
@@ -4592,7 +4592,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-23"
@@ -4607,7 +4607,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-24"
@@ -4622,7 +4622,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-25"
@@ -4637,7 +4637,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-26"
@@ -4652,7 +4652,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-27"
@@ -4667,7 +4667,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-28"
@@ -4682,7 +4682,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-29"
@@ -4699,7 +4699,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-04-30"
@@ -4777,7 +4777,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-01"
@@ -4792,7 +4792,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-02"
@@ -4807,7 +4807,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-03"
@@ -4822,7 +4822,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-04"
@@ -4837,7 +4837,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-05"
@@ -4852,7 +4852,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-06"
@@ -4869,7 +4869,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-07"
@@ -4884,7 +4884,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-08"
@@ -4899,7 +4899,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-09"
@@ -4914,7 +4914,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-10"
@@ -4929,7 +4929,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-11"
@@ -4944,7 +4944,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-12"
@@ -4959,7 +4959,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-13"
@@ -4976,7 +4976,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-14"
@@ -4991,7 +4991,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-15"
@@ -5006,7 +5006,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-16"
@@ -5021,7 +5021,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-17"
@@ -5036,7 +5036,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-18"
@@ -5051,7 +5051,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-19"
@@ -5066,7 +5066,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-20"
@@ -5083,7 +5083,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-21"
@@ -5098,7 +5098,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-22"
@@ -5113,7 +5113,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-23"
@@ -5128,7 +5128,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-24"
@@ -5143,7 +5143,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-25"
@@ -5158,7 +5158,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-26"
@@ -5173,7 +5173,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day  datepicker-day-weekend       "
+                  class="datepicker-day datepicker-day-weekend"
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-27"
@@ -5190,7 +5190,7 @@ exports[`calendar renders 1`] = `
             <tr>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-28"
@@ -5205,7 +5205,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-29"
@@ -5220,7 +5220,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-30"
@@ -5235,7 +5235,7 @@ exports[`calendar renders 1`] = `
               </td>
               <td>
                 <span
-                  class="datepicker-day         "
+                  class="datepicker-day "
                   data-datepicker-absence-id="-1"
                   data-datepicker-absence-type=""
                   data-datepicker-date="2018-05-31"
