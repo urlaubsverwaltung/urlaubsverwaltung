@@ -109,55 +109,68 @@
     font-weight: normal;
 }
 .datepicker-day {
+    --background-color-left: #E5E5E5;
+    --background-color-right: #E5E5E5;
+    --font-color: #6F6F6F;
     display: block;
     padding: 12px;
-    background-color: #E5E5E5;
+    background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
     cursor: default;
-    color: #6F6F6F;
+    color: var(--font-color);
 }
 
 /* NOTE: Order of the day classes is very important because of css classes overloading! */
 
 /* must be the first special day, so other special days are overriding this */
 .datepicker-day-past {
-    background-color: #EFEFEF;
-    color: #AFAFAF;
-    opacity: .8;
+  --background-color-left: #EFEFEF;
+  --background-color-right: #EFEFEF;
+  --font-color: #AFAFAF;
+  opacity: .8;
 }
 
 .datepicker-day-personal-holiday.datepicker-day-absence-morning {
-    background: linear-gradient(90deg, #FFEDA0 50%, #EFEFEF 50%);
+  --background-color-left: #FFEDA0;
+  --background-color-right: #EFEFEF;
 }
 .datepicker-day-personal-holiday.datepicker-day-absence-noon {
-    background: linear-gradient(-90deg, #FFEDA0 50%, #EFEFEF 50%);
+  --background-color-left: #EFEFEF;
+  --background-color-right: #FFEDA0;
 }
 .datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon {
-    background: #FFEDA0;
+  --background-color-left: #FFEDA0;
+  --background-color-right: #FFEDA0;
 }
 
 .datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-past {
-    background: linear-gradient(90deg, #FFEDA0 50%, #EFEFEF 50%);
+  --background-color-left: #FFEDA0;
+  --background-color-right: #EFEFEF;
 }
 .datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-past {
-    background: linear-gradient(-90deg, #FFEDA0 50%, #EFEFEF 50%);
+  --background-color-left: #EFEFEF;
+  --background-color-right: #FFEDA0;
 }
 .datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past {
-    background: #FFEDA0;
+  --background-color-left: #FFEDA0;
+  --background-color-right: #FFEDA0;
 }
 
 .datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-status-ALLOWED,
 .datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-past.datepicker-day-status-ALLOWED {
-    background: linear-gradient(90deg, #FFE57F 50%, #EFEFEF 50%);
-    color: #FF881F;
+  --background-color-left: #FFE57F;
+  --background-color-right: #EFEFEF;
+  --font-color: #FF881F;
 }
 .datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-status-ALLOWED,
 .datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-past.datepicker-day-status-ALLOWED {
-    background: linear-gradient(-90deg, #FFE57F 50%, #EFEFEF 50%);
-    color: #FF881F;
+  --background-color-left: #EFEFEF;
+  --background-color-right: #FFE57F;
+  --font-color: #FF881F;
 }
 .datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-status-ALLOWED,
 .datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past.datepicker-day-status-ALLOWED {
-    background: #FFE57F;
+  --background-color-left: #FFE57F;
+  --background-color-right: #FFE57F;
 }
 
 
@@ -167,7 +180,8 @@
 
 .datepicker-day-today,
 .datepicker-day:not([data-datepicker-selectable=false]):hover {
-    background-color: #CFCFCF;
+  --background-color-left: #CFCFCF;
+  --background-color-right: #CFCFCF;
 }
 
 .datepicker-day-today.datepicker-day:not([data-datepicker-selectable=false]):hover,
@@ -175,21 +189,24 @@
 .datepicker-day-selected,
 .datepicker-day-selected.datepicker-day-absence-morning,
 .datepicker-day-selected.datepicker-day-absence-noon {
-    color: #5F5F5F;
-    background-color: #BFBFBF;
+  --background-color-left: #BFBFBF;
+  --background-color-right: #BFBFBF;
+  --font-color: #5F5F5F;
 }
 
 .datepicker-day-personal-holiday {
-    color: #5F5F5F;
-    background-color: #FFEDA0;
+  --background-color-left: #FFEDA0;
+  --background-color-right: #FFEDA0;
+  --font-color: #5F5F5F;
 }
 
 .datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-status-ALLOWED {
-    color: #FF881F;
+  --font-color: #FF881F;
 }
 
 .datepicker-day:not([data-datepicker-selectable=false]).datepicker-day-personal-holiday:hover {
-    background-color: #FFDF5F;
+  --background-color-left: #FFDF5F;
+  --background-color-right: #FFDF5F;
 }
 
 .datepicker-day-personal-holiday.datepicker-day-absence-morning:hover,
@@ -197,8 +214,8 @@
 .datepicker-day-selected.datepicker-day-personal-holiday,
 .datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-morning,
 .datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-noon {
-    background: none;
-    background-color: #FFDF5F;
+  --background-color-left: #FFDF5F;
+  --background-color-right: #FFDF5F;
 }
 
 .datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-morning.datepicker-day-status-ALLOWED:hover,
@@ -206,99 +223,120 @@
 .datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-status-ALLOWED,
 .datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-morning.datepicker-day-status-ALLOWED,
 .datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-absence-noon.datepicker-day-status-ALLOWED {
-    background: none;
-    background-color: #FFE57F;
+  --background-color-left: #FFE57F;
+  --background-color-right: #FFE57F;
 }
 
 .datepicker-day-sick-note.datepicker-day-absence-morning {
-    background: linear-gradient(90deg, #FFC5BF 50%, #EFEFEF 50%);
+  --background-color-left: #FFC5BF;
+  --background-color-right: #EFEFEF;
 }
 .datepicker-day-sick-note.datepicker-day-absence-noon {
-    background: linear-gradient(-90deg, #FFC5BF 50%, #EFEFEF 50%);
+  --background-color-left: #EFEFEF;
+  --background-color-right: #FFC5BF;
 }
 .datepicker-day-sick-note.datepicker-day-absence-morning.datepicker-day-absence-noon {
-    background: #FFC5BF;
+  --background-color-left: #FFC5BF;
+  --background-color-right: #FFC5BF;
 }
 
 .datepicker-day-sick-note.datepicker-day-absence-morning.datepicker-day-past {
-    background: linear-gradient(90deg, #FFC5BF 50%, #EFEFEF 50%);
+  --background-color-left: #FFC5BF;
+  --background-color-right: #EFEFEF;
 }
 .datepicker-day-sick-note.datepicker-day-absence-noon.datepicker-day-past {
-    background: linear-gradient(-90deg, #FFC5BF 50%, #EFEFEF 50%);
+  --background-color-left: #EFEFEF;
+  --background-color-right: #FFC5BF;
 }
 .datepicker-day-sick-note.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past {
-    background: #FFC5BF;
+  --background-color-left: #FFC5BF;
+  --background-color-right: #FFC5BF;
 }
 
 .datepicker-day-sick-note {
-    color: #DF4737;
-    background-color: #FFC5BF;
+  --background-color-left: #FFC5BF;
+  --background-color-right: #FFC5BF;
+  --font-color: #DF4737;
 }
 
 .datepicker-day:not([data-datepicker-selectable=false]).datepicker-day-sick-note:hover {
-    color: #DF4737;
-    background-color: #FFA89F;
+  --background-color-left: #FFA89F;
+  --background-color-right: #FFA89F;
+  --font-color: #DF4737;
 }
 
 .datepicker-day-sick-note.datepicker-day-absence-morning:hover,
 .datepicker-day-sick-note.datepicker-day-absence-noon:hover {
-    background: none;
-    color: #DF4737;
-    background-color: #FFA89F;
+  --background-color-left: #FFA89F;
+  --background-color-right: #FFA89F;
+  --font-color: #DF4737;
 }
 
 .datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-morning.datepicker-day-status-ALLOWED {
-    background: linear-gradient(90deg, #FFE57F 50%, #EFEFEF 50%);
+  --background-color-left: #FFE57F;
+  --background-color-right: #EFEFEF;
 }
 .datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-noon.datepicker-day-status-ALLOWED {
-    background: linear-gradient(-90deg, #FFE57F 50%, #EFEFEF 50%);
+  --background-color-left: #EFEFEF;
+  --background-color-right: #FFE57F;
 }
 .datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-status-ALLOWED {
-    background: #FFE57F;
+  --background-color-left: #FFE57F;
+  --background-color-right: #FFE57F;
 }
 
 /* public holidays must be the last calendar day treatment */
 /* to override all other absences */
 .datepicker-day-public-holiday,
 .datepicker-day-weekend {
-  color: #FFF;
-  background-color: #B5D0DF;
+  --background-color-left: #B5D0DF;
+  --background-color-right: #B5D0DF;
+  --font-color: #FFF;
 }
 
 .datepicker-day-public-holiday.datepicker-day-absence-morning {
-  background: linear-gradient(90deg, #B5D0DF 50%, #E5E5E5 50%);
-  color: #6F6F6F;
+  --background-color-left: #B5D0DF;
+  --background-color-right: #E5E5E5;
+  --font-color: #6F6F6F;
 }
 .datepicker-day-public-holiday.datepicker-day-absence-noon {
-  background: linear-gradient(-90deg, #B5D0DF 50%, #E5E5E5 50%);
-  color: #6F6F6F;
+  --background-color-left: #E5E5E5;
+  --background-color-right: #B5D0DF;
+  --font-color: #6F6F6F;
 }
 .datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon {
-  background: #B5D0DF;
+  --background-color-left: #B5D0DF;
+  --background-color-right: #B5D0DF;
 }
 
 .datepicker-day-public-holiday.datepicker-day-absence-morning:hover {
-  background: linear-gradient(90deg, #B5D0DF 50%, #CFCFCF 50%);
-  color: #FFF;
+  --background-color-left: #B5D0DF;
+  --background-color-right: #CFCFCF;
+  --font-color: #FFF;
 }
 .datepicker-day-public-holiday.datepicker-day-absence-noon:hover {
-  background: linear-gradient(-90deg, #B5D0DF 50%, #CFCFCF 50%);
-  color: #FFF;
+  --background-color-left: #CFCFCF;
+  --background-color-right: #B5D0DF;
+  --font-color: #FFF;
 }
 .datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon:hover {
-  background: #B5D0DF;
+  --background-color-left: #B5D0DF;
+  --background-color-right: #B5D0DF;
 }
 
 .datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-past {
-  background: linear-gradient(90deg, #B5D0DF 50%, #EFEFEF 50%);
-  color: #AFAFAF;
+  --background-color-left: #B5D0DF;
+  --background-color-right: #EFEFEF;
+  --font-color: #AFAFAF;
 }
 .datepicker-day-public-holiday.datepicker-day-absence-noon.datepicker-day-past {
-  background: linear-gradient(-90deg, #B5D0DF 50%, #EFEFEF 50%);
-  color: #AFAFAF;
+  --background-color-left: #EFEFEF;
+  --background-color-right: #B5D0DF;
+  --font-color: #AFAFAF;
 }
 .datepicker-day-public-holiday.datepicker-day-absence-morning.datepicker-day-absence-noon.datepicker-day-past {
-  background: #B5D0DF;
+  --background-color-left: #B5D0DF;
+  --background-color-right: #B5D0DF;
 }
 
 
