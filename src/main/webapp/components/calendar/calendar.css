@@ -112,7 +112,7 @@
     --background-color-left: #E5E5E5;
     --background-color-right: #E5E5E5;
     --font-color: #6F6F6F;
-    display: block;
+    display: table-cell;
     padding: 12px;
     background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
     cursor: default;

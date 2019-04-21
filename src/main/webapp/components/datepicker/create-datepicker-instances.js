@@ -3,6 +3,8 @@ import { findWhere } from 'underscore';
 import datepicker from './datepicker';
 import { isWeekend } from 'date-fns';
 
+import '../calendar/calendar.css';
+
 export default async function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, onSelect) {
 
   let highlighted;
@@ -112,62 +114,46 @@ function getPublicHolidays(data) {
 function colorizeDate(date, publicHolidays, absences) {
 
   if (isWeekend(date)) {
-    return [true, "notworkday"];
+    return [true, "datepicker-day datepicker-day-weekend"];
   } else {
 
     const dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
-    const isPublicHoliday = isSpecialDay(dateString, publicHolidays);
+    const fitsCriteria = (list, filterAttributes) => Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
 
-    let absenceType;
-    if (isSpecialDay(dateString, absences)) {
-      absenceType = getAbsenceType(dateString, absences);
-    }
+    const isPast = () => false;
+    const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: 'FULL'});
+    const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: 'MORNING'});
+    const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: 'NOON'});
+    const isPersonalHolidayFull = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'FULL', status: 'WAITING'});
+    const isPersonalHolidayFullApproved = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'FULL', status: 'ALLOWED'});
+    const isPersonalHolidayMorning = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'MORNING', status: 'WAITING'});
+    const isPersonalHolidayMorningApproved = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'MORNING', status: 'ALLOWED'});
+    const isPersonalHolidayNoon = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'NOON', status: 'WAITING'});
+    const isPersonalHolidayNoonApproved = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'NOON', status: 'ALLOWED'});
+    const isSickDayFull = () => fitsCriteria(absences, { type: 'SICK_NOTE', absencePeriodName: 'FULL'});
+    const isSickDayMorning = () => fitsCriteria(absences, { type: 'SICK_NOTE', absencePeriodName: 'MORNING'});
+    const isSickDayNoon = () => fitsCriteria(absences, { type: 'SICK_NOTE', absencePeriodName: 'NOON'});
 
-    const isSickDay = absenceType === "SICK_NOTE";
-    const isPersonalHoliday = absenceType === "VACATION";
+    const cssClasses = [
+      'datepicker-day',
+      isPast() && 'datepicker-day-past',
+      isPublicHolidayFull() && 'datepicker-day-public-holiday-full',
+      isPublicHolidayMorning() && 'datepicker-day-public-holiday-morning',
+      isPublicHolidayNoon() && 'datepicker-day-public-holiday-noon',
+      isPersonalHolidayFull() && 'datepicker-day-personal-holiday-full',
+      isPersonalHolidayFullApproved() && 'datepicker-day-personal-holiday-full-approved',
+      isPersonalHolidayMorning() && 'datepicker-day-personal-holiday-morning',
+      isPersonalHolidayMorningApproved() && 'datepicker-day-personal-holiday-morning-approved',
+      isPersonalHolidayNoon() && 'datepicker-day-personal-holiday-noon',
+      isPersonalHolidayNoonApproved() && 'datepicker-day-personal-holiday-noon-approved',
+      isSickDayFull() && 'datepicker-day-sick-note-full',
+      isSickDayMorning() && 'datepicker-day-sick-note-morning',
+      isSickDayNoon() && 'datepicker-day-sick-note-noon',
+    ].filter(Boolean);
 
-    const isHalfWorkDayMorning = isHalfWorkday(dateString, publicHolidays, 'MORNING') || isHalfWorkday(dateString, absences, 'MORNING');
-    const isHalfWorkDayNoon = isHalfWorkday(dateString, publicHolidays, 'NOON') || isHalfWorkday(dateString, absences, 'NOON');
-
-    const cssClasses = [];
-
-    if (isPublicHoliday) {
-      cssClasses.push("notworkday");
-    }
-
-    if (isHalfWorkDayMorning) {
-      cssClasses.push("halfworkdaymorning");
-    }
-
-    if (isHalfWorkDayNoon) {
-      cssClasses.push("halfworkdaynoon");
-    }
-
-    if (isSickDay) {
-      cssClasses.push("sickday");
-    }
-
-    if (isPersonalHoliday) {
-      cssClasses.push("holiday");
-    }
-
-    return [true, cssClasses.join(" ")];
+    return [true, cssClasses.join(" ").trim()];
   }
-}
-
-function isSpecialDay(formattedDate, specialDays) {
-  const day = findWhere(specialDays, {date: formattedDate});
-  return day !== undefined && day.dayLength <= 1;
-}
-
-function getAbsenceType(formattedDate, absences) {
-  const absence = findWhere(absences, {date: formattedDate});
-  return absence.type;
-}
-
-function isHalfWorkday(formattedDate, holidays, absencePeriodName) {
-  return findWhere(holidays, {date: formattedDate, absencePeriodName}) !== undefined;
 }
 
 function getHighlighted(url, callback) {
