@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -75,6 +74,8 @@ public class TestDataCreationService {
             "boss@firma.test", TestUser.BOSS.getRoles());
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
             "office@firma.test", TestUser.OFFICE.getRoles());
+
+        personDataProvider.createTestPerson("admin", PASSWORD, "Senor", "Operation", "admin@firma.test", TestUser.ADMIN.getRoles());
 
         Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
             "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
