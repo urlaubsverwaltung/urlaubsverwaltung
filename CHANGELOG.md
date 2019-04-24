@@ -1,5 +1,6 @@
 ### master/unreleased
 * Upgrade jquery to 3.4.1 [#679](https://github.com/synyx/urlaubsverwaltung/pull/679)
+* Allow assignment of departments for bosses [#317](https://github.com/synyx/urlaubsverwaltung/issues/317) [#374](https://github.com/synyx/urlaubsverwaltung/issues/374)
 
 ### [urlaubsverwaltung-2.41.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.41.0)
 * Show morning, noon and full absence in calendar [#624](https://github.com/synyx/urlaubsverwaltung/issues/624)
