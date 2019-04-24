@@ -82,18 +82,18 @@ public class ApplicationForLeaveController {
             return getApplicationsForLeaveForBossOrOffice();
         }
 
-        List<ApplicationForLeave> applicationForLeave = new ArrayList<>();
+        List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
         if (isSecondStage) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
-            applicationForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));
+            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));
         }
 
         if (isHeadOf) {
             // Department head can see only waiting applications for leave of certain department(s)
-            applicationForLeave.addAll(getApplicationsForLeaveForDepartmentHead(user));
+            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(user));
         }
 
-        return applicationForLeave.stream().filter(distinctByKey(ApplicationForLeave::getId)).collect(toList());
+        return applicationsForLeave.stream().filter(distinctByKey(ApplicationForLeave::getId)).collect(toList());
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
