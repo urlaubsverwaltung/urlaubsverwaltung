@@ -230,9 +230,13 @@
                                         <form:checkbox path="permissions" value="BOSS"/><spring:message
                                         code="person.form.permissions.roles.BOSS"/>
                                     </label>
-                                    <label class="person--mail-notification">
-                                        <form:checkbox path="notifications" value="NOTIFICATION_BOSS"/>
-                                        <spring:message code="person.form.notifications.BOSS"/>
+                                    <label>
+                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_ALL" />
+                                        <spring:message code="person.form.notifications.BOSS.all"/>
+                                    </label>
+                                    <label>
+                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_DEPARTMENTS" />
+                                        <spring:message code="person.form.notifications.BOSS.departments"/>
                                     </label>
                                 </div>
 

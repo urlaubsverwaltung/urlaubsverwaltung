@@ -352,7 +352,7 @@ public class PersonValidatorTest {
     public void ensureBossMailNotificationIsOnlyValidIfBossRoleSelected() {
 
         person.setPermissions(singletonList(Role.USER));
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
 
         validator.validateNotifications(person, errors);
 
@@ -364,7 +364,7 @@ public class PersonValidatorTest {
     public void ensureOfficeMailNotificationIsOnlyValidIfOfficeRoleSelected() {
 
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS,
+        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL,
                 MailNotification.NOTIFICATION_OFFICE));
 
         validator.validateNotifications(person, errors);
@@ -403,7 +403,7 @@ public class PersonValidatorTest {
     public void ensureValidNotificationSelectionForBossHasNoValidationError() {
 
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
 
         validator.validatePermissions(person, errors);
 

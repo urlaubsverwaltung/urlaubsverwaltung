@@ -54,10 +54,10 @@ public class PersonTest {
     public void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
         Person person = TestDataCreator.createPerson();
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
 
         Assert.assertTrue("Should return true if the person has the given notification type",
-            person.hasNotificationType(MailNotification.NOTIFICATION_BOSS));
+            person.hasNotificationType(MailNotification.NOTIFICATION_BOSS_ALL));
     }
 
 
@@ -68,7 +68,7 @@ public class PersonTest {
         person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
 
         Assert.assertFalse("Should return false if the person has not the given notification type",
-            person.hasNotificationType(MailNotification.NOTIFICATION_BOSS));
+            person.hasNotificationType(MailNotification.NOTIFICATION_BOSS_ALL));
     }
 
 
@@ -124,7 +124,7 @@ public class PersonTest {
         person.setNotifications(modifiableList);
 
         try {
-            person.getNotifications().add(MailNotification.NOTIFICATION_BOSS);
+            person.getNotifications().add(MailNotification.NOTIFICATION_BOSS_ALL);
             Assert.fail("Notifications should be unmodifiable!");
         } catch (UnsupportedOperationException ex) {
             // Expected

@@ -180,7 +180,10 @@ class PersonValidator implements Validator {
                 MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY, errors);
 
             validateCombinationOfNotificationAndRole(roles, notifications, Role.BOSS,
-                MailNotification.NOTIFICATION_BOSS, errors);
+                MailNotification.NOTIFICATION_BOSS_ALL, errors);
+
+            validateCombinationOfNotificationAndRole(roles, notifications, Role.BOSS,
+                MailNotification.NOTIFICATION_BOSS_DEPARTMENTS, errors);
 
             validateCombinationOfNotificationAndRole(roles, notifications, Role.OFFICE,
                 MailNotification.NOTIFICATION_OFFICE, errors);

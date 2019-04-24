@@ -80,7 +80,7 @@ class PersonDataProvider {
         }
 
         if (roles.contains(Role.BOSS)) {
-            notifications.add(MailNotification.NOTIFICATION_BOSS);
+            notifications.add(MailNotification.NOTIFICATION_BOSS_ALL);
         }
 
         if (roles.contains(Role.OFFICE)) {

@@ -14,6 +14,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 
 /**
  * Provides functionality to get the correct mail recipients for different use cases.
@@ -76,29 +78,44 @@ class RecipientService {
 
         Person applicationPerson = application.getPerson();
 
-        List<Person> bosses = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+        List<Person> bosses = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL);
+
+        List<Person> relevantBosses =
+            personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_DEPARTMENTS).stream()
+            .filter(bossesForDepartmentOf(applicationPerson))
+            .collect(toList());
 
         if (applicationPerson.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            return bosses;
+            return concat(bosses, relevantBosses);
         }
 
         if (applicationPerson.hasRole(Role.DEPARTMENT_HEAD)) {
             List<Person> secondStageAuthorities = getResponsibleSecondStageAuthorities(applicationPerson);
             List<Person> responsibleDepartmentHeads = getResponsibleDepartmentHeads(applicationPerson);
-            return concat(bosses, secondStageAuthorities, responsibleDepartmentHeads);
+            return concat(bosses, relevantBosses, secondStageAuthorities, responsibleDepartmentHeads);
         }
 
         //boss and user
         List<Person> responsibleDepartmentHeads = getResponsibleDepartmentHeads(applicationPerson);
-        return concat(bosses, responsibleDepartmentHeads);
+        return concat(bosses, relevantBosses, responsibleDepartmentHeads);
+    }
+
+    private Predicate<Person> bossesForDepartmentOf(Person applicationPerson) {
+        return boss ->
+            departmentService.getAssignedDepartmentsOfMember(applicationPerson).stream()
+                .anyMatch(depOfAssignedMember -> departmentService.getAssignedDepartmentsOfMember(boss).contains(depOfAssignedMember));
     }
 
     private static List<Person> concat(List<Person> list1, List<Person> list2) {
-        return Stream.concat(list1.stream(), list2.stream()).collect(Collectors.toList());
+        return Stream.concat(list1.stream(), list2.stream()).collect(toList());
     }
 
     private static List<Person> concat(List<Person> list1, List<Person> list2, List<Person> list3) {
         return concat(concat(list1, list2), list3);
+    }
+
+    private static List<Person> concat(List<Person> list1, List<Person> list2, List<Person> list3, List<Person> list4) {
+        return concat(concat(list1, list2), concat(list3, list4));
     }
 
     private List<Person> getResponsibleSecondStageAuthorities(Person applicationPerson) {
@@ -109,7 +126,7 @@ class RecipientService {
                 .stream()
                 .filter(responsibleSecondStageAuthority)
                 .filter(without(applicationPerson))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private static Predicate<Person> without(Person applicationPerson) {
@@ -124,7 +141,7 @@ class RecipientService {
                     .stream()
                     .filter(responsibleDepartmentHeads)
                     .filter(without(applicationPerson))
-                    .collect(Collectors.toList());
+                    .collect(toList());
     }
 
 }
