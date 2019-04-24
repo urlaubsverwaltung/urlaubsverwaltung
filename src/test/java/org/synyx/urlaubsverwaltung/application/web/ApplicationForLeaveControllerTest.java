@@ -211,7 +211,7 @@ public class ApplicationForLeaveControllerTest {
         applicationOfSecondStage.setEndDate(LocalDate.MAX);
 
         when(personService.getSignedInUser()).thenReturn(secondStagePerson);
-        when(departmentService.getMembersForSecondStageAuthority(secondStagePerson)).thenReturn(asList(secondStagePerson, person, officePerson));
+        when(departmentService.getManagedMembersForSecondStageAuthority(secondStagePerson)).thenReturn(asList(secondStagePerson, person, officePerson));
         when(applicationService.getApplicationsForACertainState(WAITING)).thenReturn(asList(applicationOfBoss, applicationOfSecondStage));
         when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED)).thenReturn(singletonList(application));
 
@@ -254,7 +254,7 @@ public class ApplicationForLeaveControllerTest {
         applicationOfUserB.setEndDate(LocalDate.MAX);
 
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
-        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentA));
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentA));
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentB));
         when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
             .thenReturn(singletonList(applicationOfUserA));
@@ -298,7 +298,7 @@ public class ApplicationForLeaveControllerTest {
 
 
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
-        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartment));
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartment));
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartment));
         when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
             .thenReturn(singletonList(temporaryAllowedApplication));

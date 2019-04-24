@@ -130,7 +130,7 @@ public class ApplicationForLeaveController {
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
 
         List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
-        List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
+        List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
 
         return applications.stream()
             .filter(includeApplicationsOf(members))

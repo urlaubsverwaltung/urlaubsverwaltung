@@ -114,7 +114,7 @@ public interface DepartmentService {
      *
      * @return  all unique members of the departments where the given person is the secondStageAuthority
      */
-    List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority);
+    List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority);
 
 
     /**

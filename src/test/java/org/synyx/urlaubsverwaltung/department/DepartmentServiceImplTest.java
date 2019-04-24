@@ -156,6 +156,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsAllMembersOfTheManagedDepartmentsOfTheDepartmentHead() {
 
         Person departmentHead = mock(Person.class);
+        Person secondDepartmentHead = mock(Person.class);
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person admin2 = TestDataCreator.createPerson("admin2");
@@ -165,10 +166,13 @@ public class DepartmentServiceImplTest {
         Person marketing3 = TestDataCreator.createPerson("marketing3");
 
         Department admins = TestDataCreator.createDepartment("admins");
-        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
+        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead, secondDepartmentHead));
+        admins.setDepartmentHeads(Arrays.asList(departmentHead, secondDepartmentHead));
 
         Department marketing = TestDataCreator.createDepartment("marketing");
-        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, departmentHead));
+        Person secondStageAuth = mock(Person.class);
+        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, departmentHead, secondStageAuth));
+        marketing.setSecondStageAuthorities(Collections.singletonList(secondStageAuth));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Arrays.asList(admins, marketing));
 
@@ -457,6 +461,7 @@ public class DepartmentServiceImplTest {
         Department dep = TestDataCreator.createDepartment("dep");
         dep.setMembers(Arrays.asList(secondStageAuthority, departmentHead));
 
+
         when(departmentRepository.getManagedDepartments(departmentHead))
             .thenReturn(Collections.singletonList(dep));
 
@@ -471,13 +476,15 @@ public class DepartmentServiceImplTest {
         throws IllegalAccessException {
 
         Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
-        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
 
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
-        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
         Department dep = TestDataCreator.createDepartment("dep");
         dep.setMembers(Arrays.asList(secondStageAuthority, departmentHead));
+        dep.setSecondStageAuthorities(Collections.singletonList(secondStageAuthority));
+        dep.setDepartmentHeads(Collections.singletonList(departmentHead));
 
         when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority)).thenReturn(Collections.singletonList(dep));
 
