@@ -182,7 +182,7 @@ public class DepartmentServiceImplTest {
         List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
 
         Assert.assertNotNull("Should not be null", members);
-        Assert.assertEquals("Wrong number of members", 6, members.size());
+        Assert.assertEquals("Wrong number of members", 7, members.size());
     }
 
 

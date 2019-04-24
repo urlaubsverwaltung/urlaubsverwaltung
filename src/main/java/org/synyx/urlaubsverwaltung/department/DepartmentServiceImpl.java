@@ -153,7 +153,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departments.forEach(department -> relevantPersons.addAll(
             department.getMembers().stream()
-                .filter(isNotHeadOf(department))
                 .filter(isNotSecondStageIn(department))
                 .collect(toSet())
         ));
