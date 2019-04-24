@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -124,7 +125,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                             application.hasStatus(ApplicationStatus.ALLOWED)
                                 || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
                                 || application.hasStatus(ApplicationStatus.WAITING))
-                        .collect(Collectors.toList())));
+                        .collect(toList())));
 
         return departmentApplications;
     }
@@ -154,7 +155,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             department.getMembers().stream()
                 .filter(isNotHeadOf(department))
                 .filter(isNotSecondStageIn(department))
-                .collect(Collectors.toSet())
+                .collect(toSet())
         ));
 
         return new ArrayList<>(relevantPersons);
@@ -170,7 +171,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         departments.forEach(department -> relevantPersons.addAll(
             department.getMembers().stream()
                 .filter(isNotSecondStageIn(department))
-                .collect(Collectors.toSet())
+                .collect(toSet())
         ));
 
         return new ArrayList<>(relevantPersons);
