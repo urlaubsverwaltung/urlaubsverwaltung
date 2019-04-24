@@ -463,7 +463,7 @@ public class DepartmentServiceImplTest {
 
         Department dep = TestDataCreator.createDepartment("dep");
         dep.setMembers(asList(secondStageAuthority, departmentHead));
-
+        dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
 
         when(departmentRepository.getManagedDepartments(departmentHead))
             .thenReturn(singletonList(dep));
