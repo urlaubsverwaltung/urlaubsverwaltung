@@ -4,6 +4,7 @@
 * Fix overlapping temporary allowed applications [#325](https://github.com/synyx/urlaubsverwaltung/issues/325)
 * Show approvable applications for departmentHead and secondStageAuth [#657](https://github.com/synyx/urlaubsverwaltung/pull/657)
 * Fix character counter in overtime form [#673](https://github.com/synyx/urlaubsverwaltung/issues/673)
+* Fix i18n in dynamic application information [#558](https://github.com/synyx/urlaubsverwaltung/issues/558)
 
 ### [urlaubsverwaltung-2.40.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.4)
 * Fix maximum sick pay days [#579](https://github.com/synyx/urlaubsverwaltung/issues/579) [#650](https://github.com/synyx/urlaubsverwaltung/pull/650)
