@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
 
 /**
@@ -156,11 +159,11 @@ public class OverlapService {
         List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson( startDate, endDate, person);
 
         // remove the non-relevant ones
-        return applicationsForLeave.stream().filter(input -> {
+        return applicationsForLeave.stream()
+            .filter(input -> {
 
             // only waiting and allowed applications for leave are relevant
-            boolean isWaitingOrAllowed = input.hasStatus(ApplicationStatus.WAITING)
-                || input.hasStatus(ApplicationStatus.ALLOWED);
+            boolean isWaitingOrAllowed = input.hasStatus(WAITING) || input.hasStatus(ALLOWED) || input.hasStatus(TEMPORARY_ALLOWED);
 
             // if only half day, then only the same time of day and full day is relevant
             if (!DayLength.FULL.equals(dayLength)) {
