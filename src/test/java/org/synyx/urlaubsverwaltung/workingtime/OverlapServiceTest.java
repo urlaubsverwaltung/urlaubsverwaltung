@@ -449,4 +449,30 @@ public class OverlapServiceTest {
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
     }
+
+    @Test
+    public void ensureOverlappingForTEMPORARY_ALLOWEDApplications() {
+
+        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
+
+        Application morningVacation = new Application();
+        morningVacation.setDayLength(DayLength.MORNING);
+        morningVacation.setStartDate(vacationDate);
+        morningVacation.setEndDate(vacationDate);
+        morningVacation.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+
+        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+            .thenReturn(singletonList(morningVacation));
+
+        SickNote sickNote = TestDataCreator.anySickNote();
+        sickNote.setDayLength(DayLength.FULL);
+        sickNote.setStartDate(vacationDate);
+        sickNote.setEndDate(vacationDate);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
+
+        OverlapCase overlapCase = service.checkOverlap(sickNote);
+
+        Assert.assertNotNull("Should not be null", overlapCase);
+        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+    }
 }
