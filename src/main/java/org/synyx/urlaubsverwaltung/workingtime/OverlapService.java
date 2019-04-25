@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -17,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
@@ -160,20 +160,20 @@ public class OverlapService {
 
         // remove the non-relevant ones
         return applicationsForLeave.stream()
-            .filter(input -> {
+            .filter(withConflictingStatus().and(withOverlappingDayLength(dayLength)))
+            .collect(toList());
+    }
 
-            // only waiting and allowed applications for leave are relevant
-            boolean isWaitingOrAllowed = input.hasStatus(WAITING) || input.hasStatus(ALLOWED) || input.hasStatus(TEMPORARY_ALLOWED);
+    private Predicate<Application> withOverlappingDayLength(DayLength dayLength) {
+        return application ->
+            application.getDayLength().equals(DayLength.FULL) ||
+            dayLength.equals(DayLength.FULL) ||
+            application.getDayLength().equals(dayLength);
 
-            // if only half day, then only the same time of day and full day is relevant
-            if (!DayLength.FULL.equals(dayLength)) {
-                boolean isOverlappingDayLength = input.getDayLength().equals(dayLength)
-                    || input.getDayLength().equals(DayLength.FULL);
-                return isWaitingOrAllowed && isOverlappingDayLength;
-            }
+    }
 
-            return isWaitingOrAllowed;
-        }).collect(toList());
+    private Predicate<Application> withConflictingStatus() {
+        return application -> application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED);
     }
 
 
