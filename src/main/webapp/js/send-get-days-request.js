@@ -31,11 +31,11 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
   var text;
 
   if(isNaN(workDays)) {
-    text = "Ung&uuml;ltiger Zeitraum"
-  } else if (workDays === 1) {
-    text = formatNumber(workDays) + " Tag";
+    text = window.uv.i18n['application.applier.invalidPeriod']
+  } else if (workDays === "1.0") {
+    text = formatNumber(workDays) + " " + window.uv.i18n['application.applier.day'];
   } else {
-    text = formatNumber(workDays) + " Tage";
+    text = formatNumber(workDays) + " " + window.uv.i18n['application.applier.days'];
   }
 
   element.innerHTML = text;

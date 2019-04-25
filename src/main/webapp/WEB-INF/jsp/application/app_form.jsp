@@ -18,7 +18,14 @@
         window.uv.apiPrefix = "<spring:url value='/api' />";
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
-    </script>
+
+        window.uv.i18n = [];
+        window.uv.i18n['application.applier.applicationsOfColleagues'] = "<spring:message code='application.applier.applicationsOfColleagues' javaScriptEscape='true' />";
+        window.uv.i18n['application.applier.none'] = "<spring:message code='application.applier.none' javaScriptEscape='true' />";
+        window.uv.i18n['application.applier.invalidPeriod'] = "<spring:message code='application.applier.invalidPeriod' javaScriptEscape='true' />";
+        window.uv.i18n['application.applier.day'] = "<spring:message code='application.applier.day' javaScriptEscape='true' />";
+        window.uv.i18n['application.applier.days'] = "<spring:message code='application.applier.days' javaScriptEscape='true' />";
+        </script>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.timepicker.css' />" />

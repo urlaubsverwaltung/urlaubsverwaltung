@@ -22,13 +22,13 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
   const vacations = data.response.vacations;
 
   const element = document.querySelector(elementSelector);
-  element.innerHTML = "Antr&auml;ge von Mitarbeitern:";
+  element.innerHTML = window.uv.i18n['application.applier.applicationsOfColleagues'] + " ";
 
   if(vacations.length > 0) {
     const html = vacations.map(vacation => createHtmlForVacation(vacation));
     element.innerHTML += html.join("<br />");
   } else {
-    element.innerHTML += "&nbsp;Keine";
+    element.innerHTML += "&nbsp;" + window.uv.i18n['application.applier.none'];
   }
 }
 
