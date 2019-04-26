@@ -130,28 +130,28 @@
 }
 
 .datepicker-day-personal-holiday-morning {
-  --background-color-left: #FFEDA0;
+  --background-color-left: #F9CD13;
 }
 .datepicker-day-personal-holiday-noon {
-  --background-color-right: #FFEDA0;
+  --background-color-right: #F9CD13;
 }
 .datepicker-day-personal-holiday-full {
-  --background-color-left: #FFEDA0;
-  --background-color-right: #FFEDA0;
+  --background-color-left: #F9CD13;
+  --background-color-right: #F9CD13;
 }
 
 .datepicker-day-personal-holiday-morning-approved,
 .datepicker-day-personal-holiday-morning-approved.datepicker-day-past {
-  --background-color-left: #FFE57F;
+  --background-color-left: #FFEDA0;
   --font-color: #FF881F;
 }
 .datepicker-day-personal-holiday-noon-approved {
-  --background-color-right: #FFE57F;
+  --background-color-right: #FFEDA0;
   --font-color: #FF881F;
 }
 .datepicker-day-personal-holiday-full-approved {
-  --background-color-left: #FFE57F;
-  --background-color-right: #FFE57F;
+  --background-color-left: #FFEDA0;
+  --background-color-right: #FFEDA0;
 }
 
 
@@ -176,8 +176,8 @@
 }
 
 .datepicker-day-personal-holiday-full {
-  --background-color-left: #FFEDA0;
-  --background-color-right: #FFEDA0;
+  --background-color-left: #F9CD13;
+  --background-color-right: #F9CD13;
   --font-color: #5F5F5F;
 }
 
@@ -207,17 +207,17 @@
 
 .datepicker-day-personal-holiday-morning-approved:not(.datepicker-day-sick-note):hover,
 .datepicker-day-selected.datepicker-day-personal-holiday-morning-approved {
-  --background-color-left: #FFE57F;
+  --background-color-left: #FFEDA0;
 }
 
 .datepicker-day-personal-holiday-noon-approved:not(.datepicker-day-sick-note):hover,
 .datepicker-day-selected.datepicker-day-personal-holiday-noon-approved {
-  --background-color-right: #FFE57F;
+  --background-color-right: #FFEDA0;
 }
 
 .datepicker-day-selected.datepicker-day-personal-holiday-full-approved {
-  --background-color-left: #FFE57F;
-  --background-color-right: #FFE57F;
+  --background-color-left: #FFEDA0;
+  --background-color-right: #FFEDA0;
 }
 
 .datepicker-day-sick-note-morning {
@@ -249,14 +249,14 @@
 }
 
 .datepicker-day-personal-holiday-morning-approved:not(.datepicker-day-sick-note-full) {
-  --background-color-left: #FFE57F;
+  --background-color-left: #FFEDA0;
 }
 .datepicker-day-personal-holiday-noon-approved:not(.datepicker-day-sick-note-full) {
-  --background-color-right: #FFE57F;
+  --background-color-right: #FFEDA0;
 }
 .datepicker-day-personal-holiday-full-approved:not(.datepicker-day-sick-note-full) {
-  --background-color-left: #FFE57F;
-  --background-color-right: #FFE57F;
+  --background-color-left: #FFEDA0;
+  --background-color-right: #FFEDA0;
 }
 
 /* public holidays must be the last calendar day treatment */
