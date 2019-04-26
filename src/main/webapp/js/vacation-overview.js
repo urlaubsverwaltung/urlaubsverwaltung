@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import 'tablesorter'
+import html from '../js/html-literal'
 import '../css/vacation-overview.css'
 
 $(function () {
@@ -100,45 +101,36 @@ $(function () {
               }
             });
 
-          let outputTable = "<table id='vacationOverviewTable' class='list-table sortable tablesorter vacationOverview-table'>";
-          outputTable += "<thead class='hidden-xs'>";
-          outputTable += "<tr>";
-          outputTable += "<th class='sortable-field'><spring:message code='person.data.firstName'/></th>";
-          outputTable += "<th class='sortable-field'><spring:message code='person.data.lastName'/></th>";
-          overViewList[0].days
-            .forEach(
-              function (item) {
-                let defaultClasses = "non-sortable vacationOverview-day-item";
-                if (item.typeOfDay === "WEEKEND") {
-                  outputTable += "<th class='" + defaultClasses + " vacationOverview-day-weekend'>" + item.dayNumber + "</th>";
-                } else {
-                  outputTable += "<th class='" + defaultClasses + "'>" + item.dayNumber + "</th>";
-                }
-              }, outputTable);
-          outputTable += "</tr><tbody class='vacationOverview-tbody'>";
+          const vacationOverviewTableHtml = html`<table id="vacationOverviewTable" class="list-table sortable tablesorter vacationOverview-table">
+            <thead class="hidden-xs">
+              <tr>
+                <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
+                <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
+                ${overViewList[0].days.map(item => item.typeOfDay === "WEEKEND"
+                  ? html`<th class="non-sortable vacationOverview-day-item vacationOverview-day-weekend">${item.dayNumber}</th>`
+                  : html`<th class="non-sortable vacationOverview-day-item">${item.dayNumber}</th>`
+                )}
+              </tr>
+            </thead>
+            <tbody class="vacationOverview-tbody">
+              ${overViewList.map(item => html`
+                <tr>
+                  <td class="hidden-xs">${item.person.firstName}</td>
+                  <td class="hidden-xs">${item.person.lastName}</td>
+                  ${item.days.map(dayItem => {
+                    if (dayItem.typeOfDay === "WEEKEND") {
+                      dayItem.cssClass = 'vacationOverview-day-weekend vacationOverview-day-item';
+                    } else if (!dayItem.cssClass) {
+                      dayItem.cssClass = 'vacationOverview-day vacationOverview-day-item ';
+                    }
+                    return html`<td class="${dayItem.cssClass}"></td>`;
+                  })}
+                </tr>
+              `)}
+            </tbody>
+          </table>`;
 
-          overViewList
-            .forEach(item => {
-              outputTable += "<tr>";
-              outputTable += "<td class='hidden-xs'>"+ item.person.firstName+ "</td>";
-              outputTable += "<td class='hidden-xs'>" + item.person.lastName + "</td>";
-
-              item.days
-                .forEach(dayItem => {
-                  if (dayItem.typeOfDay === "WEEKEND") {
-                    dayItem.cssClass = 'vacationOverview-day-weekend vacationOverview-day-item';
-                  } else if (!dayItem.cssClass) {
-                    dayItem.cssClass = 'vacationOverview-day vacationOverview-day-item ';
-                  }
-
-                  outputTable += "<td class='" + dayItem.cssClass + "'></td>";
-                });
-
-              outputTable += "</tr>";
-            }, outputTable);
-          outputTable += "</tbody></table>";
-
-          document.querySelector("#vacationOverview").innerHTML = outputTable;
+          document.querySelector("#vacationOverview").innerHTML = vacationOverviewTableHtml;
         }
       }
 
