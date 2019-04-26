@@ -1,3 +1,6 @@
+### master/unreleased
+* Calendar settings not configurable for google and exchange [#675](https://github.com/synyx/urlaubsverwaltung/pull/675)
+
 ### [urlaubsverwaltung-2.40.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.5)
 * Fix broken umlauts on error page [#665](https://github.com/synyx/urlaubsverwaltung/issues/665)
 * Fix creation of admin user for testdata [#662](https://github.com/synyx/urlaubsverwaltung/pull/662)

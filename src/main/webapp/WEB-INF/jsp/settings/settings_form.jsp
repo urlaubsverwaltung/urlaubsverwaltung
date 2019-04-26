@@ -520,11 +520,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="calendarSettings.provider">
+                                    <label class="control-label col-md-4" for="calendarSettingsProvider">
                                         <spring:message code='settings.calendar.provider'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:select id="calendarSettings.provider" path="calendarSettings.provider"
+                                        <form:select id="calendarSettingsProvider" path="calendarSettings.provider"
                                                      class="form-control" cssErrorClass="form-control error">
                                             <c:forEach items="${providers}" var="provider">
                                                 <form:option value="${provider}"><spring:message
