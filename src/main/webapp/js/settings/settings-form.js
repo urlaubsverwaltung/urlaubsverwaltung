@@ -28,7 +28,7 @@ import 'bootstrap/js/tab'
    *   * Anbindung an Microsoft Exchange Kalender
    */
   function updateVisibiltyCalendar() {
-    const calenderSettingsProvider = document.querySelector('#calendarSettings.provider');
+    const calenderSettingsProvider = document.querySelector('#calendarSettingsProvider');
     var value = calenderSettingsProvider ? calenderSettingsProvider.value : '';
 
     const googleCalendar = document.querySelector('#google-calendar');
@@ -57,7 +57,7 @@ import 'bootstrap/js/tab'
     // initial run to update view
     updateVisibiltyCalendar();
 
-    const calendarSettingsProvider = document.querySelector('#calendarSettings.provider');
+    const calendarSettingsProvider = document.querySelector('#calendarSettingsProvider');
     if (calendarSettingsProvider) {
       calendarSettingsProvider.addEventListener('change', () => {
         updateVisibiltyCalendar();
