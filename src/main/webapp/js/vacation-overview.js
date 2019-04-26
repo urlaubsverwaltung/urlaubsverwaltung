@@ -110,7 +110,7 @@ $(function () {
               function (item) {
                 let defaultClasses = "non-sortable vacationOverview-day-item";
                 if (item.typeOfDay === "WEEKEND") {
-                  outputTable += "<th class='" + defaultClasses + "vacationOverview-day-weekend'>" + item.dayNumber + "</th>";
+                  outputTable += "<th class='" + defaultClasses + " vacationOverview-day-weekend'>" + item.dayNumber + "</th>";
                 } else {
                   outputTable += "<th class='" + defaultClasses + "'>" + item.dayNumber + "</th>";
                 }
