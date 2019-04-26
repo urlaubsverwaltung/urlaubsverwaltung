@@ -31,15 +31,15 @@
 }
 
 .vacationOverview-day-personal-holiday-status-WAITING {
-  background: #F9CD13;
+  background: #FFE165;
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning {
-  background: linear-gradient(90deg, #F9CD13 50%, #E5E5E5 50%);
+  background: linear-gradient(90deg, #FFE165 50%, #E5E5E5 50%);
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-  background: linear-gradient(-90deg, #F9CD13 50%, #E5E5E5 50%);
+  background: linear-gradient(-90deg, #FFE165 50%, #E5E5E5 50%);
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
@@ -47,15 +47,15 @@
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning.vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-  background: #F9CD13;
+  background: #FFE165;
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning.vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-  background: linear-gradient(90deg, #FFEDA0 50%, #F9CD13 50%);
+  background: linear-gradient(90deg, #FFEDA0 50%, #FFE165 50%);
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
-  background: linear-gradient(90deg, #F9CD13 50%, #FFEDA0 50%);
+  background: linear-gradient(90deg, #FFE165 50%, #FFEDA0 50%);
 }
 
 .vacationOverview-day-sick-note {
@@ -75,11 +75,11 @@
 }
 
 .vacationOverview-day-sick-note-half-day-morning.vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-  background: linear-gradient(90deg, #FFC5BF 50%, #F9CD13 50%);
+  background: linear-gradient(90deg, #FFC5BF 50%, #FFE165 50%);
 }
 
 .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning.vacationOverview-day-sick-note-half-day-noon {
-  background: linear-gradient(90deg, #F9CD13 50%, #FFC5BF 50%);
+  background: linear-gradient(90deg, #FFE165 50%, #FFC5BF 50%);
 }
 
 .vacationOverview-day-sick-note-half-day-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {

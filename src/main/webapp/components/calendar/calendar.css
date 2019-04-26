@@ -130,14 +130,14 @@
 }
 
 .datepicker-day-personal-holiday-morning {
-  --background-color-left: #F9CD13;
+  --background-color-left: #FFE165;
 }
 .datepicker-day-personal-holiday-noon {
-  --background-color-right: #F9CD13;
+  --background-color-right: #FFE165;
 }
 .datepicker-day-personal-holiday-full {
-  --background-color-left: #F9CD13;
-  --background-color-right: #F9CD13;
+  --background-color-left: #FFE165;
+  --background-color-right: #FFE165;
   --font-color: #5F5F5F;
 }
 
