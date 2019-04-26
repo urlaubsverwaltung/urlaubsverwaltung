@@ -29,6 +29,7 @@
         window.uv.i18n['application.applier.days'] = "<spring:message code='application.applier.days' javaScriptEscape='true' />";
         </script>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.timepicker.css' />" />
     <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
@@ -38,6 +39,7 @@
     <script defer src="<spring:url value='/assets/npm.timepicker.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_detail~app_form~person_overview.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_form.min.js' />"></script>
 </head>
 

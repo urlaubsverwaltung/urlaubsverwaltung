@@ -11,12 +11,14 @@ class PublicHolidayResponse {
     private String date;
     private String description;
     private BigDecimal dayLength;
+    private String absencePeriodName;
 
-    PublicHolidayResponse(Holiday holiday, BigDecimal dayLength) {
+    PublicHolidayResponse(Holiday holiday, BigDecimal dayLength, String absencePeriodName) {
 
         this.date = holiday.getDate().toString();
         this.description = holiday.getDescription(Locale.GERMAN);
         this.dayLength = dayLength;
+        this.absencePeriodName = absencePeriodName;
     }
 
     public String getDate() {
@@ -52,5 +54,9 @@ class PublicHolidayResponse {
     public void setDayLength(BigDecimal dayLength) {
 
         this.dayLength = dayLength;
+    }
+
+    public String getAbsencePeriodName() {
+        return absencePeriodName;
     }
 }

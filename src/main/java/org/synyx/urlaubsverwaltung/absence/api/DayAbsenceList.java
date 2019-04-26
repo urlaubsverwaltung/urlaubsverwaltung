@@ -7,7 +7,7 @@ public class DayAbsenceList {
 
     private final List<DayAbsence> absences;
 
-    public DayAbsenceList(List<DayAbsence> absences) {
+    DayAbsenceList(List<DayAbsence> absences) {
 
         this.absences = absences;
     }

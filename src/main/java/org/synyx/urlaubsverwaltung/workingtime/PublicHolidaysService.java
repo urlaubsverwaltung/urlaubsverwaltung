@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
-import de.jollyday.ManagerParameter;
-import de.jollyday.ManagerParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -14,7 +12,6 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -27,36 +24,15 @@ import java.util.stream.Collectors;
 @Component
 public class PublicHolidaysService {
 
-    private static final String HOLIDAY_DEFINITION_FILE = "Holidays_de.xml";
-
     private final HolidayManager manager;
     private final SettingsService settingsService;
 
     @Autowired
-    public PublicHolidaysService(SettingsService settingsService) {
+    public PublicHolidaysService(SettingsService settingsService, HolidayManager holidayManager) {
 
         this.settingsService = settingsService;
-
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL url = cl.getResource(HOLIDAY_DEFINITION_FILE);
-        ManagerParameter managerParameter = ManagerParameters.create(url);
-
-        this.manager = HolidayManager.getInstance(managerParameter);
+        this.manager = holidayManager;
     }
-
-    /**
-     * Checks if the given date is a public holiday by lookup in the given set of public holidays.
-     *
-     * @param  date  to check if it is a public holiday
-     * @param  federalState  the federal state to consider holiday settings for
-     *
-     * @return  true if the given date is a public holiday, else false
-     */
-    boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-
-        return manager.isHoliday(date, federalState.getCodes());
-    }
-
 
     /**
      * Returns the working duration for a date: may be full day (1.0) for a non public holiday or zero (0.0) for a
@@ -70,20 +46,27 @@ public class PublicHolidaysService {
      */
     public BigDecimal getWorkingDurationOfDate(LocalDate date, FederalState federalState) {
 
+        return getAbsenceTypeOfDate(date, federalState).getInverse().getDuration();
+    }
+
+    public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
+
         Settings settings = settingsService.getSettings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
+        DayLength workingTime = DayLength.FULL;
+
         if (isPublicHoliday(date, federalState)) {
             if (DateUtil.isChristmasEve(date)) {
-                return workingTimeSettings.getWorkingDurationForChristmasEve().getDuration();
+                workingTime = workingTimeSettings.getWorkingDurationForChristmasEve();
             } else if (DateUtil.isNewYearsEve(date)) {
-                return workingTimeSettings.getWorkingDurationForNewYearsEve().getDuration();
+                workingTime = workingTimeSettings.getWorkingDurationForNewYearsEve();
             } else {
-                return DayLength.ZERO.getDuration();
+                workingTime = DayLength.ZERO;
             }
         }
 
-        return DayLength.FULL.getDuration();
+        return workingTime.getInverse();
     }
 
 
@@ -100,6 +83,10 @@ public class PublicHolidaysService {
         return holidays.stream().filter(byMonth(month)).collect(Collectors.toSet());
     }
 
+    private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+
+        return manager.isHoliday(date, federalState.getCodes());
+    }
 
     private Predicate<Holiday> byMonth(int month) {
 

@@ -1,3 +1,6 @@
+### master/unreleased
+* Show morning, noon and full absence in calendar [#624](https://github.com/synyx/urlaubsverwaltung/issues/624)
+
 ### [urlaubsverwaltung-2.40.6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.6)
 * Calendar settings not configurable for google and exchange [#675](https://github.com/synyx/urlaubsverwaltung/pull/675)
 

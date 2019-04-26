@@ -22,11 +22,13 @@
     </script>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
     <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.css' />" />
     <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
     <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
     <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
     <script defer src="<spring:url value='/assets/npm.jquery-ui-themes.min.js' />"></script>
     <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.min.js' />"></script>
     <script defer src="<spring:url value='/assets/sick_note_form.min.js' />"></script>
 </head>
 <body>

@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -16,14 +19,14 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Api("Public Holidays: Get information about public holidays")
@@ -72,12 +75,17 @@ public class PublicHolidayController {
         FederalState federalState = getFederalState(year, optionalMonth, optionalPerson);
         Set<Holiday> holidays = getHolidays(year, optionalMonth, federalState);
 
-        List<PublicHolidayResponse> publicHolidayResponses = holidays.stream().map(holiday ->
-            new PublicHolidayResponse(holiday,
-                publicHolidaysService.getWorkingDurationOfDate(holiday.getDate(),
-                    federalState))).collect(Collectors.toList());
+        List<PublicHolidayResponse> publicHolidayResponses = holidays.stream()
+            .map(holiday -> this.mapPublicHolidayToDto(holiday, federalState))
+            .collect(toList());
 
         return new ResponseWrapper<>(new PublicHolidayListResponse(publicHolidayResponses));
+    }
+
+    private PublicHolidayResponse mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(holiday.getDate(), federalState);
+        DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(holiday.getDate(), federalState);
+        return new PublicHolidayResponse(holiday, workingDuration, absenceType.name());
     }
 
 

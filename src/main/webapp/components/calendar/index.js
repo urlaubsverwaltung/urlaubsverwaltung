@@ -38,22 +38,27 @@ $(function() {
     };
 
     var CSS = {
-        day                   : 'datepicker-day',
-        daySelected           : 'datepicker-day-selected',
-        dayToday              : 'datepicker-day-today',
-        dayWeekend            : 'datepicker-day-weekend',
-        dayPast               : 'datepicker-day-past',
-        dayHalf               : 'datepicker-day-half',
-        dayPublicHoliday      : 'datepicker-day-public-holiday',
-        dayHalfPublicHoliday  : 'datepicker-day-half-public-holiday',
-        dayPersonalHoliday    : 'datepicker-day-personal-holiday',
-        dayHalfPersonalHoliday: 'datepicker-day-half-personal-holiday',
-        daySickDay            : 'datepicker-day-sick-note',
-        dayStatus             : 'datepicker-day-status-{{status}}',
-        next                  : 'datepicker-next',
-        previous              : 'datepicker-prev',
-        month                 : 'datepicker-month',
-        mousedown             : 'mousedown'
+        day                               : 'datepicker-day',
+        daySelected                       : 'datepicker-day-selected',
+        dayToday                          : 'datepicker-day-today',
+        dayWeekend                        : 'datepicker-day-weekend',
+        dayPast                           : 'datepicker-day-past',
+        dayPublicHolidayFull              : 'datepicker-day-public-holiday-full',
+        dayPublicHolidayMorning           : 'datepicker-day-public-holiday-morning',
+        dayPublicHolidayNoon              : 'datepicker-day-public-holiday-noon',
+        dayPersonalHolidayFull            : 'datepicker-day-personal-holiday-full',
+        dayPersonalHolidayFullApproved    : 'datepicker-day-personal-holiday-full-approved',
+        dayPersonalHolidayMorning         : 'datepicker-day-personal-holiday-morning',
+        dayPersonalHolidayMorningApproved : 'datepicker-day-personal-holiday-morning-approved',
+        dayPersonalHolidayNoon            : 'datepicker-day-personal-holiday-noon',
+        dayPersonalHolidayNoonApproved    : 'datepicker-day-personal-holiday-noon-approved',
+        daySickDayFull                    : 'datepicker-day-sick-note-full',
+        daySickDayMorning                 : 'datepicker-day-sick-note-morning',
+        daySickDayNoon                    : 'datepicker-day-sick-note-noon',
+        next                              : 'datepicker-next',
+        previous                          : 'datepicker-prev',
+        month                             : 'datepicker-month',
+        mousedown                         : 'mousedown'
     };
 
     var DATA = {
@@ -80,17 +85,50 @@ $(function() {
                 /* NOTE: Today is not in the past! */
                 return !isToday(date) && isPast(date);
             },
-            isPublicHoliday: function(date) {
-                return holidayService.isPublicHoliday(date);
+            isHalfDayAbsence: function(date) {
+              if (assert.isPersonalHolidayMorning(date) || assert.isPersonalHolidayNoon(date)) {
+                return true;
+              }
+              if (assert.isSickDayMorning(date) || assert.isSickDayNoon(date)) {
+                return true;
+              }
+              return assert.isPublicHolidayMorning(date) || assert.isPublicHolidayNoon(date);
             },
-            isPersonalHoliday: function(date) {
-                return !isWeekend(date) && holidayService.isPersonalHoliday(date);
+            isPublicHolidayFull: function(date) {
+                return holidayService.isPublicHolidayFull(date);
             },
-            isSickDay: function(date) {
-                return !isWeekend(date) && holidayService.isSickDay(date);
+            isPublicHolidayMorning: function(date) {
+              return holidayService.isPublicHolidayMorning(date);
             },
-            isHalfDay: function(date) {
-              return !isWeekend(date) && holidayService.isHalfDay(date);
+            isPublicHolidayNoon: function(date) {
+              return holidayService.isPublicHolidayNoon(date);
+            },
+            isPersonalHolidayFull: function(date) {
+                return !isWeekend(date) && holidayService.isPersonalHolidayFull(date);
+            },
+            isPersonalHolidayFullApproved: function(date) {
+              return !isWeekend(date) && holidayService.isPersonalHolidayFullApproved(date);
+            },
+            isPersonalHolidayMorning: function(date) {
+              return !isWeekend(date) && holidayService.isPersonalHolidayMorning(date);
+            },
+            isPersonalHolidayMorningApproved: function(date) {
+              return !isWeekend(date) && holidayService.isPersonalHolidayMorningApproved(date);
+            },
+            isPersonalHolidayNoon: function(date) {
+              return !isWeekend(date) && holidayService.isPersonalHolidayNoon(date);
+            },
+            isPersonalHolidayNoonApproved: function(date) {
+              return !isWeekend(date) && holidayService.isPersonalHolidayNoonApproved(date);
+            },
+            isSickDayFull: function(date) {
+                return !isWeekend(date) && holidayService.isSickDayFull(date);
+            },
+            isSickDayMorning: function(date) {
+              return !isWeekend(date) && holidayService.isSickDayMorning(date);
+            },
+            isSickDayNoon: function(date) {
+              return !isWeekend(date) && holidayService.isSickDayNoon(date);
             },
             title: function(date) {
               return holidayService.getDescription(date);
@@ -190,79 +228,46 @@ $(function() {
             }
         }
 
-        function isOfType(type) {
+        function isOfType(type, matcherAttributes) {
           return function (date) {
-            var year = getYear(date);
-            var formattedDate = format(date, 'YYYY-MM-DD');
+            const year = getYear(date);
+            const formattedDate = format(date, 'YYYY-MM-DD');
 
             if (!_CACHE[type]) {
                 return false;
             }
 
             if(_CACHE[type][year]) {
-
-              var holiday = findWhere(_CACHE[type][year], {date: formattedDate});
-
-              if (type === 'publicHoliday') {
-                return holiday !== undefined && holiday.dayLength < 1;
-              } else {
-                return holiday !== undefined;
-              }
-
+              const absence = findWhere(_CACHE[type][year], {...matcherAttributes, date: formattedDate});
+              return Boolean(absence);
             }
 
             return false;
           };
         }
 
-        var HolidayService = {
+        const absencePeriod = Object.freeze({
+          FULL: 'FULL',
+          MORNING: 'MORNING',
+          NOON: 'NOON',
+        });
 
-            isSickDay: isOfType('sick'),
+        const HolidayService = {
 
-            isPersonalHoliday: isOfType('holiday'),
+            isSickDayFull: isOfType('sick', { absencePeriodName: absencePeriod.FULL }),
+            isSickDayMorning: isOfType('sick', { absencePeriodName: absencePeriod.MORNING }),
+            isSickDayNoon: isOfType('sick', { absencePeriodName: absencePeriod.NOON }),
 
-            isPublicHoliday: isOfType('publicHoliday'),
+            isPersonalHolidayFull: isOfType('holiday', { absencePeriodName: absencePeriod.FULL, status: 'WAITING' }),
+            isPersonalHolidayFullApproved: isOfType('holiday', { absencePeriodName: absencePeriod.FULL, status: 'ALLOWED' }),
+            isPersonalHolidayMorning: isOfType('holiday', { absencePeriodName: absencePeriod.MORNING, status: 'WAITING' }),
+            isPersonalHolidayMorningApproved: isOfType('holiday', { absencePeriodName: absencePeriod.MORNING, status: 'ALLOWED' }),
+            isPersonalHolidayNoon: isOfType('holiday', { absencePeriodName: absencePeriod.NOON, status: 'WAITING' }),
+            isPersonalHolidayNoonApproved: isOfType('holiday', { absencePeriodName: absencePeriod.NOON, status: 'ALLOWED' }),
 
-            isHalfDay: function (date) {
-              var year = getYear(date);
-              var formattedDate = format(date, 'YYYY-MM-DD');
-
-              if (!_CACHE['publicHoliday']) {
-                  return false;
-              }
-
-              if(_CACHE['publicHoliday'][year]) {
-
-                var publicHoliday = findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
-
-                if(publicHoliday && publicHoliday.dayLength === 0.5) {
-                  return true;
-                }
-
-              }
-
-              if(_CACHE['holiday'][year]) {
-
-                var personalHoliday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
-
-                if(personalHoliday && personalHoliday.dayLength === 0.5) {
-                  return true;
-                }
-
-              }
-
-              if(_CACHE['sick'][year]) {
-
-                  var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
-
-                  if(sickDay && sickDay.dayLength === 0.5) {
-                      return true;
-                  }
-
-              }
-
-              return false;
-            },
+            isPublicHolidayFull: isOfType('publicHoliday', { absencePeriodName: absencePeriod.FULL }),
+            isPublicHolidayMorning: isOfType('publicHoliday', { absencePeriodName: absencePeriod.MORNING }),
+            isPublicHolidayNoon: isOfType('publicHoliday', { absencePeriodName: absencePeriod.NOON }),
 
             getDescription: function (date) {
               var year = getYear(date);
@@ -307,8 +312,6 @@ $(function() {
               return null;
 
             },
-
-
 
             getAbsenceId: function (date) {
               var year = getYear(date);
@@ -596,38 +599,44 @@ $(function() {
         function renderDay(date) {
 
             function classes() {
-                var status = assert.status(date);
                 return [
-                    assert.isToday           (date) ? CSS.dayToday                                  : '',
-                    assert.isWeekend         (date) ? CSS.dayWeekend                                : '',
-                    assert.isPast            (date) ? CSS.dayPast                                   : '',
-                    assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday                          : '',
-                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday                        : '',
-                    assert.isSickDay         (date) ? CSS.daySickDay                                : '',
-                    assert.isHalfDay         (date) ? CSS.dayHalf                                   : '',
-                    status                          ? CSS.dayStatus.replace("{{status}}", status)   : ""
-                ].join(' ');
+                    assert.isToday                          (date) ? CSS.dayToday                          : '',
+                    assert.isWeekend                        (date) ? CSS.dayWeekend                        : '',
+                    assert.isPast                           (date) ? CSS.dayPast                           : '',
+                    assert.isPublicHolidayFull              (date) ? CSS.dayPublicHolidayFull              : '',
+                    assert.isPublicHolidayMorning           (date) ? CSS.dayPublicHolidayMorning           : '',
+                    assert.isPublicHolidayNoon              (date) ? CSS.dayPublicHolidayNoon              : '',
+                    assert.isPersonalHolidayFull            (date) ? CSS.dayPersonalHolidayFull            : '',
+                    assert.isPersonalHolidayFullApproved    (date) ? CSS.dayPersonalHolidayFullApproved    : '',
+                    assert.isPersonalHolidayMorning         (date) ? CSS.dayPersonalHolidayMorning         : '',
+                    assert.isPersonalHolidayMorningApproved (date) ? CSS.dayPersonalHolidayMorningApproved : '',
+                    assert.isPersonalHolidayNoon            (date) ? CSS.dayPersonalHolidayNoon            : '',
+                    assert.isPersonalHolidayNoonApproved    (date) ? CSS.dayPersonalHolidayNoonApproved    : '',
+                    assert.isSickDayFull                    (date) ? CSS.daySickDayFull                    : '',
+                    assert.isSickDayMorning                 (date) ? CSS.daySickDayMorning                 : '',
+                    assert.isSickDayNoon                    (date) ? CSS.daySickDayNoon                    : '',
+                ].filter(Boolean).join(' ');
             }
 
             function isSelectable() {
 
                 // NOTE: Order is important here!
 
-                var isPersonalHoliday = assert.isPersonalHoliday(date);
-                var isSickDay = assert.isSickDay(date);
+                const isPersonalHoliday = assert.isPersonalHolidayFull(date);
+                const isSickDay = assert.isSickDayFull(date);
 
                 if(isPersonalHoliday || isSickDay) {
                   return true;
                 }
 
-                var isPast = assert.isPast(date);
-                var isWeekend = assert.isWeekend(date);
+                const isPast = assert.isPast(date);
+                const isWeekend = assert.isWeekend(date);
 
                 if(isPast || isWeekend) {
                     return false;
                 }
 
-                return assert.isHalfDay(date) || !assert.isPublicHoliday(date);
+                return assert.isHalfDayAbsence(date) || !assert.isPublicHolidayFull(date);
             }
 
             return render(TMPL.day, {

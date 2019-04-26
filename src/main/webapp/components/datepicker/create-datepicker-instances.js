@@ -3,12 +3,14 @@ import { findWhere } from 'underscore';
 import datepicker from './datepicker';
 import { isWeekend } from 'date-fns';
 
+import '../calendar/calendar.css';
+
 export default async function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, onSelect) {
 
-  var highlighted;
-  var highlightedAbsences;
+  let highlighted;
+  let highlightedAbsences;
 
-  var selector = selectors.join(",");
+  const selector = selectors.join(",");
 
   if (regional === 'de') {
     const de = await import(/* webpackChunkName: "jquery-ui-datepicker-de" */'jquery-ui/ui/i18n/datepicker-de');
@@ -31,14 +33,14 @@ export default async function createDatepickerInstances(selectors, regional, url
     selectOtherMonths: false,
     beforeShow: function (input, inst) {
 
-      var calendrier = inst.dpDiv;
-      var top = $(this).offset().top + $(this).outerHeight();
-      var left = $(this).offset().left;
+      const calendrier = inst.dpDiv;
+      const top = $(this).offset().top + $(this).outerHeight();
+      const left = $(this).offset().left;
       setTimeout(function () {
         calendrier.css({'top': top, 'left': left});
       }, 10);
 
-      var date;
+      let date;
 
       if ($(input).datepicker("getDate") == null) {
         date = new Date();
@@ -46,10 +48,10 @@ export default async function createDatepickerInstances(selectors, regional, url
         date = $(input).datepicker("getDate");
       }
 
-      var year = date.getFullYear();
-      var month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
 
-      var personId = getPerson();
+      const personId = getPerson();
 
       getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
@@ -62,7 +64,7 @@ export default async function createDatepickerInstances(selectors, regional, url
     },
     onChangeMonthYear: function (year, month) {
 
-      var personId = getPerson();
+      const personId = getPerson();
 
       getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
@@ -85,99 +87,76 @@ export default async function createDatepickerInstances(selectors, regional, url
 
 function getAbsences(data) {
 
-  var absences = [];
+  const absences = [];
 
-  for (var i = 0; i < data.response.absences.length; i++) {
-    var value = data.response.absences[i];
+  for (let i = 0; i < data.response.absences.length; i++) {
+    const value = data.response.absences[i];
     if ($.inArray(value, absences) == -1) {
       absences.push(value);
     }
   }
 
   return absences;
-
 }
 
 function getPublicHolidays(data) {
 
-  var publicHolidayDates = [];
+  const publicHolidayDates = [];
 
-  for (var i = 0; i < data.response.publicHolidays.length; i++) {
-    var value = data.response.publicHolidays[i];
+  for (let i = 0; i < data.response.publicHolidays.length; i++) {
+    const value = data.response.publicHolidays[i];
     publicHolidayDates.push(value);
   }
 
   return publicHolidayDates;
-
 }
 
 function colorizeDate(date, publicHolidays, absences) {
 
   if (isWeekend(date)) {
-    return [true, "notworkday"];
+    return [true, "datepicker-day datepicker-day-weekend"];
   } else {
 
-    var dateString = $.datepicker.formatDate("yy-mm-dd", date);
+    const dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
-    var isPublicHoliday = isSpecialDay(dateString, publicHolidays);
+    const fitsCriteria = (list, filterAttributes) => Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
 
-    var absenceType;
-    if (isSpecialDay(dateString, absences)) {
-      absenceType = getAbsenceType(dateString, absences);
-    }
+    const isPast = () => false;
+    const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: 'FULL'});
+    const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: 'MORNING'});
+    const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: 'NOON'});
+    const isPersonalHolidayFull = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'FULL', status: 'WAITING'});
+    const isPersonalHolidayFullApproved = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'FULL', status: 'ALLOWED'});
+    const isPersonalHolidayMorning = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'MORNING', status: 'WAITING'});
+    const isPersonalHolidayMorningApproved = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'MORNING', status: 'ALLOWED'});
+    const isPersonalHolidayNoon = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'NOON', status: 'WAITING'});
+    const isPersonalHolidayNoonApproved = () => fitsCriteria(absences, { type: 'VACATION', absencePeriodName: 'NOON', status: 'ALLOWED'});
+    const isSickDayFull = () => fitsCriteria(absences, { type: 'SICK_NOTE', absencePeriodName: 'FULL'});
+    const isSickDayMorning = () => fitsCriteria(absences, { type: 'SICK_NOTE', absencePeriodName: 'MORNING'});
+    const isSickDayNoon = () => fitsCriteria(absences, { type: 'SICK_NOTE', absencePeriodName: 'NOON'});
 
-    var isSickDay = absenceType === "SICK_NOTE";
-    var isPersonalHoliday = absenceType === "VACATION";
+    const cssClasses = [
+      'datepicker-day',
+      isPast() && 'datepicker-day-past',
+      isPublicHolidayFull() && 'datepicker-day-public-holiday-full',
+      isPublicHolidayMorning() && 'datepicker-day-public-holiday-morning',
+      isPublicHolidayNoon() && 'datepicker-day-public-holiday-noon',
+      isPersonalHolidayFull() && 'datepicker-day-personal-holiday-full',
+      isPersonalHolidayFullApproved() && 'datepicker-day-personal-holiday-full-approved',
+      isPersonalHolidayMorning() && 'datepicker-day-personal-holiday-morning',
+      isPersonalHolidayMorningApproved() && 'datepicker-day-personal-holiday-morning-approved',
+      isPersonalHolidayNoon() && 'datepicker-day-personal-holiday-noon',
+      isPersonalHolidayNoonApproved() && 'datepicker-day-personal-holiday-noon-approved',
+      isSickDayFull() && 'datepicker-day-sick-note-full',
+      isSickDayMorning() && 'datepicker-day-sick-note-morning',
+      isSickDayNoon() && 'datepicker-day-sick-note-noon',
+    ].filter(Boolean);
 
-    var isHalfWorkDay = isHalfWorkday(dateString, publicHolidays) || isHalfWorkday(dateString, absences);
-
-    var cssClasses = [];
-
-    if (isPublicHoliday) {
-      cssClasses.push("notworkday");
-    }
-
-    if (isHalfWorkDay) {
-      cssClasses.push("halfworkday");
-    }
-
-    if (isSickDay) {
-      cssClasses.push("sickday");
-    }
-
-    if (isPersonalHoliday) {
-      cssClasses.push("holiday");
-    }
-
-    return [true, cssClasses.join(" ")];
-
+    return [true, cssClasses.join(" ").trim()];
   }
-
-}
-
-function isSpecialDay(formattedDate, specialDays) {
-
-  var day = findWhere(specialDays, {date: formattedDate});
-
-  return day !== undefined && day.dayLength <= 1;
-
-}
-
-function getAbsenceType(formattedDate, absences) {
-
-  var absence = findWhere(absences, {date: formattedDate});
-
-  return absence.type;
-}
-
-function isHalfWorkday(formattedDate, holidays) {
-
-  return findWhere(holidays, {date: formattedDate, dayLength: 0.5}) !== undefined;
-
 }
 
 function getHighlighted(url, callback) {
-
   $.ajax({
     url: url,
     async: false,
@@ -185,8 +164,6 @@ function getHighlighted(url, callback) {
     type: "GET",
     success: function (data) {
       callback(data);
-
     }
   });
-
 }
