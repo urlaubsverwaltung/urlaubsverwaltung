@@ -111,10 +111,10 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="actualVacationDays"
-                                            path="actualVacationDays" class="form-control"
-                                            cssErrorClass="form-control error"
-                                            type="number" step="1"/>
+                                <uv:input-number id="actualVacationDays"
+                                                 path="actualVacationDays" cssClass="form-control"
+                                                 cssErrorClass="form-control error" step="0.5"
+                                                 value="${account.actualVacationDays}"/>
                                 <span class="help-inline">
                                     <form:errors path="actualVacationDays" cssClass="error"/>
                                 </span>
