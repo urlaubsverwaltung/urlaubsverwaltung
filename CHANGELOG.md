@@ -1,5 +1,6 @@
 ### master/unreleased
 * Show morning, noon and full absence in calendar [#624](https://github.com/synyx/urlaubsverwaltung/issues/624)
+* Fix second stage auth does not have to be in department [#663](https://github.com/synyx/urlaubsverwaltung/pull/663) [#192](https://github.com/synyx/urlaubsverwaltung/issues/192) [#439](https://github.com/synyx/urlaubsverwaltung/issues/439) [#317](https://github.com/synyx/urlaubsverwaltung/issues/317)
 
 ### [urlaubsverwaltung-2.40.6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.6)
 * Calendar settings not configurable for google and exchange [#675](https://github.com/synyx/urlaubsverwaltung/pull/675)
@@ -11,7 +12,6 @@
 * Show approvable applications for departmentHead and secondStageAuth [#657](https://github.com/synyx/urlaubsverwaltung/pull/657)
 * Fix character counter in overtime form [#673](https://github.com/synyx/urlaubsverwaltung/issues/673)
 * Fix i18n in dynamic application information [#558](https://github.com/synyx/urlaubsverwaltung/issues/558)
-* Fix second stage auth does not have to be in department [#663](https://github.com/synyx/urlaubsverwaltung/pull/663) [#192](https://github.com/synyx/urlaubsverwaltung/issues/192) [#439](https://github.com/synyx/urlaubsverwaltung/issues/439) [#317](https://github.com/synyx/urlaubsverwaltung/issues/317)
 
 ### [urlaubsverwaltung-2.40.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.4)
 * Fix maximum sick pay days [#579](https://github.com/synyx/urlaubsverwaltung/issues/579) [#650](https://github.com/synyx/urlaubsverwaltung/pull/650)
