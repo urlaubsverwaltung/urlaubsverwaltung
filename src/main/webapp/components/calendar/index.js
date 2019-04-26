@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { where, findWhere } from 'underscore';
+import { findWhere } from 'underscore';
 import {
   addDays,
   addMonths,

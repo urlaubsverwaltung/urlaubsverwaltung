@@ -138,6 +138,7 @@
 .datepicker-day-personal-holiday-full {
   --background-color-left: #F9CD13;
   --background-color-right: #F9CD13;
+  --font-color: #5F5F5F;
 }
 
 .datepicker-day-personal-holiday-morning-approved,
@@ -172,12 +173,6 @@
 .datepicker-day-selected[class*="-noon"] {
   --background-color-left: #BFBFBF;
   --background-color-right: #BFBFBF;
-  --font-color: #5F5F5F;
-}
-
-.datepicker-day-personal-holiday-full {
-  --background-color-left: #F9CD13;
-  --background-color-right: #F9CD13;
   --font-color: #5F5F5F;
 }
 
