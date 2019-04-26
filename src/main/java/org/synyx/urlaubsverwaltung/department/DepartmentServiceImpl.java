@@ -15,10 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -123,7 +125,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                             application.hasStatus(ApplicationStatus.ALLOWED)
                                 || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
                                 || application.hasStatus(ApplicationStatus.WAITING))
-                        .collect(Collectors.toList())));
+                        .collect(toList())));
 
         return departmentApplications;
     }
@@ -149,27 +151,39 @@ public class DepartmentServiceImpl implements DepartmentService {
         Set<Person> relevantPersons = new HashSet<>();
         List<Department> departments = getManagedDepartmentsOfDepartmentHead(departmentHead);
 
-        for (Department department : departments) {
-            List<Person> members = department.getMembers();
-            relevantPersons.addAll(members);
-        }
+        departments.forEach(department -> relevantPersons.addAll(
+            department.getMembers().stream()
+                .filter(isNotSecondStageIn(department))
+                .collect(toSet())
+        ));
 
         return new ArrayList<>(relevantPersons);
     }
 
 
     @Override
-    public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
+    public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
 
         Set<Person> relevantPersons = new HashSet<>();
         List<Department> departments = getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority);
 
-        for (Department department : departments) {
-            List<Person> members = department.getMembers();
-            relevantPersons.addAll(members);
-        }
+        departments.forEach(department -> relevantPersons.addAll(
+            department.getMembers().stream()
+                .filter(isNotSecondStageIn(department))
+                .collect(toSet())
+        ));
 
         return new ArrayList<>(relevantPersons);
+    }
+
+
+    private Predicate<Person> isNotHeadOf(Department department) {
+        return person -> !department.getDepartmentHeads().contains(person);
+    }
+
+
+    private Predicate<Person> isNotSecondStageIn(Department department) {
+        return person -> !department.getSecondStageAuthorities().contains(person);
     }
 
 
@@ -190,7 +204,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person) {
 
         if (secondStageAuthority.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            List<Person> members = getMembersForSecondStageAuthority(secondStageAuthority);
+            List<Person> members = getManagedMembersForSecondStageAuthority(secondStageAuthority);
 
             return members.contains(person);
         }
@@ -205,17 +219,9 @@ public class DepartmentServiceImpl implements DepartmentService {
         boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
         boolean isDepartmentHeadOfPerson = isDepartmentHeadOfPerson(signedInUser, person);
         boolean isSecondStageAuthorityOfPerson = isSecondStageAuthorityOfPerson(signedInUser, person);
+
         boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
 
-        // Note:
-        // signedInUser has role DEPARTMENT_HEAD
-        // person has role SECOND_STAGE_AUTHORITY
-        // signedInUser and person are in the same department
-        // signedInUser is not allowed to access persons data cause of lower level role
-        // (DEPARTMENT_HEAD < SECOND_STAGE_AUTHORITY)
-        boolean isDepartmentHeadOfSecondStageAuthority =
-            person.hasRole(Role.SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(Role.DEPARTMENT_HEAD);
-
-        return isOwnData || (isPrivilegedUser && !isDepartmentHeadOfSecondStageAuthority);
+        return isOwnData || isPrivilegedUser ;
     }
 }

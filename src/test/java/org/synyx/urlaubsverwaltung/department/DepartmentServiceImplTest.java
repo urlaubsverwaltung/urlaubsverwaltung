@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -156,6 +159,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsAllMembersOfTheManagedDepartmentsOfTheDepartmentHead() {
 
         Person departmentHead = mock(Person.class);
+        Person secondDepartmentHead = mock(Person.class);
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person admin2 = TestDataCreator.createPerson("admin2");
@@ -165,17 +169,20 @@ public class DepartmentServiceImplTest {
         Person marketing3 = TestDataCreator.createPerson("marketing3");
 
         Department admins = TestDataCreator.createDepartment("admins");
-        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
+        admins.setMembers(asList(admin1, admin2, departmentHead, secondDepartmentHead));
+        admins.setDepartmentHeads(asList(departmentHead, secondDepartmentHead));
 
         Department marketing = TestDataCreator.createDepartment("marketing");
-        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, departmentHead));
+        Person secondStageAuth = mock(Person.class);
+        marketing.setMembers(asList(marketing1, marketing2, marketing3, departmentHead, secondStageAuth));
+        marketing.setSecondStageAuthorities(singletonList(secondStageAuth));
 
-        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Arrays.asList(admins, marketing));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(asList(admins, marketing));
 
         List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
 
         Assert.assertNotNull("Should not be null", members);
-        Assert.assertEquals("Wrong number of members", 6, members.size());
+        Assert.assertEquals("Wrong number of members", 7, members.size());
     }
 
 
@@ -184,7 +191,7 @@ public class DepartmentServiceImplTest {
 
         Person departmentHead = mock(Person.class);
 
-        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Collections.emptyList());
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(emptyList());
 
         List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
 
@@ -203,9 +210,9 @@ public class DepartmentServiceImplTest {
         Person admin2 = TestDataCreator.createPerson("admin2");
 
         Department admins = TestDataCreator.createDepartment("admins");
-        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
+        admins.setMembers(asList(admin1, admin2, departmentHead));
 
-        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, admin1);
 
@@ -223,11 +230,11 @@ public class DepartmentServiceImplTest {
         Person admin2 = TestDataCreator.createPerson("admin2");
 
         Department admins = TestDataCreator.createDepartment("admins");
-        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
+        admins.setMembers(asList(admin1, admin2, departmentHead));
 
         Person marketing1 = TestDataCreator.createPerson("marketing1");
 
-        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, marketing1);
 
@@ -245,10 +252,10 @@ public class DepartmentServiceImplTest {
         Person admin2 = TestDataCreator.createPerson("admin2");
 
         Department admins = TestDataCreator.createDepartment("admins");
-        admins.setMembers(Arrays.asList(admin1, admin2, noDepartmentHead));
+        admins.setMembers(asList(admin1, admin2, noDepartmentHead));
 
         when(departmentRepository.getManagedDepartments(noDepartmentHead))
-            .thenReturn(Collections.singletonList(admins));
+            .thenReturn(singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(noDepartmentHead, admin1);
 
@@ -262,7 +269,7 @@ public class DepartmentServiceImplTest {
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
 
-        when(departmentRepository.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
+        when(departmentRepository.getAssignedDepartments(person)).thenReturn(emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
 
@@ -288,15 +295,15 @@ public class DepartmentServiceImplTest {
         Person marketing3 = TestDataCreator.createPerson("marketing3");
 
         Department admins = TestDataCreator.createDepartment("admins");
-        admins.setMembers(Arrays.asList(admin1, admin2, person));
+        admins.setMembers(asList(admin1, admin2, person));
 
         Department marketing = TestDataCreator.createDepartment("marketing");
-        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, person));
+        marketing.setMembers(asList(marketing1, marketing2, marketing3, person));
 
-        when(departmentRepository.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
+        when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
-            .thenReturn(Collections.emptyList());
+            .thenReturn(emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
 
@@ -335,10 +342,10 @@ public class DepartmentServiceImplTest {
         Person marketing1 = TestDataCreator.createPerson("marketing1");
 
         Department admins = TestDataCreator.createDepartment("admins");
-        admins.setMembers(Arrays.asList(admin1, person));
+        admins.setMembers(asList(admin1, person));
 
         Department marketing = TestDataCreator.createDepartment("marketing");
-        marketing.setMembers(Arrays.asList(marketing1, person));
+        marketing.setMembers(asList(marketing1, person));
 
         Application waitingApplication = mock(Application.class);
         when(waitingApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(true);
@@ -352,15 +359,15 @@ public class DepartmentServiceImplTest {
         when(otherApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(false);
         when(otherApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(false);
 
-        when(departmentRepository.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
+        when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
             any(LocalDate.class), eq(admin1)))
-            .thenReturn(Arrays.asList(waitingApplication, otherApplication));
+            .thenReturn(asList(waitingApplication, otherApplication));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
             any(LocalDate.class), eq(marketing1)))
-            .thenReturn(Collections.singletonList(allowedApplication));
+            .thenReturn(singletonList(allowedApplication));
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
 
@@ -375,10 +382,10 @@ public class DepartmentServiceImplTest {
     public void ensureSignedInOfficeUserCanAccessPersonData() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson(23, "person");
-        person.setPermissions(Collections.singletonList(Role.USER));
+        person.setPermissions(singletonList(Role.USER));
 
         Person office = TestDataCreator.createPerson(42, "office");
-        office.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
+        office.setPermissions(asList(Role.USER, Role.OFFICE));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(office, person);
 
@@ -390,10 +397,10 @@ public class DepartmentServiceImplTest {
     public void ensureSignedInBossUserCanAccessPersonData() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson(23, "person");
-        person.setPermissions(Collections.singletonList(Role.USER));
+        person.setPermissions(singletonList(Role.USER));
 
         Person boss = TestDataCreator.createPerson(42, "boss");
-        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        boss.setPermissions(asList(Role.USER, Role.BOSS));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
 
@@ -405,16 +412,16 @@ public class DepartmentServiceImplTest {
     public void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson(23, "person");
-        person.setPermissions(Collections.singletonList(Role.USER));
+        person.setPermissions(singletonList(Role.USER));
 
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
-        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        dep.setMembers(Arrays.asList(person, departmentHead));
+        dep.setMembers(asList(person, departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead))
-            .thenReturn(Collections.singletonList(dep));
+            .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
 
@@ -427,16 +434,16 @@ public class DepartmentServiceImplTest {
         throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson(23, "person");
-        person.setPermissions(Collections.singletonList(Role.USER));
+        person.setPermissions(singletonList(Role.USER));
 
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
-        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        dep.setMembers(Collections.singletonList(departmentHead));
+        dep.setMembers(singletonList(departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead))
-            .thenReturn(Collections.singletonList(dep));
+            .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
 
@@ -449,16 +456,17 @@ public class DepartmentServiceImplTest {
         throws IllegalAccessException {
 
         Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
-        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+        secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
-        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        dep.setMembers(Arrays.asList(secondStageAuthority, departmentHead));
+        dep.setMembers(asList(secondStageAuthority, departmentHead));
+        dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
 
         when(departmentRepository.getManagedDepartments(departmentHead))
-            .thenReturn(Collections.singletonList(dep));
+            .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
 
@@ -471,15 +479,17 @@ public class DepartmentServiceImplTest {
         throws IllegalAccessException {
 
         Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
-        secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+        secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
 
         Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
-        departmentHead.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        dep.setMembers(Arrays.asList(secondStageAuthority, departmentHead));
+        dep.setMembers(asList(secondStageAuthority, departmentHead));
+        dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
+        dep.setDepartmentHeads(singletonList(departmentHead));
 
-        when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority)).thenReturn(Collections.singletonList(dep));
+        when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority)).thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(secondStageAuthority, departmentHead);
 
@@ -491,15 +501,15 @@ public class DepartmentServiceImplTest {
     public void ensureNotPrivilegedUserCanNotAccessPersonData() throws IllegalAccessException {
 
         Person person = TestDataCreator.createPerson(23, "person");
-        person.setPermissions(Collections.singletonList(Role.USER));
+        person.setPermissions(singletonList(Role.USER));
 
         Person user = TestDataCreator.createPerson(42, "user");
-        user.setPermissions(Collections.singletonList(Role.USER));
+        user.setPermissions(singletonList(Role.USER));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        dep.setMembers(Arrays.asList(person, user));
+        dep.setMembers(asList(person, user));
         when(departmentRepository.getManagedDepartments(user))
-            .thenReturn(Collections.singletonList(dep));
+            .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, person);
 
@@ -511,7 +521,7 @@ public class DepartmentServiceImplTest {
     public void ensureNotPrivilegedUserCanAccessOwnPersonData() throws IllegalAccessException {
 
         Person user = TestDataCreator.createPerson(42, "user");
-        user.setPermissions(Collections.singletonList(Role.USER));
+        user.setPermissions(singletonList(Role.USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, user);
 

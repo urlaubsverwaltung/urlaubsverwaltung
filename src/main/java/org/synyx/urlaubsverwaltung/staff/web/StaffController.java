@@ -170,7 +170,7 @@ public class StaffController {
 
         // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
         if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            List<Person> members = departmentService.getMembersForSecondStageAuthority(signedInUser);
+            List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(signedInUser);
 
             // NOTE: Only persons without inactive role are relevant
             return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
@@ -196,7 +196,7 @@ public class StaffController {
 
         // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
         if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            List<Person> members = departmentService.getMembersForSecondStageAuthority(signedInUser);
+            List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(signedInUser);
 
             // NOTE: Only persons with inactive role are relevant
             return members.stream().filter(person -> person.hasRole(Role.INACTIVE)).collect(Collectors.toList());

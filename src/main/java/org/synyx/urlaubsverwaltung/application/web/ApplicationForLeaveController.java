@@ -15,12 +15,15 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -79,17 +82,24 @@ public class ApplicationForLeaveController {
             return getApplicationsForLeaveForBossOrOffice();
         }
 
-        if (isHeadOf) {
-            // Department head can see only waiting applications for leave of certain department(s)
-            return getApplicationsForLeaveForDepartmentHead(user);
-        }
-
+        List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
         if (isSecondStage) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
-            return getApplicationsForLeaveForSecondStageAuthority(user);
+            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));
         }
 
-        return emptyList();
+        if (isHeadOf) {
+            // Department head can see only waiting applications for leave of certain department(s)
+            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(user));
+        }
+
+        return applicationsForLeave.stream().filter(distinctByKey(ApplicationForLeave::getId)).collect(toList());
+    }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
 
@@ -109,7 +119,7 @@ public class ApplicationForLeaveController {
         List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
 
         return waitingApplications.stream()
-            .filter(includeDepartmentApplications(members))
+            .filter(includeApplicationsOf(members))
             .filter(withoutOwnApplications(head))
             .filter(withoutSecondStageAuthorityApplications())
             .map(application -> new ApplicationForLeave(application, calendarService))
@@ -120,10 +130,10 @@ public class ApplicationForLeaveController {
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
 
         List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
-        List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
+        List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
 
         return applications.stream()
-            .filter(includeDepartmentApplications(members))
+            .filter(includeApplicationsOf(members))
             .filter(withoutOwnApplications(secondStage))
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
@@ -138,7 +148,7 @@ public class ApplicationForLeaveController {
         return application -> !application.getPerson().getPermissions().contains(SECOND_STAGE_AUTHORITY);
     }
 
-    private Predicate<Application> includeDepartmentApplications(List<Person> members) {
+    private Predicate<Application> includeApplicationsOf(List<Person> members) {
         return application -> members.contains(application.getPerson());
     }
 
