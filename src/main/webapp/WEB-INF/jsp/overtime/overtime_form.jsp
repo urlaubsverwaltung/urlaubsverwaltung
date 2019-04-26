@@ -126,6 +126,7 @@
                             <div class="col-md-9">
                                 <span id="char-counter"></span><spring:message code="action.comment.maxChars"/>
                                 <form:textarea path="comment" cssClass="form-control" rows="2"
+                                               onkeyup="count(this.value, 'char-counter');"
                                                onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
                                 <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
                             </div>
