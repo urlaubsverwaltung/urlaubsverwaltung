@@ -6,30 +6,30 @@ import 'bootstrap/js/tab'
 
   /**
    * when a anchor is defined in the url (#)
-   * then it will be opend.
+   * then it will be opened.
    */
   function activateTabFromAnchorLink() {
-    var url = window.location.href;
-    var tabName = url.split('#')[1];
+    const url = window.location.href;
+    const tabName = url.split('#')[1];
     if (tabName) {
-      activaTab(tabName);
+      activeTab(tabName);
     }
   }
 
-  function activaTab(tab) {
+  function activeTab(tab) {
     $('.nav-tabs a[href="#' + tab + '"]').tab('show');
   }
 
 
   /**
-   * updates config section 'Kalendar Sync'
+   * updates config section 'calendar sync'
    * shows dependent on Kalenderanbindung
    *   * Anbindung an Google Kalender
    *   * Anbindung an Microsoft Exchange Kalender
    */
-  function updateVisibiltyCalendar() {
+  function updateVisibilityCalendar() {
     const calenderSettingsProvider = document.querySelector('#calendarSettingsProvider');
-    var value = calenderSettingsProvider ? calenderSettingsProvider.value : '';
+    const value = calenderSettingsProvider ? calenderSettingsProvider.value : '';
 
     const googleCalendar = document.querySelector('#google-calendar');
     if (googleCalendar) {
@@ -55,12 +55,12 @@ import 'bootstrap/js/tab'
     activateTabFromAnchorLink();
 
     // initial run to update view
-    updateVisibiltyCalendar();
+    updateVisibilityCalendar();
 
     const calendarSettingsProvider = document.querySelector('#calendarSettingsProvider');
     if (calendarSettingsProvider) {
       calendarSettingsProvider.addEventListener('change', () => {
-        updateVisibiltyCalendar();
+        updateVisibilityCalendar();
       })
     }
   });
