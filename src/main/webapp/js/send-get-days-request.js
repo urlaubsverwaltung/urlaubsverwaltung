@@ -28,7 +28,7 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
   const data = await getJSON(url);
   const workDays = data.response.workDays;
 
-  var text;
+  let text;
 
   if(isNaN(workDays)) {
     text = window.uv.i18n['application.applier.invalidPeriod']

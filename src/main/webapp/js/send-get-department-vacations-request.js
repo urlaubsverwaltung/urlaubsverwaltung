@@ -22,7 +22,7 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
   const vacations = data.response.vacations;
 
   const element = document.querySelector(elementSelector);
-  element.innerHTML = window.uv.i18n['application.applier.applicationsOfColleagues'] + " ";
+  element.innerHTML = window.uv.i18n['application.applier.applicationsOfColleagues'] + "<br />";
 
   if(vacations.length > 0) {
     const html = vacations.map(vacation => createHtmlForVacation(vacation));
