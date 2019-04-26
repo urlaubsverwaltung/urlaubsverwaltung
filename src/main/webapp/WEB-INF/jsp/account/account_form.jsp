@@ -98,7 +98,7 @@
                                 <form:input id="annualVacationDays"
                                             path="annualVacationDays" class="form-control"
                                             cssErrorClass="form-control error"
-                                            type="number" step="0.5"/>
+                                            type="number" step="1"/>
                                 <span class="help-inline">
                                     <form:errors path="annualVacationDays" cssClass="error"/>
                                 </span>
@@ -111,10 +111,10 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="actualVacationDays"
-                                            path="actualVacationDays" class="form-control"
-                                            cssErrorClass="form-control error"
-                                            type="number" step="0.5"/>
+                                <uv:input-number id="actualVacationDays"
+                                                 path="actualVacationDays" cssClass="form-control"
+                                                 cssErrorClass="form-control error" step="0.5"
+                                                 value="${account.actualVacationDays}"/>
                                 <span class="help-inline">
                                     <form:errors path="actualVacationDays" cssClass="error"/>
                                 </span>
