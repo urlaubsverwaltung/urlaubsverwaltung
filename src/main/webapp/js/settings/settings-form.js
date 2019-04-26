@@ -36,7 +36,7 @@ import 'bootstrap/js/tab'
       googleCalendar.hidden = value !== 'GoogleCalendarSyncProvider';
     }
 
-    const exchangeCalendar = document.querySelector('#google-calendar');
+    const exchangeCalendar = document.querySelector('#exchange-calendar');
     if (exchangeCalendar) {
       exchangeCalendar.hidden = value !== 'ExchangeCalendarProvider';
     }
