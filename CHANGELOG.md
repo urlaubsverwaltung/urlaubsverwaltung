@@ -1,4 +1,4 @@
-### master/unreleased
+### [urlaubsverwaltung-2.41.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.41.0)
 * Show morning, noon and full absence in calendar [#624](https://github.com/synyx/urlaubsverwaltung/issues/624)
 * Fix second stage auth does not have to be in department [#663](https://github.com/synyx/urlaubsverwaltung/pull/663) [#192](https://github.com/synyx/urlaubsverwaltung/issues/192) [#439](https://github.com/synyx/urlaubsverwaltung/issues/439) [#317](https://github.com/synyx/urlaubsverwaltung/issues/317)
 * Set annualVacation and actualVacation settings steps to 0.5 [#664](https://github.com/synyx/urlaubsverwaltung/issues/664)
