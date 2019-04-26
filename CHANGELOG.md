@@ -1,4 +1,4 @@
-### master/unreleased
+### [urlaubsverwaltung-2.40.6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.6)
 * Calendar settings not configurable for google and exchange [#675](https://github.com/synyx/urlaubsverwaltung/pull/675)
 
 ### [urlaubsverwaltung-2.40.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.5)
