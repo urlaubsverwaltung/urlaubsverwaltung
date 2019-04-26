@@ -28,7 +28,7 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
     const html = vacations.map(vacation => createHtmlForVacation(vacation));
     element.innerHTML += html.join("<br />");
   } else {
-    element.innerHTML += "&nbsp;" + window.uv.i18n['application.applier.none'];
+    element.innerHTML += window.uv.i18n['application.applier.none'];
   }
 }
 
