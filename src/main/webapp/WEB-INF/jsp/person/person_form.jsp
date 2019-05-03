@@ -42,10 +42,10 @@
                     </div>
 
                     <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-            <spring:message code="person.form.data.description"/>
-        </span>
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="person.form.data.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
@@ -107,7 +107,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="form-section">
@@ -137,10 +136,10 @@
                     </c:if>
 
                     <div class="col-md-4 col-md-push-8">
-    <span class="help-block">
-        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-        <spring:message code="person.form.permissions.description"/>
-    </span>
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="person.form.permissions.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
@@ -231,11 +230,11 @@
                                         code="person.form.permissions.roles.BOSS"/>
                                     </label>
                                     <label>
-                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_ALL" />
+                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_ALL"/>
                                         <spring:message code="person.form.notifications.BOSS.all"/>
                                     </label>
                                     <label>
-                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_DEPARTMENTS" />
+                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_DEPARTMENTS"/>
                                         <spring:message code="person.form.notifications.BOSS.departments"/>
                                     </label>
                                 </div>
@@ -254,12 +253,9 @@
                                         <spring:message code="person.form.notifications.OFFICE.overtime"/>
                                     </label>
                                 </div>
-
                             </div>
-
                         </div>
                     </div>
-
                 </div>
 
                 <div class="form-section">
