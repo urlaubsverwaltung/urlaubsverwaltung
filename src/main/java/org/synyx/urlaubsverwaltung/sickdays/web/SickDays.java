@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.math.BigDecimal.ZERO;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
+
 
 /**
  * Represents number of days for specific sick note types.
@@ -22,8 +26,8 @@ public class SickDays {
 
         days = new HashMap<>();
 
-        days.put(SickDayType.TOTAL.name(), BigDecimal.ZERO);
-        days.put(SickDayType.WITH_AUB.name(), BigDecimal.ZERO);
+        days.put(TOTAL.name(), ZERO);
+        days.put(WITH_AUB.name(), ZERO);
     }
 
     public Map<String, BigDecimal> getDays() {
