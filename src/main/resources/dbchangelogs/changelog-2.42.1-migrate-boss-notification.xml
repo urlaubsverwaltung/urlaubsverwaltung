@@ -1,0 +1,16 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="Tobias Schneider" id="migrate-boss-notification">
+
+    <preConditions>
+      <tableExists tableName="Person_notifications"/>
+    </preConditions>
+
+    <sql>
+      UPDATE Person_notifications SET notifications = 'NOTIFICATION_BOSS_ALL' WHERE notifications = 'NOTIFICATION_BOSS';
+    </sql>
+  </changeSet>
+</databaseChangeLog>
