@@ -118,14 +118,14 @@ public class MailServiceImplTest {
 
         mailService.sendNewApplicationNotification(application, null);
 
-        verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+        verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL);
     }
 
     @Test
     public void ensureSendsNewApplicationNotificationSubjectIncludesApplicationPersonName() {
 
         Person boss = TestDataCreator.createPerson("boss");
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
         when(messageSource.getMessage("subject.application.applied.boss", new String[]{"Marlene Muster"}, Locale.GERMAN))
             .thenReturn("Neuer Urlaubsantrag für Marlene Muster");
 
@@ -141,7 +141,7 @@ public class MailServiceImplTest {
         Person boss = TestDataCreator.createPerson("boss");
         Person departmentHead = TestDataCreator.createPerson("departmentHead");
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL))
             .thenReturn(singletonList(boss));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
@@ -160,7 +160,7 @@ public class MailServiceImplTest {
 
         mailService.sendRemindBossNotification(application);
 
-        verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+        verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL);
     }
 
 
@@ -170,7 +170,7 @@ public class MailServiceImplTest {
         Person boss = TestDataCreator.createPerson("boss");
         Person departmentHead = TestDataCreator.createPerson("departmentHead");
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL))
             .thenReturn(singletonList(boss));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
@@ -199,7 +199,7 @@ public class MailServiceImplTest {
         Application applicationB = createApplication(personDepartmentB);
         Application applicationC = createApplication(personDepartmentC);
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL))
             .thenReturn(singletonList(boss));
 
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
@@ -214,7 +214,7 @@ public class MailServiceImplTest {
 
         verify(personService, times(3))
             .getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
-        verify(personService, times(3)).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+        verify(personService, times(3)).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL);
         verify(departmentService)
             .isDepartmentHeadOfPerson(eq(departmentHeadAC), eq(applicationA.getPerson()));
         verify(departmentService)

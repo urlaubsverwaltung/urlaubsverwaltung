@@ -42,7 +42,7 @@ public class PersonServiceImplTest {
 
         Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
 
         Person createdPerson = sut.create(person);
 
@@ -55,7 +55,7 @@ public class PersonServiceImplTest {
         Assert.assertTrue("Missing notification",
             createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
         Assert.assertTrue("Missing notification",
-            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
+            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS_ALL));
 
         Assert.assertEquals("Wrong number of permissions", 2, createdPerson.getPermissions().size());
         Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(Role.USER));
@@ -81,7 +81,7 @@ public class PersonServiceImplTest {
         when(personDAO.findById(anyInt())).thenReturn(Optional.of(person));
 
         Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
-            Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
+            Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL),
             Arrays.asList(Role.USER, Role.BOSS));
 
         Assert.assertEquals("Wrong login name", "rick", updatedPerson.getLoginName());
@@ -93,7 +93,7 @@ public class PersonServiceImplTest {
         Assert.assertTrue("Missing notification",
             updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
         Assert.assertTrue("Missing notification",
-            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
+            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS_ALL));
 
         Assert.assertEquals("Wrong number of permissions", 2, updatedPerson.getPermissions().size());
         Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(Role.USER));
@@ -242,18 +242,18 @@ public class PersonServiceImplTest {
 
         Person boss = TestDataCreator.createPerson("boss");
         boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
-        boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+        boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
 
         Person office = TestDataCreator.createPerson("office");
         office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
-        office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS,
+        office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL,
             MailNotification.NOTIFICATION_OFFICE));
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
 
         when(personDAO.findAll()).thenReturn(allPersons);
 
-        List<Person> filteredList = sut.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+        List<Person> filteredList = sut.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL);
 
         Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
 

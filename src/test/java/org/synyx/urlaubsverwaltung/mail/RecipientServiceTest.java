@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -12,9 +13,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -22,7 +24,8 @@ import static org.mockito.Mockito.when;
 
 public class RecipientServiceTest {
 
-    RecipientService sut;
+    private RecipientService sut;
+
     private PersonService personService;
     private DepartmentService departmentService;
 
@@ -46,7 +49,7 @@ public class RecipientServiceTest {
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -63,7 +66,7 @@ public class RecipientServiceTest {
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -88,7 +91,7 @@ public class RecipientServiceTest {
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -110,7 +113,7 @@ public class RecipientServiceTest {
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -130,7 +133,7 @@ public class RecipientServiceTest {
 
         // given boss
         Person boss = TestDataCreator.createPerson("boss", Role.BOSS);
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
 
         List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
 
@@ -163,7 +166,7 @@ public class RecipientServiceTest {
         Person head2 = TestDataCreator.createPerson("head2", Role.DEPARTMENT_HEAD);
         Person secondStage = TestDataCreator.createPerson("secondStage", Role.SECOND_STAGE_AUTHORITY);
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(Arrays.asList(head1, head2));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(asList(head1, head2));
         when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
         when(departmentService.isDepartmentHeadOfPerson(head1, head1)).thenReturn(true);
         when(departmentService.isDepartmentHeadOfPerson(head2, head1)).thenReturn(true);
@@ -193,6 +196,52 @@ public class RecipientServiceTest {
         List<Person> recipientsForTemporaryAllow = sut.getRecipientsForTemporaryAllow(application);
 
         assertThat(recipientsForTemporaryAllow).contains(secondStage).doesNotContain(departmentHead);
+    }
+
+    @Test
+    public void testSendMailToBossOfDepartment() {
+
+        Person normalUser = TestDataCreator.createPerson("normalUser", Role.USER);
+        Application application = getHolidayApplication(normalUser);
+
+        Person boss = TestDataCreator.createPerson("boss1", Role.BOSS);
+        Person bossOfDepartment = TestDataCreator.createPerson("boss2", Role.BOSS);
+
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(singletonList(bossOfDepartment));
+
+        Department department = new Department();
+        department.setMembers(asList(normalUser, bossOfDepartment));
+
+        when(departmentService.getAssignedDepartmentsOfMember(bossOfDepartment)).thenReturn(singletonList(department));
+        when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(singletonList(department));
+
+        List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+
+        assertThat(recipientsForAllowAndRemind).contains(boss, bossOfDepartment);
+    }
+
+    @Test
+    public void testSendNoMailToBossOfOtherDepartment() {
+
+        Person normalUser = TestDataCreator.createPerson("normalUser", Role.USER);
+        Application application = getHolidayApplication(normalUser);
+
+        Person boss = TestDataCreator.createPerson("boss1", Role.BOSS);
+        Person bossOfDepartment = TestDataCreator.createPerson("boss2", Role.BOSS);
+
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(singletonList(bossOfDepartment));
+
+        Department department = new Department();
+        department.setMembers(asList(normalUser, bossOfDepartment));
+
+        when(departmentService.getAssignedDepartmentsOfMember(bossOfDepartment)).thenReturn(emptyList());
+        when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(singletonList(department));
+
+        List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+
+        assertThat(recipientsForAllowAndRemind).contains(boss);
     }
 
     private Application getHolidayApplication(Person normalUser) {

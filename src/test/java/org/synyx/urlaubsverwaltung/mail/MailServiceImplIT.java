@@ -130,7 +130,7 @@ public class MailServiceImplIT {
         boss = TestDataCreator.createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(Role.BOSS));
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL))
             .thenReturn(singletonList(boss));
 
         // DEPARTMENT HEAD
@@ -306,7 +306,7 @@ public class MailServiceImplIT {
         Application otherDepartmentApplication = TestDataCreator.createApplication(otherDepartmentMember, vacationType,
             LocalDate.of(2015, 11, 4), LocalDate.of(2015, 11, 4), DayLength.MORNING);
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL))
             .thenReturn(singletonList(boss));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(eq(person),
