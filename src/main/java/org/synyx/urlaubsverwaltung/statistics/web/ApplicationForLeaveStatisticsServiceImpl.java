@@ -6,6 +6,8 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.List;

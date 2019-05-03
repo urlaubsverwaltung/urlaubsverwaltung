@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics;
+package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,7 +6,8 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatisticsServiceImpl;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.Collections;
@@ -19,10 +20,11 @@ import static org.mockito.Mockito.when;
 
 public class ApplicationForLeaveStatisticsServiceImplTest {
 
+    private ApplicationForLeaveStatisticsServiceImpl sut;
+
     private PersonService personService;
     private DepartmentService departmentService;
     private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
-    private ApplicationForLeaveStatisticsServiceImpl sut;
 
     @Before
     public void setUp() {
