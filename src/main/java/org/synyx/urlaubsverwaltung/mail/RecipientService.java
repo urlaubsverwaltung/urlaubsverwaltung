@@ -67,7 +67,8 @@ class RecipientService {
      * @return  list of recipients for the given application allow/remind request
      */
     List<Person> getRecipientsForAllowAndRemind(Application application) {
-        /**
+
+        /*
          * NOTE:
          *
          * It's not possible that someone has both roles,
