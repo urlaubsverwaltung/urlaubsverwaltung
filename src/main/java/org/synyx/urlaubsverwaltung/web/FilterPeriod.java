@@ -97,4 +97,12 @@ public class FilterPeriod {
 
         return getEndDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN));
     }
+
+    @Override
+    public String toString() {
+        return "FilterPeriod{" +
+            "startDate=" + startDate +
+            ", endDate=" + endDate +
+            '}';
+    }
 }

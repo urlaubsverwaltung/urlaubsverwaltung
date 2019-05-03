@@ -38,4 +38,11 @@ public class SickDays {
 
         this.days.put(type.name(), addedDays);
     }
+
+    @Override
+    public String toString() {
+        return "SickDays{" +
+            "days=" + days +
+            '}';
+    }
 }
