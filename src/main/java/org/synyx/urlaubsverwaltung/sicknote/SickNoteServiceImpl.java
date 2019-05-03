@@ -65,19 +65,22 @@ class SickNoteServiceImpl implements SickNoteService {
         Settings settings = settingsService.getSettings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        LocalDate endDate = ZonedDateTime.now(UTC).plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification()).toLocalDate();
+        LocalDate endDate = ZonedDateTime.now(UTC)
+            .plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification())
+            .toLocalDate();
 
         return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(), endDate);
     }
 
     @Override
     public List<SickNote> getAllActiveByYear(int year) {
+
         return sickNoteDAO.findAllActiveByYear(year);
     }
 
     @Override
     public Long getNumberOfPersonsWithMinimumOneSickNote(int year) {
+
         return sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
     }
-
 }
