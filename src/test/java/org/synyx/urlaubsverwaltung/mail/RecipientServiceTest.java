@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -25,7 +24,8 @@ import static org.mockito.Mockito.when;
 
 public class RecipientServiceTest {
 
-    RecipientService sut;
+    private RecipientService sut;
+
     private PersonService personService;
     private DepartmentService departmentService;
 
