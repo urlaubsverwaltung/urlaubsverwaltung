@@ -14,21 +14,14 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 @Transactional
 public class SickNoteStatisticsService {
 
-    private SickNoteService sickNoteService;
-    private WorkDaysService calendarService;
+    private final SickNoteService sickNoteService;
+    private final WorkDaysService calendarService;
 
     @Autowired
     public SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysService calendarService) {
 
         this.sickNoteService = sickNoteService;
         this.calendarService = calendarService;
-    }
-
-
-    public SickNoteStatisticsService() {
-
-        /* needed by Spring */
-
     }
 
     public SickNoteStatistics createStatistics(int year) {
