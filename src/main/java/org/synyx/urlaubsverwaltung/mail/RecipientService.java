@@ -2,12 +2,14 @@ package org.synyx.urlaubsverwaltung.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -100,6 +102,20 @@ class RecipientService {
         //boss and user
         List<Person> responsibleDepartmentHeads = getResponsibleDepartmentHeads(applicationPerson);
         return concat(bosses, relevantBosses, responsibleDepartmentHeads);
+    }
+
+    List<String> getMailAddresses(Person... persons) {
+
+        return getMailAddresses(Arrays.asList(persons));
+    }
+
+
+    List<String> getMailAddresses(List<Person> persons) {
+
+        return persons.stream()
+            .filter(person -> StringUtils.hasText(person.getEmail()))
+            .map(Person::getEmail)
+            .collect(toList());
     }
 
     private Predicate<Person> bossesForDepartmentOf(Person applicationPerson) {
