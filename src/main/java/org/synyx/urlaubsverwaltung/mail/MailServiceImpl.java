@@ -392,7 +392,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
-        /**
+        /*
          * whats happening here?
          *
          * application a
