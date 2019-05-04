@@ -8,8 +8,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
@@ -33,7 +32,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 
 /**
@@ -61,6 +59,20 @@ class MailServiceImpl implements MailService {
         this.recipientService = recipientService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
+    }
+
+    @Override
+    public void sendMailTo(MailNotification mailNotification, String subjectMessageKey, String templateName, Map<String, Object> model) {
+
+        MailSettings mailSettings = getMailSettings();
+        model.put("baseLinkURL", mailSettings.getBaseLinkURL());
+
+        final List<Person> persons = recipientService.getRecipientsWithNotificationType(mailNotification);
+        final List<String> recipients = recipientService.getMailAddresses(persons);
+        final String subject = getTranslation(subjectMessageKey);
+        final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
+
+        mailSender.sendEmail(mailSettings, recipients, subject, text);
     }
 
     @Override
@@ -376,24 +388,6 @@ class MailServiceImpl implements MailService {
         final String text = mailBuilder.buildMailBody("application_cancellation_request", model, LOCALE);
         final List<String> recipients = recipientService.getMailAddresses(recipientService.getRecipientsWithNotificationType(NOTIFICATION_OFFICE));
         final String subject = getTranslation("subject.application.cancellationRequest");
-
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
-
-    @Override
-    public void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment) {
-
-        MailSettings mailSettings = getMailSettings();
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("overtime", overtime);
-        model.put("comment", overtimeComment);
-        model.put("settings", mailSettings);
-
-        final List<String> recipients = recipientService.getMailAddresses(recipientService.getRecipientsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE));
-        final String subject = getTranslation("subject.overtime.created");
-        final String text = mailBuilder.buildMailBody("overtime_office", model, LOCALE);
 
         mailSender.sendEmail(mailSettings, recipients, subject, text);
     }

@@ -57,6 +57,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 
 public class MailServiceImplIT {
@@ -964,10 +966,9 @@ public class MailServiceImplIT {
     public void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
         Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
-        OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, OvertimeAction.CREATED);
+        OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED);
 
-        when(personService.getPersonsWithNotificationType(MailNotification.OVERTIME_NOTIFICATION_OFFICE))
-            .thenReturn(singletonList(office));
+        when(personService.getPersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(singletonList(office));
 
         mailService.sendOvertimeNotification(overtimeRecord, overtimeComment);
 

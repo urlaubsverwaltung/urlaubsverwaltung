@@ -7,17 +7,30 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * This service provides sending notification emails.
  */
 public interface MailService {
+
+    /**
+     * Sends a mail defined by mail notification groups
+     *
+     * @param mailNotification group of people to get this email
+     * @param subjectMessageKey message key of the subject
+     * @param templateName name of template
+     * @param model additional information based on the template
+     */
+    void sendMailTo(MailNotification mailNotification, String subjectMessageKey, String templateName, Map<String, Object> model);
+
 
     /**
      * Sends an email to the applicant that the application
@@ -199,15 +212,6 @@ public interface MailService {
      * @param  createdComment additional comment for the confirming application
      */
     void sendCancellationRequest(Application application, ApplicationComment createdComment);
-
-
-    /**
-     * Sends a mail to the office after someone added an overtime record.
-     *
-     * @param  overtime  that has been added
-     * @param  overtimeComment  may contain further information
-     */
-    void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment);
 
     /**
      * Sends a mail as reminder to notify about applications for leave waiting longer already to be processed.
