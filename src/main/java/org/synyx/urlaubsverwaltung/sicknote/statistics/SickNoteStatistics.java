@@ -115,4 +115,15 @@ public class SickNoteStatistics {
             return BigDecimal.valueOf(averageDuration);
         }
     }
+
+    @Override
+    public String toString() {
+        return "SickNoteStatistics{" +
+            "created=" + created +
+            ", year=" + year +
+            ", totalNumberOfSickNotes=" + totalNumberOfSickNotes +
+            ", totalNumberOfSickDays=" + totalNumberOfSickDays +
+            ", numberOfPersonsWithMinimumOneSickNote=" + numberOfPersonsWithMinimumOneSickNote +
+            '}';
+    }
 }
