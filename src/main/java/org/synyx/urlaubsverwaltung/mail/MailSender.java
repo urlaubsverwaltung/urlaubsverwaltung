@@ -24,12 +24,12 @@ class MailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final JavaMailSenderImpl mailSender;
+    private final JavaMailSenderImpl javaMailSender;
 
     @Autowired
-    MailSender(@Qualifier("javaMailSender") JavaMailSenderImpl mailSender) {
+    MailSender(@Qualifier("javaMailSender") JavaMailSenderImpl javaMailSender) {
 
-        this.mailSender = mailSender;
+        this.javaMailSender = javaMailSender;
     }
 
     /**
@@ -65,12 +65,12 @@ class MailSender {
 
         try {
             if (mailSettings.isActive()) {
-                this.mailSender.setHost(mailSettings.getHost());
-                this.mailSender.setPort(mailSettings.getPort());
-                this.mailSender.setUsername(mailSettings.getUsername());
-                this.mailSender.setPassword(mailSettings.getPassword());
+                this.javaMailSender.setHost(mailSettings.getHost());
+                this.javaMailSender.setPort(mailSettings.getPort());
+                this.javaMailSender.setUsername(mailSettings.getUsername());
+                this.javaMailSender.setPassword(mailSettings.getPassword());
 
-                this.mailSender.send(message);
+                this.javaMailSender.send(message);
 
                 for (String recipient : message.getTo()) {
                     LOG.info("Sent email to {}", recipient);
