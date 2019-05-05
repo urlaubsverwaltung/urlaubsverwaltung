@@ -23,8 +23,8 @@ class OvertimeMailService {
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
 
-        final String templateName = "overtime_office";
         final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
 
         mailService.sendMailTo(OVERTIME_NOTIFICATION_OFFICE, subjectMessageKey, templateName, model);
     }

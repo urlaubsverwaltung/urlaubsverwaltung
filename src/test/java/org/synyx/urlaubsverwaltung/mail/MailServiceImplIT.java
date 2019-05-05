@@ -6,7 +6,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.jvnet.mock_javamail.Mailbox;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ClassPathResource;
@@ -19,14 +22,9 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeAction;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -57,10 +55,17 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class MailServiceImplIT {
 
     private static final Logger LOGGER = getLogger(lookup().lookupClass());
@@ -84,9 +89,14 @@ public class MailServiceImplIT {
         }
     }
 
-    private MailServiceImpl mailService;
+    private MailServiceImpl sut;
+
+    @Mock
     private PersonService personService;
+    @Mock
     private DepartmentService departmentService;
+    @Mock
+    private SettingsService settingsService;
 
     private Person person;
     private Person boss;
@@ -104,23 +114,14 @@ public class MailServiceImplIT {
         freeMarkerConfigurationFactory.setTemplateLoaderPath("classpath:/org/synyx/urlaubsverwaltung/core/mail/");
         Configuration configuration = freeMarkerConfigurationFactory.createConfiguration();
         configuration.setObjectWrapper(new Java8ObjectWrapper(Configuration.VERSION_2_3_28));
+
         MailBuilder mailBuilder = new MailBuilder(configuration);
-
-        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-        MailSender mailSender = new MailSender(javaMailSender);
-
-        personService = mock(PersonService.class);
-        departmentService = mock(DepartmentService.class);
-
+        MailSender mailSender = new MailSender(new JavaMailSenderImpl());
         RecipientService recipientService = new RecipientService(personService, departmentService);
-
-        SettingsService settingsService = mock(SettingsService.class);
-
-        mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, recipientService, departmentService,
+        sut = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, recipientService, departmentService,
             settingsService);
 
         person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
-
         application = createApplication(person);
 
         settings = new Settings();
@@ -130,55 +131,26 @@ public class MailServiceImplIT {
 
         // BOSS
         boss = TestDataCreator.createPerson("boss", "Hugo", "Boss", "boss@firma.test");
-        boss.setPermissions(singletonList(Role.BOSS));
-
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL))
-            .thenReturn(singletonList(boss));
+        boss.setPermissions(singletonList(BOSS));
+        when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
 
         // DEPARTMENT HEAD
         departmentHead = TestDataCreator.createPerson("head", "Michel", "Mustermann", "head@firma.test");
-        departmentHead.setPermissions(singletonList(Role.DEPARTMENT_HEAD));
-
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
-            .thenReturn(singletonList(departmentHead));
-
+        departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
+        when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), any(Person.class))).thenReturn(true);
 
         // SECOND STAGE AUTHORITY
         secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
-        secondStage.setPermissions(singletonList(Role.SECOND_STAGE_AUTHORITY));
-
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY))
-            .thenReturn(singletonList(secondStage));
-
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), any(Person.class)))
-            .thenReturn(true);
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
+        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), any(Person.class))).thenReturn(true);
 
         // OFFICE
         office = TestDataCreator.createPerson("office", "Marlene", "Muster", "office@firma.test");
-        office.setPermissions(singletonList(Role.OFFICE));
-
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
-            .thenReturn(singletonList(office));
+        office.setPermissions(singletonList(OFFICE));
+        when(personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE)).thenReturn(singletonList(office));
     }
-
-
-    private Application createApplication(Person person) {
-
-        LocalDate now = LocalDate.now(UTC);
-        Application application = new Application();
-        application.setId(1234);
-        application.setPerson(person);
-        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday"));
-        application.setDayLength(DayLength.FULL);
-        application.setApplicationDate(now);
-        application.setStartDate(now);
-        application.setEndDate(now);
-        application.setApplier(person);
-
-        return application;
-    }
-
 
     @After
     public void tearDown() {
@@ -188,12 +160,11 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException,
-        IOException {
+    public void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
 
         ApplicationComment comment = createDummyComment(person, "Hätte gerne Urlaub");
 
-        mailService.sendNewApplicationNotification(application, comment);
+        sut.sendNewApplicationNotification(application, comment);
 
         // was email sent to boss?
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
@@ -214,13 +185,12 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException,
-        IOException {
+    public void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
 
         ApplicationComment comment = createDummyComment(secondStage, "Hätte gerne Urlaub");
         application.setPerson(secondStage);
 
-        mailService.sendNewApplicationNotification(application, comment);
+        sut.sendNewApplicationNotification(application, comment);
 
         // was email sent to boss?
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
@@ -244,7 +214,7 @@ public class MailServiceImplIT {
         ApplicationComment comment = createDummyComment(departmentHead, "Hätte gerne Urlaub");
         application.setPerson(departmentHead);
 
-        mailService.sendNewApplicationNotification(application, comment);
+        sut.sendNewApplicationNotification(application, comment);
 
         // was email sent to boss?
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
@@ -263,37 +233,6 @@ public class MailServiceImplIT {
             comment);
     }
 
-
-    private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName,
-                                                       ApplicationComment comment) throws MessagingException, IOException {
-
-        // check subject
-        assertEquals("Neuer Urlaubsantrag für " + niceName, msg.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress(recipient.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String contentDepartmentHead = (String) msg.getContent();
-        assertTrue(contentDepartmentHead.contains("Hallo " + recipient.getNiceName()));
-        assertTrue(contentDepartmentHead.contains(niceName));
-        assertTrue(contentDepartmentHead.contains("Erholungsurlaub"));
-        assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
-        assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/1234"));
-        assertTrue("No comment in mail content", contentDepartmentHead.contains(comment.getText()));
-        assertTrue("Wrong comment author", contentDepartmentHead.contains(comment.getPerson().getNiceName()));
-    }
-
-
-    private ApplicationComment createDummyComment(Person author, String text) {
-
-        ApplicationComment comment = new ApplicationComment(author);
-        comment.setText(text);
-
-        return comment;
-    }
-
-
     @Test
     public void ensureNotificationAboutNewApplicationContainsInformationAboutDepartmentVacations()
         throws MessagingException, IOException {
@@ -308,14 +247,14 @@ public class MailServiceImplIT {
         Application otherDepartmentApplication = TestDataCreator.createApplication(otherDepartmentMember, vacationType,
             LocalDate.of(2015, 11, 4), LocalDate.of(2015, 11, 4), DayLength.MORNING);
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL))
+        when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL))
             .thenReturn(singletonList(boss));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(eq(person),
             any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Arrays.asList(departmentApplication, otherDepartmentApplication));
 
-        mailService.sendNewApplicationNotification(application, null);
+        sut.sendNewApplicationNotification(application, null);
 
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
         Message message = inboxOfBoss.get(0);
@@ -336,7 +275,7 @@ public class MailServiceImplIT {
 
         ApplicationComment comment = createDummyComment(boss, "OK, Urlaub kann genommen werden");
 
-        mailService.sendAllowedNotification(application, comment);
+        sut.sendAllowedNotification(application, comment);
 
         // were both emails sent?
         List<Message> inboxOffice = Mailbox.get(office.getEmail());
@@ -389,7 +328,7 @@ public class MailServiceImplIT {
 
         ApplicationComment comment = createDummyComment(secondStage, "OK, spricht von meiner Seite aus nix dagegen");
 
-        mailService.sendTemporaryAllowedNotification(application, comment);
+        sut.sendTemporaryAllowedNotification(application, comment);
 
         // were both emails sent?
         List<Message> inboxSecondStage = Mailbox.get(secondStage.getEmail());
@@ -441,7 +380,7 @@ public class MailServiceImplIT {
 
         ApplicationComment comment = createDummyComment(boss, "Geht leider nicht zu dem Zeitraum");
 
-        mailService.sendRejectedNotification(application, comment);
+        sut.sendRejectedNotification(application, comment);
 
         // was email sent?
         List<Message> inbox = Mailbox.get(person.getEmail());
@@ -471,7 +410,7 @@ public class MailServiceImplIT {
 
         ApplicationComment comment = createDummyComment(person, "Hätte gerne Urlaub");
 
-        mailService.sendConfirmation(application, comment);
+        sut.sendConfirmation(application, comment);
 
         // was email sent?
         List<Message> inbox = Mailbox.get(person.getEmail());
@@ -503,7 +442,7 @@ public class MailServiceImplIT {
 
         ApplicationComment comment = createDummyComment(office, "Geht leider nicht");
 
-        mailService.sendCancelledByOfficeNotification(application, comment);
+        sut.sendCancelledByOfficeNotification(application, comment);
 
         // was email sent?
         List<Message> inboxApplicant = Mailbox.get(person.getEmail());
@@ -533,7 +472,7 @@ public class MailServiceImplIT {
         ApplicationComment comment = createDummyComment(office, "Habe das mal für dich beantragt");
 
         application.setApplier(office);
-        mailService.sendAppliedForLeaveByOfficeNotification(application, comment);
+        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
 
         // was email sent?
         List<Message> inbox = Mailbox.get(person.getEmail());
@@ -560,7 +499,7 @@ public class MailServiceImplIT {
     @Test
     public void ensureCorrectFrom() throws MessagingException {
 
-        mailService.sendConfirmation(application, null);
+        sut.sendConfirmation(application, null);
 
         List<Message> inbox = Mailbox.get(person.getEmail());
         assertTrue(inbox.size() > 0);
@@ -589,7 +528,7 @@ public class MailServiceImplIT {
         accountThree.setRemainingVacationDays(new BigDecimal("-1"));
         accountThree.setPerson(TestDataCreator.createPerson("dings", "Horst", "Dings", "horst@dings.de"));
 
-        mailService.sendSuccessfullyUpdatedAccountsNotification(Arrays.asList(accountOne, accountTwo, accountThree));
+        sut.sendSuccessfullyUpdatedAccountsNotification(Arrays.asList(accountOne, accountTwo, accountThree));
 
         // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
         List<Message> inboxOffice = Mailbox.get(office.getEmail());
@@ -616,7 +555,7 @@ public class MailServiceImplIT {
             "replacement@firma.test");
         application.setHolidayReplacement(holidayReplacement);
 
-        mailService.notifyHolidayReplacement(application);
+        sut.notifyHolidayReplacement(application);
 
         // was email sent?
         List<Message> inbox = Mailbox.get(holidayReplacement.getEmail());
@@ -646,7 +585,7 @@ public class MailServiceImplIT {
         when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
         when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
 
-        mailService.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
+        sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
         List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
         assertTrue(inbox.size() > 0);
@@ -666,7 +605,7 @@ public class MailServiceImplIT {
     public void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
         IOException {
 
-        mailService.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
+        sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
 
         List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
         assertTrue(inbox.size() > 0);
@@ -691,7 +630,7 @@ public class MailServiceImplIT {
         when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
         when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
 
-        mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
+        sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 
         List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
         assertTrue(inbox.size() > 0);
@@ -711,7 +650,7 @@ public class MailServiceImplIT {
     @Test
     public void ensureAdministratorGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
 
-        mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
+        sut.sendSuccessfullyUpdatedSettingsNotification(settings);
 
         List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
         assertTrue(inbox.size() > 0);
@@ -733,7 +672,7 @@ public class MailServiceImplIT {
         Person user = TestDataCreator.createPerson("neuer", "Manuel", "Neuer", "neuer@test.de");
         String rawPassword = "secret";
 
-        mailService.sendUserCreationNotification(user, rawPassword);
+        sut.sendUserCreationNotification(user, rawPassword);
 
         List<Message> inbox = Mailbox.get(user.getEmail());
         assertTrue(inbox.size() > 0);
@@ -761,7 +700,7 @@ public class MailServiceImplIT {
 
         ApplicationComment comment = createDummyComment(person, "Bitte stornieren!");
 
-        mailService.sendCancellationRequest(application, comment);
+        sut.sendCancellationRequest(application, comment);
 
         List<Message> inbox = Mailbox.get(office.getEmail());
         assertTrue(inbox.size() > 0);
@@ -788,7 +727,7 @@ public class MailServiceImplIT {
         Person recipient = TestDataCreator.createPerson("recipient", "Max", "Muster", "mustermann@test.de");
         Person sender = TestDataCreator.createPerson("sender", "Rick", "Grimes", "rick@grimes.com");
 
-        mailService.sendReferApplicationNotification(application, recipient, sender);
+        sut.sendReferApplicationNotification(application, recipient, sender);
 
         List<Message> inbox = Mailbox.get(recipient.getEmail());
         assertTrue(inbox.size() > 0);
@@ -812,7 +751,7 @@ public class MailServiceImplIT {
     @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
-        mailService.sendRemindBossNotification(application);
+        sut.sendRemindBossNotification(application);
 
         // was email sent to boss?
         List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
@@ -855,7 +794,7 @@ public class MailServiceImplIT {
         Person departmentHeadA = TestDataCreator.createPerson("headAC", "Heinz", "Wurst", "headAC@firma.test");
         Person departmentHeadB = TestDataCreator.createPerson("headB", "Michel", "Mustermann", "headB@firma.test");
 
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
+        when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Arrays.asList(departmentHeadA, departmentHeadB));
 
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHeadA), eq(personDepartmentA)))
@@ -865,7 +804,7 @@ public class MailServiceImplIT {
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHeadA), eq(personDepartmentC)))
             .thenReturn(true);
 
-        mailService.sendRemindForWaitingApplicationsReminderNotification(Arrays.asList(applicationA, applicationB,
+        sut.sendRemindForWaitingApplicationsReminderNotification(Arrays.asList(applicationA, applicationB,
             applicationC));
 
         verifyInbox(boss, Arrays.asList(applicationA, applicationB, applicationC));
@@ -901,7 +840,7 @@ public class MailServiceImplIT {
 
         application.setApplier(office);
 
-        mailService.sendSickNoteConvertedToVacationNotification(application);
+        sut.sendSickNoteConvertedToVacationNotification(application);
 
         // was email sent?
         List<Message> inbox = Mailbox.get(person.getEmail());
@@ -929,7 +868,7 @@ public class MailServiceImplIT {
 
         SickNote sickNote = TestDataCreator.createSickNote(person);
 
-        mailService.sendEndOfSickPayNotification(sickNote);
+        sut.sendEndOfSickPayNotification(sickNote);
 
         // was email sent to office?
         List<Message> inboxOffice = Mailbox.get(office.getEmail());
@@ -961,34 +900,47 @@ public class MailServiceImplIT {
         assertTrue(content.contains("erreicht in Kürze die 42 Tag(e) Grenze"));
     }
 
+    private Application createApplication(Person person) {
 
-    @Test
-    public void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
+        LocalDate now = LocalDate.now(UTC);
+        Application application = new Application();
+        application.setId(1234);
+        application.setPerson(person);
+        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday"));
+        application.setDayLength(DayLength.FULL);
+        application.setApplicationDate(now);
+        application.setStartDate(now);
+        application.setEndDate(now);
+        application.setApplier(person);
 
-        Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
-        OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED);
+        return application;
+    }
 
-        when(personService.getPersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(singletonList(office));
-
-        mailService.sendOvertimeNotification(overtimeRecord, overtimeComment);
-
-        // was email sent to office?
-        List<Message> inboxOffice = Mailbox.get(office.getEmail());
-        assertTrue("Person should get email", inboxOffice.size() > 0);
-
-        // has mail correct attributes?
-        Message msg = inboxOffice.get(0);
+    private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName,
+                                                       ApplicationComment comment) throws MessagingException, IOException {
 
         // check subject
-        assertTrue("Wrong subject", msg.getSubject().contains("Es wurden Überstunden eingetragen"));
+        assertEquals("Neuer Urlaubsantrag für " + niceName, msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress(office.getEmail()), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(recipient.getEmail()), msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Office"));
-        assertTrue(content.contains("es wurden Überstunden erfasst"));
-        assertTrue(content.contains("http://urlaubsverwaltung/web/overtime/1234"));
+        String contentDepartmentHead = (String) msg.getContent();
+        assertTrue(contentDepartmentHead.contains("Hallo " + recipient.getNiceName()));
+        assertTrue(contentDepartmentHead.contains(niceName));
+        assertTrue(contentDepartmentHead.contains("Erholungsurlaub"));
+        assertTrue(contentDepartmentHead.contains("es liegt ein neuer zu genehmigender Antrag vor"));
+        assertTrue(contentDepartmentHead.contains("http://urlaubsverwaltung/web/application/1234"));
+        assertTrue("No comment in mail content", contentDepartmentHead.contains(comment.getText()));
+        assertTrue("Wrong comment author", contentDepartmentHead.contains(comment.getPerson().getNiceName()));
+    }
+
+    private ApplicationComment createDummyComment(Person author, String text) {
+
+        ApplicationComment comment = new ApplicationComment(author);
+        comment.setText(text);
+
+        return comment;
     }
 }
