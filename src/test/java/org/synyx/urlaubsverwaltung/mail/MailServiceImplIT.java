@@ -267,59 +267,7 @@ public class MailServiceImplIT {
     }
 
 
-    @Test
-    public void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException,
-        IOException {
 
-        application.setBoss(boss);
-
-        ApplicationComment comment = createDummyComment(boss, "OK, Urlaub kann genommen werden");
-
-        sut.sendAllowedNotification(application, comment);
-
-        // were both emails sent?
-        List<Message> inboxOffice = Mailbox.get(office.getEmail());
-        assertTrue(inboxOffice.size() > 0);
-
-        List<Message> inboxUser = Mailbox.get(person.getEmail());
-        assertTrue(inboxUser.size() > 0);
-
-        // get email user
-        Message msg = inboxUser.get(0);
-
-        // check subject
-        assertEquals("Dein Urlaubsantrag wurde bewilligt", msg.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress(person.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of user email
-        String contentUser = (String) msg.getContent();
-        assertTrue(contentUser.contains("Lieschen Müller"));
-        assertTrue(contentUser.contains("gestellter Antrag wurde von Hugo Boss genehmigt"));
-        assertTrue("No comment in mail content", contentUser.contains(comment.getText()));
-        assertTrue("Wrong comment author", contentUser.contains(comment.getPerson().getNiceName()));
-        assertTrue(contentUser.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
-
-        // get email office
-        Message msgOffice = inboxOffice.get(0);
-
-        // check subject
-        assertEquals("Neuer bewilligter Antrag", msgOffice.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress(office.getEmail()), msgOffice.getAllRecipients()[0]);
-
-        // check content of office email
-        String contentOfficeMail = (String) msgOffice.getContent();
-        assertTrue(contentOfficeMail.contains("Hallo Office"));
-        assertTrue(contentOfficeMail.contains("es liegt ein neuer genehmigter Antrag vor"));
-        assertTrue(contentOfficeMail.contains("Lieschen Müller"));
-        assertTrue(contentOfficeMail.contains("Erholungsurlaub"));
-        assertTrue("No comment in mail content", contentOfficeMail.contains(comment.getText()));
-        assertTrue("Wrong comment author", contentOfficeMail.contains(comment.getPerson().getNiceName()));
-        assertTrue(contentOfficeMail.contains("es liegt ein neuer genehmigter Antrag vor: http://urlaubsverwaltung/web/application/1234"));
-    }
 
 
     @Test

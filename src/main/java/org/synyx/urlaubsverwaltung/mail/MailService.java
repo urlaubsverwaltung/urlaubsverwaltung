@@ -19,6 +19,29 @@ import java.util.Map;
  */
 public interface MailService {
 
+
+    /**
+     * Sends a mail to a person
+     *
+     * @param person to get this email
+     * @param subjectMessageKey message key of the subject
+     * @param templateName name of template
+     * @param model additional information based on the template
+     */
+    void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model);
+
+
+    /**
+     * Sends a mail to a list of persons
+     *
+     * @param persons to get this email
+     * @param subjectMessageKey message key of the subject
+     * @param templateName name of template
+     * @param model additional information based on the template
+     */
+    void sendMailTo(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model);
+
+
     /**
      * Sends a mail defined by mail notification groups
      *
@@ -69,15 +92,6 @@ public interface MailService {
      * @param  comment  contains reason why application for leave has been allowed temporary
      */
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment);
-
-
-    /**
-     * /** Sends an email to the applicant and to the office that the application for leave has been allowed.
-     *
-     * @param  application  that has been allowed by a privileged user
-     * @param  comment  contains reason why application for leave has been allowed
-     */
-    void sendAllowedNotification(Application application, ApplicationComment comment);
 
 
     /**

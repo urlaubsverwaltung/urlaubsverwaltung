@@ -64,10 +64,28 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendMailTo(MailNotification mailNotification, String subjectMessageKey, String templateName, Map<String, Object> model) {
 
+        final List<Person> persons = recipientService.getRecipientsWithNotificationType(mailNotification);
+        sendMail(persons, subjectMessageKey, templateName, model);
+    }
+
+    @Override
+    public void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {
+
+        final List<Person> persons = singletonList(person);
+        sendMail(persons, subjectMessageKey, templateName, model);
+    }
+
+    @Override
+    public void sendMailTo(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
+
+        sendMail(persons, subjectMessageKey, templateName, model);
+    }
+
+    private void sendMail(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
+
         MailSettings mailSettings = getMailSettings();
         model.put("baseLinkURL", mailSettings.getBaseLinkURL());
 
-        final List<Person> persons = recipientService.getRecipientsWithNotificationType(mailNotification);
         final List<String> recipients = recipientService.getMailAddresses(persons);
         final String subject = getTranslation(subjectMessageKey);
         final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
@@ -128,24 +146,7 @@ class MailServiceImpl implements MailService {
     }
 
 
-    @Override
-    public void sendAllowedNotification(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application, ofNullable(comment));
-
-        // Inform user that the application for leave has been allowed
-        final List<String> recipientsUser = recipientService.getMailAddresses(application.getPerson());
-        final String subjectForUser = getTranslation("subject.application.allowed.user");
-        final String textForUser = mailBuilder.buildMailBody("allowed_user", model, LOCALE);
-        mailSender.sendEmail(mailSettings, recipientsUser, subjectForUser, textForUser);
-
-        // Inform office that there is a new allowed application for leave
-        final List<String> recipientsOffice = recipientService.getMailAddresses(recipientService.getRecipientsWithNotificationType(NOTIFICATION_OFFICE));
-        final String subjectForOffice = getTranslation("subject.application.allowed.office");
-        final String textForOffice = mailBuilder.buildMailBody("allowed_office", model, LOCALE);
-        mailSender.sendEmail(mailSettings, recipientsOffice, subjectForOffice, textForOffice);
-    }
 
 
     @Override

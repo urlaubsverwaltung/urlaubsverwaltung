@@ -47,6 +47,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final AccountInteractionService accountInteractionService;
     private final ApplicationCommentService commentService;
     private final MailService mailService;
+    private final ApplicationMailService applicationMailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
@@ -57,7 +58,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                                              ApplicationCommentService commentService,
                                              AccountInteractionService accountInteractionService,
                                              MailService mailService,
-                                             CalendarSyncService calendarSyncService,
+                                             ApplicationMailService applicationMailService, CalendarSyncService calendarSyncService,
                                              AbsenceMappingService absenceMappingService,
                                              SettingsService settingsService,
                                              DepartmentService departmentService) {
@@ -66,6 +67,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
         this.mailService = mailService;
+        this.applicationMailService = applicationMailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
@@ -215,7 +217,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         ApplicationComment createdComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED,
                 comment, privilegedUser);
 
-        mailService.sendAllowedNotification(applicationForLeave, createdComment);
+        applicationMailService.sendAllowedNotification(applicationForLeave, createdComment);
 
         if (applicationForLeave.getHolidayReplacement() != null) {
             mailService.notifyHolidayReplacement(applicationForLeave);

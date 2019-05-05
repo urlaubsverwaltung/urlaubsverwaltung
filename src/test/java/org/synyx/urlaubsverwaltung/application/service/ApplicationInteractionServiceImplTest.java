@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
@@ -33,7 +36,6 @@ import java.util.Optional;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Optional.of;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -43,38 +45,38 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class ApplicationInteractionServiceImplTest {
 
     private ApplicationInteractionService service;
 
+    @Mock
     private ApplicationService applicationService;
+    @Mock
     private ApplicationCommentService commentService;
+    @Mock
     private AccountInteractionService accountInteractionService;
+    @Mock
     private MailService mailService;
+    @Mock
+    private ApplicationMailService applicationMailService;
+    @Mock
     private CalendarSyncService calendarSyncService;
+    @Mock
     private AbsenceMappingService absenceMappingService;
+    @Mock
     private SettingsService settingsService;
+    @Mock
     private DepartmentService departmentService;
 
     @Before
     public void setUp() {
 
-        applicationService = mock(ApplicationService.class);
-        commentService = mock(ApplicationCommentService.class);
-        accountInteractionService = mock(AccountInteractionService.class);
-        mailService = mock(MailService.class);
-        calendarSyncService = mock(CalendarSyncService.class);
-        absenceMappingService = mock(AbsenceMappingService.class);
-        settingsService = mock(SettingsService.class);
-        departmentService = mock(DepartmentService.class);
-
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION)))
-            .thenReturn(of(new AbsenceMapping(1, AbsenceType.VACATION, "42")));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService, mailService, calendarSyncService, absenceMappingService, settingsService,
+        service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
+            mailService, applicationMailService, calendarSyncService, absenceMappingService, settingsService,
                 departmentService);
     }
 
@@ -247,7 +249,7 @@ public class ApplicationInteractionServiceImplTest {
 
     private void assertAllowedNotificationIsSent(Application applicationForLeave) {
 
-        verify(mailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
 
         verify(mailService, never())
             .sendTemporaryAllowedNotification(any(Application.class), any(ApplicationComment.class));
@@ -333,9 +335,6 @@ public class ApplicationInteractionServiceImplTest {
         Person user = TestDataCreator.createPerson("user");
         user.setPermissions(Collections.singletonList(Role.USER));
 
-        when(departmentService.isDepartmentHeadOfPerson(eq(user), eq(person))).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(user), eq(person))).thenReturn(false);
-
         Optional<String> comment = of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -386,7 +385,6 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, departmentHead, comment);
@@ -412,7 +410,7 @@ public class ApplicationInteractionServiceImplTest {
         verify(mailService)
             .sendTemporaryAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
 
-        verify(mailService, never())
+        verify(applicationMailService, never())
             .sendAllowedNotification(any(Application.class), any(ApplicationComment.class));
     }
 
@@ -565,7 +563,6 @@ public class ApplicationInteractionServiceImplTest {
         Person secondStageAuthority = TestDataCreator.createPerson("secondStageAuthority");
         secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(secondStageAuthority))).thenReturn(true);
         when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead))).thenReturn(true);
 
         Optional<String> comment = of("Foo");
@@ -587,7 +584,6 @@ public class ApplicationInteractionServiceImplTest {
         secondStageAuthority.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(secondStageAuthority))).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead))).thenReturn(true);
 
         Optional<String> comment = of("Foo");
 
@@ -981,7 +977,6 @@ public class ApplicationInteractionServiceImplTest {
         ImpatientAboutApplicationForLeaveProcessException {
 
         Application applicationForLeave = mock(Application.class);
-        when(applicationForLeave.getApplicationDate()).thenReturn(LocalDate.now(UTC).minusDays(3));
         when(applicationForLeave.getRemindDate()).thenReturn(LocalDate.now(UTC));
 
         service.remind(applicationForLeave);
@@ -1037,8 +1032,6 @@ public class ApplicationInteractionServiceImplTest {
         Person sender = TestDataCreator.createPerson("sender");
 
         Application applicationForLeave = mock(Application.class);
-        when(applicationForLeave.getPerson()).thenReturn(TestDataCreator.createPerson());
-
         service.refer(applicationForLeave, recipient, sender);
 
         verify(mailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
