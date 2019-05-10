@@ -608,33 +608,6 @@ public class MailServiceImplIT {
         assertTrue(content.contains(rawPassword));
     }
 
-
-    @Test
-    public void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
-
-        ApplicationComment comment = createDummyComment(person, "Bitte stornieren!");
-
-        sut.sendCancellationRequest(application, comment);
-
-        List<Message> inbox = Mailbox.get(office.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertTrue(msg.getSubject().contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(office.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Office"));
-        assertTrue(content.contains("hat beantragt den bereits genehmigten Urlaub"));
-        assertTrue(content.contains("Es handelt sich um folgenden Urlaubsantrag: http://urlaubsverwaltung/web/application/1234"));
-    }
-
-
     @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 

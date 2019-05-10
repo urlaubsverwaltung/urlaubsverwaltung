@@ -174,6 +174,38 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
     }
 
+
+    @Test
+    public void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        office.setPermissions(singletonList(OFFICE));
+
+        final ApplicationComment comment = new ApplicationComment(person);
+        comment.setText("Bitte stornieren!");
+
+        final Application application = createApplication(person);
+
+        sut.sendCancellationRequest(application, comment);
+
+        List<Message> inbox = Mailbox.get(office.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+        assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Office");
+        assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
+        assertThat(content).contains("/web/application/1234");
+    }
+
     private Application createApplication(Person person) {
 
         LocalDate now = LocalDate.now(UTC);

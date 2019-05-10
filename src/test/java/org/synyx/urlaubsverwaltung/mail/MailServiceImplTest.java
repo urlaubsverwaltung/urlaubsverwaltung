@@ -93,29 +93,6 @@ public class MailServiceImplTest {
 
 
     @Test
-    public void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
-
-        Person person = TestDataCreator.createPerson("muster", "Max", "Mustermann", "max@firma.test");
-        Person anotherPerson = TestDataCreator.createPerson("mmuster", "Marlene", "Muster", "max@firma.test");
-        Person personWithoutMailAddress = TestDataCreator.createPerson("nomail", "No", "Mail", null);
-
-        when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
-            .thenReturn(asList(person, anotherPerson, personWithoutMailAddress));
-
-        when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("body");
-        when(messageSource.getMessage(anyString(), any(), any())).thenReturn("subject");
-
-        mailService.sendCancellationRequest(application, null);
-
-        verify(mailSender)
-            .sendEmail(eq(settings.getMailSettings()), recipientsArgumentCaptor.capture(), anyString(), anyString());
-
-        List value = recipientsArgumentCaptor.getValue();
-        Assert.assertEquals("Wrong number of recipients", 2, value.size());
-    }
-
-
-    @Test
     public void ensureSendsNewApplicationNotificationToBosses() {
 
         mailService.sendNewApplicationNotification(application, null);

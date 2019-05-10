@@ -342,24 +342,6 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCancellationRequest(Application application, ApplicationComment createdComment) {
-
-        MailSettings mailSettings = getMailSettings();
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("comment", createdComment);
-        model.put("settings", mailSettings);
-
-        final String text = mailBuilder.buildMailBody("application_cancellation_request", model, LOCALE);
-        final List<String> recipients = recipientService.getMailAddresses(recipientService.getRecipientsWithNotificationType(NOTIFICATION_OFFICE));
-        final String subject = getTranslation("subject.application.cancellationRequest");
-
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
-
-    @Override
     public void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
         /*

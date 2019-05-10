@@ -195,16 +195,6 @@ public interface MailService {
      */
     void sendUserCreationNotification(Person person, String rawPassword);
 
-
-    /**
-     * Sends mail to office and informs about
-     * a cancellation request of an already allowed application.
-     *
-     * @param  application cancelled application
-     * @param  createdComment additional comment for the confirming application
-     */
-    void sendCancellationRequest(Application application, ApplicationComment createdComment);
-
     /**
      * Sends a mail as reminder to notify about applications for leave waiting longer already to be processed.
      *

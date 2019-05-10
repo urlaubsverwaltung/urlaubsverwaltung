@@ -817,7 +817,7 @@ public class ApplicationInteractionServiceImplTest {
         verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.CANCEL_REQUESTED), eq(comment), eq(person));
 
-        verify(mailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 

@@ -33,6 +33,7 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 
 
 @Service
@@ -344,10 +345,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             LOG.info("Request cancellation of application for leave: {}", application);
 
-            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCEL_REQUESTED,
-                    comment, canceller);
-
-            mailService.sendCancellationRequest(application, createdComment);
+            ApplicationComment createdComment = commentService.create(application, CANCEL_REQUESTED, comment, canceller);
+            applicationMailService.sendCancellationRequest(application, createdComment);
         }
 
         return application;

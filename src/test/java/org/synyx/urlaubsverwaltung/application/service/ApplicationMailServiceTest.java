@@ -130,4 +130,19 @@ public class ApplicationMailServiceTest {
 
         verify(mailService).sendMailTo(recipient,"subject.application.refer", "refer", model);
     }
+
+    @Test
+    public void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
+
+        final Application application = new Application();
+        final ApplicationComment applicationComment = new ApplicationComment(new Person());
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", applicationComment);
+
+        sut.sendCancellationRequest(application, applicationComment);
+
+        verify(mailService).sendMailTo(NOTIFICATION_OFFICE,"subject.application.cancellationRequest", "application_cancellation_request", model);
+    }
 }

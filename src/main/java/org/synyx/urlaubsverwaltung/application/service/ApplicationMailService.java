@@ -76,6 +76,22 @@ class ApplicationMailService {
         mailService.sendMailTo(recipient,"subject.application.refer", "refer", model);
     }
 
+    /**
+     * Sends mail to office and informs about
+     * a cancellation request of an already allowed application.
+     *
+     * @param  application cancelled application
+     * @param  createdComment additional comment for the confirming application
+     */
+    void sendCancellationRequest(Application application, ApplicationComment createdComment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", createdComment);
+
+        mailService.sendMailTo(NOTIFICATION_OFFICE,"subject.application.cancellationRequest", "application_cancellation_request", model);
+    }
+
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);
