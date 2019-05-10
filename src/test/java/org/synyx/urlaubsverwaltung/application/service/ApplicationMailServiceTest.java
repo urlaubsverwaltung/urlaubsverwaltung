@@ -145,4 +145,19 @@ public class ApplicationMailServiceTest {
 
         verify(mailService).sendMailTo(NOTIFICATION_OFFICE,"subject.application.cancellationRequest", "application_cancellation_request", model);
     }
+
+    @Test
+    public void sendSickNoteConvertedToVacationNotification() {
+        final Person person = new Person();
+
+        final Application application = new Application();
+        application.setPerson(person);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+
+        sut.sendSickNoteConvertedToVacationNotification(application);
+
+        verify(mailService).sendMailTo(person,"subject.sicknote.converted", "sicknote_converted", model);
+    }
 }

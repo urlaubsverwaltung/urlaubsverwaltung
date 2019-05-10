@@ -92,6 +92,19 @@ class ApplicationMailService {
         mailService.sendMailTo(NOTIFICATION_OFFICE,"subject.application.cancellationRequest", "application_cancellation_request", model);
     }
 
+    /**
+     * Sends mail to the affected person if sick note is converted to vacation.
+     *
+     * @param  application the application that has been converted from sick note to vacation
+     */
+    void sendSickNoteConvertedToVacationNotification(Application application) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+
+        mailService.sendMailTo(application.getPerson(), "subject.sicknote.converted", "sicknote_converted", model);
+    }
+
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);

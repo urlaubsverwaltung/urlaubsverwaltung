@@ -206,6 +206,42 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
     }
 
+    @Test
+    public void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException,
+        IOException {
+
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        office.setPermissions(singletonList(OFFICE));
+
+        final Application application = createApplication(person);
+        application.setApplier(office);
+
+        sut.sendSickNoteConvertedToVacationNotification(application);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(person.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        // has mail correct attributes?
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertThat(msg.getSubject()).contains("Deine Krankmeldung wurde zu Urlaub umgewandelt");
+
+        // check from and recipient
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("Marlene Muster hat deine Krankmeldung zu Urlaub umgewandelt");
+        assertThat(content).contains("/web/application/1234");
+    }
+
     private Application createApplication(Person person) {
 
         LocalDate now = LocalDate.now(UTC);

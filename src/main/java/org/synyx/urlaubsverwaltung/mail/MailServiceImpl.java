@@ -273,23 +273,6 @@ class MailServiceImpl implements MailService {
         sendTechnicalNotification(subject, text);
     }
 
-
-    @Override
-    public void sendSickNoteConvertedToVacationNotification(Application application) {
-
-        MailSettings mailSettings = getMailSettings();
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("settings", mailSettings);
-
-        final String text = mailBuilder.buildMailBody("sicknote_converted", model, LOCALE);
-        final String subject = getTranslation("subject.sicknote.converted");
-        final List<String> recipients = recipientService.getMailAddresses(application.getPerson());
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
-
     @Override
     public void sendEndOfSickPayNotification(SickNote sickNote) {
 

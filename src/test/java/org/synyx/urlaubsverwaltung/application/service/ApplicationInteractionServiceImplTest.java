@@ -958,7 +958,7 @@ public class ApplicationInteractionServiceImplTest {
         verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.CONVERTED), eq(Optional.empty()),
                 eq(creator));
-        verify(mailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
+        verify(applicationMailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
 
         Assert.assertNotNull("Status should be set", applicationForLeave.getStatus());
         Assert.assertNotNull("Applier should be set", applicationForLeave.getApplier());

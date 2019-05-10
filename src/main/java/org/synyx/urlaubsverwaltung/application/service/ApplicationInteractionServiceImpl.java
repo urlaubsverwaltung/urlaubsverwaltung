@@ -363,7 +363,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationService.save(application);
 
         commentService.create(application, ApplicationAction.CONVERTED, Optional.empty(), creator);
-        mailService.sendSickNoteConvertedToVacationNotification(application);
+        applicationMailService.sendSickNoteConvertedToVacationNotification(application);
 
         return application;
     }

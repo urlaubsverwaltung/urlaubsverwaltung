@@ -695,35 +695,6 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException,
-        IOException {
-
-        application.setApplier(office);
-
-        sut.sendSickNoteConvertedToVacationNotification(application);
-
-        // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertTrue("Person should get email", inbox.size() > 0);
-
-        // has mail correct attributes?
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertTrue("Wrong subject", msg.getSubject().contains("Deine Krankmeldung wurde zu Urlaub umgewandelt"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(person.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Lieschen Müller"));
-        assertTrue(content.contains("Marlene Muster hat deine Krankmeldung zu Urlaub umgewandelt"));
-        assertTrue(content.contains("Für Details siehe: http://urlaubsverwaltung/web/application/1234"));
-    }
-
-
-    @Test
     public void ensurePersonAndOfficeGetMailIfSickNoteReachesEndOfSickPay() throws MessagingException, IOException {
 
         SickNote sickNote = TestDataCreator.createSickNote(person);

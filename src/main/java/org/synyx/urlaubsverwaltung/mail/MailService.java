@@ -161,14 +161,6 @@ public interface MailService {
 
 
     /**
-     * Sends mail to the affected person if sick note is converted to vacation.
-     *
-     * @param  application the application that has been converted from sick note to vacation
-     */
-    void sendSickNoteConvertedToVacationNotification(Application application);
-
-
-    /**
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      *
      * @param  sickNote that is about to end
