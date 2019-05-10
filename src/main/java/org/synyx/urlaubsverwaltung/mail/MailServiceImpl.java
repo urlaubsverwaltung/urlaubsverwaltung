@@ -146,24 +146,6 @@ class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendReferApplicationNotification(Application application, Person recipient, Person sender) {
-
-        MailSettings mailSettings = getMailSettings();
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("settings", mailSettings);
-        model.put("recipient", recipient);
-        model.put("sender", sender);
-
-        final String text = mailBuilder.buildMailBody("refer", model, LOCALE);
-        final String subject = getTranslation("subject.application.refer");
-        final List<String> recipients = recipientService.getMailAddresses(recipient);
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
-
-    @Override
     public void sendConfirmation(Application application, ApplicationComment comment) {
 
         MailSettings mailSettings = getMailSettings();

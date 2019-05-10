@@ -1034,6 +1034,6 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = mock(Application.class);
         service.refer(applicationForLeave, recipient, sender);
 
-        verify(mailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
+        verify(applicationMailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
     }
 }

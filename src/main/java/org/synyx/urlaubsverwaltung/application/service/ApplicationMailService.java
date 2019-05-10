@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -55,6 +56,24 @@ class ApplicationMailService {
         model.put("comment", comment);
 
         mailService.sendMailTo(application.getPerson(),"subject.application.rejected", "rejected", model);
+    }
+
+    /**
+     * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide
+     * about this application via a generated email.
+     *
+     * @param  application to ask for support
+     * @param  recipient to request for a second opinion
+     * @param  sender person that asks for a second opinion
+     */
+    void sendReferApplicationNotification(Application application, Person recipient, Person sender) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("recipient", recipient);
+        model.put("sender", sender);
+
+        mailService.sendMailTo(recipient,"subject.application.refer", "refer", model);
     }
 
     private String getTranslation(String key, Object... args) {

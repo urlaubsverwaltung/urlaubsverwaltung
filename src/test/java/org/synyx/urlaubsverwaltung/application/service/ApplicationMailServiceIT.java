@@ -31,6 +31,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -56,12 +57,12 @@ public class ApplicationMailServiceIT {
 
         activateMailSettings();
 
-        final Person person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
-        final Person office = TestDataCreator.createPerson("office", "Marlene", "Muster", "office@firma.test");
+        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
 
-        final Person boss = TestDataCreator.createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
         final Application application = createApplication(person);
@@ -114,9 +115,9 @@ public class ApplicationMailServiceIT {
 
         activateMailSettings();
 
-        final Person person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
-        final Person boss = TestDataCreator.createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
         final ApplicationComment comment = new ApplicationComment(boss);
@@ -143,6 +144,34 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
         assertThat(content).contains(comment.getText());
         assertThat(content).contains(comment.getPerson().getNiceName());
+    }
+
+    @Test
+    public void ensureCorrectReferMail() throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person recipient = createPerson("recipient", "Max", "Muster", "mustermann@test.de");
+        final Person sender = createPerson("sender", "Rick", "Grimes", "rick@grimes.com");
+
+        final Application application = createApplication(recipient);
+
+        sut.sendReferApplicationNotification(application, recipient, sender);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(recipient.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        // check content of user email
+        Message msg = inbox.get(0);
+        assertThat(msg.getSubject()).contains("Hilfe bei der Entscheidung über einen Urlaubsantrag");
+        assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Max Muster");
+        assertThat(content).contains("Rick Grimes bittet dich um Hilfe bei der Entscheidung über einen Urlaubsantrag");
+        assertThat(content).contains("/web/application/1234");
     }
 
     private Application createApplication(Person person) {

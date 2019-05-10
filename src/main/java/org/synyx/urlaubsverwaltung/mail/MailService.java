@@ -94,18 +94,6 @@ public interface MailService {
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment);
 
 
-
-    /**
-     * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide
-     * about this application via a generated email.
-     *
-     * @param  application to ask for support
-     * @param  recipient to request for a second opinion
-     * @param  sender person that asks for a second opinion
-     */
-    void sendReferApplicationNotification(Application application, Person recipient, Person sender);
-
-
     /**
      * If an application has status waiting and no boss has decided about it after a certain time, the bosses receive a
      * reminding notification.

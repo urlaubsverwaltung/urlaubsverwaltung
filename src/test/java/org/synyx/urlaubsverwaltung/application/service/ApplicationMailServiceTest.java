@@ -102,6 +102,32 @@ public class ApplicationMailServiceTest {
         sut.sendRejectedNotification(application, applicationComment);
 
         verify(mailService).sendMailTo(person,"subject.application.rejected", "rejected", model);
+    }
 
+    @Test
+    public void sendReferApplicationNotification() {
+
+        final Person recipient = new Person();
+        final Person sender = new Person();
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setDayLength(FULL);
+        application.setPerson(recipient);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(ALLOWED);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("recipient", recipient);
+        model.put("sender", sender);
+
+        sut.sendReferApplicationNotification(application, recipient, sender);
+
+        verify(mailService).sendMailTo(recipient,"subject.application.refer", "refer", model);
     }
 }

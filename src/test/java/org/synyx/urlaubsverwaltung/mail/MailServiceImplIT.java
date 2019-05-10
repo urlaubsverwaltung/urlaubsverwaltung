@@ -636,33 +636,6 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureCorrectReferMail() throws MessagingException, IOException {
-
-        Person recipient = TestDataCreator.createPerson("recipient", "Max", "Muster", "mustermann@test.de");
-        Person sender = TestDataCreator.createPerson("sender", "Rick", "Grimes", "rick@grimes.com");
-
-        sut.sendReferApplicationNotification(application, recipient, sender);
-
-        List<Message> inbox = Mailbox.get(recipient.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertTrue(msg.getSubject().contains("Hilfe bei der Entscheidung über einen Urlaubsantrag"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(recipient.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Max Muster"));
-        assertTrue(content.contains("Rick Grimes bittet dich um Hilfe bei der Entscheidung über einen Urlaubsantrag"));
-        assertTrue(content.contains("http://urlaubsverwaltung/web/application/1234"));
-    }
-
-
-    @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
         sut.sendRemindBossNotification(application);

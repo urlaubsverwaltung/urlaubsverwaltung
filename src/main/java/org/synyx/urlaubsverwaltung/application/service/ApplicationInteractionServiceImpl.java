@@ -401,7 +401,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application refer(Application application, Person recipient, Person sender) {
 
-        mailService.sendReferApplicationNotification(application, recipient, sender);
+        applicationMailService.sendReferApplicationNotification(application, recipient, sender);
 
         return application;
     }
