@@ -105,6 +105,22 @@ class ApplicationMailService {
         mailService.sendMailTo(application.getPerson(), "subject.sicknote.converted", "sicknote_converted", model);
     }
 
+    /**
+     * Sends mail to person to inform that he/she
+     * has been selected as holiday replacement
+     * that stands in while someone is on holiday.
+     *
+     * @param  application to inform the holiday replacement
+     */
+    void notifyHolidayReplacement(Application application) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
+
+        mailService.sendMailTo(application.getHolidayReplacement(),"subject.application.holidayReplacement", "notify_holiday_replacement", model);
+    }
+
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);

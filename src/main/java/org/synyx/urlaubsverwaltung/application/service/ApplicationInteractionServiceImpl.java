@@ -221,7 +221,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationMailService.sendAllowedNotification(applicationForLeave, createdComment);
 
         if (applicationForLeave.getHolidayReplacement() != null) {
-            mailService.notifyHolidayReplacement(applicationForLeave);
+            applicationMailService.notifyHolidayReplacement(applicationForLeave);
         }
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(

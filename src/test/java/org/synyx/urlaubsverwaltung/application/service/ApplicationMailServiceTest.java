@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
@@ -18,9 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -159,5 +162,26 @@ public class ApplicationMailServiceTest {
         sut.sendSickNoteConvertedToVacationNotification(application);
 
         verify(mailService).sendMailTo(person,"subject.sicknote.converted", "sicknote_converted", model);
+    }
+
+    @Test
+    public void notifyHolidayReplacement() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final Person holidayReplacement = new Person();
+
+        final Application application = new Application();
+        application.setHolidayReplacement(holidayReplacement);
+        application.setDayLength(dayLength);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("dayLength", "FULL");
+
+        sut.notifyHolidayReplacement(application);
+
+        verify(mailService).sendMailTo(holidayReplacement,"subject.application.holidayReplacement", "notify_holiday_replacement", model);
     }
 }

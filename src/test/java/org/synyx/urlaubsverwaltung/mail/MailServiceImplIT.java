@@ -463,34 +463,6 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
-
-        Person holidayReplacement = TestDataCreator.createPerson("replacement", "Mar", "Teria",
-            "replacement@firma.test");
-        application.setHolidayReplacement(holidayReplacement);
-
-        sut.notifyHolidayReplacement(application);
-
-        // was email sent?
-        List<Message> inbox = Mailbox.get(holidayReplacement.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertTrue(msg.getSubject().contains("Urlaubsvertretung"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(holidayReplacement.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Mar Teria"));
-        assertTrue(content.contains("Urlaubsvertretung"));
-    }
-
-
-    @Test
     public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 

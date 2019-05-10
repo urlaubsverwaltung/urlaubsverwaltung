@@ -292,22 +292,6 @@ class MailServiceImpl implements MailService {
         mailSender.sendEmail(mailSettings, recipientsOffice, subject, text);
     }
 
-
-    @Override
-    public void notifyHolidayReplacement(Application application) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("dayLength", messageSource.getMessage(application.getDayLength().name(), null, LOCALE));
-
-        final String text = mailBuilder.buildMailBody("notify_holiday_replacement", model, LOCALE);
-        final List<String> recipients = recipientService.getMailAddresses(application.getHolidayReplacement());
-        final String subject = getTranslation("subject.application.holidayReplacement");
-
-        mailSender.sendEmail(getMailSettings(), recipients, subject, text);
-    }
-
-
     @Override
     public void sendUserCreationNotification(Person person, String rawPassword) {
 

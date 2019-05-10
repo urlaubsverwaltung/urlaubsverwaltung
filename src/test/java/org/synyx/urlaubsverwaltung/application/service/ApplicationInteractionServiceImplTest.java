@@ -642,7 +642,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(mailService).notifyHolidayReplacement(eq(applicationForLeave));
+        verify(applicationMailService).notifyHolidayReplacement(eq(applicationForLeave));
     }
 
 
@@ -658,7 +658,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(mailService, never()).notifyHolidayReplacement(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
     }
 
 
@@ -677,7 +677,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, departmentHead, of("Foo"));
 
-        verify(mailService, never()).notifyHolidayReplacement(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
     }
 
 

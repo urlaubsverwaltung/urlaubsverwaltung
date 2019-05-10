@@ -242,6 +242,34 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
     }
 
+    @Test
+    public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Person holidayReplacement = createPerson("replacement", "Mar", "Teria", "replacement@firma.test");
+
+        final Application application = createApplication(person);
+        application.setHolidayReplacement(holidayReplacement);
+
+        sut.notifyHolidayReplacement(application);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(holidayReplacement.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+        assertThat(msg.getSubject()).contains("Urlaubsvertretung");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Mar Teria");
+        assertThat(content).contains("Urlaubsvertretung");
+    }
+
     private Application createApplication(Person person) {
 
         LocalDate now = LocalDate.now(UTC);

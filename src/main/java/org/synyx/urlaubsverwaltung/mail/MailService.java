@@ -167,17 +167,6 @@ public interface MailService {
      */
     void sendEndOfSickPayNotification(SickNote sickNote);
 
-
-    /**
-     * Sends mail to person to inform that he/she
-     * has been selected as holiday replacement
-     * that stands in while someone is on holiday.
-     *
-     * @param  application to inform the holiday replacement
-     */
-    void notifyHolidayReplacement(Application application);
-
-
     // TODO: To be used as soon as all missing features for database authentication are implemented!
     /**
      * Sends mail to person to inform that his/her account has been created.
