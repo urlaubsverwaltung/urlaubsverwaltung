@@ -251,7 +251,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
                 privilegedUser);
 
-        mailService.sendRejectedNotification(application, createdComment);
+        applicationMailService.sendRejectedNotification(application, createdComment);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
                 AbsenceType.VACATION);

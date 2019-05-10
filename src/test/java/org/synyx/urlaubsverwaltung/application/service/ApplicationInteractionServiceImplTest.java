@@ -744,7 +744,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.reject(applicationForLeave, boss, optionalComment);
 
-        verify(mailService).sendRejectedNotification(eq(applicationForLeave), eq(applicationComment));
+        verify(applicationMailService).sendRejectedNotification(eq(applicationForLeave), eq(applicationComment));
     }
 
 

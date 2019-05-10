@@ -71,4 +71,37 @@ public class ApplicationMailServiceTest {
         verify(mailService).sendMailTo(person,"subject.application.allowed.user", "allowed_user", model);
         verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.application.allowed.office", "allowed_office", model);
     }
+
+
+    @Test
+    public void sendRejectedNotification() {
+
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
+
+        final Person person = new Person();
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setDayLength(FULL);
+        application.setPerson(person);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(ALLOWED);
+
+        final ApplicationComment applicationComment = new ApplicationComment(person);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "something");
+        model.put("dayLength", "something");
+        model.put("comment", applicationComment);
+
+        sut.sendRejectedNotification(application, applicationComment);
+
+        verify(mailService).sendMailTo(person,"subject.application.rejected", "rejected", model);
+
+    }
 }

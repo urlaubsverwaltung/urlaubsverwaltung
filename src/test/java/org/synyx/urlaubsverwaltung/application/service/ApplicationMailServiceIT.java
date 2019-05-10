@@ -109,6 +109,42 @@ public class ApplicationMailServiceIT {
         assertThat(contentOfficeMail).contains("/web/application/1234");
     }
 
+    @Test
+    public void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Person boss = TestDataCreator.createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        boss.setPermissions(singletonList(BOSS));
+
+        final ApplicationComment comment = new ApplicationComment(boss);
+        comment.setText("Geht leider nicht zu dem Zeitraum");
+
+        final Application application = createApplication(person);
+        application.setBoss(boss);
+
+        sut.sendRejectedNotification(application, comment);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(person.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        // check content of user email
+        Message msg = inbox.get(0);
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde abgelehnt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("wurde leider von Hugo Boss abgelehnt");
+        assertThat(content).contains("/web/application/1234");
+        assertThat(content).contains(comment.getText());
+        assertThat(content).contains(comment.getPerson().getNiceName());
+    }
+
     private Application createApplication(Person person) {
 
         LocalDate now = LocalDate.now(UTC);

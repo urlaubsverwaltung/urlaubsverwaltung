@@ -94,14 +94,6 @@ public interface MailService {
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment);
 
 
-    /**
-     * sends an email to the applicant that the application has been rejected.
-     *
-     * @param  application  the application which got rejected
-     * @param  comment  reason why application was rejected
-     */
-    void sendRejectedNotification(Application application, ApplicationComment comment);
-
 
     /**
      * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide

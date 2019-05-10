@@ -266,10 +266,6 @@ public class MailServiceImplIT {
         assertTrue(content.contains("Niko Schmidt: 04.11.2015 bis 04.11.2015"));
     }
 
-
-
-
-
     @Test
     public void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
         throws MessagingException, IOException {
@@ -321,36 +317,6 @@ public class MailServiceImplIT {
         assertTrue("No comment in mail content", contentSecondStageMail.contains(comment.getText()));
         assertTrue("Wrong comment author", contentSecondStageMail.contains(comment.getPerson().getNiceName()));
     }
-
-
-    @Test
-    public void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
-
-        ApplicationComment comment = createDummyComment(boss, "Geht leider nicht zu dem Zeitraum");
-
-        sut.sendRejectedNotification(application, comment);
-
-        // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertEquals("Dein Urlaubsantrag wurde abgelehnt", msg.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress(person.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Lieschen Müller"));
-        assertTrue(content.contains("wurde leider von Hugo Boss abgelehnt"));
-        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
-        assertTrue("No comment in mail content", content.contains(comment.getText()));
-        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
-    }
-
 
     @Test
     public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException,

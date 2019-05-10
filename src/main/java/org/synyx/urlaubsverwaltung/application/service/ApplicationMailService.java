@@ -40,6 +40,23 @@ class ApplicationMailService {
         mailService.sendMailTo(NOTIFICATION_OFFICE, "subject.application.allowed.office", "allowed_office", model);
     }
 
+    /**
+     * sends an email to the applicant that the application has been rejected.
+     *
+     * @param  application  the application which got rejected
+     * @param  comment  reason why application was rejected
+     */
+    void sendRejectedNotification(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
+        model.put("comment", comment);
+
+        mailService.sendMailTo(application.getPerson(),"subject.application.rejected", "rejected", model);
+    }
+
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);
