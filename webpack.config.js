@@ -37,7 +37,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'target/classes/static/assets'),
-    filename: isProduction ? '[name].[contenthash].min.js' : '[name].min.js',
+    filename: isProduction ? '[name].[contenthash].min.js' : '[name].js',
     publicPath: '/assets/'
   },
 
