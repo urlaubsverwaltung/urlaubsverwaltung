@@ -1,6 +1,7 @@
 ### master/unreleased
 * Replace h2 with mysql for development [#694](https://github.com/synyx/urlaubsverwaltung/pull/694)
 * Fix calculation of days between start date and end date of sick notes [#686](https://github.com/synyx/urlaubsverwaltung/issues/686)
+* Fix (missing) asset caching [#684](https://github.com/synyx/urlaubsverwaltung/issues/684)
 
 ### [urlaubsverwaltung-2.42.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.1)
 * Fix mail notification permissions [#681](https://github.com/synyx/urlaubsverwaltung/pull/681)
