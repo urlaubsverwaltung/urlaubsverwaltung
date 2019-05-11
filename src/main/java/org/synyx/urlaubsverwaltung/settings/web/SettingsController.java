@@ -24,7 +24,9 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -119,7 +121,7 @@ public class SettingsController {
         }
 
         settingsService.save(processGoogleRefreshToken(settings));
-        mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
+        sendSuccessfullyUpdatedSettingsNotification(settings);
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
@@ -128,6 +130,20 @@ public class SettingsController {
         redirectAttributes.addFlashAttribute("success", true);
 
         return "redirect:/web/settings";
+    }
+
+
+    /**
+     * Sends mail to the tool's manager if settings has been updated to ensure that the mail configuration works.
+     *
+     * @param settings the updated {@link Settings} to notify via mail
+     */
+    private void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("settings", settings);
+
+        mailService.sendTechnicalMail("subject.settings.updated", "updated_settings", model);
     }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {

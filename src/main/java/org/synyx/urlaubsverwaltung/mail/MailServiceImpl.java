@@ -8,9 +8,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.AbstractMap;
@@ -191,32 +189,6 @@ class MailServiceImpl implements MailService {
         mailSender.sendEmail(mailSettings, recipients, subject, text);
     }
 
-
-    /**
-     * Sends an email to the manager of the application to inform about a technical event, e.g. if an error occurred.
-     *
-     * @param subject of the email
-     * @param text    of the body of the email
-     */
-    private void sendTechnicalNotification(final String subject, final String text) {
-
-        MailSettings mailSettings = settingsService.getSettings().getMailSettings();
-
-        final List<String> recipients = singletonList(mailSettings.getAdministrator());
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
-    @Override
-    public void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("settings", settings);
-
-        final String text = mailBuilder.buildMailBody("updated_settings", model, LOCALE);
-        final String subject = getTranslation("subject.settings.updated");
-        sendTechnicalNotification(subject, text);
-    }
-
     @Override
     public void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
@@ -285,11 +257,6 @@ class MailServiceImpl implements MailService {
     private MailSettings getMailSettings() {
 
         return settingsService.getSettings().getMailSettings();
-    }
-
-    private AbsenceSettings getAbsenceSettings() {
-
-        return settingsService.getSettings().getAbsenceSettings();
     }
 
     private Map<String, Object> createModelForApplicationStatusChangeMail(MailSettings mailSettings,

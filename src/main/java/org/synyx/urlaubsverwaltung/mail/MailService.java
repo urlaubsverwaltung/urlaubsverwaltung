@@ -5,7 +5,6 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 
 import java.util.List;
 import java.util.Map;
@@ -117,14 +116,6 @@ public interface MailService {
      * @param  comment  describes the reason of the cancellation
      */
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment);
-
-
-    /**
-     * Sends mail to the tool's manager if settings has been updated to ensure that the mail configuration works.
-     *
-     * @param settings the updated {@link Settings} to notify via mail
-     */
-    void sendSuccessfullyUpdatedSettingsNotification(Settings settings);
 
 
     /**

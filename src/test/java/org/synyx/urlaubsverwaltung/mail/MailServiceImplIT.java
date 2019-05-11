@@ -419,25 +419,6 @@ public class MailServiceImplIT {
     }
 
     @Test
-    public void ensureAdministratorGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
-
-        sut.sendSuccessfullyUpdatedSettingsNotification(settings);
-
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Einstellungen aktualisiert", msg.getSubject());
-
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Einstellungen"));
-        assertTrue(content.contains(settings.getMailSettings().getHost()));
-        assertTrue(content.contains(settings.getMailSettings().getPort().toString()));
-    }
-
-
-    @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
         sut.sendRemindBossNotification(application);
