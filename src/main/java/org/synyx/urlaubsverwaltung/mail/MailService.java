@@ -145,14 +145,6 @@ public interface MailService {
      */
     void sendEndOfSickPayNotification(SickNote sickNote);
 
-    // TODO: To be used as soon as all missing features for database authentication are implemented!
-    /**
-     * Sends mail to person to inform that his/her account has been created.
-     *
-     * @param  person  New account owner
-     * @param  rawPassword  First time usage password
-     */
-    void sendUserCreationNotification(Person person, String rawPassword);
 
     /**
      * Sends a mail as reminder to notify about applications for leave waiting longer already to be processed.

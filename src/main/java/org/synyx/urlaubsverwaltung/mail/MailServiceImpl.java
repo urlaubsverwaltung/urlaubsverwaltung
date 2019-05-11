@@ -261,22 +261,6 @@ class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendUserCreationNotification(Person person, String rawPassword) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("person", person);
-        model.put("rawPassword", rawPassword);
-        model.put("applicationUrl", "");
-
-        final String text = mailBuilder.buildMailBody("user_creation", model, LOCALE);
-        final List<String> recipients = recipientService.getMailAddresses(person);
-        final String subject = getTranslation("subject.userCreation");
-
-        mailSender.sendEmail(getMailSettings(), recipients, subject, text);
-    }
-
-
-    @Override
     public void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
         /*

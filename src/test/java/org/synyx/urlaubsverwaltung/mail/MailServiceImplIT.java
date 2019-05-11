@@ -480,34 +480,6 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureThatSendUserCreationNotification() throws MessagingException, IOException {
-
-        Person user = TestDataCreator.createPerson("neuer", "Manuel", "Neuer", "neuer@test.de");
-        String rawPassword = "secret";
-
-        sut.sendUserCreationNotification(user, rawPassword);
-
-        List<Message> inbox = Mailbox.get(user.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertTrue(msg.getSubject().contains("Account für Urlaubsverwaltung erstellt"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(user.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Manuel Neuer"));
-        assertTrue(content.contains(
-            "Du hast soeben einen Benutzeraccount für die Urlaubsverwaltung angelegt bekommen"));
-        assertTrue(content.contains(user.getLoginName()));
-        assertTrue(content.contains(rawPassword));
-    }
-
-    @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
         sut.sendRemindBossNotification(application);
