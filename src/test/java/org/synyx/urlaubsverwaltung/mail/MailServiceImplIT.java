@@ -483,32 +483,6 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
-        IOException {
-
-        Absence absence = mock(Absence.class);
-        when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
-
-        sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
-
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Fehler beim Aktualisieren eines Kalendereintrags", msg.getSubject());
-
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Kalendername"));
-        assertTrue(content.contains("ID-123456"));
-        assertTrue(content.contains("event update failed"));
-        assertTrue(content.contains(person.getNiceName()));
-    }
-
-
-    @Test
     public void ensureAdministratorGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
 
         sut.sendSuccessfullyUpdatedSettingsNotification(settings);

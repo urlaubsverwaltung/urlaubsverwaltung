@@ -32,4 +32,25 @@ public class CalendarMailService {
 
         mailService.sendTechnicalMail("subject.error.calendar.sync","error_calendar_sync", model);
     }
+
+    /**
+     * Send an email to the tool's manager if an error occurs during update of calendar event.
+     *
+     * @param  calendarName  that is used for syncing
+     * @param  absence  represents the absence of a person
+     * @param  eventId  unique calendar event id
+     * @param  exception  describes the error
+     */
+    public void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId,
+                                                    String exception) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendar", calendarName);
+        model.put("absence", absence);
+        model.put("eventId", eventId);
+        model.put("exception", exception);
+
+        mailService.sendTechnicalMail("subject.error.calendar.update","error_calendar_update", model);
+
+    }
 }

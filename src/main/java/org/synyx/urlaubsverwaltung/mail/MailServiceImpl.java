@@ -214,22 +214,6 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId,
-                                                    String exception) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendarName);
-        model.put("absence", absence);
-        model.put("eventId", eventId);
-        model.put("exception", exception);
-
-        final String subject = getTranslation("subject.error.calendar.update");
-        final String text = mailBuilder.buildMailBody("error_calendar_update", model, LOCALE);
-        sendTechnicalNotification(subject, text);
-    }
-
-
-    @Override
     public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
 
         Map<String, Object> model = new HashMap<>();

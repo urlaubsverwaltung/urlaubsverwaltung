@@ -61,9 +61,7 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
-        final String adminMail = getAdminMail();
-
-        List<Message> inbox = Mailbox.get(adminMail);
+        List<Message> inbox = Mailbox.get(getAdminMail());
         assertThat(inbox.size()).isOne();
 
         Message msg = inbox.get(0);
@@ -74,6 +72,36 @@ public class CalendarMailServiceIT {
         assertThat(content).contains("Kalendername");
         assertThat(content).contains("Calendar sync failed");
         assertThat(content).contains(person.getNiceName());
+    }
+
+    @Test
+    public void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
+        IOException {
+
+        activateMailSettings();
+
+        final Person person = new Person();
+        person.setLoginName("Henry");
+
+        Absence absence = mock(Absence.class);
+        when(absence.getPerson()).thenReturn(person);
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
+
+        sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
+
+        List<Message> inbox = Mailbox.get(getAdminMail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+
+        assertThat(msg.getSubject()).isEqualTo("Fehler beim Aktualisieren eines Kalendereintrags");
+
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Kalendername");
+        assertThat(content).contains("ID-123456");
+        assertThat(content).contains("event update failed");
+        assertThat(content).contains("Henry");
     }
 
     private String getAdminMail() {

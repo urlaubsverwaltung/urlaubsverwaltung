@@ -57,4 +57,32 @@ public class CalendarMailServiceTest {
 
         verify(mailService).sendTechnicalMail("subject.error.calendar.sync", "error_calendar_sync", model);
     }
+
+
+    @Test
+    public void sendCalendarUpdateErrorNotification() {
+
+        final String calendarName = "calendar name";
+        final String exception = "Some exception";
+        final String eventId = "eventId";
+
+        final CalendarSettings calendarSettings = new CalendarSettings();
+        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 5);
+        final LocalDate endDate = LocalDate.of(2019, 5, 10);
+        final Period period = new Period(startDate, endDate, FULL);
+
+        final Absence absence = new Absence(new Person(), period, ALLOWED_APPLICATION, absenceTimeConfiguration);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendar", calendarName);
+        model.put("absence", absence);
+        model.put("eventId", eventId);
+        model.put("exception", exception);
+
+        sut.sendCalendarUpdateErrorNotification(calendarName, absence, eventId, exception);
+
+        verify(mailService).sendTechnicalMail("subject.error.calendar.update", "error_calendar_update", model);
+    }
 }

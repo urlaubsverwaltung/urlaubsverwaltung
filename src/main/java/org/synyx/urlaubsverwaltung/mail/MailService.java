@@ -121,18 +121,6 @@ public interface MailService {
      */
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment);
 
-
-    /**
-     * Send an email to the tool's manager if an error occurs during update of calendar event.
-     *
-     * @param  calendarName  that is used for syncing
-     * @param  absence  represents the absence of a person
-     * @param  eventId  unique calendar event id
-     * @param  exception  describes the error
-     */
-    void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId, String exception);
-
-
     /**
      * Send an email to the tool's manager if an error occurs during syncing delete action to calendar.
      *

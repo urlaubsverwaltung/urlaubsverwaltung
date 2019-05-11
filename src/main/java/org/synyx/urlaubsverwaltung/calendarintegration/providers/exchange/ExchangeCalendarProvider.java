@@ -252,7 +252,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             LOG.info("Appointment {} has been updated in exchange calendar '{}'.", eventId, calendarName);
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("Could not update appointment {} in exchange calendar '{}'", eventId, calendarName);
-            mailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId,
+            calendarMailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId,
                 ExceptionUtils.getStackTrace(ex));
         }
     }

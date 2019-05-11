@@ -158,7 +158,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 LOG.info("Event {} has been updated in calendar '{}'.", eventId, calendarId);
             } catch (IOException ex) {
                 LOG.warn("Could not update event {} in calendar '{}'.", eventId, calendarId, ex);
-                mailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
+                calendarMailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
             }
         }
     }
