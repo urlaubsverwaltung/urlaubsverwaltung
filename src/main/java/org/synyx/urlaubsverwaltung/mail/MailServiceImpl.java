@@ -65,33 +65,47 @@ class MailServiceImpl implements MailService {
     public void sendMailTo(MailNotification mailNotification, String subjectMessageKey, String templateName, Map<String, Object> model) {
 
         final List<Person> persons = recipientService.getRecipientsWithNotificationType(mailNotification);
-        sendMail(persons, subjectMessageKey, templateName, model);
+        sendMailToPersons(persons, subjectMessageKey, templateName, model);
     }
 
     @Override
     public void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {
 
         final List<Person> persons = singletonList(person);
-        sendMail(persons, subjectMessageKey, templateName, model);
+        sendMailToPersons(persons, subjectMessageKey, templateName, model);
     }
 
     @Override
     public void sendMailTo(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
 
-        sendMail(persons, subjectMessageKey, templateName, model);
+        sendMailToPersons(persons, subjectMessageKey, templateName, model);
     }
 
-    private void sendMail(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
+    @Override
+    public void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model) {
+
+        MailSettings mailSettings = settingsService.getSettings().getMailSettings();
+
+        sendMailToRecipients(singletonList(mailSettings.getAdministrator()), subjectMessageKey, templateName, model);
+    }
+
+    private void sendMailToPersons(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
+
+        final List<String> recipients = recipientService.getMailAddresses(persons);
+        sendMailToRecipients(recipients, subjectMessageKey, templateName, model);
+    }
+
+    private void sendMailToRecipients(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model) {
 
         MailSettings mailSettings = getMailSettings();
         model.put("baseLinkURL", mailSettings.getBaseLinkURL());
 
-        final List<String> recipients = recipientService.getMailAddresses(persons);
         final String subject = getTranslation(subjectMessageKey);
         final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
 
         mailSender.sendEmail(mailSettings, recipients, subject, text);
     }
+
 
     @Override
     public void sendNewApplicationNotification(Application application, ApplicationComment comment) {
@@ -196,20 +210,6 @@ class MailServiceImpl implements MailService {
 
         final List<String> recipients = singletonList(mailSettings.getAdministrator());
         mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
-
-    @Override
-    public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendarName);
-        model.put("absence", absence);
-        model.put("exception", exception);
-
-        final String subject = getTranslation("subject.error.calendar.sync");
-        final String text = mailBuilder.buildMailBody("error_calendar_sync", model, LOCALE);
-        sendTechnicalNotification(subject, text);
     }
 
 

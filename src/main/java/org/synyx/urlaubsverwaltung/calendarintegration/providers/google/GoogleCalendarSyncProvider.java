@@ -19,6 +19,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -52,11 +53,14 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     private Calendar googleCalendarClient;
     private int refreshTokenHashCode;
+
     private final MailService mailService;
+    private final CalendarMailService calendarMailService;
     private final SettingsService settingsService;
 
     @Autowired
-    public GoogleCalendarSyncProvider(MailService mailService, SettingsService settingsService) {
+    public GoogleCalendarSyncProvider(MailService mailService, CalendarMailService calendarMailService, SettingsService settingsService) {
+        this.calendarMailService = calendarMailService;
 
         this.settingsService = settingsService;
         this.mailService = mailService;
@@ -124,7 +128,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
             } catch (IOException ex) {
                 LOG.warn("An error occurred while trying to add appointment to calendar %s", calendarId, ex);
-                mailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
+                calendarMailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
         return Optional.empty();

@@ -43,8 +43,8 @@ public class CalendarServiceTest {
     private List<CalendarProvider> getTypicalProviderList() {
         List<CalendarProvider> calendarProviders = new ArrayList<>();
         calendarProviders.add(new NoopCalendarSyncProvider());
-        calendarProviders.add(new ExchangeCalendarProvider(null));
-        calendarProviders.add(new GoogleCalendarSyncProvider(null, null));
+        calendarProviders.add(new ExchangeCalendarProvider(null, null));
+        calendarProviders.add(new GoogleCalendarSyncProvider(null, null, null));
 
         return calendarProviders;
     }

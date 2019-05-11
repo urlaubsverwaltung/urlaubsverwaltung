@@ -463,31 +463,6 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
-        IOException {
-
-        Absence absence = mock(Absence.class);
-        when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
-
-        sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
-
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Fehler beim Synchronisieren des Kalenders", msg.getSubject());
-
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Kalendername"));
-        assertTrue(content.contains("Calendar sync failed"));
-        assertTrue(content.contains(person.getNiceName()));
-    }
-
-
-    @Test
     public void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
         IOException {
 

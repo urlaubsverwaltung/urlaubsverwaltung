@@ -1,18 +1,17 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
@@ -41,26 +40,21 @@ public class MailServiceImplTest {
 
     private MailServiceImpl mailService;
 
+    @Mock
     private MessageSource messageSource;
+    @Mock
     private MailBuilder mailBuilder;
+    @Mock
     private MailSender mailSender;
+    @Mock
     private PersonService personService;
+    @Mock
     private DepartmentService departmentService;
 
     private Application application;
-    private Settings settings;
-
-    @Captor
-    private ArgumentCaptor<List<String>> recipientsArgumentCaptor;
 
     @Before
     public void setUp() {
-
-        messageSource = mock(MessageSource.class);
-        mailBuilder = mock(MailBuilder.class);
-        mailSender = mock(MailSender.class);
-        personService = mock(PersonService.class);
-        departmentService = mock(DepartmentService.class);
 
         SettingsService settingsService = mock(SettingsService.class);
 
@@ -74,7 +68,7 @@ public class MailServiceImplTest {
 
         application = createApplication(person);
 
-        settings = new Settings();
+        Settings settings = new Settings();
         settings.getMailSettings().setActive(true);
 
         when(settingsService.getSettings()).thenReturn(settings);

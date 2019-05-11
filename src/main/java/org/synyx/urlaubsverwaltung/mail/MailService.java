@@ -54,6 +54,16 @@ public interface MailService {
 
 
     /**
+     * Sends a technical mail to the defined administrator in the {@link org.synyx.urlaubsverwaltung.settings.MailSettings}
+     *
+     * @param subjectMessageKey message key of the subject
+     * @param templateName name of template
+     * @param model additional information based on the template
+     */
+    void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model);
+
+
+    /**
      * Sends an email to the applicant that the application
      * has been made successfully.
      *
@@ -110,16 +120,6 @@ public interface MailService {
      * @param  comment  describes the reason of the cancellation
      */
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment);
-
-
-    /**
-     * Send an email to the tool's manager if an error occurs during adding calendar event.
-     *
-     * @param  calendarName  that is used for syncing
-     * @param  absence  represents the absence of a person
-     * @param  exception  describes the error
-     */
-    void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception);
 
 
     /**
