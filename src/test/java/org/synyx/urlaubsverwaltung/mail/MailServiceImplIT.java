@@ -15,7 +15,6 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
@@ -33,9 +32,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +51,6 @@ import static org.mockito.Mockito.when;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -146,7 +142,6 @@ public class MailServiceImplIT {
         // OFFICE
         office = TestDataCreator.createPerson("office", "Marlene", "Muster", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE)).thenReturn(singletonList(office));
     }
 
     @After
@@ -422,42 +417,6 @@ public class MailServiceImplIT {
         Assert.assertEquals("From must be only one email address", 1, from.length);
         Assert.assertEquals("Wrong from", settings.getMailSettings().getFrom(), from[0].toString());
     }
-
-
-    @Test
-    public void ensureOfficeGetsNotificationAfterAccountUpdating() throws MessagingException, IOException {
-
-        Account accountOne = new Account();
-        accountOne.setRemainingVacationDays(new BigDecimal("3"));
-        accountOne.setPerson(TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@firma.test"));
-
-        Account accountTwo = new Account();
-        accountTwo.setRemainingVacationDays(new BigDecimal("5.5"));
-        accountTwo.setPerson(TestDataCreator.createPerson("mustermann", "Max", "Mustermann", "max@mustermann.de"));
-
-        Account accountThree = new Account();
-        accountThree.setRemainingVacationDays(new BigDecimal("-1"));
-        accountThree.setPerson(TestDataCreator.createPerson("dings", "Horst", "Dings", "horst@dings.de"));
-
-        sut.sendSuccessfullyUpdatedAccountsNotification(Arrays.asList(accountOne, accountTwo, accountThree));
-
-        // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
-        List<Message> inboxOffice = Mailbox.get(office.getEmail());
-        assertTrue(inboxOffice.size() > 0);
-
-        Message mail = inboxOffice.get(0);
-
-        // check subject
-        assertEquals("Wrong subject", "Auswertung Resturlaubstage", mail.getSubject());
-
-        // check content
-        String content = (String) mail.getContent();
-        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + ZonedDateTime.now(UTC).getYear()));
-        assertTrue(content.contains("Marlene Muster: 3"));
-        assertTrue(content.contains("Max Mustermann: 5"));
-        assertTrue(content.contains("Horst Dings: -1"));
-    }
-
 
     @Test
     public void ensureAdministratorGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {

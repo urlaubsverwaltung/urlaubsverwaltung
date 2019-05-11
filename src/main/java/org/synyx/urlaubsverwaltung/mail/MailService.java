@@ -1,7 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.mail;
 
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
@@ -118,15 +117,6 @@ public interface MailService {
      * @param  comment  describes the reason of the cancellation
      */
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment);
-
-
-    /**
-     * Sends mail to the tool's manager if holidays accounts were updated successfully on 1st January of a year.
-     * (setting remaining vacation days)
-     *
-     * @param  updatedAccounts  that have been successfully updated
-     */
-    void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts);
 
 
     /**

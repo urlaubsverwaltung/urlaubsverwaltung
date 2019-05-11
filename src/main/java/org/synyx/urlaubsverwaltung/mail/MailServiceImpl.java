@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.mail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -14,7 +13,6 @@ import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-import java.time.LocalDate;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -22,14 +20,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 
 /**
@@ -209,25 +205,6 @@ class MailServiceImpl implements MailService {
         final List<String> recipients = singletonList(mailSettings.getAdministrator());
         mailSender.sendEmail(mailSettings, recipients, subject, text);
     }
-
-    @Override
-    public void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("accounts", updatedAccounts);
-        model.put("today", LocalDate.now(UTC));
-
-        final String text = mailBuilder.buildMailBody("updated_accounts", model, LOCALE);
-        final String subject = getTranslation("subject.account.updatedRemainingDays");
-
-        // send email to office for printing statistic
-        final List<String> recipients = recipientService.getMailAddresses(recipientService.getRecipientsWithNotificationType(NOTIFICATION_OFFICE));
-        mailSender.sendEmail(getMailSettings(), recipients, subject, text);
-
-        // send email to manager to notify about update of accounts
-        sendTechnicalNotification(subject, text);
-    }
-
 
     @Override
     public void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {

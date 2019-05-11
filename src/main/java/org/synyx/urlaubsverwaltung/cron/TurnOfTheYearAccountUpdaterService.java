@@ -12,14 +12,18 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 
 /**
@@ -37,7 +41,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-        AccountInteractionService accountInteractionService, MailService mailService) {
+                                              AccountInteractionService accountInteractionService, MailService mailService) {
 
         this.personService = personService;
         this.accountService = accountService;
@@ -66,16 +70,38 @@ public class TurnOfTheYearAccountUpdaterService {
 
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
                 Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
-                        accountLastYear.get());
+                    accountLastYear.get());
 
                 LOG.info("Setting remaining vacation days of {} to {} for {}",
-                        person.getLoginName(), holidaysAccount.getRemainingVacationDays(), year);
+                    person.getLoginName(), holidaysAccount.getRemainingVacationDays(), year);
 
                 updatedAccounts.add(holidaysAccount);
             }
         }
 
         LOG.info("Successfully updated holidays accounts: {} / {}", updatedAccounts.size(), persons.size());
-        mailService.sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
+        sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
+    }
+
+    /**
+     * Sends mail to the tool's manager if holidays accounts were updated successfully on 1st January of a year.
+     * (setting remaining vacation days)
+     *
+     * @param updatedAccounts that have been successfully updated
+     */
+    private void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("accounts", updatedAccounts);
+        model.put("today", LocalDate.now(UTC));
+
+        final String subjectMessageKey = "subject.account.updatedRemainingDays";
+        final String templateName = "updated_accounts";
+
+        // send email to office for printing statistic
+        mailService.sendMailTo(NOTIFICATION_OFFICE, subjectMessageKey, templateName, model);
+
+        // send email to manager to notify about update of accounts
+        mailService.sendTechnicalMail(subjectMessageKey, templateName, model);
     }
 }
