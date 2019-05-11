@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.time.LocalDate;
 import java.util.AbstractMap;
@@ -239,25 +238,6 @@ class MailServiceImpl implements MailService {
         final String text = mailBuilder.buildMailBody("updated_settings", model, LOCALE);
         final String subject = getTranslation("subject.settings.updated");
         sendTechnicalNotification(subject, text);
-    }
-
-    @Override
-    public void sendEndOfSickPayNotification(SickNote sickNote) {
-
-        final MailSettings mailSettings = getMailSettings();
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("sickNote", sickNote);
-        model.put("maximumSickPayDays", getAbsenceSettings().getMaximumSickPayDays());
-
-        final String text = mailBuilder.buildMailBody("sicknote_end_of_sick_pay", model, LOCALE);
-        final String subject = getTranslation("subject.sicknote.endOfSickPay");
-
-        final List<String> recipientSickPerson = recipientService.getMailAddresses(sickNote.getPerson());
-        mailSender.sendEmail(mailSettings, recipientSickPerson, subject, text);
-
-        final List<String> recipientsOffice = recipientService.getMailAddresses(recipientService.getRecipientsWithNotificationType(NOTIFICATION_OFFICE));
-        mailSender.sendEmail(mailSettings, recipientsOffice, subject, text);
     }
 
     @Override

@@ -14,13 +14,16 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 
 /**
@@ -48,6 +51,9 @@ public class CronMailService {
         this.mailService = mailService;
     }
 
+    /**
+     * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
+     */
     @Scheduled(cron = "${uv.cron.endOfSickPayNotification}")
     public void sendEndOfSickPayNotification() {
 
@@ -55,8 +61,18 @@ public class CronMailService {
 
         LOG.info("Found {} sick notes reaching end of sick pay", sickNotes.size());
 
+        final String subjectMessageKey = "subject.sicknote.endOfSickPay";
+        final String templateName = "sicknote_end_of_sick_pay";
+        final Integer maximumSickPayDays = settingsService.getSettings().getAbsenceSettings().getMaximumSickPayDays();
+
         for (SickNote sickNote : sickNotes) {
-            mailService.sendEndOfSickPayNotification(sickNote);
+
+            Map<String, Object> model = new HashMap<>();
+            model.put("maximumSickPayDays", maximumSickPayDays);
+            model.put("sickNote", sickNote);
+
+            mailService.sendMailTo(sickNote.getPerson(), subjectMessageKey, templateName, model);
+            mailService.sendMailTo(NOTIFICATION_OFFICE, subjectMessageKey, templateName, model);
         }
     }
 
@@ -64,15 +80,15 @@ public class CronMailService {
     public void sendWaitingApplicationsReminderNotification() {
 
         boolean isRemindForWaitingApplicationsActive =
-                settingsService.getSettings().getAbsenceSettings().getRemindForWaitingApplications();
+            settingsService.getSettings().getAbsenceSettings().getRemindForWaitingApplications();
 
         if (isRemindForWaitingApplicationsActive) {
             List<Application> allWaitingApplications =
-                    applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
+                applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
 
             List<Application> longWaitingApplications = allWaitingApplications.stream()
-                    .filter(isLongWaitingApplications())
-                    .collect(Collectors.toList());
+                .filter(isLongWaitingApplications())
+                .collect(Collectors.toList());
 
             if (!longWaitingApplications.isEmpty()) {
                 LOG.info("{} long waiting applications found. Sending Notification...", longWaitingApplications.size());
@@ -88,9 +104,7 @@ public class CronMailService {
             } else {
                 LOG.info("No long waiting application found.");
             }
-
         }
-
     }
 
     private Predicate<Application> isLongWaitingApplications() {
@@ -99,11 +113,11 @@ public class CronMailService {
             LocalDate remindDate = application.getRemindDate();
             if (remindDate == null) {
                 Integer daysBeforeRemindForWaitingApplications =
-                        settingsService.getSettings().getAbsenceSettings().getDaysBeforeRemindForWaitingApplications();
+                    settingsService.getSettings().getAbsenceSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
                 LocalDate minDateForNotification = application.getApplicationDate()
-                        .plusDays(daysBeforeRemindForWaitingApplications);
+                    .plusDays(daysBeforeRemindForWaitingApplications);
 
                 // true -> remind!
                 // false -> to early for notification

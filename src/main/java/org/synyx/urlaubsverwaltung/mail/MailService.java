@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.util.List;
 import java.util.Map;
@@ -136,14 +135,6 @@ public interface MailService {
      * @param settings the updated {@link Settings} to notify via mail
      */
     void sendSuccessfullyUpdatedSettingsNotification(Settings settings);
-
-
-    /**
-     * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
-     *
-     * @param  sickNote that is about to end
-     */
-    void sendEndOfSickPayNotification(SickNote sickNote);
 
 
     /**

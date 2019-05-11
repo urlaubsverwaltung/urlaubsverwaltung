@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import javax.mail.Address;
@@ -562,44 +561,6 @@ public class MailServiceImplIT {
             assertTrue(content.contains(application.getApplier().getNiceName()));
             assertTrue(content.contains("http://urlaubsverwaltung/web/application/1234"));
         }
-    }
-
-
-    @Test
-    public void ensurePersonAndOfficeGetMailIfSickNoteReachesEndOfSickPay() throws MessagingException, IOException {
-
-        SickNote sickNote = TestDataCreator.createSickNote(person);
-
-        sut.sendEndOfSickPayNotification(sickNote);
-
-        // was email sent to office?
-        List<Message> inboxOffice = Mailbox.get(office.getEmail());
-        assertTrue("Person should get email", inboxOffice.size() > 0);
-
-        // was email sent to person?
-        List<Message> inboxPerson = Mailbox.get(person.getEmail());
-        assertTrue("Person should get email", inboxPerson.size() > 0);
-
-        // has mail correct attributes?
-        assertCorrectEndOfSickPayMail(inboxOffice.get(0), office);
-        assertCorrectEndOfSickPayMail(inboxPerson.get(0), person);
-    }
-
-
-    private void assertCorrectEndOfSickPayMail(Message msg, Person recipient) throws MessagingException, IOException {
-
-        // check subject
-        assertTrue("Wrong subject", msg.getSubject().contains("Ende der Lohnfortzahlung"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(recipient.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Lieschen Müller,\r\nHallo Office,"));
-        assertTrue(content.contains(
-            "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tag(e)"));
-        assertTrue(content.contains("erreicht in Kürze die 42 Tag(e) Grenze"));
     }
 
     private Application createApplication(Person person) {
