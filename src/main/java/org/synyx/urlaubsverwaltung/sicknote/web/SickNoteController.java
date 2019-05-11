@@ -125,7 +125,7 @@ public class SickNoteController {
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNote", sickNoteForm);
             model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
@@ -173,7 +173,7 @@ public class SickNoteController {
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNote", sickNoteForm);
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             return "sicknote/sick_note_form";
