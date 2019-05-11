@@ -180,9 +180,9 @@ public class SickNoteController {
         }
 
         if (sickNoteForm.getComment() == null) {
-            sickNoteInteractionService.create(sickNote, personService.getSignedInUser());
+            sickNoteInteractionService.update(sickNote, personService.getSignedInUser());
         } else {
-            sickNoteInteractionService.create(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
+            sickNoteInteractionService.update(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
         }
 
         return "redirect:/web/sicknote/" + id;

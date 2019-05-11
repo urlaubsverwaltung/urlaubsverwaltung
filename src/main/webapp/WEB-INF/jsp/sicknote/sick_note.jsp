@@ -191,14 +191,20 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${empty comment.text}">
-                                        <uv:date date="${comment.date}"/>:
-                                        <br/>
                                         <spring:message code="sicknote.progress.${comment.action}"/>
+                                        <uv:date date="${comment.date}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <uv:date date="${comment.date}"/> -
                                         <spring:message code="sicknote.progress.${comment.action}"/>
-                                        <spring:message code="application.progress.comment"/>
+                                        <uv:date date="${comment.date}"/>
+                                        <c:choose>
+                                            <c:when test="${comment.action == 'COMMENTED'}">
+                                                :
+                                            </c:when>
+                                            <c:otherwise>
+                                                <spring:message code="sicknote.progress.comment"/>
+                                            </c:otherwise>
+                                        </c:choose>
                                         <br/>
                                         <em><c:out value="${comment.text}"/></em>
                                     </c:otherwise>
