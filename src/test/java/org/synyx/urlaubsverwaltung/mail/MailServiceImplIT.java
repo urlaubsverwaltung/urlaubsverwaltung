@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -52,7 +51,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
@@ -459,26 +457,6 @@ public class MailServiceImplIT {
         assertTrue(content.contains("Marlene Muster: 3"));
         assertTrue(content.contains("Max Mustermann: 5"));
         assertTrue(content.contains("Horst Dings: -1"));
-    }
-
-
-    @Test
-    public void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
-        IOException {
-
-        sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
-
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Fehler beim Löschen eines Kalendereintrags", msg.getSubject());
-
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Kalendername"));
-        assertTrue(content.contains("ID-123456"));
-        assertTrue(content.contains("event delete failed"));
     }
 
 

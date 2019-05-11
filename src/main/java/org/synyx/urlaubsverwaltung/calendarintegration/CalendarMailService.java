@@ -51,6 +51,22 @@ public class CalendarMailService {
         model.put("exception", exception);
 
         mailService.sendTechnicalMail("subject.error.calendar.update","error_calendar_update", model);
+    }
 
+    /**
+     * Send an email to the tool's manager if an error occurs during syncing delete action to calendar.
+     *
+     * @param  calendarName  name of calendar that is used for syncing
+     * @param  eventId  id of event which should be deleted
+     * @param  exception  describes the error
+     */
+    public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendar", calendarName);
+        model.put("eventId", eventId);
+        model.put("exception", exception);
+
+        mailService.sendTechnicalMail("subject.error.calendar.delete","error_calendar_delete", model);
     }
 }

@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -54,16 +53,14 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     private Calendar googleCalendarClient;
     private int refreshTokenHashCode;
 
-    private final MailService mailService;
     private final CalendarMailService calendarMailService;
     private final SettingsService settingsService;
 
     @Autowired
-    public GoogleCalendarSyncProvider(MailService mailService, CalendarMailService calendarMailService, SettingsService settingsService) {
+    public GoogleCalendarSyncProvider(CalendarMailService calendarMailService, SettingsService settingsService) {
         this.calendarMailService = calendarMailService;
 
         this.settingsService = settingsService;
-        this.mailService = mailService;
     }
 
     /**
@@ -180,7 +177,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 LOG.info("Event {} has been deleted in calendar '{}'.", eventId, calendarId);
             } catch (IOException ex) {
                 LOG.warn("Could not delete event {} in calendar '{}'", eventId, calendarId, ex);
-                mailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
+                calendarMailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
             }
         }
     }

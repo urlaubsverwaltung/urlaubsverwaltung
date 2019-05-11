@@ -15,7 +15,6 @@ import microsoft.exchange.webservices.data.search.FolderView;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
@@ -35,10 +34,9 @@ public class ExchangeCalendarProviderTest {
 
     @Test
     public void checkCalendarSyncSettingsNoExceptionForEmptyEmail() {
-        final MailService mailService = mock(MailService.class);
-        final CalendarMailService calendarMailService= mock(CalendarMailService.class);
+        final CalendarMailService calendarMailService = mock(CalendarMailService.class);
 
-        ExchangeCalendarProvider cut = new ExchangeCalendarProvider(mailService, calendarMailService);
+        ExchangeCalendarProvider cut = new ExchangeCalendarProvider(calendarMailService);
 
         CalendarSettings calendarSettings = mock(CalendarSettings.class);
         ExchangeCalendarSettings exchangeCalSettings = mock(ExchangeCalendarSettings.class);
@@ -97,7 +95,6 @@ public class ExchangeCalendarProviderTest {
 
     @Test
     public void add() throws Exception {
-        MailService mailService = mock(MailService.class);
         CalendarMailService calendarMailService = mock(CalendarMailService.class);
         ExchangeFactory exchangeFactory = mock(ExchangeFactory.class);
 
@@ -105,7 +102,7 @@ public class ExchangeCalendarProviderTest {
         when(exchangeFactory.getNewAppointment(any(ExchangeService.class))).thenReturn(appointment);
 
         ExchangeService exchangeService = getMockedExchangeService();
-        ExchangeCalendarProvider cut = new ExchangeCalendarProvider(mailService, exchangeService, exchangeFactory, calendarMailService);
+        ExchangeCalendarProvider cut = new ExchangeCalendarProvider(exchangeService, exchangeFactory, calendarMailService);
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(new Person("login", "lastName", "firstName", "abc@de.f"));

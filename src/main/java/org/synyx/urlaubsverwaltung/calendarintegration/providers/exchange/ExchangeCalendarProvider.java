@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarNotCreatedException;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
@@ -46,7 +45,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final MailService mailService;
     private final ExchangeService exchangeService;
     private final ExchangeFactory exchangeFactory;
     private final CalendarMailService calendarMailService;
@@ -55,15 +53,13 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     private String credentialsPassword;
 
     @Autowired
-    public ExchangeCalendarProvider(MailService mailService, CalendarMailService calendarMailService) {
+    public ExchangeCalendarProvider(CalendarMailService calendarMailService) {
 
-        this(mailService, new ExchangeService(), new ExchangeFactory(), calendarMailService);
+        this(new ExchangeService(), new ExchangeFactory(), calendarMailService);
     }
 
-    public ExchangeCalendarProvider(MailService mailService,
-                                    ExchangeService exchangeService, ExchangeFactory exchangeFactory, CalendarMailService calendarMailService) {
+    public ExchangeCalendarProvider(ExchangeService exchangeService, ExchangeFactory exchangeFactory, CalendarMailService calendarMailService) {
 
-        this.mailService = mailService;
         this.exchangeService = exchangeService;
         this.exchangeFactory = exchangeFactory;
         this.calendarMailService = calendarMailService;
@@ -279,7 +275,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             LOG.info("Appointment {} has been deleted in exchange calendar '{}'.", eventId, calendarName);
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("Could not delete appointment {} in exchange calendar '{}'", eventId, calendarName);
-            mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ExceptionUtils.getStackTrace(ex));
+            calendarMailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ExceptionUtils.getStackTrace(ex));
         }
     }
 

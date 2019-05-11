@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -211,21 +210,6 @@ class MailServiceImpl implements MailService {
         final List<String> recipients = singletonList(mailSettings.getAdministrator());
         mailSender.sendEmail(mailSettings, recipients, subject, text);
     }
-
-
-    @Override
-    public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendarName);
-        model.put("eventId", eventId);
-        model.put("exception", exception);
-
-        String text = mailBuilder.buildMailBody("error_calendar_delete", model, LOCALE);
-
-        sendTechnicalNotification(getTranslation("subject.error.calendar.delete"), text);
-    }
-
 
     @Override
     public void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {

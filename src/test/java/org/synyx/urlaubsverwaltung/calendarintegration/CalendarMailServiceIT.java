@@ -104,6 +104,27 @@ public class CalendarMailServiceIT {
         assertThat(content).contains("Henry");
     }
 
+    @Test
+    public void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
+        IOException {
+
+        activateMailSettings();
+
+        sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
+
+        List<Message> inbox = Mailbox.get(getAdminMail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+
+        assertThat(msg.getSubject()).isEqualTo("Fehler beim Löschen eines Kalendereintrags");
+
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Kalendername");
+        assertThat(content).contains("ID-123456");
+        assertThat(content).contains("event delete failed");
+    }
+
     private String getAdminMail() {
         final Settings settings = settingsService.getSettings();
         final MailSettings mailSettings = settings.getMailSettings();

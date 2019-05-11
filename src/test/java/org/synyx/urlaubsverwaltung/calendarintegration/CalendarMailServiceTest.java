@@ -85,4 +85,21 @@ public class CalendarMailServiceTest {
 
         verify(mailService).sendTechnicalMail("subject.error.calendar.update", "error_calendar_update", model);
     }
+
+    @Test
+    public void sendCalendarDeleteErrorNotification() {
+
+        final String calendarName = "calendar name";
+        final String exception = "Some exception";
+        final String eventId = "eventId";
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendar", calendarName);
+        model.put("eventId", eventId);
+        model.put("exception", exception);
+
+        sut.sendCalendarDeleteErrorNotification(calendarName, eventId, exception);
+
+        verify(mailService).sendTechnicalMail("subject.error.calendar.delete", "error_calendar_delete", model);
+    }
 }
