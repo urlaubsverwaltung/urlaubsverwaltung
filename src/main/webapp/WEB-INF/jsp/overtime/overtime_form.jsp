@@ -8,34 +8,31 @@
 <html>
 <head>
     <uv:head/>
-    <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var locale = "${pageContext.response.locale.language}";
-            var urlPrefix = "<spring:url value='/api' />";
-
-            var onSelect = function (selectedDate) {
-                var $endDate = $("#endDate");
-                if (this.id == "startDate" && $endDate.val() === "") {
-                    $endDate.datepicker("setDate", selectedDate);
-                }
-            };
-
-            var getPersonId = function () {
-                return "<c:out value="${overtime.person.id}" />";
-            };
-
-            createDatepickerInstances(["#startDate", "#endDate"], locale, urlPrefix, getPersonId, onSelect);
-        });
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.css' />" />
+    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.jquery-ui-themes.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/overtime_form.min.js' />"></script>
 </head>
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <uv:menu/>
+
+<c:set var="DATE_PATTERN">
+    <spring:message code="pattern.date"/>
+</c:set>
 
 <div class="content">
     <div class="container">
@@ -96,7 +93,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="startDate" cssClass="form-control" cssErrorClass="form-control error"
-                                            autocomplete="off"/>
+                                            autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -107,7 +104,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="endDate" cssClass="form-control" cssErrorClass="form-control error"
-                                            autocomplete="off"/>
+                                            autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -117,8 +114,9 @@
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="numberOfHours" cssClass="form-control"
-                                            cssErrorClass="form-control error"/>
+                                <uv:input-number id="numberOfHours" path="numberOfHours" cssClass="form-control"
+                                                 cssErrorClass="form-control error" step="0.25"
+                                                 value="${overtime.numberOfHours}"/>
                                 <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
                             </div>
                         </div>
@@ -130,6 +128,7 @@
                             <div class="col-md-9">
                                 <span id="char-counter"></span><spring:message code="action.comment.maxChars"/>
                                 <form:textarea path="comment" cssClass="form-control" rows="2"
+                                               onkeyup="count(this.value, 'char-counter');"
                                                onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
                                 <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
                             </div>

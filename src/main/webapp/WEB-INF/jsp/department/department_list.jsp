@@ -1,21 +1,19 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/department_list.min.js' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>
-
 </head>
 
 <body>
@@ -67,17 +65,6 @@
                     </c:choose>
                 </div>
 
-                <script type="text/javascript">
-                    $(document).ready(function () {
-
-                        $("table.sortable").tablesorter({
-                            sortList: [[0, 0]]
-                        });
-
-                    });
-                </script>
-
-
                 <c:choose>
                     <c:when test="${empty departments}">
                         <spring:message code="departments.none"/>
@@ -108,7 +95,8 @@
                                                      title="<spring:message code='department.data.info'/>"
                                                      data-content="${department.description}">
                                                     <c:out value="${department.name}"/>
-                                                    <i class="fa fa-fw fa-info-circle hidden-print" aria-hidden="true"></i>
+                                                    <i class="fa fa-fw fa-info-circle hidden-print"
+                                                       aria-hidden="true"></i>
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
@@ -121,7 +109,7 @@
                                         code="department.members"/>
                                     </td>
                                     <td class="hidden-xs">
-                                        <uv:dateTime dateTime="${department.lastModification}"/>
+                                        <uv:date date="${department.lastModification}"/>
                                     </td>
                                     <sec:authorize access="hasAuthority('OFFICE')">
                                         <td>
@@ -133,7 +121,8 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal"
-                                                                        aria-hidden="true"><i class="fa fa-remove" aria-hidden="true"></i>
+                                                                        aria-hidden="true"><i class="fa fa-remove"
+                                                                                              aria-hidden="true"></i>
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
                                                                     <spring:message

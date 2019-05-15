@@ -1,7 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
@@ -38,13 +37,13 @@
                 <h2 class="error-description">
                     <c:choose>
                         <c:when test="${statusCode == 403}">
-                          <spring:message code="errorPage.403"/>
+                            <spring:message code="errorPage.403"/>
                         </c:when>
                         <c:when test="${statusCode == 404}">
-                          <spring:message code="errorPage.404"/>
+                            <spring:message code="errorPage.404"/>
                         </c:when>
                         <c:otherwise>
-                          <spring:message code="errorPage.other"/>
+                            <spring:message code="errorPage.other"/>
                         </c:otherwise>
                     </c:choose>
                 </h2>

@@ -1,15 +1,16 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
+
+import java.time.LocalDate;
 
 
 /**
@@ -29,8 +30,8 @@ class SickNoteDataProvider {
         this.durationChecker = durationChecker;
     }
 
-    SickNote createSickNote(Person person, Person office, DayLength dayLength, DateMidnight startDate,
-        DateMidnight endDate, SickNoteType type, boolean withAUB) {
+    SickNote createSickNote(Person person, Person office, DayLength dayLength, LocalDate startDate,
+                            LocalDate endDate, SickNoteType type, boolean withAUB) {
 
         SickNote sickNote = null;
 

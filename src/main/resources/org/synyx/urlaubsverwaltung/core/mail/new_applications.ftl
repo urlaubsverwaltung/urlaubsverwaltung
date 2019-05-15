@@ -7,25 +7,25 @@ es liegt ein neuer zu genehmigender Antrag vor: ${settings.baseLinkURL}web/appli
 Informationen zum Urlaubsantrag:
 
 Mitarbeiter: ${application.person.niceName}
-Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
-Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
+Datum der Antragsstellung: ${application.applicationDate.format("dd.MM.yyyy")}
+Zeitraum des beantragten Urlaubs: ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
 Art des Urlaubs: ${vacationType}
-<#if (application.reason)??>
+<#if (application.reason)?has_content>
 Grund: ${application.reason}
 </#if>
-<#if (application.holidayReplacement.niceName)??>
+<#if (application.holidayReplacement.niceName)?has_content>
 Vertreter: ${application.holidayReplacement.niceName}
 </#if>
-<#if (application.address)??>
+<#if (application.address)?has_content>
 Anschrift/Telefon während des Urlaubs: ${application.address}
 </#if>
-<#if (comment.text)??>
+<#if (comment.text)?has_content>
 Kommentar: ${comment.text}
 </#if>
 
 Überschneidende Anträge in der Abteilung des Antragsstellers:
 <#list departmentVacations as vacation>
-${vacation.person.niceName}: ${vacation.startDate.toString("dd.MM.yyyy")} bis ${vacation.endDate.toString("dd.MM.yyyy")}
+${vacation.person.niceName}: ${vacation.startDate.format("dd.MM.yyyy")} bis ${vacation.endDate.format("dd.MM.yyyy")}
 <#else>
 Keine
 </#list>

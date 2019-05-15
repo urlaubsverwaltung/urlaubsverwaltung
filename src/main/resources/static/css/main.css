@@ -1,9 +1,5 @@
 @import "colors.css";
 @import "actions.css";
-@import "navbar.css";
-@import "calendar.css";
-@import "vacation_overview.css";
-@import "datepicker.css";
 @import "form.css";
 @import "button.css";
 @import "box.css";
@@ -16,9 +12,9 @@
 @import "error.css";
 
 /**************************************************************************
-  
+
   COMMON STYLING
-  
+
 **************************************************************************/
 
 body {

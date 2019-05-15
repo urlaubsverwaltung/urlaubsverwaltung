@@ -1,176 +1,211 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-    
-    <changeSet author="murygina (generated)" id="initial-schema-creation">
-        
-        <createTable tableName="SickNote_SickNoteComment">
-            <column name="SickNote_id" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="comments_id" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        
-        <createTable tableName="Person">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="active" type="BIT(1)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="email" type="VARCHAR(255)"/>
-            <column name="firstName" type="VARCHAR(255)"/>
-            <column name="lastName" type="VARCHAR(255)"/>
-            <column name="loginName" type="VARCHAR(255)"/>
-            <column name="privateKey" type="LONGBLOB"/>
-            <column name="publicKey" type="LONGBLOB"/>
-        </createTable>
-        
-        <createTable tableName="WorkingTime">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="friday" type="VARCHAR(255)"/>
-            <column name="monday" type="VARCHAR(255)"/>
-            <column name="saturday" type="VARCHAR(255)"/>
-            <column name="sunday" type="VARCHAR(255)"/>
-            <column name="thursday" type="VARCHAR(255)"/>
-            <column name="tuesday" type="VARCHAR(255)"/>
-            <column name="validFrom" type="date"/>
-            <column name="wednesday" type="VARCHAR(255)"/>
-            <column name="person_id" type="INT(10)"/>
-        </createTable>
-        
-        <createTable tableName="SickNote">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="active" type="BIT(1)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="aubEndDate" type="date"/>
-            <column name="aubPresent" type="BIT(1)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="aubStartDate" type="date"/>
-            <column name="endDate" type="date"/>
-            <column name="lastEdited" type="date"/>
-            <column name="startDate" type="date"/>
-            <column name="workDays" type="DECIMAL(19, 2)"/>
-            <column name="person_id" type="INT(10)"/>
-        </createTable>
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-        <createTable tableName="Comment">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="dateOfComment" type="date"/>
-            <column name="nameOfCommentingPerson" type="VARCHAR(255)"/>
-            <column name="reason" type="VARCHAR(255)"/>
-            <column name="application_id" type="INT(10)"/>
-            <column name="progress" type="VARCHAR(255)"/>
-            <column name="status" type="INT(10)"/>
-        </createTable>
+  <changeSet author="murygina (generated)" id="initial-schema-creation">
 
-        <createTable tableName="Application">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="address" type="VARCHAR(255)"/>
-            <column name="applicationDate" type="date"/>
-            <column name="days" type="DECIMAL(19, 2)"/>
-            <column name="endDate" type="date"/>
-            <column name="formerlyAllowed" type="BIT(1)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="howLong" type="INT(10)"/>
-            <column name="reason" type="VARCHAR(255)"/>
-            <column name="rep" type="VARCHAR(255)"/>
-            <column name="signatureBoss" type="LONGBLOB"/>
-            <column name="signaturePerson" type="LONGBLOB"/>
-            <column name="startDate" type="date"/>
-            <column name="status" type="INT(10)"/>
-            <column name="vacationType" type="INT(10)"/>
-            <column name="boss_id" type="INT(10)"/>
-            <column name="office_id" type="INT(10)"/>
-            <column name="person_id" type="INT(10)"/>
-            <column name="cancelDate" type="date"/>
-            <column name="editedDate" type="date"/>
-            <column name="remindDate" type="date"/>
-            <column name="applier_id" type="INT(10)"/>
-            <column name="canceller_id" type="INT(10)"/>
-            <column name="comment" type="VARCHAR(255)"/>
-            <column name="teamInformed" type="BIT(1)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="rep_id" type="INT(10)"/>
-        </createTable>
+    <createTable tableName="SickNote_SickNoteComment">
+      <column name="SickNote_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="comments_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
 
-        <createTable tableName="Person_permissions">
-            <column name="Person_id" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="permissions" type="VARCHAR(255)"/>
-        </createTable>
+    <createTable tableName="Person">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="active" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="email" type="VARCHAR(255)"/>
+      <column name="firstName" type="VARCHAR(255)"/>
+      <column name="lastName" type="VARCHAR(255)"/>
+      <column name="loginName" type="VARCHAR(255)"/>
+      <column name="privateKey" type="LONGBLOB"/>
+      <column name="publicKey" type="LONGBLOB"/>
+    </createTable>
 
-        <createTable tableName="SickNoteComment">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="date" type="date"/>
-            <column name="status" type="VARCHAR(255)"/>
-            <column name="text" type="VARCHAR(255)"/>
-            <column name="person_id" type="INT(10)"/>
-        </createTable>
+    <createTable tableName="WorkingTime">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="friday" type="VARCHAR(255)"/>
+      <column name="monday" type="VARCHAR(255)"/>
+      <column name="saturday" type="VARCHAR(255)"/>
+      <column name="sunday" type="VARCHAR(255)"/>
+      <column name="thursday" type="VARCHAR(255)"/>
+      <column name="tuesday" type="VARCHAR(255)"/>
+      <column name="validFrom" type="date"/>
+      <column name="wednesday" type="VARCHAR(255)"/>
+      <column name="person_id" type="INT(10)"/>
+    </createTable>
 
-        <createTable tableName="Account">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="annualVacationDays" type="DECIMAL(19, 2)"/>
-            <column name="remainingVacationDays" type="DECIMAL(19, 2)"/>
-            <column name="remainingVacationDaysExpire" type="BIT(1)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="vacationDays" type="DECIMAL(19, 2)"/>
-            <column name="validFrom" type="date"/>
-            <column name="validTo" type="date"/>
-            <column name="year" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="person_id" type="INT(10)"/>
-        </createTable>
-        
-        <addForeignKeyConstraint baseColumnNames="office_id" baseTableName="Application" constraintName="FKC00DAD308DE74EB" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="Account" constraintName="FK1D0C220DC1CA25B2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="boss_id" baseTableName="Application" constraintName="FKC00DAD3093066E9A" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="WorkingTime" constraintName="FK6B1E997E323A0A01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="Person_id" baseTableName="Person_permissions" constraintName="FK9B1752BAC1CA25B2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="SickNote" constraintName="FKF689670323A0A01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="comments_id" baseTableName="SickNote_SickNoteComment" constraintName="FK1133DE008E296B7A" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="SickNoteComment"/>
-        
-        <addForeignKeyConstraint baseColumnNames="SickNote_id" baseTableName="SickNote_SickNoteComment" constraintName="FK1133DE001E866686" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="SickNote"/>
-        
-        <addForeignKeyConstraint baseColumnNames="applier_id" baseTableName="Application" constraintName="FKC00DAD307949FCBC" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="rep_id" baseTableName="Application" constraintName="FKC00DAD30C7AB87B9" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="Application" constraintName="FKC00DAD30C1CA25B2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="canceller_id" baseTableName="Application" constraintName="FKC00DAD304C576368" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-        <addForeignKeyConstraint baseColumnNames="application_id" baseTableName="Comment" constraintName="FK9BDE863F88CA0EA2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Application"/>
-        
-        <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="SickNoteComment" constraintName="FK4A44D1CF323A0A01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="Person"/>
-        
-    </changeSet>
+    <createTable tableName="SickNote">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="active" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="aubEndDate" type="date"/>
+      <column name="aubPresent" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="aubStartDate" type="date"/>
+      <column name="endDate" type="date"/>
+      <column name="lastEdited" type="date"/>
+      <column name="startDate" type="date"/>
+      <column name="workDays" type="DECIMAL(19, 2)"/>
+      <column name="person_id" type="INT(10)"/>
+    </createTable>
+
+    <createTable tableName="Comment">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="dateOfComment" type="date"/>
+      <column name="nameOfCommentingPerson" type="VARCHAR(255)"/>
+      <column name="reason" type="VARCHAR(255)"/>
+      <column name="application_id" type="INT(10)"/>
+      <column name="progress" type="VARCHAR(255)"/>
+      <column name="status" type="INT(10)"/>
+    </createTable>
+
+    <createTable tableName="Application">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="address" type="VARCHAR(255)"/>
+      <column name="applicationDate" type="date"/>
+      <column name="days" type="DECIMAL(19, 2)"/>
+      <column name="endDate" type="date"/>
+      <column name="formerlyAllowed" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="howLong" type="INT(10)"/>
+      <column name="reason" type="VARCHAR(255)"/>
+      <column name="rep" type="VARCHAR(255)"/>
+      <column name="signatureBoss" type="LONGBLOB"/>
+      <column name="signaturePerson" type="LONGBLOB"/>
+      <column name="startDate" type="date"/>
+      <column name="status" type="INT(10)"/>
+      <column name="vacationType" type="INT(10)"/>
+      <column name="boss_id" type="INT(10)"/>
+      <column name="office_id" type="INT(10)"/>
+      <column name="person_id" type="INT(10)"/>
+      <column name="cancelDate" type="date"/>
+      <column name="editedDate" type="date"/>
+      <column name="remindDate" type="date"/>
+      <column name="applier_id" type="INT(10)"/>
+      <column name="canceller_id" type="INT(10)"/>
+      <column name="comment" type="VARCHAR(255)"/>
+      <column name="teamInformed" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rep_id" type="INT(10)"/>
+    </createTable>
+
+    <createTable tableName="Person_permissions">
+      <column name="Person_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="permissions" type="VARCHAR(255)"/>
+    </createTable>
+
+    <createTable tableName="SickNoteComment">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="date" type="date"/>
+      <column name="status" type="VARCHAR(255)"/>
+      <column name="text" type="VARCHAR(255)"/>
+      <column name="person_id" type="INT(10)"/>
+    </createTable>
+
+    <createTable tableName="Account">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="annualVacationDays" type="DECIMAL(19, 2)"/>
+      <column name="remainingVacationDays" type="DECIMAL(19, 2)"/>
+      <column name="remainingVacationDaysExpire" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="vacationDays" type="DECIMAL(19, 2)"/>
+      <column name="validFrom" type="date"/>
+      <column name="validTo" type="date"/>
+      <column name="year" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="INT(10)"/>
+    </createTable>
+
+    <addForeignKeyConstraint baseColumnNames="office_id" baseTableName="Application" constraintName="FKC00DAD308DE74EB"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="Account" constraintName="FK1D0C220DC1CA25B2"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="boss_id" baseTableName="Application" constraintName="FKC00DAD3093066E9A"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="WorkingTime" constraintName="FK6B1E997E323A0A01"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="Person_id" baseTableName="Person_permissions"
+                             constraintName="FK9B1752BAC1CA25B2" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="SickNote" constraintName="FKF689670323A0A01"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="comments_id" baseTableName="SickNote_SickNoteComment"
+                             constraintName="FK1133DE008E296B7A" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="SickNoteComment"/>
+
+    <addForeignKeyConstraint baseColumnNames="SickNote_id" baseTableName="SickNote_SickNoteComment"
+                             constraintName="FK1133DE001E866686" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="SickNote"/>
+
+    <addForeignKeyConstraint baseColumnNames="applier_id" baseTableName="Application"
+                             constraintName="FKC00DAD307949FCBC" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="rep_id" baseTableName="Application" constraintName="FKC00DAD30C7AB87B9"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="Application" constraintName="FKC00DAD30C1CA25B2"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="canceller_id" baseTableName="Application"
+                             constraintName="FKC00DAD304C576368" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="Person"/>
+
+    <addForeignKeyConstraint baseColumnNames="application_id" baseTableName="Comment"
+                             constraintName="FK9BDE863F88CA0EA2" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="Application"/>
+
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="SickNoteComment"
+                             constraintName="FK4A44D1CF323A0A01" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="Person"/>
+
+  </changeSet>
 </databaseChangeLog>

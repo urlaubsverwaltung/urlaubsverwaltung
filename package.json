@@ -7,7 +7,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/main/webapp",
+    "build": "NODE_ENV=production webpack --mode production",
+    "build:dev": "NODE_ENV=development webpack --mode development",
+    "build:watch": "NODE_ENV=development webpack --mode development --watch"
   },
   "repository": {
     "type": "git",
@@ -15,38 +20,107 @@
   },
   "keywords": [],
   "author": "",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/synyx/urlaubsverwaltung/issues"
   },
   "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
-  "dependencies": {},
-  "devDependencies": {
-    "babel-core": "6.26.3",
-    "babel-plugin-dynamic-import-node": "1.2.0",
-    "babel-preset-env": "1.7.0",
+  "dependencies": {
+    "@babel/polyfill": "7.4.0",
+    "bootstrap": "3.4.1",
     "chosen-js": "1.8.7",
+    "core-js": "2.6.5",
+    "font-awesome": "4.5.0",
+    "jquery": "3.4.1",
+    "jquery-ui": "1.12.1",
+    "jquery-ui-themes": "1.12.0",
+    "list.js": "1.3.0",
+    "tablesorter": "2.29.4",
+    "timepicker": "1.11.14",
+    "underscore": "1.8.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "7.2.0",
+    "@babel/preset-env": "^7.0.0",
+    "@urlaubsverwaltung/eslint-plugin": "1.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "10.0.1",
+    "babel-jest": "^23.4.2",
+    "babel-loader": "8.0.5",
+    "babel-plugin-date-fns": "0.2.1",
+    "babel-plugin-dynamic-import-node": "1.2.0",
+    "css-loader": "2.1.1",
     "date-fns": "1.30.1",
+    "eslint": "5.15.3",
+    "eslint-config-prettier": "4.1.0",
+    "eslint-plugin-unicorn": "8.0.0",
+    "fetch-mock": "7.3.1",
+    "file-loader": "3.0.1",
+    "imports-loader": "0.8.0",
     "jest": "24.5.0",
-    "merge": "1.2.1"
+    "less": "3.9.0",
+    "less-loader": "4.1.0",
+    "merge": "1.2.1",
+    "mini-css-extract-plugin": "0.5.0",
+    "moment": "2.22.2",
+    "node-fetch": "2.3.0",
+    "optimize-css-assets-webpack-plugin": "5.0.1",
+    "terser-webpack-plugin": "1.2.3",
+    "url-loader": "1.1.2",
+    "webpack": "4.28.4",
+    "webpack-cli": "3.3.0"
   },
   "babel": {
     "presets": [
       [
-        "env",
+        "@babel/preset-env",
         {
-          "targets": {
-            "node": "current"
-          }
+          "modules": false,
+          "useBuiltIns": "entry",
+          "corejs": "2",
+          "targets": "> 0.25%, not dead"
         }
       ]
     ],
     "plugins": [
-      "babel-plugin-dynamic-import-node"
-    ]
+      "@babel/plugin-syntax-dynamic-import",
+      "babel-plugin-date-fns"
+    ],
+    "env": {
+      "test": {
+        "presets": [
+          [
+            "@babel/preset-env",
+            {
+              "targets": {
+                "node": "current"
+              }
+            }
+          ]
+        ],
+        "plugins": [
+          "babel-plugin-dynamic-import-node"
+        ]
+      }
+    }
   },
   "jest": {
+    "roots": [
+      "<rootDir>/src/main/webapp"
+    ],
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!**/__tests__/**",
+      "!**/WEB-INF/**"
+    ],
+    "coverageDirectory": "<rootDir>/target/js-coverage",
     "testURL": "http://localhost",
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    }
   }
 }

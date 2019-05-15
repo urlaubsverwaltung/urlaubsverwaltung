@@ -4,11 +4,11 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-
 <!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
+    <script defer src="<spring:url value='/assets/person_form.min.js' />"></script>
 </head>
 
 <body>
@@ -42,10 +42,10 @@
                     </div>
 
                     <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-            <spring:message code="person.form.data.description"/>
-        </span>
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="person.form.data.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
@@ -102,12 +102,11 @@
 
                             <div class="col-md-9">
                                 <form:input id="email" path="email" class="form-control"
-                                            cssErrorClass="form-control error"/>
+                                            cssErrorClass="form-control error" type="email"/>
                                 <span class="help-inline"><form:errors path="email" cssClass="error"/></span>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="form-section">
@@ -137,10 +136,10 @@
                     </c:if>
 
                     <div class="col-md-4 col-md-push-8">
-    <span class="help-block">
-        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-        <spring:message code="person.form.permissions.description"/>
-    </span>
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="person.form.permissions.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
@@ -230,9 +229,13 @@
                                         <form:checkbox path="permissions" value="BOSS"/><spring:message
                                         code="person.form.permissions.roles.BOSS"/>
                                     </label>
-                                    <label class="person--mail-notification">
-                                        <form:checkbox path="notifications" value="NOTIFICATION_BOSS"/>
-                                        <spring:message code="person.form.notifications.BOSS"/>
+                                    <label>
+                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_ALL"/>
+                                        <spring:message code="person.form.notifications.BOSS.all"/>
+                                    </label>
+                                    <label>
+                                        <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_DEPARTMENTS"/>
+                                        <spring:message code="person.form.notifications.BOSS.departments"/>
                                     </label>
                                 </div>
 
@@ -250,12 +253,9 @@
                                         <spring:message code="person.form.notifications.OFFICE.overtime"/>
                                     </label>
                                 </div>
-
                             </div>
-
                         </div>
                     </div>
-
                 </div>
 
                 <div class="form-section">

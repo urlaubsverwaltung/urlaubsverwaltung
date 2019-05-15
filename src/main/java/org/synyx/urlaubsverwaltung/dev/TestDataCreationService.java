@@ -1,30 +1,32 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.List;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 @Service
@@ -34,7 +36,7 @@ public class TestDataCreationService {
     private static final String PASSWORD = "secret";
     private static final String NO_PASSWORD = "";
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestDataCreationService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonDataProvider personDataProvider;
     private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
@@ -59,7 +61,7 @@ public class TestDataCreationService {
     }
 
     @PostConstruct
-    public void createTestData() throws NoSuchAlgorithmException {
+    public void createTestData() {
 
         LOG.info("STARTING CREATION OF TEST DATA --------------------------------------------------------------------");
 
@@ -72,6 +74,8 @@ public class TestDataCreationService {
             "boss@firma.test", TestUser.BOSS.getRoles());
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
             "office@firma.test", TestUser.OFFICE.getRoles());
+
+        personDataProvider.createTestPerson("admin", PASSWORD, "Senor", "Operation", "admin@firma.test", TestUser.ADMIN.getRoles());
 
         Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
             "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
@@ -124,7 +128,7 @@ public class TestDataCreationService {
 
     private void createApplicationsForLeave(Person person, Person headOf) {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         VacationType holiday = null;
         VacationType overtime = null;
@@ -178,7 +182,7 @@ public class TestDataCreationService {
 
     private void createSickNotes(Person person) {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         SickNoteType sickNoteTypeStandard = null;
         SickNoteType sickNoteTypeChild = null;
@@ -210,19 +214,19 @@ public class TestDataCreationService {
 
     private void createOvertimeRecords(Person person) {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
-        DateMidnight lastWeek = now.minusWeeks(1);
-        DateMidnight weekBeforeLast = now.minusWeeks(2);
-        DateMidnight lastYear = now.minusYears(1);
+        LocalDate lastWeek = now.minusWeeks(1);
+        LocalDate weekBeforeLast = now.minusWeeks(2);
+        LocalDate lastYear = now.minusYears(1);
 
-        overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.withDayOfWeek(DateTimeConstants.MONDAY),
-            lastWeek.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("2.5")); // NOSONAR
+        overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.with(MONDAY),
+            lastWeek.with(FRIDAY), new BigDecimal("2.5")); // NOSONAR
 
-        overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.withDayOfWeek(DateTimeConstants.MONDAY),
-            weekBeforeLast.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("3")); // NOSONAR
+        overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.with(MONDAY),
+            weekBeforeLast.with(FRIDAY), new BigDecimal("3")); // NOSONAR
 
-        overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.withDayOfWeek(DateTimeConstants.MONDAY),
-            lastYear.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("4")); // NOSONAR
+        overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.with(MONDAY),
+            lastYear.with(FRIDAY), new BigDecimal("4")); // NOSONAR
     }
 }

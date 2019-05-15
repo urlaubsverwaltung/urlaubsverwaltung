@@ -1,17 +1,31 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+
+<fmt:parseDate value="${application.startDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date"/>
+<fmt:parseDate value="${application.endDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date"/>
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${application.person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        window.uv.dayLength = "<c:out value='${application.dayLength}' />";
+        window.uv.startDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedStartDate}' type="date" />";
+        window.uv.endDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedEndDate}' type="date" />";
+    </script>
+    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail~app_form~person_overview.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/app_detail.min.js' />"></script>
 </head>
 
 <body>

@@ -4,9 +4,9 @@ es wurden Überstunden erfasst: ${settings.baseLinkURL}web/overtime/${overtime.i
 
 Mitarbeiter: ${overtime.person.niceName}
 
-Datum: ${overtime.startDate.toString("dd.MM.yyyy")} - ${overtime.endDate.toString("dd.MM.yyyy")}
+Datum: ${overtime.startDate.format("dd.MM.yyyy")} - ${overtime.endDate.format("dd.MM.yyyy")}
 Anzahl der Stunden: ${overtime.hours}
 
-<#if (comment.text)??>
+<#if (comment.text)?has_content>
 Kommentar von ${comment.person.niceName} zum Überstundeneintrag: ${comment.text}
 </#if>

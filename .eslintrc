@@ -1,0 +1,30 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@urlaubsverwaltung/recommended",
+    "plugin:unicorn/recommended",
+    "prettier"
+  ],
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "globals": {
+    "Urlaubsverwaltung": true
+  },
+  "overrides": [
+    {
+      "files": "src/main/webapp/lib/date-fns/**",
+      "rules": {
+        "@urlaubsverwaltung/no-date-fns": "off"
+      }
+    },
+    {
+      "files": "webpack.config.js",
+      "env": {
+        "node": true
+      }
+    }
+  ]
+}

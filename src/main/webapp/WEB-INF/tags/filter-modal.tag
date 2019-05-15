@@ -49,15 +49,3 @@
         </div>
     </div>
 </div>
-
-<script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-<script src="<spring:url value='/js/datepicker.js' />" type="text/javascript"></script>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        var locale = "${pageContext.response.locale.language}";
-        $.datepicker.setDefaults($.datepicker.regional[locale]);
-        $('#startDate').datepicker();
-        $('#endDate').datepicker();
-    });
-</script>

@@ -1,0 +1,107 @@
+/**************************************************************************
+
+  NAVIGATION BAR
+
+**************************************************************************/
+
+.navbar {
+    font-size: 14px;
+    background-image: none;
+    background-color: #F5F5F5;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    border-radius: 0;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.navbar a {
+    color: #4d5258 !important;
+    transition: all 0.25s ease 0s;
+}
+
+.navbar a:hover {
+    color: #1896db !important;
+}
+
+.navbar a .caret {
+    margin: 0;
+    opacity: .65;
+}
+
+.navbar a.navbar-brand {
+    font-family: Verdana,sans-serif;
+    font-size: 24px;
+    color: #4d5258 !important;
+    line-height: 24px; /* height of the brand logo */
+    vertical-align: middle;
+}
+
+.navbar a.navbar-brand img {
+    float: left;
+    margin-right: 6px;
+}
+
+/* NO PADDING FOR "MY ACCOUNT" FOR LARGER DEVICES */
+@media (min-width: 993px) {
+
+    .navbar-nav:first-of-type > li > a {
+        padding-left: 0;
+    }
+
+    .navbar-nav:first-of-type > li > a > img {
+        margin-right: 3px;
+    }
+
+}
+
+/* MORE PLACE IN NAVBAR FOR MD DEVICES */
+
+@media (max-width: 1200px) {
+    .navbar .container {
+        width: 100%;
+    }
+    .navbar .navbar-brand-title {
+        display: none;
+    }
+}
+
+/* SHOW MOBILE NAVBAR FOR XS DEVICES */
+
+@media (max-width: 992px) {
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+    }
+    .navbar-collapse.collapse {
+        display: none !important;
+    }
+    .navbar-collapse.collapse.in {
+        display: block !important;
+    }
+    .navbar-nav {
+        float: none !important;
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+    .navbar-nav > li {
+        float: none;
+        display: block;
+    }
+    .navbar-nav > li > a {
+        border-top: 1px solid #e5e5e5 !important;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .navbar-nav:first-of-type > li:first-child > a {
+        border: none !important;
+    }
+    .navbar .dropdown-menu li.divider {
+        display: none;
+    }
+}

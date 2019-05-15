@@ -1,36 +1,36 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="add_person_reference_to_comment">
+  <changeSet author="murygina" id="add_person_reference_to_comment">
 
-        <preConditions>
-            <tableExists tableName="Comment"/>
-            <columnExists tableName="Comment" columnName="nameOfCommentingPerson"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Comment"/>
+      <columnExists tableName="Comment" columnName="nameOfCommentingPerson"/>
+    </preConditions>
 
-        <addColumn tableName="Comment">
-            <column name="person_id" type="INT(10)"/>
-        </addColumn>
+    <addColumn tableName="Comment">
+      <column name="person_id" type="INT(10)"/>
+    </addColumn>
 
-        <sql>
-            UPDATE Comment comment SET person_id = (SELECT person.id FROM Person person WHERE 
-            CONCAT(person.firstName, ' ', person.lastName) LIKE comment.nameOfCommentingPerson);
-        </sql>
+    <sql>
+      UPDATE Comment comment SET person_id = (SELECT person.id FROM Person person WHERE
+      CONCAT(person.firstName, ' ', person.lastName) LIKE comment.nameOfCommentingPerson);
+    </sql>
 
-    </changeSet>
+  </changeSet>
 
-    <changeSet author="murygina" id="remove_deprecated_column_nameOfCommentingPerson_from_comment">
+  <changeSet author="murygina" id="remove_deprecated_column_nameOfCommentingPerson_from_comment">
 
-        <preConditions>
-            <tableExists tableName="Comment"/>
-            <columnExists tableName="Comment" columnName="nameOfCommentingPerson"/>
-            <columnExists tableName="Comment" columnName="person_id"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Comment"/>
+      <columnExists tableName="Comment" columnName="nameOfCommentingPerson"/>
+      <columnExists tableName="Comment" columnName="person_id"/>
+    </preConditions>
 
-        <dropColumn tableName="Comment" columnName="nameOfCommentingPerson"/>
+    <dropColumn tableName="Comment" columnName="nameOfCommentingPerson"/>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

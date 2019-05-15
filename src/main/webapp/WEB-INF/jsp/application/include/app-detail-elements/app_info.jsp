@@ -1,7 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <div class="box">
@@ -87,27 +86,12 @@
             <strong>
                 <uv:number number="${application.workDays}"/> <spring:message code="duration.days"/>
             </strong>
+            <c:if test="${application.startDate.year != application.endDate.year}">
             <span class="text-muted days">
                 <%-- filled by javascript --%>
+                <%-- see app_info.js --%>
             </span>
-            <script type="text/javascript">
-                $(document).ready(function () {
-                    <c:if test="${application.startDate.year != application.endDate.year}">
-
-                    var dayLength = '<c:out value="${application.dayLength}" />';
-                    var personId = '<c:out value="${application.person.id}" />';
-
-                    var startDate = "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
-                    var endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
-
-                    var from = new Date(startDate);
-                    var to = new Date(endDate);
-
-                    sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
-
-                    </c:if>
-                });
-            </script>
+            </c:if>
             <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
                 <span class="text-muted">
                     <br/>

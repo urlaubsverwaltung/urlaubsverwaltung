@@ -1,20 +1,20 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="honnel" id="add_remind_waiting_application_settings" >
+  <changeSet author="honnel" id="add_remind_waiting_application_settings">
 
-        <preConditions>
-            <tableExists tableName="Settings"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Settings"/>
+    </preConditions>
 
-        <addColumn tableName="Settings">
-            <column name="remindForWaitingApplications" type="BIT(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
+    <addColumn tableName="Settings">
+      <column name="remindForWaitingApplications" type="BIT(1)" defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

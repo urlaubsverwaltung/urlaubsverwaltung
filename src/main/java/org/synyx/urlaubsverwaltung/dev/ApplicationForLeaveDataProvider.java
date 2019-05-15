@@ -1,17 +1,17 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -34,7 +34,7 @@ class ApplicationForLeaveDataProvider {
     }
 
     Application createWaitingApplication(Person person, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                         LocalDate startDate, LocalDate endDate) {
 
         Application application = null;
 
@@ -71,7 +71,7 @@ class ApplicationForLeaveDataProvider {
 
 
     Application createPremilinaryAllowedApplication(Person person, Person headOf, VacationType vacationType,
-        DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
+                                                    DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
         application.setTwoStageApproval(true);
@@ -82,7 +82,7 @@ class ApplicationForLeaveDataProvider {
 
 
     Application createAllowedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                         LocalDate startDate, LocalDate endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
@@ -95,7 +95,7 @@ class ApplicationForLeaveDataProvider {
 
 
     Application createRejectedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                          LocalDate startDate, LocalDate endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
@@ -109,7 +109,7 @@ class ApplicationForLeaveDataProvider {
 
 
     Application createCancelledApplication(Person person, Person office, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                           LocalDate startDate, LocalDate endDate) {
 
         Application application = createAllowedApplication(person, office, vacationType, dayLength, startDate, endDate);
 

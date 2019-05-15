@@ -1,18 +1,20 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
@@ -25,7 +27,7 @@ import java.util.Optional;
 )
 public class LdapUserDataImporter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LdapSyncService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final LdapUserService ldapUserService;
     private final LdapSyncService ldapSyncService;

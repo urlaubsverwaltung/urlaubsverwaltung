@@ -4,21 +4,6 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<script type="text/javascript">
-
-  <%-- UGLY FIX BECAUSE BOOTSTRAP DROPDOWN IN NAVBAR NOT WORKING ON SOME MOBILE PHONES --%>
-
-  $('.dropdown-toggle').on("click", function (event) {
-    event.preventDefault();
-    setTimeout($.proxy(function () {
-      if ('ontouchstart' in document.documentElement) {
-        $(this).siblings('.dropdown-backdrop').off().remove();
-      }
-    }, this), 0);
-  });
-
-</script>
-
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <!-- Brand and toggle get grouped for better mobile display -->

@@ -1,7 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
@@ -12,6 +11,20 @@
 
 <head>
     <uv:head/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.css' />" />
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        // 0=sunday, 1=monday
+        window.uv.weekStartsOn = 1;
+    </script>
+    <script defer src="<spring:url value="/assets/npm.date-fns.min.js" />"></script>
+    <script defer src="<spring:url value="/assets/date-fns-localized.min.js" />"></script>
+    <script defer src="<spring:url value="/assets/app_detail~app_form~person_overview.min.js" />"></script>
+    <script defer src="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.min.js' />"></script>
+    <script defer src="<spring:url value="/assets/person_overview.min.js" />"></script>
 </head>
 
 <body>
@@ -83,67 +96,6 @@
                 </div>
             </div>
         </c:if>
-
-        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript"></script>
-        <script>
-            $(function () {
-
-                var datepickerLocale = "${pageContext.response.locale.language}";
-                var personId = '<c:out value="${person.id}" />';
-                var webPrefix = "<spring:url value='/web' />";
-                var apiPrefix = "<spring:url value='/api' />";
-
-                function initCalendar() {
-                    const { getYear, setYear, firstOfYear, subMonths, addMonths } = dateFns;
-
-                    var year = getUrlParam("year");
-                    var date = new Date();
-
-                    if (year.length > 0 && year != getYear(date)) {
-                        date = firstOfYear(setYear(date, year));
-                    }
-
-                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
-
-                    var shownNumberOfMonths = 10;
-                    var startDate = subMonths(date, shownNumberOfMonths / 2);
-                    var endDate = addMonths(date, shownNumberOfMonths / 2);
-
-                    var yearOfStartDate = getYear(startDate);
-                    var yearOfEndDate = getYear(endDate);
-
-                    $.when(
-                        holidayService.fetchPublic(yearOfStartDate),
-                        holidayService.fetchPersonal(yearOfStartDate),
-                        holidayService.fetchSickDays(yearOfStartDate),
-
-                        holidayService.fetchPublic(yearOfEndDate),
-                        holidayService.fetchPersonal(yearOfEndDate),
-                        holidayService.fetchSickDays(yearOfEndDate)
-                    ).always(function () {
-                        Urlaubsverwaltung.Calendar.init(holidayService, date);
-                    });
-                }
-
-                initCalendar();
-
-                var resizeTimer = null;
-
-                $(window).on('resize', function () {
-
-                    if (resizeTimer !== null) {
-                        clearTimeout(resizeTimer);
-                    }
-
-                    resizeTimer = setTimeout(function () {
-                        Urlaubsverwaltung.Calendar.reRender();
-                        resizeTimer = null;
-                    }, 30)
-
-                });
-
-            });
-        </script>
 
         <div class="row">
             <div class="col-xs-12">

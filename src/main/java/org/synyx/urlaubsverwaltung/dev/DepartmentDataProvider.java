@@ -1,14 +1,16 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.core.department.Department;
-import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -32,7 +34,7 @@ class DepartmentDataProvider {
         Department department = new Department();
         department.setName(name);
         department.setDescription(description);
-        department.setLastModification(DateTime.now());
+        department.setLastModification(LocalDate.now(UTC));
         department.setMembers(members);
         department.setDepartmentHeads(departmentHeads);
         department.setSecondStageAuthorities(secondStageAuthorities);

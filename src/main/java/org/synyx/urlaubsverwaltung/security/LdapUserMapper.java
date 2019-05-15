@@ -90,14 +90,12 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
     }
 
 
-    public LdapUser mapFromContext(DirContextOperations ctx) throws NamingException,
+    LdapUser mapFromContext(DirContextOperations ctx) throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        Optional.ofNullable(ctx.getStringAttribute(identifierAttribute)).orElseThrow(() ->
+        String username = Optional.ofNullable(ctx.getStringAttribute(identifierAttribute)).orElseThrow(() ->
                 new InvalidSecurityConfigurationException(
                     "Can not get a username using '" + identifierAttribute + "' attribute to identify the user."));
-
-        String username = ctx.getStringAttribute(identifierAttribute);
 
         Optional<String> firstName = Optional.ofNullable(ctx.getStringAttribute(firstNameAttribute));
         Optional<String> lastName = Optional.ofNullable(ctx.getStringAttribute(lastNameAttribute));

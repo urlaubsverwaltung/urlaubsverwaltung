@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -13,14 +12,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
@@ -30,7 +32,7 @@ import java.util.Optional;
 @ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
 public class PersonContextMapper implements UserDetailsContextMapper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PersonContextMapper.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
     private final LdapSyncService ldapSyncService;

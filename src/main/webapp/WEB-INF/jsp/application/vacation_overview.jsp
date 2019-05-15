@@ -1,7 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec"
@@ -27,7 +26,9 @@
 
 <head>
     <uv:head/>
-    <%@include file="include/app-detail-elements/vacation_overview_js.jsp" %>
+    <link rel="stylesheet" href="<spring:url value='/assets/vacation_overview.css' />" />
+    <script defer src="<spring:url value='/assets/vacation_overview.min.js' />"></script>
+    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
 </head>
 
 <body>
@@ -86,7 +87,7 @@
                                     <c:if test="${currentMonth == i }">
                                         <option value="${i}" selected="${i}">
                                             <spring:eval
-                                                expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)"
+                                                expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)"
                                                 var="month"/>
                                             <c:out value="${month}"/>
                                         </option>
@@ -94,7 +95,7 @@
                                     <c:if test="${currentMonth != i }">
                                         <option value="${i}">
                                             <spring:eval
-                                                expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)"
+                                                expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)"
                                                 var="month"/>
                                             <c:out value="${month}"/>
                                         </option>

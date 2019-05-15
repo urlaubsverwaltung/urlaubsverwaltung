@@ -5,8 +5,6 @@ Please review the following notes before submitting you pull request.
 
 Please look for other issues or pull requests which already work on this topic. Is somebody already on it? Do you need to synchronize?
 
-❗Every contributor has to add herself/himself to [AUTHORS.md](AUTHORS.md) to grant full and irrevocable copyright to the Urlaubsverwaltung, otherwise a contribution is not possible.
-
 # Security Vulnerabilities
 
 🛑 STOP! 🛑 If your contribution fixes a security vulnerability, please do not submit it.
