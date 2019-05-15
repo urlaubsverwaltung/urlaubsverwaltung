@@ -310,11 +310,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     private Application cancelApplication(Application application, Person canceller, Optional<String> comment) {
 
-        /*
-         * Only Office can cancel allowed applications for leave directly,
-         * users have to request cancellation
-         */
         if (canceller.hasRole(Role.OFFICE)) {
+            /*
+             * Only Office can cancel allowed applications for leave directly,
+             * users have to request cancellation
+             */
+
             application.setStatus(ApplicationStatus.CANCELLED);
 
             applicationService.save(application);
@@ -327,10 +328,25 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             if (!canceller.equals(application.getPerson())) {
                 mailService.sendCancelledByOfficeNotification(application, createdComment);
             }
-        } else {
+
+        } else if (canceller.equals(application.getPerson()) && application.getStartDate().isAfterNow()) {
             /*
              * Users cannot cancel already allowed applications
-             * directly. Their commentStatus will be CANCEL_REQUESTED
+             * directly only if the vacation has not yet started.
+             */
+
+            application.setStatus(ApplicationStatus.CANCELLED);
+
+            applicationService.save(application);
+
+            LOG.info("Cancelled application for leave (by same person, before leave started): {}", application);
+
+            commentService.create(application, ApplicationAction.CANCELLED, comment, canceller);
+
+
+        } else {
+             /*
+             * If it has started, their commentStatus will be CANCEL_REQUESTED
              * and the application.status will remain ALLOWED until
              * the office or a boss approves the request.
              */

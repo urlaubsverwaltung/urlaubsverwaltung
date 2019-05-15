@@ -322,8 +322,8 @@ public class ApplicationForLeaveDetailsController {
         // 2: user can request cancellation if the application is already allowed.
         // 3: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
         if (signedInUser.equals(application.getPerson())) {
-            // user can cancel only her own waiting applications, so the comment is NOT mandatory
-            comment.setMandatory(false);
+            // the comment is NOT mandatory, if the user cancels her own waiting applications
+            comment.setMandatory(!isWaiting);
         } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
