@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -132,13 +131,13 @@ public class GoogleCalendarSyncProviderServiceTest {
         Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.MORNING);
 
         AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(CalendarSettings.class));
-        Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, config);
+        Absence absence = new Absence(person, period, config);
 
         int eventsBeforeAdd = getCalendarEventCount();
         String eventId = googleCalendarSyncProvider.add(absence, calendarSettings).get();
         int eventsAfterAdd = getCalendarEventCount();
 
-        Absence absenceUpdate = new Absence(person, period, EventType.SICKNOTE, config);
+        Absence absenceUpdate = new Absence(person, period, config);
         googleCalendarSyncProvider.update(absenceUpdate, eventId, calendarSettings);
         int eventsAfterUpdate = getCalendarEventCount();
 

@@ -19,19 +19,16 @@ public class Absence {
     private final ZonedDateTime startDate;
     private final ZonedDateTime endDate;
     private final Person person;
-    private final EventType eventType;
     private final boolean isAllDay;
 
-    public Absence(Person person, Period period, EventType eventType,
-        AbsenceTimeConfiguration absenceTimeConfiguration) {
+    public Absence(Person person, Period period,
+                   AbsenceTimeConfiguration absenceTimeConfiguration) {
 
         Assert.notNull(person, "Person must be given");
         Assert.notNull(period, "Period must be given");
-        Assert.notNull(eventType, "Type of absence must be given");
         Assert.notNull(absenceTimeConfiguration, "Time configuration must be given");
 
         this.person = person;
-        this.eventType = eventType;
 
         ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(UTC);
         ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(UTC);
@@ -58,11 +55,6 @@ public class Absence {
             default:
                 throw new IllegalArgumentException("Invalid day length!");
         }
-    }
-
-    public EventType getEventType() {
-
-        return eventType;
     }
 
 
