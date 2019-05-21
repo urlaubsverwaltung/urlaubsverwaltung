@@ -1,4 +1,5 @@
 ### master/unreleased
+* Make event subjects for calendar sync more generic [#198](https://github.com/synyx/urlaubsverwaltung/issues/198) + [#654](https://github.com/synyx/urlaubsverwaltung/issues/654)
 
 ### [urlaubsverwaltung-2.42.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.3)
 * Fix login issues caused by missing ldap security configuration
