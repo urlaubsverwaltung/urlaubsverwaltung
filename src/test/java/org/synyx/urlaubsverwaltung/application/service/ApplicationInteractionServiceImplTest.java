@@ -213,7 +213,7 @@ public class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -236,10 +236,10 @@ public class ApplicationInteractionServiceImplTest {
     }
 
 
-    private void assertCalendarSyncIsExecuted() {
+    private void assertNoCalendarSyncIsExecuted() {
 
-        verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION));
+        verifyZeroInteractions(calendarSyncService);
+        verifyZeroInteractions(absenceMappingService);
     }
 
 
@@ -269,7 +269,7 @@ public class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -293,7 +293,7 @@ public class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -360,7 +360,7 @@ public class ApplicationInteractionServiceImplTest {
             departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             departmentHead);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -453,7 +453,7 @@ public class ApplicationInteractionServiceImplTest {
             departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             departmentHead);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -482,7 +482,7 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             secondStage);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -511,7 +511,7 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             secondStage);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -538,8 +538,8 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             secondStage);
-        assertCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
+        verifyZeroInteractions(calendarSyncService);
     }
 
     @Test

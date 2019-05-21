@@ -223,16 +223,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             applicationMailService.notifyHolidayReplacement(applicationForLeave);
         }
 
-        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(
-                applicationForLeave.getId(), AbsenceType.VACATION);
-
-        if (absenceMapping.isPresent()) {
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(applicationForLeave.getPerson(), applicationForLeave.getPeriod(),
-                    timeConfiguration), absenceMapping.get().getEventId());
-        }
-
         return applicationForLeave;
     }
 
