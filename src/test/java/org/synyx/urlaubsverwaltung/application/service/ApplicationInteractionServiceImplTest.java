@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -56,11 +57,13 @@ public class ApplicationInteractionServiceImplTest {
     private AbsenceMappingService absenceMappingService;
     private SettingsService settingsService;
     private DepartmentService departmentService;
+    private NowService nowService;
 
     @Before
     public void setUp() {
 
         applicationService = mock(ApplicationService.class);
+        nowService = mock(NowService.class);
         commentService = mock(ApplicationCommentService.class);
         accountInteractionService = mock(AccountInteractionService.class);
         mailService = mock(MailService.class);
@@ -74,8 +77,10 @@ public class ApplicationInteractionServiceImplTest {
             .thenReturn(of(new AbsenceMapping(1, AbsenceType.VACATION, "42")));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
+        when(nowService.now()).thenReturn(LocalDate.of(2014,10,1));
+
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService, mailService, calendarSyncService, absenceMappingService, settingsService,
-                departmentService);
+                departmentService, nowService);
     }
 
 
@@ -95,7 +100,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", ApplicationStatus.WAITING, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong applier", applier, applicationForLeave.getApplier());
-        Assert.assertEquals("Wrong application date", LocalDate.now(UTC) , applicationForLeave.getApplicationDate());
+        Assert.assertEquals("Wrong application date", nowService.now() , applicationForLeave.getApplicationDate());
 
         verify(applicationService).save(applicationForLeave);
 
@@ -224,7 +229,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", status, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong privileged user", privilegedUser, applicationForLeave.getBoss());
-        Assert.assertEquals("Wrong edited date", LocalDate.now(UTC), applicationForLeave.getEditedDate());
+        Assert.assertEquals("Wrong edited date", nowService.now(), applicationForLeave.getEditedDate());
     }
 
 
@@ -703,7 +708,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", ApplicationStatus.REJECTED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong boss", boss, applicationForLeave.getBoss());
-        Assert.assertEquals("Wrong edited date", LocalDate.now(UTC), applicationForLeave.getEditedDate());
+        Assert.assertEquals("Wrong edited date", nowService.now(), applicationForLeave.getEditedDate());
 
         verify(applicationService).save(applicationForLeave);
 
@@ -768,7 +773,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", person, applicationForLeave.getCanceller());
-        Assert.assertEquals("Wrong cancelled date", LocalDate.now(UTC), applicationForLeave.getCancelDate());
+        Assert.assertEquals("Wrong cancelled date", nowService.now(), applicationForLeave.getCancelDate());
         Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
@@ -804,6 +809,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureCancellingAllowedApplicationByOwnerCreatesACancellationRequest() {
 
+        when(nowService.now()).thenReturn(LocalDate.of(2013,2,1));
+
         Person person = TestDataCreator.createPerson("muster");
 
         Optional<String> comment = of("Foo");
@@ -824,6 +831,39 @@ public class ApplicationInteractionServiceImplTest {
         verify(mailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
+    @Test
+    public void ensureCancellingAllowedApplicationByOwnerBeforeStartOfLeaveCancelsDirectly() {
+
+        LocalDate today = LocalDate.of(2013,1,25);
+        when(nowService.now()).thenReturn(today);
+
+        Person person = TestDataCreator.createPerson("muster");
+
+        Optional<String> comment = of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+
+        when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
+            .thenReturn(new ApplicationComment(person));
+
+        service.cancel(applicationForLeave, person, comment);
+
+        Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
+        Assert.assertEquals("Wrong canceller", person, applicationForLeave.getCanceller());
+        Assert.assertEquals("Wrong cancelled date", today, applicationForLeave.getCancelDate());
+        Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
+
+        verify(applicationService).save(applicationForLeave);
+
+        verify(commentService)
+            .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
+
+        verifyZeroInteractions(mailService);
+    }
+
+
 
     @Test
     public void ensureCancellingAllowedApplicationByOwnerThatIsOfficeCancelsTheApplicationForLeaveDirectly() {
@@ -841,7 +881,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", person, applicationForLeave.getCanceller());
-        Assert.assertEquals("Wrong cancelled date", LocalDate.now(UTC), applicationForLeave.getCancelDate());
+        Assert.assertEquals("Wrong cancelled date", nowService.now(), applicationForLeave.getCancelDate());
         Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
@@ -873,7 +913,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", canceller, applicationForLeave.getCanceller());
-        Assert.assertEquals("Wrong cancelled date", LocalDate.now(UTC), applicationForLeave.getCancelDate());
+        Assert.assertEquals("Wrong cancelled date", nowService.now(), applicationForLeave.getCancelDate());
         Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
@@ -906,7 +946,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", canceller, applicationForLeave.getCanceller());
-        Assert.assertEquals("Wrong cancelled date", LocalDate.now(UTC), applicationForLeave.getCancelDate());
+        Assert.assertEquals("Wrong cancelled date", nowService.now(), applicationForLeave.getCancelDate());
         Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
@@ -980,9 +1020,11 @@ public class ApplicationInteractionServiceImplTest {
     public void ensureThrowsIfAlreadySentRemindToday() throws RemindAlreadySentException,
         ImpatientAboutApplicationForLeaveProcessException {
 
+        LocalDate today = nowService.now();
+
         Application applicationForLeave = mock(Application.class);
-        when(applicationForLeave.getApplicationDate()).thenReturn(LocalDate.now(UTC).minusDays(3));
-        when(applicationForLeave.getRemindDate()).thenReturn(LocalDate.now(UTC));
+        when(applicationForLeave.getApplicationDate()).thenReturn(today.minusDays(3));
+        when(applicationForLeave.getRemindDate()).thenReturn(today);
 
         service.remind(applicationForLeave);
 
@@ -996,8 +1038,10 @@ public class ApplicationInteractionServiceImplTest {
     public void ensureThrowsIfTryingToRemindTooEarly() throws RemindAlreadySentException,
         ImpatientAboutApplicationForLeaveProcessException {
 
+        LocalDate today = nowService.now();
+
         Application applicationForLeave = mock(Application.class);
-        when(applicationForLeave.getApplicationDate()).thenReturn(LocalDate.now(UTC));
+        when(applicationForLeave.getApplicationDate()).thenReturn(today);
         when(applicationForLeave.getRemindDate()).thenReturn(null);
 
         service.remind(applicationForLeave);
@@ -1015,13 +1059,13 @@ public class ApplicationInteractionServiceImplTest {
         Person person = TestDataCreator.createPerson();
         Application applicationForLeave = TestDataCreator.createApplication(person,
                 TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        applicationForLeave.setApplicationDate(LocalDate.now(UTC).minusDays(3));
-        applicationForLeave.setRemindDate(LocalDate.now(UTC).minusDays(1));
+        applicationForLeave.setApplicationDate(nowService.now().minusDays(3));
+        applicationForLeave.setRemindDate(nowService.now().minusDays(1));
 
         service.remind(applicationForLeave);
 
         Assert.assertNotNull("Remind date should be set", applicationForLeave.getRemindDate());
-        Assert.assertEquals("Wrong remind date", LocalDate.now(UTC), applicationForLeave.getRemindDate());
+        Assert.assertEquals("Wrong remind date", nowService.now(), applicationForLeave.getRemindDate());
 
         verify(applicationService).save(eq(applicationForLeave));
         verify(mailService).sendRemindBossNotification(eq(applicationForLeave));
