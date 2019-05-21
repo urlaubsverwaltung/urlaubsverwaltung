@@ -92,19 +92,7 @@ public class Absence {
 
     public String getEventSubject() {
 
-        switch (eventType) {
-            case ALLOWED_APPLICATION:
-                return String.format("Urlaub %s", person.getNiceName());
-
-            case WAITING_APPLICATION:
-                return String.format("Antrag auf Urlaub %s", person.getNiceName());
-
-            case SICKNOTE:
-                return String.format("%s krank", person.getNiceName());
-
-            default:
-                throw new IllegalStateException("Event type is not properly set.");
-        }
+        return String.format("%s abwesend", person.getNiceName());
     }
 
 

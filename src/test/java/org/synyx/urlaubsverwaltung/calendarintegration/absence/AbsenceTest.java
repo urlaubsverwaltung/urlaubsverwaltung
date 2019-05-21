@@ -199,15 +199,10 @@ public class AbsenceTest {
         LocalDate today = LocalDate.now(UTC);
         Period period = new Period(today, today, DayLength.FULL);
 
-        BiConsumer<EventType, String> assertCorrectEventSubject = (type, subject) -> {
-            Absence absence = new Absence(person, period, type, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, timeConfiguration);
 
-            assertThat(absence.getEventType(), is(type));
-            assertThat(absence.getEventSubject(), is(subject));
-        };
+        Assert.assertNotNull("Event subject must not be null", absence.getEventSubject());
+        Assert.assertEquals("Wrong event subject", "Marlene Muster abwesend", absence.getEventSubject());
 
-        assertCorrectEventSubject.accept(EventType.WAITING_APPLICATION, "Antrag auf Urlaub Marlene Muster");
-        assertCorrectEventSubject.accept(EventType.ALLOWED_APPLICATION, "Urlaub Marlene Muster");
-        assertCorrectEventSubject.accept(EventType.SICKNOTE, "Marlene Muster krank");
     }
 }
