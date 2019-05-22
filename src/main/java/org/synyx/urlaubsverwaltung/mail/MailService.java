@@ -90,15 +90,6 @@ public interface MailService {
 
 
     /**
-     * Send an email to the applicant if an application for leave got cancelled by office.
-     *
-     * @param  application  the application which got cancelled
-     * @param  comment  describes the reason of the cancellation
-     */
-    void sendCancelledByOfficeNotification(Application application, ApplicationComment comment);
-
-
-    /**
      * Sends a mail as reminder to notify about applications for leave waiting longer already to be processed.
      *
      * @param applications waiting to be processed longer already

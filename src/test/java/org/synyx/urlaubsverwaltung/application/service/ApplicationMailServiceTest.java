@@ -253,4 +253,23 @@ public class ApplicationMailServiceTest {
 
         verify(mailService).sendMailTo(person,"subject.application.appliedByOffice", "new_application_by_office", model);
     }
+
+    @Test
+    public void sendCancelledByOfficeNotification() {
+
+        final Person person = new Person();
+
+        final Application application = new Application();
+        application.setPerson(person);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", comment);
+
+        sut.sendCancelledByOfficeNotification(application, comment);
+
+        verify(mailService).sendMailTo(person, "subject.application.cancelled.user", "cancelled_by_office", model);
+    }
 }

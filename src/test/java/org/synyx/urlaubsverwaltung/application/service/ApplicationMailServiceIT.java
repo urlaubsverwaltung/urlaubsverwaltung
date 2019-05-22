@@ -360,6 +360,42 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
     }
 
+    @Test
+    public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException,
+        IOException {
+
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        office.setPermissions(singletonList(OFFICE));
+
+        final Application application = createApplication(person);
+        application.setCanceller(office);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+        comment.setText("Geht leider nicht");
+
+        sut.sendCancelledByOfficeNotification(application, comment);
+
+        // was email sent?
+        List<Message> inboxApplicant = Mailbox.get(person.getEmail());
+        assertThat(inboxApplicant.size()).isOne();
+
+        Message msg = inboxApplicant.get(0);
+        assertThat(msg.getSubject()).isEqualTo("Dein Antrag wurde storniert");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("Marlene Muster hat einen deiner Urlaubsanträge storniert.");
+        assertThat(content).contains(comment.getText());
+        assertThat(content).contains(comment.getPerson().getNiceName());
+        assertThat(content).contains("/web/application/1234");
+    }
+
     private Application createApplication(Person person) {
 
         LocalDate now = LocalDate.now(UTC);

@@ -307,7 +307,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 canceller);
 
         if (canceller.hasRole(Role.OFFICE) && !canceller.equals(application.getPerson())) {
-            mailService.sendCancelledByOfficeNotification(application, createdComment);
+            applicationMailService.sendCancelledByOfficeNotification(application, createdComment);
         }
 
         return application;
@@ -331,7 +331,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                     canceller);
 
             if (!canceller.equals(application.getPerson())) {
-                mailService.sendCancelledByOfficeNotification(application, createdComment);
+                applicationMailService.sendCancelledByOfficeNotification(application, createdComment);
             }
         } else {
             /*

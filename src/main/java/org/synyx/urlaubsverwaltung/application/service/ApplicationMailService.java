@@ -159,6 +159,22 @@ class ApplicationMailService {
         mailService.sendMailTo(recipient, "subject.application.appliedByOffice", "new_application_by_office", model);
     }
 
+    /**
+     * Send an email to the applicant if an application for leave got cancelled by office.
+     *
+     * @param application the application which got cancelled
+     * @param comment     describes the reason of the cancellation
+     */
+    void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", comment);
+
+        final Person recipient = application.getPerson();
+        mailService.sendMailTo(recipient, "subject.application.cancelled.user", "cancelled_by_office", model);
+    }
+
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);

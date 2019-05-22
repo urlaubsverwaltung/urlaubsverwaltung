@@ -866,12 +866,8 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
-
-        verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(canceller));
-
-        verify(mailService)
-            .sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(canceller));
+        verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 
@@ -899,12 +895,8 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
-
-        verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
-
-        verify(mailService)
-            .sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
+        verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 

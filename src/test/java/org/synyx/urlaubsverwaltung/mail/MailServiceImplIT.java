@@ -310,38 +310,6 @@ public class MailServiceImplIT {
 
 
     @Test
-    public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException,
-        IOException {
-
-        application.setCanceller(office);
-
-        ApplicationComment comment = createDummyComment(office, "Geht leider nicht");
-
-        sut.sendCancelledByOfficeNotification(application, comment);
-
-        // was email sent?
-        List<Message> inboxApplicant = Mailbox.get(person.getEmail());
-        assertTrue(inboxApplicant.size() > 0);
-
-        Message msg = inboxApplicant.get(0);
-
-        // check subject
-        assertEquals("Dein Antrag wurde storniert", msg.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress(person.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Lieschen Müller"));
-        assertTrue(content.contains("Marlene Muster hat einen deiner Urlaubsanträge storniert."));
-        assertTrue("No comment in mail content", content.contains(comment.getText()));
-        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
-        assertTrue(content.contains("Es handelt sich um folgenden Urlaubsantrag: http://urlaubsverwaltung/web/application/1234"));
-    }
-
-
-    @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
         sut.sendRemindBossNotification(application);

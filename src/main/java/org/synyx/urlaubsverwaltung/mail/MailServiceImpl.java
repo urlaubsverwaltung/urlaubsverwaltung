@@ -151,19 +151,6 @@ class MailServiceImpl implements MailService {
         sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority", subjectForSecondStage);
     }
 
-
-    @Override
-    public void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
-
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application, ofNullable(comment));
-
-        final List<String> recipients = recipientService.getMailAddresses(application.getPerson());
-        final String subject = getTranslation("subject.application.cancelled.user");
-        final String text = mailBuilder.buildMailBody("cancelled_by_office", model, LOCALE);
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
     @Override
     public void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
