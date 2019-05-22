@@ -30,11 +30,11 @@ public class SickNoteForm {
 
     private String comment;
 
-    public SickNoteForm() {
+    SickNoteForm() {
         // default constructor needed for empty object
     }
 
-    public SickNoteForm(SickNote sickNote) {
+    SickNoteForm(SickNote sickNote) {
         this.id = sickNote.getId();
         this.person = sickNote.getPerson();
         this.sickNoteType = sickNote.getSickNoteType();
@@ -117,7 +117,7 @@ public class SickNoteForm {
         this.comment = comment;
     }
 
-    public SickNote generateSickNote() {
+    SickNote generateSickNote() {
         SickNote sickNote = new SickNote();
         sickNote.setId(id);
         sickNote.setPerson(person);
