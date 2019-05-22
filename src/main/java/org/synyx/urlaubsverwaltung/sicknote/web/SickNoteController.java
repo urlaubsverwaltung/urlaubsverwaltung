@@ -132,11 +132,7 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
-        if (sickNoteForm.getComment() == null) {
-            sickNoteInteractionService.create(sickNote, personService.getSignedInUser());
-        } else {
-            sickNoteInteractionService.create(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
-        }
+        sickNoteInteractionService.create(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
 
         return "redirect:/web/sicknote/" + sickNote.getId();
     }
@@ -179,11 +175,7 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
-        if (sickNoteForm.getComment() == null) {
-            sickNoteInteractionService.update(sickNote, personService.getSignedInUser());
-        } else {
-            sickNoteInteractionService.update(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
-        }
+        sickNoteInteractionService.update(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
 
         return "redirect:/web/sicknote/" + id;
     }
@@ -202,11 +194,7 @@ public class SickNoteController {
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         } else {
-            if (comment.getText() == null) {
-                sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, personService.getSignedInUser());
-            } else {
-                sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, personService.getSignedInUser(), comment.getText());
-            }
+            sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, personService.getSignedInUser(), comment.getText());
         }
 
         return "redirect:/web/sicknote/" + id;
