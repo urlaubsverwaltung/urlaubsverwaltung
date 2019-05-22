@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,8 +29,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @RunWith(MockitoJUnitRunner.class)
 public class SickNoteControllerTest {
 
-    private SickNoteController sut;
-
     @Mock
     private SickNoteService sickNoteServiceMock;
     @Mock
@@ -52,42 +49,38 @@ public class SickNoteControllerTest {
     private SickNoteConvertFormValidator sickNoteConvertFormValidatorMock;
 
 
-    @Before
-    public void setUp() {
-
-        sut = new SickNoteController(sickNoteServiceMock,
-            sickNoteInteractionServiceMock, sickNoteCommentServiceMock, sickNoteTypeServiceMock,
-            vacationTypeServiceMock, personServiceMock, calendarServiceMock, validatorMock,
-            sickNoteConvertFormValidatorMock);
-    }
-
     @Test
     public void ensureNewHasCorrectModelAttributes() throws Exception {
-        final ResultActions resultActions = perform(get("/web/sicknote/new"));
 
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)));
-        resultActions.andExpect(model().attribute("persons", personServiceMock.getActivePersons()));
-        resultActions.andExpect(model().attribute("sickNoteTypes", sickNoteTypeServiceMock.getSickNoteTypes()));
-        resultActions.andExpect(view().name("sicknote/sick_note_form"));
+        perform(get("/web/sicknote/new"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("persons", personServiceMock.getActivePersons()))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypeServiceMock.getSickNoteTypes()))
+            .andExpect(view().name("sicknote/sick_note_form"));
     }
 
     @Test
     public void ensureEditHasCorrectModelAttributes() throws Exception {
-        SickNote sickNote = new SickNote();
+        final SickNote sickNote = new SickNote();
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
         when(sickNoteServiceMock.getById(0)).thenReturn(Optional.of(sickNote));
 
-        final ResultActions resultActions = perform(get("/web/sicknote/0/edit"));
-
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)));
-        resultActions.andExpect(model().attribute("sickNoteTypes", sickNoteTypeServiceMock.getSickNoteTypes()));
-        resultActions.andExpect(view().name("sicknote/sick_note_form"));
+        perform(get("/web/sicknote/0/edit"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypeServiceMock.getSickNoteTypes()))
+            .andExpect(view().name("sicknote/sick_note_form"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
+
+        final SickNoteController sut = new SickNoteController(sickNoteServiceMock,
+            sickNoteInteractionServiceMock, sickNoteCommentServiceMock, sickNoteTypeServiceMock,
+            vacationTypeServiceMock, personServiceMock, calendarServiceMock, validatorMock,
+            sickNoteConvertFormValidatorMock);
+
         return standaloneSetup(sut).build().perform(builder);
     }
 }
