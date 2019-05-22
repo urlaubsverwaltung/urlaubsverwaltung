@@ -153,19 +153,6 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {
-
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application, ofNullable(comment));
-
-        final List<String> recipients = recipientService.getMailAddresses(application.getPerson());
-        final String subject = getTranslation("subject.application.appliedByOffice");
-        final String text = mailBuilder.buildMailBody("new_application_by_office", model, LOCALE);
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
-
-    @Override
     public void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
         MailSettings mailSettings = getMailSettings();

@@ -106,7 +106,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         } else {
             // someone else (normally the office) applies for leave on behalf of the person
             // person gets an email that someone else has applied for leave on behalf
-            mailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
+            applicationMailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
         }
 
         // bosses gets email that a new application for leave has been created

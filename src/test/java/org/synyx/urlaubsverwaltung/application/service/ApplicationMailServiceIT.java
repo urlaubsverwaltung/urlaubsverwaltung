@@ -324,6 +324,42 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
     }
 
+
+    @Test
+    public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,
+        IOException {
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Application application = createApplication(person);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+        comment.setText("Habe das mal für dich beantragt");
+
+        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        office.setPermissions(singletonList(OFFICE));
+
+        application.setApplier(office);
+        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(person.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+        assertThat(msg.getSubject()).contains("Für dich wurde ein Urlaubsantrag eingereicht");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("Marlene Muster hat einen Urlaubsantrag für dich gestellt");
+        assertThat(content).contains(comment.getText());
+        assertThat(content).contains(comment.getPerson().getNiceName());
+        assertThat(content).contains("/web/application/1234");
+    }
+
     private Application createApplication(Person person) {
 
         LocalDate now = LocalDate.now(UTC);

@@ -148,11 +148,8 @@ public class ApplicationInteractionServiceImplTest {
         service.apply(applicationForLeave, person, of("Foo"));
 
         verify(applicationMailService).sendConfirmation(eq(applicationForLeave), eq(applicationComment));
-        verify(mailService, never())
-            .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
-
-        verify(mailService)
-            .sendNewApplicationNotification(eq(applicationForLeave), eq(applicationComment));
+        verify(applicationMailService, never()).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(mailService).sendNewApplicationNotification(eq(applicationForLeave), eq(applicationComment));
     }
 
 
@@ -170,7 +167,7 @@ public class ApplicationInteractionServiceImplTest {
         service.apply(applicationForLeave, applier, of("Foo"));
 
         verify(applicationMailService, never()).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(mailService).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), eq(applicationComment));
+        verify(applicationMailService).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), eq(applicationComment));
         verify(mailService).sendNewApplicationNotification(eq(applicationForLeave), eq(applicationComment));
     }
 

@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.mail;
 import freemarker.template.Configuration;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +26,6 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -340,36 +338,6 @@ public class MailServiceImplIT {
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
         assertTrue(content.contains("Es handelt sich um folgenden Urlaubsantrag: http://urlaubsverwaltung/web/application/1234"));
-    }
-
-    @Test
-    public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,
-        IOException {
-
-        ApplicationComment comment = createDummyComment(office, "Habe das mal für dich beantragt");
-
-        application.setApplier(office);
-        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
-
-        // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertTrue(msg.getSubject().contains("Für dich wurde ein Urlaubsantrag eingereicht"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(person.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Lieschen Müller"));
-        assertTrue(content.contains("Marlene Muster hat einen Urlaubsantrag für dich gestellt"));
-        assertTrue("No comment in mail content", content.contains(comment.getText()));
-        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
-        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
 

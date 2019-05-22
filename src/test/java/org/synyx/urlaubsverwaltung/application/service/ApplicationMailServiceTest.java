@@ -220,4 +220,37 @@ public class ApplicationMailServiceTest {
 
         verify(mailService).sendMailTo(person,"subject.application.applied.user", "confirm", model);
     }
+
+
+    @Test
+    public void sendAppliedForLeaveByOfficeNotification() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationCategory vacationCategory = HOLIDAY;
+        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(vacationCategory);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+
+        verify(mailService).sendMailTo(person,"subject.application.appliedByOffice", "new_application_by_office", model);
+    }
 }

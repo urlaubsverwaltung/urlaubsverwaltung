@@ -60,16 +60,6 @@ public interface MailService {
 
 
     /**
-     * Sends an email to the person of the given application
-     * that the office has applied for leave on behalf of himself.
-     *
-     * @param  application confirmed application on behalf
-     * @param  comment additional comment for the application
-     */
-    void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment);
-
-
-    /**
      * Sends an email to the bosses notifying
      * that there is a new application for leave
      * which has to be allowed or rejected by a boss.

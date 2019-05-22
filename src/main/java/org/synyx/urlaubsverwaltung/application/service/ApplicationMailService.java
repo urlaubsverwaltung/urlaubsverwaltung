@@ -140,6 +140,25 @@ class ApplicationMailService {
         mailService.sendMailTo(recipient, "subject.application.applied.user", "confirm", model);
     }
 
+    /**
+     * Sends an email to the person of the given application
+     * that the office has applied for leave on behalf of himself.
+     *
+     * @param  application confirmed application on behalf
+     * @param  comment additional comment for the application
+     */
+    void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
+        model.put("comment", comment);
+
+        final Person recipient = application.getPerson();
+        mailService.sendMailTo(recipient, "subject.application.appliedByOffice", "new_application_by_office", model);
+    }
+
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);
