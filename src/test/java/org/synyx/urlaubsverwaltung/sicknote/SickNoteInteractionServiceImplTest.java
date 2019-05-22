@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -21,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -88,10 +88,9 @@ public class SickNoteInteractionServiceImplTest {
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteAction.CREATED, person);
 
-        Assert.assertNotNull("Should not be null", createdSickNote);
-
-        Assert.assertNotNull("Last edited date should be set", createdSickNote.getLastEdited());
-        Assert.assertEquals("Wrong status", SickNoteStatus.ACTIVE, createdSickNote.getStatus());
+        assertThat(createdSickNote).isNotNull();
+        assertThat(createdSickNote.getLastEdited()).isNotNull();
+        assertThat(createdSickNote.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
     }
 
     @Test
@@ -124,10 +123,9 @@ public class SickNoteInteractionServiceImplTest {
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteAction.EDITED, person);
 
-        Assert.assertNotNull("Should not be null", updatedSickNote);
-
-        Assert.assertNotNull("Last edited date should be set", updatedSickNote.getLastEdited());
-        Assert.assertEquals("Wrong status", SickNoteStatus.ACTIVE, updatedSickNote.getStatus());
+        assertThat(updatedSickNote).isNotNull();
+        assertThat(updatedSickNote.getLastEdited()).isNotNull();
+        assertThat(updatedSickNote.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
     }
 
     @Test
@@ -159,10 +157,9 @@ public class SickNoteInteractionServiceImplTest {
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteAction.CANCELLED, person);
 
-        Assert.assertNotNull("Should not be null", cancelledSickNote);
-
-        Assert.assertNotNull("Last edited date should be set", cancelledSickNote.getLastEdited());
-        Assert.assertEquals("Wrong status", SickNoteStatus.CANCELLED, cancelledSickNote.getStatus());
+        assertThat(cancelledSickNote).isNotNull();
+        assertThat(cancelledSickNote.getLastEdited()).isNotNull();
+        assertThat(cancelledSickNote.getStatus()).isEqualTo(SickNoteStatus.CANCELLED);
     }
 
 
@@ -195,10 +192,9 @@ public class SickNoteInteractionServiceImplTest {
         verify(commentService)
             .create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, person);
 
-        Assert.assertNotNull("Should not be null", convertedSickNote);
-
-        Assert.assertNotNull("Last edited date should be set", convertedSickNote.getLastEdited());
-        Assert.assertEquals("Wrong status", SickNoteStatus.CONVERTED_TO_VACATION, convertedSickNote.getStatus());
+        assertThat(convertedSickNote).isNotNull();
+        assertThat(convertedSickNote.getLastEdited()).isNotNull();
+        assertThat(convertedSickNote.getStatus()).isEqualTo(SickNoteStatus.CONVERTED_TO_VACATION);
 
         // assert application for leave correctly created
         verify(applicationInteractionService).createFromConvertedSickNote(applicationForLeave, person);
