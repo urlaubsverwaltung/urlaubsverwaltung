@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SickNoteFormTest {
 
@@ -44,14 +44,15 @@ public class SickNoteFormTest {
 
         SickNote sickNote = sut.generateSickNote();
 
-        assertEquals(id, sickNote.getId());
-        assertEquals(person, sickNote.getPerson());
-        assertEquals(type, sickNote.getSickNoteType());
-        assertEquals(day2019_04_16, sickNote.getStartDate());
-        assertEquals(day2019_04_16, sickNote.getEndDate());
-        assertEquals(dayLength, sickNote.getDayLength());
-        assertEquals(day2019_04_16, sickNote.getAubStartDate());
-        assertEquals(day2019_04_16, sickNote.getAubEndDate());
+
+        assertThat(sickNote.getId()).isEqualTo(id);
+        assertThat(sickNote.getPerson()).isEqualTo(person);
+        assertThat(sickNote.getSickNoteType()).isEqualTo(type);
+        assertThat(sickNote.getStartDate()).isEqualTo(day2019_04_16);
+        assertThat(sickNote.getEndDate()).isEqualTo(day2019_04_16);
+        assertThat(sickNote.getDayLength()).isEqualTo(dayLength);
+        assertThat(sickNote.getAubStartDate()).isEqualTo(day2019_04_16);
+        assertThat(sickNote.getAubEndDate()).isEqualTo(day2019_04_16);
     }
 
     @Test
@@ -63,9 +64,9 @@ public class SickNoteFormTest {
 
         SickNoteComment sickNoteComment = sut.generateSickNoteComment(sickNote);
 
-        assertEquals(comment, sickNoteComment.getText());
-        assertEquals(SickNoteAction.COMMENTED, sickNoteComment.getAction());
-        assertEquals(sickNote, sickNoteComment.getSickNote());
+        assertThat(sickNoteComment.getText()).isEqualTo(comment);
+        assertThat(sickNoteComment.getAction()).isEqualTo(SickNoteAction.COMMENTED);
+        assertThat(sickNoteComment.getSickNote()).isEqualTo(sickNote);
     }
 
     @Test
@@ -74,14 +75,14 @@ public class SickNoteFormTest {
 
         SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
 
-        assertEquals(id, sickNoteForm.getId());
-        assertEquals(person, sickNoteForm.getPerson());
-        assertEquals(type, sickNoteForm.getSickNoteType());
-        assertEquals(day2019_04_16, sickNoteForm.getStartDate());
-        assertEquals(day2019_04_16, sickNoteForm.getEndDate());
-        assertEquals(dayLength, sickNoteForm.getDayLength());
-        assertEquals(day2019_04_16, sickNoteForm.getAubStartDate());
-        assertEquals(day2019_04_16, sickNoteForm.getAubEndDate());
+        assertThat(sickNoteForm.getId()).isEqualTo(id);
+        assertThat(sickNoteForm.getPerson()).isEqualTo(person);
+        assertThat(sickNoteForm.getSickNoteType()).isEqualTo(type);
+        assertThat(sickNoteForm.getStartDate()).isEqualTo(day2019_04_16);
+        assertThat(sickNoteForm.getEndDate()).isEqualTo(day2019_04_16);
+        assertThat(sickNoteForm.getDayLength()).isEqualTo(dayLength);
+        assertThat(sickNoteForm.getAubStartDate()).isEqualTo(day2019_04_16);
+        assertThat(sickNoteForm.getAubEndDate()).isEqualTo(day2019_04_16);
     }
 
     @Test
@@ -106,6 +107,6 @@ public class SickNoteFormTest {
             "comment='my comment'" +
         "}";
 
-        assertEquals(stringRepresentation, sut.toString());
+        assertThat(sut.toString()).isEqualTo(stringRepresentation);
     }
 }
