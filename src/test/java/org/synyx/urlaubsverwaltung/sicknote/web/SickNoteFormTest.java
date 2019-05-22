@@ -22,27 +22,27 @@ public class SickNoteFormTest {
     private final DayLength dayLength = DayLength.FULL;
     private final String comment = "my comment";
 
-    private SickNoteForm cut;
+    private SickNoteForm sut;
 
     @Before
     public void setUp() {
-        cut = new SickNoteForm();
+        sut = new SickNoteForm();
 
-        cut.setId(id);
-        cut.setPerson(person);
-        cut.setSickNoteType(type);
-        cut.setStartDate(day2019_04_16);
-        cut.setEndDate(day2019_04_16);
-        cut.setDayLength(dayLength);
-        cut.setAubStartDate(day2019_04_16);
-        cut.setAubEndDate(day2019_04_16);
-        cut.setComment(comment);
+        sut.setId(id);
+        sut.setPerson(person);
+        sut.setSickNoteType(type);
+        sut.setStartDate(day2019_04_16);
+        sut.setEndDate(day2019_04_16);
+        sut.setDayLength(dayLength);
+        sut.setAubStartDate(day2019_04_16);
+        sut.setAubEndDate(day2019_04_16);
+        sut.setComment(comment);
     }
 
     @Test
     public void checkGeneratedSickNote() {
 
-        SickNote sickNote = cut.generateSickNote();
+        SickNote sickNote = sut.generateSickNote();
 
         assertEquals(id, sickNote.getId());
         assertEquals(person, sickNote.getPerson());
@@ -57,11 +57,11 @@ public class SickNoteFormTest {
     @Test
     public void checkGeneratedSickNoteComment() {
         String comment = "my comment";
-        cut.setComment(comment);
+        sut.setComment(comment);
 
         SickNote sickNote = new SickNote();
 
-        SickNoteComment sickNoteComment = cut.generateSickNoteComment(sickNote);
+        SickNoteComment sickNoteComment = sut.generateSickNoteComment(sickNote);
 
         assertEquals(comment, sickNoteComment.getText());
         assertEquals(SickNoteAction.COMMENTED, sickNoteComment.getAction());
@@ -70,7 +70,7 @@ public class SickNoteFormTest {
 
     @Test
     public void checkCopyConstructur() {
-        SickNote sickNote = cut.generateSickNote();
+        SickNote sickNote = sut.generateSickNote();
 
         SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
 
@@ -106,6 +106,6 @@ public class SickNoteFormTest {
             "comment='my comment'" +
         "}";
 
-        assertEquals(stringRepresentation, cut.toString());
+        assertEquals(stringRepresentation, sut.toString());
     }
 }
