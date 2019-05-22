@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 /**

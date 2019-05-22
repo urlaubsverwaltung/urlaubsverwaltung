@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.util.Optional;
-
 
 /**
  * Provides interactions with sick notes, i.e. create, edit etc.
