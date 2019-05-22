@@ -55,14 +55,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Override
     public SickNote create(SickNote sickNote, Person creator) {
-        saveSickNote(sickNote, SickNoteStatus.ACTIVE);
-        commentService.create(sickNote, SickNoteAction.CREATED, creator);
-
-        LOG.info("Created sick note: {}", sickNote);
-
-        updateCalendar(sickNote);
-
-        return sickNote;
+        return this.create(sickNote, creator, null);
     }
 
     @Override
@@ -80,15 +73,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Override
     public SickNote update(SickNote sickNote, Person editor) {
-
-        saveSickNote(sickNote, SickNoteStatus.ACTIVE);
-        commentService.create(sickNote, SickNoteAction.EDITED, editor);
-
-        LOG.info("Updated sick note: {}", sickNote);
-
-        updateAbsence(sickNote);
-
-        return sickNote;
+        return this.update(sickNote, editor, null);
     }
 
     @Override
@@ -97,7 +82,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         saveSickNote(sickNote, SickNoteStatus.ACTIVE);
         commentService.create(sickNote, SickNoteAction.EDITED, editor, comment);
 
-        LOG.info("Updated sick note: {}", sickNote);
+        LOG.info("Updated sick note: {} with comment", sickNote, comment);
 
         updateAbsence(sickNote);
 

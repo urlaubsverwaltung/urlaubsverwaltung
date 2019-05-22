@@ -23,24 +23,25 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
     @Override
     public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author) {
-
-        SickNoteComment comment = createSickNoteCommentBase(sickNote, action, author);
-
-        commentDAO.save(comment);
-
-        return comment;
+        return this.create(sickNote, action, author, null);
     }
 
     @Override
     public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author, String text) {
 
-        SickNoteComment comment = createSickNoteCommentBase(sickNote, action, author);
+        final SickNoteComment comment = new SickNoteComment();
 
-        comment.setText(text);
+        comment.setSickNote(sickNote);
+        comment.setAction(action);
+        comment.setPerson(author);
 
-        commentDAO.save(comment);
+        if (text == null) {
+            comment.setText("");
+        } else {
+            comment.setText(text);
+        }
 
-        return comment;
+        return commentDAO.save(comment);
     }
 
 
@@ -48,14 +49,5 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     public List<SickNoteComment> getCommentsBySickNote(SickNote sickNote) {
 
         return commentDAO.getCommentsBySickNote(sickNote);
-    }
-
-    private SickNoteComment createSickNoteCommentBase(SickNote sickNote, SickNoteAction action, Person author) {
-        SickNoteComment comment = new SickNoteComment();
-
-        comment.setSickNote(sickNote);
-        comment.setAction(action);
-        comment.setPerson(author);
-        return comment;
     }
 }

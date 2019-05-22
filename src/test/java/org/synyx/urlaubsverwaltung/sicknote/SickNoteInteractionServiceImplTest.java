@@ -86,7 +86,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CREATED, person);
+        verify(commentService).create(sickNote, SickNoteAction.CREATED, person, null);
 
         assertThat(createdSickNote).isNotNull();
         assertThat(createdSickNote.getLastEdited()).isNotNull();
@@ -121,7 +121,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.EDITED, person);
+        verify(commentService).create(sickNote, SickNoteAction.EDITED, person, null);
 
         assertThat(updatedSickNote).isNotNull();
         assertThat(updatedSickNote.getLastEdited()).isNotNull();
