@@ -98,9 +98,9 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public void save(Person person) {
+    public Person save(Person person) {
 
-        personDAO.save(person);
+        return personDAO.save(person);
     }
 
 

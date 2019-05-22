@@ -170,10 +170,6 @@
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
     </dependency>
@@ -343,11 +339,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <profiles>
-            <profile>dev</profile>
-          </profiles>
-        </configuration>
       </plugin>
 
       <plugin>
@@ -403,6 +394,15 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <executions>
           <execution>
+            <configuration>
+              <!-- Those can be overridden in build.properties.local -->
+              <systemPropertyVariables>
+                <!-- Spring Datasource configuration -->
+                <spring.datasource.url>
+                  jdbc:mysql://${docker.host.address}:${docker.mysql.port}/urlaubsverwaltung
+                </spring.datasource.url>
+              </systemPropertyVariables>
+            </configuration>
             <goals>
               <goal>integration-test</goal>
               <goal>verify</goal>
@@ -451,6 +451,46 @@
             </image>
           </images>
         </configuration>
+        <executions>
+          <execution>
+            <id>docker-prepare-integration-test</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>build</goal>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <images>
+                <!-- MySQL -->
+                <image>
+                  <name>urlaubsverwaltung/database</name>
+                  <build>
+                    <dockerFileDir>mysql</dockerFileDir>
+                  </build>
+                  <run>
+                    <ports>
+                      <port>docker.mysql.port:3306</port>
+                    </ports>
+                    <wait>
+                      <healthy>true</healthy>
+                      <time>60000</time>
+                    </wait>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+          </execution>
+          <execution>
+            <id>docker-stop</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+            <configuration>
+              <removeVolumes>true</removeVolumes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- Editorconfig -->
