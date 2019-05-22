@@ -60,16 +60,6 @@ public interface MailService {
 
 
     /**
-     * Sends an email to the applicant that the application
-     * has been made successfully.
-     *
-     * @param  application confirmed application
-     * @param  comment additional comment for the confirming application
-     */
-    void sendConfirmation(Application application, ApplicationComment comment);
-
-
-    /**
      * Sends an email to the person of the given application
      * that the office has applied for leave on behalf of himself.
      *

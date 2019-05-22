@@ -102,7 +102,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (person.equals(applier)) {
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
-            mailService.sendConfirmation(application, createdComment);
+            applicationMailService.sendConfirmation(application, createdComment);
         } else {
             // someone else (normally the office) applies for leave on behalf of the person
             // person gets an email that someone else has applied for leave on behalf

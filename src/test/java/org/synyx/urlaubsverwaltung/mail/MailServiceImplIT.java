@@ -310,35 +310,6 @@ public class MailServiceImplIT {
         assertTrue("Wrong comment author", contentSecondStageMail.contains(comment.getPerson().getNiceName()));
     }
 
-    @Test
-    public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException,
-        IOException {
-
-        ApplicationComment comment = createDummyComment(person, "Hätte gerne Urlaub");
-
-        sut.sendConfirmation(application, comment);
-
-        // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertTrue(msg.getSubject().contains("Antragsstellung"));
-
-        // check from and recipient
-        assertEquals(new InternetAddress(person.getEmail()), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Hallo Lieschen Müller"));
-        assertTrue(content.contains("dein Urlaubsantrag wurde erfolgreich eingereicht"));
-        assertTrue("No comment in mail content", content.contains(comment.getText()));
-        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
-        assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
-    }
-
 
     @Test
     public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException,
@@ -401,22 +372,6 @@ public class MailServiceImplIT {
         assertTrue(content.contains("Link zum Antrag: http://urlaubsverwaltung/web/application/1234"));
     }
 
-
-    @Test
-    public void ensureCorrectFrom() throws MessagingException {
-
-        sut.sendConfirmation(application, null);
-
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        Address[] from = msg.getFrom();
-        Assert.assertNotNull("From must be set", from);
-        Assert.assertEquals("From must be only one email address", 1, from.length);
-        Assert.assertEquals("Wrong from", settings.getMailSettings().getFrom(), from[0].toString());
-    }
 
     @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {

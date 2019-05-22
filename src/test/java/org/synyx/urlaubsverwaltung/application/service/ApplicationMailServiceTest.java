@@ -9,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -23,6 +24,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -182,5 +184,40 @@ public class ApplicationMailServiceTest {
         sut.notifyHolidayReplacement(application);
 
         verify(mailService).sendMailTo(holidayReplacement,"subject.application.holidayReplacement", "notify_holiday_replacement", model);
+    }
+
+    @Test
+    public void sendConfirmation() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationCategory vacationCategory = HOLIDAY;
+        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(vacationCategory);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(WAITING);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        sut.sendConfirmation(application, comment);
+
+        verify(mailService).sendMailTo(person,"subject.application.applied.user", "confirm", model);
     }
 }

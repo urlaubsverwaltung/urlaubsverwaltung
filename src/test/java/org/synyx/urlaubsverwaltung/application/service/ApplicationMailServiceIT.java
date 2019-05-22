@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -268,6 +269,59 @@ public class ApplicationMailServiceIT {
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Mar Teria");
         assertThat(content).contains("Urlaubsvertretung");
+    }
+
+    @Test
+    public void ensureCorrectFrom() throws MessagingException {
+
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Application application = createApplication(person);
+
+        sut.sendConfirmation(application, null);
+
+        List<Message> inbox = Mailbox.get(person.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+        Address[] from = msg.getFrom();
+        assertThat(from).isNotNull();
+        assertThat(from.length).isOne();
+        assertThat(from[0].toString()).isEqualTo("absender@urlaubsverwaltung.test");
+    }
+
+    @Test
+    public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException,
+        IOException {
+
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Application application = createApplication(person);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+        comment.setText("Hätte gerne Urlaub");
+
+        sut.sendConfirmation(application, comment);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(person.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+        assertThat(msg.getSubject()).contains("Antragsstellung");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("dein Urlaubsantrag wurde erfolgreich eingereicht");
+        assertThat(content).contains(comment.getText());
+        assertThat(content).contains(comment.getPerson().getNiceName());
+        assertThat(content).contains("/web/application/1234");
     }
 
     private Application createApplication(Person person) {

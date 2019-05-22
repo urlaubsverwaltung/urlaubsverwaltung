@@ -151,18 +151,6 @@ class MailServiceImpl implements MailService {
         sendMailToEachRecipient(model, recipients, "temporary_allowed_second_stage_authority", subjectForSecondStage);
     }
 
-    @Override
-    public void sendConfirmation(Application application, ApplicationComment comment) {
-
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application, ofNullable(comment));
-
-        final String text = mailBuilder.buildMailBody("confirm", model, LOCALE);
-        final List<String> recipients = recipientService.getMailAddresses(application.getPerson());
-        final String subject = getTranslation("subject.application.applied.user");
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
-    }
-
 
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {

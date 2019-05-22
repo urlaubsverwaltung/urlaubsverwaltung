@@ -121,6 +121,25 @@ class ApplicationMailService {
         mailService.sendMailTo(application.getHolidayReplacement(),"subject.application.holidayReplacement", "notify_holiday_replacement", model);
     }
 
+    /**
+     * Sends an email to the applicant that the application
+     * has been made successfully.
+     *
+     * @param application confirmed application
+     * @param comment     additional comment for the confirming application
+     */
+    void sendConfirmation(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
+        model.put("comment", comment);
+
+        final Person recipient = application.getPerson();
+        mailService.sendMailTo(recipient, "subject.application.applied.user", "confirm", model);
+    }
+
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);
