@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote.web;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteAction;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
@@ -131,16 +129,6 @@ public class SickNoteForm {
         sickNote.setAubEndDate(aubEndDate);
 
         return sickNote;
-    }
-
-    public SickNoteComment generateSickNoteComment(SickNote sickNote) {
-        SickNoteComment sickNoteComment = new SickNoteComment();
-
-        sickNoteComment.setText(comment);
-        sickNoteComment.setAction(SickNoteAction.COMMENTED);
-        sickNoteComment.setSickNote(sickNote);
-
-        return sickNoteComment;
     }
 
     @Override

@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteAction;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
@@ -53,20 +51,6 @@ public class SickNoteFormTest {
         assertThat(sickNote.getDayLength()).isEqualTo(dayLength);
         assertThat(sickNote.getAubStartDate()).isEqualTo(day2019_04_16);
         assertThat(sickNote.getAubEndDate()).isEqualTo(day2019_04_16);
-    }
-
-    @Test
-    public void checkGeneratedSickNoteComment() {
-        String comment = "my comment";
-        sut.setComment(comment);
-
-        SickNote sickNote = new SickNote();
-
-        SickNoteComment sickNoteComment = sut.generateSickNoteComment(sickNote);
-
-        assertThat(sickNoteComment.getText()).isEqualTo(comment);
-        assertThat(sickNoteComment.getAction()).isEqualTo(SickNoteAction.COMMENTED);
-        assertThat(sickNoteComment.getSickNote()).isEqualTo(sickNote);
     }
 
     @Test
