@@ -53,7 +53,7 @@ public class AbsenceApiController {
         notes = "Get all absences for a certain period and person"
     )
     @GetMapping("/absences")
-    @PreAuthorize("@securityProvider.loggedInUserRequestsOwnData(authentication, #person)")
+    @PreAuthorize("@securityProvider.loggedInUserRequestsOwnData(authentication, #personId)")
     public ResponseWrapper<DayAbsenceList> personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
