@@ -5,12 +5,6 @@ ENV MYSQL_USER=urlaubsverwaltung \
     MYSQL_PASSWORD=urlaubsverwaltung \
     MYSQL_RANDOM_ROOT_PASSWORD=yes
 
-ENV TZ=Europe/Berlin
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-#RUN sudo echo "Europe/Berlin" > /etc/timezone
-#RUN sudo dpkg-reconfigure -f noninteractive tzdata
-
 HEALTHCHECK --interval=10s --timeout=3s --start-period=15s \
   CMD /usr/bin/mysql --user=urlaubsverwaltung --password=urlaubsverwaltung --execute "SHOW DATABASES;"
 
