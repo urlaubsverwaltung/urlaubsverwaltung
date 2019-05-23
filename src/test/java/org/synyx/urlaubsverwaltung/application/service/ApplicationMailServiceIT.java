@@ -44,7 +44,6 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@ActiveProfiles("dev")
 @Transactional
 public class ApplicationMailServiceIT {
 
