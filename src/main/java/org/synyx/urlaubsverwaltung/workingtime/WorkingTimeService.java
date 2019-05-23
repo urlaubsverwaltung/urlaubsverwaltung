@@ -52,7 +52,7 @@ public class WorkingTimeService {
             workingTime.setValidFrom(validFrom);
         }
 
-        /**
+        /*
          * else just change the working days of the current working time object
          */
         workingTime.setWorkingDays(workingDays, DayLength.FULL);

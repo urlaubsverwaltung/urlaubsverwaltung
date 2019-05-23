@@ -40,11 +40,9 @@ class PersonServiceImpl implements PersonService {
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        save(person);
+        LOG.info("Create person: {}", person);
 
-        LOG.info("Created person: {}", person);
-
-        return person;
+        return save(person);
     }
 
 
@@ -63,22 +61,18 @@ class PersonServiceImpl implements PersonService {
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        save(person);
+        LOG.info("Update person: {}", person);
 
-        LOG.info("Updated person: {}", person);
-
-        return person;
+        return save(person);
     }
 
 
     @Override
     public Person create(Person person) {
 
-        save(person);
+        LOG.info("Create person: {}", person);
 
-        LOG.info("Created person: {}", person);
-
-        return person;
+        return save(person);
     }
 
 
@@ -89,18 +83,16 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
-        save(person);
-
         LOG.info("Updated person: {}", person);
 
-        return person;
+        return save(person);
     }
 
 
     @Override
-    public void save(Person person) {
+    public Person save(Person person) {
 
-        personDAO.save(person);
+        return personDAO.save(person);
     }
 
 

@@ -110,7 +110,8 @@ Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 #### Systemvoraussetzungen
 
 * JDK 8
-* MySQL Datenbank
+* MySQL Datenbank (v8.0.16)
+* Docker 17.12.0+ & Docker Compose
 
 #### Download
 
@@ -121,14 +122,22 @@ da die WAR-Datei einen Tomcat bundled.
 
 #### Starten der Anwendung
 
-Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Anwendung im Entwicklungsmodus
-zu starten:
+Damit man die Anwendung möglichst schnell ausprobieren kann,  
+bietet es sich an
+
+die Datenbank via Docker Compose zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=dev urlaubsverwaltung.war
+docker-compose up
 ```
 
-Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
+und die Anwendung mit dem Profil `testdata` zu starten:
+
+```bash
+java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
+```
+
+Auf diese Weise wird die Anwendung mit einer MySQL-Datenbank und Testdaten gestartet.
 Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system) anmelden.
 
 #### Aufrufen der Anwendung
@@ -142,8 +151,8 @@ Die Anwendung ist nun erreichbar unter
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
 funktioniert, kann den entsprechenden Kapiteln in der Spring Boot Dokumentation nachgelesen werden:
 
-* [Linux Service](http://docs.spring.io/spring-boot/docs/1.3.1.RELEASE/reference/html/deployment-install.html#deployment-service)
-* [Windows Service](http://docs.spring.io/spring-boot/docs/1.3.1.RELEASE/reference/html/deployment-windows.html)
+* [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
+* [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
 
 #### Konfigurationsdatei
 
@@ -169,8 +178,8 @@ Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 
 ####  Achtung! Produktives Starten der Anwendung
 
-Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr im Entwicklungsmodus
-gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
+Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr mit Testdaten
+gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdata` gestartet werden:
 
 ```bash
 java -jar urlaubsverwaltung.war
@@ -280,24 +289,21 @@ Plugin gestartet werden:
 
 bzw. für Windows Benutzer über:
 
-```cmd
+```bash
 ./mvnw.cmd clean spring-boot:run
 ```
 
-<a name="mvn_profiles" />
-Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
-werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
-Maven Aufruf gestartet werden:
+Da die Urlaubsverwaltung abhängig von einer mysql Datenbank ist kann diese über
 
 ```bash
-./mvnw clean spring-boot:run -Drun.profiles=mariadb
+docker-compose up
 ```
-Einzelne Parameter lassen sich mit `-D<parameterName>=<parameterWert>` überschreiben.
+gestartet weren.
 
 ### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
-Ohne weitere Anpassung der Standardkonfiguration wird eine H2-Datenbank verwendet und es werden Testdaten angelegt,
+Mit dem `testdata` Profil wird eine MySQL-Datenbank verwendet und es werden Testdaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
 Testbenutzern anmelden:
 
@@ -331,16 +337,7 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 ### Anlegen von Testdaten deaktivieren
 
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
-in den `application-dev.properties` auf `false` setzen.
-
-### H2 Web Konsole
-
-Die Standardkonfiguration im `dev`-Profil sorgt dafür, dass eine H2 Web Konsole aktiv ist.  
-Diese kann standardmäßig erreicht werden unter:
-
-<pre>localhost:8080/h2-console/</pre>
-
-Die H2 Konfigurationen können in der `application-dev.properties` überschrieben werden.
+in den `application-testdata.properties` auf `false` setzen.
 
 ### API
 
@@ -351,10 +348,10 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 Siehe [Authentifizierung](#authentifizierung)
 
 Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `auth` entweder als System
-Property oder man konfiguriert diese in den `application.properties` bzw. in den `application-dev.properties`.
+Property oder man konfiguriert diese in den `application.properties`.
 
 Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
-`application.properties` bzw. in den `application-dev.properties` konfiguriert sein.
+`application.properties` konfiguriert sein.
 
 #### LDAP
 
@@ -364,7 +361,7 @@ Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 ./mvnw clean spring-boot:run -Dauth=ldap
 ```
 
-Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
+Oder die Property `auth` in den `application.properties` setzen:
 
 <pre>auth=ldap</pre>
 
@@ -376,7 +373,7 @@ Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 ./mvnw clean spring-boot:run -Dauth=activeDirectory
 ```
 
-Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
+Oder die Property `auth` in den `application.properties` setzen:
 
 <pre>auth=activeDirectory</pre>
 

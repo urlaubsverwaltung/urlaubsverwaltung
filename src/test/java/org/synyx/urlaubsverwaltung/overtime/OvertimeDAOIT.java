@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -14,11 +14,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.math.BigDecimal.ROUND_UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 public class OvertimeDAOIT {
 
     @Autowired
@@ -30,44 +34,43 @@ public class OvertimeDAOIT {
     @Test
     public void ensureCanPersistOvertime() {
 
-        Person person = TestDataCreator.createPerson();
-        personDAO.save(person);
+        final Person person = TestDataCreator.createPerson();
+        final Person savedPerson = personDAO.save(person);
 
-        LocalDate now = LocalDate.now(UTC);
-        Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
-
-        Assert.assertNull("Must not have ID", overtime.getId());
+        final LocalDate now = LocalDate.now(UTC);
+        final Overtime overtime = new Overtime(savedPerson, now, now.plusDays(2), BigDecimal.ONE);
+        assertThat(overtime.getId()).isNull();
 
         overtimeDAO.save(overtime);
 
-        Assert.assertNotNull("Missing ID", overtime.getId());
+        assertThat(overtime.getId()).isNotNull();
     }
 
 
     @Test
     public void ensureCountsTotalHoursCorrectly() {
 
-        Person person = TestDataCreator.createPerson();
-        personDAO.save(person);
+        final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
+        final Person savedPerson = personDAO.save(person);
 
-        Person otherPerson = TestDataCreator.createPerson();
-        personDAO.save(otherPerson);
+        final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
+        final Person savedOtherPerson = personDAO.save(otherPerson);
 
         LocalDate now = LocalDate.now(UTC);
 
         // Overtime for person
-        overtimeDAO.save(new Overtime(person, now, now.plusDays(2), new BigDecimal("3")));
-        overtimeDAO.save(new Overtime(person, now.plusDays(5), now.plusDays(10), new BigDecimal("0.5")));
-        overtimeDAO.save(new Overtime(person, now.minusDays(8), now.minusDays(4), new BigDecimal("-1")));
+        overtimeDAO.save(new Overtime(savedPerson, now, now.plusDays(2), new BigDecimal("3")));
+        overtimeDAO.save(new Overtime(savedPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("0.5")));
+        overtimeDAO.save(new Overtime(savedPerson, now.minusDays(8), now.minusDays(4), new BigDecimal("-1")));
 
         // Overtime for other person
-        overtimeDAO.save(new Overtime(otherPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("5")));
+        overtimeDAO.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("5")));
 
         BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
 
-        Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Total hours calculated wrongly", new BigDecimal("2.5").setScale(1,
-                BigDecimal.ROUND_UNNECESSARY), totalHours.setScale(1, BigDecimal.ROUND_UNNECESSARY));
+        assertThat(totalHours).isNotNull();
+        assertThat(totalHours.setScale(1, ROUND_UNNECESSARY)).isEqualTo(new BigDecimal("2.5").setScale(1,
+            ROUND_UNNECESSARY));
     }
 
 
@@ -79,35 +82,35 @@ public class OvertimeDAOIT {
 
         BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
 
-        Assert.assertNull("Should be null", totalHours);
+        assertThat(totalHours).isNull();
     }
 
 
     @Test
     public void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
 
-        Person person = TestDataCreator.createPerson();
-        personDAO.save(person);
+        final Person person = TestDataCreator.createPerson();
+        final Person savedPerson = personDAO.save(person);
 
         // records for 2015
-        overtimeDAO.save(new Overtime(person, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
+        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
                 new BigDecimal("1")));
-        overtimeDAO.save(new Overtime(person, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
+        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
                 new BigDecimal("2")));
-        overtimeDAO.save(new Overtime(person, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
+        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
                 new BigDecimal("3")));
 
         // record for 2014
-        overtimeDAO.save(new Overtime(person, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
+        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
                 new BigDecimal("4")));
 
-        List<Overtime> records = overtimeDAO.findByPersonAndPeriod(person,
+        List<Overtime> records = overtimeDAO.findByPersonAndPeriod(savedPerson,
             LocalDate.of(2015, 1, 1),LocalDate.of(2015, 12, 31));
 
-        Assert.assertNotNull("Should not be null", records);
-        Assert.assertEquals("Wrong number of records", 3, records.size());
-        Assert.assertEquals("Wrong record", new BigDecimal("1"), records.get(0).getHours());
-        Assert.assertEquals("Wrong record", new BigDecimal("2"), records.get(1).getHours());
-        Assert.assertEquals("Wrong record", new BigDecimal("3"), records.get(2).getHours());
+        assertThat(records).isNotNull();
+        assertThat(records.size()).isEqualTo(3);
+        assertThat(records.get(0).getHours()).isEqualTo(BigDecimal.valueOf(1));
+        assertThat(records.get(1).getHours()).isEqualTo(BigDecimal.valueOf(2));
+        assertThat(records.get(2).getHours()).isEqualTo(BigDecimal.valueOf(3));
     }
 }

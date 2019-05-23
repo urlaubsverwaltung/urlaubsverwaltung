@@ -1,3 +1,6 @@
+### master/unreleased
+* Replace h2 with mysql for development [#694](https://github.com/synyx/urlaubsverwaltung/pull/694)
+
 ### [urlaubsverwaltung-2.42.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.1)
 * Fix mail notification permissions [#681](https://github.com/synyx/urlaubsverwaltung/pull/681)
 
