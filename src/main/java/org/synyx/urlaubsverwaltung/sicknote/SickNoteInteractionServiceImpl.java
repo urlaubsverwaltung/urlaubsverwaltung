@@ -61,7 +61,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     public SickNote create(SickNote sickNote, Person creator, String comment) {
 
-        saveSickNote(sickNote, SickNoteStatus.ACTIVE);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
+        saveSickNote(sickNote);
+
         commentService.create(sickNote, SickNoteAction.CREATED, creator, comment);
 
         LOG.info("Created sick note: {} with comment {}", sickNote, comment);
@@ -79,7 +81,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     public SickNote update(SickNote sickNote, Person editor, String comment) {
 
-        saveSickNote(sickNote, SickNoteStatus.ACTIVE);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
+        saveSickNote(sickNote);
+
         commentService.create(sickNote, SickNoteAction.EDITED, editor, comment);
 
         LOG.info("Updated sick note: {} with comment", sickNote, comment);
@@ -93,7 +97,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
         // make sick note inactive
-        saveSickNote(sickNote, SickNoteStatus.CONVERTED_TO_VACATION);
+        sickNote.setStatus(SickNoteStatus.CONVERTED_TO_VACATION);
+        saveSickNote(sickNote);
+
         commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, converter);
 
         applicationInteractionService.createFromConvertedSickNote(application, converter);
@@ -120,7 +126,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     public SickNote cancel(SickNote sickNote, Person canceller) {
 
-        saveSickNote(sickNote, SickNoteStatus.CANCELLED);
+        sickNote.setStatus(SickNoteStatus.CANCELLED);
+        saveSickNote(sickNote);
+
         commentService.create(sickNote, SickNoteAction.CANCELLED, canceller);
 
         LOG.info("Cancelled sick note: {}", sickNote);
@@ -160,9 +168,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         eventId.ifPresent(s -> absenceMappingService.create(sickNote.getId(), AbsenceType.SICKNOTE, s));
     }
 
-    private void saveSickNote(SickNote sickNote, SickNoteStatus active) {
+    private void saveSickNote(SickNote sickNote) {
 
-        sickNote.setStatus(active);
         sickNote.setLastEdited(LocalDate.now(UTC));
 
         sickNoteService.save(sickNote);
