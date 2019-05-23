@@ -45,6 +45,11 @@ class PersonDataProvider {
 
     Person createTestPerson(String login, String password, String firstName, String lastName, String email, Role... roles) {
 
+        Optional<Person> personByLogin = personService.getPersonByLogin(login);
+        if (personByLogin.isPresent()) {
+            return personByLogin.get();
+        }
+
         List<Role> permissions = Arrays.asList(roles);
         List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
