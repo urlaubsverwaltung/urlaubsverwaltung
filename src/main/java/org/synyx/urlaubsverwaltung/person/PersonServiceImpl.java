@@ -165,12 +165,12 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalStateException("No authentication found in context.");
         }
 
-        String user = ((CustomPrincipal)authentication.getPrincipal()).getName();
+        String username = ((CustomPrincipal)authentication.getPrincipal()).getName();
 
-        Optional<Person> person = getPersonByLogin(user);
+        Optional<Person> person = getPersonByLogin(username);
 
         if (!person.isPresent()) {
-            throw new IllegalStateException("Can not get the person for the signed in user with username = " + user);
+            throw new IllegalStateException("Can not get the person for the signed in user with username = " + username);
         }
 
         return person.get();
