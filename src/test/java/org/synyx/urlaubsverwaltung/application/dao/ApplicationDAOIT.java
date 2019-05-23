@@ -42,10 +42,8 @@ public class ApplicationDAOIT {
 
     @Autowired
     private PersonDAO personDAO;
-
     @Autowired
     private ApplicationDAO applicationDAO;
-
     @Autowired
     private VacationTypeDAO vacationTypeDAO;
 
@@ -63,10 +61,10 @@ public class ApplicationDAOIT {
     @Test
     public void ensureCountsTotalOvertimeReductionCorrectly() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
         final Person savedPerson = personDAO.save(person);
 
-        final Person otherPerson = TestDataCreator.createPerson();
+        final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
         final Person savedOtherPerson = personDAO.save(otherPerson);
 
         final LocalDate now = LocalDate.now(UTC);

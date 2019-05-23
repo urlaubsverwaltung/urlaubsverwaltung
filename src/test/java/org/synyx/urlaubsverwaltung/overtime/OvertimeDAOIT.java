@@ -50,10 +50,10 @@ public class OvertimeDAOIT {
     @Test
     public void ensureCountsTotalHoursCorrectly() {
 
-        Person person = TestDataCreator.createPerson();
+        final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
         final Person savedPerson = personDAO.save(person);
 
-        Person otherPerson = TestDataCreator.createPerson();
+        final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
         final Person savedOtherPerson = personDAO.save(otherPerson);
 
         LocalDate now = LocalDate.now(UTC);
