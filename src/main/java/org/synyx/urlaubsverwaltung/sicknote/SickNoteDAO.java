@@ -41,10 +41,11 @@ public interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
 
 
     // NOTE: Only needed to send email after certain duration of a sick note
-    // TODO: replace DATEDIFF because it is db specific (MS SQL)
-    @Query(
-        "SELECT x, x.endDate - x.startDate as diff FROM SickNote x WHERE (diff >= ?1 AND x.endDate = ?2) "
-        + "AND x.status = 'ACTIVE'"
+    @Query(value = "SELECT x " +
+        "FROM SickNote x " +
+        "WHERE DATEDIFF(x.endDate, x.startDate) >= ?1 " +
+        "AND x.endDate = ?2 " +
+        "AND x.status = 'ACTIVE'"
     )
     List<SickNote> findSickNotesByMinimumLengthAndEndDate(int limit, LocalDate endDate);
 }
