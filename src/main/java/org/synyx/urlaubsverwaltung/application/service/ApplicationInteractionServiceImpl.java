@@ -110,7 +110,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         }
 
         // bosses gets email that a new application for leave has been created
-        mailService.sendNewApplicationNotification(application, createdComment);
+        applicationMailService.sendNewApplicationNotification(application, createdComment);
 
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
@@ -190,7 +190,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         ApplicationComment createdComment = commentService.create(applicationForLeave,
                 ApplicationAction.TEMPORARY_ALLOWED, comment, privilegedUser);
 
-        mailService.sendTemporaryAllowedNotification(applicationForLeave, createdComment);
+        applicationMailService.sendTemporaryAllowedNotification(applicationForLeave, createdComment);
 
         return applicationForLeave;
     }
@@ -388,7 +388,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             throw new RemindAlreadySentException("Reminding is possible maximum one time per day!");
         }
 
-        mailService.sendRemindBossNotification(application);
+        applicationMailService.sendRemindBossNotification(application);
 
         application.setRemindDate(LocalDate.now(UTC));
         applicationService.save(application);

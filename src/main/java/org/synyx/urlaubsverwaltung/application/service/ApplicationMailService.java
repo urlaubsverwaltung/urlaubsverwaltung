@@ -1,13 +1,16 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,10 +22,15 @@ class ApplicationMailService {
     private static final Locale LOCALE = Locale.GERMAN;
 
     private final MailService mailService;
+    private final DepartmentService departmentService;
+    private final ApplicationRecipientService applicationRecipientService;
     private final MessageSource messageSource;
 
-    ApplicationMailService(MailService mailService, MessageSource messageSource) {
+    @Autowired
+    ApplicationMailService(MailService mailService, DepartmentService departmentService, ApplicationRecipientService applicationRecipientService, MessageSource messageSource) {
         this.mailService = mailService;
+        this.departmentService = departmentService;
+        this.applicationRecipientService = applicationRecipientService;
         this.messageSource = messageSource;
     }
 
@@ -174,6 +182,83 @@ class ApplicationMailService {
         final Person recipient = application.getPerson();
         mailService.sendMailTo(recipient, "subject.application.cancelled.user", "cancelled_by_office", model);
     }
+
+
+    /**
+     * Sends an email to the bosses notifying
+     * that there is a new application for leave
+     * which has to be allowed or rejected by a boss.
+     *
+     * @param application to allow or reject
+     * @param comment     additional comment for the application
+     */
+    void sendNewApplicationNotification(Application application, ApplicationComment comment) {
+
+        final List<Application> applicationsForLeave =
+            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
+        model.put("comment", comment);
+        model.put("departmentVacations", applicationsForLeave);
+
+        final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        mailService.sendMailToEach(recipients, "subject.application.applied.boss", "new_applications", model, application.getPerson().getNiceName());
+    }
+
+
+    /**
+     * Sends an email to the applicant and to the second stage authorities that the application for leave has been
+     * allowed temporary.
+     *
+     * @param  application  that has been allowed temporary by a department head
+     * @param  comment  contains reason why application for leave has been allowed temporary
+     */
+    void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("dayLength", getTranslation(application.getDayLength().name()));
+        model.put("comment", comment);
+
+        // Inform user that the application for leave has been allowed temporary
+        final String subjectMessageKey = "subject.application.temporaryAllowed.user";
+        final String templateName = "temporary_allowed_user";
+        mailService.sendMailTo(application.getPerson(), subjectMessageKey, templateName, model);
+
+        final List<Application> applicationsForLeave =
+            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
+
+        Map<String, Object> modelSecondStage = new HashMap<>();
+        modelSecondStage.put("application", application);
+        modelSecondStage.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        modelSecondStage.put("dayLength", getTranslation(application.getDayLength().name()));
+        modelSecondStage.put("comment", comment);
+        modelSecondStage.put("departmentVacations", applicationsForLeave);
+
+        // Inform second stage authorities that there is an application for leave that must be allowed
+        final List<Person> recipients = applicationRecipientService.getRecipientsForTemporaryAllow(application);
+        mailService.sendMailToEach(recipients, "subject.application.temporaryAllowed.secondStage", "temporary_allowed_second_stage_authority", modelSecondStage);
+    }
+
+
+    /**
+     * If an application has status waiting and no boss has decided about it after a certain time, the bosses receive a
+     * reminding notification.
+     *
+     * @param application to receive a reminding notification
+     */
+    void sendRemindBossNotification(Application application) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+
+        List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        mailService.sendMailToEach(recipients, "subject.application.remind", "remind", model);
+    }
+
 
     private String getTranslation(String key, Object... args) {
 

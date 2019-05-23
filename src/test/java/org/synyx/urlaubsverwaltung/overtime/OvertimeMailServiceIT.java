@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
@@ -22,27 +23,29 @@ import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createOvertimeRecord;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles("dev")
+@Transactional
 public class OvertimeMailServiceIT {
 
     @Autowired
     private OvertimeMailService sut;
 
     @Autowired
-    private PersonService personService;
-    @Autowired
     private SettingsService settingsService;
     @Autowired
     private SettingsDAO settingsDAO;
 
     @After
-    public void setUp() {
+    public void tearDown() {
         Mailbox.clearAll();
     }
 
@@ -51,12 +54,12 @@ public class OvertimeMailServiceIT {
 
         activateMailSettings();
 
-        final Person person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
-        final Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen12@firma.test");
+        final Overtime overtimeRecord = createOvertimeRecord(person);
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED);
 
-        final List<Person> officePeople = personService.getPersonsByRole(OFFICE);
-        final Person office = officePeople.get(0);
+        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        office.setPermissions(singletonList(OFFICE));
 
         sut.sendOvertimeNotification(overtimeRecord, overtimeComment);
 

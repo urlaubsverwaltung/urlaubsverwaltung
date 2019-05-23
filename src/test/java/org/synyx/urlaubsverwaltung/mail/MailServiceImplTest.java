@@ -6,36 +6,28 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class MailServiceImplTest {
 
-    private MailServiceImpl mailService;
+    private MailServiceImpl sut;
 
     @Mock
     private MessageSource messageSource;
@@ -44,126 +36,109 @@ public class MailServiceImplTest {
     @Mock
     private MailSender mailSender;
     @Mock
-    private PersonService personService;
+    private RecipientService recipientService;
     @Mock
-    private DepartmentService departmentService;
-
-    private Application application;
+    private SettingsService settingsService;
 
     @Before
     public void setUp() {
 
-        SettingsService settingsService = mock(SettingsService.class);
-
-        // TODO: Would be better to mock this service directly
-        RecipientService recipientService = new RecipientService(personService, departmentService);
-
-        mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, departmentService,
-            settingsService);
-
-        Person person = TestDataCreator.createPerson();
-
-        application = createApplication(person);
-
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.getMailSettings().setActive(true);
-
+        settings.getMailSettings().setAdministrator("admin@firma.test");
         when(settingsService.getSettings()).thenReturn(settings);
+
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
+        when(mailBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
+
+        sut = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, settingsService);
     }
 
+    @Test
+    public void sendMailToWithNotification() {
 
-    private Application createApplication(Person person) {
+        final Person person = new Person();
+        final List<Person> persons = singletonList(person);
+        when(recipientService.getRecipientsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(persons);
 
-        Application application = new Application();
-        application.setPerson(person);
-        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        application.setDayLength(DayLength.FULL);
+        final List<String> recipients = singletonList("email@firma.test");
+        when(recipientService.getMailAddresses(persons)).thenReturn(recipients);
 
-        return application;
+        final Map<String, Object> model = new HashMap<>();
+        model.put("someModel", "something");
+
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
+
+        sut.sendMailTo(OVERTIME_NOTIFICATION_OFFICE, subjectMessageKey, templateName, model);
+
+        verify(mailSender).sendEmail(any(MailSettings.class), eq(recipients), eq("subject"), eq("emailBody"));
+    }
+
+    @Test
+    public void sendMailToWithPerson() {
+
+        final Person hans = new Person();
+        final List<Person> persons = singletonList(hans);
+
+        final List<String> recipients = singletonList("hans@firma.test");
+        when(recipientService.getMailAddresses(persons)).thenReturn(recipients);
+
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
+
+        sut.sendMailTo(hans, subjectMessageKey, templateName, new HashMap<>());
+
+        verify(mailSender).sendEmail(any(MailSettings.class), eq(recipients), eq("subject"), eq("emailBody"));
+    }
+
+    @Test
+    public void sendMailToEachPerson() {
+
+        final Person hans = new Person();
+        final String hansMail = "hans@firma.test";
+        final List<String> recipientHans = singletonList(hansMail);
+        when(recipientService.getMailAddresses(hans)).thenReturn(recipientHans);
+
+        final Person franz = new Person();
+        final String franzMail = "franz@firma.test";
+        final List<String> recipientFranz = singletonList(franzMail);
+        when(recipientService.getMailAddresses(franz)).thenReturn(recipientFranz);
+
+        final List<Person> persons = asList(hans, franz);
+
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
+
+        sut.sendMailToEach(persons, subjectMessageKey, templateName, new HashMap<>());
+
+        verify(mailSender).sendEmail(any(MailSettings.class), eq(singletonList(hansMail)), eq("subject"), eq("emailBody"));
+        verify(mailSender).sendEmail(any(MailSettings.class), eq(singletonList(franzMail)), eq("subject"), eq("emailBody"));
     }
 
 
     @Test
-    public void ensureSendsNewApplicationNotificationToBosses() {
+    public void sendTechnicalMail() {
 
-        mailService.sendNewApplicationNotification(application, null);
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
 
-        verify(personService).getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
+        sut.sendTechnicalMail(subjectMessageKey, templateName, new HashMap<>());
+
+        verify(mailSender).sendEmail(any(MailSettings.class), eq(singletonList("admin@firma.test")), eq("subject"), eq("emailBody"));
     }
 
-    @Test
-    public void ensureSendsNewApplicationNotificationSubjectIncludesApplicationPersonName() {
-
-        Person boss = TestDataCreator.createPerson("boss");
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
-        when(messageSource.getMessage("subject.application.applied.boss", new String[]{"Marlene Muster"}, Locale.GERMAN))
-            .thenReturn("Neuer Urlaubsantrag für Marlene Muster");
-
-        when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("mail body");
-        mailService.sendNewApplicationNotification(application, null);
-
-        verify(mailSender).sendEmail(any(MailSettings.class), any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
-    }
-
-    @Test
-    public void ensureSendsNewApplicationNotificationToDepartmentHeads() {
-
-        Person boss = TestDataCreator.createPerson("boss");
-        Person departmentHead = TestDataCreator.createPerson("departmentHead");
-
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL))
-            .thenReturn(singletonList(boss));
-
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD))
-            .thenReturn(singletonList(departmentHead));
-
-        mailService.sendNewApplicationNotification(application, null);
-
-        verify(personService).getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD);
-        verify(departmentService)
-            .isDepartmentHeadOfPerson(eq(departmentHead), eq(application.getPerson()));
-    }
-
-
-    @Test
-    public void ensureSendsRemindNotificationToBosses() {
-
-        mailService.sendRemindBossNotification(application);
-
-        verify(personService).getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
-    }
-
-
-    @Test
-    public void ensureSendsRemindNotificationToDepartmentHeads() {
-
-        Person boss = TestDataCreator.createPerson("boss");
-        Person departmentHead = TestDataCreator.createPerson("departmentHead");
-
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL))
-            .thenReturn(singletonList(boss));
-
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD))
-            .thenReturn(singletonList(departmentHead));
-
-        mailService.sendRemindBossNotification(application);
-
-        verify(personService).getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD);
-        verify(departmentService)
-            .isDepartmentHeadOfPerson(eq(departmentHead), eq(application.getPerson()));
-    }
-
-
+/*
     @Test
     public void ensureSendRemindForWaitingApplicationsReminderNotification() {
 
-        Person boss = TestDataCreator.createPerson("boss");
-        Person departmentHeadAC = TestDataCreator.createPerson("departmentHeadAC");
-        Person departmentHeadB = TestDataCreator.createPerson("departmentHeadB");
+        Person boss = createPerson("boss");
+        Person departmentHeadAC = createPerson("departmentHeadAC");
+        Person departmentHeadB = createPerson("departmentHeadB");
 
-        Person personDepartmentA = TestDataCreator.createPerson("personDepartmentA");
-        Person personDepartmentB = TestDataCreator.createPerson("personDepartmentB");
-        Person personDepartmentC = TestDataCreator.createPerson("personDepartmentC");
+        Person personDepartmentA = createPerson("personDepartmentA");
+        Person personDepartmentB = createPerson("personDepartmentB");
+        Person personDepartmentC = createPerson("personDepartmentC");
 
         Application applicationA = createApplication(personDepartmentA);
         Application applicationB = createApplication(personDepartmentB);
@@ -178,7 +153,7 @@ public class MailServiceImplTest {
         when(departmentService.isDepartmentHeadOfPerson(departmentHeadB, personDepartmentB)).thenReturn(true);
         when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentC)).thenReturn(true);
 
-        mailService.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationB, applicationC));
+        sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationB, applicationC));
 
         verify(personService, times(3)).getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD);
         verify(personService, times(3)).getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
@@ -186,4 +161,5 @@ public class MailServiceImplTest {
         verify(departmentService).isDepartmentHeadOfPerson(eq(departmentHeadB), eq(applicationB.getPerson()));
         verify(departmentService).isDepartmentHeadOfPerson(eq(departmentHeadAC), eq(applicationC.getPerson()));
     }
+    */
 }

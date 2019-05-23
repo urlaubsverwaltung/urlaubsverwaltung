@@ -11,14 +11,19 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -37,11 +42,15 @@ public class ApplicationMailServiceTest {
     @Mock
     private MailService mailService;
     @Mock
+    private DepartmentService departmentService;
+    @Mock
+    private ApplicationRecipientService applicationRecipientService;
+    @Mock
     private MessageSource messageSource;
 
     @Before
     public void setUp() {
-        sut = new ApplicationMailService(mailService, messageSource);
+        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, messageSource);
     }
 
     @Test
@@ -271,5 +280,99 @@ public class ApplicationMailServiceTest {
         sut.sendCancelledByOfficeNotification(application, comment);
 
         verify(mailService).sendMailTo(person, "subject.application.cancelled.user", "cancelled_by_office", model);
+    }
+
+
+    @Test
+    public void sendNewApplicationNotification() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationCategory vacationCategory = HOLIDAY;
+        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+        person.setLoginName("LoginName");
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(vacationCategory);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(WAITING);
+
+        final List<Person> recipients = singletonList(person);
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(recipients);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+
+        final Application applicationForLeave = new Application();
+        final List<Application> applicationsForLeave = singletonList(applicationForLeave);
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.MIN, LocalDate.MAX)).thenReturn(applicationsForLeave);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+        model.put("departmentVacations", applicationsForLeave);
+
+        sut.sendNewApplicationNotification(application, comment);
+
+        verify(mailService).sendMailToEach(recipients, "subject.application.applied.boss", "new_applications", model, "LoginName");
+    }
+
+
+    @Test
+    public void sendTemporaryAllowedNotification() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationCategory vacationCategory = HOLIDAY;
+        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+        final List<Person> recipients = singletonList(person);
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(vacationCategory);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(WAITING);
+        when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(recipients);
+
+        final ApplicationComment comment = new ApplicationComment(person);
+
+        final Application applicationForLeave = new Application();
+        final List<Application> applicationsForLeave = singletonList(applicationForLeave);
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.MIN, LocalDate.MAX)).thenReturn(applicationsForLeave);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        final Map<String, Object> modelSecondStage = new HashMap<>();
+        modelSecondStage.put("application", application);
+        modelSecondStage.put("vacationType", "HOLIDAY");
+        modelSecondStage.put("dayLength", "FULL");
+        modelSecondStage.put("comment", comment);
+        modelSecondStage.put("departmentVacations", applicationsForLeave);
+
+        sut.sendTemporaryAllowedNotification(application, comment);
+
+        verify(mailService).sendMailTo(person, "subject.application.temporaryAllowed.user", "temporary_allowed_user", model);
+        verify(mailService).sendMailToEach(recipients, "subject.application.temporaryAllowed.secondStage", "temporary_allowed_second_stage_authority", modelSecondStage);
     }
 }

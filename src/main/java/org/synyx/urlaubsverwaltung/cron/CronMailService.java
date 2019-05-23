@@ -93,7 +93,7 @@ public class CronMailService {
             if (!longWaitingApplications.isEmpty()) {
                 LOG.info("{} long waiting applications found. Sending Notification...", longWaitingApplications.size());
 
-                mailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
+                // applicationService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 
                 for (Application longWaitingApplication : longWaitingApplications) {
                     longWaitingApplication.setRemindDate(LocalDate.now(UTC));

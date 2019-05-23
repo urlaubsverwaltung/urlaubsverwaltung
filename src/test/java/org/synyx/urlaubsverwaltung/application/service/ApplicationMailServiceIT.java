@@ -6,10 +6,13 @@ import org.junit.runner.RunWith;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -26,17 +29,23 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles("dev")
+@Transactional
 public class ApplicationMailServiceIT {
 
     @Autowired
@@ -47,8 +56,13 @@ public class ApplicationMailServiceIT {
     @Autowired
     private SettingsDAO settingsDAO;
 
+    @MockBean
+    private ApplicationRecipientService applicationRecipientService;
+    @MockBean
+    private DepartmentService departmentService;
+
     @After
-    public void setUp() {
+    public void tearDown() {
         Mailbox.clearAll();
     }
 
@@ -328,6 +342,7 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,
         IOException {
+
         activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
@@ -394,6 +409,249 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains(comment.getText());
         assertThat(content).contains(comment.getPerson().getNiceName());
         assertThat(content).contains("/web/application/1234");
+    }
+
+
+    @Test
+    public void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        boss.setPermissions(singletonList(BOSS));
+        boss.setNotifications(singletonList(NOTIFICATION_BOSS_ALL));
+
+        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final ApplicationComment comment = new ApplicationComment(person);
+        comment.setText("Hätte gerne Urlaub");
+
+        final Application application = createApplication(person);
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+
+        sut.sendNewApplicationNotification(application, comment);
+
+        // was email sent to boss?
+        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
+        assertThat(inboxOfBoss.size()).isOne();
+
+        // was email sent to department head?
+        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
+        assertThat(inboxOfDepartmentHead.size()).isOne();
+
+        // get email
+        Message msgBoss = inboxOfBoss.get(0);
+        Message msgDepartmentHead = inboxOfDepartmentHead.get(0);
+
+        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
+        verifyNotificationAboutNewApplication(departmentHead, msgDepartmentHead, application.getPerson().getNiceName(),
+            comment);
+    }
+
+
+    @Test
+    public void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        boss.setPermissions(singletonList(BOSS));
+
+        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+
+        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
+
+        final ApplicationComment comment = new ApplicationComment(secondStage);
+        comment.setText("Hätte gerne Urlaub");
+
+        final Application application = createApplication(secondStage);
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+
+        sut.sendNewApplicationNotification(application, comment);
+
+        // was email sent to boss?
+        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
+        assertThat(inboxOfBoss.size()).isOne();
+
+        // no email sent to department head
+        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
+        assertThat(inboxOfDepartmentHead.size()).isOne();
+
+        // get email
+        Message msgBoss = inboxOfBoss.get(0);
+        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
+    }
+
+
+    @Test
+    public void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority()
+        throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        boss.setPermissions(singletonList(BOSS));
+
+        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+
+        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
+
+        final ApplicationComment comment = new ApplicationComment(departmentHead);
+        comment.setText("Hätte gerne Urlaub");
+
+        final Application application = createApplication(departmentHead);
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, secondStage));
+
+        sut.sendNewApplicationNotification(application, comment);
+
+        // was email sent to boss?
+        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
+        assertThat(inboxOfBoss.size()).isOne();
+
+        // was email sent to secondary stage?
+        List<Message> inboxOfSecondaryStage = Mailbox.get(secondStage.getEmail());
+        assertThat(inboxOfSecondaryStage.size()).isOne();
+
+        // get email
+        Message msgBoss = inboxOfBoss.get(0);
+        Message msgSecondaryStage = inboxOfSecondaryStage.get(0);
+
+        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
+        verifyNotificationAboutNewApplication(secondStage, msgSecondaryStage, application.getPerson().getNiceName(),
+            comment);
+    }
+
+    @Test
+    public void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
+        throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+
+        final ApplicationComment comment = new ApplicationComment(secondStage);
+        comment.setText("OK, spricht von meiner Seite aus nix dagegen");
+
+        final Application application = createApplication(person);
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
+        when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(singletonList(secondStage));
+
+        sut.sendTemporaryAllowedNotification(application, comment);
+
+        // were both emails sent?
+        List<Message> inboxSecondStage = Mailbox.get(secondStage.getEmail());
+        assertThat(inboxSecondStage.size()).isOne();
+
+        List<Message> inboxUser = Mailbox.get(person.getEmail());
+        assertThat(inboxUser.size()).isOne();
+
+        // get email user
+        Message msg = inboxUser.get(0);
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of user email
+        String contentUser = (String) msg.getContent();
+        assertThat(contentUser).contains("Hallo Lieschen Müller");
+        assertThat(contentUser).contains("Bitte beachte, dass dieser erst noch von einem entsprechend Verantwortlichen freigegeben werden muss");
+        assertThat(contentUser).contains(comment.getText());
+        assertThat(contentUser).contains(comment.getPerson().getNiceName());
+        assertThat(contentUser).contains("Link zum Antrag:");
+        assertThat(contentUser).contains("/web/application/1234");
+
+        // get email office
+        Message msgSecondStage = inboxSecondStage.get(0);
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
+
+        // check content of office email
+        String contentSecondStageMail = (String) msgSecondStage.getContent();
+        assertThat(contentSecondStageMail).contains("es liegt ein neuer zu genehmigender Antrag vor:");
+        assertThat(contentSecondStageMail).contains("/web/application/1234");
+        assertThat(contentSecondStageMail).contains("Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden");
+        assertThat(contentSecondStageMail).contains("Lieschen Müller");
+        assertThat(contentSecondStageMail).contains("Erholungsurlaub");
+        assertThat(contentSecondStageMail).contains(comment.getText());
+        assertThat(contentSecondStageMail).contains(comment.getPerson().getNiceName());
+    }
+
+
+    @Test
+    public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
+
+        activateMailSettings();
+
+        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        boss.setPermissions(singletonList(BOSS));
+
+        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
+
+        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+
+        final ApplicationComment comment = new ApplicationComment(person);
+        comment.setText("OK, spricht von meiner Seite aus nix dagegen");
+
+        final Application application = createApplication(person);
+
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+
+        sut.sendRemindBossNotification(application);
+
+        // was email sent to boss?
+        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
+        assertThat(inboxOfBoss.size()).isOne();
+
+        // was email sent to department head?
+        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
+        assertThat(inboxOfDepartmentHead.size()).isOne();
+
+        // has mail correct attributes?
+        Message msg = inboxOfBoss.get(0);
+        assertThat(msg.getSubject()).contains("Erinnerung wartender Urlaubsantrag");
+        assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Hugo Boss");
+        assertThat(content).contains("/web/application/1234");
+    }
+
+    private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName,
+                                                       ApplicationComment comment) throws MessagingException, IOException {
+
+        // check subject
+        assertThat(msg.getSubject()).isEqualTo("Neuer Urlaubsantrag für " + niceName);
+
+        // check from and recipient
+        assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String contentDepartmentHead = (String) msg.getContent();
+        assertThat(contentDepartmentHead).contains("Hallo " + recipient.getNiceName());
+        assertThat(contentDepartmentHead).contains(niceName);
+        assertThat(contentDepartmentHead).contains("Erholungsurlaub");
+        assertThat(contentDepartmentHead).contains("es liegt ein neuer zu genehmigender Antrag vor");
+        assertThat(contentDepartmentHead).contains("/web/application/1234");
+        assertThat(contentDepartmentHead).contains(comment.getText());
+        assertThat(contentDepartmentHead).contains(comment.getPerson().getNiceName());
     }
 
     private Application createApplication(Person person) {

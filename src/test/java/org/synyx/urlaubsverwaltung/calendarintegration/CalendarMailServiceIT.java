@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
@@ -31,6 +32,7 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles("dev")
+@Transactional
 public class CalendarMailServiceIT {
 
     @Autowired
@@ -42,7 +44,7 @@ public class CalendarMailServiceIT {
     private SettingsDAO settingsDAO;
 
     @After
-    public void setUp() {
+    public void tearDown() {
         Mailbox.clearAll();
     }
 
