@@ -7,13 +7,13 @@ import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -52,6 +53,8 @@ public class ApplicationMailServiceIT {
 
     @Autowired
     private SettingsService settingsService;
+    @Autowired
+    private PersonService personService;
     @Autowired
     private SettingsDAO settingsDAO;
 
@@ -75,6 +78,8 @@ public class ApplicationMailServiceIT {
 
         final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
+        office.setNotifications(singletonList(NOTIFICATION_OFFICE));
+        personService.save(office);
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -198,6 +203,8 @@ public class ApplicationMailServiceIT {
 
         final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
+        office.setNotifications(singletonList(NOTIFICATION_OFFICE));
+        personService.save(office);
 
         final ApplicationComment comment = new ApplicationComment(person);
         comment.setText("Bitte stornieren!");

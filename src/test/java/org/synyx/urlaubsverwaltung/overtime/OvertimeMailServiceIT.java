@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -15,7 +14,6 @@ import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -26,6 +24,7 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createOvertimeRecord;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
@@ -40,6 +39,8 @@ public class OvertimeMailServiceIT {
 
     @Autowired
     private SettingsService settingsService;
+    @Autowired
+    private PersonService personService;
     @Autowired
     private SettingsDAO settingsDAO;
 
@@ -59,6 +60,8 @@ public class OvertimeMailServiceIT {
 
         final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
+        office.setNotifications(singletonList(OVERTIME_NOTIFICATION_OFFICE));
+        personService.save(office);
 
         sut.sendOvertimeNotification(overtimeRecord, overtimeComment);
 
