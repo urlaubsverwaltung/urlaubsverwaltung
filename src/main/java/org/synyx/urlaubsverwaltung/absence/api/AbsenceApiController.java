@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,6 +53,7 @@ public class AbsenceApiController {
         notes = "Get all absences for a certain period and person"
     )
     @GetMapping("/absences")
+    @PreAuthorize("@securityProvider.loggedInUserRequestsOwnData(authentication, #person)")
     public ResponseWrapper<DayAbsenceList> personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")

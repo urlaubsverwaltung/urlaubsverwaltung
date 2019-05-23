@@ -255,10 +255,10 @@ public class RestApiSecurityConfigIT {
         resultActions.andExpect(status().isOk());
     }
 
-    private void createAuthenticatedPerson() {
+    private Person createAuthenticatedPerson() {
         final Person authenticated = new Person("authenticated", "Only", "Aussie", "");
         authenticated.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
-        personService.save(authenticated);
+        return personService.save(authenticated);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -9,7 +9,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.synyx.urlaubsverwaltung.security.CustomPrincipal;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -362,7 +364,9 @@ public class PersonServiceImplTest {
         Person person = createPerson();
 
         Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn(person.getNiceName());
+        Principal principal = mock(CustomPrincipal.class);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(principal.getName()).thenReturn(person.getNiceName());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
