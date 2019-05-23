@@ -128,7 +128,7 @@ bietet es sich an
 die Datenbank via Docker Compose zu starten:
 
 ```bash
-docker-compiose up
+docker-compose up
 ```
 
 und die Anwendung mit dem Profil `testdata` zu starten:
