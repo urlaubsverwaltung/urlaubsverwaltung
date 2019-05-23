@@ -26,7 +26,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = "uv.security.auth=default")
@@ -52,20 +55,39 @@ public class RestApiSecurityConfigIT {
     }
 
     @Test
-    public void getAbsencesWithBasicAuthIsOk() throws Exception {
+    public void getAbsencesForOneselfIsOk() throws Exception {
+
+        final Person authenticatedPerson = createAuthenticatedPerson();
+
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", authenticatedPerson.getId().toString())
+            .with(httpBasic("authenticated", "secret")))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAbsencesAsNotPrivilegedUserForOtherUserIsForbidden() throws Exception {
 
         createAuthenticatedPerson();
 
-        final Person person = new Person("person", "Fresh", "Holy", "");
-        final Person savedPerson = personService.save(person);
-        final String savedPersonId = savedPerson.getId() == null ? "" : savedPerson.getId().toString();
-
-        final ResultActions resultActions = perform(get("/api/absences")
+        perform(get("/api/absences")
             .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", savedPersonId)
-            .with(httpBasic("authenticated", "secret")));
+            .param("person", "2")
+            .with(httpBasic("authenticated", "secret")))
+            .andExpect(status().isForbidden());
+    }
 
-        resultActions.andExpect(status().isOk());
+    @Test
+    public void getAbsencesAsOfficeUserForOtherUserIsOk() throws Exception {
+
+        createOfficePerson();
+
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1")
+            .with(httpBasic("office", "secret")))
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -168,10 +190,7 @@ public class RestApiSecurityConfigIT {
     @Test
     public void getSickNotesWithBasicAuthIsOk() throws Exception {
 
-        final Person office = new Person("office", "Betty", "Secure", "");
-        office.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
-        office.setPermissions(singletonList(OFFICE));
-        personService.save(office);
+        createOfficePerson();
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/sicknotes")
@@ -180,6 +199,58 @@ public class RestApiSecurityConfigIT {
             .with(httpBasic("office", "secret")));
 
         resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void getSicknotesWithNotPrivilegedUserIsForbidden() throws Exception {
+
+        createAuthenticatedPerson();
+
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+            .with(httpBasic("authenticated", "secret")))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void getSicknotesWithBossUserIsForbidden() throws Exception {
+
+        createBossPerson();
+
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+            .with(httpBasic("boss", "secret")))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void getSicknotesWithDepartmentHeadUserIsForbidden() throws Exception {
+
+        createDepartmentHeadPerson();
+
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+            .with(httpBasic("departmentHead", "secret")))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void getSicknotesWithSecondStageUserIsForbidden() throws Exception {
+
+        createSecondStagePerson();
+
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+            .with(httpBasic("secondStage", "secret")))
+            .andExpect(status().isForbidden());
     }
 
     @Test
@@ -259,6 +330,34 @@ public class RestApiSecurityConfigIT {
         final Person authenticated = new Person("authenticated", "Only", "Aussie", "");
         authenticated.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
         return personService.save(authenticated);
+    }
+
+    private Person createOfficePerson() {
+        final Person office = new Person("office", "Only", "Some", "");
+        office.setPermissions(List.of(OFFICE));
+        office.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
+        return personService.save(office);
+    }
+
+    private void createSecondStagePerson() {
+        final Person secondStage = new Person("secondstage", "Only", "Some", "");
+        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
+        personService.save(secondStage);
+    }
+
+    private void createDepartmentHeadPerson() {
+        final Person departmentHead = new Person("departmentHead", "Only", "Some", "");
+        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        departmentHead.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
+        personService.save(departmentHead);
+    }
+
+    private void createBossPerson() {
+        final Person boss = new Person("boss", "Only", "Some", "");
+        boss.setPermissions(List.of(BOSS));
+        boss.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
+        personService.save(boss);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
