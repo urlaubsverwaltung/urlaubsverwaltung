@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = "auth=default")
 @Transactional
 public class RestApiSecurityConfigIT {
 
