@@ -9,11 +9,15 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @Service
@@ -257,6 +261,41 @@ class ApplicationMailService {
 
         List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
         mailService.sendMailToEach(recipients, "subject.application.remind", "remind", model);
+    }
+
+
+    void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
+
+        /*
+         * whats happening here?
+         *
+         * application a
+         * person p
+         *
+         * map application to list of boss/department head
+         * a_1 -> (p_1, p_2); a_2 -> (p_1, p_3)
+         *
+         * collect list of application grouped by boss/department head
+         * p_1 -> (a_1, a_2); p_2 -> (a_1); (p_3 -> a_2)
+         *
+         * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
+         */
+        Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
+            .flatMap(application -> applicationRecipientService.getRecipientsForAllowAndRemind(application).stream()
+                .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
+            .collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toList())));
+
+        for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
+
+            List<Application> applications = entry.getValue();
+            Person recipient = entry.getKey();
+
+            Map<String, Object> model = new HashMap<>();
+            model.put("applicationList", applications);
+            model.put("recipient", recipient);
+
+            mailService.sendMailTo(recipient, "subject.application.cronRemind", "cron_remind", model);
+        }
     }
 
 

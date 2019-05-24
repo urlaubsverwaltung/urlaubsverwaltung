@@ -640,6 +640,59 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
     }
 
+    @Test
+    public void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
+
+        activateMailSettings();
+
+        // PERSONs
+        final Person personDepartmentA = createPerson("personDepartmentA");
+        final Person personDepartmentB = createPerson("personDepartmentB");
+        final Person personDepartmentC = createPerson("personDepartmentC");
+
+        // APPLICATIONs
+        final Application applicationA = createApplication(personDepartmentA);
+        applicationA.setId(1);
+        final Application applicationB = createApplication(personDepartmentB);
+        applicationB.setId(2);
+        final Application applicationC = createApplication(personDepartmentC);
+        applicationC.setId(3);
+
+        // DEPARTMENT HEADs
+        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person departmentHeadA = createPerson("headAC", "Heinz", "Wurst", "headAC@firma.test");
+        final Person departmentHeadB = createPerson("headB", "Michel", "Mustermann", "headB@firma.test");
+
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationA)).thenReturn(asList(boss, departmentHeadA));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationB)).thenReturn(asList(boss, departmentHeadB));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationC)).thenReturn(asList(boss, departmentHeadA));
+
+        sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationB, applicationC));
+
+        verifyInbox(boss, asList(applicationA, applicationB, applicationC));
+        verifyInbox(departmentHeadA, asList(applicationA, applicationC));
+        verifyInbox(departmentHeadB, singletonList(applicationB));
+    }
+
+
+    private void verifyInbox(Person inboxOwner, List<Application> applications) throws MessagingException, IOException {
+
+        List<Message> inbox = Mailbox.get(inboxOwner.getEmail());
+        assertThat(inbox.size()).isOne();
+
+        Message msg = inbox.get(0);
+        assertThat(msg.getSubject()).contains("Erinnerung für wartende Urlaubsanträge");
+
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo " + inboxOwner.getNiceName());
+
+        for (Application application : applications) {
+            assertThat(content).contains(application.getApplier().getNiceName());
+            assertThat(content).contains("/web/application/" + application.getId());
+        }
+    }
+
+
     private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName,
                                                        ApplicationComment comment) throws MessagingException, IOException {
 
