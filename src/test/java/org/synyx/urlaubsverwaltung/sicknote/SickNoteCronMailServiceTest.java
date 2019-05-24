@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.cron;
+package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +10,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +21,9 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CronMailServiceTest {
+public class SickNoteCronMailServiceTest {
 
-    private CronMailService sut;
+    private SickNoteCronMailService sut;
 
     @Mock
     private SettingsService settingsService;
@@ -36,7 +34,7 @@ public class CronMailServiceTest {
 
     @Before
     public void setUp() {
-        sut = new CronMailService(settingsService, sickNoteService, mailService);
+        sut = new SickNoteCronMailService(settingsService, sickNoteService, mailService);
     }
 
     @Test

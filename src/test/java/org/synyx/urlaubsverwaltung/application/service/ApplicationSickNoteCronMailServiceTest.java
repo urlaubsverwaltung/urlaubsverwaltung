@@ -27,7 +27,7 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createVacationType;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ApplicationCronMailServiceTest {
+public class ApplicationSickNoteCronMailServiceTest {
 
     private ApplicationCronMailService sut;
 

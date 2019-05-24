@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.cron;
+package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
  * Service to send emails at a particular time. (Cronjob)
  */
 @Service
-public class CronMailService {
+public class SickNoteCronMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -32,7 +32,7 @@ public class CronMailService {
     private final MailService mailService;
 
     @Autowired
-    public CronMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
+    public SickNoteCronMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
 
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
