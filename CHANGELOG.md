@@ -1,4 +1,6 @@
 ### master/unreleased
+* Fix login issues caused by missing ldap security configuration
+  properties [#697](https://github.com/synyx/urlaubsverwaltung/pull/697)
 
 ### [urlaubsverwaltung-2.42.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.2)
 * Replace h2 with mysql for development [#694](https://github.com/synyx/urlaubsverwaltung/pull/694)
