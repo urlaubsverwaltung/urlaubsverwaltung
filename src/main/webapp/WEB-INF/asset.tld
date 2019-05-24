@@ -1,0 +1,16 @@
+<taglib>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>2.0</jsp-version>
+    <short-name>Asset TLD</short-name>
+
+    <tag>
+        <name>url</name>
+        <tag-class>org.synyx.urlaubsverwaltung.web.jsp.tags.AssetsHashResolverTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <description>The raw asset filename.</description>
+            <name>value</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+</taglib>

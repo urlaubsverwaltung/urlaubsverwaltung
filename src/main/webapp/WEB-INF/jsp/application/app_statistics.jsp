@@ -3,14 +3,15 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_statistics.min.js' />"></script>
+    <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
+    <script defer src="<asset:url value='app_statistics.js' />"></script>
 </head>
 
 <body>

@@ -328,10 +328,24 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 
 * `npm run build`
   * baut optimierte, minifizierte Assets
+  * Info: der Dateiname beinhaltet einen Hash welcher eindeutig zum Inhalt des Assets passt 
 * `npm run build:dev`
   * baut nicht minifizierte Assets
 * `npm run build:watch`
   * baut automatisch nach dem editieren von JavaScript / CSS Dateien neue Assets 
+
+#### Long term caching von Assets
+
+Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `asstes-mannifest.json` angelegt.
+Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
+in den JSPs integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
+Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert werden.
+
+```jsp
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+
+<script defer src="<asset:url value='npm.jquery.js' />"></script>
+```
 
 
 ### Anlegen von Testdaten deaktivieren

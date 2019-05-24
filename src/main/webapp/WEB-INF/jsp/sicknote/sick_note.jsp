@@ -4,12 +4,13 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/sick_note.min.js' />"></script>
+    <script defer src="<asset:url value='sick_note.js' />"></script>
 </head>
 <body>
 

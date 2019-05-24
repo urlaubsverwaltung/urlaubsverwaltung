@@ -3,12 +3,13 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
 <html>
 <head>
     <uv:head/>
-    <script defer src="<spring:url value='/assets/sick_note_convert.min.js' />"></script>
+    <script defer src="<asset:url value='sick_note_convert.js' />"></script>
 </head>
 <body>
 
