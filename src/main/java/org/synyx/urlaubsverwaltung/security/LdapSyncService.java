@@ -42,15 +42,14 @@ public class LdapSyncService {
     /**
      * Sync the data of the given {@link Person}.
      *
-     * @param  person  to update the attributes for
-     * @param  firstName  to be updated, is optional
-     * @param  lastName  to be updated, is optional
-     * @param  mailAddress  to be updated, is optional
-     *
-     * @return  the updated person
+     * @param person      to update the attributes for
+     * @param firstName   to be updated, is optional
+     * @param lastName    to be updated, is optional
+     * @param mailAddress to be updated, is optional
+     * @return the updated person
      */
     Person syncPerson(Person person, Optional<String> firstName, Optional<String> lastName,
-        Optional<String> mailAddress) {
+                      Optional<String> mailAddress) {
 
         firstName.ifPresent(person::setFirstName);
         lastName.ifPresent(person::setLastName);
@@ -67,20 +66,19 @@ public class LdapSyncService {
      * Creates a {@link Person} with the role {@link Role#USER} resp. with the roles {@link Role#USER} and
      * {@link Role#OFFICE} if this is the first person that is created.
      *
-     * @param  login  of the person to be created, is mandatory to create a person
-     * @param  firstName  of the person to be created, is optional
-     * @param  lastName  of the person to be created, is optional
-     * @param  mailAddress  of the person to be created, is optional
-     *
-     * @return  the created person
+     * @param login       of the person to be created, is mandatory to create a person
+     * @param firstName   of the person to be created, is optional
+     * @param lastName    of the person to be created, is optional
+     * @param mailAddress of the person to be created, is optional
+     * @return the created person
      */
     Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
-        Optional<String> mailAddress) {
+                        Optional<String> mailAddress) {
 
         Assert.notNull(login, "Missing login name!");
 
         final Person person = personService.create(login, lastName.orElse(null), firstName.orElse(null),
-                mailAddress.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
+            mailAddress.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
 
         LOG.info("Successfully auto-created person: {}", person);
 
@@ -91,7 +89,7 @@ public class LdapSyncService {
     /**
      * Adds {@link Role#OFFICE} to the roles of the given person.
      *
-     * @param  person  that gets the role {@link Role#OFFICE}
+     * @param person that gets the role {@link Role#OFFICE}
      */
     void appointPersonAsOfficeUser(Person person) {
 
