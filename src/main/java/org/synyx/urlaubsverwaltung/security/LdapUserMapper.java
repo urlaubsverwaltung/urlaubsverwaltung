@@ -1,21 +1,22 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.synyx.urlaubsverwaltung.security.config.SecurityConfigurationProperties;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Arrays.asList;
+import static org.springframework.util.StringUtils.hasText;
 
 
 /**
@@ -27,30 +28,17 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
 
     private static final String MEMBER_OF_ATTRIBUTE = "memberOf";
 
-    private final String identifierAttribute;
-    private final String firstNameAttribute;
-    private final String lastNameAttribute;
-    private final String mailAddressAttribute;
-    private final String memberOfFilter;
+    private final SecurityConfigurationProperties securityProperties;
 
     @Autowired
-    public LdapUserMapper(@Value("${uv.security.identifier}") String identifierAttribute,
-        @Value("${uv.security.firstName}") String firstNameAttribute,
-        @Value("${uv.security.lastName}") String lastNameAttribute,
-        @Value("${uv.security.mailAddress}") String mailAddressAttribute,
-        @Value("${uv.security.filter.memberOf}") String memberOfFilter) {
-
-        this.identifierAttribute = identifierAttribute;
-        this.firstNameAttribute = firstNameAttribute;
-        this.lastNameAttribute = lastNameAttribute;
-        this.mailAddressAttribute = mailAddressAttribute;
-        this.memberOfFilter = memberOfFilter;
+    public LdapUserMapper(SecurityConfigurationProperties securityProperties) {
+        this.securityProperties = securityProperties;
     }
 
     @Override
     public LdapUser mapFromAttributes(Attributes attributes) throws NamingException {
 
-        Optional<Attribute> userNameAttribute = Optional.ofNullable(attributes.get(identifierAttribute));
+        Optional<Attribute> userNameAttribute = Optional.ofNullable(attributes.get(securityProperties.getIdentifier()));
 
         if (!userNameAttribute.isPresent()) {
             throw new InvalidSecurityConfigurationException("User identifier is configured incorrectly");
@@ -58,9 +46,9 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
 
         String username = (String) userNameAttribute.get().get();
 
-        Optional<String> firstName = getAttributeValue(attributes, firstNameAttribute);
-        Optional<String> lastName = getAttributeValue(attributes, lastNameAttribute);
-        Optional<String> email = getAttributeValue(attributes, mailAddressAttribute);
+        Optional<String> firstName = getAttributeValue(attributes, securityProperties.getFirstName());
+        Optional<String> lastName = getAttributeValue(attributes, securityProperties.getLastName());
+        Optional<String> email = getAttributeValue(attributes, securityProperties.getMailAddress());
 
         List<String> groups = new ArrayList<>();
         Optional<Attribute> memberOfAttribute = Optional.ofNullable(attributes.get(MEMBER_OF_ATTRIBUTE));
@@ -90,23 +78,22 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
     }
 
 
-    LdapUser mapFromContext(DirContextOperations ctx) throws NamingException,
-        UnsupportedMemberAffiliationException {
+    LdapUser mapFromContext(DirContextOperations ctx) throws UnsupportedMemberAffiliationException {
 
-        String username = Optional.ofNullable(ctx.getStringAttribute(identifierAttribute)).orElseThrow(() ->
+        String username = Optional.ofNullable(ctx.getStringAttribute(securityProperties.getIdentifier())).orElseThrow(() ->
                 new InvalidSecurityConfigurationException(
-                    "Can not get a username using '" + identifierAttribute + "' attribute to identify the user."));
+                    "Can not get a username using '" + securityProperties.getIdentifier() + "' attribute to identify the user."));
 
-        Optional<String> firstName = Optional.ofNullable(ctx.getStringAttribute(firstNameAttribute));
-        Optional<String> lastName = Optional.ofNullable(ctx.getStringAttribute(lastNameAttribute));
-        Optional<String> email = Optional.ofNullable(ctx.getStringAttribute(mailAddressAttribute));
+        Optional<String> firstName = Optional.ofNullable(ctx.getStringAttribute(securityProperties.getFirstName()));
+        Optional<String> lastName = Optional.ofNullable(ctx.getStringAttribute(securityProperties.getLastName()));
+        Optional<String> email = Optional.ofNullable(ctx.getStringAttribute(securityProperties.getMailAddress()));
 
-        if (StringUtils.hasText(memberOfFilter)) {
+        if (hasText(securityProperties.getFilter().getMemberOf())) {
             String[] memberOf = ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE);
 
-            if (!Arrays.asList(memberOf).contains(memberOfFilter)) {
+            if (!asList(memberOf).contains(securityProperties.getFilter().getMemberOf())) {
                 throw new UnsupportedMemberAffiliationException("User '" + username + "' is not a member of '"
-                    + memberOfFilter + "'");
+                    + securityProperties.getFilter().getMemberOf() + "'");
             }
 
             return new LdapUser(username, firstName, lastName, email, memberOf);

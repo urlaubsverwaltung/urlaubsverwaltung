@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.stereotype.Component;
+import org.synyx.urlaubsverwaltung.security.config.SecurityLdapConfigurationProperties;
 
 
 /**
@@ -15,17 +15,16 @@ import org.springframework.stereotype.Component;
 public class LdapContextSourceForLdapSync extends LdapContextSource {
 
     @Autowired
-    public LdapContextSourceForLdapSync(@Value("${uv.security.ldap.url}") String url,
-        @Value("${uv.security.ldap.sync.userSearchBase}") String userSearchBase,
-        @Value("${uv.security.ldap.base}") String base,
-        @Value("${uv.security.ldap.sync.userDn}") String userDn,
-        @Value("${uv.security.ldap.sync.password}") String password) {
+    public LdapContextSourceForLdapSync(SecurityLdapConfigurationProperties ldapProperties) {
 
         super();
 
-        this.setUrl(url);
+        final String base = ldapProperties.getBase();
+        final String userSearchBase = ldapProperties.getSync().getUserSearchBase();
+
+        this.setUrl(ldapProperties.getUrl());
         this.setBase(userSearchBase + "," + base);
-        this.setUserDn(userDn);
-        this.setPassword(password);
+        this.setUserDn(ldapProperties.getSync().getUserDn());
+        this.setPassword(ldapProperties.getSync().getPassword());
     }
 }
