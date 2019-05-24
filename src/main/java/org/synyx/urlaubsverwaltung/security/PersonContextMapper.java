@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
-import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -55,7 +54,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         try {
             ldapUser = ldapUserMapper.mapFromContext(ctx);
-        } catch (InvalidSecurityConfigurationException | NamingException | UnsupportedMemberAffiliationException ex) {
+        } catch (InvalidSecurityConfigurationException | UnsupportedMemberAffiliationException ex) {
             LOG.info("User '{}' can not sign in!", username, ex);
             throw new BadCredentialsException("No authentication possible for user = " + username, ex);
         }
@@ -84,7 +83,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
                     ldapUser.getEmail());
         }
 
-        /**
+        /*
          * NOTE: If the system has no office user yet, grant office permissions to successfully signed in user
          */
         boolean noOfficeUserYet = personService.getPersonsByRole(Role.OFFICE).isEmpty();

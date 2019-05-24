@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ldap.core.DirContextOperations;
+import org.synyx.urlaubsverwaltung.security.config.SecurityConfigurationProperties;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
@@ -31,8 +32,14 @@ public class LdapUserMapperTest {
     @Before
     public void setUp() {
 
-        ldapUserMapper = new LdapUserMapper(IDENTIFIER_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE,
-                MAIL_ADDRESS_ATTRIBUTE, MEMBER_OF_FILTER);
+        final SecurityConfigurationProperties securityConfigurationProperties = new SecurityConfigurationProperties();
+        securityConfigurationProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
+        securityConfigurationProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
+        securityConfigurationProperties.setLastName(LAST_NAME_ATTRIBUTE);
+        securityConfigurationProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
+        securityConfigurationProperties.getFilter().setMemberOf(MEMBER_OF_FILTER);
+
+        ldapUserMapper = new LdapUserMapper(securityConfigurationProperties);
     }
 
 
@@ -113,8 +120,7 @@ public class LdapUserMapperTest {
     // Map user from context -------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws NamingException,
-        UnsupportedMemberAffiliationException {
+    public void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
@@ -134,7 +140,7 @@ public class LdapUserMapperTest {
 
 
     @Test
-    public void ensureCreatesLdapUserFromContext() throws NamingException, UnsupportedMemberAffiliationException {
+    public void ensureCreatesLdapUserFromContext() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
@@ -158,8 +164,7 @@ public class LdapUserMapperTest {
 
 
     @Test(expected = UnsupportedMemberAffiliationException.class)
-    public void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws NamingException,
-        UnsupportedMemberAffiliationException {
+    public void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
@@ -175,10 +180,16 @@ public class LdapUserMapperTest {
 
 
     @Test
-    public void ensureNoMemberOfCheckIfMemberOfFilterIsNull() throws NamingException {
+    public void ensureNoMemberOfCheckIfMemberOfFilterIsNull()  {
 
-        ldapUserMapper = new LdapUserMapper(IDENTIFIER_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE,
-                MAIL_ADDRESS_ATTRIBUTE, null);
+        final SecurityConfigurationProperties securityConfigurationProperties = new SecurityConfigurationProperties();
+        securityConfigurationProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
+        securityConfigurationProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
+        securityConfigurationProperties.setLastName(LAST_NAME_ATTRIBUTE);
+        securityConfigurationProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
+        securityConfigurationProperties.getFilter().setMemberOf(null);
+
+        LdapUserMapper ldapUserMapper = new LdapUserMapper(securityConfigurationProperties);
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
@@ -200,10 +211,16 @@ public class LdapUserMapperTest {
 
 
     @Test
-    public void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() throws NamingException {
+    public void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() {
 
-        ldapUserMapper = new LdapUserMapper(IDENTIFIER_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE,
-                MAIL_ADDRESS_ATTRIBUTE, "");
+        final SecurityConfigurationProperties securityConfigurationProperties = new SecurityConfigurationProperties();
+        securityConfigurationProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
+        securityConfigurationProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
+        securityConfigurationProperties.setLastName(LAST_NAME_ATTRIBUTE);
+        securityConfigurationProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
+        securityConfigurationProperties.getFilter().setMemberOf("");
+
+        LdapUserMapper ldapUserMapper = new LdapUserMapper(securityConfigurationProperties);
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
