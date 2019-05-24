@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.security;
  */
 public class UnsupportedMemberAffiliationException extends Exception {
 
-    public UnsupportedMemberAffiliationException(String message) {
+    UnsupportedMemberAffiliationException(String message) {
 
         super(message);
     }

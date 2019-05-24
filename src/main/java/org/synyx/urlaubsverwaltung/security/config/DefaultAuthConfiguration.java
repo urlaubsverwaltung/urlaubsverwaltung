@@ -15,5 +15,4 @@ public class DefaultAuthConfiguration {
     public AuthenticationProvider defaultAuthenticationProvider(PersonService personService) {
         return new SimpleAuthenticationProvider(personService);
     }
-
 }
