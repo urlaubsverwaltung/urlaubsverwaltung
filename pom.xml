@@ -158,6 +158,16 @@
       <artifactId>commons-collections</artifactId>
       <version>${commons-collections.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>javax.interceptor</groupId>
+      <artifactId>javax.interceptor-api</artifactId>
+      <version>1.2.2</version>
+    </dependency>
 
     <!-- METRICS -->
     <dependency>

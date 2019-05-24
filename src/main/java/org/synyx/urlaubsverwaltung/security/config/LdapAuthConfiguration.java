@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
@@ -19,41 +18,46 @@ import org.synyx.urlaubsverwaltung.security.PersonContextMapper;
 @ConditionalOnProperty(name = "auth", havingValue = "ldap")
 public class LdapAuthConfiguration {
 
-    private final Environment environment;
+    private final SecurityLdapConfigurationProperties ldapProperties;
 
     @Autowired
-    public LdapAuthConfiguration(Environment environment) {
-        this.environment = environment;
+    public LdapAuthConfiguration(SecurityLdapConfigurationProperties ldapProperties) {
+        this.ldapProperties = ldapProperties;
     }
 
     @Bean
     public LdapContextSource ldapContextSource() {
+
         LdapContextSource source = new LdapContextSource();
-        source.setUserDn(environment.getProperty("uv.security.ldap.managerDn"));
-        source.setPassword(environment.getProperty("uv.security.ldap.managerPassword"));
-        source.setBase(environment.getProperty("uv.security.ldap.base"));
-        source.setUrl(environment.getProperty("uv.security.ldap.url"));
+        source.setUserDn(ldapProperties.getManagerDn());
+        source.setPassword(ldapProperties.getManagerPassword());
+        source.setBase(ldapProperties.getBase());
+        source.setUrl(ldapProperties.getUrl());
+
         return source;
     }
 
     @Bean
     public LdapAuthoritiesPopulator authoritiesPopulator() {
+
         return new DefaultLdapAuthoritiesPopulator(ldapContextSource(), null);
     }
 
     @Bean
     public FilterBasedLdapUserSearch ldapUserSearch() {
 
-        String searchBase = environment.getProperty("uv.security.ldap.userSearchBase");
-        String searchFilter = environment.getProperty("uv.security.ldap.userSearchFilter");
+        String searchBase = ldapProperties.getUserSearchBase();
+        String searchFilter = ldapProperties.getUserSearchFilter();
 
         return new FilterBasedLdapUserSearch(searchBase, searchFilter, ldapContextSource());
     }
 
     @Bean
     public LdapAuthenticator authenticator() {
+
         BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource());
         authenticator.setUserSearch(ldapUserSearch());
+
         return authenticator;
     }
 
@@ -65,5 +69,4 @@ public class LdapAuthConfiguration {
 
         return ldapAuthenticationProvider;
     }
-
 }

@@ -1,15 +1,15 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.synyx.urlaubsverwaltung.security.config.SecurityConfigurationProperties;
 
 import java.util.List;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
+import static org.springframework.util.StringUtils.hasText;
 
 
 @Service
@@ -23,24 +23,24 @@ public class LdapUserServiceImpl implements LdapUserService {
 
     private final LdapTemplate ldapTemplate;
     private final LdapUserMapper ldapUserMapper;
-    private final String objectClass;
-    private final String memberOf;
+    private final SecurityConfigurationProperties securityProperties;
 
     @Autowired
     public LdapUserServiceImpl(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper,
-        @Value("${uv.security.filter.objectClass}") String objectClass,
-        @Value("${uv.security.filter.memberOf}") String memberOf) {
+                               SecurityConfigurationProperties securityProperties) {
 
         this.ldapTemplate = ldapTemplate;
         this.ldapUserMapper = ldapUserMapper;
-        this.objectClass = objectClass;
-        this.memberOf = memberOf;
+        this.securityProperties = securityProperties;
     }
 
     @Override
     public List<LdapUser> getLdapUsers() {
 
-        if (StringUtils.hasText(memberOf)) {
+        final String memberOf = securityProperties.getFilter().getMemberOf();
+        final String objectClass = securityProperties.getFilter().getObjectClass();
+
+        if (hasText(memberOf)) {
             return ldapTemplate.search(query().where(OBJECT_CLASS_ATTRIBUTE)
                     .is(objectClass)
                     .and(MEMBER_OF_ATTRIBUTE)
