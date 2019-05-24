@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.cron;
+package org.synyx.urlaubsverwaltung.account.service;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
