@@ -1,4 +1,6 @@
 ### master/unreleased
+
+### [urlaubsverwaltung-2.42.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.3)
 * Fix login issues caused by missing ldap security configuration
   properties [#697](https://github.com/synyx/urlaubsverwaltung/pull/697)
 
