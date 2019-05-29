@@ -35,7 +35,7 @@ class PersonServiceImpl implements PersonService {
     public Person create(String loginName, String lastName, String firstName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
-        Person person = new Person(loginName, lastName, firstName, email);
+        final Person person = new Person(loginName, lastName, firstName, email);
 
         person.setNotifications(notifications);
         person.setPermissions(permissions);

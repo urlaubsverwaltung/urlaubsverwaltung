@@ -3,8 +3,10 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -14,77 +16,75 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static java.util.Optional.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class LdapSyncServiceTest {
 
-    private PersonService personService;
+    private LdapSyncService sut;
 
-    private LdapSyncService ldapSyncService;
+    @Mock
+    private PersonService personService;
 
     @Before
     public void setUp() {
-
-        personService = mock(PersonService.class);
-
-        ldapSyncService = new LdapSyncService(personService);
+        sut = new LdapSyncService(personService);
     }
 
 
     @Test
     public void ensurePersonIsCreatedWithCorrectAttributes() {
 
-        Person person = TestDataCreator.createPerson();
+        final String loginName = "murygina";
+        final String firstName = "Aljona";
+        final String lastName = "Murygina";
+        final String email = "murygina@synyx.de";
 
-        when(personService.create(anyString(), anyString(), anyString(), anyString(), anyList(), anyList())).thenReturn(person);
+        final Person person = new Person();
+        person.setLoginName(loginName);
+        when(personService.create(loginName, lastName, firstName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
 
-        ldapSyncService.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-            Optional.of("murygina@synyx.de"));
-
-        verify(personService)
-            .create("murygina", "Murygina", "Aljona", "murygina@synyx.de",
-                singletonList(MailNotification.NOTIFICATION_USER), singletonList(Role.USER));
+        final Person createdPerson = sut.createPerson(loginName, of(firstName), of(lastName), of(email));
+        assertThat(createdPerson.getLoginName()).isEqualTo(loginName);
     }
 
 
     @Test
     public void ensurePersonCanBeCreatedWithOnlyLoginName() {
 
-        Person person = TestDataCreator.createPerson();
+        final String loginName = "murygina";
 
-        when(personService.create(anyString(), isNull(), isNull(), isNull(), anyList(), anyList())).thenReturn(person);
+        final Person person = new Person();
+        person.setLoginName(loginName);
+        when(personService.create(loginName, null, null, null, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
 
-        ldapSyncService.createPerson("murygina", Optional.empty(), Optional.empty(), Optional.empty());
-
-        verify(personService)
-            .create("murygina", null, null, null, singletonList(MailNotification.NOTIFICATION_USER), singletonList(Role.USER));
+        final Person createdPerson = sut.createPerson(loginName, Optional.empty(), Optional.empty(), Optional.empty());
+        assertThat(createdPerson.getLoginName()).isEqualTo(loginName);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfNoLoginNameIsGiven() {
 
-        ldapSyncService.createPerson(null, Optional.of("Aljona"), Optional.of("Murygina"),
-            Optional.of("murygina@synyx.de"));
+        sut.createPerson(null, of("Aljona"), of("Murygina"), of("murygina@synyx.de"));
     }
 
 
     @Test
     public void ensureSyncedPersonHasCorrectAttributes() {
 
-        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@firma.test");
+        final Person person = createPerson("muster", "Marlene", "Muster", "marlene@firma.test");
+        when(personService.save(person)).thenReturn(person);
 
-        Person syncedPerson = ldapSyncService.syncPerson(person, Optional.of("Aljona"), Optional.of("Murygina"),
-            Optional.of("murygina@synyx.de"));
-
-        verify(personService).save(eq(person));
+        final Person syncedPerson = sut.syncPerson(person, of("Aljona"), of("Murygina"), of("murygina@synyx.de"));
 
         Assert.assertNotNull("Missing login name", syncedPerson.getLoginName());
         Assert.assertNotNull("Missing first name", syncedPerson.getFirstName());
@@ -101,11 +101,10 @@ public class LdapSyncServiceTest {
     @Test
     public void ensureSyncDoesNotEmptyAttributes() {
 
-        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@firma.test");
+        Person person = createPerson("muster", "Marlene", "Muster", "marlene@firma.test");
+        when(personService.save(person)).thenReturn(person);
 
-        Person syncedPerson = ldapSyncService.syncPerson(person, Optional.empty(), Optional.empty(), Optional.empty());
-
-        verify(personService).save(eq(person));
+        Person syncedPerson = sut.syncPerson(person, Optional.empty(), Optional.empty(), Optional.empty());
 
         Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
         Assert.assertEquals("Wrong first name", "Marlene", syncedPerson.getFirstName());
@@ -117,21 +116,21 @@ public class LdapSyncServiceTest {
     @Test
     public void ensureCanAppointPersonAsOfficeUser() {
 
-        Person person = TestDataCreator.createPerson();
-        person.setPermissions(singletonList(Role.USER));
+        Person person = createPerson();
+        person.setPermissions(singletonList(USER));
 
         Assert.assertEquals("Wrong initial permissions", 1, person.getPermissions().size());
 
         ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
 
-        ldapSyncService.appointPersonAsOfficeUser(person);
+        sut.appointPersonAsOfficeUser(person);
 
         verify(personService).save(personCaptor.capture());
 
         Collection<Role> permissions = personCaptor.getValue().getPermissions();
 
         Assert.assertEquals("Wrong number of permissions", 2, permissions.size());
-        Assert.assertTrue("Should have user role", permissions.contains(Role.USER));
+        Assert.assertTrue("Should have user role", permissions.contains(USER));
         Assert.assertTrue("Should have office role", permissions.contains(Role.OFFICE));
     }
 }

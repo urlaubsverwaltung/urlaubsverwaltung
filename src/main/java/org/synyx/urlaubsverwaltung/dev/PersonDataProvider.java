@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -17,11 +16,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Arrays.asList;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -60,24 +65,26 @@ class PersonDataProvider {
             return personByLogin.get();
         }
 
-        List<Role> permissions = Arrays.asList(roles);
+        List<Role> permissions = asList(roles);
         List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
-        Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
+        final Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
         person.setPassword(new StandardPasswordEncoder().encode(password));
-        personService.save(person);
+
+        final Person savedPerson = personService.save(person);
 
         int currentYear = ZonedDateTime.now(UTC).getYear();
         workingTimeService.touch(
-            Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek(),
-                WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()),
-            Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), person);
+            asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(),WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
+            Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);
 
-        accountInteractionService.updateOrCreateHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),
-            DateUtil.getLastDayOfYear(currentYear), new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
-            BigDecimal.ZERO, null);
+        final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(currentYear);
+        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(currentYear);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,
+            lastDayOfYear, new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
+            ZERO, null);
 
-        return person;
+        return savedPerson;
     }
 
     private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
