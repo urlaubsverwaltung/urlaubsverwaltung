@@ -92,6 +92,7 @@ public class ApplicationInteractionServiceImplTest {
         Optional<String> comment = of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.apply(applicationForLeave, applier, comment);
 
@@ -128,6 +129,7 @@ public class ApplicationInteractionServiceImplTest {
         Optional<String> comment = of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.apply(applicationForLeave, applier, comment);
 
@@ -141,7 +143,8 @@ public class ApplicationInteractionServiceImplTest {
 
         Person person = createPerson();
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         ApplicationComment applicationComment = new ApplicationComment(person);
         when(commentService.create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), any(), eq(person))).thenReturn(applicationComment);
@@ -161,6 +164,7 @@ public class ApplicationInteractionServiceImplTest {
         Person applier = createPerson("applier");
 
         Application applicationForLeave = getDummyApplication(person);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         ApplicationComment applicationComment = new ApplicationComment(person);
         when(commentService.create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), any(), eq(applier))).thenReturn(applicationComment);
@@ -176,11 +180,12 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
 
-        Person person = createPerson("muster");
-        Person applier = createPerson("applier");
-        Optional<String> comment = of("Foo");
+        final Person person = createPerson("muster");
+        final Person applier = createPerson("applier");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.apply(applicationForLeave, applier, comment);
 
@@ -198,10 +203,10 @@ public class ApplicationInteractionServiceImplTest {
         Person boss = createPerson("boss", USER, Role.BOSS);
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
@@ -255,9 +260,10 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(false);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
+        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        when(applicationComment).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
 
@@ -278,6 +284,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
@@ -340,10 +347,10 @@ public class ApplicationInteractionServiceImplTest {
 
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, departmentHead, comment);
@@ -366,9 +373,10 @@ public class ApplicationInteractionServiceImplTest {
 
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setTwoStageApproval(true);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
@@ -430,9 +438,10 @@ public class ApplicationInteractionServiceImplTest {
 
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(false);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(any(), any(), any(), any())).thenReturn(new ApplicationComment(person));
 
@@ -460,10 +469,9 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
-
 
         service.allow(applicationForLeave, secondStage, comment);
 
@@ -487,9 +495,10 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setTwoStageApproval(true);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
+        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
+        when(applicationComment).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, secondStage, comment);
 
@@ -513,9 +522,10 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
+        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
+        when(applicationComment).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, secondStage, comment);
 
@@ -535,12 +545,14 @@ public class ApplicationInteractionServiceImplTest {
         Person secondStageAuthority = createPerson("secondStageAuthority");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead))).thenReturn(true);
+        final boolean isSecondStage = departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead));
+        when(isSecondStage).thenReturn(true);
 
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(departmentHead);
+        final Application applicationForLeave = getDummyApplication(departmentHead);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.allow(applicationForLeave, secondStageAuthority, comment);
     }
@@ -611,6 +623,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setHolidayReplacement(replacement);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.allow(applicationForLeave, boss, of("Foo"));
 
@@ -627,6 +640,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setHolidayReplacement(null);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.allow(applicationForLeave, boss, of("Foo"));
 
@@ -663,8 +677,9 @@ public class ApplicationInteractionServiceImplTest {
 
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.reject(applicationForLeave, boss, comment);
 
@@ -690,9 +705,11 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
+        final Optional<AbsenceMapping> absenceByIdAndType = absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION));
+        when(absenceByIdAndType).thenReturn(of(absenceMapping));
 
         service.reject(applicationForLeave, boss, comment);
 
@@ -707,7 +724,8 @@ public class ApplicationInteractionServiceImplTest {
         Person person = createPerson("muster");
         Person boss = createPerson("boss");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         Optional<String> optionalComment = of("Foo");
         ApplicationComment applicationComment = new ApplicationComment(person);
@@ -728,8 +746,9 @@ public class ApplicationInteractionServiceImplTest {
         Person person = createPerson();
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.cancel(applicationForLeave, person, comment);
 
@@ -773,11 +792,11 @@ public class ApplicationInteractionServiceImplTest {
     public void ensureCancellingAllowedApplicationByOwnerCreatesACancellationRequest() {
 
         Person person = createPerson("muster");
-
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
                 .thenReturn(new ApplicationComment(person));
@@ -801,8 +820,9 @@ public class ApplicationInteractionServiceImplTest {
 
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.cancel(applicationForLeave, person, comment);
 
@@ -832,6 +852,7 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
                 .thenReturn(new ApplicationComment(person));
@@ -861,6 +882,7 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
                 .thenReturn(new ApplicationComment(person));
@@ -888,12 +910,13 @@ public class ApplicationInteractionServiceImplTest {
 
         Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = new Application();
+        final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setStartDate(LocalDate.of(2014, 12, 24));
         applicationForLeave.setEndDate(LocalDate.of(2015, 1, 7));
         applicationForLeave.setDayLength(DayLength.FULL);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.cancel(applicationForLeave, canceller, comment);
 
@@ -915,6 +938,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStartDate(LocalDate.of(2014, 12, 24));
         applicationForLeave.setEndDate(LocalDate.of(2015, 1, 7));
         applicationForLeave.setDayLength(DayLength.FULL);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         service.createFromConvertedSickNote(applicationForLeave, creator);
 
