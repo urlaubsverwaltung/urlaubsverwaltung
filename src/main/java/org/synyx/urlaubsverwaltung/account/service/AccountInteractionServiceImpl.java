@@ -56,11 +56,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         account.setVacationDays(actualVacationDays);
 
-        accountService.save(account);
+        final Account savedAccount = accountService.save(account);
 
-        LOG.info("Created holidays account: {}", account);
+        LOG.info("Created holidays account: {}", savedAccount);
 
-        return account;
+        return savedAccount;
     }
 
     @Override
@@ -76,11 +76,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
         account.setComment(comment);
 
-        accountService.save(account);
+        final Account savedAccount = accountService.save(account);
 
-        LOG.info("Updated holidays account: {}", account);
+        LOG.info("Updated holidays account: {}", savedAccount);
 
-        return account;
+        return savedAccount;
     }
 
     @Override
