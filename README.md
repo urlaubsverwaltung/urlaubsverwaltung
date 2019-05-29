@@ -6,9 +6,10 @@
 
 ## Urlaubsverwaltung
 
- * [Demo System](#demo-system)
- * [Blog Posts](#blog-posts)
+ * [Übersicht](#übersicht)
  * [FAQ](#faq)
+ * [Changelog](CHANGELOG.md)
+ * [Demo System](#demo-system)
  * [Berechtigungen](#berechtigungen)
  * [REST-Schnittstelle](#rest-schnittstelle)
  * [Installation](#installation)
@@ -28,7 +29,6 @@
     * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
     * [Konfiguration Google Calendar](#konfiguration-google-calendar)
  * [Entwicklung](#entwicklung)
- * [Changelog](CHANGELOG.md)
  * [Technologien](#technologien)
  * [Lizenz](#lizenz)
 
@@ -44,21 +44,7 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 
 ![Screenshot Urlaubsverwaltung](docs/uv-01.png)
 
-#### Demo System
-
-Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung.herokuapp.com) mit Testbenutzern für
-die unterschiedlichen Rollen:
-
-| Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
-| ------------------------- | ------------- | -------- | ----------------- |
-| Office                    | test          | secret   | Marlene Muster    |
-| Chef                      | testBoss      | secret   | Max Muster        |
-| Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       | 
-| Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
-| Benutzer                  | testUser      | secret   | Klaus Müller      |
-| Admin                     | admin         | secret   | Senor Operation   |
-
-#### Blog Posts
+### Geschichte
 
 Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung findet man im
 [synyx Blog](https://www.synyx.de/blog/):
@@ -68,11 +54,31 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 * [Stand Oktober 2014](https://www.synyx.de/blog/urlaubsverwaltung-goes-mobile/)
 * [Stand April 2017](https://synyx.de/blog/urlaubsverwaltung-die-geschichte-eines-open-source-projekts/)
 
-#### FAQ
+---
+
+## FAQ
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen können, gibt es ein
 [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki).
 Der Fragenkatalog erhebt keinen Anspruch auf Vollständigkeit und befindet sich im ständigen Wachstum und in Veränderung.
+
+## Changelog
+
+Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
+
+## Demo System
+
+Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung.herokuapp.com) mit Testbenutzern für
+die unterschiedlichen Rollen:
+
+| Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
+| ------------------------- | ------------- | -------- | ----------------- |
+| Office                    | test          | secret   | Marlene Muster    |
+| Chef                      | testBoss      | secret   | Max Muster        |
+| Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       |
+| Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
+| Benutzer                  | testUser      | secret   | Klaus Müller      |
+| Admin                     | admin         | secret   | Senor Operation   |
 
 #### Berechtigungen
 
@@ -346,7 +352,6 @@ Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert 
 <script defer src="<asset:url value='npm.jquery.js' />"></script>
 ```
 
-
 ### Anlegen von Testdaten deaktivieren
 
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
@@ -398,12 +403,6 @@ tun kann.](docs/UV_WITH_DOCKER.md)
 
 ---
 
-## Hinweise zu Versionen
-
-Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
-
----
-
 ## Technologien
 
 * Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework.
@@ -415,6 +414,8 @@ Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHAN
 [EWS JAVA API](https://github.com/OfficeDev/ews-java-api) genutzt.
 * Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Google Calendar wird der
 [Google API Client](https://github.com/google/google-api-java-client) verwendet.
+
+---
 
 ## Lizenz
 
