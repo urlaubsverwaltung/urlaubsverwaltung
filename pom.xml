@@ -509,6 +509,7 @@
         </executions>
         <configuration>
           <excludes>
+            <exclude>logs/**</exclude>
             <exclude>node/**</exclude>
             <exclude>node_modules/**</exclude>
             <exclude>.mvn/**</exclude>

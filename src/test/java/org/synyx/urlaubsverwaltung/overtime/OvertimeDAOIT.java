@@ -3,11 +3,11 @@ package org.synyx.urlaubsverwaltung.overtime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDAO;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
@@ -17,16 +17,15 @@ import java.util.List;
 import static java.math.BigDecimal.ROUND_UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = NONE)
+@SpringBootTest
+@Transactional
 public class OvertimeDAOIT {
 
     @Autowired
-    private PersonDAO personDAO;
+    private PersonService personService;
 
     @Autowired
     private OvertimeDAO overtimeDAO;
@@ -35,7 +34,7 @@ public class OvertimeDAOIT {
     public void ensureCanPersistOvertime() {
 
         final Person person = TestDataCreator.createPerson();
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         final LocalDate now = LocalDate.now(UTC);
         final Overtime overtime = new Overtime(savedPerson, now, now.plusDays(2), BigDecimal.ONE);
@@ -51,10 +50,10 @@ public class OvertimeDAOIT {
     public void ensureCountsTotalHoursCorrectly() {
 
         final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
-        final Person savedOtherPerson = personDAO.save(otherPerson);
+        final Person savedOtherPerson = personService.save(otherPerson);
 
         LocalDate now = LocalDate.now(UTC);
 
@@ -78,7 +77,7 @@ public class OvertimeDAOIT {
     public void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
 
         Person person = TestDataCreator.createPerson();
-        personDAO.save(person);
+        personService.save(person);
 
         BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
 
@@ -90,7 +89,7 @@ public class OvertimeDAOIT {
     public void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
 
         final Person person = TestDataCreator.createPerson();
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         // records for 2015
         overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),

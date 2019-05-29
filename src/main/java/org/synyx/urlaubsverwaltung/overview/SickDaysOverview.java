@@ -1,5 +1,6 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.overview;
 
+import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
@@ -17,7 +18,7 @@ public class SickDaysOverview {
 
     private final SickDays childSickDays;
 
-    public SickDaysOverview(List<SickNote> sickNotes, WorkDaysService calendarService) {
+    SickDaysOverview(List<SickNote> sickNotes, WorkDaysService calendarService) {
 
         this.sickDays = new SickDays();
         this.childSickDays = new SickDays();

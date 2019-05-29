@@ -19,7 +19,7 @@ import static java.time.ZoneOffset.UTC;
  * Implementation for {@link org.synyx.urlaubsverwaltung.sicknote.SickNoteService}.
  */
 @Service
-public class SickNoteServiceImpl implements SickNoteService {
+class SickNoteServiceImpl implements SickNoteService {
 
     private final SickNoteDAO sickNoteDAO;
     private final SettingsService settingsService;
@@ -65,8 +65,22 @@ public class SickNoteServiceImpl implements SickNoteService {
         Settings settings = settingsService.getSettings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        LocalDate endDate = ZonedDateTime.now(UTC).plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification()).toLocalDate();
+        LocalDate endDate = ZonedDateTime.now(UTC)
+            .plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification())
+            .toLocalDate();
 
         return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(), endDate);
+    }
+
+    @Override
+    public List<SickNote> getAllActiveByYear(int year) {
+
+        return sickNoteDAO.findAllActiveByYear(year);
+    }
+
+    @Override
+    public Long getNumberOfPersonsWithMinimumOneSickNote(int year) {
+
+        return sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
     }
 }

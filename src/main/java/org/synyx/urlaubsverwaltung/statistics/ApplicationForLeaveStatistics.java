@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.statistics;
 
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -15,6 +15,9 @@ import java.util.Map;
  * leave are waiting, how many are allowed, how many vacation days has the person left for using).
  */
 public class ApplicationForLeaveStatistics {
+
+    private static final String VACATION_TYPE_MUST_BE_GIVEN = "Vacation type must be given.";
+    private static final String DAYS_MUST_BE_GIVEN = "Days must be given.";
 
     private final Person person;
 
@@ -86,7 +89,7 @@ public class ApplicationForLeaveStatistics {
 
     public void setLeftVacationDays(BigDecimal leftVacationDays) {
 
-        Assert.notNull(leftVacationDays, "Days must be given.");
+        Assert.notNull(leftVacationDays, DAYS_MUST_BE_GIVEN);
 
         this.leftVacationDays = leftVacationDays;
     }
@@ -94,8 +97,8 @@ public class ApplicationForLeaveStatistics {
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
 
-        Assert.notNull(vacationType, "Vacation type must be given.");
-        Assert.notNull(waitingVacationDays, "Days must be given.");
+        Assert.notNull(vacationType, VACATION_TYPE_MUST_BE_GIVEN);
+        Assert.notNull(waitingVacationDays, DAYS_MUST_BE_GIVEN);
 
         BigDecimal currentWaitingVacationDays = getWaitingVacationDays().get(vacationType);
 
@@ -105,8 +108,8 @@ public class ApplicationForLeaveStatistics {
 
     public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
 
-        Assert.notNull(vacationType, "Vacation type must be given.");
-        Assert.notNull(allowedVacationDays, "Days must be given.");
+        Assert.notNull(vacationType, VACATION_TYPE_MUST_BE_GIVEN);
+        Assert.notNull(allowedVacationDays, DAYS_MUST_BE_GIVEN);
 
         BigDecimal currentAllowedVacationDays = getAllowedVacationDays().get(vacationType);
 

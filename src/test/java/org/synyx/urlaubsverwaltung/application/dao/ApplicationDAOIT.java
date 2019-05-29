@@ -3,14 +3,14 @@ package org.synyx.urlaubsverwaltung.application.dao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDAO;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
@@ -21,7 +21,6 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ROUND_UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
@@ -36,12 +35,12 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = NONE)
+@SpringBootTest
+@Transactional
 public class ApplicationDAOIT {
 
     @Autowired
-    private PersonDAO personDAO;
+    private PersonService personService;
     @Autowired
     private ApplicationDAO applicationDAO;
     @Autowired
@@ -51,7 +50,7 @@ public class ApplicationDAOIT {
     public void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
         final Person person = TestDataCreator.createPerson();
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         BigDecimal totalHours = applicationDAO.calculateTotalOvertimeOfPerson(savedPerson);
         assertThat(totalHours).isNull();
@@ -62,10 +61,10 @@ public class ApplicationDAOIT {
     public void ensureCountsTotalOvertimeReductionCorrectly() {
 
         final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
-        final Person savedPerson = personDAO.save(person);
+        final Person savedPerson = personService.save(person);
 
         final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
-        final Person savedOtherPerson = personDAO.save(otherPerson);
+        final Person savedOtherPerson = personService.save(otherPerson);
 
         final LocalDate now = LocalDate.now(UTC);
 

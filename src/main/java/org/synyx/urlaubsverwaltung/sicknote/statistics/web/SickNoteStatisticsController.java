@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.sicknote.statistics.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,8 +35,7 @@ public class SickNoteStatisticsController {
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
         Model model) {
 
-        Integer year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
-
+        int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
         SickNoteStatistics statistics = statisticsService.createStatistics(year);
 
         model.addAttribute("statistics", statistics);

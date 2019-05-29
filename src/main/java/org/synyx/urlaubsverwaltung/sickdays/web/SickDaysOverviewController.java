@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.web;
+package org.synyx.urlaubsverwaltung.sickdays.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,9 +15,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.statistics.web.SickDays;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
@@ -28,9 +26,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 
 /**
@@ -39,8 +40,6 @@ import static java.time.ZoneOffset.UTC;
 @Controller
 @RequestMapping("/web")
 public class SickDaysOverviewController {
-
-    private static final String PERSONS_ATTRIBUTE = "persons";
 
     private final SickNoteService sickNoteService;
     private final PersonService personService;
@@ -71,12 +70,10 @@ public class SickDaysOverviewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping("/sicknote")
     public String periodsSickNotes(@RequestParam(value = "from", required = false) String from,
-        @RequestParam(value = "to", required = false) String to, Model model) {
+                                   @RequestParam(value = "to", required = false) String to, Model model) {
 
         FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
-
         List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
-
         fillModel(model, sickNoteList, period);
 
         return "sicknote/sick_notes";
@@ -92,8 +89,9 @@ public class SickDaysOverviewController {
 
         List<Person> persons = personService.getActivePersons();
 
-        List<SickNote> sickNotesOfActivePersons = sickNotes.stream().filter(sickNote ->
-                    persons.contains(sickNote.getPerson()) && sickNote.isActive()).collect(Collectors.toList());
+        List<SickNote> sickNotesOfActivePersons = sickNotes.stream()
+            .filter(sickNote -> persons.contains(sickNote.getPerson()) && sickNote.isActive())
+            .collect(toList());
 
         Map<Person, SickDays> sickDays = new HashMap<>();
         Map<Person, SickDays> childSickDays = new HashMap<>();
@@ -106,31 +104,31 @@ public class SickDaysOverviewController {
         for (SickNote sickNote : sickNotesOfActivePersons) {
             Person person = sickNote.getPerson();
             BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
-                    sickNote.getEndDate(), person);
+                sickNote.getEndDate(), person);
 
-            if (sickNote.getSickNoteType().isOfCategory(SickNoteCategory.SICK_NOTE_CHILD)) {
-                childSickDays.get(person).addDays(SickDays.SickDayType.TOTAL, workDays);
+            if (sickNote.getSickNoteType().isOfCategory(SICK_NOTE_CHILD)) {
+                childSickDays.get(person).addDays(TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {
                     BigDecimal workDaysWithAUB = calendarService.getWorkDays(sickNote.getDayLength(),
-                            sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+                        sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
 
-                    childSickDays.get(person).addDays(SickDays.SickDayType.WITH_AUB, workDaysWithAUB);
+                    childSickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);
                 }
             } else {
-                sickDays.get(person).addDays(SickDays.SickDayType.TOTAL, workDays);
+                sickDays.get(person).addDays(TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {
                     BigDecimal workDaysWithAUB = calendarService.getWorkDays(sickNote.getDayLength(),
-                            sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+                        sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
 
-                    sickDays.get(person).addDays(SickDays.SickDayType.WITH_AUB, workDaysWithAUB);
+                    sickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);
                 }
             }
         }
 
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("childSickDays", childSickDays);
-        model.addAttribute(PERSONS_ATTRIBUTE, persons);
+        model.addAttribute("persons", persons);
     }
 }

@@ -33,6 +33,7 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 
 
 @Service
@@ -47,6 +48,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final AccountInteractionService accountInteractionService;
     private final ApplicationCommentService commentService;
     private final MailService mailService;
+    private final ApplicationMailService applicationMailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
@@ -57,7 +59,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                                              ApplicationCommentService commentService,
                                              AccountInteractionService accountInteractionService,
                                              MailService mailService,
-                                             CalendarSyncService calendarSyncService,
+                                             ApplicationMailService applicationMailService, CalendarSyncService calendarSyncService,
                                              AbsenceMappingService absenceMappingService,
                                              SettingsService settingsService,
                                              DepartmentService departmentService) {
@@ -66,6 +68,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
         this.mailService = mailService;
+        this.applicationMailService = applicationMailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
@@ -99,15 +102,15 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (person.equals(applier)) {
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
-            mailService.sendConfirmation(application, createdComment);
+            applicationMailService.sendConfirmation(application, createdComment);
         } else {
             // someone else (normally the office) applies for leave on behalf of the person
             // person gets an email that someone else has applied for leave on behalf
-            mailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
+            applicationMailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
         }
 
         // bosses gets email that a new application for leave has been created
-        mailService.sendNewApplicationNotification(application, createdComment);
+        applicationMailService.sendNewApplicationNotification(application, createdComment);
 
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
@@ -187,7 +190,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         ApplicationComment createdComment = commentService.create(applicationForLeave,
                 ApplicationAction.TEMPORARY_ALLOWED, comment, privilegedUser);
 
-        mailService.sendTemporaryAllowedNotification(applicationForLeave, createdComment);
+        applicationMailService.sendTemporaryAllowedNotification(applicationForLeave, createdComment);
 
         return applicationForLeave;
     }
@@ -215,10 +218,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         ApplicationComment createdComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED,
                 comment, privilegedUser);
 
-        mailService.sendAllowedNotification(applicationForLeave, createdComment);
+        applicationMailService.sendAllowedNotification(applicationForLeave, createdComment);
 
         if (applicationForLeave.getHolidayReplacement() != null) {
-            mailService.notifyHolidayReplacement(applicationForLeave);
+            applicationMailService.notifyHolidayReplacement(applicationForLeave);
         }
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(
@@ -249,7 +252,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
                 privilegedUser);
 
-        mailService.sendRejectedNotification(application, createdComment);
+        applicationMailService.sendRejectedNotification(application, createdComment);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
                 AbsenceType.VACATION);
@@ -304,7 +307,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 canceller);
 
         if (canceller.hasRole(Role.OFFICE) && !canceller.equals(application.getPerson())) {
-            mailService.sendCancelledByOfficeNotification(application, createdComment);
+            applicationMailService.sendCancelledByOfficeNotification(application, createdComment);
         }
 
         return application;
@@ -328,7 +331,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                     canceller);
 
             if (!canceller.equals(application.getPerson())) {
-                mailService.sendCancelledByOfficeNotification(application, createdComment);
+                applicationMailService.sendCancelledByOfficeNotification(application, createdComment);
             }
         } else {
             /*
@@ -342,10 +345,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             LOG.info("Request cancellation of application for leave: {}", application);
 
-            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCEL_REQUESTED,
-                    comment, canceller);
-
-            mailService.sendCancellationRequest(application, createdComment);
+            ApplicationComment createdComment = commentService.create(application, CANCEL_REQUESTED, comment, canceller);
+            applicationMailService.sendCancellationRequest(application, createdComment);
         }
 
         return application;
@@ -362,7 +363,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationService.save(application);
 
         commentService.create(application, ApplicationAction.CONVERTED, Optional.empty(), creator);
-        mailService.sendSickNoteConvertedToVacationNotification(application);
+        applicationMailService.sendSickNoteConvertedToVacationNotification(application);
 
         return application;
     }
@@ -387,7 +388,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             throw new RemindAlreadySentException("Reminding is possible maximum one time per day!");
         }
 
-        mailService.sendRemindBossNotification(application);
+        applicationMailService.sendRemindBossNotification(application);
 
         application.setRemindDate(LocalDate.now(UTC));
         applicationService.save(application);
@@ -399,7 +400,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application refer(Application application, Person recipient, Person sender) {
 
-        mailService.sendReferApplicationNotification(application, recipient, sender);
+        applicationMailService.sendReferApplicationNotification(application, recipient, sender);
 
         return application;
     }

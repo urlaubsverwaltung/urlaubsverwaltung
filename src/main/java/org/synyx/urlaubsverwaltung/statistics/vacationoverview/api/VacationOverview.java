@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.holiday;
+package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 

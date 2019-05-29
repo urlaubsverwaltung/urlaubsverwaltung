@@ -16,10 +16,10 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -51,7 +51,7 @@ public class GoogleCalendarSyncProviderServiceTest {
     private static String REFRESH_TOKEN;
 
     private SettingsService settingsService;
-    private MailService mailService;
+    private CalendarMailService calendarMailService;
     private GoogleCalendarSyncProvider googleCalendarSyncProvider;
 
     @BeforeClass
@@ -76,8 +76,8 @@ public class GoogleCalendarSyncProviderServiceTest {
     @Before
     public void setUp() {
         settingsService = prepareSettingsServiceMock();
-        mailService = mock(MailService.class);
-        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(mailService, settingsService);
+        calendarMailService = mock(CalendarMailService.class);
+        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
     }
 
     private static Credential createCredentialWithRefreshToken(
@@ -120,7 +120,7 @@ public class GoogleCalendarSyncProviderServiceTest {
 
     @Test
     public void init() {
-        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(mailService, settingsService);
+        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
     }
 
     @Test

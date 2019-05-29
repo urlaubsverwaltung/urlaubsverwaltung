@@ -1,8 +1,12 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.sickdays.web;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.math.BigDecimal.ZERO;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
 
 
 /**
@@ -22,8 +26,8 @@ public class SickDays {
 
         days = new HashMap<>();
 
-        days.put(SickDayType.TOTAL.name(), BigDecimal.ZERO);
-        days.put(SickDayType.WITH_AUB.name(), BigDecimal.ZERO);
+        days.put(TOTAL.name(), ZERO);
+        days.put(WITH_AUB.name(), ZERO);
     }
 
     public Map<String, BigDecimal> getDays() {
@@ -37,5 +41,12 @@ public class SickDays {
         BigDecimal addedDays = this.days.get(type.name()).add(days);
 
         this.days.put(type.name(), addedDays);
+    }
+
+    @Override
+    public String toString() {
+        return "SickDays{" +
+            "days=" + days +
+            '}';
     }
 }

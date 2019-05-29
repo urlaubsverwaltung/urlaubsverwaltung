@@ -22,6 +22,16 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Provides person test data.
@@ -74,22 +84,23 @@ class PersonDataProvider {
 
         List<MailNotification> notifications = new ArrayList<>();
 
-        notifications.add(MailNotification.NOTIFICATION_USER);
+        notifications.add(NOTIFICATION_USER);
 
-        if (roles.contains(Role.DEPARTMENT_HEAD)) {
-            notifications.add(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
+        if (roles.contains(DEPARTMENT_HEAD)) {
+            notifications.add(NOTIFICATION_DEPARTMENT_HEAD);
         }
 
-        if (roles.contains(Role.SECOND_STAGE_AUTHORITY)) {
-            notifications.add(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY);
+        if (roles.contains(SECOND_STAGE_AUTHORITY)) {
+            notifications.add(NOTIFICATION_SECOND_STAGE_AUTHORITY);
         }
 
-        if (roles.contains(Role.BOSS)) {
-            notifications.add(MailNotification.NOTIFICATION_BOSS_ALL);
+        if (roles.contains(BOSS)) {
+            notifications.add(NOTIFICATION_BOSS_ALL);
         }
 
-        if (roles.contains(Role.OFFICE)) {
-            notifications.add(MailNotification.NOTIFICATION_OFFICE);
+        if (roles.contains(OFFICE)) {
+            notifications.add(NOTIFICATION_OFFICE);
+            notifications.add(OVERTIME_NOTIFICATION_OFFICE);
         }
 
         return notifications;

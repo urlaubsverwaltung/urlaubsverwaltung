@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
@@ -31,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatisticsBuilder}.
+ * Unit test for {@link ApplicationForLeaveStatisticsBuilder}.
  */
 public class ApplicationForLeaveStatisticsBuilderTest {
 

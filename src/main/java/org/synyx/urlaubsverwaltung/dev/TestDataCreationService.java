@@ -27,6 +27,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.BOSS;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.OFFICE;
 
 
 @Service
@@ -70,10 +72,10 @@ public class TestDataCreationService {
             "user@firma.test", TestUser.USER.getRoles());
         Person departmentHead = personDataProvider.createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD,
             "Thorsten", "Krüger", "departmentHead@firma.test", TestUser.DEPARTMENT_HEAD.getRoles());
-        boss = personDataProvider.createTestPerson(TestUser.BOSS.getLogin(), PASSWORD, "Max", "Mustermann",
-            "boss@firma.test", TestUser.BOSS.getRoles());
-        office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
-            "office@firma.test", TestUser.OFFICE.getRoles());
+        boss = personDataProvider.createTestPerson(BOSS.getLogin(), PASSWORD, "Max", "Mustermann",
+            "boss@firma.test", BOSS.getRoles());
+        office = personDataProvider.createTestPerson(OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
+            "office@firma.test", OFFICE.getRoles());
 
         personDataProvider.createTestPerson("admin", PASSWORD, "Senor", "Operation", "admin@firma.test", TestUser.ADMIN.getRoles());
 

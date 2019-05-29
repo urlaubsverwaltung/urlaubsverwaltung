@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.vacationoverview;
+package org.synyx.urlaubsverwaltung.statistics.vacationoverview.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
  * Controller to generate applications for leave vacation overview.
@@ -24,6 +27,8 @@ import static java.time.ZoneOffset.UTC;
 @RequestMapping("/web/application")
 @Controller
 public class ApplicationForLeaveVacationOverviewController {
+
+    private static final String DEPARTMENTS = "departments";
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -34,14 +39,14 @@ public class ApplicationForLeaveVacationOverviewController {
         this.departmentService = departmentService;
     }
 
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
+    @PreAuthorize(IS_PRIVILEGED_USER)
     @PostMapping("/vacationoverview")
     public String applicationForLeaveVacationOverview() {
 
         return "redirect:/web/application/vacationoverview";
     }
 
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
+    @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping("/vacationoverview")
     public String applicationForLeaveVacationOverview(Model model) {
         Person signedInUser = personService.getSignedInUser();
@@ -54,14 +59,14 @@ public class ApplicationForLeaveVacationOverviewController {
     }
 
     private void prepareDepartments(Person person, Model model) {
-        if (person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE)) {
-            model.addAttribute("departments", departmentService.getAllDepartments());
-        } else if (person.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            model.addAttribute("departments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
-        } else if (person.hasRole(Role.DEPARTMENT_HEAD)) {
-            model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            model.addAttribute(DEPARTMENTS, departmentService.getAllDepartments());
+        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            model.addAttribute(DEPARTMENTS, departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
+        } else if (person.hasRole(DEPARTMENT_HEAD)) {
+            model.addAttribute(DEPARTMENTS, departmentService.getManagedDepartmentsOfDepartmentHead(person));
         } else {
-            model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
+            model.addAttribute(DEPARTMENTS, departmentService.getAssignedDepartmentsOfMember(person));
         }
     }
 }

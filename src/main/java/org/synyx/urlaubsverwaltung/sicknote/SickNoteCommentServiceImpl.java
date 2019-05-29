@@ -12,7 +12,7 @@ import java.util.Optional;
  * Implementation for {@link SickNoteCommentService}.
  */
 @Service
-public class SickNoteCommentServiceImpl implements SickNoteCommentService {
+class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
     private final SickNoteCommentDAO commentDAO;
 
