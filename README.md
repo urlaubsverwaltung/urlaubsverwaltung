@@ -60,7 +60,8 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen können, gibt es ein
 [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki).
-Der Fragenkatalog erhebt keinen Anspruch auf Vollständigkeit und befindet sich im ständigen Wachstum und in Veränderung.
+Sollte dieser Fragenkatalog nicht weiterhelfen, kann gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
+vom Typ "Question" erstellt werden.
 
 ## Changelog
 
@@ -98,7 +99,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 ## REST-Schnittstelle
 
 Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
-Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverwaltung.herokuapp.com/api/
+Diese kann mit über `/api/` aufgerufen werden, z.B. hier: https://urlaubsverwaltung.herokuapp.com/api/
 
 ---
 
@@ -142,8 +143,8 @@ und die Anwendung mit dem Profil `testdata` zu starten:
 java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 ```
 
-Auf diese Weise wird die Anwendung mit einer MySQL-Datenbank und Testdaten gestartet.
-Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system) anmelden.
+Auf diese Weise wird die Anwendung mit einer MySQL-Datenbank gestartet und Testdaten generiert.
+Man kann sich mit den gleichen [Benutzerdaten wie beim Demo System](#demo-system) anmelden.
 
 ### Aufrufen der Anwendung
 
@@ -154,7 +155,7 @@ Die Anwendung ist nun erreichbar unter
 ### Anwendung als Service
 
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
-funktioniert, kann den entsprechenden Kapiteln in der Spring Boot Dokumentation nachgelesen werden:
+funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation entnommen werden:
 
 * [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
 * [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
@@ -318,7 +319,7 @@ Testbenutzern anmelden:
 * `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
 * `test/secret`: Benutzer mit der Rolle `Office`
 
-### Fontend Entwicklung
+### Frontend Entwicklung
 
 Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
 
