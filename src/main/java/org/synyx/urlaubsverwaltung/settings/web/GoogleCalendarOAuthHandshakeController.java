@@ -35,13 +35,14 @@ import java.util.Collections;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
 
 @Controller
 @RequestMapping("/web")
 public class GoogleCalendarOAuthHandshakeController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
 
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
@@ -104,11 +105,7 @@ public class GoogleCalendarOAuthHandshakeController {
             LOG.error("Exception while handling OAuth2 callback ({}) Redirecting to google connection status page.", e.getMessage(), e);
         }
 
-        StringBuilder buf = new StringBuilder();
-        buf.append("redirect:/web/settings");
-        buf.append("#calendar");
-
-        return buf.toString();
+        return "redirect:/web/settings#calendar";
     }
 
     private static HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {

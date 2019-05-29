@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -62,8 +61,6 @@ public class ApplicationInteractionServiceImplTest {
     @Mock
     private AccountInteractionService accountInteractionService;
     @Mock
-    private MailService mailService;
-    @Mock
     private ApplicationMailService applicationMailService;
     @Mock
     private CalendarSyncService calendarSyncService;
@@ -81,8 +78,7 @@ public class ApplicationInteractionServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-            mailService, applicationMailService, calendarSyncService, absenceMappingService, settingsService,
-                departmentService);
+            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService);
     }
 
 
@@ -206,14 +202,13 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -236,10 +231,10 @@ public class ApplicationInteractionServiceImplTest {
     }
 
 
-    private void assertCalendarSyncIsExecuted() {
+    private void assertNoCalendarSyncIsExecuted() {
 
-        verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION));
+        verifyZeroInteractions(calendarSyncService);
+        verifyZeroInteractions(absenceMappingService);
     }
 
 
@@ -262,14 +257,13 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(false);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -286,14 +280,13 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -314,7 +307,7 @@ public class ApplicationInteractionServiceImplTest {
 
         verifyZeroInteractions(applicationService);
         verifyZeroInteractions(commentService);
-        verifyZeroInteractions(mailService);
+        verifyZeroInteractions(applicationMailService);
         verifyZeroInteractions(calendarSyncService);
         verifyZeroInteractions(absenceMappingService);
     }
@@ -351,7 +344,6 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, departmentHead, comment);
@@ -360,7 +352,7 @@ public class ApplicationInteractionServiceImplTest {
             departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             departmentHead);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -423,7 +415,7 @@ public class ApplicationInteractionServiceImplTest {
 
         verifyZeroInteractions(applicationService);
         verifyZeroInteractions(commentService);
-        verifyZeroInteractions(mailService);
+        verifyZeroInteractions(applicationMailService);
         verifyZeroInteractions(calendarSyncService);
         verifyZeroInteractions(absenceMappingService);
     }
@@ -442,10 +434,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(false);
 
-
         when(commentService.create(any(), any(), any(), any())).thenReturn(new ApplicationComment(person));
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), any())).thenReturn(of(absenceMapping));
 
         service.allow(applicationForLeave, departmentHead, comment);
 
@@ -453,7 +442,7 @@ public class ApplicationInteractionServiceImplTest {
             departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             departmentHead);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -473,7 +462,6 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
 
 
@@ -482,7 +470,7 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             secondStage);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -501,17 +489,14 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
-
-
 
         service.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             secondStage);
-        assertCalendarSyncIsExecuted();
+        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -530,7 +515,6 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
 
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION))).thenReturn(of(absenceMapping));
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
 
         service.allow(applicationForLeave, secondStage, comment);
@@ -538,8 +522,8 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             secondStage);
-        assertCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
+        verifyZeroInteractions(calendarSyncService);
     }
 
     @Test
@@ -760,7 +744,7 @@ public class ApplicationInteractionServiceImplTest {
         verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(person));
 
-        verifyZeroInteractions(mailService);
+        verifyZeroInteractions(applicationMailService);
     }
 
 
@@ -833,7 +817,7 @@ public class ApplicationInteractionServiceImplTest {
         verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
 
-        verifyZeroInteractions(mailService);
+        verifyZeroInteractions(applicationMailService);
     }
 
 
@@ -963,7 +947,7 @@ public class ApplicationInteractionServiceImplTest {
 
         verify(applicationForLeave, never()).setRemindDate(any(LocalDate.class));
         verifyZeroInteractions(applicationService);
-        verifyZeroInteractions(mailService);
+        verifyZeroInteractions(applicationMailService);
     }
 
 
@@ -979,7 +963,7 @@ public class ApplicationInteractionServiceImplTest {
 
         verify(applicationForLeave, never()).setRemindDate(any(LocalDate.class));
         verifyZeroInteractions(applicationService);
-        verifyZeroInteractions(mailService);
+        verifyZeroInteractions(applicationMailService);
     }
 
 

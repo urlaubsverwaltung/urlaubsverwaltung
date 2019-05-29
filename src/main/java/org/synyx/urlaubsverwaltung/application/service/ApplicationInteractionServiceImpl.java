@@ -17,10 +17,8 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
@@ -47,7 +45,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final ApplicationService applicationService;
     private final AccountInteractionService accountInteractionService;
     private final ApplicationCommentService commentService;
-    private final MailService mailService;
     private final ApplicationMailService applicationMailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
@@ -58,7 +55,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     public ApplicationInteractionServiceImpl(ApplicationService applicationService,
                                              ApplicationCommentService commentService,
                                              AccountInteractionService accountInteractionService,
-                                             MailService mailService,
                                              ApplicationMailService applicationMailService, CalendarSyncService calendarSyncService,
                                              AbsenceMappingService absenceMappingService,
                                              SettingsService settingsService,
@@ -67,7 +63,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
-        this.mailService = mailService;
         this.applicationMailService = applicationMailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
@@ -119,7 +114,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application.getPerson(),
-                    application.getPeriod(), EventType.WAITING_APPLICATION, timeConfiguration));
+                    application.getPeriod(), timeConfiguration));
 
         eventId.ifPresent(s -> absenceMappingService.create(application.getId(), AbsenceType.VACATION, s));
 
@@ -222,16 +217,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         if (applicationForLeave.getHolidayReplacement() != null) {
             applicationMailService.notifyHolidayReplacement(applicationForLeave);
-        }
-
-        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(
-                applicationForLeave.getId(), AbsenceType.VACATION);
-
-        if (absenceMapping.isPresent()) {
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(applicationForLeave.getPerson(), applicationForLeave.getPeriod(),
-                    EventType.ALLOWED_APPLICATION, timeConfiguration), absenceMapping.get().getEventId());
         }
 
         return applicationForLeave;

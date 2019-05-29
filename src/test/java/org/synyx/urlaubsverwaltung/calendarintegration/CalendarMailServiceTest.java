@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.verify;
-import static org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType.ALLOWED_APPLICATION;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,7 +45,7 @@ public class CalendarMailServiceTest {
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
         final Period period = new Period(startDate, endDate, FULL);
 
-        final Absence absence = new Absence(new Person(), period, ALLOWED_APPLICATION, absenceTimeConfiguration);
+        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration);
 
         Map<String, Object> model = new HashMap<>();
         model.put("calendar", calendarName);
@@ -73,7 +72,7 @@ public class CalendarMailServiceTest {
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
         final Period period = new Period(startDate, endDate, FULL);
 
-        final Absence absence = new Absence(new Person(), period, ALLOWED_APPLICATION, absenceTimeConfiguration);
+        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration);
 
         Map<String, Object> model = new HashMap<>();
         model.put("calendar", calendarName);
