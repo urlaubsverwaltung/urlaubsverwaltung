@@ -27,6 +27,8 @@ public interface AccountService {
      * Saves the given {@link Account}.
      *
      * @param  account  to be saved
+     *
+     * @return saved {@link Account}
      */
-    void save(Account account);
+    Account save(Account account);
 }
