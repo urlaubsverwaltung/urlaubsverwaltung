@@ -43,7 +43,6 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 überblickt werden.
 
 ![Screenshot Urlaubsverwaltung](docs/uv-01.png)
-![Screenshot Urlaubsverwaltung](docs/uv-02.png)
 
 #### Demo System
 
