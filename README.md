@@ -80,7 +80,7 @@ die unterschiedlichen Rollen:
 | Benutzer                  | testUser      | secret   | Klaus Müller      |
 | Admin                     | admin         | secret   | Senor Operation   |
 
-#### Berechtigungen
+## Berechtigungen
 
 In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 
@@ -95,7 +95,7 @@ beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
-#### REST-Schnittstelle
+## REST-Schnittstelle
 
 Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
 Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverwaltung.herokuapp.com/api/
@@ -112,20 +112,20 @@ Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
 Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synxy/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
 Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
-#### Systemvoraussetzungen
+### Systemvoraussetzungen
 
 * JDK 8
 * MySQL Datenbank (v8.0.16)
 * Docker 17.12.0+ & Docker Compose
 
-#### Download
+### Download
 
 Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
 Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
 da die WAR-Datei einen Tomcat bundled.
 
-#### Starten der Anwendung
+### Starten der Anwendung
 
 Damit man die Anwendung möglichst schnell ausprobieren kann,  
 bietet es sich an
@@ -145,13 +145,13 @@ java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 Auf diese Weise wird die Anwendung mit einer MySQL-Datenbank und Testdaten gestartet.
 Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system) anmelden.
 
-#### Aufrufen der Anwendung
+### Aufrufen der Anwendung
 
 Die Anwendung ist nun erreichbar unter
 
 `<servername>:8080/`
 
-#### Anwendung als Service
+### Anwendung als Service
 
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
 funktioniert, kann den entsprechenden Kapiteln in der Spring Boot Dokumentation nachgelesen werden:
@@ -159,7 +159,7 @@ funktioniert, kann den entsprechenden Kapiteln in der Spring Boot Dokumentation 
 * [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
 * [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
 
-#### Konfigurationsdatei
+### Konfigurationsdatei
 
 Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
 Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
@@ -177,11 +177,11 @@ nachgelesen werden.
 Man kann in dem Verzeichnis, in dem man die Anwendung startet eine Datei namens `application.properties` mit eigener
 Konfiguration hinterlegen. Die dort konfigurierten Properties überschreiben dann die Standardwerte.
 
-#### Datenbank
+### Datenbank
 
 Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 
-####  Achtung! Produktives Starten der Anwendung
+###  Achtung! Produktives Starten der Anwendung
 
 Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr mit Testdaten
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdata` gestartet werden:
@@ -190,7 +190,7 @@ gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdat
 java -jar urlaubsverwaltung.war
 ```
 
-#### Authentifizierung
+### Authentifizierung
 
 Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkeiten:
 
@@ -206,21 +206,21 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
 
-##### LDAP
+#### LDAP
 
 Um LDAP zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
 werden:
 
 <pre>auth=ldap</pre>
 
-##### Active Directory
+#### Active Directory
 
 Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf
 `activeDirectory` gesetzt werden:
 
 <pre>auth=activeDirectory</pre>
 
-##### Synchronisation der User-Datenbank
+#### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
 Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync` bzw. `uv.security.activeDirectory.sync` auf `true` gesetzt wird:
