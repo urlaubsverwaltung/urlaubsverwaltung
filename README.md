@@ -128,10 +128,8 @@ da die WAR-Datei einen Tomcat bundled.
 
 ### Starten der Anwendung
 
-Damit man die Anwendung möglichst schnell ausprobieren kann,  
-bietet es sich an
-
-die Datenbank via Docker Compose zu starten:
+Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/)
+zu starten:
 
 ```bash
 docker-compose up
@@ -286,25 +284,29 @@ git fetch
 
 ### Anwendung starten
 
-Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
-Plugin gestartet werden:
-
-```bash
-./mvnw clean spring-boot:run
-```
-
-bzw. für Windows Benutzer über:
-
-```bash
-./mvnw.cmd clean spring-boot:run
-```
-
 Da die Urlaubsverwaltung abhängig von einer mysql Datenbank ist kann diese über
 
 ```bash
 docker-compose up
 ```
-gestartet weren.
+gestartet werden. ([Wie installiere ich Docker Compose?](https://docs.docker.com/compose/install/))
+
+Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
+Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `testdata` zu starten, um Testdaten generieren
+zu lassen:
+
+```bash
+./mvn clean spring-boot:run -Dspring-boot.run.profiles=testdata
+```
+
+bzw. für Windows Benutzer über:
+
+```bash
+./mvnw.cmd clean spring-boot:run -Dspring-boot.run.profiles=testdata
+```
+
+Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run.profiles` gesetzt, statt via
+`spring.profiles.active`. (vgl. https://github.com/spring-projects/spring-boot/issues/10926)
 
 ### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
