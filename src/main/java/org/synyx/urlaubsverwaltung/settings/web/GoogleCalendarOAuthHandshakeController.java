@@ -104,11 +104,7 @@ public class GoogleCalendarOAuthHandshakeController {
             LOG.error("Exception while handling OAuth2 callback ({}) Redirecting to google connection status page.", e.getMessage(), e);
         }
 
-        StringBuilder buf = new StringBuilder();
-        buf.append("redirect:/web/settings");
-        buf.append("#calendar");
-
-        return buf.toString();
+        return "redirect:/web/settings#calendar";
     }
 
     private static HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
