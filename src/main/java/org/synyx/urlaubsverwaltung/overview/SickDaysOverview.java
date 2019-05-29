@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Build a sick days statistic for a certain year and person.
  */
-class SickDaysOverview {
+public class SickDaysOverview {
 
     private final SickDays sickDays;
 
