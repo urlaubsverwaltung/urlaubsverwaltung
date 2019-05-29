@@ -47,8 +47,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    public static final String APPLICATION_NAME = "Urlaubsverwaltung";
-    protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
+    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
+    private static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
     private Calendar googleCalendarClient;
     private int refreshTokenHashCode;

@@ -35,13 +35,14 @@ import java.util.Collections;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
 
 @Controller
 @RequestMapping("/web")
 public class GoogleCalendarOAuthHandshakeController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
 
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 

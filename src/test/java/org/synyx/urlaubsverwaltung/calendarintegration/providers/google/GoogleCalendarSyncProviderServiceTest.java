@@ -39,10 +39,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
-import static org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider.GOOGLEAPIS_OAUTH2_V4_TOKEN;
 
 public class GoogleCalendarSyncProviderServiceTest {
+
+    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
+    private static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
     private static String CLIENT_ID;
     private static String CLIENT_SECRET;
