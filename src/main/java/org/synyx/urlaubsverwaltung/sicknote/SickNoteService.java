@@ -59,4 +59,10 @@ public interface SickNoteService {
      * @return  sick notes that are reaching the end of sick pay
      */
     List<SickNote> getSickNotesReachingEndOfSickPay();
+
+    List<SickNote> getAllActiveByYear(int year);
+
+    Long getNumberOfPersonsWithMinimumOneSickNote(int year);
+
+
 }

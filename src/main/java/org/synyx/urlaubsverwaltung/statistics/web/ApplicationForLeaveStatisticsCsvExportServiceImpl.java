@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.text.DecimalFormat;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-public class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationForLeaveStatisticsCsvExportService {
+class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationForLeaveStatisticsCsvExportService {
 
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";

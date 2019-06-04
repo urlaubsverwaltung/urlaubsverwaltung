@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
+import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

@@ -21,6 +21,8 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -109,6 +111,7 @@ public class AccountInteractionServiceImplTest {
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.empty());
         when(vacationDaysService.calculateTotalLeftVacationDays(referenceHolidaysAccount)).thenReturn(leftDays);
+        when(accountService.save(any())).then(returnsFirstArg());
 
         Account createdHolidaysAccount = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceHolidaysAccount);
 
@@ -178,6 +181,7 @@ public class AccountInteractionServiceImplTest {
         LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.empty());
+        when(accountService.save(any())).then(returnsFirstArg());
 
         Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
@@ -186,7 +190,6 @@ public class AccountInteractionServiceImplTest {
         assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ZERO);
         assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(TEN);
 
-        verify(accountService).save(expectedAccount);
     }
 
     @Test
@@ -195,7 +198,9 @@ public class AccountInteractionServiceImplTest {
         LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
+        when(accountService.save(any())).then(returnsFirstArg());
 
         Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, ONE, ONE, ONE, ONE, "new comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
@@ -203,7 +208,5 @@ public class AccountInteractionServiceImplTest {
         assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
         assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ONE);
         assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ONE);
-
-        verify(accountService).save(expectedAccount);
     }
 }

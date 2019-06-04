@@ -48,17 +48,15 @@ public class AbsenceTest {
 
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
         Assert.assertNotNull("Person must not be null", absence.getPerson());
-        Assert.assertNotNull("Event type must not be null", absence.getEventType());
 
         Assert.assertEquals("Wrong start date", start.atStartOfDay(UTC), absence.getStartDate());
         Assert.assertEquals("Wrong end date", end.atStartOfDay(UTC).plusDays(1), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
-        Assert.assertEquals("Wrong event type", EventType.WAITING_APPLICATION, absence.getEventType());
     }
 
 
@@ -71,17 +69,15 @@ public class AbsenceTest {
 
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
         Assert.assertNotNull("Person must not be null", absence.getPerson());
-        Assert.assertNotNull("Event type must not be null", absence.getEventType());
 
         Assert.assertEquals("Wrong start date", start.atStartOfDay(UTC), absence.getStartDate());
         Assert.assertEquals("Wrong end date", end.atStartOfDay(UTC).plusDays(1), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
-        Assert.assertEquals("Wrong event type", EventType.ALLOWED_APPLICATION, absence.getEventType());
     }
 
 
@@ -95,7 +91,7 @@ public class AbsenceTest {
 
         Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.MORNING);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
         Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
         Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
@@ -112,7 +108,7 @@ public class AbsenceTest {
 
         Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.NOON);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
         Assert.assertEquals("Should start at 12 pm", start, absence.getStartDate());
         Assert.assertEquals("Should end at 4 pm", end, absence.getEndDate());
@@ -127,7 +123,7 @@ public class AbsenceTest {
 
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
         Assert.assertTrue("Should be all day", absence.isAllDay());
     }
@@ -140,7 +136,7 @@ public class AbsenceTest {
 
         Period period = new Period(today, today, DayLength.MORNING);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
@@ -153,7 +149,7 @@ public class AbsenceTest {
 
         Period period = new Period(today, today, DayLength.NOON);
 
-        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
@@ -162,7 +158,7 @@ public class AbsenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullPeriod() {
 
-        new Absence(person, null, EventType.ALLOWED_APPLICATION, timeConfiguration);
+        new Absence(person, null, timeConfiguration);
     }
 
 
@@ -171,16 +167,7 @@ public class AbsenceTest {
 
         Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
 
-        new Absence(null, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullEventType() {
-
-        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
-
-        new Absence(person, period, null, timeConfiguration);
+        new Absence(null, period, timeConfiguration);
     }
 
 
@@ -189,7 +176,7 @@ public class AbsenceTest {
 
         Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
 
-        new Absence(person, period, EventType.ALLOWED_APPLICATION, null);
+        new Absence(person, period, null);
     }
 
 
@@ -199,15 +186,10 @@ public class AbsenceTest {
         LocalDate today = LocalDate.now(UTC);
         Period period = new Period(today, today, DayLength.FULL);
 
-        BiConsumer<EventType, String> assertCorrectEventSubject = (type, subject) -> {
-            Absence absence = new Absence(person, period, type, timeConfiguration);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
-            assertThat(absence.getEventType(), is(type));
-            assertThat(absence.getEventSubject(), is(subject));
-        };
+        Assert.assertNotNull("Event subject must not be null", absence.getEventSubject());
+        Assert.assertEquals("Wrong event subject", "Marlene Muster abwesend", absence.getEventSubject());
 
-        assertCorrectEventSubject.accept(EventType.WAITING_APPLICATION, "Antrag auf Urlaub Marlene Muster");
-        assertCorrectEventSubject.accept(EventType.ALLOWED_APPLICATION, "Urlaub Marlene Muster");
-        assertCorrectEventSubject.accept(EventType.SICKNOTE, "Marlene Muster krank");
     }
 }

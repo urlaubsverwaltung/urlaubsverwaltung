@@ -17,13 +17,10 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -34,6 +31,12 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 
 @Service
@@ -47,7 +50,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final ApplicationService applicationService;
     private final AccountInteractionService accountInteractionService;
     private final ApplicationCommentService commentService;
-    private final MailService mailService;
+    private final ApplicationMailService applicationMailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
@@ -58,8 +61,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     public ApplicationInteractionServiceImpl(ApplicationService applicationService,
                                              ApplicationCommentService commentService,
                                              AccountInteractionService accountInteractionService,
-                                             MailService mailService,
-                                             CalendarSyncService calendarSyncService,
+                                             ApplicationMailService applicationMailService, CalendarSyncService calendarSyncService,
                                              AbsenceMappingService absenceMappingService,
                                              SettingsService settingsService,
                                              DepartmentService departmentService,
@@ -68,7 +70,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
-        this.mailService = mailService;
+        this.applicationMailService = applicationMailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
@@ -84,59 +86,58 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
 
         // check if a two stage approval is set for the Department
-        departments.stream().filter(Department::isTwoStageApproval).forEach(department ->
-                application.setTwoStageApproval(true));
+        departments.stream().filter(Department::isTwoStageApproval).forEach(department -> application.setTwoStageApproval(true));
 
         application.setStatus(ApplicationStatus.WAITING);
         application.setApplier(applier);
         application.setApplicationDate(nowService.now());
 
-        applicationService.save(application);
+        final Application savedApplication = applicationService.save(application);
 
-        LOG.info("Created application for leave: {}", application);
+        LOG.info("Created application for leave: {}", savedApplication);
 
         // COMMENT
-        ApplicationComment createdComment = commentService.create(application, ApplicationAction.APPLIED, comment,
+        ApplicationComment createdComment = commentService.create(savedApplication, ApplicationAction.APPLIED, comment,
                 applier);
 
         // EMAILS
         if (person.equals(applier)) {
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
-            mailService.sendConfirmation(application, createdComment);
+            applicationMailService.sendConfirmation(savedApplication, createdComment);
         } else {
             // someone else (normally the office) applies for leave on behalf of the person
             // person gets an email that someone else has applied for leave on behalf
-            mailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
+            applicationMailService.sendAppliedForLeaveByOfficeNotification(savedApplication, createdComment);
         }
 
         // bosses gets email that a new application for leave has been created
-        mailService.sendNewApplicationNotification(application, createdComment);
+        applicationMailService.sendNewApplicationNotification(savedApplication, createdComment);
 
         // update remaining vacation days (if there is already a holidays account for next year)
-        accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
+        accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
-        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application.getPerson(),
-                    application.getPeriod(), EventType.WAITING_APPLICATION, timeConfiguration));
+        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(savedApplication.getPerson(),
+            savedApplication.getPeriod(), timeConfiguration));
 
-        eventId.ifPresent(s -> absenceMappingService.create(application.getId(), AbsenceType.VACATION, s));
+        eventId.ifPresent(s -> absenceMappingService.create(savedApplication.getId(), AbsenceType.VACATION, s));
 
-        return application;
+        return savedApplication;
     }
 
     @Override
     public Application allow(Application application, Person privilegedUser, Optional<String> comment) {
 
         // Boss is a very might dude
-        if (privilegedUser.hasRole(Role.BOSS)) {
+        if (privilegedUser.hasRole(BOSS)) {
             return allowFinally(application, privilegedUser, comment);
         }
 
         // Second stage authority has almost the same power (except on own applications)
-        boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
+        boolean isSecondStageAuthority = privilegedUser.hasRole(SECOND_STAGE_AUTHORITY)
                 && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
 
         boolean isOwnApplication = application.getPerson().equals(privilegedUser);
@@ -146,12 +147,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         }
 
         // Department head can be mighty only in some cases
-        boolean isDepartmentHead = privilegedUser.hasRole(Role.DEPARTMENT_HEAD)
+        boolean isDepartmentHead = privilegedUser.hasRole(DEPARTMENT_HEAD)
             && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
 
         // DEPARTMENT_HEAD can _not_ allow SECOND_STAGE_AUTHORITY
-        boolean isSecondStageAuthorityApplication =
-                application.getPerson().hasRole(Role.SECOND_STAGE_AUTHORITY);
+        boolean isSecondStageAuthorityApplication = application.getPerson().hasRole(SECOND_STAGE_AUTHORITY);
 
         if (isDepartmentHead && !isOwnApplication && !isSecondStageAuthorityApplication) {
             if (application.isTwoStageApproval()) {
@@ -173,9 +173,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         if (alreadyAllowed) {
             // Early return - do nothing if expected status already set
-
-            LOG.info("Application for leave is already in an allowed status, do nothing: {}",
-                    applicationForLeave);
+            LOG.info("Application for leave is already in an allowed status, do nothing: {}", applicationForLeave);
 
             return applicationForLeave;
         }
@@ -183,17 +181,16 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(nowService.now());
+        final Application savedApplication = applicationService.save(applicationForLeave);
 
-        applicationService.save(applicationForLeave);
+        LOG.info("Temporary allowed application for leave: {}", savedApplication);
 
-        LOG.info("Temporary allowed application for leave: {}", applicationForLeave);
-
-        ApplicationComment createdComment = commentService.create(applicationForLeave,
+        final ApplicationComment createdComment = commentService.create(savedApplication,
                 ApplicationAction.TEMPORARY_ALLOWED, comment, privilegedUser);
 
-        mailService.sendTemporaryAllowedNotification(applicationForLeave, createdComment);
+        applicationMailService.sendTemporaryAllowedNotification(savedApplication, createdComment);
 
-        return applicationForLeave;
+        return savedApplication;
     }
 
 
@@ -211,31 +208,20 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(nowService.now());
+        final Application savedApplication = applicationService.save(applicationForLeave);
 
-        applicationService.save(applicationForLeave);
+        LOG.info("Allowed application for leave: {}", savedApplication);
 
-        LOG.info("Allowed application for leave: {}", applicationForLeave);
-
-        ApplicationComment createdComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED,
+        final ApplicationComment createdComment = commentService.create(savedApplication, ApplicationAction.ALLOWED,
                 comment, privilegedUser);
 
-        mailService.sendAllowedNotification(applicationForLeave, createdComment);
+        applicationMailService.sendAllowedNotification(savedApplication, createdComment);
 
-        if (applicationForLeave.getHolidayReplacement() != null) {
-            mailService.notifyHolidayReplacement(applicationForLeave);
+        if (savedApplication.getHolidayReplacement() != null) {
+            applicationMailService.notifyHolidayReplacement(savedApplication);
         }
 
-        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(
-                applicationForLeave.getId(), AbsenceType.VACATION);
-
-        if (absenceMapping.isPresent()) {
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(applicationForLeave.getPerson(), applicationForLeave.getPeriod(),
-                    EventType.ALLOWED_APPLICATION, timeConfiguration), absenceMapping.get().getEventId());
-        }
-
-        return applicationForLeave;
+        return savedApplication;
     }
 
 
@@ -245,17 +231,16 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setStatus(ApplicationStatus.REJECTED);
         application.setBoss(privilegedUser);
         application.setEditedDate(nowService.now());
+        final Application savedApplication = applicationService.save(application);
 
-        applicationService.save(application);
+        LOG.info("Rejected application for leave: {}", savedApplication);
 
-        LOG.info("Rejected application for leave: {}", application);
-
-        ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
+        final ApplicationComment createdComment = commentService.create(savedApplication, ApplicationAction.REJECTED, comment,
                 privilegedUser);
 
-        mailService.sendRejectedNotification(application, createdComment);
+        applicationMailService.sendRejectedNotification(savedApplication, createdComment);
 
-        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedApplication.getId(),
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
@@ -296,44 +281,39 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
 
-    private Application revokeApplication(Application application, Person canceller, Optional<String> comment) {
+    private void revokeApplication(Application application, Person canceller, Optional<String> comment) {
 
         application.setStatus(ApplicationStatus.REVOKED);
+        final Application savedApplication = applicationService.save(application);
 
-        applicationService.save(application);
+        LOG.info("Revoked application for leave: {}", savedApplication);
 
-        LOG.info("Revoked application for leave: {}", application);
+        final ApplicationComment savedComment = commentService.create(savedApplication, REVOKED, comment, canceller);
 
-        ApplicationComment createdComment = commentService.create(application, ApplicationAction.REVOKED, comment,
-                canceller);
-
-        if (canceller.hasRole(Role.OFFICE) && !canceller.equals(application.getPerson())) {
-            mailService.sendCancelledByOfficeNotification(application, createdComment);
+        if (canceller.hasRole(OFFICE) && !canceller.equals(application.getPerson())) {
+            applicationMailService.sendCancelledByOfficeNotification(application, savedComment);
         }
-
-        return application;
     }
 
 
-    private Application cancelApplication(Application application, Person canceller, Optional<String> comment) {
+    private void cancelApplication(Application application, Person canceller, Optional<String> comment) {
 
-        if (canceller.hasRole(Role.OFFICE)) {
+        if (canceller.hasRole(OFFICE)) {
             /*
              * Only Office can cancel allowed applications for leave directly,
              * users have to request cancellation
              */
 
             application.setStatus(ApplicationStatus.CANCELLED);
+            final Application savedApplication = applicationService.save(application);
 
-            applicationService.save(application);
+            LOG.info("Cancelled application for leave: {}", savedApplication);
 
-            LOG.info("Cancelled application for leave: {}", application);
-
-            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCELLED, comment,
+            final ApplicationComment savedComment = commentService.create(savedApplication, ApplicationAction.CANCELLED, comment,
                     canceller);
 
-            if (!canceller.equals(application.getPerson())) {
-                mailService.sendCancelledByOfficeNotification(application, createdComment);
+            if (!canceller.equals(savedApplication.getPerson())) {
+                applicationMailService.sendCancelledByOfficeNotification(savedApplication, savedComment);
             }
 
         } else if (canceller.equals(application.getPerson()) && application.getStartDate().isAfter(nowService.now())) {
@@ -358,17 +338,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
              * the office or a boss approves the request.
              */
 
-            applicationService.save(application);
+            final Application savedApplication = applicationService.save(application);
 
-            LOG.info("Request cancellation of application for leave: {}", application);
+            LOG.info("Request cancellation of application for leave: {}", savedApplication);
 
-            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCEL_REQUESTED,
-                    comment, canceller);
-
-            mailService.sendCancellationRequest(application, createdComment);
+            final ApplicationComment createdComment = commentService.create(savedApplication, CANCEL_REQUESTED, comment, canceller);
+            applicationMailService.sendCancellationRequest(savedApplication, createdComment);
         }
-
-        return application;
     }
 
 
@@ -379,12 +355,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setApplier(creator);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        applicationService.save(application);
+        final Application savedApplication = applicationService.save(application);
 
-        commentService.create(application, ApplicationAction.CONVERTED, Optional.empty(), creator);
-        mailService.sendSickNoteConvertedToVacationNotification(application);
+        commentService.create(savedApplication, ApplicationAction.CONVERTED, Optional.empty(), creator);
+        applicationMailService.sendSickNoteConvertedToVacationNotification(savedApplication);
 
-        return application;
+        return savedApplication;
     }
 
 
@@ -407,19 +383,17 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             throw new RemindAlreadySentException("Reminding is possible maximum one time per day!");
         }
 
-        mailService.sendRemindBossNotification(application);
+        applicationMailService.sendRemindBossNotification(application);
 
         application.setRemindDate(nowService.now());
-        applicationService.save(application);
-
-        return application;
+        return applicationService.save(application);
     }
 
 
     @Override
     public Application refer(Application application, Person recipient, Person sender) {
 
-        mailService.sendReferApplicationNotification(application, recipient, sender);
+        applicationMailService.sendReferApplicationNotification(application, recipient, sender);
 
         return application;
     }

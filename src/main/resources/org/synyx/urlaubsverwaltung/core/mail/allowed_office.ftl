@@ -1,6 +1,6 @@
 Hallo Office,
 
-es liegt ein neuer genehmigter Antrag vor: ${settings.baseLinkURL}web/application/${application.id?c}
+es liegt ein neuer genehmigter Antrag vor: ${baseLinkURL}web/application/${application.id?c}
 
 <#if (comment.text)?has_content>
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}

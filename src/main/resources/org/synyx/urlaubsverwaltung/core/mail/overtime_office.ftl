@@ -1,6 +1,6 @@
 Hallo Office,
 
-es wurden Überstunden erfasst: ${settings.baseLinkURL}web/overtime/${overtime.id?c}
+es wurden Überstunden erfasst: ${baseLinkURL}web/overtime/${overtime.id?c}
 
 Mitarbeiter: ${overtime.person.niceName}
 

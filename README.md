@@ -6,9 +6,10 @@
 
 ## Urlaubsverwaltung
 
- * [Demo System](#demo-system)
- * [Blog Posts](#blog-posts)
+ * [Übersicht](#übersicht)
  * [FAQ](#faq)
+ * [Changelog](CHANGELOG.md)
+ * [Demo System](#demo-system)
  * [Berechtigungen](#berechtigungen)
  * [REST-Schnittstelle](#rest-schnittstelle)
  * [Installation](#installation)
@@ -28,7 +29,6 @@
     * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
     * [Konfiguration Google Calendar](#konfiguration-google-calendar)
  * [Entwicklung](#entwicklung)
- * [Changelog](CHANGELOG.md)
  * [Technologien](#technologien)
  * [Lizenz](#lizenz)
 
@@ -43,23 +43,8 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 überblickt werden.
 
 ![Screenshot Urlaubsverwaltung](docs/uv-01.png)
-![Screenshot Urlaubsverwaltung](docs/uv-02.png)
 
-#### Demo System
-
-Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung.herokuapp.com) mit Testbenutzern für
-die unterschiedlichen Rollen:
-
-| Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
-| ------------------------- | ------------- | -------- | ----------------- |
-| Office                    | test          | secret   | Marlene Muster    |
-| Chef                      | testBoss      | secret   | Max Muster        |
-| Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       | 
-| Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
-| Benutzer                  | testUser      | secret   | Klaus Müller      |
-| Admin                     | admin         | secret   | Senor Operation   |
-
-#### Blog Posts
+### Geschichte
 
 Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung findet man im
 [synyx Blog](https://www.synyx.de/blog/):
@@ -69,13 +54,34 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 * [Stand Oktober 2014](https://www.synyx.de/blog/urlaubsverwaltung-goes-mobile/)
 * [Stand April 2017](https://synyx.de/blog/urlaubsverwaltung-die-geschichte-eines-open-source-projekts/)
 
-#### FAQ
+---
+
+## FAQ
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen können, gibt es ein
 [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki).
-Der Fragenkatalog erhebt keinen Anspruch auf Vollständigkeit und befindet sich im ständigen Wachstum und in Veränderung.
+Sollte dieser Fragenkatalog nicht weiterhelfen, kann gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
+vom Typ "Question" erstellt werden.
 
-#### Berechtigungen
+## Changelog
+
+Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
+
+## Demo System
+
+Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung.herokuapp.com) mit Testbenutzern für
+die unterschiedlichen Rollen:
+
+| Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
+| ------------------------- | ------------- | -------- | ----------------- |
+| Office                    | test          | secret   | Marlene Muster    |
+| Chef                      | testBoss      | secret   | Max Muster        |
+| Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       |
+| Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
+| Benutzer                  | testUser      | secret   | Klaus Müller      |
+| Admin                     | admin         | secret   | Senor Operation   |
+
+## Berechtigungen
 
 In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 
@@ -90,10 +96,10 @@ beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
-#### REST-Schnittstelle
+## REST-Schnittstelle
 
 Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
-Diese kann mit über `/api/` aufgerufen werden, z.Bsp. hier: https://urlaubsverwaltung.herokuapp.com/api/
+Diese kann mit über `/api/` aufgerufen werden, z.B. hier: https://urlaubsverwaltung.herokuapp.com/api/
 
 ---
 
@@ -107,53 +113,57 @@ Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
 Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synxy/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
 Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
-#### Systemvoraussetzungen
+### Systemvoraussetzungen
 
 * JDK 8
-* MySQL Datenbank
+* MySQL Datenbank (v8.0.16)
+* Docker 17.12.0+ & Docker Compose
 
-#### Download
+### Download
 
 Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
 Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
 da die WAR-Datei einen Tomcat bundled.
 
-#### Starten der Anwendung
+### Starten der Anwendung
 
-Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Anwendung im Entwicklungsmodus
+Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/)
 zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=dev urlaubsverwaltung.war
+docker-compose up
 ```
 
-Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
-Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system) anmelden.
+und die Anwendung mit dem Profil `testdata` zu starten:
 
-#### Aufrufen der Anwendung
+```bash
+java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
+```
+
+Auf diese Weise wird die Anwendung mit einer MySQL-Datenbank gestartet und Testdaten generiert.
+Man kann sich mit den gleichen [Benutzerdaten wie beim Demo System](#demo-system) anmelden.
+
+### Aufrufen der Anwendung
 
 Die Anwendung ist nun erreichbar unter
 
 `<servername>:8080/`
 
-#### Anwendung als Service
+### Anwendung als Service
 
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
-funktioniert, kann den entsprechenden Kapiteln in der Spring Boot Dokumentation nachgelesen werden:
+funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation entnommen werden:
 
-* [Linux Service](http://docs.spring.io/spring-boot/docs/1.3.1.RELEASE/reference/html/deployment-install.html#deployment-service)
-* [Windows Service](http://docs.spring.io/spring-boot/docs/1.3.1.RELEASE/reference/html/deployment-windows.html)
+* [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
+* [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
 
-#### Konfigurationsdatei
+### Konfigurationsdatei
 
 Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
 Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
 Anwendung allerdings noch nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
-eigene Properties-Datei hinterlegt werden. Welche Konfigurationen überschrieben werden können/müssen, kann in einer beispielhaften
-[Konfigurationsdatei](https://raw.githubusercontent.com/synyx/urlaubsverwaltung/master/src/main/resources/example.properties)
-eingesehen werden. Diese Datei kann einfach als Grundlage genommen werden, um eine eigene `application.properties` zu
-erstellen, die die Standardwerte überschreibt.
+eigene Properties-Datei hinterlegt werden.
 
 Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann
 [hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
@@ -163,20 +173,20 @@ nachgelesen werden.
 Man kann in dem Verzeichnis, in dem man die Anwendung startet eine Datei namens `application.properties` mit eigener
 Konfiguration hinterlegen. Die dort konfigurierten Properties überschreiben dann die Standardwerte.
 
-#### Datenbank
+### Datenbank
 
 Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 
-####  Achtung! Produktives Starten der Anwendung
+###  Achtung! Produktives Starten der Anwendung
 
-Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr im Entwicklungsmodus
-gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
+Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr mit Testdaten
+gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdata` gestartet werden:
 
 ```bash
 java -jar urlaubsverwaltung.war
 ```
 
-#### Authentifizierung
+### Authentifizierung
 
 Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkeiten:
 
@@ -192,21 +202,21 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
 
-##### LDAP
+#### LDAP
 
 Um LDAP zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
 werden:
 
 <pre>auth=ldap</pre>
 
-##### Active Directory
+#### Active Directory
 
 Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf
 `activeDirectory` gesetzt werden:
 
 <pre>auth=activeDirectory</pre>
 
-##### Synchronisation der User-Datenbank
+#### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
 Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync` bzw. `uv.security.activeDirectory.sync` auf `true` gesetzt wird:
@@ -271,33 +281,34 @@ git fetch
 
 ### Anwendung starten
 
-Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
-Plugin gestartet werden:
+Da die Urlaubsverwaltung abhängig von einer mysql Datenbank ist kann diese über
 
 ```bash
-./mvnw clean spring-boot:run
+docker-compose up
+```
+gestartet werden. ([Wie installiere ich Docker Compose?](https://docs.docker.com/compose/install/))
+
+Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
+Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `testdata` zu starten, um Testdaten generieren
+zu lassen:
+
+```bash
+./mvn clean spring-boot:run -Dspring-boot.run.profiles=testdata
 ```
 
 bzw. für Windows Benutzer über:
 
-```cmd
-./mvnw.cmd clean spring-boot:run
-```
-
-<a name="mvn_profiles" />
-Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
-werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
-Maven Aufruf gestartet werden:
-
 ```bash
-./mvnw clean spring-boot:run -Drun.profiles=mariadb
+./mvnw.cmd clean spring-boot:run -Dspring-boot.run.profiles=testdata
 ```
-Einzelne Parameter lassen sich mit `-D<parameterName>=<parameterWert>` überschreiben.
+
+Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run.profiles` gesetzt, statt via
+`spring.profiles.active`. (vgl. https://github.com/spring-projects/spring-boot/issues/10926)
 
 ### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
-Ohne weitere Anpassung der Standardkonfiguration wird eine H2-Datenbank verwendet und es werden Testdaten angelegt,
+Mit dem `testdata` Profil wird eine MySQL-Datenbank verwendet und es werden Testdaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
 Testbenutzern anmelden:
 
@@ -307,7 +318,7 @@ Testbenutzern anmelden:
 * `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
 * `test/secret`: Benutzer mit der Rolle `Office`
 
-### Fontend Entwicklung
+### Frontend Entwicklung
 
 Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
 
@@ -322,25 +333,29 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 
 * `npm run build`
   * baut optimierte, minifizierte Assets
+  * Info: der Dateiname beinhaltet einen Hash welcher eindeutig zum Inhalt des Assets passt 
 * `npm run build:dev`
   * baut nicht minifizierte Assets
 * `npm run build:watch`
   * baut automatisch nach dem editieren von JavaScript / CSS Dateien neue Assets 
 
+#### Long term caching von Assets
+
+Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `asstes-mannifest.json` angelegt.
+Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
+in den JSPs integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
+Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert werden.
+
+```jsp
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+
+<script defer src="<asset:url value='npm.jquery.js' />"></script>
+```
 
 ### Anlegen von Testdaten deaktivieren
 
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
-in den `application-dev.properties` auf `false` setzen.
-
-### H2 Web Konsole
-
-Die Standardkonfiguration im `dev`-Profil sorgt dafür, dass eine H2 Web Konsole aktiv ist.  
-Diese kann standardmäßig erreicht werden unter:
-
-<pre>localhost:8080/h2-console/</pre>
-
-Die H2 Konfigurationen können in der `application-dev.properties` überschrieben werden.
+in den `application-testdata.properties` auf `false` setzen.
 
 ### API
 
@@ -351,10 +366,10 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 Siehe [Authentifizierung](#authentifizierung)
 
 Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `auth` entweder als System
-Property oder man konfiguriert diese in den `application.properties` bzw. in den `application-dev.properties`.
+Property oder man konfiguriert diese in den `application.properties`.
 
 Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
-`application.properties` bzw. in den `application-dev.properties` konfiguriert sein.
+`application.properties` konfiguriert sein.
 
 #### LDAP
 
@@ -364,7 +379,7 @@ Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 ./mvnw clean spring-boot:run -Dauth=ldap
 ```
 
-Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
+Oder die Property `auth` in den `application.properties` setzen:
 
 <pre>auth=ldap</pre>
 
@@ -376,7 +391,7 @@ Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 ./mvnw clean spring-boot:run -Dauth=activeDirectory
 ```
 
-Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
+Oder die Property `auth` in den `application.properties` setzen:
 
 <pre>auth=activeDirectory</pre>
 
@@ -385,12 +400,6 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die extenen
 Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gezeigt, wie man das mit Docker
 tun kann.](docs/UV_WITH_DOCKER.md)
-
----
-
-## Hinweise zu Versionen
-
-Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
 
 ---
 
@@ -405,6 +414,8 @@ Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHAN
 [EWS JAVA API](https://github.com/OfficeDev/ews-java-api) genutzt.
 * Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Google Calendar wird der
 [Google API Client](https://github.com/google/google-api-java-client) verwendet.
+
+---
 
 ## Lizenz
 

@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -32,13 +32,12 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 public class OverlapService {
 
     private final ApplicationDAO applicationDAO;
-    private final SickNoteDAO sickNoteDAO;
+    private final SickNoteService sickNoteService;
 
     @Autowired
-    public OverlapService(ApplicationDAO applicationDAO, SickNoteDAO sickNoteDAO) {
-
+    public OverlapService(ApplicationDAO applicationDAO, SickNoteService sickNoteService) {
         this.applicationDAO = applicationDAO;
-        this.sickNoteDAO = sickNoteDAO;
+        this.sickNoteService = sickNoteService;
     }
 
     /**
@@ -188,11 +187,11 @@ public class OverlapService {
      */
     private List<SickNote> getRelevantSickNotes(Person person, LocalDate startDate, LocalDate endDate) {
 
-        // get all sick notes
-        List<SickNote> sickNotes = sickNoteDAO.findByPersonAndPeriod(person, startDate, endDate);
-
-        // filter them since only active sick notes are relevant
-        return sickNotes.stream().filter(SickNote::isActive).collect(toList());
+        // only active sick notes are relevant
+        return sickNoteService.getByPersonAndPeriod(person, startDate, endDate)
+            .stream()
+            .filter(SickNote::isActive)
+            .collect(toList());
     }
 
 

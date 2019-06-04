@@ -3,13 +3,13 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +43,7 @@ public class CalendarServiceTest {
     private List<CalendarProvider> getTypicalProviderList() {
         List<CalendarProvider> calendarProviders = new ArrayList<>();
         calendarProviders.add(new NoopCalendarSyncProvider());
-        calendarProviders.add(new ExchangeCalendarProvider(null));
+        calendarProviders.add(new ExchangeCalendarProvider( null));
         calendarProviders.add(new GoogleCalendarSyncProvider(null, null));
 
         return calendarProviders;
