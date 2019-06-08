@@ -53,6 +53,10 @@ export default async function createDatepickerInstances(selectors, regional, url
 
       const personId = getPerson();
 
+      if(!personId) {
+        return;
+      }
+
       getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
       });
@@ -65,6 +69,10 @@ export default async function createDatepickerInstances(selectors, regional, url
     onChangeMonthYear: function (year, month) {
 
       const personId = getPerson();
+
+      if(!personId) {
+        return;
+      }
 
       getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);

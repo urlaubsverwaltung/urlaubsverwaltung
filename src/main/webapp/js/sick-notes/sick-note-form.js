@@ -8,14 +8,13 @@ $(document).ready(async function () {
 
   var datepickerLocale = window.navigator.language;
   var urlPrefix = window.uv.apiPrefix;
-  var sickNoteId = window.uv.sickNote.id;
   var sickNotePersonId = window.uv.sickNote.person.id;
 
   function getPersonId() {
-    if (!sickNoteId) {
+    if (!sickNotePersonId) {
       return $("#employee option:selected").val();
     }
-    return sickNoteId || sickNotePersonId;
+    return sickNotePersonId;
   }
 
   var onSelect = function (selectedDate) {
