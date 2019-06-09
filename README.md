@@ -293,7 +293,7 @@ Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `testda
 zu lassen:
 
 ```bash
-./mvn clean spring-boot:run -Dspring-boot.run.profiles=testdata
+./mvnw clean spring-boot:run -Dspring-boot.run.profiles=testdata
 ```
 
 bzw. für Windows Benutzer über:
