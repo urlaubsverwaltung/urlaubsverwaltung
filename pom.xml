@@ -167,8 +167,8 @@
 
     <!-- DATABASE -->
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.liquibase</groupId>
@@ -404,7 +404,7 @@
               <systemPropertyVariables>
                 <!-- Spring Datasource configuration -->
                 <spring.datasource.url>
-                  jdbc:mysql://${docker.host.address}:${docker.mysql.port}/urlaubsverwaltung
+                  jdbc:mariadb://${docker.host.address}:${docker.mariadb.port}/urlaubsverwaltung
                 </spring.datasource.url>
               </systemPropertyVariables>
             </configuration>
@@ -466,15 +466,15 @@
             </goals>
             <configuration>
               <images>
-                <!-- MySQL -->
+                <!-- MariaDB -->
                 <image>
                   <name>urlaubsverwaltung/database</name>
                   <build>
-                    <dockerFileDir>mysql</dockerFileDir>
+                    <dockerFileDir>mariadb</dockerFileDir>
                   </build>
                   <run>
                     <ports>
-                      <port>docker.mysql.port:3306</port>
+                      <port>docker.mariadb.port:3306</port>
                     </ports>
                     <wait>
                       <healthy>true</healthy>
