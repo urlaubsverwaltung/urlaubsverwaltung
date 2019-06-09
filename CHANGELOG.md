@@ -1,5 +1,6 @@
 ### 3.x RC
 * Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
+* Migrate database to mariadb [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 
 ### master/unreleased
 * Make event subjects for calendar sync more generic [#198](https://github.com/synyx/urlaubsverwaltung/issues/198) + [#654](https://github.com/synyx/urlaubsverwaltung/issues/654)

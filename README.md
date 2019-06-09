@@ -116,7 +116,7 @@ Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 ### Systemvoraussetzungen
 
 * JDK 11
-* MySQL Datenbank (v8.0.16)
+* MariaDB Datenbank (v10.4)
 * Docker 17.12.0+ & Docker Compose
 
 ### Download
@@ -141,7 +141,7 @@ und die Anwendung mit dem Profil `testdata` zu starten:
 java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 ```
 
-Auf diese Weise wird die Anwendung mit einer MySQL-Datenbank gestartet und Testdaten generiert.
+Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbank gestartet und Testdaten generiert.
 Man kann sich mit den gleichen [Benutzerdaten wie beim Demo System](#demo-system) anmelden.
 
 ### Aufrufen der Anwendung
@@ -281,7 +281,7 @@ git fetch
 
 ### Anwendung starten
 
-Da die Urlaubsverwaltung abhängig von einer mysql Datenbank ist kann diese über
+Da die Urlaubsverwaltung abhängig von einer MariaDB-Datenbank ist kann diese über
 
 ```bash
 docker-compose up
@@ -308,7 +308,7 @@ Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run
 ### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
-Mit dem `testdata` Profil wird eine MySQL-Datenbank verwendet und es werden Testdaten angelegt,
+Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Testdaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
 Testbenutzern anmelden:
 
