@@ -1,3 +1,6 @@
+### 3.x RC
+* Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
+
 ### [urlaubsverwaltung-2.44.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.0)
 * Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
 * Quickfix for better overview about department members: add link to department
