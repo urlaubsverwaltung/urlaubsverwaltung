@@ -211,7 +211,7 @@
                     <div class="col-md-4 col-md-push-8">
                 <span class="help-block">
                     <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                    <spring:message code="person"/>
+                    <spring:message code="sicknote.data.person"/>
                 </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
