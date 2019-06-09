@@ -24,7 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
     <mail.version>1.4.7</mail.version>
     <mock-javamail.version>1.9</mock-javamail.version>
     <jollyday.version>0.5.8</jollyday.version>
@@ -40,6 +40,7 @@
     <run-java-sh.version>1.3.4</run-java-sh.version>
     <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
     <swagger-annotations.version>1.5.21</swagger-annotations.version>
+    <jaxws-api.version>2.3.1</jaxws-api.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <jaxb-impl.version>2.3.1</jaxb-impl.version>
     <jaxb-core.version>2.3.0.1</jaxb-core.version>
@@ -216,6 +217,11 @@
       <type>jar</type>
     </dependency>
     <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>${jaxb-api.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>${jaxb-impl.version}</version>
@@ -228,9 +234,8 @@
     <dependency>
       <groupId>javax.xml.ws</groupId>
       <artifactId>jaxws-api</artifactId>
-      <version>${jaxb-api.version}</version>
+      <version>${jaxws-api.version}</version>
     </dependency>
-
 
     <!-- SPRINGBOOT DEVTOOLS -->
     <dependency>
