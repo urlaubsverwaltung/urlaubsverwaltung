@@ -1,4 +1,4 @@
-FROM mysql:8.0.16
+FROM mariadb:10.4
 MAINTAINER Tobias Schneider <Tobias.Schneider@synyx.de>
 
 ENV MYSQL_USER=urlaubsverwaltung \
