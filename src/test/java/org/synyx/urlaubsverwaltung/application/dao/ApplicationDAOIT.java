@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.ROUND_UNNECESSARY;
+import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
@@ -114,7 +114,7 @@ public class ApplicationDAOIT {
         // Let's calculate! --------------------------------------------------------------------------------------------
 
         BigDecimal totalHours = applicationDAO.calculateTotalOvertimeOfPerson(person);
-        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.50).setScale(2, ROUND_UNNECESSARY));
+        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.50).setScale(2, UNNECESSARY));
     }
 
 
