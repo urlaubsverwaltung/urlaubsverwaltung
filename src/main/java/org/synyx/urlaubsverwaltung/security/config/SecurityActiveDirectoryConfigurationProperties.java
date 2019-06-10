@@ -7,10 +7,20 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("uv.security.active-directory")
 public class SecurityActiveDirectoryConfigurationProperties {
 
+    private boolean enabled;
+
     private String domain;
     private String url;
 
     private SecurityActiveDirectorySync sync = new SecurityActiveDirectorySync();
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public String getDomain() {
         return domain;

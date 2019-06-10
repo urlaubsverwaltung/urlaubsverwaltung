@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.security.config.SecurityLdapConfigurationProp
  * Context source for syncing data from LDAP.
  */
 @Component("ldapContextSourceSync")
-@ConditionalOnExpression("'${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true'")
+@ConditionalOnExpression("'${uv.security.auth}'=='ldap' and '${uv.security.ldap.sync.enabled}'=='true'")
 public class LdapContextSourceForLdapSync extends LdapContextSource {
 
     @Autowired

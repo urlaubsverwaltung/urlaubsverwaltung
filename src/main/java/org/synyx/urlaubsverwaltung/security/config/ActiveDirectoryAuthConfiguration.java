@@ -10,7 +10,7 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.synyx.urlaubsverwaltung.security.PersonContextMapper;
 
 @Configuration
-@ConditionalOnProperty(name = "auth", havingValue = "activeDirectory")
+@ConditionalOnProperty(name = "uv.security.auth", havingValue = "activeDirectory")
 public class ActiveDirectoryAuthConfiguration {
 
     private final SecurityActiveDirectoryConfigurationProperties configurationProperties;

@@ -25,7 +25,7 @@ data:
     uv.security.ldap.userSearchFilter=(uid={0})
 
     # LDAP Data Sync
-    uv.security.ldap.sync=true
+    uv.security.ldap.sync.enabled=true
     uv.security.ldap.sync.userSearchBase=ou=xxx,ou=xxx
     uv.security.ldap.sync.userDn=
     uv.security.ldap.sync.password=

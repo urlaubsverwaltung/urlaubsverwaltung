@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SimpleAuthenticationProvider;
 
 @Configuration
-@ConditionalOnProperty(name = "auth", havingValue = "default")
+@ConditionalOnProperty(name = "uv.security.auth", havingValue = "default")
 public class DefaultAuthConfiguration {
 
     @Bean

@@ -3,6 +3,7 @@
 * Migrate database to mariadb [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Add configuration properties for security and some cleanups [#696](https://github.com/synyx/urlaubsverwaltung/pull/696)
 * Upgrade spring boot to 2.1.5 [#710](https://github.com/synyx/urlaubsverwaltung/pull/710)
+* Migrate double used configuration paths for uv.security [#712](https://github.com/synyx/urlaubsverwaltung/pull/712)
 
 ### [urlaubsverwaltung-2.43.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.0)
 * Make event subjects for calendar sync more generic [#198](https://github.com/synyx/urlaubsverwaltung/issues/198) + [#654](https://github.com/synyx/urlaubsverwaltung/issues/654)
