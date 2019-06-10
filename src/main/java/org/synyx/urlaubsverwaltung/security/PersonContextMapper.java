@@ -28,7 +28,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Map granted authorities to application roles described in {@link Role}.
  */
 @Component
-@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
+@ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' or '${uv.security.auth}'=='ldap'")
 public class PersonContextMapper implements UserDetailsContextMapper {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

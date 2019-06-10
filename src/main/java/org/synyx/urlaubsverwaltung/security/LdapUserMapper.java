@@ -23,7 +23,7 @@ import static org.springframework.util.StringUtils.hasText;
  * Maps LDAP attributes to {@link LdapUser} class.
  */
 @Component
-@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
+@ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' or '${uv.security.auth}'=='ldap'")
 public class LdapUserMapper implements AttributesMapper<LdapUser> {
 
     private static final String MEMBER_OF_ATTRIBUTE = "memberOf";

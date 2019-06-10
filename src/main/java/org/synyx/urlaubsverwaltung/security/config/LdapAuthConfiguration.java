@@ -15,7 +15,7 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.synyx.urlaubsverwaltung.security.PersonContextMapper;
 
 @Configuration
-@ConditionalOnProperty(name = "auth", havingValue = "ldap")
+@ConditionalOnProperty(name = "uv.security.auth", havingValue = "ldap")
 public class LdapAuthConfiguration {
 
     private final SecurityLdapConfigurationProperties ldapProperties;

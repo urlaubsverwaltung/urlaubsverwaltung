@@ -26,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
  */
 @Service
 @Transactional
-@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
+@ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' or '${uv.security.auth}'=='ldap'")
 public class LdapSyncService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
