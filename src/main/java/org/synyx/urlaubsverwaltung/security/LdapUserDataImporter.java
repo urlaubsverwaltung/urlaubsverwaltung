@@ -23,7 +23,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Service
 @Transactional
 @ConditionalOnExpression(
-    "('${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true') or ('${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true')" // NOSONAR
+    "('${uv.security.auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync.enabled}'=='true') or ('${uv.security.auth}'=='ldap' and '${uv.security.ldap.sync.enabled}'=='true')" // NOSONAR
 )
 public class LdapUserDataImporter {
 

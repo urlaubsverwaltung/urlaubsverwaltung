@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.security.config.SecurityActiveDirectoryConfig
  * Context source for syncing data from Active Directory.
  */
 @Component("ldapContextSourceSync")
-@ConditionalOnExpression("'${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true'")
+@ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync.enabled}'=='true'")
 public class LdapContextSourceForActiveDirectorySync extends LdapContextSource {
 
     @Autowired

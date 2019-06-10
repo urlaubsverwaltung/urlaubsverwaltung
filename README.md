@@ -204,24 +204,24 @@ Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das 
 
 #### LDAP
 
-Um LDAP zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
+Um LDAP zur Authentifizierung zu nutzen, muss die Property `uv.security.auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
 werden:
 
-<pre>auth=ldap</pre>
+<pre>uv.security.auth=ldap</pre>
 
 #### Active Directory
 
-Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf
+Um Active Directory zur Authentifizierung zu nutzen, muss die Property `uv.security.auth` in der eigenen Konfigurationsdatei auf
 `activeDirectory` gesetzt werden:
 
-<pre>auth=activeDirectory</pre>
+<pre>uv.security.auth=activeDirectory</pre>
 
 #### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
-Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync` bzw. `uv.security.activeDirectory.sync` auf `true` gesetzt wird:
+Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync.enabled` bzw. `uv.security.active-directory.sync.enabled` auf `true` gesetzt wird:
 
-<pre>uv.security.ldap.sync=true</pre> bzw. <pre>uv.security.activeDirectory.sync=true</pre>
+<pre>uv.security.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.active-directory.sync.enabled=true</pre>
 
 ### Synchronisation mit Kalender
 
@@ -365,7 +365,7 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 
 Siehe [Authentifizierung](#authentifizierung)
 
-Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `auth` entweder als System
+Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `uv.security.auth` entweder als System
 Property oder man konfiguriert diese in den `application.properties`.
 
 Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
@@ -373,27 +373,27 @@ Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständl
 
 #### LDAP
 
-Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
+Die Anwendung mit dem Parameter `-Duv.security.auth=ldap` starten:
 
 ```bash
-./mvnw clean spring-boot:run -Dauth=ldap
+./mvnw clean spring-boot:run -Duv.security.auth=ldap
 ```
 
-Oder die Property `auth` in den `application.properties` setzen:
+Oder die Property `uv.security.auth` in den `application.properties` setzen:
 
-<pre>auth=ldap</pre>
+<pre>uv.security.auth=ldap</pre>
 
 #### Active Directory
 
-Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
+Die Anwendung mit dem Parameter `-Duv.security.auth=activeDirectory` starten:
 
 ```bash
-./mvnw clean spring-boot:run -Dauth=activeDirectory
+./mvnw clean spring-boot:run -Duv.security.auth=activeDirectory
 ```
 
-Oder die Property `auth` in den `application.properties` setzen:
+Oder die Property `uv.security.auth` in den `application.properties` setzen:
 
-<pre>auth=activeDirectory</pre>
+<pre>uv.security.auth=activeDirectory</pre>
 
 ### Externe Systeme mit Docker virtualisieren
 

@@ -3,7 +3,7 @@ image:
 
 applicationProperties: |-
   # AUTHENTICATION
-  auth=default
+  uv.security.auth=default
   testdata.create=true
 
 environment:

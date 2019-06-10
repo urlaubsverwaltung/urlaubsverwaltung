@@ -7,11 +7,21 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("uv.security")
 public class SecurityConfigurationProperties {
 
+    private String auth;
+
     private String identifier;
     private String firstName;
     private String lastName;
     private String mailAddress;
     private SecurityFilter filter = new SecurityFilter();
+
+    public String getAuth() {
+        return auth;
+    }
+
+    public void setAuth(String auth) {
+        this.auth = auth;
+    }
 
     public String getIdentifier() {
         return identifier;
