@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.math.BigDecimal.ROUND_UNNECESSARY;
+import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,8 +68,8 @@ public class OvertimeDAOIT {
         BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
 
         assertThat(totalHours).isNotNull();
-        assertThat(totalHours.setScale(1, ROUND_UNNECESSARY)).isEqualTo(new BigDecimal("2.5").setScale(1,
-            ROUND_UNNECESSARY));
+        assertThat(totalHours.setScale(1, UNNECESSARY)).isEqualTo(new BigDecimal("2.5").setScale(1,
+            UNNECESSARY));
     }
 
 
