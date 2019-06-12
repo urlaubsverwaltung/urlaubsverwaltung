@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("uv.security.ldap")
 public class SecurityLdapConfigurationProperties {
 
-    private boolean enabled;
-
     private String url;
     private String base;
     private String managerDn;
@@ -17,14 +15,6 @@ public class SecurityLdapConfigurationProperties {
     private String userSearchFilter;
 
     private SecurityLdapSync sync = new SecurityLdapSync();
-
-    public boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public String getUrl() {
         return url;
@@ -84,9 +74,18 @@ public class SecurityLdapConfigurationProperties {
 
     public static class SecurityLdapSync {
 
+        private boolean enabled;
         private String userSearchBase;
         private String userDn;
         private String password;
+
+        public boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
 
         public String getUserSearchBase() {
             return userSearchBase;
