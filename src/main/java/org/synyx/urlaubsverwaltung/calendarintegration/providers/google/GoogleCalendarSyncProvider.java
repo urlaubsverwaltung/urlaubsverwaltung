@@ -19,9 +19,9 @@ import com.google.api.services.calendar.model.EventDateTime;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -47,19 +47,20 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    public static final String APPLICATION_NAME = "Urlaubsverwaltung";
-    protected static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
+    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
+    private static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
     private Calendar googleCalendarClient;
     private int refreshTokenHashCode;
-    private final MailService mailService;
+
+    private final CalendarMailService calendarMailService;
     private final SettingsService settingsService;
 
     @Autowired
-    public GoogleCalendarSyncProvider(MailService mailService, SettingsService settingsService) {
+    public GoogleCalendarSyncProvider(CalendarMailService calendarMailService, SettingsService settingsService) {
+        this.calendarMailService = calendarMailService;
 
         this.settingsService = settingsService;
-        this.mailService = mailService;
     }
 
     /**
@@ -124,7 +125,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
             } catch (IOException ex) {
                 LOG.warn("An error occurred while trying to add appointment to calendar %s", calendarId, ex);
-                mailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
+                calendarMailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
         return Optional.empty();
@@ -154,7 +155,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 LOG.info("Event {} has been updated in calendar '{}'.", eventId, calendarId);
             } catch (IOException ex) {
                 LOG.warn("Could not update event {} in calendar '{}'.", eventId, calendarId, ex);
-                mailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
+                calendarMailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
             }
         }
     }
@@ -176,7 +177,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 LOG.info("Event {} has been deleted in calendar '{}'.", eventId, calendarId);
             } catch (IOException ex) {
                 LOG.warn("Could not delete event {} in calendar '{}'", eventId, calendarId, ex);
-                mailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
+                calendarMailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
             }
         }
     }

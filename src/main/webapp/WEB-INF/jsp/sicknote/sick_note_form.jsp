@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
 <html>
@@ -20,16 +21,16 @@
         window.uv.params = {};
         window.uv.params.person = "${param.person}";
     </script>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.jquery-ui-themes.css' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~sick_note_form.css' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.css' />" />
-    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/date-fns-localized.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/npm.jquery-ui.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/npm.jquery-ui-themes.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_form~overtime_form~sick_note_form.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_form~overtime_form~person_overview~sick_note_form.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/sick_note_form.min.js' />"></script>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />" />
+    <script defer src="<asset:url value='npm.date-fns.js' />"></script>
+    <script defer src="<asset:url value='date-fns-localized.js' />"></script>
+    <script defer src="<asset:url value='npm.jquery-ui.js' />"></script>
+    <script defer src="<asset:url value='npm.jquery-ui-themes.js' />"></script>
+    <script defer src="<asset:url value='app_form~overtime_form~sick_note_form.js' />"></script>
+    <script defer src="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
+    <script defer src="<asset:url value='sick_note_form.js' />"></script>
 </head>
 <body>
 

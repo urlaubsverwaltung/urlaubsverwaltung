@@ -31,8 +31,8 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void save(Account account) {
+    public Account save(Account account) {
 
-        accountDAO.save(account);
+        return accountDAO.save(account);
     }
 }

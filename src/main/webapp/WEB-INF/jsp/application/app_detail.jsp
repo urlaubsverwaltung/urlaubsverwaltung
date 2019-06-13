@@ -5,6 +5,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <fmt:parseDate value="${application.startDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date"/>
 <fmt:parseDate value="${application.endDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date"/>
@@ -23,9 +24,9 @@
         window.uv.startDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedStartDate}' type="date" />";
         window.uv.endDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedEndDate}' type="date" />";
     </script>
-    <script defer src="<spring:url value='/assets/npm.date-fns.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_detail~app_form~person_overview.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/app_detail.min.js' />"></script>
+    <script defer src="<asset:url value='npm.date-fns.js' />"></script>
+    <script defer src="<asset:url value='app_detail~app_form~person_overview.js' />"></script>
+    <script defer src="<asset:url value='app_detail.js' />"></script>
 </head>
 
 <body>

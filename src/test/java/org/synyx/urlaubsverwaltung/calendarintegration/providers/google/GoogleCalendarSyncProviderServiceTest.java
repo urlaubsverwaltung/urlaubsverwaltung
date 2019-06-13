@@ -16,10 +16,9 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -40,10 +39,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider.APPLICATION_NAME;
-import static org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider.GOOGLEAPIS_OAUTH2_V4_TOKEN;
 
 public class GoogleCalendarSyncProviderServiceTest {
+
+    private static final String APPLICATION_NAME = "Urlaubsverwaltung";
+    private static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
     private static String CLIENT_ID;
     private static String CLIENT_SECRET;
@@ -51,7 +51,7 @@ public class GoogleCalendarSyncProviderServiceTest {
     private static String REFRESH_TOKEN;
 
     private SettingsService settingsService;
-    private MailService mailService;
+    private CalendarMailService calendarMailService;
     private GoogleCalendarSyncProvider googleCalendarSyncProvider;
 
     @BeforeClass
@@ -76,8 +76,8 @@ public class GoogleCalendarSyncProviderServiceTest {
     @Before
     public void setUp() {
         settingsService = prepareSettingsServiceMock();
-        mailService = mock(MailService.class);
-        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(mailService, settingsService);
+        calendarMailService = mock(CalendarMailService.class);
+        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
     }
 
     private static Credential createCredentialWithRefreshToken(
@@ -120,7 +120,7 @@ public class GoogleCalendarSyncProviderServiceTest {
 
     @Test
     public void init() {
-        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(mailService, settingsService);
+        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
     }
 
     @Test
@@ -132,13 +132,13 @@ public class GoogleCalendarSyncProviderServiceTest {
         Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.MORNING);
 
         AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(CalendarSettings.class));
-        Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, config);
+        Absence absence = new Absence(person, period, config);
 
         int eventsBeforeAdd = getCalendarEventCount();
         String eventId = googleCalendarSyncProvider.add(absence, calendarSettings).get();
         int eventsAfterAdd = getCalendarEventCount();
 
-        Absence absenceUpdate = new Absence(person, period, EventType.SICKNOTE, config);
+        Absence absenceUpdate = new Absence(person, period, config);
         googleCalendarSyncProvider.update(absenceUpdate, eventId, calendarSettings);
         int eventsAfterUpdate = getCalendarEventCount();
 

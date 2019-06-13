@@ -44,8 +44,7 @@ class MailBuilder {
             Template template = freemarkerConfiguration.getTemplate(templateFilename, locale);
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         } catch (TemplateException | IOException e) {
-            throw new RuntimeException("Something went wrong processing email template=" + templateName, e);
+            throw new MailBuilderException("Something went wrong processing email template=" + templateName, e);
         }
     }
-
 }

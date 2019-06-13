@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
 <html>
@@ -19,8 +20,8 @@
         window.uv.sickNote.person = {};
         window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
     </script>
-    <script defer type="text/javascript" src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
-    <script defer type="text/javascript" src="<spring:url value='/assets/sick_notes.min.js' />"></script>
+    <script defer type="text/javascript" src="<asset:url value='npm.tablesorter.js' />"></script>
+    <script defer type="text/javascript" src="<asset:url value='sick_notes.js' />"></script>
 </head>
 
 <body>

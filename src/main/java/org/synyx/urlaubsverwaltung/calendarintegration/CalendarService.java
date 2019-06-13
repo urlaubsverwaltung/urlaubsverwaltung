@@ -2,9 +2,9 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
 import java.util.Optional;

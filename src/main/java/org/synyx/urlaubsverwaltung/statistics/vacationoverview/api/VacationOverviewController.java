@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.absence.api.AbsenceController;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;

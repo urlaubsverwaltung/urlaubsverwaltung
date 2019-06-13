@@ -119,9 +119,7 @@ public final class TestDataCreator {
     public static Application createApplication(Person person, VacationType vacationType) {
 
         LocalDate now = LocalDate.now(UTC);
-
-        return createApplication(person, vacationType, now, now.plusDays(3),
-            DayLength.FULL);
+        return createApplication(person, vacationType, now, now.plusDays(3), DayLength.FULL);
     }
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate,

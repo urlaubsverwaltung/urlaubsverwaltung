@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.EventType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -30,7 +29,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Service
 @Transactional
-public class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
+class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -69,7 +68,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote.getPerson(),
-                    sickNote.getPeriod(), EventType.SICKNOTE, timeConfiguration));
+                    sickNote.getPeriod(), timeConfiguration));
 
         eventId.ifPresent(s -> absenceMappingService.create(sickNote.getId(), AbsenceType.SICKNOTE, s));
 
@@ -94,7 +93,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         if (absenceMapping.isPresent()) {
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
             AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(), EventType.SICKNOTE,
+            calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
                     timeConfiguration), absenceMapping.get().getEventId());
         }
 
@@ -124,7 +123,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
 
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                    EventType.ALLOWED_APPLICATION, new AbsenceTimeConfiguration(calendarSettings)), eventId);
+                    new AbsenceTimeConfiguration(calendarSettings)), eventId);
             absenceMappingService.delete(absenceMapping.get());
             absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId);
         }

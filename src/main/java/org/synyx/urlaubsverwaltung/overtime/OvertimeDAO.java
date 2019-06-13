@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @since  2.11.0
  */
-public interface OvertimeDAO extends CrudRepository<Overtime, Integer> {
+interface OvertimeDAO extends CrudRepository<Overtime, Integer> {
 
     List<Overtime> findByPerson(Person person);
 

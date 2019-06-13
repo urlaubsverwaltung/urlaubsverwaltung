@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
@@ -30,14 +30,14 @@ public class SickNoteStatisticsTest {
 
     private SickNoteStatistics statistics;
     private WorkDaysService calendarService;
-    private SickNoteDAO sickNoteDAO;
+    private SickNoteService sickNoteDAO;
     private List<SickNote> sickNotes;
 
     @Before
     public void setUp() {
 
         calendarService = mock(WorkDaysService.class);
-        sickNoteDAO = mock(SickNoteDAO.class);
+        sickNoteDAO = mock(SickNoteService.class);
         sickNotes = new ArrayList<>();
 
         Person person = TestDataCreator.createPerson();
@@ -53,8 +53,8 @@ public class SickNoteStatisticsTest {
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
 
-        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
-        when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
+        when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
+        when(sickNoteDAO.getAllActiveByYear(2013)).thenReturn(sickNotes);
 
         when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
                     LocalDate.of(2013, OCTOBER, 11), person))
@@ -98,7 +98,7 @@ public class SickNoteStatisticsTest {
     @Test
     public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
 
-        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
+        when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
 
         statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
 
@@ -109,7 +109,7 @@ public class SickNoteStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetTotalNumberOfSickDaysInvalidDateRange() {
 
-        when(sickNoteDAO.findAllActiveByYear(2015)).thenReturn(sickNotes);
+        when(sickNoteDAO.getAllActiveByYear(2015)).thenReturn(sickNotes);
 
         statistics = new SickNoteStatistics(2015, sickNoteDAO, calendarService);
 

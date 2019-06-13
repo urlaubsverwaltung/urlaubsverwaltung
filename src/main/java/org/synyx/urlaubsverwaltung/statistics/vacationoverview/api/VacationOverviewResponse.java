@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
-import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
-
 import java.util.List;
 
 public class VacationOverviewResponse {

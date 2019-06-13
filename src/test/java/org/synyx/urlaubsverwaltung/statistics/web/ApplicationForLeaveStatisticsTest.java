@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.statistics.web.ApplicationForLeaveStatistics}.
+ * Unit test for {@link ApplicationForLeaveStatistics}.
  */
 public class ApplicationForLeaveStatisticsTest {
 
