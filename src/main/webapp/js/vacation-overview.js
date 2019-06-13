@@ -29,34 +29,17 @@ $(function () {
           + encodeURIComponent(selectedMonthValue) + "&selectedDepartment="
           + encodeURIComponent(selectedDepartmentValue);
 
-        const xhttp = new XMLHttpRequest();
-        xhttp.open("GET", url, false);
-        xhttp.setRequestHeader("Content-type", "application/json");
-        xhttp.send();
-        const holyDayOverviewResponse = JSON.parse(xhttp.responseText);
+        $.get(url).then( (holyDayOverviewResponse) => {
         if (holyDayOverviewResponse && holyDayOverviewResponse.response) {
 
           const overViewList = holyDayOverviewResponse.response.list;
           overViewList
             .forEach(function (listItem) {
               const personId = listItem.personID;
-              const url = location.protocol + "//"
-                + location.host + "/api/absences?year="
-                + encodeURIComponent(selectedYearValue) + "&month="
-                + encodeURIComponent(selectedMonthValue) + "&person="
-                + encodeURIComponent(personId);
-              const xhttp = new XMLHttpRequest();
-              xhttp.open("GET", url, false);
-              xhttp.setRequestHeader("Content-type",
-                "application/json");
-              xhttp.send();
-
-              const response = JSON.parse(xhttp.responseText);
-              if (response) {
 
                 listItem.days
                   .forEach(currentDay => {
-                      let absences = response.response.absences;
+                      let absences = listItem.absences;
 
                       currentDay.cssClass = '';
 
@@ -98,7 +81,7 @@ $(function () {
                       }
 
                   }, this);
-              }
+
             });
 
           const vacationOverviewTableHtml = html`<table id="vacationOverviewTable" class="list-table sortable tablesorter vacationOverview-table">
@@ -132,7 +115,7 @@ $(function () {
 
           document.querySelector("#vacationOverview").innerHTML = vacationOverviewTableHtml;
         }
-      }
+      });
 
       $("table.sortable").tablesorter({
         sortList: [[0, 0]],
@@ -142,6 +125,7 @@ $(function () {
           }
         }
       });
+    }
     }
 
     const selectedYear = document.querySelector('#yearSelect');

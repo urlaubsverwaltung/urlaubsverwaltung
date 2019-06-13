@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.lang.Integer.parseInt;
-
 
 @Api("Absences: Get all absences for a certain period")
 @RestController("restApiAbsenceController")
@@ -55,10 +53,10 @@ public class AbsenceController {
     public ResponseWrapper<DayAbsenceList> personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
-        String year,
+        Integer year,
         @ApiParam(value = "Month of year to get the absences for")
         @RequestParam(value = "month", required = false)
-        String month,
+        Integer month,
         @ApiParam(value = "ID of the person")
         @RequestParam("person")
         Integer personId,
@@ -97,18 +95,18 @@ public class AbsenceController {
     }
 
 
-    private static LocalDate getStartDate(String year, Optional<String> optionalMonth) {
+    private static LocalDate getStartDate(Integer year, Optional<Integer> optionalMonth) {
 
-        return optionalMonth.map(s -> DateUtil.getFirstDayOfMonth(parseInt(year), parseInt(s)))
-            .orElseGet(() -> DateUtil.getFirstDayOfYear(parseInt(year)));
+        return optionalMonth.map(s -> DateUtil.getFirstDayOfMonth(year, s))
+            .orElseGet(() -> DateUtil.getFirstDayOfYear(year));
 
     }
 
 
-    private static LocalDate getEndDate(String year, Optional<String> optionalMonth) {
+    private static LocalDate getEndDate(Integer year, Optional<Integer> optionalMonth) {
 
-        return optionalMonth.map(s -> DateUtil.getLastDayOfMonth(parseInt(year), parseInt(s)))
-            .orElseGet(() -> DateUtil.getLastDayOfYear(parseInt(year)));
+        return optionalMonth.map(s -> DateUtil.getLastDayOfMonth(year, s))
+            .orElseGet(() -> DateUtil.getLastDayOfYear(year));
 
     }
 
