@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -23,14 +24,14 @@ public class LdapUserDataImporter {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final LdapUserService ldapUserService;
-    private final LdapSyncService ldapSyncService;
+    private final PersonSyncService personSyncService;
     private final PersonService personService;
 
-    LdapUserDataImporter(LdapUserService ldapUserService, LdapSyncService ldapSyncService,
+    LdapUserDataImporter(LdapUserService ldapUserService, PersonSyncService personSyncService,
         PersonService personService) {
 
         this.ldapUserService = ldapUserService;
-        this.ldapSyncService = ldapSyncService;
+        this.personSyncService = personSyncService;
         this.personService = personService;
     }
 
@@ -54,9 +55,9 @@ public class LdapUserDataImporter {
             Optional<Person> optionalPerson = personService.getPersonByLogin(username);
 
             if (optionalPerson.isPresent()) {
-                ldapSyncService.syncPerson(optionalPerson.get(), firstName, lastName, email);
+                personSyncService.syncPerson(optionalPerson.get(), firstName, lastName, email);
             } else {
-                ldapSyncService.createPerson(username, firstName, lastName, email);
+                personSyncService.createPerson(username, firstName, lastName, email);
             }
         }
 

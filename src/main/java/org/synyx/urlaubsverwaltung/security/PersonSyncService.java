@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security.ldap;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +20,19 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Syncs the person data from configured LDAP.
+ *
+ * @deprecated Please use {@link PersonService} directly.
+ * @see PersonService
  */
 @Transactional
-public class LdapSyncService {
+@Deprecated
+public class PersonSyncService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
 
-    LdapSyncService(PersonService personService) {
+    public PersonSyncService(PersonService personService) {
 
         this.personService = personService;
     }
@@ -42,7 +46,7 @@ public class LdapSyncService {
      * @param mailAddress to be updated, is optional
      * @return the updated person
      */
-    Person syncPerson(Person person, Optional<String> firstName, Optional<String> lastName,
+    public Person syncPerson(Person person, Optional<String> firstName, Optional<String> lastName,
                       Optional<String> mailAddress) {
 
         firstName.ifPresent(person::setFirstName);
@@ -66,7 +70,7 @@ public class LdapSyncService {
      * @param mailAddress of the person to be created, is optional
      * @return the created person
      */
-    Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
+    public Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
                         Optional<String> mailAddress) {
 
         Assert.notNull(login, "Missing login name!");
@@ -85,7 +89,7 @@ public class LdapSyncService {
      *
      * @param person that gets the role {@link Role#OFFICE}
      */
-    void appointPersonAsOfficeUser(Person person) {
+    public void appointPersonAsOfficeUser(Person person) {
 
         List<Role> permissions = new ArrayList<>(person.getPermissions());
         permissions.add(Role.OFFICE);

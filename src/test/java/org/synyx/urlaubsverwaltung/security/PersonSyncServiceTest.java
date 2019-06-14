@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security.ldap;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,7 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapSyncService;
+import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -27,16 +27,16 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class LdapSyncServiceTest {
+public class PersonSyncServiceTest {
 
-    private LdapSyncService sut;
+    private PersonSyncService sut;
 
     @Mock
     private PersonService personService;
 
     @Before
     public void setUp() {
-        sut = new LdapSyncService(personService);
+        sut = new PersonSyncService(personService);
     }
 
 

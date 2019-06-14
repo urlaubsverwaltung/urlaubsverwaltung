@@ -5,6 +5,7 @@
 * Upgrade spring boot to 2.1.5 [#710](https://github.com/synyx/urlaubsverwaltung/pull/710)
 * Migrate double used configuration paths for uv.security [#712](https://github.com/synyx/urlaubsverwaltung/pull/712)
 * Fix availability and workdays api: Use http status 204 (instead of 500) for no working days present for given user [#728](https://github.com/synyx/urlaubsverwaltung/issues/728)
+* New Security Provider with OpenId Connect (oidc) [#716](https://github.com/synyx/urlaubsverwaltung/pull/716)
 
 #### Breaking Changes
 * Bump to Java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)

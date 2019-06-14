@@ -9,6 +9,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 
 @Configuration
@@ -46,14 +47,14 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapPersonContextMapper personContextMapper(PersonService personService, LdapSyncService ldapSyncService,
+        public LdapPersonContextMapper personContextMapper(PersonService personService, PersonSyncService personSyncService,
                                                            LdapUserMapper ldapUserMapper) {
-            return new LdapPersonContextMapper(personService, ldapSyncService, ldapUserMapper);
+            return new LdapPersonContextMapper(personService, personSyncService, ldapUserMapper);
         }
 
         @Bean
-        public LdapSyncService ldapSyncService(PersonService personService) {
-            return new LdapSyncService(personService);
+        public PersonSyncService ldapSyncService(PersonService personService) {
+            return new PersonSyncService(personService);
         }
     }
 
@@ -76,9 +77,9 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, LdapSyncService ldapSyncService,
+        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonSyncService personSyncService,
                                                          PersonService personService) {
-            return new LdapUserDataImporter(ldapUserService, ldapSyncService, personService);
+            return new LdapUserDataImporter(ldapUserService, personSyncService, personService);
         }
 
         @Bean

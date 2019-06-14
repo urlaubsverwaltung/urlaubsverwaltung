@@ -12,6 +12,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private boolean isOauth2Enabled;
+
+    public WebSecurityConfig(SecurityConfigurationProperties properties) {
+
+        isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -40,13 +47,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                     .authenticated()
                 .and()
-                    .formLogin()
+                .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login");
+
+                if(isOauth2Enabled) {
+                    http.oauth2Login();
+                } else {
+                    http.formLogin()
                         .loginPage("/login").permitAll()
                             .defaultSuccessUrl("/web/overview")
-                            .failureUrl("/login?login_error=1")
-                .and()
-                    .logout()
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login");
+                            .failureUrl("/login?login_error=1");
+                }
     }
 }

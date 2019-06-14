@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,14 +31,14 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
-    private final LdapSyncService ldapSyncService;
+    private final PersonSyncService personSyncService;
     private final LdapUserMapper ldapUserMapper;
 
-    LdapPersonContextMapper(PersonService personService, LdapSyncService ldapSyncService,
+    LdapPersonContextMapper(PersonService personService, PersonSyncService personSyncService,
                                    LdapUserMapper ldapUserMapper) {
 
         this.personService = personService;
-        this.ldapSyncService = ldapSyncService;
+        this.personSyncService = personSyncService;
         this.ldapUserMapper = ldapUserMapper;
     }
 
@@ -69,12 +70,12 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
                 throw new DisabledException("User '" + username + "' has been deactivated");
             }
 
-            person = ldapSyncService.syncPerson(existentPerson, ldapUser.getFirstName(), ldapUser.getLastName(),
+            person = personSyncService.syncPerson(existentPerson, ldapUser.getFirstName(), ldapUser.getLastName(),
                     ldapUser.getEmail());
         } else {
             LOG.info("No user found for username '{}'", username);
 
-            person = ldapSyncService.createPerson(login, ldapUser.getFirstName(), ldapUser.getLastName(),
+            person = personSyncService.createPerson(login, ldapUser.getFirstName(), ldapUser.getLastName(),
                     ldapUser.getEmail());
         }
 
@@ -85,7 +86,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
 
         // TODO: Think about if this logic could be dangerous?!
         if (noOfficeUserYet) {
-            ldapSyncService.appointPersonAsOfficeUser(person);
+            personSyncService.appointPersonAsOfficeUser(person);
         }
 
         final Essence user = new Essence(ctx);
