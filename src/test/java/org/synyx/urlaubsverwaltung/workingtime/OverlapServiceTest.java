@@ -10,15 +10,13 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
@@ -35,14 +33,14 @@ public class OverlapServiceTest {
 
     private OverlapService service;
     private ApplicationDAO applicationDAO;
-    private SickNoteDAO sickNoteDAO;
+    private SickNoteService sickNoteService;
 
     @Before
     public void setup() {
 
         applicationDAO = mock(ApplicationDAO.class);
-        sickNoteDAO = mock(SickNoteDAO.class);
-        service = new OverlapService(applicationDAO, sickNoteDAO);
+        sickNoteService = mock(SickNoteService.class);
+        service = new OverlapService(applicationDAO, sickNoteService);
     }
 
 
@@ -203,7 +201,7 @@ public class OverlapServiceTest {
         inactiveSickNote.setEndDate(endDate);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class),
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class),
             any(LocalDate.class)))
             .thenReturn(singletonList(inactiveSickNote));
 
@@ -223,7 +221,7 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfNoActiveSickNotesInThePeriod() {
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(new ArrayList<>());
 
         // sick note to be checked: 16.01. - 18.01.
@@ -249,7 +247,7 @@ public class OverlapServiceTest {
         sickNote.setEndDate(LocalDate.of(2012, JANUARY, 19));
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
 
         // application for leave to check: 18.01. - 19.01.
@@ -275,7 +273,7 @@ public class OverlapServiceTest {
         sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
 
         // application for leave to check: 14.01. - 16.01.
@@ -302,7 +300,7 @@ public class OverlapServiceTest {
         existentSickNote.setEndDate(LocalDate.of(2015, MARCH, 16));
         existentSickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        when(sickNoteDAO.findByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(existentSickNote));
 
         // sick note should be edited to: 16.03. - 17.03.

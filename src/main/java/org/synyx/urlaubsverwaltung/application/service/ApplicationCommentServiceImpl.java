@@ -32,16 +32,14 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     public ApplicationComment create(Application application, ApplicationAction action, Optional<String> text,
         Person author) {
 
-        ApplicationComment comment = new ApplicationComment(author);
+        final ApplicationComment comment = new ApplicationComment(author);
 
         comment.setAction(action);
         comment.setApplication(application);
 
         text.ifPresent(comment::setText);
 
-        commentDAO.save(comment);
-
-        return comment;
+        return commentDAO.save(comment);
     }
 
 

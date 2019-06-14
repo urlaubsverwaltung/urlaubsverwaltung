@@ -3,35 +3,41 @@ package org.synyx.urlaubsverwaltung.person;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class PersonServiceImplTest {
 
     private PersonService sut;
 
+    @Mock
     private PersonDAO personDAO;
-
-    private SecurityContext securityContext = mock(SecurityContext.class);
+    @Mock
+    private SecurityContext securityContext;
 
     @Before
     public void setUp() {
-
-        personDAO = mock(PersonDAO.class);
 
         sut = new PersonServiceImpl(personDAO);
     }
@@ -41,8 +47,10 @@ public class PersonServiceImplTest {
     public void ensureCreatedPersonHasCorrectAttributes() {
 
         Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");
-        person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
+        person.setPermissions(asList(USER, BOSS));
+        person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
+
+        when(personDAO.save(person)).thenReturn(person);
 
         Person createdPerson = sut.create(person);
 
@@ -52,37 +60,34 @@ public class PersonServiceImplTest {
         Assert.assertEquals("Wrong email", "rick@grimes.de", createdPerson.getEmail());
 
         Assert.assertEquals("Wrong number of notifications", 2, createdPerson.getNotifications().size());
-        Assert.assertTrue("Missing notification",
-            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
-        Assert.assertTrue("Missing notification",
-            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS_ALL));
+        Assert.assertTrue("Missing notification", createdPerson.getNotifications().contains(NOTIFICATION_USER));
+        Assert.assertTrue("Missing notification", createdPerson.getNotifications().contains(NOTIFICATION_BOSS_ALL));
 
         Assert.assertEquals("Wrong number of permissions", 2, createdPerson.getPermissions().size());
-        Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(Role.USER));
-        Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(Role.BOSS));
+        Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(USER));
+        Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(BOSS));
     }
 
 
     @Test
     public void ensureCreatedPersonIsPersisted() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
+        sut.create(person);
 
-        Person createdPerson = sut.create(person);
-
-        verify(personDAO).save(createdPerson);
+        verify(personDAO).save(person);
     }
 
     @Test
     public void ensureUpdatedPersonHasCorrectAttributes() {
 
-        Person person = TestDataCreator.createPerson();
-
+        Person person = createPerson();
         when(personDAO.findById(anyInt())).thenReturn(Optional.of(person));
+        when(personDAO.save(person)).thenReturn(person);
 
         Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
-            Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL),
-            Arrays.asList(Role.USER, Role.BOSS));
+            asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL),
+            asList(USER, BOSS));
 
         Assert.assertEquals("Wrong login name", "rick", updatedPerson.getLoginName());
         Assert.assertEquals("Wrong first name", "Rick", updatedPerson.getFirstName());
@@ -90,14 +95,12 @@ public class PersonServiceImplTest {
         Assert.assertEquals("Wrong email", "rick@grimes.de", updatedPerson.getEmail());
 
         Assert.assertEquals("Wrong number of notifications", 2, updatedPerson.getNotifications().size());
-        Assert.assertTrue("Missing notification",
-            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
-        Assert.assertTrue("Missing notification",
-            updatedPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS_ALL));
+        Assert.assertTrue("Missing notification", updatedPerson.getNotifications().contains(NOTIFICATION_USER));
+        Assert.assertTrue("Missing notification", updatedPerson.getNotifications().contains(NOTIFICATION_BOSS_ALL));
 
         Assert.assertEquals("Wrong number of permissions", 2, updatedPerson.getPermissions().size());
-        Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(Role.USER));
-        Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(Role.BOSS));
+        Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(USER));
+        Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(BOSS));
 
     }
 
@@ -105,7 +108,7 @@ public class PersonServiceImplTest {
     @Test
     public void ensureUpdatedPersonIsPersisted() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
         person.setId(1);
 
         sut.update(person);
@@ -117,7 +120,7 @@ public class PersonServiceImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfPersonToBeUpdatedHasNoID() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
         person.setId(null);
 
         sut.update(person);
@@ -127,7 +130,7 @@ public class PersonServiceImplTest {
     @Test
     public void ensureSaveCallsCorrectDaoMethod() {
 
-        Person personToSave = TestDataCreator.createPerson();
+        Person personToSave = createPerson();
         sut.save(personToSave);
         verify(personDAO).save(personToSave);
     }
@@ -155,19 +158,19 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
-        Person inactive = TestDataCreator.createPerson("inactive");
-        inactive.setPermissions(Collections.singletonList(Role.INACTIVE));
+        Person inactive = createPerson("inactive");
+        inactive.setPermissions(singletonList(Role.INACTIVE));
 
-        Person user = TestDataCreator.createPerson("user");
-        user.setPermissions(Collections.singletonList(Role.USER));
+        Person user = createPerson("user");
+        user.setPermissions(singletonList(USER));
 
-        Person boss = TestDataCreator.createPerson("boss");
-        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        Person boss = createPerson("boss");
+        boss.setPermissions(asList(USER, BOSS));
 
-        Person office = TestDataCreator.createPerson("office");
-        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+        Person office = createPerson("office");
+        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
 
-        List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
+        List<Person> allPersons = asList(inactive, user, boss, office);
 
         when(personDAO.findAll()).thenReturn(allPersons);
 
@@ -184,19 +187,19 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
 
-        Person inactive = TestDataCreator.createPerson("inactive");
-        inactive.setPermissions(Collections.singletonList(Role.INACTIVE));
+        Person inactive = createPerson("inactive");
+        inactive.setPermissions(singletonList(Role.INACTIVE));
 
-        Person user = TestDataCreator.createPerson("user");
-        user.setPermissions(Collections.singletonList(Role.USER));
+        Person user = createPerson("user");
+        user.setPermissions(singletonList(USER));
 
-        Person boss = TestDataCreator.createPerson("boss");
-        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        Person boss = createPerson("boss");
+        boss.setPermissions(asList(USER, BOSS));
 
-        Person office = TestDataCreator.createPerson("office");
-        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+        Person office = createPerson("office");
+        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
 
-        List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
+        List<Person> allPersons = asList(inactive, user, boss, office);
 
         when(personDAO.findAll()).thenReturn(allPersons);
 
@@ -211,20 +214,20 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
-        Person user = TestDataCreator.createPerson("user");
-        user.setPermissions(Collections.singletonList(Role.USER));
+        Person user = createPerson("user");
+        user.setPermissions(singletonList(USER));
 
-        Person boss = TestDataCreator.createPerson("boss");
-        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        Person boss = createPerson("boss");
+        boss.setPermissions(asList(USER, BOSS));
 
-        Person office = TestDataCreator.createPerson("office");
-        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+        Person office = createPerson("office");
+        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
 
-        List<Person> allPersons = Arrays.asList(user, boss, office);
+        List<Person> allPersons = asList(user, boss, office);
 
         when(personDAO.findAll()).thenReturn(allPersons);
 
-        List<Person> filteredList = sut.getPersonsByRole(Role.BOSS);
+        List<Person> filteredList = sut.getPersonsByRole(BOSS);
 
         Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
 
@@ -236,24 +239,24 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
 
-        Person user = TestDataCreator.createPerson("user");
-        user.setPermissions(Collections.singletonList(Role.USER));
-        user.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
+        Person user = createPerson("user");
+        user.setPermissions(singletonList(USER));
+        user.setNotifications(singletonList(NOTIFICATION_USER));
 
-        Person boss = TestDataCreator.createPerson("boss");
-        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
-        boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
+        Person boss = createPerson("boss");
+        boss.setPermissions(asList(USER, BOSS));
+        boss.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
-        Person office = TestDataCreator.createPerson("office");
-        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
-        office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL,
+        Person office = createPerson("office");
+        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
+        office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL,
             MailNotification.NOTIFICATION_OFFICE));
 
-        List<Person> allPersons = Arrays.asList(user, boss, office);
+        List<Person> allPersons = asList(user, boss, office);
 
         when(personDAO.findAll()).thenReturn(allPersons);
 
-        List<Person> filteredList = sut.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS_ALL);
+        List<Person> filteredList = sut.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
 
         Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
 
@@ -265,11 +268,11 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetActivePersonsReturnSortedList() {
 
-        Person shane = TestDataCreator.createPerson("shane");
-        Person carl = TestDataCreator.createPerson("carl");
-        Person rick = TestDataCreator.createPerson("rick");
+        Person shane = createPerson("shane");
+        Person carl = createPerson("carl");
+        Person rick = createPerson("rick");
 
-        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
+        List<Person> unsortedPersons = asList(shane, carl, rick);
 
         when(personDAO.findAll()).thenReturn(unsortedPersons);
 
@@ -285,12 +288,12 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetInactivePersonsReturnSortedList() {
 
-        Person shane = TestDataCreator.createPerson("shane");
-        Person carl = TestDataCreator.createPerson("carl");
-        Person rick = TestDataCreator.createPerson("rick");
+        Person shane = createPerson("shane");
+        Person carl = createPerson("carl");
+        Person rick = createPerson("rick");
 
-        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
-        unsortedPersons.forEach(person -> person.setPermissions(Collections.singletonList(Role.INACTIVE)));
+        List<Person> unsortedPersons = asList(shane, carl, rick);
+        unsortedPersons.forEach(person -> person.setPermissions(singletonList(Role.INACTIVE)));
 
         when(personDAO.findAll()).thenReturn(unsortedPersons);
 
@@ -306,16 +309,16 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetPersonsByRoleReturnSortedList() {
 
-        Person shane = TestDataCreator.createPerson("shane");
-        Person carl = TestDataCreator.createPerson("carl");
-        Person rick = TestDataCreator.createPerson("rick");
+        Person shane = createPerson("shane");
+        Person carl = createPerson("carl");
+        Person rick = createPerson("rick");
 
-        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
-        unsortedPersons.forEach(person -> person.setPermissions(Collections.singletonList(Role.USER)));
+        List<Person> unsortedPersons = asList(shane, carl, rick);
+        unsortedPersons.forEach(person -> person.setPermissions(singletonList(USER)));
 
         when(personDAO.findAll()).thenReturn(unsortedPersons);
 
-        List<Person> sortedList = sut.getPersonsByRole(Role.USER);
+        List<Person> sortedList = sut.getPersonsByRole(USER);
 
         Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
         Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
@@ -327,17 +330,16 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetPersonsByNotificationTypeReturnSortedList() {
 
-        Person shane = TestDataCreator.createPerson("shane");
-        Person carl = TestDataCreator.createPerson("carl");
-        Person rick = TestDataCreator.createPerson("rick");
+        Person shane = createPerson("shane");
+        Person carl = createPerson("carl");
+        Person rick = createPerson("rick");
 
-        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
-        unsortedPersons.forEach(person ->
-            person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER)));
+        List<Person> unsortedPersons = asList(shane, carl, rick);
+        unsortedPersons.forEach(person -> person.setNotifications(singletonList(NOTIFICATION_USER)));
 
         when(personDAO.findAll()).thenReturn(unsortedPersons);
 
-        List<Person> sortedList = sut.getPersonsWithNotificationType(MailNotification.NOTIFICATION_USER);
+        List<Person> sortedList = sut.getPersonsWithNotificationType(NOTIFICATION_USER);
 
         Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
         Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
@@ -357,7 +359,7 @@ public class PersonServiceImplTest {
     @Test
     public void ensureReturnsPersonForCurrentlySignedInUser() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
 
         Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(person.getNiceName());
@@ -374,7 +376,6 @@ public class PersonServiceImplTest {
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIllegalOnNullAuthentication() {
 
-        when(securityContext.getAuthentication()).thenReturn(null);
         sut.getSignedInUser();
     }
 }

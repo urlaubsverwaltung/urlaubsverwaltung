@@ -38,7 +38,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
             .addResourceLocations("classpath:static/assets/", "classpath:static/css/", "classpath:static/images/")
             .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .resourceChain(false)
-            .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"))
+            // do not add contentVersionStrategy for "/assets/**" since these files are already handled by the webpack build
+            .addResolver(new VersionResourceResolver().addContentVersionStrategy("/css/**", "/images/**"))
             .addTransformer(new CssLinkResourceTransformer());
     }
 

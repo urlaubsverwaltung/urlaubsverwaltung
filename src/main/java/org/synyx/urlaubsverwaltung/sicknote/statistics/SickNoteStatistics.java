@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -25,13 +25,13 @@ public class SickNoteStatistics {
     private final BigDecimal totalNumberOfSickDays;
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
-    public SickNoteStatistics(int year, SickNoteDAO sickNoteDAO, WorkDaysService calendarService) {
+    public SickNoteStatistics(int year, SickNoteService sickNoteService, WorkDaysService calendarService) {
 
         this.year = year;
-        this.numberOfPersonsWithMinimumOneSickNote = sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
+        this.numberOfPersonsWithMinimumOneSickNote = sickNoteService.getNumberOfPersonsWithMinimumOneSickNote(year);
         this.created = LocalDate.now(UTC);
 
-        List<SickNote> sickNotes = sickNoteDAO.findAllActiveByYear(year);
+        List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year);
 
         this.totalNumberOfSickNotes = sickNotes.size();
         this.totalNumberOfSickDays = calculateTotalNumberOfSickDays(calendarService, sickNotes);
@@ -114,5 +114,16 @@ public class SickNoteStatistics {
 
             return BigDecimal.valueOf(averageDuration);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SickNoteStatistics{" +
+            "created=" + created +
+            ", year=" + year +
+            ", totalNumberOfSickNotes=" + totalNumberOfSickNotes +
+            ", totalNumberOfSickDays=" + totalNumberOfSickDays +
+            ", numberOfPersonsWithMinimumOneSickNote=" + numberOfPersonsWithMinimumOneSickNote +
+            '}';
     }
 }

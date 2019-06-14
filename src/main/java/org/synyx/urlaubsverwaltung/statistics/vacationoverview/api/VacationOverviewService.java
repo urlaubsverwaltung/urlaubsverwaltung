@@ -9,8 +9,6 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.holiday.DayOfMonth;
-import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -29,8 +27,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
-import static org.synyx.urlaubsverwaltung.holiday.DayOfMonth.TypeOfDay.WEEKEND;
-import static org.synyx.urlaubsverwaltung.holiday.DayOfMonth.TypeOfDay.WORKDAY;
+import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WEEKEND;
+import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
 
 @Component
 public class VacationOverviewService {

@@ -22,4 +22,4 @@ Anschrift/Telefon während des Urlaubs: ${application.address}
 Kommentar: ${comment.text}
 </#if>
 
-Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id?c}
+Link zum Antrag: ${baseLinkURL}web/application/${application.id?c}

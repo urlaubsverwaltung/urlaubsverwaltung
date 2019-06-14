@@ -7,7 +7,7 @@ import java.util.List;
 
 
 @Service
-public class SickNoteTypeServiceImpl implements SickNoteTypeService {
+class SickNoteTypeServiceImpl implements SickNoteTypeService {
 
     private final SickNoteTypeDAO sickNoteTypeDAO;
 

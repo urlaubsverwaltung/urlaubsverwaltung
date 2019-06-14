@@ -6,6 +6,7 @@
 <%@taglib prefix="sec"
           uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <sec:authorize access="hasAuthority('USER')">
     <c:set var="IS_USER" value="${true}"/>
@@ -26,9 +27,9 @@
 
 <head>
     <uv:head/>
-    <link rel="stylesheet" href="<spring:url value='/assets/vacation_overview.css' />" />
-    <script defer src="<spring:url value='/assets/vacation_overview.min.js' />"></script>
-    <script defer src="<spring:url value='/assets/npm.tablesorter.min.js' />"></script>
+    <link rel="stylesheet" href="<asset:url value='vacation_overview.css' />" />
+    <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
+    <script defer src="<asset:url value='vacation_overview.js' />"></script>
 </head>
 
 <body>

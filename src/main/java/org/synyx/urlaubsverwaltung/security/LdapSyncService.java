@@ -6,18 +6,19 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 /**
@@ -55,11 +56,10 @@ public class LdapSyncService {
         lastName.ifPresent(person::setLastName);
         mailAddress.ifPresent(person::setEmail);
 
-        personService.save(person);
+        final Person savedPerson = personService.save(person);
+        LOG.info("Successfully synced person data: {}", savedPerson);
 
-        LOG.info("Successfully synced person data: {}", person);
-
-        return person;
+        return savedPerson;
     }
 
 
@@ -79,9 +79,8 @@ public class LdapSyncService {
 
         Assert.notNull(login, "Missing login name!");
 
-        Person person = personService.create(login, lastName.orElse(null), firstName.orElse(null),
-                mailAddress.orElse(null), Collections.singletonList(MailNotification.NOTIFICATION_USER),
-                Collections.singletonList(Role.USER));
+        final Person person = personService.create(login, lastName.orElse(null), firstName.orElse(null),
+                mailAddress.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
 
         LOG.info("Successfully auto-created person: {}", person);
 

@@ -7,4 +7,4 @@ Es handelt sich um den Zeitraum von ${application.startDate.format("dd.MM.yyyy")
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 
 </#if>
-Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id?c}
+Link zum Antrag: ${baseLinkURL}web/application/${application.id?c}

@@ -2,6 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
 <html>
@@ -11,10 +12,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
     <title><spring:message code="login.title"/></title>
     <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />"/>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/npm.font-awesome.css' />" />
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/common.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/assets/login.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='login.css' />"/>
 </head>
 
 <body>

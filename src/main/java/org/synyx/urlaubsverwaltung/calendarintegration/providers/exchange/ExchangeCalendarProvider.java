@@ -20,10 +20,10 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarNotCreatedException;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
@@ -45,25 +45,24 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final MailService mailService;
     private final ExchangeService exchangeService;
     private final ExchangeFactory exchangeFactory;
+    private final CalendarMailService calendarMailService;
 
     private String credentialsMailAddress;
     private String credentialsPassword;
 
     @Autowired
-    public ExchangeCalendarProvider(MailService mailService) {
+    public ExchangeCalendarProvider(CalendarMailService calendarMailService) {
 
-        this(mailService, new ExchangeService(), new ExchangeFactory());
+        this(new ExchangeService(), new ExchangeFactory(), calendarMailService);
     }
 
-    public ExchangeCalendarProvider(MailService mailService,
-                                    ExchangeService exchangeService, ExchangeFactory exchangeFactory) {
+    public ExchangeCalendarProvider(ExchangeService exchangeService, ExchangeFactory exchangeFactory, CalendarMailService calendarMailService) {
 
-        this.mailService = mailService;
         this.exchangeService = exchangeService;
         this.exchangeFactory = exchangeFactory;
+        this.calendarMailService = calendarMailService;
     }
 
     @Override
@@ -97,7 +96,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("An error occurred while trying to add appointment to Exchange calendar");
-            mailService.sendCalendarSyncErrorNotification(calendarName, absence, ExceptionUtils.getStackTrace(ex));
+            calendarMailService.sendCalendarSyncErrorNotification(calendarName, absence, ExceptionUtils.getStackTrace(ex));
         }
 
         return Optional.empty();
@@ -249,7 +248,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             LOG.info("Appointment {} has been updated in exchange calendar '{}'.", eventId, calendarName);
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("Could not update appointment {} in exchange calendar '{}'", eventId, calendarName);
-            mailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId,
+            calendarMailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId,
                 ExceptionUtils.getStackTrace(ex));
         }
     }
@@ -276,7 +275,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             LOG.info("Appointment {} has been deleted in exchange calendar '{}'.", eventId, calendarName);
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("Could not delete appointment {} in exchange calendar '{}'", eventId, calendarName);
-            mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ExceptionUtils.getStackTrace(ex));
+            calendarMailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ExceptionUtils.getStackTrace(ex));
         }
     }
 

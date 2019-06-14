@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
@@ -23,23 +22,23 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Transactional
 @Service
-public class OvertimeServiceImpl implements OvertimeService {
+class OvertimeServiceImpl implements OvertimeService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final OvertimeDAO overtimeDAO;
     private final OvertimeCommentDAO commentDAO;
     private final ApplicationService applicationService;
-    private final MailService mailService;
+    private final OvertimeMailService overtimeMailService;
 
     @Autowired
     public OvertimeServiceImpl(OvertimeDAO overtimeDAO, OvertimeCommentDAO commentDAO,
-        ApplicationService applicationService, MailService mailService) {
+                               ApplicationService applicationService, OvertimeMailService overtimeMailService) {
 
         this.overtimeDAO = overtimeDAO;
         this.commentDAO = commentDAO;
         this.applicationService = applicationService;
-        this.mailService = mailService;
+        this.overtimeMailService = overtimeMailService;
     }
 
     @Override
@@ -76,7 +75,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         commentDAO.save(overtimeComment);
 
-        mailService.sendOvertimeNotification(overtime, overtimeComment);
+        overtimeMailService.sendOvertimeNotification(overtime, overtimeComment);
 
         LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", overtime);
 

@@ -5,7 +5,7 @@ gibt es auch ein Container Image für Docker.
 
 ## Docker
 
-Über `docker run synyx/urlaubsverwaltung:latest -p 8080:8080` kann die Urlaubsverwaltung als Docker Container gestartet werden.
+Über `docker run -p 8080:8080 synyx/urlaubsverwaltung:latest` kann die Urlaubsverwaltung als Docker Container gestartet werden.
 
 
 ## docker-compose
