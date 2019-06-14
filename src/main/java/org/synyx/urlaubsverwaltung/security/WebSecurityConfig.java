@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security.config;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.health.HealthEndpoint;

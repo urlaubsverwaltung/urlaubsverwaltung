@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 /**
  * Is thrown in case of the security configuration (LDAP/AD) seems to be invalid.

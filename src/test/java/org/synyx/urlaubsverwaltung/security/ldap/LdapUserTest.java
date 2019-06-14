@@ -1,7 +1,8 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUser;
 
 import java.util.List;
 import java.util.Optional;

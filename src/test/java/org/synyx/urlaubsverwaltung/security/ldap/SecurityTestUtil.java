@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.synyx.urlaubsverwaltung.person.Role;
