@@ -1,8 +1,6 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,7 +8,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -27,9 +24,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Map granted authorities to application roles described in {@link Role}.
  */
-@Component
-@ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' or '${uv.security.auth}'=='ldap'")
-public class PersonContextMapper implements UserDetailsContextMapper {
+public class LdapPersonContextMapper implements UserDetailsContextMapper {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -37,9 +32,8 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     private final LdapSyncService ldapSyncService;
     private final LdapUserMapper ldapUserMapper;
 
-    @Autowired
-    public PersonContextMapper(PersonService personService, LdapSyncService ldapSyncService,
-        LdapUserMapper ldapUserMapper) {
+    LdapPersonContextMapper(PersonService personService, LdapSyncService ldapSyncService,
+                                   LdapUserMapper ldapUserMapper) {
 
         this.personService = personService;
         this.ldapSyncService = ldapSyncService;
@@ -133,7 +127,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     @Override
     public void mapUserToContext(UserDetails user, DirContextAdapter ctx) {
 
-        throw new UnsupportedOperationException("PersonContextMapper only supports reading from a context. Please"
+        throw new UnsupportedOperationException("LdapPersonContextMapper only supports reading from a context. Please"
             + "use a subclass if mapUserToContext() is required.");
     }
 }

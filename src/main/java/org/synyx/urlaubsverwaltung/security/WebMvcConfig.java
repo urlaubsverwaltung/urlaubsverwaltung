@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security.config;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
-import org.synyx.urlaubsverwaltung.security.UserInterceptor;
 
 import java.util.concurrent.TimeUnit;
 

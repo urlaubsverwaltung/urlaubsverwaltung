@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,11 +30,11 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.security.PersonContextMapper}.
+ * Unit test for {@link LdapPersonContextMapper}.
  */
-public class PersonContextMapperTest {
+public class LdapPersonContextMapperTest {
 
-    private PersonContextMapper personContextMapper;
+    private LdapPersonContextMapper ldapPersonContextMapper;
 
     private PersonService personService;
     private LdapSyncService ldapSyncService;
@@ -49,7 +49,7 @@ public class PersonContextMapperTest {
         ldapSyncService = mock(LdapSyncService.class);
         ldapUserMapper = mock(LdapUserMapper.class);
 
-        personContextMapper = new PersonContextMapper(personService, ldapSyncService, ldapUserMapper);
+        ldapPersonContextMapper = new LdapPersonContextMapper(personService, ldapSyncService, ldapUserMapper);
 
         context = mock(DirContextOperations.class);
 
@@ -62,7 +62,7 @@ public class PersonContextMapperTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTryingToGetAuthoritiesForNullPerson() {
 
-        personContextMapper.getGrantedAuthorities(null);
+        ldapPersonContextMapper.getGrantedAuthorities(null);
     }
 
 
@@ -72,7 +72,7 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.emptyList());
 
-        personContextMapper.getGrantedAuthorities(person);
+        ldapPersonContextMapper.getGrantedAuthorities(person);
     }
 
 
@@ -82,7 +82,7 @@ public class PersonContextMapperTest {
         Person person = TestDataCreator.createPerson();
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
-        Collection<GrantedAuthority> authorities = personContextMapper.getGrantedAuthorities(person);
+        Collection<GrantedAuthority> authorities = ldapPersonContextMapper.getGrantedAuthorities(person);
 
         Assert.assertEquals("Wrong number of authorities", 2, authorities.size());
         Assert.assertTrue("No authority for user role found",
@@ -102,7 +102,7 @@ public class PersonContextMapperTest {
         when(personService.getPersonByLogin(anyString())).thenReturn(empty());
         when(ldapSyncService.createPerson(anyString(), any(), any(), any())).thenReturn(TestDataCreator.createPerson());
 
-        personContextMapper.mapUserFromContext(context, "murygina", null);
+        ldapPersonContextMapper.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
         verify(ldapSyncService)
@@ -124,7 +124,7 @@ public class PersonContextMapperTest {
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(ldapSyncService.syncPerson(any(Person.class), any(), any(), any())).thenReturn(person);
 
-        personContextMapper.mapUserFromContext(context, "murygina", null);
+        ldapPersonContextMapper.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
         verify(ldapSyncService)
@@ -144,7 +144,7 @@ public class PersonContextMapperTest {
         when(personService.getPersonByLogin(anyString())).thenReturn(empty());
         when(ldapSyncService.createPerson(anyString(), any(), any(), any())).thenReturn(TestDataCreator.createPerson());
 
-        UserDetails userDetails = personContextMapper.mapUserFromContext(context, userNameSignedInWith, null);
+        UserDetails userDetails = ldapPersonContextMapper.mapUserFromContext(context, userNameSignedInWith, null);
 
         Assert.assertNotNull("Username should be set", userDetails.getUsername());
         Assert.assertEquals("Wrong username", userIdentifier, userDetails.getUsername());
@@ -164,7 +164,7 @@ public class PersonContextMapperTest {
                 Optional.of(person.getLastName()), Optional.of(person.getEmail())));
         when(ldapSyncService.syncPerson(any(Person.class), any(), any(), any())).thenReturn(person);
 
-        personContextMapper.mapUserFromContext(context, person.getLoginName(), null);
+        ldapPersonContextMapper.mapUserFromContext(context, person.getLoginName(), null);
     }
 
 
@@ -175,7 +175,7 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenThrow(new InvalidSecurityConfigurationException("Bad!"));
 
-        personContextMapper.mapUserFromContext(context, "username", null);
+        ldapPersonContextMapper.mapUserFromContext(context, "username", null);
     }
 
 
@@ -186,7 +186,7 @@ public class PersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
 
-        personContextMapper.mapUserFromContext(context, "username", null);
+        ldapPersonContextMapper.mapUserFromContext(context, "username", null);
     }
 
 
@@ -202,7 +202,7 @@ public class PersonContextMapperTest {
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
         when(ldapSyncService.syncPerson(any(Person.class), any(), any(), any())).thenReturn(person);
 
-        UserDetails userDetails = personContextMapper.mapUserFromContext(context, "username", null);
+        UserDetails userDetails = ldapPersonContextMapper.mapUserFromContext(context, "username", null);
 
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
@@ -228,7 +228,7 @@ public class PersonContextMapperTest {
         when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Collections.emptyList());
         when(ldapSyncService.syncPerson(any(Person.class), any(), any(), any())).thenReturn(person);
 
-        personContextMapper.mapUserFromContext(context, "username", null);
+        ldapPersonContextMapper.mapUserFromContext(context, "username", null);
 
         verify(personService).getPersonsByRole(Role.OFFICE);
         verify(ldapSyncService).appointPersonAsOfficeUser(person);

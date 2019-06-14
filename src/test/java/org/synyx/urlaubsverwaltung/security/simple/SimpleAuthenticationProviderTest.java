@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.simple;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.security.simple.SimpleAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.ArrayList;

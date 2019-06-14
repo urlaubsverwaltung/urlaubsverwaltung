@@ -1,10 +1,7 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.security.config.SecurityConfigurationProperties;
+import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 
 import java.util.List;
 
@@ -12,10 +9,6 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
 import static org.springframework.util.StringUtils.hasText;
 
 
-@Service
-@ConditionalOnExpression(
-    "('${uv.security.auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync.enabled}'=='true') or ('${uv.security.auth}'=='ldap' and '${uv.security.ldap.sync.enabled}'=='true')" // NOSONAR
-)
 public class LdapUserServiceImpl implements LdapUserService {
 
     private static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";
@@ -25,8 +18,7 @@ public class LdapUserServiceImpl implements LdapUserService {
     private final LdapUserMapper ldapUserMapper;
     private final SecurityConfigurationProperties securityProperties;
 
-    @Autowired
-    public LdapUserServiceImpl(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper,
+    LdapUserServiceImpl(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper,
                                SecurityConfigurationProperties securityProperties) {
 
         this.ldapTemplate = ldapTemplate;

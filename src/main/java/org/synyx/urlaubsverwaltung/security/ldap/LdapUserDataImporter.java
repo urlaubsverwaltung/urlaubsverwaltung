@@ -1,10 +1,7 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -20,11 +17,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Import person data from configured LDAP or Active Directory.
  */
-@Service
 @Transactional
-@ConditionalOnExpression(
-    "('${uv.security.auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync.enabled}'=='true') or ('${uv.security.auth}'=='ldap' and '${uv.security.ldap.sync.enabled}'=='true')" // NOSONAR
-)
 public class LdapUserDataImporter {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -33,8 +26,7 @@ public class LdapUserDataImporter {
     private final LdapSyncService ldapSyncService;
     private final PersonService personService;
 
-    @Autowired
-    public LdapUserDataImporter(LdapUserService ldapUserService, LdapSyncService ldapSyncService,
+    LdapUserDataImporter(LdapUserService ldapUserService, LdapSyncService ldapSyncService,
         PersonService personService) {
 
         this.ldapUserService = ldapUserService;

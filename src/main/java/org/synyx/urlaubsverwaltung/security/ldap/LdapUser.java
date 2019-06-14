@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -25,7 +25,7 @@ public final class LdapUser {
 
     private final Set<String> memberOf = new HashSet<>();
 
-    public LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email,
+    LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email,
         String... memberOf) {
 
         if (!StringUtils.hasText(username)) {

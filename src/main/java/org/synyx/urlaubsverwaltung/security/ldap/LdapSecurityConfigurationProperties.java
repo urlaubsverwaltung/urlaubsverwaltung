@@ -1,11 +1,11 @@
-package org.synyx.urlaubsverwaltung.security.config;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties("uv.security.ldap")
-public class SecurityLdapConfigurationProperties {
+public class LdapSecurityConfigurationProperties {
 
     private String url;
     private String base;
