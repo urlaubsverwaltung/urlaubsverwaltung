@@ -25,7 +25,7 @@ public class DayAbsence {
     private final String status;
     private final String href;
 
-    DayAbsence(LocalDate date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
+    public DayAbsence(LocalDate date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
 
         this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
         this.dayLength = dayLength;

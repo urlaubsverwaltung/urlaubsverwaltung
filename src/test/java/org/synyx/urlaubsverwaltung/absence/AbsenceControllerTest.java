@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.VacationOverviewService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
@@ -41,15 +42,16 @@ public class AbsenceControllerTest {
     private SickNoteService sickNoteServiceMock;
     private ApplicationService applicationServiceMock;
 
+
     @Before
     public void setUp() {
 
         personServiceMock = mock(PersonService.class);
         applicationServiceMock = mock(ApplicationService.class);
         sickNoteServiceMock = mock(SickNoteService.class);
+        VacationOverviewService vacationOverviewService = new VacationOverviewService(null, null, null, applicationServiceMock, sickNoteServiceMock);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(new AbsenceController(personServiceMock, applicationServiceMock,
-                        sickNoteServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new AbsenceController(personServiceMock, vacationOverviewService)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
     }
 
 

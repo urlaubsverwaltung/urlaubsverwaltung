@@ -7,14 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.absence.api.AbsenceController;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
-import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Api("VacationOverview: Get Vacation-Overview Metadata")
 @RestController("restApiVacationOverview")
@@ -23,12 +20,10 @@ public class VacationOverviewController {
 
     private final VacationOverviewService vacationOverviewService;
 
-    private final AbsenceController absenceController;
 
     @Autowired
-    VacationOverviewController(VacationOverviewService vacationOverviewService, PersonService personService, ApplicationService applicationService, SickNoteService sickNoteService) {
+    VacationOverviewController(VacationOverviewService vacationOverviewService) {
         this.vacationOverviewService = vacationOverviewService;
-        this.absenceController = new AbsenceController(personService, applicationService,  sickNoteService);
     }
 
     @ApiOperation(
@@ -41,14 +36,7 @@ public class VacationOverviewController {
             @RequestParam("selectedMonth") Integer selectedMonth) {
 
         List<VacationOverview> holidayOverviewList =
-                vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
-
-        // to provide an efficient facade, also pull in the absences that would otherwise require separate API calls
-        for (VacationOverview v: holidayOverviewList){
-            v.setAbsences(
-                absenceController.personsVacations(selectedYear, selectedMonth, v.getPersonID(), null).getResponse().getAbsences()
-            );
-        }
+                vacationOverviewService.getVacationOverviews(selectedDepartment, Optional.of(selectedYear), Optional.of(selectedMonth));
 
         return new ResponseWrapper<>(new VacationOverviewResponse(holidayOverviewList));
     }

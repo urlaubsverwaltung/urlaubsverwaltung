@@ -2,18 +2,21 @@ package org.synyx.urlaubsverwaltung.statistics.vacationoverview;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.holiday.VacationOverview;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.VacationOverviewService;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
@@ -32,13 +35,17 @@ public class VacationOverviewServiceTest {
     private DepartmentService departmentService;
     private WorkingTimeService workingTimeService;
     private PublicHolidaysService publicHolidayService;
+    private SickNoteService sickNoteService;
+    private ApplicationService applicationService;
 
     @Before
     public void setUp() {
         this.departmentService = mock(DepartmentService.class);
         this.workingTimeService = mock(WorkingTimeService.class);
         this.publicHolidayService = mock(PublicHolidaysService.class);
-        this.sut = new VacationOverviewService(departmentService, workingTimeService, publicHolidayService);
+        this.applicationService = mock(ApplicationService.class);
+        this.sickNoteService = mock(SickNoteService.class);
+        this.sut = new VacationOverviewService(departmentService, workingTimeService, publicHolidayService, applicationService, sickNoteService);
     }
 
     @Test
@@ -57,7 +64,7 @@ public class VacationOverviewServiceTest {
         when(publicHolidayService.getWorkingDurationOfDate(any(LocalDate.class), any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 
         List<VacationOverview> vacationOverviews =
-                sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthValue());
+                sut.getVacationOverviews(departmentName, Optional.of(testDate.getYear()), Optional.of(testDate.getMonthValue()));
 
         assertThat(vacationOverviews, hasSize(1));
         assertThat(vacationOverviews.get(0).getPerson().getEmail(), is(email));
