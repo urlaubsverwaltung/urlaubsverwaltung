@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.ldap.userdetails.Person.Essence;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -87,9 +88,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
             ldapSyncService.appointPersonAsOfficeUser(person);
         }
 
-        org.springframework.security.ldap.userdetails.Person.Essence user =
-            new org.springframework.security.ldap.userdetails.Person.Essence(ctx);
-
+        final Essence user = new Essence(ctx);
         user.setUsername(login);
         user.setAuthorities(getGrantedAuthorities(person));
 
