@@ -1,3 +1,6 @@
+### [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2)
+* Fix release for broken war / container image
+
 ### [urlaubsverwaltung-2.43.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.0)
 * Make event subjects for calendar sync more generic [#198](https://github.com/synyx/urlaubsverwaltung/issues/198) + [#654](https://github.com/synyx/urlaubsverwaltung/issues/654)
 * Fix security vulnerabilities [#704](https://github.com/synyx/urlaubsverwaltung/pull/704) [#705](https://github.com/synyx/urlaubsverwaltung/pull/705)
