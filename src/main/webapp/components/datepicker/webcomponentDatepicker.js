@@ -1,5 +1,5 @@
 /* eslint-disable @urlaubsverwaltung/no-date-fns,unicorn/filename-case */
-import { getTime, getDate, getMonth, getYear, startOfMonth, startOfWeek, format, addDays, addWeeks, addMonths, subMonths, isWeekend, isPast, isToday, isSameDay } from 'date-fns';
+import { getTime, getDate, getMonth, getYear, startOfMonth, startOfWeek, format, addDays, addWeeks, addMonths, subMonths, isWeekend, isToday, isSameDay } from 'date-fns';
 
 const element = (tagName, attributesOrChildren, children) => {
   const [tagWithId, ...classNames] = tagName.split('.');
@@ -606,8 +606,8 @@ class DatepickerMonth extends HTMLElement {
         color: var(--font-color);
         cursor: pointer;
       }
-      /* 'day-past' must be the first special day, so other special days are overriding this */
-      .day-past {
+      /* 'different-month' must be the first special day, so other special days are overriding this */
+      .different-month {
         --background-color-left: #EFEFEF;
         --background-color-right: #EFEFEF;
         --font-color: #AFAFAF;
@@ -680,20 +680,15 @@ class DatepickerMonth extends HTMLElement {
 
   renderDay({ currentMonth, date, selected }) {
     const today = isToday(date);
-    const past = isPast(date) && !today;
     const classNames = [
       'day',
       today && 'today',
-      past && 'day-past',
+      currentMonth !== getMonth(date) && 'different-month',
       isWeekend(date) && 'weekend',
       isSameDay(date, selected) && 'selected'
     ].filter(Boolean).join(' ');
 
-    if (currentMonth === getMonth(date)) {
-      return `<td class="${classNames}" data-timestamp="${format(date, 'x')}"">${format(date, 'DD')}</td>`;
-    }
-
-    return `<td class="${classNames}">&nbsp;</td>`;
+    return `<td class="${classNames}" data-timestamp="${format(date, 'x')}"">${format(date, 'DD')}</td>`;
   }
 
   render({ date, selected }) {
