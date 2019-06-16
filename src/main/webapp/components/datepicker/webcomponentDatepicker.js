@@ -404,7 +404,12 @@ class Datepicker extends HTMLElement {
     this.foo.attachShadow({ mode: 'open' })
       .append(style, datepickerInputElement, placeholder);
 
-    this.append(datepickerFacadeElement, this.foo);
+    if (this.hasChildNodes()) {
+      this.replaceChild(datepickerFacadeElement, this.firstElementChild);
+      this.append(this.foo);
+    } else {
+      this.append(datepickerFacadeElement, this.foo);
+    }
   }
 
   /**
