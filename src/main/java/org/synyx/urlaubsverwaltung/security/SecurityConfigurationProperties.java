@@ -7,7 +7,16 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("uv.security")
 public class SecurityConfigurationProperties {
 
-    private String auth;
+
+    public enum AuthenticationProvider {
+
+        DEFAULT,
+        OIDC,
+        LDAP,
+        ACTIVEDIRECTORY
+    }
+
+    private AuthenticationProvider auth;
 
     private String identifier;
     private String firstName;
@@ -15,11 +24,11 @@ public class SecurityConfigurationProperties {
     private String mailAddress;
     private SecurityFilter filter = new SecurityFilter();
 
-    public String getAuth() {
+    public AuthenticationProvider getAuth() {
         return auth;
     }
 
-    public void setAuth(String auth) {
+    public void setAuth(AuthenticationProvider auth) {
         this.auth = auth;
     }
 
