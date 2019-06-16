@@ -76,6 +76,12 @@ class Datepicker extends HTMLElement {
       .p-2 {
         padding: 0.5rem;
       }
+      .pt-10 {
+        padding-top: 2.5rem;
+      }
+      .pt-16 {
+        padding-top: 10rem;
+      }
       .px-1 {
         padding-left: 0.25rem;
         padding-right: 0.25rem;
@@ -99,6 +105,9 @@ class Datepicker extends HTMLElement {
       .absolute {
         position: absolute;
       }
+      .fixed {
+        position: fixed;
+      }
       .w-full {
         width: 100%;
       }
@@ -110,6 +119,12 @@ class Datepicker extends HTMLElement {
       }
       .left-0 {
         left: 0;
+      }
+      .right-0 {
+        right: 0;
+      }
+      .bottom-0 {
+        bottom: 0;
       }
       .select-none {
         user-select: none;
@@ -526,8 +541,8 @@ class Datepicker extends HTMLElement {
     }
     else {
       const datepickerElement = this.datepickerElement = element('div');
-      datepickerElement.classList.add('shadow', 'p-2', 'absolute', 'z-10');
-      datepickerElement.style.width = '300px';
+      datepickerElement.classList.add('shadow', 'p-2', 'pt-16', 'fixed', 'top-0', 'right-0', 'bottom-0', 'left-0', 'z-10');
+      // datepickerElement.style.width = '300px';
       datepickerElement.style.background = '#f9f9f9';
 
       const timestamp = this.getTimestampForCalendar();
@@ -685,10 +700,10 @@ class DatepickerMonth extends HTMLElement {
     ].filter(Boolean).join(' ');
 
     if (currentMonth === getMonth(date)) {
-      return `<td class="${classNames}" data-timestamp="${format(date, 'x')}"">${format(date, 'DD')}</td>`;
+      return `<td class="${classNames}" style="font-size: 1.5rem; height: calc(100vmin / 8);" data-timestamp="${format(date, 'x')}"">${format(date, 'DD')}</td>`;
     }
 
-    return `<td class="${classNames}">&nbsp;</td>`;
+    return `<td class="${classNames}" style="font-size: 1.5rem; height: calc(100vmin / 8);">&nbsp;</td>`;
   }
 
   render({ date, selected }) {
@@ -698,7 +713,7 @@ class DatepickerMonth extends HTMLElement {
 
     this.thead.innerHTML = `
       <tr>
-        ${times(7).map(daysToAdd => `<th>${format(addDays(firstOfWeek, daysToAdd), 'dd')}</th>`).join('')}
+        ${times(7).map(daysToAdd => `<th style="font-size: 1.5rem; height: calc(100vmin / 8);">${format(addDays(firstOfWeek, daysToAdd), 'dd')}</th>`).join('')}
       </tr>
     `;
 
