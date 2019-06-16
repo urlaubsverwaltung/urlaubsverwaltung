@@ -57,3 +57,11 @@
   --background-color-right: #CFCFCF;
   --font-color: #5F5F5F;
 }
+
+uv-datepicker {
+  --input-box-sizing: inherit;
+  --input-font: inherit;
+  --input-line-height: inherit;
+  --input-margin: inherit;
+  --input-color: inherit;
+}

@@ -21,11 +21,11 @@
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
     </script>
-    <script defer src="<asset:url value="npm.date-fns.js" />"></script>
-    <script defer src="<asset:url value="date-fns-localized.js" />"></script>
-    <script defer src="<asset:url value="app_detail~app_form~person_overview.js" />"></script>
-    <script defer src="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
-    <script defer src="<asset:url value="person_overview.js" />"></script>
+    <script src="<asset:url value="npm.date-fns.js" />"></script>
+    <script src="<asset:url value="date-fns-localized.js" />"></script>
+    <script src="<asset:url value="app_detail~app_form~person_overview.js" />"></script>
+    <script src="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
+    <script src="<asset:url value="person_overview.js" />"></script>
 </head>
 
 <body>
@@ -41,9 +41,24 @@
     <h4><spring:message code="print.info.portrait"/></h4>
 </div>
 
+
 <div class="content print--only-portrait">
 
     <div class="container">
+
+        <hr />
+
+        <form id="awesome-form" method="POST" action="gibtsnich">
+            <div style="display:flex;flex-direction:row">
+                <input type="date" name="originalDateInput" />
+                <input type="text" name="originalTextInput" placeholder="fill me with text" />
+                <uv-datepicker name="myDatepicker"></uv-datepicker>
+                <button id="awesome-submit-button" type="submit">submit</button>
+            </div>
+        </form>
+
+        <hr />
+
 
         <div class="row">
 
