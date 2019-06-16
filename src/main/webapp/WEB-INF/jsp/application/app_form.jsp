@@ -183,9 +183,11 @@
                             <spring:message code="absence.period.startDate"/>:
                         </label>
                         <div class="col-md-5">
-                            <form:input id="from" path="startDate" class="form-control"
-                                        cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
-                                        autocomplete="off" value="${param.from}"/>
+                            <uv-datepicker>
+                                <form:input id="from" path="startDate" class="form-control"
+                                            cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
+                                            autocomplete="off" value="${param.from}"/>
+                            </uv-datepicker>
                         </div>
                         <div class="col-md-4">
                             <form:input id="startTime" path="startTime" class="form-control"

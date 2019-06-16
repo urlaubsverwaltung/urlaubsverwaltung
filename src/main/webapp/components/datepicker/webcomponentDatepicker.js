@@ -30,6 +30,9 @@ class Datepicker extends HTMLElement {
   constructor() {
     super();
 
+    // get all style rules for bootstraps 'form-control' class
+    //Array.from(document.styleSheets.entries()).reduce((target, source) => ([...target, ...source]), []).filter(element => !Number.isInteger(element)).filter(stylesheet => Array.from(stylesheet.cssRules).some(rule => (rule.selectorText || '').includes('form-control'))).reduce((target, source) => ([...target, ...(Array.from(source.cssRules).filter(rule => (rule.selectorText || '').includes('form-control')))]), [])
+
     const style = element('style');
     style.innerHTML = `
       :host {
