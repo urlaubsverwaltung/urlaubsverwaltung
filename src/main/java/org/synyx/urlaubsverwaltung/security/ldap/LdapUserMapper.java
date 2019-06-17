@@ -1,11 +1,8 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.security.config.SecurityConfigurationProperties;
+import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -22,16 +19,13 @@ import static org.springframework.util.StringUtils.hasText;
 /**
  * Maps LDAP attributes to {@link LdapUser} class.
  */
-@Component
-@ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' or '${uv.security.auth}'=='ldap'")
 public class LdapUserMapper implements AttributesMapper<LdapUser> {
 
     private static final String MEMBER_OF_ATTRIBUTE = "memberOf";
 
     private final SecurityConfigurationProperties securityProperties;
 
-    @Autowired
-    public LdapUserMapper(SecurityConfigurationProperties securityProperties) {
+    LdapUserMapper(SecurityConfigurationProperties securityProperties) {
         this.securityProperties = securityProperties;
     }
 

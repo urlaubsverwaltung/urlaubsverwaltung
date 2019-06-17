@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,7 +6,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ldap.core.LdapTemplate;
-import org.synyx.urlaubsverwaltung.security.config.SecurityConfigurationProperties;
+import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUserMapper;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUserService;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUserServiceImpl;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

@@ -1,9 +1,13 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapSyncService;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUser;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUserDataImporter;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUserService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Collections;

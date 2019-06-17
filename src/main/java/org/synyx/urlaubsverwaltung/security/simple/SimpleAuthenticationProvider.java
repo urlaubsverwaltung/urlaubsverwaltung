@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.simple;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -32,8 +31,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
     private final PersonService personService;
 
-    @Autowired
-    public SimpleAuthenticationProvider(PersonService personService) {
+    SimpleAuthenticationProvider(PersonService personService) {
 
         this.personService = personService;
     }

@@ -1,10 +1,14 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ldap.core.DirContextOperations;
-import org.synyx.urlaubsverwaltung.security.config.SecurityConfigurationProperties;
+import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
+import org.synyx.urlaubsverwaltung.security.ldap.InvalidSecurityConfigurationException;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUser;
+import org.synyx.urlaubsverwaltung.security.ldap.LdapUserMapper;
+import org.synyx.urlaubsverwaltung.security.ldap.UnsupportedMemberAffiliationException;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
