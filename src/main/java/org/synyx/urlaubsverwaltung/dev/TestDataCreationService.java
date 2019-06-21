@@ -163,8 +163,10 @@ public class TestDataCreationService {
         applicationForLeaveDataProvider.createAllowedApplication(person, boss, specialLeave, MORNING, now.minusDays(9), now.minusDays(9));
 
         applicationForLeaveDataProvider.createRejectedApplication(person, boss, holiday, FULL, now.minusDays(33), now.minusDays(30));
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, holiday, MORNING, now.minusDays(32), now.minusDays(32));
 
         applicationForLeaveDataProvider.createCancelledApplication(person, office, holiday, FULL, now.minusDays(11), now.minusDays(10));
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, holiday, NOON, now.minusDays(12), now.minusDays(12));
     }
 
 
