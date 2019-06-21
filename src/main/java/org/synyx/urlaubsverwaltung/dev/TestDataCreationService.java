@@ -1,11 +1,7 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
@@ -45,21 +41,16 @@ public class TestDataCreationService {
     private final PersonDataProvider personDataProvider;
     private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
     private final SickNoteDataProvider sickNoteDataProvider;
-    private final SickNoteTypeService sickNoteTypeService;
-    private final VacationTypeService vacationTypeService;
     private final OvertimeRecordDataProvider overtimeRecordDataProvider;
     private final DepartmentDataProvider departmentDataProvider;
     private final TestDataProperties testDataProperties;
 
     public TestDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
-                                   SickNoteDataProvider sickNoteDataProvider, SickNoteTypeService sickNoteTypeService,
-                                   VacationTypeService vacationTypeService, OvertimeRecordDataProvider overtimeRecordDataProvider,
+                                   SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
                                    DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;
-        this.sickNoteTypeService = sickNoteTypeService;
-        this.vacationTypeService = vacationTypeService;
         this.overtimeRecordDataProvider = overtimeRecordDataProvider;
         this.departmentDataProvider = departmentDataProvider;
         this.testDataProperties = testDataProperties;
@@ -132,41 +123,21 @@ public class TestDataCreationService {
 
         final LocalDate now = LocalDate.now(UTC);
 
-        VacationType holiday = null;
-        VacationType overtime = null;
-        VacationType specialLeave = null;
-
-        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
-
-        for (VacationType vacationType : vacationTypes) {
-            if (vacationType.isOfCategory(HOLIDAY)) {
-                holiday = vacationType;
-            }
-
-            if (vacationType.isOfCategory(OVERTIME)) {
-                overtime = vacationType;
-            }
-
-            if (vacationType.isOfCategory(SPECIALLEAVE)) {
-                specialLeave = vacationType;
-            }
-        }
-
         // FUTURE APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createWaitingApplication(person, holiday, FULL, now.plusDays(10), now.plusDays(16));
-        applicationForLeaveDataProvider.createWaitingApplication(person, overtime, FULL, now.plusDays(1), now.plusDays(1));
-        applicationForLeaveDataProvider.createWaitingApplication(person, specialLeave, FULL, now.plusDays(4), now.plusDays(6));
+        applicationForLeaveDataProvider.createWaitingApplication(person, HOLIDAY, FULL, now.plusDays(10), now.plusDays(16));
+        applicationForLeaveDataProvider.createWaitingApplication(person, OVERTIME, FULL, now.plusDays(1), now.plusDays(1));
+        applicationForLeaveDataProvider.createWaitingApplication(person, SPECIALLEAVE, FULL, now.plusDays(4), now.plusDays(6));
 
         // PAST APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, holiday, FULL, now.minusDays(20), now.minusDays(13));
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, holiday, MORNING, now.minusDays(5), now.minusDays(5));
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, specialLeave, MORNING, now.minusDays(9), now.minusDays(9));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, FULL, now.minusDays(20), now.minusDays(13));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(5), now.minusDays(5));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, SPECIALLEAVE, MORNING, now.minusDays(9), now.minusDays(9));
 
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, holiday, FULL, now.minusDays(33), now.minusDays(30));
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, holiday, MORNING, now.minusDays(32), now.minusDays(32));
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, FULL, now.minusDays(33), now.minusDays(30));
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(32), now.minusDays(32));
 
-        applicationForLeaveDataProvider.createCancelledApplication(person, office, holiday, FULL, now.minusDays(11), now.minusDays(10));
-        applicationForLeaveDataProvider.createCancelledApplication(person, office, holiday, NOON, now.minusDays(12), now.minusDays(12));
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, FULL, now.minusDays(11), now.minusDays(10));
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, NOON, now.minusDays(12), now.minusDays(12));
     }
 
 
@@ -174,27 +145,13 @@ public class TestDataCreationService {
 
         final LocalDate now = LocalDate.now(UTC);
 
-        SickNoteType sickNoteTypeStandard = null;
-        SickNoteType sickNoteTypeChild = null;
-        final List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
-
-        for (SickNoteType sickNoteType : sickNoteTypes) {
-            if (sickNoteType.isOfCategory(SICK_NOTE)) {
-                sickNoteTypeStandard = sickNoteType;
-            }
-
-            if (sickNoteType.isOfCategory(SICK_NOTE_CHILD)) {
-                sickNoteTypeChild = sickNoteType;
-            }
-        }
-
         // SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), sickNoteTypeStandard, false);
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(2), now.minusDays(2), sickNoteTypeStandard, false);
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(30), now.minusDays(25), sickNoteTypeStandard, true);
+        sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), SICK_NOTE, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(2), now.minusDays(2), SICK_NOTE, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(30), now.minusDays(25), SICK_NOTE, true);
 
         // CHILD SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), sickNoteTypeChild, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), SICK_NOTE_CHILD, false);
     }
 
 

@@ -23,20 +23,18 @@ class TestDataConfiguration {
 
     @Bean
     TestDataCreationService testDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
-                                                    SickNoteDataProvider sickNoteDataProvider, SickNoteTypeService sickNoteTypeService,
-                                                    VacationTypeService vacationTypeService, OvertimeRecordDataProvider overtimeRecordDataProvider,
+                                                    SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
                                                     DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
-        return new TestDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, sickNoteTypeService, vacationTypeService, overtimeRecordDataProvider, departmentDataProvider, testDataProperties);
+        return new TestDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, overtimeRecordDataProvider, departmentDataProvider, testDataProperties);
     }
 
     @Bean
-    SickNoteDataProvider sickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker) {
-        return new SickNoteDataProvider(sickNoteInteractionService, durationChecker);
+    SickNoteDataProvider sickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker, SickNoteTypeService sickNoteTypeService) {
+        return new SickNoteDataProvider(sickNoteInteractionService, durationChecker, sickNoteTypeService);
     }
 
     @Bean
-    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService,
-                                          AccountInteractionService accountInteractionService) {
+    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService) {
         return new PersonDataProvider(personService, workingTimeService, accountInteractionService);
     }
 
@@ -56,8 +54,7 @@ class TestDataConfiguration {
     }
 
     @Bean
-    ApplicationForLeaveDataProvider applicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService,
-                                                                    DurationChecker durationChecker) {
-        return new ApplicationForLeaveDataProvider(applicationInteractionService, durationChecker);
+    ApplicationForLeaveDataProvider applicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService, DurationChecker durationChecker, VacationTypeService vacationTypeService) {
+        return new ApplicationForLeaveDataProvider(applicationInteractionService, durationChecker, vacationTypeService);
     }
 }
