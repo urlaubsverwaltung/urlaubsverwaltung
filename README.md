@@ -313,10 +313,11 @@ d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der We
 Testbenutzern anmelden:
 
 * `user/secret`: Benutzer mit der Rolle `User`
-* `boss/secret`: Benutzer mit der Rolle `Boss`
-* `departmentHead/secret`: Benutzer mit der Rolle `DepartmentHead`
-* `secondStageAuthority/secret`: Benutzer mit der Rolle `SecondStageAuthority`
-* `office/secret`: Benutzer mit der Rolle `Office`
+* `departmentHead/secret`: Benutzer mit der Rolle `User` und `DepartmentHead`
+* `secondStageAuthority/secret`: Benutzer mit der Rolle `User` und `SecondStageAuthority`
+* `boss/secret`: Benutzer mit der Rolle `User` und `Boss`
+* `office/secret`: Benutzer mit der Rolle `User`, `Boss` und `Office`
+* `admin/secret`: Benutzer mit der Rolle `User` und `Admin`
 
 ### Frontend Entwicklung
 
