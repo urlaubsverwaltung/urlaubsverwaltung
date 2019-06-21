@@ -4,14 +4,17 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 /**
@@ -21,21 +24,25 @@ class ApplicationForLeaveDataProvider {
 
     private final ApplicationInteractionService applicationInteractionService;
     private final DurationChecker durationChecker;
+    private final VacationTypeService vacationTypeService;
 
     ApplicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService,
-        DurationChecker durationChecker) {
+                                    DurationChecker durationChecker, VacationTypeService vacationTypeService) {
 
         this.applicationInteractionService = applicationInteractionService;
         this.durationChecker = durationChecker;
+        this.vacationTypeService = vacationTypeService;
     }
 
-    Application createWaitingApplication(Person person, VacationType vacationType, DayLength dayLength,
-                                         LocalDate startDate, LocalDate endDate) {
+    Application createWaitingApplication(Person person, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
         Application application = null;
 
         if (durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate)
                 && durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
+
+            final VacationType vacationType = getVacationType(vacationCategory);
+
             application = new Application();
             application.setPerson(person);
             application.setApplicationDate(startDate.minusDays(5L));
@@ -48,8 +55,8 @@ class ApplicationForLeaveDataProvider {
                 + "ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 + "At vero eos et accusam et justo duo dolores");
 
-            if (vacationType.getCategory().equals(OVERTIME)) {
-                if (dayLength == DayLength.FULL) {
+            if (vacationCategory.equals(OVERTIME)) {
+                if (dayLength == FULL) {
                     application.setHours(new BigDecimal("8"));
                 } else {
                     application.setHours(new BigDecimal("4"));
@@ -63,9 +70,9 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    Application createAllowedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    Application createAllowedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        final Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
+        final Application application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
 
         if (application != null) {
             applicationInteractionService.allow(application, boss, Optional.of("Ist in Ordnung"));
@@ -75,9 +82,9 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    void createRejectedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    void createRejectedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        final Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
+        final Application application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
 
         if (application != null) {
             applicationInteractionService.reject(application, boss, Optional.of("Aus organisatorischen Gründen leider nicht möglich"));
@@ -85,12 +92,24 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    void createCancelledApplication(Person person, Person office, VacationType vacationType, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    void createCancelledApplication(Person person, Person office, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        final Application application = createAllowedApplication(person, office, vacationType, dayLength, startDate, endDate);
+        final Application application = createAllowedApplication(person, office, vacationCategory, dayLength, startDate, endDate);
 
         if (application != null) {
             applicationInteractionService.cancel(application, office, Optional.of("Urlaub wurde nicht genommen, daher storniert"));
         }
+    }
+
+    private VacationType getVacationType(VacationCategory vacationCategory) {
+
+        VacationType vacationType = null;
+        final List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+        for (VacationType savedVacationType : vacationTypes) {
+            if (savedVacationType.isOfCategory(vacationCategory)) {
+                vacationType = savedVacationType;
+            }
+        }
+        return vacationType;
     }
 }
