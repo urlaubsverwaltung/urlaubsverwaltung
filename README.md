@@ -312,11 +312,11 @@ Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Te
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
 Testbenutzern anmelden:
 
-* `testUser/secret`: Benutzer mit der Rolle `User`
-* `testBoss/secret`: Benutzer mit der Rolle `Boss`
-* `testHead/secret`: Benutzer mit der Rolle `DepartmentHead`
-* `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
-* `test/secret`: Benutzer mit der Rolle `Office`
+* `user/secret`: Benutzer mit der Rolle `User`
+* `boss/secret`: Benutzer mit der Rolle `Boss`
+* `departmentHead/secret`: Benutzer mit der Rolle `DepartmentHead`
+* `secondStageAuthority/secret`: Benutzer mit der Rolle `SecondStageAuthority`
+* `office/secret`: Benutzer mit der Rolle `Office`
 
 ### Frontend Entwicklung
 

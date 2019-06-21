@@ -8,11 +8,11 @@ import org.synyx.urlaubsverwaltung.person.Role;
  */
 enum TestUser {
 
-    USER("testUser"),
-    DEPARTMENT_HEAD("testHead"),
-    SECOND_STAGE_AUTHORITY("testManager"),
-    BOSS("testBoss"),
-    OFFICE("test"),
+    USER("user"),
+    DEPARTMENT_HEAD("departmentHead"),
+    SECOND_STAGE_AUTHORITY("secondStageAuthority"),
+    BOSS("boss"),
+    OFFICE("office"),
     ADMIN("admin");
 
     private final String login;
