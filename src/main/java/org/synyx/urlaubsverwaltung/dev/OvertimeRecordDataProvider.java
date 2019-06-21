@@ -28,10 +28,9 @@ class OvertimeRecordDataProvider {
         settingsService.save(settings);
     }
 
-    Overtime createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, BigDecimal hours) {
+    void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, BigDecimal hours) {
 
-        Overtime overtime = new Overtime(person, startDate, endDate, hours);
-
-        return overtimeService.record(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
+        final Overtime overtime = new Overtime(person, startDate, endDate, hours);
+        overtimeService.record(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
     }
 }

@@ -61,21 +61,9 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    Application createPreliminaryAllowedApplication(Person person, Person headOf, VacationType vacationType,
-                                                    DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    Application createAllowedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
-        application.setTwoStageApproval(true);
-        application = applicationInteractionService.allow(application, headOf, Optional.of("Erst mal OK"));
-
-        return application;
-    }
-
-
-    Application createAllowedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength,
-                                         LocalDate startDate, LocalDate endDate) {
-
-        Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
+        final Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
             applicationInteractionService.allow(application, boss, Optional.of("Ist in Ordnung"));
@@ -85,28 +73,22 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    Application createRejectedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength,
-                                          LocalDate startDate, LocalDate endDate) {
+    void createRejectedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
+        final Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
             applicationInteractionService.reject(application, boss, Optional.of("Aus organisatorischen Gründen leider nicht möglich"));
         }
-
-        return application;
     }
 
 
-    Application createCancelledApplication(Person person, Person office, VacationType vacationType, DayLength dayLength,
-                                           LocalDate startDate, LocalDate endDate) {
+    void createCancelledApplication(Person person, Person office, VacationType vacationType, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        Application application = createAllowedApplication(person, office, vacationType, dayLength, startDate, endDate);
+        final Application application = createAllowedApplication(person, office, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
             applicationInteractionService.cancel(application, office, Optional.of("Urlaub wurde nicht genommen, daher storniert"));
         }
-
-        return application;
     }
 }

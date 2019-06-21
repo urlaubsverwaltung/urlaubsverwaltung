@@ -25,7 +25,7 @@ class DepartmentDataProvider {
     void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads,
         List<Person> secondStageAuthorities) {
 
-        Department department = new Department();
+        final Department department = new Department();
         department.setName(name);
         department.setDescription(description);
         department.setLastModification(LocalDate.now(UTC));

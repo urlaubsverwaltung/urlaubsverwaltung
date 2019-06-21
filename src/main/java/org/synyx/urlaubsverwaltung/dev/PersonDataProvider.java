@@ -54,20 +54,20 @@ class PersonDataProvider {
 
     Person createTestPerson(String login, String password, String firstName, String lastName, String email, Role... roles) {
 
-        Optional<Person> personByLogin = personService.getPersonByLogin(login);
+        final Optional<Person> personByLogin = personService.getPersonByLogin(login);
         if (personByLogin.isPresent()) {
             return personByLogin.get();
         }
 
-        List<Role> permissions = asList(roles);
-        List<MailNotification> notifications = getNotificationsForRoles(permissions);
+        final List<Role> permissions = asList(roles);
+        final List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
         final Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
         person.setPassword(new StandardPasswordEncoder().encode(password));
 
         final Person savedPerson = personService.save(person);
 
-        int currentYear = ZonedDateTime.now(UTC).getYear();
+        final int currentYear = ZonedDateTime.now(UTC).getYear();
         workingTimeService.touch(
             asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(),WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
             Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);
