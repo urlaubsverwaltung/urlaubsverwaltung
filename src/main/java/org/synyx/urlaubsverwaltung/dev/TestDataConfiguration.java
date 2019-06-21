@@ -16,8 +16,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 @Configuration
-@ConditionalOnProperty("uv.development.testdata.create")
-public class TestDataConfiguration {
+@ConditionalOnProperty(value = "uv.development.testdata.create", havingValue = "true")
+class TestDataConfiguration {
 
     @Bean
     TestDataCreationService testDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
