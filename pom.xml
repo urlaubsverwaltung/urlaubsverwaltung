@@ -125,13 +125,6 @@
       <artifactId>spring-security-taglibs</artifactId>
     </dependency>
 
-    <!-- Common -->
-    <dependency>
-      <groupId>javax.interceptor</groupId>
-      <artifactId>javax.interceptor-api</artifactId>
-      <version>1.2.2</version>
-    </dependency>
-
     <!-- Configuration Properties -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
