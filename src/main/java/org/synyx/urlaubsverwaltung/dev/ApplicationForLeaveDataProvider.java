@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+
 
 /**
  * Provides sick note test data.
@@ -46,7 +48,7 @@ class ApplicationForLeaveDataProvider {
                 + "ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 + "At vero eos et accusam et justo duo dolores");
 
-            if (vacationType.getCategory().equals(VacationCategory.OVERTIME)) {
+            if (vacationType.getCategory().equals(OVERTIME)) {
                 if (dayLength == DayLength.FULL) {
                     application.setHours(new BigDecimal("8"));
                 } else {
