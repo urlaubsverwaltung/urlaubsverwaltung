@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
@@ -60,7 +59,7 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
         setAllDayLengthsToZero();
 
-        if (!CollectionUtils.isEmpty(workingDays)) {
+        if (!workingDays.isEmpty()) {
             for (Integer dayOfWeek : workingDays) {
                 setDayLengthForWeekDay(dayOfWeek, dayLength);
             }
