@@ -36,6 +36,7 @@ class ApplicationForLeaveDataProvider {
                 && durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
             application = new Application();
             application.setPerson(person);
+            application.setApplicationDate(startDate.minusDays(5L));
             application.setStartDate(startDate);
             application.setEndDate(endDate);
             application.setVacationType(vacationType);
