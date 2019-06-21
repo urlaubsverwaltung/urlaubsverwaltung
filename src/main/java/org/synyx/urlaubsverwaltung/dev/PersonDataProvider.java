@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -41,15 +38,12 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 /**
  * Provides person test data.
  */
-@Component
-@ConditionalOnProperty("testdata.create")
 class PersonDataProvider {
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final AccountInteractionService accountInteractionService;
 
-    @Autowired
     PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
                        AccountInteractionService accountInteractionService) {
 

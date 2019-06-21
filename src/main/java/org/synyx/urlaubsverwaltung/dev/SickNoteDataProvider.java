@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -16,14 +13,11 @@ import java.time.LocalDate;
 /**
  * Provides sick note test data.
  */
-@Component
-@ConditionalOnProperty("testdata.create")
 class SickNoteDataProvider {
 
     private final SickNoteInteractionService sickNoteInteractionService;
     private final DurationChecker durationChecker;
 
-    @Autowired
     SickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker) {
 
         this.sickNoteInteractionService = sickNoteInteractionService;

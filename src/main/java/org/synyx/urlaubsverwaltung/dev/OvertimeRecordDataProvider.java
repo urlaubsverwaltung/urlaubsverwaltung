@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -17,13 +14,10 @@ import java.util.Optional;
 /**
  * Provides overtime record test data.
  */
-@Component
-@ConditionalOnProperty("testdata.create")
 class OvertimeRecordDataProvider {
 
     private final OvertimeService overtimeService;
 
-    @Autowired
     OvertimeRecordDataProvider(OvertimeService overtimeService, SettingsService settingsService) {
 
         this.overtimeService = overtimeService;
