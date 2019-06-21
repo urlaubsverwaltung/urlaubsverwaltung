@@ -73,7 +73,7 @@ public class TestDataCreationService {
         final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@firma.test");
         final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@firma.test");
         final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@firma.test");
-        final Person manager = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@firma.test");
+        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@firma.test");
         personDataProvider.createTestPerson(TestUser.ADMIN,"Senor", "Operation", "admin@firma.test");
 
         // Users
@@ -86,10 +86,19 @@ public class TestDataCreationService {
         personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@firma.test", INACTIVE);
 
         // Departments
-        departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen", asList(hans, brigitte, departmentHead, manager), singletonList(departmentHead), singletonList(manager));
-        departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln", asList(user, niko, departmentHead), emptyList(), emptyList());
-        departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen", asList(guenther, elena), emptyList(), emptyList());
-        departmentDataProvider.createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen", asList(boss, office), emptyList(), emptyList());
+        final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);
+        final List<Person> adminDepartmentHeads = singletonList(departmentHead);
+        final List<Person> adminSecondStageAuthorities = singletonList(secondStageAuthority);
+        departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen", adminDepartmentUser, adminDepartmentHeads, adminSecondStageAuthorities);
+
+        final List<Person> developmentMembers = asList(user, niko, departmentHead);
+        departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln", developmentMembers, emptyList(), emptyList());
+
+        final List<Person> marketingMembers = asList(guenther, elena);
+        departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen", marketingMembers, emptyList(), emptyList());
+
+        final List<Person> bossMembers = asList(boss, office);
+        departmentDataProvider.createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen", bossMembers, emptyList(), emptyList());
 
         // Applications for leave and sick notes
         createTestData(user, boss, office);
@@ -97,7 +106,7 @@ public class TestDataCreationService {
         createTestData(office, boss, office);
         createTestData(hans, boss, office);
         createTestData(niko, boss, office);
-        createTestData(manager, boss, office);
+        createTestData(secondStageAuthority, boss, office);
 
         LOG.info("DONE CREATION OF TEST DATA ------------------------------------------------------------------------");
     }
