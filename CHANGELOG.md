@@ -1,3 +1,7 @@
+### master/unreleased
+* Quickfix for better overview about department members: add link to department
+  members on departments page [#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
+
 ### [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2)
 * Fix release for broken war / container image
 
