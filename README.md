@@ -354,7 +354,7 @@ Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert 
 
 ### Anlegen von Testdaten deaktivieren
 
-Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
+Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `uv.development.testdata.create`
 in den `application-testdata.properties` auf `false` setzen.
 
 ### API

@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -18,14 +15,11 @@ import java.util.Optional;
 /**
  * Provides sick note test data.
  */
-@Component
-@ConditionalOnProperty("testdata.create")
 class ApplicationForLeaveDataProvider {
 
     private final ApplicationInteractionService applicationInteractionService;
     private final DurationChecker durationChecker;
 
-    @Autowired
     ApplicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService,
         DurationChecker durationChecker) {
 
@@ -96,8 +90,7 @@ class ApplicationForLeaveDataProvider {
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            applicationInteractionService.reject(application, boss,
-                Optional.of("Aus organisatorischen Gründen leider nicht möglich"));
+            applicationInteractionService.reject(application, boss, Optional.of("Aus organisatorischen Gründen leider nicht möglich"));
         }
 
         return application;
@@ -110,8 +103,7 @@ class ApplicationForLeaveDataProvider {
         Application application = createAllowedApplication(person, office, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            applicationInteractionService.cancel(application, office,
-                Optional.of("Urlaub wurde nicht genommen, daher storniert"));
+            applicationInteractionService.cancel(application, office, Optional.of("Urlaub wurde nicht genommen, daher storniert"));
         }
 
         return application;
