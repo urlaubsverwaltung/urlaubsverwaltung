@@ -4,10 +4,11 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
+
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
 
 /**
@@ -24,17 +25,17 @@ class SickNoteDataProvider {
         this.durationChecker = durationChecker;
     }
 
-    SickNote createSickNote(Person person, Person office, DayLength dayLength, LocalDate startDate,
+    void createSickNote(Person person, Person office, DayLength dayLength, LocalDate startDate,
                             LocalDate endDate, SickNoteType type, boolean withAUB) {
 
-        SickNote sickNote = null;
+        final SickNote sickNote;
 
         if (durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
             sickNote = new SickNote();
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
             sickNote.setEndDate(endDate);
-            sickNote.setStatus(SickNoteStatus.ACTIVE);
+            sickNote.setStatus(ACTIVE);
             sickNote.setSickNoteType(type);
             sickNote.setDayLength(dayLength);
 
@@ -43,9 +44,7 @@ class SickNoteDataProvider {
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNote = sickNoteInteractionService.create(sickNote, office);
+            sickNoteInteractionService.create(sickNote, office);
         }
-
-        return sickNote;
     }
 }
