@@ -49,11 +49,12 @@ public class TestDataCreationService {
     private final VacationTypeService vacationTypeService;
     private final OvertimeRecordDataProvider overtimeRecordDataProvider;
     private final DepartmentDataProvider departmentDataProvider;
+    private final TestDataProperties testDataProperties;
 
     public TestDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                    SickNoteDataProvider sickNoteDataProvider, SickNoteTypeService sickNoteTypeService,
                                    VacationTypeService vacationTypeService, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                   DepartmentDataProvider departmentDataProvider) {
+                                   DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;
@@ -61,13 +62,20 @@ public class TestDataCreationService {
         this.vacationTypeService = vacationTypeService;
         this.overtimeRecordDataProvider = overtimeRecordDataProvider;
         this.departmentDataProvider = departmentDataProvider;
+        this.testDataProperties = testDataProperties;
     }
 
     @PostConstruct
     public void createTestData() {
 
-        LOG.info("STARTING CREATION OF TEST DATA --------------------------------------------------------------------");
+        LOG.info(">> TestData Creation (uv.development.testdata.create={})", testDataProperties.isCreate());
 
+        if (personDataProvider.isPersonAlreadyCreated(TestUser.USER.getLogin())) {
+            LOG.info("-> Test data was already created. Abort.");
+            return;
+        }
+
+        LOG.info("-> Starting test data creation...");
         // Users to be able to SIGN-IN with
         final Person user = personDataProvider.createTestPerson(TestUser.USER, "Klaus", "Müller", "user@firma.test");
         final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@firma.test");
@@ -108,7 +116,7 @@ public class TestDataCreationService {
         createTestData(niko, boss, office);
         createTestData(secondStageAuthority, boss, office);
 
-        LOG.info("DONE CREATION OF TEST DATA ------------------------------------------------------------------------");
+        LOG.info("-> Test data was created");
     }
 
 
