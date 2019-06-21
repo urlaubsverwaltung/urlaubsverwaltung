@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.testdatacreator;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;

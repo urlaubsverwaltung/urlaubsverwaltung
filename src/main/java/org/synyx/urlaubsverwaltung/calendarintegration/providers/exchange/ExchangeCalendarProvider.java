@@ -16,7 +16,6 @@ import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.property.complex.time.OlsonTimeZoneDefinition;
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.sql.Date;
 import java.util.Optional;
@@ -96,7 +97,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("An error occurred while trying to add appointment to Exchange calendar");
-            calendarMailService.sendCalendarSyncErrorNotification(calendarName, absence, ExceptionUtils.getStackTrace(ex));
+            calendarMailService.sendCalendarSyncErrorNotification(calendarName, absence, getStackTrace(ex));
         }
 
         return Optional.empty();
@@ -248,8 +249,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             LOG.info("Appointment {} has been updated in exchange calendar '{}'.", eventId, calendarName);
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("Could not update appointment {} in exchange calendar '{}'", eventId, calendarName);
-            calendarMailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId,
-                ExceptionUtils.getStackTrace(ex));
+            calendarMailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId, getStackTrace(ex));
         }
     }
 
@@ -275,7 +275,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             LOG.info("Appointment {} has been deleted in exchange calendar '{}'.", eventId, calendarName);
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("Could not delete appointment {} in exchange calendar '{}'", eventId, calendarName);
-            calendarMailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ExceptionUtils.getStackTrace(ex));
+            calendarMailService.sendCalendarDeleteErrorNotification(calendarName, eventId, getStackTrace(ex));
         }
     }
 
@@ -294,5 +294,12 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
             return redirectionUrl.toLowerCase().startsWith("https://");
         }
+    }
+
+    private static String getStackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw, true);
+        throwable.printStackTrace(pw);
+        return sw.getBuffer().toString();
     }
 }
