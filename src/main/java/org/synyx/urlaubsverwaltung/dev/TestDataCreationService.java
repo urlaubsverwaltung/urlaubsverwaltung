@@ -164,7 +164,7 @@ public class TestDataCreationService {
             now.minusDays(11), now.minusDays(10)); // NOSONAR
 
         if ("hdampf".equals(person.getLoginName()) && headOf != null) {
-            applicationForLeaveDataProvider.createPremilinaryAllowedApplication(person, headOf, holiday, FULL,
+            applicationForLeaveDataProvider.createPreliminaryAllowedApplication(person, headOf, holiday, FULL,
                 now.plusDays(5), now.plusDays(8)); // NOSONAR
         }
     }

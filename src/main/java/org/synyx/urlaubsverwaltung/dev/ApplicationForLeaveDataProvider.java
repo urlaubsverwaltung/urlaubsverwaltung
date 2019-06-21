@@ -61,7 +61,7 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    Application createPremilinaryAllowedApplication(Person person, Person headOf, VacationType vacationType,
+    Application createPreliminaryAllowedApplication(Person person, Person headOf, VacationType vacationType,
                                                     DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
