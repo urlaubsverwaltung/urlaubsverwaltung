@@ -52,7 +52,17 @@ class PersonDataProvider {
         this.accountInteractionService = accountInteractionService;
     }
 
+    Person createTestPerson(TestUser testUser, String firstName, String lastName, String email) {
+
+        final String login = testUser.getLogin();
+        final String password = testUser.getPassword();
+        final Role[] roles = testUser.getRoles();
+
+        return createTestPerson(login, password, firstName, lastName, email, roles);
+    }
+
     Person createTestPerson(String login, String password, String firstName, String lastName, String email, Role... roles) {
+
 
         final Optional<Person> personByLogin = personService.getPersonByLogin(login);
         if (personByLogin.isPresent()) {

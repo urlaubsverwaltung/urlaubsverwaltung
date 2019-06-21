@@ -24,7 +24,9 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.dev.TestUser.BOSS;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.dev.TestUser.OFFICE;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -36,7 +38,6 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CH
 
 public class TestDataCreationService {
 
-    private static final String PASSWORD = "secret";
     private static final String NO_PASSWORD = "";
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -67,15 +68,13 @@ public class TestDataCreationService {
 
         LOG.info("STARTING CREATION OF TEST DATA --------------------------------------------------------------------");
 
-        // Users to be able to sign in with
-        final Person user = personDataProvider.createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller", "user@firma.test", TestUser.USER.getRoles());
-        final Person departmentHead = personDataProvider.createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD, "Thorsten", "Krüger", "departmentHead@firma.test", TestUser.DEPARTMENT_HEAD.getRoles());
-        final Person boss = personDataProvider.createTestPerson(BOSS.getLogin(), PASSWORD, "Max", "Mustermann", "boss@firma.test", BOSS.getRoles());
-        final Person office = personDataProvider.createTestPerson(OFFICE.getLogin(), PASSWORD, "Marlene", "Muster", "office@firma.test", OFFICE.getRoles());
-
-        personDataProvider.createTestPerson("admin", PASSWORD, "Senor", "Operation", "admin@firma.test", TestUser.ADMIN.getRoles());
-
-        final Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD, "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
+        // Users to be able to SIGN-IN with
+        final Person user = personDataProvider.createTestPerson(TestUser.USER, "Klaus", "Müller", "user@firma.test");
+        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@firma.test");
+        final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@firma.test");
+        final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@firma.test");
+        final Person manager = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@firma.test");
+        personDataProvider.createTestPerson(TestUser.ADMIN,"Senor", "Operation", "admin@firma.test");
 
         // Users
         final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test", USER);
