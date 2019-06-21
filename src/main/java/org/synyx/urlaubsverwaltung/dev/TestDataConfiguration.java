@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
@@ -17,14 +18,15 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 @Configuration
 @ConditionalOnProperty(value = "uv.development.testdata.create", havingValue = "true")
+@EnableConfigurationProperties(TestDataProperties.class)
 class TestDataConfiguration {
 
     @Bean
     TestDataCreationService testDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                                     SickNoteDataProvider sickNoteDataProvider, SickNoteTypeService sickNoteTypeService,
                                                     VacationTypeService vacationTypeService, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                                    DepartmentDataProvider departmentDataProvider) {
-        return new TestDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, sickNoteTypeService, vacationTypeService, overtimeRecordDataProvider, departmentDataProvider);
+                                                    DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
+        return new TestDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, sickNoteTypeService, vacationTypeService, overtimeRecordDataProvider, departmentDataProvider, testDataProperties);
     }
 
     @Bean

@@ -52,6 +52,12 @@ class PersonDataProvider {
         this.accountInteractionService = accountInteractionService;
     }
 
+    boolean isPersonAlreadyCreated(String loginName){
+
+        final Optional<Person> personByLogin = personService.getPersonByLogin(loginName);
+        return personByLogin.isPresent();
+    }
+
     Person createTestPerson(TestUser testUser, String firstName, String lastName, String email) {
 
         final String login = testUser.getLogin();
