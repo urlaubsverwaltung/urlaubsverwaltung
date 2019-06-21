@@ -47,14 +47,10 @@ class ApplicationForLeaveDataProvider {
                 + "At vero eos et accusam et justo duo dolores");
 
             if (vacationType.getCategory().equals(VacationCategory.OVERTIME)) {
-                switch (dayLength) {
-                    case FULL:
-                        application.setHours(new BigDecimal("8"));
-                        break;
-
-                    default:
-                        application.setHours(new BigDecimal("4"));
-                        break;
+                if (dayLength == DayLength.FULL) {
+                    application.setHours(new BigDecimal("8"));
+                } else {
+                    application.setHours(new BigDecimal("4"));
                 }
             }
 
