@@ -8,18 +8,22 @@ import org.synyx.urlaubsverwaltung.person.Role;
  */
 enum TestUser {
 
-    USER("testUser"),
-    DEPARTMENT_HEAD("testHead"),
-    SECOND_STAGE_AUTHORITY("testManager"),
-    BOSS("testBoss"),
-    OFFICE("test"),
-    ADMIN("admin");
+    USER("user", "secret", Role.USER),
+    DEPARTMENT_HEAD("departmentHead", "secret", Role.USER, Role.DEPARTMENT_HEAD),
+    SECOND_STAGE_AUTHORITY("secondStageAuthority", "secret", Role.USER, Role.SECOND_STAGE_AUTHORITY),
+    BOSS("boss", "secret", Role.USER, Role.BOSS),
+    OFFICE("office", "secret", Role.USER, Role.BOSS, Role.OFFICE),
+    ADMIN("admin", "secret", Role.USER, Role.ADMIN);
 
     private final String login;
+    private final String password;
+    private final Role[] roles;
 
-    TestUser(String login) {
+    TestUser(String login, String password, Role... roles) {
 
         this.login = login;
+        this.password = password;
+        this.roles = roles;
     }
 
     String getLogin() {
@@ -27,32 +31,12 @@ enum TestUser {
         return login;
     }
 
-
-    /**
-     * Get the roles of the test user.
-     *
-     * @return  array of roles of the test user
-     */
     Role[] getRoles() {
 
-        switch (this) {
-            case DEPARTMENT_HEAD:
-                return new Role[] { Role.USER, Role.DEPARTMENT_HEAD };
+        return roles;
+    }
 
-            case SECOND_STAGE_AUTHORITY:
-                return new Role[] { Role.USER, Role.SECOND_STAGE_AUTHORITY };
-
-            case BOSS:
-                return new Role[] { Role.USER, Role.BOSS };
-
-            case OFFICE:
-                return new Role[] { Role.USER, Role.BOSS, Role.OFFICE };
-
-            case ADMIN:
-                return new Role[] { Role.USER, Role.ADMIN};
-
-            default:
-                return new Role[] { Role.USER };
-        }
+    String getPassword() {
+        return password;
     }
 }

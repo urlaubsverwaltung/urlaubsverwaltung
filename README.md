@@ -204,24 +204,24 @@ Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das 
 
 #### LDAP
 
-Um LDAP zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
+Um LDAP zur Authentifizierung zu nutzen, muss die Property `uv.security.auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
 werden:
 
-<pre>auth=ldap</pre>
+<pre>uv.security.auth=ldap</pre>
 
 #### Active Directory
 
-Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf
+Um Active Directory zur Authentifizierung zu nutzen, muss die Property `uv.security.auth` in der eigenen Konfigurationsdatei auf
 `activeDirectory` gesetzt werden:
 
-<pre>auth=activeDirectory</pre>
+<pre>uv.security.auth=activeDirectory</pre>
 
 #### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
-Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync` bzw. `uv.security.activeDirectory.sync` auf `true` gesetzt wird:
+Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync.enabled` bzw. `uv.security.active-directory.sync.enabled` auf `true` gesetzt wird:
 
-<pre>uv.security.ldap.sync=true</pre> bzw. <pre>uv.security.activeDirectory.sync=true</pre>
+<pre>uv.security.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.active-directory.sync.enabled=true</pre>
 
 ### Synchronisation mit Kalender
 
@@ -312,11 +312,12 @@ Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Te
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
 Testbenutzern anmelden:
 
-* `testUser/secret`: Benutzer mit der Rolle `User`
-* `testBoss/secret`: Benutzer mit der Rolle `Boss`
-* `testHead/secret`: Benutzer mit der Rolle `DepartmentHead`
-* `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
-* `test/secret`: Benutzer mit der Rolle `Office`
+* `user/secret`: Benutzer mit der Rolle `User`
+* `departmentHead/secret`: Benutzer mit der Rolle `User` und `DepartmentHead`
+* `secondStageAuthority/secret`: Benutzer mit der Rolle `User` und `SecondStageAuthority`
+* `boss/secret`: Benutzer mit der Rolle `User` und `Boss`
+* `office/secret`: Benutzer mit der Rolle `User`, `Boss` und `Office`
+* `admin/secret`: Benutzer mit der Rolle `User` und `Admin`
 
 ### Frontend Entwicklung
 
@@ -354,7 +355,7 @@ Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert 
 
 ### Anlegen von Testdaten deaktivieren
 
-Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
+Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `uv.development.testdata.create`
 in den `application-testdata.properties` auf `false` setzen.
 
 ### API
@@ -365,7 +366,7 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 
 Siehe [Authentifizierung](#authentifizierung)
 
-Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `auth` entweder als System
+Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `uv.security.auth` entweder als System
 Property oder man konfiguriert diese in den `application.properties`.
 
 Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
@@ -373,27 +374,27 @@ Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständl
 
 #### LDAP
 
-Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
+Die Anwendung mit dem Parameter `-Duv.security.auth=ldap` starten:
 
 ```bash
-./mvnw clean spring-boot:run -Dauth=ldap
+./mvnw clean spring-boot:run -Duv.security.auth=ldap
 ```
 
-Oder die Property `auth` in den `application.properties` setzen:
+Oder die Property `uv.security.auth` in den `application.properties` setzen:
 
-<pre>auth=ldap</pre>
+<pre>uv.security.auth=ldap</pre>
 
 #### Active Directory
 
-Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
+Die Anwendung mit dem Parameter `-Duv.security.auth=activeDirectory` starten:
 
 ```bash
-./mvnw clean spring-boot:run -Dauth=activeDirectory
+./mvnw clean spring-boot:run -Duv.security.auth=activeDirectory
 ```
 
-Oder die Property `auth` in den `application.properties` setzen:
+Oder die Property `uv.security.auth` in den `application.properties` setzen:
 
-<pre>auth=activeDirectory</pre>
+<pre>uv.security.auth=activeDirectory</pre>
 
 ### Externe Systeme mit Docker virtualisieren
 

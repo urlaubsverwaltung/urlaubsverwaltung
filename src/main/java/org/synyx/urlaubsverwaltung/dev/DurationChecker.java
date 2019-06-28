@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
@@ -18,13 +15,10 @@ import static java.time.ZoneOffset.UTC;
 /**
  * Helper class to check durations.
  */
-@Component
-@ConditionalOnProperty("testdata.create")
 class DurationChecker {
 
     private final WorkDaysService workDaysService;
 
-    @Autowired
     DurationChecker(WorkDaysService workDaysService) {
 
         this.workDaysService = workDaysService;
