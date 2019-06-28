@@ -52,7 +52,7 @@
     <url>https://github.com/synyx/urlaubsverwaltung</url>
     <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
     <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
-    <tag>urlaubsverwaltung-2.38.2</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>

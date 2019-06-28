@@ -59,7 +59,7 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 ## FAQ
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen können, gibt es ein
-[FAQ](https://github.com/synyx/urlaubsverwaltung/wiki).
+[FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ).
 Sollte dieser Fragenkatalog nicht weiterhelfen, kann gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
 vom Typ "Question" erstellt werden.
 

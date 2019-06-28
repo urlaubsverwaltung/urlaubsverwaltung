@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 ### 3.x RC
 * Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Migrate database to mariadb [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Add configuration properties for security and some cleanups [#696](https://github.com/synyx/urlaubsverwaltung/pull/696)
 * Upgrade spring boot to 2.1.5 [#710](https://github.com/synyx/urlaubsverwaltung/pull/710)
+
+### master/unreleased
+* Quickfix for better overview about department members: add link to department
+  members on departments page [#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
+
+### [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2)
+* Fix release for broken war / container image
 
 ### [urlaubsverwaltung-2.43.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.0)
 * Make event subjects for calendar sync more generic [#198](https://github.com/synyx/urlaubsverwaltung/issues/198) + [#654](https://github.com/synyx/urlaubsverwaltung/issues/654)

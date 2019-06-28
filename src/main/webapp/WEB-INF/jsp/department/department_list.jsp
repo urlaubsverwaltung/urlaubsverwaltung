@@ -106,8 +106,10 @@
                                         </c:choose>
                                     </td>
                                     <td class="hidden-xs">
-                                        <c:out value="${fn:length(department.members)}"/> <spring:message
-                                        code="department.members"/>
+                                        <a href="${URL_PREFIX}/staff?active=true&department=${department.id}">
+                                            <c:out value="${fn:length(department.members)}"/>
+                                            <spring:message code="department.members"/>
+                                        </a>
                                     </td>
                                     <td class="hidden-xs">
                                         <uv:date date="${department.lastModification}"/>
