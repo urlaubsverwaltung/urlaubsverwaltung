@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ### 3.x RC
 * Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Migrate database to mariadb [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
