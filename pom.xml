@@ -288,7 +288,7 @@
       <artifactId>google-api-services-calendar</artifactId>
       <version>${google-api-services-calendar.version}</version>
     </dependency>
-    
+
     <!-- Test -->
     <dependency>
       <groupId>com.tngtech.archunit</groupId>
