@@ -250,4 +250,107 @@ public class ApplicationForLeaveForm {
                 ", comment='" + comment + '\'' +
                 '}';
     }
+
+    public static class Builder {
+
+        private Person person;
+        private LocalDate startDate;
+        private Time startTime;
+        private LocalDate endDate;
+        private Time endTime;
+        private VacationType vacationType;
+        private DayLength dayLength;
+        private BigDecimal hours;
+        private String reason;
+        private Person holidayReplacement;
+        private String address;
+        private boolean teamInformed;
+        private String comment;
+
+        public ApplicationForLeaveForm.Builder person(Person person) {
+            this.person = person;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder startDate(LocalDate startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder startTime(Time startTime) {
+            this.startTime = startTime;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder endDate(LocalDate endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder endTime(Time endTime) {
+            this.endTime = endTime;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder vacationType(VacationType vacationType) {
+            this.vacationType = vacationType;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder dayLength(DayLength dayLength) {
+            this.dayLength = dayLength;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder hours(BigDecimal hours) {
+            this.hours = hours;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder reason(String reason) {
+            this.reason = reason;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder holidayReplacement(Person holidayReplacement) {
+            this.holidayReplacement = holidayReplacement;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder teamInformed(boolean teamInformed) {
+            this.teamInformed = teamInformed;
+            return this;
+        }
+
+        public ApplicationForLeaveForm.Builder comment(String comment) {
+            this.comment = comment;
+            return this;
+        }
+
+        public ApplicationForLeaveForm build() {
+
+            final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
+
+            form.setPerson(person);
+            form.setStartDate(startDate);
+            form.setStartTime(startTime);
+            form.setEndDate(endDate);
+            form.setEndTime(endTime);
+            form.setVacationType(vacationType);
+            form.setDayLength(dayLength);
+            form.setHours(hours);
+            form.setReason(reason);
+            form.setHolidayReplacement(holidayReplacement);
+            form.setAddress(address);
+            form.setTeamInformed(teamInformed);
+            form.setComment(comment);
+
+            return form;
+        }
+    }
 }
