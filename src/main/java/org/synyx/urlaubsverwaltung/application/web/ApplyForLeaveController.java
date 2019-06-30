@@ -118,26 +118,6 @@ public class ApplyForLeaveController {
         return "application/app_form";
     }
 
-
-    private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
-
-        List<Person> persons = personService.getActivePersons();
-        model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute(PERSONS_ATTRIBUTE, persons);
-
-        boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
-        model.addAttribute("overtimeActive", overtimeActive);
-
-        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
-        if(!overtimeActive) {
-            vacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
-        }
-        model.addAttribute("vacationTypes", vacationTypes);
-
-        model.addAttribute("application", appForm);
-    }
-
-
     @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
         Model model, RedirectAttributes redirectAttributes) {
@@ -169,5 +149,23 @@ public class ApplyForLeaveController {
         redirectAttributes.addFlashAttribute("applySuccess", true);
 
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
+    }
+
+    private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
+
+        List<Person> persons = personService.getActivePersons();
+        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute(PERSONS_ATTRIBUTE, persons);
+
+        boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
+        model.addAttribute("overtimeActive", overtimeActive);
+
+        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+        if(!overtimeActive) {
+            vacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
+        }
+        model.addAttribute("vacationTypes", vacationTypes);
+
+        model.addAttribute("application", appForm);
     }
 }
