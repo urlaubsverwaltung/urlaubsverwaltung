@@ -1,3 +1,4 @@
+/* eslint-disable @urlaubsverwaltung/no-global-fetch */
 import { defaults } from "underscore";
 
 export async function getJSON(url) {
