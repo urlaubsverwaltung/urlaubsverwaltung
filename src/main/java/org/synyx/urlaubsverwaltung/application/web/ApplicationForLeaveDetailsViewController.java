@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -27,7 +26,6 @@ import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySe
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -40,7 +38,16 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.web.ControllerConstants.ERRORS_ATTRIBUTE;
 
 
 /**
@@ -89,19 +96,18 @@ public class ApplicationForLeaveDetailsViewController {
                                         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model)
         throws UnknownApplicationForLeaveException {
 
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+        final Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
             new UnknownApplicationForLeaveException(applicationId));
 
-        Person signedInUser = personService.getSignedInUser();
-        Person person = application.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person = application.getPerson();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to see application for leave of user '%s'",
-                signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to see application for " +
+                "leave of user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
+        final int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
 
         prepareDetailView(application, year, action, shortcut, model);
 
@@ -112,22 +118,21 @@ public class ApplicationForLeaveDetailsViewController {
     private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model) {
 
         // COMMENTS
-        List<ApplicationComment> comments = commentService.getCommentsByApplication(application);
+        final List<ApplicationComment> comments = commentService.getCommentsByApplication(application);
 
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
         model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
-        Person signedInUser = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
 
-        boolean isNotYetAllowed = application.hasStatus(ApplicationStatus.WAITING)
-            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED);
-        boolean isPrivilegedUser = signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.DEPARTMENT_HEAD)
-            || signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
+        final boolean isNotYetAllowed = application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED);
+        final boolean isPrivilegedUser = signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD)
+            || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
 
         if (isNotYetAllowed && isPrivilegedUser) {
-            model.addAttribute("bosses", personService.getActivePersonsByRole(Role.BOSS));
+            model.addAttribute("bosses", personService.getActivePersonsByRole(BOSS));
             model.addAttribute("referredPerson", new ReferredPerson());
         }
 
@@ -174,20 +179,20 @@ public class ApplicationForLeaveDetailsViewController {
                                    @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
                                    RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+        final Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
             new UnknownApplicationForLeaveException(applicationId));
 
-        Person signedInUser = personService.getSignedInUser();
-        Person person = application.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person = application.getPerson();
 
-        boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHead = signedInUser.hasRole(Role.DEPARTMENT_HEAD)
+        final boolean isBoss = signedInUser.hasRole(BOSS);
+        final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
             && departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-        boolean isSecondStageAuthority = signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
+        final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
             && departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
         if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to allow application for leave of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -196,17 +201,17 @@ public class ApplicationForLeaveDetailsViewController {
         commentValidator.validate(comment, errors);
 
         if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            redirectAttributes.addFlashAttribute(ERRORS_ATTRIBUTE, errors);
 
             return "redirect:/web/application/" + applicationId + "?action=allow";
         }
 
-        Application allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser,
+        final Application allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser,
             Optional.ofNullable(comment.getText()));
 
-        if (allowedApplicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
+        if (allowedApplicationForLeave.hasStatus(ALLOWED)) {
             redirectAttributes.addFlashAttribute("allowSuccess", true);
-        } else if (allowedApplicationForLeave.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+        } else if (allowedApplicationForLeave.hasStatus(TEMPORARY_ALLOWED)) {
             redirectAttributes.addFlashAttribute("temporaryAllowSuccess", true);
         }
 
@@ -228,17 +233,17 @@ public class ApplicationForLeaveDetailsViewController {
                                    @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException {
 
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+        final Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
             new UnknownApplicationForLeaveException(applicationId));
 
-        String referUsername = referredPerson.getUsername();
-        Person recipient = personService.getPersonByUsername(referUsername).orElseThrow(() ->
+        final String referUsername = referredPerson.getUsername();
+        final Person recipient = personService.getPersonByUsername(referUsername).orElseThrow(() ->
             new UnknownPersonException(referUsername));
 
-        Person sender = personService.getSignedInUser();
+        final Person sender = personService.getSignedInUser();
 
-        boolean isBoss = sender.hasRole(Role.BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
+        final boolean isBoss = sender.hasRole(BOSS);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
 
         if (isBoss || isDepartmentHead) {
             applicationInteractionService.refer(application, recipient, sender);
@@ -248,7 +253,7 @@ public class ApplicationForLeaveDetailsViewController {
             return "redirect:/web/application/" + applicationId;
         }
 
-        throw new AccessDeniedException(String.format(
+        throw new AccessDeniedException(format(
             "User '%s' has not the correct permissions to refer application for leave to user '%s'",
             sender.getId(), referUsername));
     }
@@ -261,22 +266,22 @@ public class ApplicationForLeaveDetailsViewController {
                                     @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
                                     RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+        final Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
             new UnknownApplicationForLeaveException(applicationId));
 
-        Person person = application.getPerson();
-        Person signedInUser = personService.getSignedInUser();
+        final Person person = application.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
 
-        boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-        boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isBoss = signedInUser.hasRole(BOSS);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
         if (isBoss || isDepartmentHead || isSecondStageAuthority) {
             comment.setMandatory(true);
             commentValidator.validate(comment, errors);
 
             if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+                redirectAttributes.addFlashAttribute(ERRORS_ATTRIBUTE, errors);
 
                 if (redirectUrl != null) {
                     return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
@@ -295,9 +300,8 @@ public class ApplicationForLeaveDetailsViewController {
             return "redirect:/web/application/" + applicationId;
         }
 
-        throw new AccessDeniedException(String.format(
-            "User '%s' has not the correct permissions to reject application for leave of user '%s'",
-            signedInUser.getId(), person.getId()));
+        throw new AccessDeniedException(format("User '%s' has not the correct permissions to reject application for " +
+            "leave of user '%s'", signedInUser.getId(), person.getId()));
     }
 
 
@@ -310,14 +314,14 @@ public class ApplicationForLeaveDetailsViewController {
                                     @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException {
 
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+        final Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
             new UnknownApplicationForLeaveException(applicationId));
 
-        Person signedInUser = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
 
-        boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
-        boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
-        boolean isTemporaryAllowed = application.hasStatus((ApplicationStatus.TEMPORARY_ALLOWED));
+        final boolean isWaiting = application.hasStatus(WAITING);
+        final boolean isAllowed = application.hasStatus(ALLOWED);
+        final boolean isTemporaryAllowed = application.hasStatus((TEMPORARY_ALLOWED));
 
         // security check: only two cases where cancelling is possible
         // 1: user can cancel her own applications for leave if it has not been allowed yet
@@ -326,19 +330,18 @@ public class ApplicationForLeaveDetailsViewController {
         if (signedInUser.equals(application.getPerson())) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
+        } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
-            throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to cancel application for leave of user '%s'",
-                signedInUser.getId(), application.getPerson().getId()));
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to cancel application for " +
+                "leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
         }
 
         commentValidator.validate(comment, errors);
 
         if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            redirectAttributes.addFlashAttribute(ERRORS_ATTRIBUTE, errors);
 
             return "redirect:/web/application/" + applicationId + "?action=cancel";
         }
@@ -356,7 +359,7 @@ public class ApplicationForLeaveDetailsViewController {
     public String remindBoss(@PathVariable("applicationId") Integer applicationId,
                              RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+        final Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
             new UnknownApplicationForLeaveException(applicationId));
 
         try {
