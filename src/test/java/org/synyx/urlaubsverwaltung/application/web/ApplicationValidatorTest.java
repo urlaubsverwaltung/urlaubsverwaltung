@@ -683,6 +683,213 @@ public class ApplicationValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    @Test
+    public void ensureAlreadyAbsentOnChristmasEveMorning() {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.MORNING));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(DayLength.MORNING)
+            .startDate(LocalDate.of(2019, 12, 24))
+            .endDate(LocalDate.of(2019, 12, 24))
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.morning");
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.christmasEve.morning");
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnChristmasEveMorningIsNotTriggered() {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.ZERO));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(DayLength.MORNING)
+            .startDate(LocalDate.of(2019, 12, 24))
+            .endDate(LocalDate.of(2019, 12, 24))
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors, never()).reject(anyString());
+        verify(errors, never()).rejectValue(anyString(), anyString());
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnChristmasEveNoon() {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.NOON));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(DayLength.NOON)
+            .startDate(LocalDate.of(2019, 12, 24))
+            .endDate(LocalDate.of(2019, 12, 24))
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.noon");
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.christmasEve.noon");
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnChristmasEveFullForDayLengthFullRequest() {
+        ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(DayLength.FULL);
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnChristmasEveFullForDayLengthMorningRequest() {
+        ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(DayLength.MORNING);
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnChristmasEveFullForDayLengthNoonRequest() {
+        ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(DayLength.NOON);
+    }
+
+    private void ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(final DayLength dayLengthRequest) {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.FULL));
+
+        final LocalDate christmasEve = LocalDate.of(2019, 12, 24);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(dayLengthRequest)
+            .startDate(christmasEve)
+            .endDate(christmasEve)
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.full");
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.christmasEve.full");
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnNewYearsEveMorning() {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.MORNING));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(DayLength.MORNING)
+            .startDate(LocalDate.of(2019, 12, 31))
+            .endDate(LocalDate.of(2019, 12, 31))
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.morning");
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.morning");
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnNewYearsEveMorningIsNotTriggered() {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.ZERO));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(DayLength.MORNING)
+            .startDate(LocalDate.of(2019, 12, 31))
+            .endDate(LocalDate.of(2019, 12, 31))
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors, never()).reject(anyString());
+        verify(errors, never()).rejectValue(anyString(), anyString());
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnNewYearsEveNoon() {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.NOON));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(DayLength.NOON)
+            .startDate(LocalDate.of(2019, 12, 31))
+            .endDate(LocalDate.of(2019, 12, 31))
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.noon");
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.noon");
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthFullRequest() {
+        ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(DayLength.FULL);
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthMorningRequest() {
+        ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(DayLength.MORNING);
+    }
+
+    @Test
+    public void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthNoonRequest() {
+        ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(DayLength.NOON);
+    }
+
+    private void ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(final DayLength dayLengthRequest) {
+
+        when(settingsService.getSettings())
+            .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.FULL));
+
+        final LocalDate christmasEve = LocalDate.of(2019, 12, 31);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(dayLengthRequest)
+            .startDate(christmasEve)
+            .endDate(christmasEve)
+            .build();
+
+        final Errors errors = mock(Errors.class);
+
+        validator.validate(appForm, errors);
+
+        verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.full");
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.full");
+    }
+
+    private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(absence.getInverse());
+        return settings;
+    }
+
+    private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
+        return settings;
+    }
+
+    private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
+        return new ApplicationForLeaveForm.Builder()
+            .person(TestDataCreator.createPerson())
+            .vacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+    }
 
     private void overtimeMinimumTest(BigDecimal hours) {
 

@@ -28,6 +28,8 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 
 
 /**
@@ -49,6 +51,13 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_WORKING_TIME = "application.error.noValidWorkingTime";
+    private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING = "application.error.alreadyAbsentOn.christmasEve.morning";
+    private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON = "application.error.alreadyAbsentOn.christmasEve.noon";
+    private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL = "application.error.alreadyAbsentOn.christmasEve.full";
+    private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING = "application.error.alreadyAbsentOn.newYearsEve.morning";
+    private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON = "application.error.alreadyAbsentOn.newYearsEve.noon";
+    private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL = "application.error.alreadyAbsentOn.newYearsEve.full";
+
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
     private static final String ERROR_NOT_ENOUGH_OVERTIME = "application.error.notEnoughOvertime";
     private static final String ERROR_MISSING_HOURS = "application.error.missingHoursForOvertime";
@@ -101,6 +110,8 @@ public class ApplicationValidator implements Validator {
         // check hours
         validateHours(applicationForm, settings, errors);
 
+        validateDayLength(applicationForm, settings, errors);
+
         // check if reason is not filled
         if (VacationCategory.SPECIALLEAVE.equals(applicationForm.getVacationType().getCategory())
                 && !StringUtils.hasText(applicationForm.getReason())) {
@@ -119,6 +130,80 @@ public class ApplicationValidator implements Validator {
         }
     }
 
+    private static void validateDayLength(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
+
+        final LocalDate startDate = applicationForm.getStartDate();
+        final LocalDate endDate = applicationForm.getEndDate();
+        final DayLength dayLength = applicationForm.getDayLength();
+
+        if (startDate == null) {
+            return;
+        }
+
+        if (endDate == null || startDate.isEqual(endDate)) {
+            if (isChristmasEve(startDate)) {
+                validateChristmasEve(dayLength, settings.getWorkingTimeSettings(), errors);
+            } else if (isNewYearsEve(startDate)) {
+                validateNewYearsEve(dayLength, settings.getWorkingTimeSettings(), errors);
+            }
+        }
+    }
+
+    private static void validateChristmasEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
+
+        final DayLength workingDurationForChristmasEve = workingTimeSettings.getWorkingDurationForChristmasEve();
+
+        switch (workingDurationForChristmasEve) {
+            case ZERO:
+                if (applicationDayLength != DayLength.ZERO) {
+                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
+                    errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
+                }
+                return;
+            case MORNING:
+                if (applicationDayLength == DayLength.NOON) {
+                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
+                    errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
+                }
+                return;
+            case NOON:
+                if (applicationDayLength == DayLength.MORNING) {
+                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
+                    errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
+                }
+                return;
+            default:
+                // nothing to do here
+        }
+    }
+
+    private static void validateNewYearsEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
+
+        final DayLength workingDurationForNewYearsEve = workingTimeSettings.getWorkingDurationForNewYearsEve();
+
+        switch (workingDurationForNewYearsEve) {
+            case ZERO:
+                if (applicationDayLength != DayLength.ZERO) {
+                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
+                    errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
+                }
+                return;
+            case MORNING:
+                if (applicationDayLength == DayLength.NOON) {
+                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
+                    errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
+                }
+                return;
+            case NOON:
+                if (applicationDayLength == DayLength.MORNING) {
+                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
+                    errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
+                }
+                return;
+            default:
+                // nothing to do here
+        }
+    }
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
