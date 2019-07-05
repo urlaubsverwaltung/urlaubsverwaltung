@@ -33,7 +33,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -98,8 +97,8 @@ public class SickNoteController {
         }
 
         throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to see the sick note of user '%s'",
-                signedInUser.getLoginName(), sickNote.getPerson().getLoginName()));
+            "User '%s' has not the correct permissions to see the sick note of user '%s'",
+            signedInUser.getLoginName(), sickNote.getPerson().getLoginName()));
     }
 
 
@@ -161,7 +160,7 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id,
-        @ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+                               @ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
 
         SickNote sickNote = sickNoteForm.generateSickNote();
 
@@ -184,7 +183,7 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Integer id,
-        @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors)
+                             @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors)
         throws UnknownSickNoteException {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
@@ -223,7 +222,7 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
-        @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
+                                            @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
         throws UnknownSickNoteException {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
