@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -23,19 +22,26 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public SickNoteComment create(SickNote sickNote, SickNoteAction action, Optional<String> text, Person author) {
+    public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author) {
+        return this.create(sickNote, action, author, null);
+    }
 
-        SickNoteComment comment = new SickNoteComment();
+    @Override
+    public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author, String text) {
+
+        final SickNoteComment comment = new SickNoteComment();
 
         comment.setSickNote(sickNote);
         comment.setAction(action);
         comment.setPerson(author);
 
-        text.ifPresent(comment::setText);
+        if (text == null) {
+            comment.setText("");
+        } else {
+            comment.setText(text);
+        }
 
-        commentDAO.save(comment);
-
-        return comment;
+        return commentDAO.save(comment);
     }
 
 

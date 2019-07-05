@@ -189,14 +189,24 @@
                                 <c:out value="${comment.person.niceName}"/>
                             </td>
                             <td>
-                                <uv:date date="${comment.date}"/>:
-                                <br/>
                                 <c:choose>
                                     <c:when test="${empty comment.text}">
                                         <spring:message code="sicknote.progress.${comment.action}"/>
+                                        <uv:date date="${comment.date}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <c:out value="${comment.text}"/>
+                                        <spring:message code="sicknote.progress.${comment.action}"/>
+                                        <uv:date date="${comment.date}"/>
+                                        <c:choose>
+                                            <c:when test="${comment.action == 'COMMENTED'}">
+                                                :
+                                            </c:when>
+                                            <c:otherwise>
+                                                <spring:message code="sicknote.progress.comment"/>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <br/>
+                                        <em><c:out value="${comment.text}"/></em>
                                     </c:otherwise>
                                 </c:choose>
                             </td>

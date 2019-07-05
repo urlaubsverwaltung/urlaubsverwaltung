@@ -33,7 +33,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -98,8 +97,8 @@ public class SickNoteController {
         }
 
         throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to see the sick note of user '%s'",
-                signedInUser.getLoginName(), sickNote.getPerson().getLoginName()));
+            "User '%s' has not the correct permissions to see the sick note of user '%s'",
+            signedInUser.getLoginName(), sickNote.getPerson().getLoginName()));
     }
 
 
@@ -107,7 +106,7 @@ public class SickNoteController {
     @GetMapping("/sicknote/new")
     public String newSickNote(Model model) {
 
-        model.addAttribute("sickNote", new SickNote());
+        model.addAttribute("sickNote", new SickNoteForm());
         model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
@@ -117,20 +116,22 @@ public class SickNoteController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote")
-    public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
+    public String newSickNote(@ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+
+        SickNote sickNote = sickNoteForm.generateSickNote();
 
         validator.validate(sickNote, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNote", sickNoteForm);
             model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             return "sicknote/sick_note_form";
         }
 
-        sickNoteInteractionService.create(sickNote, personService.getSignedInUser());
+        sickNoteInteractionService.create(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
 
         return "redirect:/web/sicknote/" + sickNote.getId();
     }
@@ -143,11 +144,13 @@ public class SickNoteController {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
+        SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
+
         if (!sickNote.isActive()) {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
-        model.addAttribute("sickNote", sickNote);
+        model.addAttribute("sickNote", sickNoteForm);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         return "sicknote/sick_note_form";
@@ -157,19 +160,21 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id,
-        @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
+                               @ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+
+        SickNote sickNote = sickNoteForm.generateSickNote();
 
         validator.validate(sickNote, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNote", sickNoteForm);
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             return "sicknote/sick_note_form";
         }
 
-        sickNoteInteractionService.update(sickNote, personService.getSignedInUser());
+        sickNoteInteractionService.update(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
 
         return "redirect:/web/sicknote/" + id;
     }
@@ -178,7 +183,7 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Integer id,
-        @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors)
+                             @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors)
         throws UnknownSickNoteException {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
@@ -188,8 +193,7 @@ public class SickNoteController {
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         } else {
-            sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, Optional.ofNullable(comment.getText()),
-                personService.getSignedInUser());
+            sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, personService.getSignedInUser(), comment.getText());
         }
 
         return "redirect:/web/sicknote/" + id;
@@ -218,7 +222,7 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
-        @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
+                                            @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
         throws UnknownSickNoteException {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));

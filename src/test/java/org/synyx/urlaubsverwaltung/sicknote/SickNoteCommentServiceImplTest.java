@@ -1,16 +1,16 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Optional;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -26,6 +26,7 @@ public class SickNoteCommentServiceImplTest {
     public void setUp() {
 
         commentDAO = mock(SickNoteCommentDAO.class);
+        when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         sickNoteCommentService = new SickNoteCommentServiceImpl(commentDAO);
     }
@@ -34,24 +35,20 @@ public class SickNoteCommentServiceImplTest {
     @Test
     public void ensureCreatesACommentAndPersistsIt() {
 
-        Person author = TestDataCreator.createPerson("author");
-        SickNote sickNote = TestDataCreator.createSickNote(author);
+        final Person author = TestDataCreator.createPerson("author");
+        final SickNote sickNote = TestDataCreator.createSickNote(author);
 
-        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.EDITED,
-                Optional.empty(), author);
+        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.EDITED, author);
 
-        Assert.assertNotNull("Should not be null", comment);
-
-        Assert.assertNotNull("Sick note should be set", comment.getSickNote());
-        Assert.assertNotNull("Date should be set", comment.getDate());
-        Assert.assertNotNull("Action should be set", comment.getAction());
-        Assert.assertNotNull("Author should be set", comment.getPerson());
-
-        Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong action", SickNoteAction.EDITED, comment.getAction());
-        Assert.assertEquals("Wrong author", author, comment.getPerson());
-
-        Assert.assertNull("Text should not be set", comment.getText());
+        assertThat(comment).isNotNull();
+        assertThat(comment.getSickNote()).isNotNull();
+        assertThat(comment.getDate()).isNotNull();
+        assertThat(comment.getAction()).isNotNull();
+        assertThat(comment.getPerson()).isNotNull();
+        assertThat(comment.getSickNote()).isEqualTo(sickNote);
+        assertThat(comment.getAction()).isEqualTo(SickNoteAction.EDITED);
+        assertThat(comment.getPerson()).isEqualTo(author);
+        assertThat(comment.getText()).isEqualTo("");
 
         verify(commentDAO).save(eq(comment));
     }
@@ -60,25 +57,21 @@ public class SickNoteCommentServiceImplTest {
     @Test
     public void ensureCreationOfCommentWithTextWorks() {
 
-        Person author = TestDataCreator.createPerson("author");
-        SickNote sickNote = TestDataCreator.createSickNote(author);
+        final String givenComment = "Foo";
+        final Person givenAuthor = TestDataCreator.createPerson("author");
+        final SickNote givenSickNote = TestDataCreator.createSickNote(givenAuthor);
 
-        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION,
-                Optional.of("Foo"), author);
+        SickNoteComment sickNoteComment = sickNoteCommentService.create(givenSickNote, SickNoteAction.CONVERTED_TO_VACATION,
+            givenAuthor, givenComment);
 
-        Assert.assertNotNull("Should not be null", comment);
+        assertThat(sickNoteComment).isNotNull();
+        assertThat(sickNoteComment.getDate()).isNotNull();
 
-        Assert.assertNotNull("Sick note should be set", comment.getSickNote());
-        Assert.assertNotNull("Date should be set", comment.getDate());
-        Assert.assertNotNull("Action should be set", comment.getAction());
-        Assert.assertNotNull("Author should be set", comment.getPerson());
-        Assert.assertNotNull("Text should be set", comment.getText());
+        assertThat(sickNoteComment.getSickNote()).isEqualTo(givenSickNote);
+        assertThat(sickNoteComment.getAction()).isEqualTo(SickNoteAction.CONVERTED_TO_VACATION);
+        assertThat(sickNoteComment.getPerson()).isEqualTo(givenAuthor);
+        assertThat(sickNoteComment.getText()).isEqualTo(givenComment);
 
-        Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong action", SickNoteAction.CONVERTED_TO_VACATION, comment.getAction());
-        Assert.assertEquals("Wrong author", author, comment.getPerson());
-        Assert.assertEquals("Wrong text", "Foo", comment.getText());
-
-        verify(commentDAO).save(eq(comment));
+        verify(commentDAO).save(eq(sickNoteComment));
     }
 }
