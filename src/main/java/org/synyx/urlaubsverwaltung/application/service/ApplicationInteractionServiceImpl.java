@@ -310,6 +310,21 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             if (!canceller.equals(savedApplication.getPerson())) {
                 applicationMailService.sendCancelledByOfficeNotification(savedApplication, savedComment);
             }
+        } else if (canceller.equals(application.getPerson()) && application.getStartDate().isAfter(LocalDate.now(UTC))) {
+            /*
+             * Users cannot cancel already allowed applications
+             * Users cannot cancel already allowed applications
+             * directly. Their commentStatus will be CANCEL_REQUESTED
+             * directly only if the vacation has not yet started.
+             */
+
+            application.setStatus(ApplicationStatus.CANCELLED);
+            final Application savedApplication = applicationService.save(application);
+
+            LOG.info("Cancelled application for leave (by same person, before leave started): {}", savedApplication);
+
+            commentService.create(savedApplication, ApplicationAction.CANCELLED, comment, canceller);
+
         } else {
             /*
              * Users cannot cancel already allowed applications
