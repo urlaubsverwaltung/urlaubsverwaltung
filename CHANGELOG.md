@@ -3,6 +3,7 @@
   members on departments page [#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
 * Fix: Doppelter halbtägiger Urlaub an Heiligabend/Silvester [#478](https://github.com/synyx/urlaubsverwaltung/issues/478)
 * Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
+* Fix of empty calender in sick note edit form [#708](https://github.com/synyx/urlaubsverwaltung/issues/708)
 
 ### [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2)
 * Fix release for broken war / container image
