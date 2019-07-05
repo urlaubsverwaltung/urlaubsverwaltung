@@ -86,7 +86,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(sickNote, SickNoteAction.EDITED, editor, comment);
 
-        LOG.info("Updated sick note: {} with comment", sickNote, comment);
+        LOG.info("Updated sick note: {} with comment {}", sickNote, comment);
 
         updateAbsence(sickNote);
 
