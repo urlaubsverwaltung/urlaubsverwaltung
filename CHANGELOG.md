@@ -1,8 +1,8 @@
 ### master/unreleased
+* Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
 * Quickfix for better overview about department members: add link to department
   members on departments page [#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
-* Fix: Doppelter halbtägiger Urlaub an Heiligabend/Silvester [#478](https://github.com/synyx/urlaubsverwaltung/issues/478)
-* Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
+* Fix double half day applications for leave on Christmas/New Year's Eve [#478](https://github.com/synyx/urlaubsverwaltung/issues/478)
 * Fix of empty calender in sick note edit form [#708](https://github.com/synyx/urlaubsverwaltung/issues/708)
 
 ### [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2)
