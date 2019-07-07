@@ -25,6 +25,11 @@ class ApplicationMailService {
 
     private static final Locale LOCALE = Locale.GERMAN;
 
+    private static final String APPLICATION = "application";
+    private static final String VACATION_TYPE = "vacationType";
+    private static final String DAY_LENGTH = "dayLength";
+    private static final String COMMENT = "comment";
+
     private final MailService mailService;
     private final DepartmentService departmentService;
     private final ApplicationRecipientService applicationRecipientService;
@@ -41,10 +46,10 @@ class ApplicationMailService {
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("comment", applicationComment);
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, applicationComment);
 
         // Inform user that the application for leave has been allowed
         mailService.sendMailTo(application.getPerson(), "subject.application.allowed.user", "allowed_user", model);
@@ -56,63 +61,63 @@ class ApplicationMailService {
     /**
      * sends an email to the applicant that the application has been rejected.
      *
-     * @param  application  the application which got rejected
-     * @param  comment  reason why application was rejected
+     * @param application the application which got rejected
+     * @param comment     reason why application was rejected
      */
     void sendRejectedNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("comment", comment);
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
 
-        mailService.sendMailTo(application.getPerson(),"subject.application.rejected", "rejected", model);
+        mailService.sendMailTo(application.getPerson(), "subject.application.rejected", "rejected", model);
     }
 
     /**
      * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide
      * about this application via a generated email.
      *
-     * @param  application to ask for support
-     * @param  recipient to request for a second opinion
-     * @param  sender person that asks for a second opinion
+     * @param application to ask for support
+     * @param recipient   to request for a second opinion
+     * @param sender      person that asks for a second opinion
      */
     void sendReferApplicationNotification(Application application, Person recipient, Person sender) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
+        model.put(APPLICATION, application);
         model.put("recipient", recipient);
         model.put("sender", sender);
 
-        mailService.sendMailTo(recipient,"subject.application.refer", "refer", model);
+        mailService.sendMailTo(recipient, "subject.application.refer", "refer", model);
     }
 
     /**
      * Sends mail to office and informs about
      * a cancellation request of an already allowed application.
      *
-     * @param  application cancelled application
-     * @param  createdComment additional comment for the confirming application
+     * @param application    cancelled application
+     * @param createdComment additional comment for the confirming application
      */
     void sendCancellationRequest(Application application, ApplicationComment createdComment) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("comment", createdComment);
+        model.put(APPLICATION, application);
+        model.put(COMMENT, createdComment);
 
-        mailService.sendMailTo(NOTIFICATION_OFFICE,"subject.application.cancellationRequest", "application_cancellation_request", model);
+        mailService.sendMailTo(NOTIFICATION_OFFICE, "subject.application.cancellationRequest", "application_cancellation_request", model);
     }
 
     /**
      * Sends mail to the affected person if sick note is converted to vacation.
      *
-     * @param  application the application that has been converted from sick note to vacation
+     * @param application the application that has been converted from sick note to vacation
      */
     void sendSickNoteConvertedToVacationNotification(Application application) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
+        model.put(APPLICATION, application);
 
         mailService.sendMailTo(application.getPerson(), "subject.sicknote.converted", "sicknote_converted", model);
     }
@@ -122,15 +127,15 @@ class ApplicationMailService {
      * has been selected as holiday replacement
      * that stands in while someone is on holiday.
      *
-     * @param  application to inform the holiday replacement
+     * @param application to inform the holiday replacement
      */
     void notifyHolidayReplacement(Application application) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
+        model.put(APPLICATION, application);
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
-        mailService.sendMailTo(application.getHolidayReplacement(),"subject.application.holidayReplacement", "notify_holiday_replacement", model);
+        mailService.sendMailTo(application.getHolidayReplacement(), "subject.application.holidayReplacement", "notify_holiday_replacement", model);
     }
 
     /**
@@ -143,10 +148,10 @@ class ApplicationMailService {
     void sendConfirmation(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("comment", comment);
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
 
         final Person recipient = application.getPerson();
         mailService.sendMailTo(recipient, "subject.application.applied.user", "confirm", model);
@@ -156,16 +161,16 @@ class ApplicationMailService {
      * Sends an email to the person of the given application
      * that the office has applied for leave on behalf of himself.
      *
-     * @param  application confirmed application on behalf
-     * @param  comment additional comment for the application
+     * @param application confirmed application on behalf
+     * @param comment     additional comment for the application
      */
     void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("comment", comment);
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
 
         final Person recipient = application.getPerson();
         mailService.sendMailTo(recipient, "subject.application.appliedByOffice", "new_application_by_office", model);
@@ -180,8 +185,8 @@ class ApplicationMailService {
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("comment", comment);
+        model.put(APPLICATION, application);
+        model.put(COMMENT, comment);
 
         final Person recipient = application.getPerson();
         mailService.sendMailTo(recipient, "subject.application.cancelled.user", "cancelled_by_office", model);
@@ -202,10 +207,10 @@ class ApplicationMailService {
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("comment", comment);
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
         model.put("departmentVacations", applicationsForLeave);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
@@ -217,15 +222,15 @@ class ApplicationMailService {
      * Sends an email to the applicant and to the second stage authorities that the application for leave has been
      * allowed temporary.
      *
-     * @param  application  that has been allowed temporary by a department head
-     * @param  comment  contains reason why application for leave has been allowed temporary
+     * @param application that has been allowed temporary by a department head
+     * @param comment     contains reason why application for leave has been allowed temporary
      */
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("comment", comment);
+        model.put(APPLICATION, application);
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
 
         // Inform user that the application for leave has been allowed temporary
         final String subjectMessageKey = "subject.application.temporaryAllowed.user";
@@ -236,10 +241,10 @@ class ApplicationMailService {
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
 
         Map<String, Object> modelSecondStage = new HashMap<>();
-        modelSecondStage.put("application", application);
-        modelSecondStage.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
-        modelSecondStage.put("dayLength", getTranslation(application.getDayLength().name()));
-        modelSecondStage.put("comment", comment);
+        modelSecondStage.put(APPLICATION, application);
+        modelSecondStage.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        modelSecondStage.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        modelSecondStage.put(COMMENT, comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
@@ -257,7 +262,7 @@ class ApplicationMailService {
     void sendRemindBossNotification(Application application) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
+        model.put(APPLICATION, application);
 
         List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
         mailService.sendMailToEach(recipients, "subject.application.remind", "remind", model);

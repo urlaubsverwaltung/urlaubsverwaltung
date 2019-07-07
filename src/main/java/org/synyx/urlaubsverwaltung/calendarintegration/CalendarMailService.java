@@ -10,6 +10,9 @@ import java.util.Map;
 @Service
 public class CalendarMailService {
 
+    private static final String CALENDAR = "calendar";
+    private static final String EXCEPTION = "exception";
+
     private final MailService mailService;
 
     CalendarMailService(MailService mailService) {
@@ -26,9 +29,9 @@ public class CalendarMailService {
     public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendarName);
+        model.put(CALENDAR, calendarName);
         model.put("absence", absence);
-        model.put("exception", exception);
+        model.put(EXCEPTION, exception);
 
         mailService.sendTechnicalMail("subject.error.calendar.sync","error_calendar_sync", model);
     }
@@ -45,10 +48,10 @@ public class CalendarMailService {
                                                     String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendarName);
+        model.put(CALENDAR, calendarName);
         model.put("absence", absence);
         model.put("eventId", eventId);
-        model.put("exception", exception);
+        model.put(EXCEPTION, exception);
 
         mailService.sendTechnicalMail("subject.error.calendar.update","error_calendar_update", model);
     }
@@ -63,9 +66,9 @@ public class CalendarMailService {
     public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendarName);
+        model.put(CALENDAR, calendarName);
         model.put("eventId", eventId);
-        model.put("exception", exception);
+        model.put(EXCEPTION, exception);
 
         mailService.sendTechnicalMail("subject.error.calendar.delete","error_calendar_delete", model);
     }
