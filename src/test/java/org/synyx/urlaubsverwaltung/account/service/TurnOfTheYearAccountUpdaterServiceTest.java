@@ -90,6 +90,6 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
 
         verify(mailService).sendMailTo(eq(NOTIFICATION_OFFICE), eq("subject.account.updatedRemainingDays"), eq("updated_accounts"), any());
-        verify(mailService).sendTechnicalMail(eq("subject.account.updatedRemainingDays"),eq("updated_accounts"), any());
+        verify(mailService).sendTechnicalMail(eq("subject.account.updatedRemainingDays"), eq("updated_accounts"), any());
     }
 }
