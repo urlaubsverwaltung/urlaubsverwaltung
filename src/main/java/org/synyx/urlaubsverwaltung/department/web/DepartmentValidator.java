@@ -36,8 +36,6 @@ public class DepartmentValidator implements Validator {
         "department.members.error.secondStageAuthorityMissing";
     private static final String ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING =
         "department.members.error.twoStageApprovalFlagMissing";
-    private static final String ERROR_SECOND_STAGE_AUTHORITY_NOT_ASSIGNED =
-        "department.members.error.secondStageNotAssigned";
     private static final String ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS =
         "department.members.error.secondStageHasNoAccess";
 

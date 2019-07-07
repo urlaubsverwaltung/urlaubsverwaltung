@@ -104,8 +104,7 @@ public class OvertimeController {
 
 
     @GetMapping("/overtime/{id}")
-    public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException,
-        AccessDeniedException {
+    public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
 
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
 

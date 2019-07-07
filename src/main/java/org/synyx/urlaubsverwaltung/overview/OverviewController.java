@@ -92,7 +92,7 @@ public class OverviewController {
     @GetMapping("/staff/{personId}/overview")
     public String showOverview(@PathVariable("personId") Integer personId,
                                @RequestParam(value = YEAR_ATTRIBUTE, required = false) Integer year, Model model)
-            throws UnknownPersonException, AccessDeniedException {
+            throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = personService.getSignedInUser();
