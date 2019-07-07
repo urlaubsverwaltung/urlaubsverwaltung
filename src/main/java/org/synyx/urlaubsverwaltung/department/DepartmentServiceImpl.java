@@ -177,11 +177,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
 
-    private Predicate<Person> isNotHeadOf(Department department) {
-        return person -> !department.getDepartmentHeads().contains(person);
-    }
-
-
     private Predicate<Person> isNotSecondStageIn(Department department) {
         return person -> !department.getSecondStageAuthorities().contains(person);
     }
@@ -222,6 +217,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
 
-        return isOwnData || isPrivilegedUser ;
+        return isOwnData || isPrivilegedUser;
     }
 }
