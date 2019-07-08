@@ -1,4 +1,4 @@
-### master/unreleased
+### [urlaubsverwaltung-2.44.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.0)
 * Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
 * Quickfix for better overview about department members: add link to department
   members on departments page [#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
