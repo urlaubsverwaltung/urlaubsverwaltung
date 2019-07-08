@@ -4,7 +4,23 @@
 [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 [![Heroku](https://img.shields.io/badge/%E2%86%91_Deploy_to-Heroku-7056bf.svg)](https://urlaubsverwaltung.herokuapp.com)
 
-## Urlaubsverwaltung
+### Version 3
+
+Die Urlaubsverwaltung (UV) wird ständig weiterentwickelt  
+und wir starten auf dem _master Branch_ mit der _3.x Version_ durch.  
+Diese gibt uns die Möglichkeit alte Zöpfe abzuschneiden und die UV transparent zu ändern.
+
+**Version 2**  
+Falls ihr auf der Suche nach der Version 2.x der UV seid  
+dann geht es hier entlang zur [v2.x](https://github.com/synyx/urlaubsverwaltung/tree/v2.x)
+
+Einen [Migration Guide](https://github.com/synyx/urlaubsverwaltung/wiki/Urlaubsverwaltung-3.0-Migration-Guide) von der 
+Version 2 auf 3 findet  ihr im [Wiki](https://github.com/synyx/urlaubsverwaltung/wiki)
+
+Wir werden bis zum **31.12.2019** die UV mit Bug und Sicherheitsupdates unterstützen.  
+Danach wird nur noch die Version 3 unterstützt.
+
+# Urlaubsverwaltung
 
  * [Übersicht](#übersicht)
  * [FAQ](#faq)
