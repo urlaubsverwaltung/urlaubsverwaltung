@@ -10,18 +10,21 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import java.util.Collection;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
@@ -116,21 +119,33 @@ public class PersonSyncServiceTest {
     @Test
     public void ensureCanAppointPersonAsOfficeUser() {
 
-        Person person = createPerson();
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(emptyList());
+        when(personService.save(any())).then(returnsFirstArg());
+
+        final Person person = createPerson();
         person.setPermissions(singletonList(USER));
+        assertThat(person.getPermissions()).containsOnly(USER);
 
-        Assert.assertEquals("Wrong initial permissions", 1, person.getPermissions().size());
+        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
 
-        ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+        final Collection<Role> permissions = personWithOfficeRole.getPermissions();
+        assertThat(permissions).hasSize(2);
+        assertThat(permissions).contains(USER, OFFICE);
+    }
 
-        sut.appointPersonAsOfficeUser(person);
+    @Test
+    public void ensureCanNotAppointPersonAsOfficeUser() {
 
-        verify(personService).save(personCaptor.capture());
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(singletonList(new Person()));
 
-        Collection<Role> permissions = personCaptor.getValue().getPermissions();
+        final Person person = createPerson();
+        person.setPermissions(singletonList(USER));
+        assertThat(person.getPermissions()).containsOnly(USER);
 
-        Assert.assertEquals("Wrong number of permissions", 2, permissions.size());
-        Assert.assertTrue("Should have user role", permissions.contains(USER));
-        Assert.assertTrue("Should have office role", permissions.contains(Role.OFFICE));
+        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
+
+        final Collection<Role> permissions = personWithOfficeRole.getPermissions();
+        assertThat(permissions).hasSize(1);
+        assertThat(permissions).containsOnly(USER);
     }
 }

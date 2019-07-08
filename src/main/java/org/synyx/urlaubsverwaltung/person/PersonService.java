@@ -100,7 +100,7 @@ public interface PersonService {
      *
      * @return  {@link List} of {@link Person}
      */
-    List<Person> getPersonsByRole(Role role);
+    List<Person> getActivePersonsByRole(Role role);
 
 
     /**

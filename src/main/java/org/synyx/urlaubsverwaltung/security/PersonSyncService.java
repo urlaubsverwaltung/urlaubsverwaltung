@@ -15,6 +15,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
@@ -85,19 +86,29 @@ public class PersonSyncService {
 
 
     /**
-     * Adds {@link Role#OFFICE} to the roles of the given person.
+     * Adds {@link Role#OFFICE} to the roles of the given person if no
+     * other active user with a office role is defined.
      *
-     * @param person that gets the role {@link Role#OFFICE}
+     * @param person that maybe gets the role {@link Role#OFFICE}
+     *
+     * @return saved {@link Person} with {@link Role#OFFICE} rights
+     * if no other active person with {@link Role#OFFICE} is available.
      */
-    public void appointPersonAsOfficeUser(Person person) {
+    public Person appointAsOfficeUserIfNoOfficeUserPresent(Person person) {
 
-        List<Role> permissions = new ArrayList<>(person.getPermissions());
-        permissions.add(Role.OFFICE);
+        boolean activeOfficeUserAvailable = !personService.getActivePersonsByRole(OFFICE).isEmpty();
+        if (activeOfficeUserAvailable) {
+            return person;
+        }
 
+        final List<Role> permissions = new ArrayList<>(person.getPermissions());
+        permissions.add(OFFICE);
         person.setPermissions(permissions);
 
-        personService.save(person);
+        final Person savedPerson = personService.save(person);
 
-        LOG.info("Add 'OFFICE' to roles of person: {}", person);
+        LOG.info("Add 'OFFICE' role to person: {}", person);
+
+        return savedPerson;
     }
 }

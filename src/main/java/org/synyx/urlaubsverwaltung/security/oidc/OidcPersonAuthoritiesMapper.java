@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 /**
  * @author Florian Krupicka - krupicka@synyx.de
@@ -54,15 +53,8 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
             if (maybePerson.isPresent()) {
                 person = personSyncService.syncPerson(maybePerson.get(), firstName, lastName, mailAddress);
             } else {
-                person = personSyncService.createPerson(userUniqueID, firstName, lastName, mailAddress);
-
-                /*
-                 * NOTE: If the system has no office user yet, grant office permissions to successfully signed in user
-                 */
-                final boolean noOfficeUserYet = personService.getPersonsByRole(OFFICE).isEmpty();
-                if (noOfficeUserYet) {
-                    personSyncService.appointPersonAsOfficeUser(person);
-                }
+                final Person createdPerson = personSyncService.createPerson(userUniqueID, firstName, lastName, mailAddress);
+                person = personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
             }
 
             return person.getPermissions()

@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 
 
 /**
@@ -34,19 +35,16 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
     private final PersonSyncService personSyncService;
     private final LdapUserMapper ldapUserMapper;
 
-    LdapPersonContextMapper(PersonService personService, PersonSyncService personSyncService,
-                                   LdapUserMapper ldapUserMapper) {
-
+    LdapPersonContextMapper(PersonService personService, PersonSyncService personSyncService, LdapUserMapper ldapUserMapper) {
         this.personService = personService;
         this.personSyncService = personSyncService;
         this.ldapUserMapper = ldapUserMapper;
     }
 
     @Override
-    public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
-        Collection<? extends GrantedAuthority> authorities) {
+    public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
 
-        LdapUser ldapUser;
+        final LdapUser ldapUser;
 
         try {
             ldapUser = ldapUserMapper.mapFromContext(ctx);
@@ -55,39 +53,34 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
             throw new BadCredentialsException("No authentication possible for user = " + username, ex);
         }
 
-        String login = ldapUser.getUsername();
+        final String login = ldapUser.getUsername();
+        final Optional<String> firstName = ldapUser.getFirstName();
+        final Optional<String> lastName = ldapUser.getLastName();
+        final Optional<String> email = ldapUser.getEmail();
 
-        Optional<Person> optionalPerson = personService.getPersonByLogin(login);
+        final Person person;
 
-        Person person;
+        final Optional<Person> maybePerson = personService.getPersonByLogin(login);
+        if (maybePerson.isPresent()) {
+            final Person existentPerson = maybePerson.get();
 
-        if (optionalPerson.isPresent()) {
-            Person existentPerson = optionalPerson.get();
-
-            if (existentPerson.hasRole(Role.INACTIVE)) {
+            if (existentPerson.hasRole(INACTIVE)) {
                 LOG.info("User '{}' has been deactivated and can not sign in therefore", username);
 
                 throw new DisabledException("User '" + username + "' has been deactivated");
             }
 
-            person = personSyncService.syncPerson(existentPerson, ldapUser.getFirstName(), ldapUser.getLastName(),
-                    ldapUser.getEmail());
+            person = personSyncService.syncPerson(existentPerson, firstName, lastName, email);
         } else {
             LOG.info("No user found for username '{}'", username);
 
-            person = personSyncService.createPerson(login, ldapUser.getFirstName(), ldapUser.getLastName(),
-                    ldapUser.getEmail());
+            final Person createdPerson = personSyncService.createPerson(login, firstName, lastName, email);
+            person = personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
 
         /*
          * NOTE: If the system has no office user yet, grant office permissions to successfully signed in user
          */
-        boolean noOfficeUserYet = personService.getPersonsByRole(Role.OFFICE).isEmpty();
-
-        // TODO: Think about if this logic could be dangerous?!
-        if (noOfficeUserYet) {
-            personSyncService.appointPersonAsOfficeUser(person);
-        }
 
         final Essence user = new Essence(ctx);
         user.setUsername(login);

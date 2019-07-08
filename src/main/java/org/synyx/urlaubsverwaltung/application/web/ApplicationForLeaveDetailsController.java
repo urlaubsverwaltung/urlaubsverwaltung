@@ -127,7 +127,7 @@ public class ApplicationForLeaveDetailsController {
             || signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
 
         if (isNotYetAllowed && isPrivilegedUser) {
-            model.addAttribute("bosses", personService.getPersonsByRole(Role.BOSS));
+            model.addAttribute("bosses", personService.getActivePersonsByRole(Role.BOSS));
             model.addAttribute("referredPerson", new ReferredPerson());
         }
 
