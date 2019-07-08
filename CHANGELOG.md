@@ -1,4 +1,4 @@
-### 3.x RC
+### 3.0 RC1
 * Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Migrate database to mariadb [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Add configuration properties for security and some cleanups [#696](https://github.com/synyx/urlaubsverwaltung/pull/696)
