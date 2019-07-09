@@ -33,15 +33,17 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     @Override
     public Collection<? extends GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
 
-        final Optional<? extends GrantedAuthority> authority = authorities.stream().findFirst();
-
-        return authority.map(this::mapAuthorities).orElseThrow(RuntimeException::new); // TODO
+        return authorities
+            .stream()
+            .filter(OidcUserAuthority.class::isInstance)
+            .findFirst()
+            .map(OidcUserAuthority.class::cast)
+            .map(this::mapAuthorities)
+            .orElseThrow(() -> new OidcPersonMappingException("oidc: The granted authority was not a 'OidcUserAuthority' and the user cannot be mapped."));
     }
 
-    private Collection<? extends GrantedAuthority> mapAuthorities(GrantedAuthority grantedAuthority) {
-        if (grantedAuthority instanceof OidcUserAuthority) {
+    private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
 
-            final OidcUserAuthority oidcUserAuthority = (OidcUserAuthority) grantedAuthority;
             final Optional<String> firstName = extractGivenName(oidcUserAuthority);
             final Optional<String> lastName = extractFamilyName(oidcUserAuthority);
             final Optional<String> mailAddress = extractMailAddress(oidcUserAuthority);
@@ -69,9 +71,6 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
                 .map(Role::name)
                 .map(SimpleGrantedAuthority::new)
                 .collect(toList());
-        } else {
-            throw new OidcPersonMappingException("oidc: The granted authority was not a 'OidcUserAuthority' and the user cannot be mapped.");
-        }
     }
 
 
