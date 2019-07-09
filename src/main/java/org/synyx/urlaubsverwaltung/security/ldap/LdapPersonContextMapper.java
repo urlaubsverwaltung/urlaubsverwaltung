@@ -49,7 +49,6 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         try {
             ldapUser = ldapUserMapper.mapFromContext(ctx);
         } catch (InvalidSecurityConfigurationException | UnsupportedMemberAffiliationException ex) {
-            LOG.info("User '{}' can not sign in!", username, ex);
             throw new BadCredentialsException("No authentication possible for user = " + username, ex);
         }
 
