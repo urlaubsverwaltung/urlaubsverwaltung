@@ -22,11 +22,27 @@ public class PersonTest {
 
 
     @Test
-    public void ensureReturnsLoginNameAsNiceNameIfFirstAndLastNameAreNotSet() {
+    public void ensureReturnsDummyAsNiceNameIfFirstAndLastNameAreNotSet() {
 
         Person person = new Person("muster", "", "", "");
 
-        Assert.assertEquals("Wrong nice name", "muster", person.getNiceName());
+        Assert.assertEquals("Wrong nice name", "Unbekannt", person.getNiceName());
+    }
+
+    @Test
+    public void ensureReturnsFirstNameAsNiceNameIfLastNameIsNotSet() {
+
+        Person person = new Person("muster", "Muster", "", "");
+
+        Assert.assertEquals("Wrong nice name", "Muster", person.getNiceName());
+    }
+
+    @Test
+    public void ensureReturnsLastNameAsNiceNameIfFirstNameIsNotSet() {
+
+        Person person = new Person("muster", "", "Max", "");
+
+        Assert.assertEquals("Wrong nice name", "Max", person.getNiceName());
     }
 
 
