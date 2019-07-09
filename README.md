@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/synyx/urlaubsverwaltung.svg)](https://travis-ci.org/synyx/urlaubsverwaltung)
+    [![Build Status](https://img.shields.io/travis/synyx/urlaubsverwaltung.svg)](https://travis-ci.org/synyx/urlaubsverwaltung)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung)
 [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
@@ -17,11 +17,11 @@ dann geht es hier entlang zur [v2.x](https://github.com/synyx/urlaubsverwaltung/
 Einen [Migration Guide](https://github.com/synyx/urlaubsverwaltung/wiki/Urlaubsverwaltung-3.0-Migration-Guide) von der 
 Version 2 auf 3 findet  ihr im [Wiki](https://github.com/synyx/urlaubsverwaltung/wiki)
 
-Wir werden bis zum **31.12.2019** die UV mit Bug und Sicherheitsupdates unterstützen.  
+Wir werden die Version 2.x der UV noch bis zum **31.12.2019** mit Bug- und Sicherheitsupdates unterstützen.  
 Danach wird nur noch die Version 3 unterstützt.
 
 # Urlaubsverwaltung
-
+                                                
  * [Übersicht](#übersicht)
  * [FAQ](#faq)
  * [Changelog](CHANGELOG.md)
@@ -123,7 +123,7 @@ Diese kann mit über `/api/` aufgerufen werden, z.B. hier: https://urlaubsverwal
 
 Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgende Anleitung befolgen.
 
-Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet hier, können Details zur Installation und
+Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet wird, können Details zur Installation und
 Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
 
 Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synxy/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
@@ -141,6 +141,8 @@ Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur
 Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
 da die WAR-Datei einen Tomcat bundled.
+
+## Testbetrieb
 
 ### Starten der Anwendung
 
@@ -166,6 +168,8 @@ Die Anwendung ist nun erreichbar unter
 
 `<servername>:8080/`
 
+## Produktivbetrieb
+
 ### Anwendung als Service
 
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
@@ -174,7 +178,7 @@ funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation ent
 * [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
 * [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
 
-### Konfigurationsdatei
+### Konfiguration
 
 Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
 Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
@@ -193,9 +197,9 @@ Konfiguration hinterlegen. Die dort konfigurierten Properties überschreiben dan
 
 Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 
-###  Achtung! Produktives Starten der Anwendung
+###  Starten der Anwendung
 
-Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr mit Testdaten
+Im Produktivbetrieb mit der Produktivdatenbank darf die Anwendung natürlich **nicht** mehr mit Testdaten
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdata` gestartet werden:
 
 ```bash
@@ -218,17 +222,11 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
 
-#### LDAP
-
-Um LDAP zur Authentifizierung zu nutzen, muss die Property `uv.security.auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
-werden:
+Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der eigenen Konfigurationsdatei gesetzt werden:
 
 <pre>uv.security.auth=ldap</pre>
 
-#### Active Directory
-
-Um Active Directory zur Authentifizierung zu nutzen, muss die Property `uv.security.auth` in der eigenen Konfigurationsdatei auf
-`activeDirectory` gesetzt werden:
+bzw.
 
 <pre>uv.security.auth=activeDirectory</pre>
 
@@ -322,18 +320,12 @@ Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run
 `spring.profiles.active`. (vgl. https://github.com/spring-projects/spring-boot/issues/10926)
 
 ### Anwendung nutzen
+
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
 Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Testdaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
-Testbenutzern anmelden:
-
-* `user/secret`: Benutzer mit der Rolle `User`
-* `departmentHead/secret`: Benutzer mit der Rolle `User` und `DepartmentHead`
-* `secondStageAuthority/secret`: Benutzer mit der Rolle `User` und `SecondStageAuthority`
-* `boss/secret`: Benutzer mit der Rolle `User` und `Boss`
-* `office/secret`: Benutzer mit der Rolle `User`, `Boss` und `Office`
-* `admin/secret`: Benutzer mit der Rolle `User` und `Admin`
+Testbenutzern(#demo-system) anmelden.
 
 ### Frontend Entwicklung
 
@@ -382,33 +374,23 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 
 Siehe [Authentifizierung](#authentifizierung)
 
-Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `uv.security.auth` entweder als System
-Property oder man konfiguriert diese in den `application.properties`.
-
-Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
-`application.properties` konfiguriert sein.
-
-#### LDAP
-
-Die Anwendung mit dem Parameter `-Duv.security.auth=ldap` starten:
+Die Anwendung mit LDAP starten:
 
 ```bash
 ./mvnw clean spring-boot:run -Duv.security.auth=ldap
 ```
 
-Oder die Property `uv.security.auth` in den `application.properties` setzen:
+Oder in den `application.properties` konfigurieren:
 
 <pre>uv.security.auth=ldap</pre>
 
-#### Active Directory
-
-Die Anwendung mit dem Parameter `-Duv.security.auth=activeDirectory` starten:
+Die Anwendung mit ActiveDirectory starten:
 
 ```bash
 ./mvnw clean spring-boot:run -Duv.security.auth=activeDirectory
 ```
 
-Oder die Property `uv.security.auth` in den `application.properties` setzen:
+Oder in den `application.properties` konfigurieren:
 
 <pre>uv.security.auth=activeDirectory</pre>
 
@@ -422,7 +404,7 @@ tun kann.](docs/UV_WITH_DOCKER.md)
 
 ## Technologien
 
-* Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework.
+* Die Anwendung basiert auf dem [Spring](https://spring.io/projects/spring-boot) Boot Framework.
 * Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt.
 * Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
 [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
@@ -431,6 +413,8 @@ tun kann.](docs/UV_WITH_DOCKER.md)
 [EWS JAVA API](https://github.com/OfficeDev/ews-java-api) genutzt.
 * Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Google Calendar wird der
 [Google API Client](https://github.com/google/google-api-java-client) verwendet.
+* Zur Synchronisation mit Exchange wird die [EWS Java API](https://github.com/OfficeDev/ews-java-api) verwendet
+* Initialisierung und Migration der Datenbank wird mit [Liquibase](https://www.liquibase.org/) durchgeführt
 
 ---
 
