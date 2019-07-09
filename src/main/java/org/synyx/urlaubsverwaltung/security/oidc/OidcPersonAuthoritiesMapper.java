@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 
 /**
  * @author Florian Krupicka - krupicka@synyx.de
@@ -33,7 +35,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
         final Optional<? extends GrantedAuthority> authority = authorities.stream().findFirst();
 
-        return authority.map(this::mapAuthorities).orElseThrow(RuntimeException::new);
+        return authority.map(this::mapAuthorities).orElseThrow(RuntimeException::new); // TODO
     }
 
     private Collection<? extends GrantedAuthority> mapAuthorities(GrantedAuthority grantedAuthority) {
@@ -52,6 +54,11 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
             if (maybePerson.isPresent()) {
                 person = personSyncService.syncPerson(maybePerson.get(), firstName, lastName, mailAddress);
+
+                if (person.hasRole(INACTIVE)) {
+                    throw new DisabledException("User '" + person.getId() + "' has been deactivated");
+                }
+
             } else {
                 final Person createdPerson = personSyncService.createPerson(userUniqueID, firstName, lastName, mailAddress);
                 person = personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);

@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -79,6 +81,25 @@ public class OidcPersonAuthoritiesMapperTest {
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @Test(expected = DisabledException.class)
+    public void userIsDeactivated() {
+        final String uniqueID = "uniqueID";
+        final String givenName = "test";
+        final String familyName = "me";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(uniqueID, givenName, familyName, email);
+
+        final Person personForLogin = new Person();
+        personForLogin.setPermissions(List.of(USER, INACTIVE));
+
+        final Optional<Person> person = Optional.of(personForLogin);
+        when(personService.getPersonByLogin(uniqueID)).thenReturn(person);
+        when(personSyncService.syncPerson(personForLogin, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
+
+        sut.mapAuthorities(List.of(oidcUserAuthority));
     }
 
     @Test
