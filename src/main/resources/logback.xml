@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+  <if condition='property("JSON_LOGGING").contains("true")'>
+    <then>
+      <appender name="jsonConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+      </appender>
+
+      <root level="INFO">
+        <appender-ref ref="jsonConsole"/>
+      </root>
+    </then>
+    <else>
+      <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+      </root>
+    </else>
+  </if>
+</configuration>
