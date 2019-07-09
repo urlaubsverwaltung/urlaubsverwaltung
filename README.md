@@ -325,7 +325,7 @@ Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteue
 
 Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Testdaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
-Testbenutzern(#demo-system) anmelden.
+[Testbenutzern](#demo-system) anmelden.
 
 ### Frontend Entwicklung
 
