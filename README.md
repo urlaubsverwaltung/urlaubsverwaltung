@@ -2,7 +2,6 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung)
 [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
-[![Heroku](https://img.shields.io/badge/%E2%86%91_Deploy_to-Heroku-7056bf.svg)](https://urlaubsverwaltung.herokuapp.com)
 
 ### Version 3
 
@@ -21,26 +20,25 @@ Wir werden die Version 2.x der UV noch bis zum **31.12.2019** mit Bug- und Siche
 Danach wird nur noch die Version 3 unterstützt.
 
 # Urlaubsverwaltung
-                                                
+                             
  * [Übersicht](#übersicht)
  * [FAQ](#faq)
- * [Changelog](CHANGELOG.md)
- * [Demo System](#demo-system)
+ * [Changelog](CHANGELOG.md) 
  * [Berechtigungen](#berechtigungen)
  * [REST-Schnittstelle](#rest-schnittstelle)
  * [Installation](#installation)
    * [Systemvoraussetzungen](#systemvoraussetzungen)
    * [Download](#download)
+ * [Testbetrieb](#testbetrieb)
    * [Starten der Anwendung](#starten-der-anwendung)
    * [Aufrufen der Anwendung](#aufrufen-der-anwendung)
+ * [Produktivbetrieb](#produktivbetrieb)
    * [Anwendung als Service](#anwendung-als-service)
-   * [Konfigurationsdatei](#konfigurationsdatei)
+   * [Konfiguration](#konfigurationsdatei)
    * [Datenbank](#datenbank)
-   * [Produktives Starten der Anwendung](#achtung-produktives-starten-der-anwendung)
+   * [Starten der Anwendung](#achtung-produktives-starten-der-anwendung)
    * [Authentifizierung](#authentifizierung)
-    * [LDAP](#ldap)
-    * [Active Directory](#active-directory)
-    * [Synchronisation der User-Datenbank](#synchronisation-der-user-datenbank)
+   * [Synchronisation der User-Datenbank](#synchronisation-der-user-datenbank)
    * [Synchronisation mit Kalender](#synchronisation-mit-kalender)
     * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
     * [Konfiguration Google Calendar](#konfiguration-google-calendar)
@@ -83,20 +81,6 @@ vom Typ "Question" erstellt werden.
 
 Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
 
-## Demo System
-
-Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung.herokuapp.com) mit Testbenutzern für
-die unterschiedlichen Rollen:
-
-| Rolle                     | Benutzername  | Passwort | Vorname, Nachname |
-| ------------------------- | ------------- | -------- | ----------------- |
-| Office                    | test          | secret   | Marlene Muster    |
-| Chef                      | testBoss      | secret   | Max Muster        |
-| Freigabe Verantwortlicher | testManager   | secret   | Peter Huber       |
-| Abteilungsleiter          | testHead      | secret   | Thorsten Krüger   |
-| Benutzer                  | testUser      | secret   | Klaus Müller      |
-| Admin                     | admin         | secret   | Senor Operation   |
-
 ## Berechtigungen
 
 In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
@@ -115,7 +99,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 ## REST-Schnittstelle
 
 Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
-Diese kann mit über `/api/` aufgerufen werden, z.B. hier: https://urlaubsverwaltung.herokuapp.com/api/
+Diese kann mit über `/api/` aufgerufen werden.
 
 ---
 
@@ -160,7 +144,16 @@ java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 ```
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbank gestartet und Testdaten generiert.
-Man kann sich mit den gleichen [Benutzerdaten wie beim Demo System](#demo-system) anmelden.
+Die Testdaten enthalten diese Nutzer, mit denen man alles ausprobieren kann:
+
+| Rolle                         | Benutzername           | Passwort | 
+| -------------------------     | -------------          | -------- | 
+| User                          | user                   | secret   | 
+| User und DepartmentHead       | departmentHead         | secret   | 
+| User und SecondStageAuthority | secondStageAuthority   | secret   | 
+| User und Boss                 | boss                   | secret   | 
+| User und Boss und Office      | office                 | secret   | 
+| User und Admin                | admin                  | secret   |
 
 ### Aufrufen der Anwendung
 
@@ -230,7 +223,7 @@ bzw.
 
 <pre>uv.security.auth=activeDirectory</pre>
 
-#### Synchronisation der User-Datenbank
+### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
 Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync.enabled` bzw. `uv.security.active-directory.sync.enabled` auf `true` gesetzt wird:
@@ -325,7 +318,7 @@ Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteue
 
 Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Testdaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
-[Testbenutzern](#demo-system) anmelden.
+[Testbenutzern](#testbetrieb) anmelden.
 
 ### Frontend Entwicklung
 
