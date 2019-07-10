@@ -195,17 +195,4 @@ public class Person extends AbstractPersistable<Integer> {
 
         super.setId(id);
     }
-
-
-    @Override
-    public String toString() {
-
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-            .append("loginName", getLoginName())
-            .append("lastName", getLastName())
-            .append("firstName", getFirstName())
-            .append("email", getEmail())
-            .append("permissions", getPermissions())
-            .toString();
-    }
 }

@@ -60,7 +60,6 @@ class MailSender {
         }
     }
 
-
     private void send(SimpleMailMessage message, MailSettings mailSettings) {
 
         try {
@@ -72,13 +71,9 @@ class MailSender {
 
                 this.javaMailSender.send(message);
 
-                for (String recipient : message.getTo()) {
-                    LOG.info("Sent email to {}", recipient);
-                }
+                LOG.info("Sent email");
             } else {
-                for (String recipient : message.getTo()) {
-                    LOG.info("No email configuration to send email to {}", recipient);
-                }
+                LOG.info("No email configuration to send email");
             }
 
             if (LOG.isDebugEnabled()) {
@@ -86,9 +81,7 @@ class MailSender {
                         Arrays.toString(message.getTo()), message.getSubject(), message.getText());
             }
         } catch (MailException ex) {
-            for (String recipient : message.getTo()) {
-                LOG.error("Sending email to {} failed", recipient, ex);
-            }
+                LOG.error("Sending email failed");
         }
     }
 }

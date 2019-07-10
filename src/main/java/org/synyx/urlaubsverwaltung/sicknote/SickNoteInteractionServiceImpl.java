@@ -66,7 +66,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(sickNote, SickNoteAction.CREATED, creator, comment);
 
-        LOG.info("Created sick note: {} with comment {}", sickNote, comment);
+        LOG.info("Created sick note: {}", sickNote);
 
         updateCalendar(sickNote);
 
@@ -86,7 +86,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(sickNote, SickNoteAction.EDITED, editor, comment);
 
-        LOG.info("Updated sick note: {} with comment {}", sickNote, comment);
+        LOG.info("Updated sick note: {}", sickNote);
 
         updateAbsence(sickNote);
 
