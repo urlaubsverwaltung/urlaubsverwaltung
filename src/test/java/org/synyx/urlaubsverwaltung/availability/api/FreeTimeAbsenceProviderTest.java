@@ -7,9 +7,9 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,6 +77,18 @@ public class FreeTimeAbsenceProviderTest {
         Assert.assertTrue("wrong absence ratio", BigDecimal.ONE.compareTo(absencesList.get(0).getRatio()) == 0);
     }
 
+    @Test(expected = FreeTimeAbsenceException.class)
+    public void ensureExceptionWhenPersonWorkingTimeIsNotAvailable() {
+
+        LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
+
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(testPerson),
+            eq(firstSundayIn2016)))
+            .thenReturn(Optional.empty());
+
+        TimedAbsenceSpans updatedTimedAbsenceSpans = freeTimeAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
+            testPerson, firstSundayIn2016);
+    }
 
     @Test
     public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
