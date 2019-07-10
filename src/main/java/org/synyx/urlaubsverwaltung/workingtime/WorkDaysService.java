@@ -88,7 +88,7 @@ public class WorkDaysService {
                 person, startDate);
 
         if (!optionalWorkingTime.isPresent()) {
-            throw new NoValidWorkingTimeException("No working time found for User '" + person.getLoginName()
+            throw new NoValidWorkingTimeException("No working time found for User '" + person.getId()
                 + "' in period " + startDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) + " - "
                 + endDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
         }

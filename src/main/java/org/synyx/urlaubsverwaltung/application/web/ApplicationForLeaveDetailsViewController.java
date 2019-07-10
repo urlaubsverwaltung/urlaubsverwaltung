@@ -98,7 +98,7 @@ public class ApplicationForLeaveDetailsViewController {
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to see application for leave of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                    signedInUser.getId(), person.getId()));
         }
 
         int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
@@ -189,7 +189,7 @@ public class ApplicationForLeaveDetailsViewController {
         if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to allow application for leave of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                    signedInUser.getId(), person.getId()));
         }
 
         comment.setMandatory(false);
@@ -250,7 +250,7 @@ public class ApplicationForLeaveDetailsViewController {
 
         throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to refer application for leave to user '%s'",
-                sender.getLoginName(), referLoginName));
+                sender.getId(), referLoginName));
     }
 
 
@@ -297,7 +297,7 @@ public class ApplicationForLeaveDetailsViewController {
 
         throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to reject application for leave of user '%s'",
-                signedInUser.getLoginName(), person.getLoginName()));
+                signedInUser.getId(), person.getId()));
     }
 
 
@@ -332,7 +332,7 @@ public class ApplicationForLeaveDetailsViewController {
         } else {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to cancel application for leave of user '%s'",
-                    signedInUser.getLoginName(), application.getPerson().getLoginName()));
+                    signedInUser.getId(), application.getPerson().getId()));
         }
 
         commentValidator.validate(comment, errors);

@@ -98,7 +98,7 @@ public class SickNoteViewController {
 
         throw new AccessDeniedException(String.format(
             "User '%s' has not the correct permissions to see the sick note of user '%s'",
-            signedInUser.getLoginName(), sickNote.getPerson().getLoginName()));
+            signedInUser.getId(), sickNote.getPerson().getId()));
     }
 
 

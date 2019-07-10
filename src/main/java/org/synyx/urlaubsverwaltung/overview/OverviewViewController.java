@@ -100,7 +100,7 @@ public class OverviewViewController {
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(
                     String.format("User '%s' has not the correct permissions to access the overview page of user '%s'",
-                            signedInUser.getLoginName(), person.getLoginName()));
+                            signedInUser.getId(), person.getId()));
         }
 
         model.addAttribute(PERSON_ATTRIBUTE, person);

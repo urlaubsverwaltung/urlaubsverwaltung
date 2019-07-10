@@ -18,8 +18,6 @@ import java.time.format.DateTimeFormatter;
 @Entity
 public class Account extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = 890434378423784389L;
-
     @ManyToOne
     private Person person;
 
@@ -154,7 +152,7 @@ public class Account extends AbstractPersistable<Integer> {
 
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             // NOSONAR - Formatting issues
-            .append("person", getPerson().getLoginName())
+            .append("person", getPerson().getId())
             .append("validFrom", getValidFrom().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
             .append("validTo", getValidTo().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
             .append("annualVacationDays", getAnnualVacationDays()).append("vacationDays", getVacationDays())

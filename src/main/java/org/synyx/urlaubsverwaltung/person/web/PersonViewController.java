@@ -83,7 +83,7 @@ public class PersonViewController {
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to access data of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                    signedInUser.getId(), person.getId()));
         }
 
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());

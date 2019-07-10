@@ -104,7 +104,7 @@ public class ApplyForLeaveViewController {
         if (!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE)) {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to apply for leave for user '%s'",
-                signedInUser.getLoginName(), person.getLoginName()));
+                signedInUser.getId(), person.getId()));
         }
 
         Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(UTC).getYear(), person);
