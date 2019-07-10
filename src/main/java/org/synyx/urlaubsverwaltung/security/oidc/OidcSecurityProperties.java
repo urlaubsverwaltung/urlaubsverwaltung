@@ -31,6 +31,9 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String clientSecret;
 
+    @NotEmpty
+    private String logoutPath;
+
     public String getIssuerUri() {
         return issuerUri;
     }
@@ -55,4 +58,11 @@ public class OidcSecurityProperties {
         this.clientSecret = clientSecret;
     }
 
+    public String getLogoutPath() {
+        return logoutPath;
+    }
+
+    public void setLogoutPath(String logoutPath) {
+        this.logoutPath = logoutPath;
+    }
 }

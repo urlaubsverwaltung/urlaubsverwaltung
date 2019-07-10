@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
@@ -71,5 +72,10 @@ public class OidcSecurityConfiguration {
     @Bean
     public OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService, PersonSyncService personSyncService) {
         return new OidcPersonAuthoritiesMapper(personService, personSyncService);
+    }
+
+    @Bean
+    public SecurityContextLogoutHandler oidcLogoutHandler() {
+        return new OidcLogoutHandler(properties);
     }
 }
