@@ -5,6 +5,9 @@
 * Upgrade spring boot to 2.1.5 [#710](https://github.com/synyx/urlaubsverwaltung/pull/710)
 * Migrate double used configuration paths for uv.security [#712](https://github.com/synyx/urlaubsverwaltung/pull/712)
 
+#### Breaking Changes
+* Bump to Java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
+
 ### [urlaubsverwaltung-2.44.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.0)
 * Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
 * Quickfix for better overview about department members: add link to department
@@ -132,10 +135,6 @@
 * Fix Bug bei dem die Überstunden trotz Deaktivierung angezeigt wurden [#511](https://github.com/synyx/urlaubsverwaltung/pull/511) 
 * Fix Bug beim Generieren von Links in Emails [#517](https://github.com/synyx/urlaubsverwaltung/pull/517)
 * Upgrade Swagger API Spezifikation von Version 1.2 zu 2 [#523](https://github.com/synyx/urlaubsverwaltung/pull/523)
-
-## Breaking Changes
-* Bump to Java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
-
 
 ### [urlaubsverwaltung-2.35.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.35.0)
 * Fix mariadb -> mysql connector [#509](https://github.com/synyx/urlaubsverwaltung/pull/509) 
