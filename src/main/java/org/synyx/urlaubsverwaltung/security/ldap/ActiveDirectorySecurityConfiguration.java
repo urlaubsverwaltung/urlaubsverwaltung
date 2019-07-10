@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.PersonSyncService;
-import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 
 @Configuration
 public class ActiveDirectorySecurityConfiguration {
@@ -19,12 +18,12 @@ public class ActiveDirectorySecurityConfiguration {
     @ConditionalOnProperty(name = "uv.security.auth", havingValue = "activeDirectory")
     public static class ActiveDirectoryAuthConfiguration {
 
-        private final SecurityConfigurationProperties securityProperties;
+        private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
         private final ActiveDirectorySecurityConfigurationProperties configurationProperties;
 
         @Autowired
-        public ActiveDirectoryAuthConfiguration(SecurityConfigurationProperties securityProperties, ActiveDirectorySecurityConfigurationProperties configurationProperties) {
-            this.securityProperties = securityProperties;
+        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties configurationProperties) {
+            this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.configurationProperties = configurationProperties;
         }
 
@@ -43,7 +42,7 @@ public class ActiveDirectorySecurityConfiguration {
         @Bean
         public LdapUserMapper ldapUserMapper() {
 
-            return new LdapUserMapper(securityProperties);
+            return new LdapUserMapper(directoryServiceSecurityProperties);
         }
 
         @Bean
@@ -62,12 +61,12 @@ public class ActiveDirectorySecurityConfiguration {
     @ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync.enabled}'=='true'")
     static class LdapAuthSyncConfiguration {
 
-        private final SecurityConfigurationProperties securityProperties;
+        private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
         private final ActiveDirectorySecurityConfigurationProperties adProperties;
 
         @Autowired
-        public LdapAuthSyncConfiguration(SecurityConfigurationProperties securityProperties, ActiveDirectorySecurityConfigurationProperties adProperties) {
-            this.securityProperties = securityProperties;
+        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties adProperties) {
+            this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.adProperties = adProperties;
         }
 
@@ -84,7 +83,7 @@ public class ActiveDirectorySecurityConfiguration {
 
         @Bean
         public LdapUserServiceImpl ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
-            return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, securityProperties);
+            return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, directoryServiceSecurityProperties);
         }
 
         @Bean

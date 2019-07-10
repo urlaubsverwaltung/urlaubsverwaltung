@@ -16,7 +16,6 @@ import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopul
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.PersonSyncService;
-import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 
 @Configuration
 public class LdapSecurityConfiguration {
@@ -25,12 +24,12 @@ public class LdapSecurityConfiguration {
     @ConditionalOnProperty(name = "uv.security.auth", havingValue = "ldap")
     static class LdapAuthConfiguration {
 
-        private final SecurityConfigurationProperties securityProperties;
+        private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
         private final LdapSecurityConfigurationProperties ldapProperties;
 
         @Autowired
-        public LdapAuthConfiguration(SecurityConfigurationProperties securityProperties, LdapSecurityConfigurationProperties ldapProperties) {
-            this.securityProperties = securityProperties;
+        public LdapAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityConfigurationProperties ldapProperties) {
+            this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.ldapProperties = ldapProperties;
         }
 
@@ -83,7 +82,7 @@ public class LdapSecurityConfiguration {
         @Bean
         public LdapUserMapper ldapUserMapper() {
 
-            return new LdapUserMapper(securityProperties);
+            return new LdapUserMapper(directoryServiceSecurityProperties);
         }
 
         @Bean
@@ -102,12 +101,12 @@ public class LdapSecurityConfiguration {
     @ConditionalOnExpression("'${uv.security.auth}'=='ldap' and '${uv.security.ldap.sync.enabled}'=='true'")
     public static class LdapAuthSyncConfiguration {
 
-        private final SecurityConfigurationProperties securityProperties;
+        private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
         private final LdapSecurityConfigurationProperties ldapProperties;
 
         @Autowired
-        public LdapAuthSyncConfiguration(SecurityConfigurationProperties securityProperties, LdapSecurityConfigurationProperties ldapProperties) {
-            this.securityProperties = securityProperties;
+        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityConfigurationProperties ldapProperties) {
+            this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.ldapProperties = ldapProperties;
         }
 
@@ -124,7 +123,7 @@ public class LdapSecurityConfiguration {
 
         @Bean
         public LdapUserServiceImpl ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
-            return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, securityProperties);
+            return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, directoryServiceSecurityProperties);
         }
 
         @Bean

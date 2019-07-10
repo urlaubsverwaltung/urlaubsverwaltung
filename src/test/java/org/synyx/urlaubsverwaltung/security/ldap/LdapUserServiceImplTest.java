@@ -29,7 +29,7 @@ public class LdapUserServiceImplTest {
     @Before
     public void setUp() {
 
-        sut = new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, new SecurityConfigurationProperties());
+        sut = new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, new DirectoryServiceSecurityProperties());
     }
 
     @Test
