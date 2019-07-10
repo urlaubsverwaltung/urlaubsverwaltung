@@ -7,12 +7,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,7 +22,6 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -70,6 +70,21 @@ public class WorkDayControllerTest {
         verify(workDaysServiceMock).getWorkDays(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
     }
 
+    @Test
+    public void ensureReturnsNoContentForMissingWorkingDay() throws Exception {
+
+        Person person = TestDataCreator.createPerson();
+        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+            .thenThrow(NoValidWorkingTimeException.class);
+
+        perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "23"))
+            .andExpect(status().isNoContent());
+    }
 
     @Test
     public void ensureBadRequestForMissingFromParameter() throws Exception {
