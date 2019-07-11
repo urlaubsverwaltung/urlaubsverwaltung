@@ -52,7 +52,7 @@ class PersonServiceImpl implements PersonService {
                          List<MailNotification> notifications, List<Role> permissions) {
 
         Person person = getPersonByID(id).orElseThrow(() ->
-                new IllegalArgumentException("Can not find a person for ID = " + id));
+            new IllegalArgumentException("Can not find a person for ID = " + id));
 
         person.setLoginName(loginName);
         person.setLastName(lastName);
@@ -115,10 +115,10 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getActivePersons() {
 
         return personDAO.findAll()
-                .stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .sorted(personComparator())
-                .collect(toList());
+            .stream()
+            .filter(person -> !person.hasRole(INACTIVE))
+            .sorted(personComparator())
+            .collect(toList());
     }
 
 
@@ -132,10 +132,10 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getInactivePersons() {
 
         return personDAO.findAll()
-                .stream()
-                .filter(person -> person.hasRole(INACTIVE))
-                .sorted(personComparator())
-                .collect(toList());
+            .stream()
+            .filter(person -> person.hasRole(INACTIVE))
+            .sorted(personComparator())
+            .collect(toList());
     }
 
 
@@ -150,8 +150,8 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
 
         return getActivePersons().stream()
-                .filter(person -> person.hasNotificationType(notification))
-                .collect(toList());
+            .filter(person -> person.hasNotificationType(notification))
+            .collect(toList());
     }
 
 
