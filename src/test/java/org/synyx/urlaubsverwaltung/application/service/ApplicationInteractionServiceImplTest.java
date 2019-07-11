@@ -548,13 +548,18 @@ public class ApplicationInteractionServiceImplTest {
         final boolean isSecondStage = departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead));
         when(isSecondStage).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
-
         final Application applicationForLeave = getDummyApplication(departmentHead);
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        Optional<String> comment = of("Foo");
+        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStageAuthority)).thenReturn(new ApplicationComment(departmentHead));
+
         sut.allow(applicationForLeave, secondStageAuthority, comment);
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, departmentHead, secondStageAuthority);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStageAuthority);
+        assertAllowedNotificationIsSent(applicationForLeave);
+        verifyZeroInteractions(calendarSyncService);
     }
 
 
