@@ -208,7 +208,7 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 * `ldap`
     * Authentifizierung via LDAP
     * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
-* `activeDirectory`
+* `activedirectory`
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory möglich ist.
 
@@ -221,7 +221,7 @@ Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der ei
 
 bzw.
 
-<pre>uv.security.auth=activeDirectory</pre>
+<pre>uv.security.auth=activedirectory</pre>
 
 ### Synchronisation der User-Datenbank
 
@@ -377,15 +377,15 @@ Oder in den `application.properties` konfigurieren:
 
 <pre>uv.security.auth=ldap</pre>
 
-Die Anwendung mit ActiveDirectory starten:
+Die Anwendung mit Active Directory (AD) starten:
 
 ```bash
-./mvnw clean spring-boot:run -Duv.security.auth=activeDirectory
+./mvnw clean spring-boot:run -Duv.security.auth=activedirectory
 ```
 
 Oder in den `application.properties` konfigurieren:
 
-<pre>uv.security.auth=activeDirectory</pre>
+<pre>uv.security.auth=activedirectory</pre>
 
 ### Externe Systeme mit Docker virtualisieren
 

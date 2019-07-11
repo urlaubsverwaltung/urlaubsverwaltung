@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 public class ActiveDirectorySecurityConfiguration {
 
     @Configuration
-    @ConditionalOnProperty(name = "uv.security.auth", havingValue = "activeDirectory")
+    @ConditionalOnProperty(name = "uv.security.auth", havingValue = "activedirectory")
     public static class ActiveDirectoryAuthConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
@@ -58,7 +58,7 @@ public class ActiveDirectorySecurityConfiguration {
     }
 
     @Configuration
-    @ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync.enabled}'=='true'")
+    @ConditionalOnExpression("'${uv.security.auth}'=='activedirectory' and '${uv.security.activedirectory.sync.enabled}'=='true'")
     static class LdapAuthSyncConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
