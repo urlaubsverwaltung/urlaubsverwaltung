@@ -11,10 +11,12 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -62,6 +64,17 @@ public class AvailabilityControllerTest {
         verify(availabilityService)
             .getPersonsAvailabilities(eq(LocalDate.of(2016, 1, 1)),
                 eq(LocalDate.of(2016, 1, 31)), eq(testPerson));
+    }
+
+    @Test
+    public void ensureNoContentAvailabilitiesForGivenPersonWithoutConfiguredWorkingTime() throws Exception {
+
+        when(availabilityService.getPersonsAvailabilities(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenThrow(NoValidWorkingTimeException.class);
+        perform(get("/api/availabilities")
+            .param("from", "2015-01-01")
+            .param("to", "2015-01-31")
+            .param("person", LOGIN))
+            .andExpect(status().isNoContent());
     }
 
 

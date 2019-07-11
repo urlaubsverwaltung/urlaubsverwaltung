@@ -7,7 +7,7 @@ public class NoValidWorkingTimeException extends IllegalStateException {
 
     private final String message;
 
-    public NoValidWorkingTimeException(String message) {
+    NoValidWorkingTimeException(String message) {
 
         super(message);
 
