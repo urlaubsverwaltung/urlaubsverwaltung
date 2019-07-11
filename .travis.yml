@@ -13,6 +13,7 @@ cache:
 branches:
   only:
     - master
+    - v2.x
     - /urlaubsverwaltung\-[0-9]+\.[0-9]+\.[0-9]$/
 
 install: true
