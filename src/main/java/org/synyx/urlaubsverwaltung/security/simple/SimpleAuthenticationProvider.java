@@ -62,7 +62,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
         }
 
         Collection<Role> permissions = person.getPermissions();
-        Collection<GrantedAuthority> grantedAuthorities = permissions.stream().map((role) ->
+        Collection<GrantedAuthority> grantedAuthorities = permissions.stream().map(role ->
             new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
 
         String userPassword = person.getPassword();
