@@ -48,7 +48,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
         Optional<Person> userOptional = personService.getPersonByLogin(username);
 
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             LOG.info("No user found for username '{}'", username);
 
             throw new UsernameNotFoundException("No authentication possible for user = " + username);
