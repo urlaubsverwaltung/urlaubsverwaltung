@@ -15,6 +15,7 @@ branches:
     - master
     - v3.x
     - /urlaubsverwaltung\-[0-9]+\.[0-9]+\.[0-9]$/
+    - /urlaubsverwaltung\-[0-9]+\.[0-9]+\.[0-9]\.RC[0-9]$/
 
 install: true
 
