@@ -1,15 +1,18 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Assert;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.FREETIME;
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 
 public class TimedAbsenceSpansTest {
@@ -17,38 +20,32 @@ public class TimedAbsenceSpansTest {
     @Test
     public void ensurePresenceRatioCalculatedCorrectly() {
 
-        TimedAbsence timedAbsence1 = new TimedAbsence(DayLength.MORNING, TimedAbsence.Type.FREETIME);
-        TimedAbsence timedAbsence2 = new TimedAbsence(DayLength.NOON, TimedAbsence.Type.VACATION);
+        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
+        final TimedAbsence timedAbsence2 = new TimedAbsence(NOON, VACATION);
+        final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(List.of(timedAbsence1, timedAbsence2));
 
-        List<TimedAbsence> absenceList = Arrays.asList(timedAbsence1, timedAbsence2);
-
-        TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(absenceList);
-
-        BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
-        Assert.assertTrue(BigDecimal.ZERO.compareTo(presenceRatio) == 0);
+        final BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
+        assertThat(presenceRatio).isEqualTo(BigDecimal.valueOf(0.0));
     }
 
 
     @Test
     public void ensurePresenceRatioIsNotNegative() {
 
-        TimedAbsence timedAbsence1 = new TimedAbsence(DayLength.MORNING, TimedAbsence.Type.FREETIME);
-        TimedAbsence timedAbsence2 = new TimedAbsence(DayLength.FULL, TimedAbsence.Type.SICK_NOTE);
+        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
+        final TimedAbsence timedAbsence2 = new TimedAbsence(FULL, SICK_NOTE);
+        final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(List.of(timedAbsence1, timedAbsence2));
 
-        List<TimedAbsence> absenceList = Arrays.asList(timedAbsence1, timedAbsence2);
-
-        TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(absenceList);
-
-        BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
-        Assert.assertTrue(BigDecimal.ZERO.compareTo(presenceRatio) == 0);
+        final BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
+        assertThat(presenceRatio).isEqualTo(BigDecimal.ZERO);
     }
 
 
     @Test
     public void ensurePresenceRatioIsCalculatedCorrectlyForEmptyList() {
 
-        BigDecimal presenceRatio = new TimedAbsenceSpans(new ArrayList<>()).calculatePresenceRatio();
-        Assert.assertTrue(BigDecimal.ONE.compareTo(presenceRatio) == 0);
+        final BigDecimal presenceRatio = new TimedAbsenceSpans(emptyList()).calculatePresenceRatio();
+        assertThat(presenceRatio).isEqualTo(BigDecimal.ONE);
     }
 
 
