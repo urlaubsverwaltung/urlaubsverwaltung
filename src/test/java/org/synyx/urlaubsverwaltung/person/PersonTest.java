@@ -2,12 +2,18 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
 public class PersonTest {
@@ -17,82 +23,94 @@ public class PersonTest {
 
         Person person = new Person("muster", "Muster", "Max", "");
 
-        Assert.assertEquals("Wrong nice name", "Max Muster", person.getNiceName());
+        assertThat(person.getNiceName()).isEqualTo("Max Muster");
     }
 
 
     @Test
-    public void ensureReturnsLoginNameAsNiceNameIfFirstAndLastNameAreNotSet() {
+    public void ensureReturnsDummyAsNiceNameIfFirstAndLastNameAreNotSet() {
 
         Person person = new Person("muster", "", "", "");
 
-        Assert.assertEquals("Wrong nice name", "muster", person.getNiceName());
+        assertThat(person.getNiceName()).isEqualTo("---");
+
+    }
+
+    @Test
+    public void ensureReturnsFirstNameAsNiceNameIfLastNameIsNotSet() {
+
+        Person person = new Person("muster", "Muster", "", "");
+
+        assertThat(person.getNiceName()).isEqualTo("Muster");
+    }
+
+    @Test
+    public void ensureReturnsLastNameAsNiceNameIfFirstNameIsNotSet() {
+
+        Person person = new Person("muster", "", "Max", "");
+
+        assertThat(person.getNiceName()).isEqualTo("Max");
     }
 
 
     @Test
     public void ensureReturnsTrueIfPersonHasTheGivenRole() {
 
-        Person person = TestDataCreator.createPerson();
-        person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        Person person = createPerson();
+        person.setPermissions(Arrays.asList(USER, BOSS));
 
-        Assert.assertTrue("Should return true if the person has the given role", person.hasRole(Role.BOSS));
+        assertThat(person.hasRole(BOSS)).isTrue();
     }
 
 
     @Test
     public void ensureReturnsFalseIfPersonHasNotTheGivenRole() {
 
-        Person person = TestDataCreator.createPerson();
-        person.setPermissions(Collections.singletonList(Role.USER));
+        Person person = createPerson();
+        person.setPermissions(singletonList(USER));
 
-        Assert.assertFalse("Should return false if the person has not the given role", person.hasRole(Role.BOSS));
+        assertThat(person.hasRole(BOSS)).isFalse();
     }
 
 
     @Test
     public void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
-        Person person = TestDataCreator.createPerson();
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS_ALL));
+        Person person = createPerson();
+        person.setNotifications(Arrays.asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
-        Assert.assertTrue("Should return true if the person has the given notification type",
-            person.hasNotificationType(MailNotification.NOTIFICATION_BOSS_ALL));
+        assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isTrue();
     }
 
 
     @Test
     public void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
-        Person person = TestDataCreator.createPerson();
-        person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
+        Person person = createPerson();
+        person.setNotifications(singletonList(NOTIFICATION_USER));
 
-        Assert.assertFalse("Should return false if the person has not the given notification type",
-            person.hasNotificationType(MailNotification.NOTIFICATION_BOSS_ALL));
+        assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isFalse();
     }
 
 
     @Test
     public void ensureReturnsEmptyStringAsGravatarURLIfEmailIsEmpty() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
         person.setEmail(null);
 
-        Assert.assertNotNull("Should not be null", person.getGravatarURL());
-        Assert.assertEquals("Wrong Gravatar URL", "", person.getGravatarURL());
+        assertThat(person.getGravatarURL()).isSameAs("");
     }
 
 
     @Test
     public void ensureCanReturnGravatarURL() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
         person.setEmail("muster@test.de");
 
-        Assert.assertNotNull("Should not be null", person.getGravatarURL());
-        Assert.assertNotEquals("Gravatar URL should not be empty", "", person.getGravatarURL());
-        Assert.assertNotEquals("Gravatar URL should differ from mail address", person.getEmail(),
-            person.getGravatarURL());
+        assertThat(person.getGravatarURL()).isNotEqualTo("");
+        assertThat(person.getEmail()).isNotEqualTo(person.getGravatarURL());
     }
 
 
@@ -100,13 +118,13 @@ public class PersonTest {
     public void ensurePermissionsAreUnmodifiable() {
 
         List<Role> modifiableList = new ArrayList<>();
-        modifiableList.add(Role.USER);
+        modifiableList.add(USER);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
         person.setPermissions(modifiableList);
 
         try {
-            person.getPermissions().add(Role.BOSS);
+            person.getPermissions().add(BOSS);
             Assert.fail("Permissions should be unmodifiable!");
         } catch (UnsupportedOperationException ex) {
             // Expected
@@ -118,13 +136,13 @@ public class PersonTest {
     public void ensureNotificationsAreUnmodifiable() {
 
         List<MailNotification> modifiableList = new ArrayList<>();
-        modifiableList.add(MailNotification.NOTIFICATION_USER);
+        modifiableList.add(NOTIFICATION_USER);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
         person.setNotifications(modifiableList);
 
         try {
-            person.getNotifications().add(MailNotification.NOTIFICATION_BOSS_ALL);
+            person.getNotifications().add(NOTIFICATION_BOSS_ALL);
             Assert.fail("Notifications should be unmodifiable!");
         } catch (UnsupportedOperationException ex) {
             // Expected

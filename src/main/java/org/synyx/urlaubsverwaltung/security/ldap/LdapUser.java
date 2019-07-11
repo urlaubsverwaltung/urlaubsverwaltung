@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Represents a LDAP user with relevant information.
  */
-public final class LdapUser {
+final class LdapUser {
 
     private final String username;
 
@@ -49,25 +49,25 @@ public final class LdapUser {
         Collections.addAll(this.memberOf, memberOf);
     }
 
-    public String getUsername() {
+    String getUsername() {
 
         return username;
     }
 
 
-    public Optional<String> getFirstName() {
+    Optional<String> getFirstName() {
 
         return Optional.ofNullable(firstName);
     }
 
 
-    public Optional<String> getLastName() {
+    Optional<String> getLastName() {
 
         return Optional.ofNullable(lastName);
     }
 
 
-    public Optional<String> getEmail() {
+    Optional<String> getEmail() {
 
         return Optional.ofNullable(email);
     }
@@ -80,7 +80,7 @@ public final class LdapUser {
     }
 
 
-    public List<String> getMemberOf() {
+    List<String> getMemberOf() {
 
         return Collections.unmodifiableList(new ArrayList<>(memberOf));
     }

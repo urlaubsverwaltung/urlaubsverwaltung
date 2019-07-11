@@ -10,7 +10,6 @@
 <div class="box ${cssClass}">
     <div class="box-image gravatar img-circle" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
     <span class="box-text">
-        <i class="fa fa-at" aria-hidden="true"></i> <c:out value="${person.loginName}"/>
         <h4>
             <c:choose>
                 <c:when test="${nameIsNoLink}">

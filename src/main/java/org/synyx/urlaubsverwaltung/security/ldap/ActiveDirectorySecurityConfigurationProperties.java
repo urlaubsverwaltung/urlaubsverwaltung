@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties("uv.security.active-directory")
+@ConfigurationProperties("uv.security.directory-service.active-directory")
 public class ActiveDirectorySecurityConfigurationProperties {
 
     private String domain;

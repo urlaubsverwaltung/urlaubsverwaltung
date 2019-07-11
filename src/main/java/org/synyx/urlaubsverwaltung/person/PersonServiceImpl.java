@@ -12,7 +12,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 
 
 /**
@@ -115,9 +117,9 @@ class PersonServiceImpl implements PersonService {
 
         return personDAO.findAll()
                 .stream()
-                .filter(person -> !person.hasRole(Role.INACTIVE))
+                .filter(person -> !person.hasRole(INACTIVE))
                 .sorted(personComparator())
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
 
@@ -132,16 +134,16 @@ class PersonServiceImpl implements PersonService {
 
         return personDAO.findAll()
                 .stream()
-                .filter(person -> person.hasRole(Role.INACTIVE))
+                .filter(person -> person.hasRole(INACTIVE))
                 .sorted(personComparator())
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
 
     @Override
-    public List<Person> getPersonsByRole(final Role role) {
+    public List<Person> getActivePersonsByRole(final Role role) {
 
-        return getActivePersons().stream().filter(person -> person.hasRole(role)).collect(Collectors.toList());
+        return getActivePersons().stream().filter(person -> person.hasRole(role)).collect(toList());
     }
 
 
@@ -150,7 +152,7 @@ class PersonServiceImpl implements PersonService {
 
         return getActivePersons().stream()
                 .filter(person -> person.hasNotificationType(notification))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
 

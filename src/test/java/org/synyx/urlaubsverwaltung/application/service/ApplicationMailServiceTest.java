@@ -291,7 +291,8 @@ public class ApplicationMailServiceTest {
         when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Person person = new Person();
-        person.setLoginName("LoginName");
+        person.setFirstName("Lord");
+        person.setLastName("Helmchen");
 
         final VacationType vacationType = new VacationType();
         vacationType.setCategory(vacationCategory);
@@ -322,7 +323,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendNewApplicationNotification(application, comment);
 
-        verify(mailService).sendMailToEach(recipients, "subject.application.applied.boss", "new_applications", model, "LoginName");
+        verify(mailService).sendMailToEach(recipients, "subject.application.applied.boss", "new_applications", model, "Lord Helmchen");
     }
 
 

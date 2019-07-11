@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
@@ -7,10 +8,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private boolean isOauth2Enabled;
+    private SecurityContextLogoutHandler oidcLogoutHandler;
+
+    public WebSecurityConfig(SecurityConfigurationProperties properties) {
+        isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -37,16 +46,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(EndpointRequest.to(PrometheusScrapeEndpoint.class)).permitAll()
                 // TODO muss konfigurierbar werden!
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).hasAuthority("ADMIN")
-                .anyRequest()
-                    .authenticated()
+            .anyRequest()
+            .authenticated();
+
+        if (isOauth2Enabled) {
+            http.oauth2Login().and()
+                .logout()
+                .addLogoutHandler(oidcLogoutHandler);
+        } else {
+            http.formLogin()
+                .loginPage("/login").permitAll()
+                .defaultSuccessUrl("/web/overview")
+                .failureUrl("/login?login_error=1")
                 .and()
-                    .formLogin()
-                        .loginPage("/login").permitAll()
-                            .defaultSuccessUrl("/web/overview")
-                            .failureUrl("/login?login_error=1")
-                .and()
-                    .logout()
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login");
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login");
+        }
+    }
+
+    @Autowired(required = false)
+    public void setOidcLogoutHandler(SecurityContextLogoutHandler oidcLogoutHandler) {
+        this.oidcLogoutHandler = oidcLogoutHandler;
     }
 }

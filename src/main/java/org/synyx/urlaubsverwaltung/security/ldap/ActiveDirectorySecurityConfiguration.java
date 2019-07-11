@@ -9,21 +9,21 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
+import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 @Configuration
 public class ActiveDirectorySecurityConfiguration {
 
     @Configuration
-    @ConditionalOnProperty(name = "uv.security.auth", havingValue = "activeDirectory")
+    @ConditionalOnProperty(name = "uv.security.auth", havingValue = "activedirectory")
     public static class ActiveDirectoryAuthConfiguration {
 
-        private final SecurityConfigurationProperties securityProperties;
+        private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
         private final ActiveDirectorySecurityConfigurationProperties configurationProperties;
 
         @Autowired
-        public ActiveDirectoryAuthConfiguration(SecurityConfigurationProperties securityProperties, ActiveDirectorySecurityConfigurationProperties configurationProperties) {
-            this.securityProperties = securityProperties;
+        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties configurationProperties) {
+            this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.configurationProperties = configurationProperties;
         }
 
@@ -42,31 +42,31 @@ public class ActiveDirectorySecurityConfiguration {
         @Bean
         public LdapUserMapper ldapUserMapper() {
 
-            return new LdapUserMapper(securityProperties);
+            return new LdapUserMapper(directoryServiceSecurityProperties);
         }
 
         @Bean
-        public LdapPersonContextMapper personContextMapper(PersonService personService, LdapSyncService ldapSyncService,
+        public LdapPersonContextMapper personContextMapper(PersonService personService, PersonSyncService personSyncService,
                                                            LdapUserMapper ldapUserMapper) {
-            return new LdapPersonContextMapper(personService, ldapSyncService, ldapUserMapper);
+            return new LdapPersonContextMapper(personService, personSyncService, ldapUserMapper);
         }
 
         @Bean
-        public LdapSyncService ldapSyncService(PersonService personService) {
-            return new LdapSyncService(personService);
+        public PersonSyncService ldapSyncService(PersonService personService) {
+            return new PersonSyncService(personService);
         }
     }
 
     @Configuration
-    @ConditionalOnExpression("'${uv.security.auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync.enabled}'=='true'")
+    @ConditionalOnExpression("'${uv.security.auth}'=='activedirectory' and '${uv.security.activedirectory.sync.enabled}'=='true'")
     static class LdapAuthSyncConfiguration {
 
-        private final SecurityConfigurationProperties securityProperties;
+        private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
         private final ActiveDirectorySecurityConfigurationProperties adProperties;
 
         @Autowired
-        public LdapAuthSyncConfiguration(SecurityConfigurationProperties securityProperties, ActiveDirectorySecurityConfigurationProperties adProperties) {
-            this.securityProperties = securityProperties;
+        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties adProperties) {
+            this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.adProperties = adProperties;
         }
 
@@ -76,14 +76,14 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, LdapSyncService ldapSyncService,
+        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonSyncService personSyncService,
                                                          PersonService personService) {
-            return new LdapUserDataImporter(ldapUserService, ldapSyncService, personService);
+            return new LdapUserDataImporter(ldapUserService, personSyncService, personService);
         }
 
         @Bean
         public LdapUserServiceImpl ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
-            return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, securityProperties);
+            return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, directoryServiceSecurityProperties);
         }
 
         @Bean

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security.ldap;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,20 +15,25 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 /**
  * Syncs the person data from configured LDAP.
+ *
+ * @deprecated Please use {@link PersonService} directly.
+ * @see PersonService
  */
 @Transactional
-public class LdapSyncService {
+@Deprecated
+public class PersonSyncService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
 
-    LdapSyncService(PersonService personService) {
+    public PersonSyncService(PersonService personService) {
 
         this.personService = personService;
     }
@@ -42,7 +47,7 @@ public class LdapSyncService {
      * @param mailAddress to be updated, is optional
      * @return the updated person
      */
-    Person syncPerson(Person person, Optional<String> firstName, Optional<String> lastName,
+    public Person syncPerson(Person person, Optional<String> firstName, Optional<String> lastName,
                       Optional<String> mailAddress) {
 
         firstName.ifPresent(person::setFirstName);
@@ -66,7 +71,7 @@ public class LdapSyncService {
      * @param mailAddress of the person to be created, is optional
      * @return the created person
      */
-    Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
+    public Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
                         Optional<String> mailAddress) {
 
         Assert.notNull(login, "Missing login name!");
@@ -81,19 +86,29 @@ public class LdapSyncService {
 
 
     /**
-     * Adds {@link Role#OFFICE} to the roles of the given person.
+     * Adds {@link Role#OFFICE} to the roles of the given person if no
+     * other active user with a office role is defined.
      *
-     * @param person that gets the role {@link Role#OFFICE}
+     * @param person that maybe gets the role {@link Role#OFFICE}
+     *
+     * @return saved {@link Person} with {@link Role#OFFICE} rights
+     * if no other active person with {@link Role#OFFICE} is available.
      */
-    void appointPersonAsOfficeUser(Person person) {
+    public Person appointAsOfficeUserIfNoOfficeUserPresent(Person person) {
 
-        List<Role> permissions = new ArrayList<>(person.getPermissions());
-        permissions.add(Role.OFFICE);
+        boolean activeOfficeUserAvailable = !personService.getActivePersonsByRole(OFFICE).isEmpty();
+        if (activeOfficeUserAvailable) {
+            return person;
+        }
 
+        final List<Role> permissions = new ArrayList<>(person.getPermissions());
+        permissions.add(OFFICE);
         person.setPermissions(permissions);
 
-        personService.save(person);
+        final Person savedPerson = personService.save(person);
 
-        LOG.info("Add 'OFFICE' to roles of person: {}", person);
+        LOG.info("Add 'OFFICE' role to person: {}", person);
+
+        return savedPerson;
     }
 }

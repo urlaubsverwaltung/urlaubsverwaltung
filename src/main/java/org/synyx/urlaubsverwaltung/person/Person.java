@@ -163,13 +163,22 @@ public class Person extends AbstractPersistable<Integer> {
 
     public String getNiceName() {
 
-        if (StringUtils.hasText(this.firstName) && StringUtils.hasText(this.lastName)) {
-            return this.firstName + " " + this.lastName;
+        StringBuilder builder = new StringBuilder();
+        if(StringUtils.hasText(this.firstName)) {
+            builder.append(this.firstName);
+            builder.append(" ");
+        }
+        if(StringUtils.hasText(this.lastName)) {
+            builder.append(this.lastName);
+        }
+        String nicename = builder.toString().trim();
+
+        if(!StringUtils.hasText(nicename)) {
+            return "---";
         }
 
-        return this.loginName;
+        return nicename;
     }
-
 
     public String getGravatarURL() {
 

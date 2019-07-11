@@ -82,7 +82,7 @@ public class CalendarMailServiceIT {
         activateMailSettings();
 
         final Person person = new Person();
-        person.setLoginName("Henry");
+        person.setFirstName("Henry");
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);

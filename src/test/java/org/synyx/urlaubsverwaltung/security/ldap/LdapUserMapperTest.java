@@ -36,14 +36,14 @@ public class LdapUserMapperTest {
     @Before
     public void setUp() {
 
-        final SecurityConfigurationProperties securityConfigurationProperties = new SecurityConfigurationProperties();
-        securityConfigurationProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
-        securityConfigurationProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
-        securityConfigurationProperties.setLastName(LAST_NAME_ATTRIBUTE);
-        securityConfigurationProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
-        securityConfigurationProperties.getFilter().setMemberOf(MEMBER_OF_FILTER);
+        final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
+        directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
+        directoryServiceSecurityProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
+        directoryServiceSecurityProperties.setLastName(LAST_NAME_ATTRIBUTE);
+        directoryServiceSecurityProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
+        directoryServiceSecurityProperties.getFilter().setMemberOf(MEMBER_OF_FILTER);
 
-        ldapUserMapper = new LdapUserMapper(securityConfigurationProperties);
+        ldapUserMapper = new LdapUserMapper(directoryServiceSecurityProperties);
     }
 
 
@@ -186,14 +186,14 @@ public class LdapUserMapperTest {
     @Test
     public void ensureNoMemberOfCheckIfMemberOfFilterIsNull()  {
 
-        final SecurityConfigurationProperties securityConfigurationProperties = new SecurityConfigurationProperties();
-        securityConfigurationProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
-        securityConfigurationProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
-        securityConfigurationProperties.setLastName(LAST_NAME_ATTRIBUTE);
-        securityConfigurationProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
-        securityConfigurationProperties.getFilter().setMemberOf(null);
+        final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
+        directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
+        directoryServiceSecurityProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
+        directoryServiceSecurityProperties.setLastName(LAST_NAME_ATTRIBUTE);
+        directoryServiceSecurityProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
+        directoryServiceSecurityProperties.getFilter().setMemberOf(null);
 
-        LdapUserMapper ldapUserMapper = new LdapUserMapper(securityConfigurationProperties);
+        LdapUserMapper ldapUserMapper = new LdapUserMapper(directoryServiceSecurityProperties);
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
@@ -217,14 +217,14 @@ public class LdapUserMapperTest {
     @Test
     public void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() {
 
-        final SecurityConfigurationProperties securityConfigurationProperties = new SecurityConfigurationProperties();
-        securityConfigurationProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
-        securityConfigurationProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
-        securityConfigurationProperties.setLastName(LAST_NAME_ATTRIBUTE);
-        securityConfigurationProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
-        securityConfigurationProperties.getFilter().setMemberOf("");
+        final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
+        directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
+        directoryServiceSecurityProperties.setFirstName(FIRST_NAME_ATTRIBUTE);
+        directoryServiceSecurityProperties.setLastName(LAST_NAME_ATTRIBUTE);
+        directoryServiceSecurityProperties.setMailAddress(MAIL_ADDRESS_ATTRIBUTE);
+        directoryServiceSecurityProperties.getFilter().setMemberOf("");
 
-        LdapUserMapper ldapUserMapper = new LdapUserMapper(securityConfigurationProperties);
+        LdapUserMapper ldapUserMapper = new LdapUserMapper(directoryServiceSecurityProperties);
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");

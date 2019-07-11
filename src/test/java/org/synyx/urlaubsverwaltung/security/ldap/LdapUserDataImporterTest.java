@@ -4,10 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapSyncService;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapUser;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapUserDataImporter;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapUserService;
+import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Collections;
@@ -25,17 +22,17 @@ public class LdapUserDataImporterTest {
     private LdapUserDataImporter ldapUserDataImporter;
 
     private LdapUserService ldapUserServiceMock;
-    private LdapSyncService ldapSyncServiceMock;
+    private PersonSyncService personSyncServiceMock;
     private PersonService personServiceMock;
 
     @Before
     public void setUp() {
 
         ldapUserServiceMock = mock(LdapUserService.class);
-        ldapSyncServiceMock = mock(LdapSyncService.class);
+        personSyncServiceMock = mock(PersonSyncService.class);
         personServiceMock = mock(PersonService.class);
 
-        ldapUserDataImporter = new LdapUserDataImporter(ldapUserServiceMock, ldapSyncServiceMock, personServiceMock);
+        ldapUserDataImporter = new LdapUserDataImporter(ldapUserServiceMock, personSyncServiceMock, personServiceMock);
     }
 
 
@@ -59,7 +56,7 @@ public class LdapUserDataImporterTest {
         ldapUserDataImporter.sync();
 
         verify(personServiceMock, times(1)).getPersonByLogin("muster");
-        verify(ldapSyncServiceMock)
+        verify(personSyncServiceMock)
             .createPerson("muster", Optional.empty(), Optional.empty(), Optional.empty());
     }
 
@@ -78,7 +75,7 @@ public class LdapUserDataImporterTest {
         ldapUserDataImporter.sync();
 
         verify(personServiceMock, times(1)).getPersonByLogin(person.getLoginName());
-        verify(ldapSyncServiceMock)
+        verify(personSyncServiceMock)
             .syncPerson(person, Optional.of("Vorname"), Optional.of("Nachname"), Optional.of("Email"));
     }
 }

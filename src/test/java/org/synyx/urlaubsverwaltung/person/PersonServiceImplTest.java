@@ -227,7 +227,7 @@ public class PersonServiceImplTest {
 
         when(personDAO.findAll()).thenReturn(allPersons);
 
-        List<Person> filteredList = sut.getPersonsByRole(BOSS);
+        List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
 
         Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
 
@@ -318,7 +318,7 @@ public class PersonServiceImplTest {
 
         when(personDAO.findAll()).thenReturn(unsortedPersons);
 
-        List<Person> sortedList = sut.getPersonsByRole(USER);
+        List<Person> sortedList = sut.getActivePersonsByRole(USER);
 
         Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
         Assert.assertEquals("Wrong first person", carl, sortedList.get(0));

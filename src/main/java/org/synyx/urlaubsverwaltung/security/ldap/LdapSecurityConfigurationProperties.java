@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties("uv.security.ldap")
+@ConfigurationProperties("uv.security.directory-service.ldap")
 public class LdapSecurityConfigurationProperties {
 
     private String url;
