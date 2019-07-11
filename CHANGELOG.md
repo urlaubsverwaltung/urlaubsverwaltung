@@ -1,4 +1,4 @@
-### 3.0 RC1
+### [urlaubsverwaltung-3.0.0.RC1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC1)
 * Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Upgrade spring boot to 2.1.6 [#710](https://github.com/synyx/urlaubsverwaltung/pull/710)
 * Migrate database to mariadb [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
@@ -6,9 +6,6 @@
 * Add configuration properties for security and some cleanups [#696](https://github.com/synyx/urlaubsverwaltung/pull/696)
 * Add new security provider with OpenId Connect (oidc) [#716](https://github.com/synyx/urlaubsverwaltung/pull/716)
 * Fix availability and workdays api: Use http status 204 (instead of 500) for no working days present for given user [#728](https://github.com/synyx/urlaubsverwaltung/issues/728)
-
-#### Breaking Changes
-* Bump to Java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 
 ### [urlaubsverwaltung-2.44.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.0)
 * Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
