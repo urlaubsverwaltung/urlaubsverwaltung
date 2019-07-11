@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class TimedAbsenceSpansTest {
 
@@ -55,6 +57,7 @@ public class TimedAbsenceSpansTest {
     @Test
     public void ensureCalculationIsNullSave() {
 
-        new TimedAbsenceSpans(null).calculatePresenceRatio();
+        final BigDecimal bigDecimal = new TimedAbsenceSpans(null).calculatePresenceRatio();
+        assertThat(bigDecimal).isSameAs(BigDecimal.ONE);
     }
 }
