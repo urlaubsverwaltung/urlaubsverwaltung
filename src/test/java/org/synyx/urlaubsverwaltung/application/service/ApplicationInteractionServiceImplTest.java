@@ -52,7 +52,7 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationInteractionServiceImplTest {
 
-    private ApplicationInteractionService service;
+    private ApplicationInteractionService sut;
 
     @Mock
     private ApplicationService applicationService;
@@ -77,7 +77,7 @@ public class ApplicationInteractionServiceImplTest {
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
+        sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
             applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService);
     }
 
@@ -94,7 +94,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.apply(applicationForLeave, applier, comment);
+        sut.apply(applicationForLeave, applier, comment);
 
         Assert.assertEquals("Wrong state", WAITING, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -131,7 +131,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.apply(applicationForLeave, applier, comment);
+        sut.apply(applicationForLeave, applier, comment);
 
         verify(calendarSyncService).addAbsence(any(Absence.class));
         verify(absenceMappingService).create(isNull(), eq(AbsenceType.VACATION), anyString());
@@ -149,7 +149,7 @@ public class ApplicationInteractionServiceImplTest {
         ApplicationComment applicationComment = new ApplicationComment(person);
         when(commentService.create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), any(), eq(person))).thenReturn(applicationComment);
 
-        service.apply(applicationForLeave, person, of("Foo"));
+        sut.apply(applicationForLeave, person, of("Foo"));
 
         verify(applicationMailService).sendConfirmation(eq(applicationForLeave), eq(applicationComment));
         verify(applicationMailService, never()).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
@@ -169,7 +169,7 @@ public class ApplicationInteractionServiceImplTest {
         ApplicationComment applicationComment = new ApplicationComment(person);
         when(commentService.create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), any(), eq(applier))).thenReturn(applicationComment);
 
-        service.apply(applicationForLeave, applier, of("Foo"));
+        sut.apply(applicationForLeave, applier, of("Foo"));
 
         verify(applicationMailService, never()).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), eq(applicationComment));
@@ -187,7 +187,7 @@ public class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.apply(applicationForLeave, applier, comment);
+        sut.apply(applicationForLeave, applier, comment);
 
         verify(accountInteractionService).updateRemainingVacationDays(2013, person);
     }
@@ -209,7 +209,7 @@ public class ApplicationInteractionServiceImplTest {
 
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, boss, comment);
+        sut.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
@@ -265,7 +265,7 @@ public class ApplicationInteractionServiceImplTest {
         final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
         when(applicationComment).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, boss, comment);
+        sut.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
@@ -289,7 +289,7 @@ public class ApplicationInteractionServiceImplTest {
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, boss, comment);
+        sut.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
@@ -308,7 +308,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
 
-        service.allow(applicationForLeave, boss, comment);
+        sut.allow(applicationForLeave, boss, comment);
 
         Assert.assertEquals("Status should not be changed", ApplicationStatus.ALLOWED, applicationForLeave.getStatus());
 
@@ -334,7 +334,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
 
-        service.allow(applicationForLeave, user, comment);
+        sut.allow(applicationForLeave, user, comment);
     }
 
 
@@ -353,7 +353,7 @@ public class ApplicationInteractionServiceImplTest {
 
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, departmentHead, comment);
+        sut.allow(applicationForLeave, departmentHead, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person,
             departmentHead);
@@ -380,7 +380,7 @@ public class ApplicationInteractionServiceImplTest {
 
         when(commentService.create(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, departmentHead, comment);
+        sut.allow(applicationForLeave, departmentHead, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.TEMPORARY_ALLOWED, person, departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment, departmentHead);
@@ -416,7 +416,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
 
-        service.allow(applicationForLeave, departmentHead, comment);
+        sut.allow(applicationForLeave, departmentHead, comment);
 
         Assert.assertEquals("Status should not be changed", ApplicationStatus.TEMPORARY_ALLOWED,
             applicationForLeave.getStatus());
@@ -445,7 +445,7 @@ public class ApplicationInteractionServiceImplTest {
 
         when(commentService.create(any(), any(), any(), any())).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, departmentHead, comment);
+        sut.allow(applicationForLeave, departmentHead, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person,
             departmentHead);
@@ -473,7 +473,7 @@ public class ApplicationInteractionServiceImplTest {
 
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, secondStage, comment);
+        sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
@@ -500,7 +500,7 @@ public class ApplicationInteractionServiceImplTest {
         final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
         when(applicationComment).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, secondStage, comment);
+        sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
@@ -527,7 +527,7 @@ public class ApplicationInteractionServiceImplTest {
         final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
         when(applicationComment).thenReturn(new ApplicationComment(person));
 
-        service.allow(applicationForLeave, secondStage, comment);
+        sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
@@ -554,7 +554,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.allow(applicationForLeave, secondStageAuthority, comment);
+        sut.allow(applicationForLeave, secondStageAuthority, comment);
     }
 
 
@@ -575,7 +575,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setTwoStageApproval(true);
 
-        service.allow(applicationForLeave, departmentHead, comment);
+        sut.allow(applicationForLeave, departmentHead, comment);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -591,7 +591,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(secondStageAuthority);
         applicationForLeave.setStatus(WAITING);
 
-        service.allow(applicationForLeave, secondStageAuthority, comment);
+        sut.allow(applicationForLeave, secondStageAuthority, comment);
     }
 
 
@@ -608,7 +608,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(departmentHead);
         applicationForLeave.setStatus(WAITING);
 
-        service.allow(applicationForLeave, departmentHead, comment);
+        sut.allow(applicationForLeave, departmentHead, comment);
     }
 
     // ALLOWING - HOLIDAY REPLACEMENT NOTIFICATION
@@ -625,7 +625,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setHolidayReplacement(replacement);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.allow(applicationForLeave, boss, of("Foo"));
+        sut.allow(applicationForLeave, boss, of("Foo"));
 
         verify(applicationMailService).notifyHolidayReplacement(eq(applicationForLeave));
     }
@@ -642,7 +642,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setHolidayReplacement(null);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.allow(applicationForLeave, boss, of("Foo"));
+        sut.allow(applicationForLeave, boss, of("Foo"));
 
         verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
     }
@@ -661,7 +661,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setHolidayReplacement(replacement);
         applicationForLeave.setTwoStageApproval(true);
 
-        service.allow(applicationForLeave, departmentHead, of("Foo"));
+        sut.allow(applicationForLeave, departmentHead, of("Foo"));
 
         verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
     }
@@ -681,7 +681,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.reject(applicationForLeave, boss, comment);
+        sut.reject(applicationForLeave, boss, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.REJECTED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -711,7 +711,7 @@ public class ApplicationInteractionServiceImplTest {
         final Optional<AbsenceMapping> absenceByIdAndType = absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION));
         when(absenceByIdAndType).thenReturn(of(absenceMapping));
 
-        service.reject(applicationForLeave, boss, comment);
+        sut.reject(applicationForLeave, boss, comment);
 
         verify(calendarSyncService).deleteAbsence(absenceMapping.getEventId());
         verify(absenceMappingService).delete(absenceMapping);
@@ -732,7 +732,7 @@ public class ApplicationInteractionServiceImplTest {
 
         when(commentService.create(applicationForLeave, ApplicationAction.REJECTED, optionalComment, boss)).thenReturn(applicationComment);
 
-        service.reject(applicationForLeave, boss, optionalComment);
+        sut.reject(applicationForLeave, boss, optionalComment);
 
         verify(applicationMailService).sendRejectedNotification(eq(applicationForLeave), eq(applicationComment));
     }
@@ -750,7 +750,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.cancel(applicationForLeave, person, comment);
+        sut.cancel(applicationForLeave, person, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -781,7 +781,7 @@ public class ApplicationInteractionServiceImplTest {
         AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
         when(absenceMappingService.getAbsenceByIdAndType(null, AbsenceType.VACATION)).thenReturn(of(absenceMapping));
 
-        service.cancel(applicationForLeave, canceller, comment);
+        sut.cancel(applicationForLeave, canceller, comment);
 
         verify(calendarSyncService).deleteAbsence(anyString());
         verify(absenceMappingService).delete(any(AbsenceMapping.class));
@@ -801,7 +801,7 @@ public class ApplicationInteractionServiceImplTest {
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
                 .thenReturn(new ApplicationComment(person));
 
-        service.cancel(applicationForLeave, person, comment);
+        sut.cancel(applicationForLeave, person, comment);
 
         verify(applicationService).save(applicationForLeave);
 
@@ -824,7 +824,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.cancel(applicationForLeave, person, comment);
+        sut.cancel(applicationForLeave, person, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -857,7 +857,7 @@ public class ApplicationInteractionServiceImplTest {
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
                 .thenReturn(new ApplicationComment(person));
 
-        service.cancel(applicationForLeave, canceller, comment);
+        sut.cancel(applicationForLeave, canceller, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -887,7 +887,7 @@ public class ApplicationInteractionServiceImplTest {
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
                 .thenReturn(new ApplicationComment(person));
 
-        service.cancel(applicationForLeave, canceller, comment);
+        sut.cancel(applicationForLeave, canceller, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -918,7 +918,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setDayLength(DayLength.FULL);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.cancel(applicationForLeave, canceller, comment);
+        sut.cancel(applicationForLeave, canceller, comment);
 
         verify(accountInteractionService).updateRemainingVacationDays(2014, person);
     }
@@ -940,7 +940,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setDayLength(DayLength.FULL);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        service.createFromConvertedSickNote(applicationForLeave, creator);
+        sut.createFromConvertedSickNote(applicationForLeave, creator);
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService)
@@ -967,7 +967,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = mock(Application.class);
         when(applicationForLeave.getRemindDate()).thenReturn(LocalDate.now(UTC));
 
-        service.remind(applicationForLeave);
+        sut.remind(applicationForLeave);
 
         verify(applicationForLeave, never()).setRemindDate(any(LocalDate.class));
         verifyZeroInteractions(applicationService);
@@ -983,7 +983,7 @@ public class ApplicationInteractionServiceImplTest {
         when(applicationForLeave.getApplicationDate()).thenReturn(LocalDate.now(UTC));
         when(applicationForLeave.getRemindDate()).thenReturn(null);
 
-        service.remind(applicationForLeave);
+        sut.remind(applicationForLeave);
 
         verify(applicationForLeave, never()).setRemindDate(any(LocalDate.class));
         verifyZeroInteractions(applicationService);
@@ -1001,7 +1001,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setApplicationDate(LocalDate.now(UTC).minusDays(3));
         applicationForLeave.setRemindDate(LocalDate.now(UTC).minusDays(1));
 
-        service.remind(applicationForLeave);
+        sut.remind(applicationForLeave);
 
         Assert.assertNotNull("Remind date should be set", applicationForLeave.getRemindDate());
         Assert.assertEquals("Wrong remind date", LocalDate.now(UTC), applicationForLeave.getRemindDate());
@@ -1020,7 +1020,7 @@ public class ApplicationInteractionServiceImplTest {
         Person sender = createPerson("sender");
 
         Application applicationForLeave = mock(Application.class);
-        service.refer(applicationForLeave, recipient, sender);
+        sut.refer(applicationForLeave, recipient, sender);
 
         verify(applicationMailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
     }
