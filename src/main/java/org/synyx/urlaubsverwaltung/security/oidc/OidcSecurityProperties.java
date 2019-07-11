@@ -31,6 +31,15 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String clientSecret;
 
+    /**
+     * The path after the given {@link OidcSecurityProperties#issuerUri} where the logout is defined
+     * for the used provider.
+     *
+     * <p>e.g. for <i>keycloak</i> this would be <pre>'/protocol/openid-connect/logout'<pre>
+     * because the logout is defined at 'https://$provider/auth/realms/$realm/protocol/openid-connect/logout'
+     * and the {@link OidcSecurityProperties#issuerUri} should be defined with 'https://$provider/auth/realms/$realm'
+     * </p>
+     */
     @NotEmpty
     private String logoutPath;
 
