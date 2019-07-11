@@ -127,39 +127,4 @@ public class MailServiceImplTest {
 
         verify(mailSender).sendEmail(any(MailSettings.class), eq(singletonList("admin@firma.test")), eq("subject"), eq("emailBody"));
     }
-
-/*
-    @Test
-    public void ensureSendRemindForWaitingApplicationsReminderNotification() {
-
-        Person boss = createPerson("boss");
-        Person departmentHeadAC = createPerson("departmentHeadAC");
-        Person departmentHeadB = createPerson("departmentHeadB");
-
-        Person personDepartmentA = createPerson("personDepartmentA");
-        Person personDepartmentB = createPerson("personDepartmentB");
-        Person personDepartmentC = createPerson("personDepartmentC");
-
-        Application applicationA = createApplication(personDepartmentA);
-        Application applicationB = createApplication(personDepartmentB);
-        Application applicationC = createApplication(personDepartmentC);
-
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
-
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD))
-            .thenReturn(asList(departmentHeadAC, departmentHeadB));
-
-        when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentA)).thenReturn(true);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHeadB, personDepartmentB)).thenReturn(true);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHeadAC, personDepartmentC)).thenReturn(true);
-
-        sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationB, applicationC));
-
-        verify(personService, times(3)).getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD);
-        verify(personService, times(3)).getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
-        verify(departmentService).isDepartmentHeadOfPerson(eq(departmentHeadAC), eq(applicationA.getPerson()));
-        verify(departmentService).isDepartmentHeadOfPerson(eq(departmentHeadB), eq(applicationB.getPerson()));
-        verify(departmentService).isDepartmentHeadOfPerson(eq(departmentHeadAC), eq(applicationC.getPerson()));
-    }
-    */
 }

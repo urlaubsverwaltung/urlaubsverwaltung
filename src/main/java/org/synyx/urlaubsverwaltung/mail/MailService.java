@@ -56,12 +56,4 @@ public interface MailService {
      * @param model additional information based on the template
      */
     void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model);
-
-
-    /*
-     * Sends a mail as reminder to notify about applications for leave waiting longer already to be processed.
-     *
-     * @param applications waiting to be processed longer already
-
-    void sendRemindForWaitingApplicationsReminderNotification(List<Application> applications);*/
 }
