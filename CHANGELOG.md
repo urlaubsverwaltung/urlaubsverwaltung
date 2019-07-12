@@ -1,3 +1,6 @@
+### [urlaubsverwaltung-2.44.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.2)
+* Fix test data creation for application (No application date created)
+
 ### [urlaubsverwaltung-2.44.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.1)
 * Fix availability and workdays api: Use http status 204 (instead of 500) for no working days present for given user [#728](https://github.com/synyx/urlaubsverwaltung/issues/728)
 
