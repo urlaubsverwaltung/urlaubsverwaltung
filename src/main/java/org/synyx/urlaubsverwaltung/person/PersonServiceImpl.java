@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
@@ -53,7 +52,7 @@ class PersonServiceImpl implements PersonService {
                          List<MailNotification> notifications, List<Role> permissions) {
 
         Person person = getPersonByID(id).orElseThrow(() ->
-                new IllegalArgumentException("Can not find a person for ID = " + id));
+            new IllegalArgumentException("Can not find a person for ID = " + id));
 
         person.setLoginName(loginName);
         person.setLastName(lastName);
@@ -116,10 +115,10 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getActivePersons() {
 
         return personDAO.findAll()
-                .stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .sorted(personComparator())
-                .collect(toList());
+            .stream()
+            .filter(person -> !person.hasRole(INACTIVE))
+            .sorted(personComparator())
+            .collect(toList());
     }
 
 
@@ -133,10 +132,10 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getInactivePersons() {
 
         return personDAO.findAll()
-                .stream()
-                .filter(person -> person.hasRole(INACTIVE))
-                .sorted(personComparator())
-                .collect(toList());
+            .stream()
+            .filter(person -> person.hasRole(INACTIVE))
+            .sorted(personComparator())
+            .collect(toList());
     }
 
 
@@ -151,8 +150,8 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
 
         return getActivePersons().stream()
-                .filter(person -> person.hasNotificationType(notification))
-                .collect(toList());
+            .filter(person -> person.hasNotificationType(notification))
+            .collect(toList());
     }
 
 

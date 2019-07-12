@@ -17,10 +17,10 @@ public interface MailService {
     /**
      * Sends a mail to a person
      *
-     * @param person to get this email
+     * @param person            to get this email
      * @param subjectMessageKey message key of the subject
-     * @param templateName name of template
-     * @param model additional information based on the template
+     * @param templateName      name of template
+     * @param model             additional information based on the template
      */
     void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model);
 
@@ -52,16 +52,8 @@ public interface MailService {
      * Sends a technical mail to the defined administrator in the {@link org.synyx.urlaubsverwaltung.settings.MailSettings}
      *
      * @param subjectMessageKey message key of the subject
-     * @param templateName name of template
-     * @param model additional information based on the template
+     * @param templateName      name of template
+     * @param model             additional information based on the template
      */
     void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model);
-
-
-    /*
-     * Sends a mail as reminder to notify about applications for leave waiting longer already to be processed.
-     *
-     * @param applications waiting to be processed longer already
-
-    void sendRemindForWaitingApplicationsReminderNotification(List<Application> applications);*/
 }

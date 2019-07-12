@@ -83,7 +83,7 @@ public class OvertimeController {
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
-        Integer year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
+        int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = personService.getSignedInUser();
 
