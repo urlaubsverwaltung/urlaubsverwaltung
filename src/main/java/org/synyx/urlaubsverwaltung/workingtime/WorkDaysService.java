@@ -126,10 +126,8 @@ public class WorkDaysService {
 
     private FederalState getFederalState(WorkingTime workingTime) {
 
-        if (workingTime.getFederalStateOverride().isPresent()) {
-            return workingTime.getFederalStateOverride().get();
-        }
+        final Optional<FederalState> federalStateOverride = workingTime.getFederalStateOverride();
+        return federalStateOverride.orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState());
 
-        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
     }
 }
