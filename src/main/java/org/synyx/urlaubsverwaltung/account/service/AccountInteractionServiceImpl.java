@@ -91,18 +91,25 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         boolean hasNextAccount = true;
 
         while (hasNextAccount) {
-            Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(startYear + 1,
-                person);
+            final int nextYear = startYear + 1;
+            Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(nextYear, person);
 
             if (nextYearsHolidaysAccountOptional.isPresent()) {
-                Account changedHolidaysAccount = accountService.getHolidaysAccount(startYear, person).get();
-                Account nextYearsHolidaysAccount = nextYearsHolidaysAccountOptional.get();
+                final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(startYear, person);
 
-                updateRemainingVacationDays(nextYearsHolidaysAccount, changedHolidaysAccount);
+                if (holidaysAccount.isPresent()) {
+                    Account changedHolidaysAccount = holidaysAccount.get();
+                    Account nextYearsHolidaysAccount = nextYearsHolidaysAccountOptional.get();
 
-                LOG.info("Updated remaining vacation days of holidays account: {}", nextYearsHolidaysAccount);
+                    updateRemainingVacationDays(nextYearsHolidaysAccount, changedHolidaysAccount);
 
-                startYear++;
+                    LOG.info("Updated remaining vacation days of holidays account: {}", nextYearsHolidaysAccount);
+
+                    startYear++;
+
+                } else {
+                    hasNextAccount = false;
+                }
             } else {
                 hasNextAccount = false;
             }
@@ -117,12 +124,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
      */
     private void updateRemainingVacationDays(Account newAccount, Account lastAccount) {
 
-        BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(lastAccount);
-
+        final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(lastAccount);
         newAccount.setRemainingVacationDays(leftVacationDays);
 
         // number of not expiring remaining vacation days is greater than remaining vacation days
-        if (newAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) == 1) {
+        if (newAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) > 0) {
             newAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
         }
 
