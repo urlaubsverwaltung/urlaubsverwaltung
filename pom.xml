@@ -440,13 +440,6 @@
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <version>${docker-maven-plugin.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>run-java-sh</artifactId>
-            <version>${run-java-sh.version}</version>
-          </dependency>
-        </dependencies>
         <configuration>
           <images>
             <image>
