@@ -1,3 +1,8 @@
+### [urlaubsverwaltung-3.0.0.RC2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC2)
+* Fix docker image build [#740](https://github.com/synyx/urlaubsverwaltung/pull/740)
+* Fix favicon security [#741](https://github.com/synyx/urlaubsverwaltung/pull/741)
+* Fixes and cleanups [#739](https://github.com/synyx/urlaubsverwaltung/pull/739)
+
 ### [urlaubsverwaltung-3.0.0.RC1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC1)
 * Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
 * Upgrade spring boot to 2.1.6 [#710](https://github.com/synyx/urlaubsverwaltung/pull/710)
