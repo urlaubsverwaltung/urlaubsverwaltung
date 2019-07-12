@@ -49,12 +49,12 @@
 
                     <div class="form-group">
                         <label for="username"><spring:message code="login.form.username"/></label>
-                        <input class="form-control" type="text" name="username" id="username" autofocus="autofocus">
+                        <input class="form-control" type="text" name="username" id="username" autofocus="autofocus" value="<c:out value="${param.username}" />">
                     </div>
 
                     <div class="form-group">
                         <label for="password"><spring:message code="login.form.password"/></label>
-                        <input class="form-control" type="password" name="password" id="password">
+                        <input class="form-control" type="password" name="password" id="password" value="<c:out value="${param.password}" />">
                     </div>
 
                     <div class="form-group">
