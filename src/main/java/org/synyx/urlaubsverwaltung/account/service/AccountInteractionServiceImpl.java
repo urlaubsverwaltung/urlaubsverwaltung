@@ -91,8 +91,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         boolean hasNextAccount = true;
 
         while (hasNextAccount) {
-            Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(startYear + 1,
-                person);
+            final int nextYear = startYear + 1;
+            Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(nextYear, person);
 
             if (nextYearsHolidaysAccountOptional.isPresent()) {
                 final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(startYear, person);
@@ -125,11 +125,10 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private void updateRemainingVacationDays(Account newAccount, Account lastAccount) {
 
         final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(lastAccount);
-
         newAccount.setRemainingVacationDays(leftVacationDays);
 
         // number of not expiring remaining vacation days is greater than remaining vacation days
-        if (newAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) == 1) {
+        if (newAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) > 0) {
             newAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
         }
 

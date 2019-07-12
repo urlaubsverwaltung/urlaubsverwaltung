@@ -85,6 +85,27 @@ public class AccountInteractionServiceImplTest {
     }
 
     @Test
+    public void testUpdateRemainingVacationDaysAndNotExpiringDaysAreGreaterThenRemaining() {
+
+        final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
+
+        final BigDecimal annualVacationDays = BigDecimal.valueOf(30);
+
+        final Account account2012 = new Account(person, startDate, endDate, annualVacationDays, BigDecimal.valueOf(3), ZERO, null);
+        final Account account2013 = new Account(person, startDate.withYear(2013), endDate.withYear(2013), annualVacationDays, ZERO, TEN, "comment1");
+
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account2012));
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
+        when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.empty());
+
+        when(vacationDaysService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
+
+        sut.updateRemainingVacationDays(2012, person);
+        assertThat(account2013.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(6));
+    }
+
+    @Test
     public void testUpdateRemainingVacationDaysHasNoThisYearAccount() {
 
         final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
