@@ -61,9 +61,8 @@ von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusät
 
 ### Demo System
 
-Zum Ausprobieren der Anwendung gibt es ein [Demo System](https://urlaubsverwaltung-demo.synyx.de) mit Testbenutzern für
-die unterschiedlichen Rollen. Die Rollen findet ihr im Abschnitt [Starten der Anwendung](#starten-der-anwendung)
-
+Zum Ausprobieren der Anwendung gibt es ein [Demo System mit dem 'Office' Benutzer](https://urlaubsverwaltung-demo.synyx.de/login?username=office&password=secret)
+zum Testen. Die Rollen findet ihr im Abschnitt [Starten der Anwendung](#starten-der-anwendung)
 
 ### Geschichte
 
