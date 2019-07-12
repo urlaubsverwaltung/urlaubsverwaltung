@@ -84,6 +84,26 @@ public class AccountInteractionServiceImplTest {
         assertThat(account2014.getComment()).isSameAs("comment2");
     }
 
+    @Test
+    public void testUpdateRemainingVacationDaysHasNoThisYearAccount() {
+
+        final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
+        final BigDecimal annualVacationDays = BigDecimal.valueOf(30);
+        final BigDecimal remainingVacationDays = BigDecimal.valueOf(5);
+
+        final Account nextYearAccount = new Account(person, startDate, endDate, annualVacationDays, remainingVacationDays, ZERO, null);
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(nextYearAccount));
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.empty());
+
+        sut.updateRemainingVacationDays(2012, person);
+
+        assertThat(nextYearAccount.getRemainingVacationDays()).isEqualTo(remainingVacationDays);
+
+        verify(vacationDaysService, never()).calculateTotalLeftVacationDays(any());
+        verify(accountService, never()).save(any());
+    }
+
 
     @Test
     public void ensureCreatesNewHolidaysAccountIfNotExistsYet() {
