@@ -54,17 +54,14 @@ public class AccountInteractionServiceImplTest {
     @Test
     public void testUpdateRemainingVacationDays() {
 
-        LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
-        LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
+        final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
 
-        Account account2012 = new Account(person, startDate, endDate, BigDecimal.valueOf(30),
-                BigDecimal.valueOf(5), ZERO, null);
+        final BigDecimal annualVacationDays = BigDecimal.valueOf(30);
 
-        Account account2013 = new Account(person, startDate.withYear(2013), endDate.withYear(2013),
-                BigDecimal.valueOf(30), BigDecimal.valueOf(3), ZERO, "comment1");
-
-        Account account2014 = new Account(person, startDate.withYear(2014), endDate.withYear(2014),
-                BigDecimal.valueOf(30), BigDecimal.valueOf(8), ZERO, "comment2");
+        final Account account2012 = new Account(person, startDate, endDate, annualVacationDays, BigDecimal.valueOf(5), ZERO, null);
+        final Account account2013 = new Account(person, startDate.withYear(2013), endDate.withYear(2013), annualVacationDays, BigDecimal.valueOf(3), ZERO, "comment1");
+        final Account account2014 = new Account(person, startDate.withYear(2014), endDate.withYear(2014), annualVacationDays, BigDecimal.valueOf(8), ZERO, "comment2");
 
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account2012));
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
@@ -76,23 +73,15 @@ public class AccountInteractionServiceImplTest {
 
         sut.updateRemainingVacationDays(2012, person);
 
-        verify(vacationDaysService).calculateTotalLeftVacationDays(account2012);
-        verify(vacationDaysService).calculateTotalLeftVacationDays(account2013);
         verify(vacationDaysService, never()).calculateTotalLeftVacationDays(account2014);
-
         verify(accountService, never()).save(account2012);
-        verify(accountService).save(account2013);
-        verify(accountService).save(account2014);
 
-        Assert.assertEquals("Wrong number of remaining vacation days for 2012", BigDecimal.valueOf(5),
-                account2012.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days for 2013", BigDecimal.valueOf(6),
-                account2013.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days for 2014", BigDecimal.valueOf(2),
-                account2014.getRemainingVacationDays());
-        Assert.assertEquals("Wrong comment", null, account2012.getComment());
-        Assert.assertEquals("Wrong comment", "comment1", account2013.getComment());
-        Assert.assertEquals("Wrong comment", "comment2", account2014.getComment());
+        assertThat(account2012.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(5));
+        assertThat(account2013.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(6));
+        assertThat(account2014.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(2));
+        assertThat(account2012.getComment()).isNull();
+        assertThat(account2013.getComment()).isSameAs("comment1");
+        assertThat(account2014.getComment()).isSameAs("comment2");
     }
 
 
