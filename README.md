@@ -71,7 +71,7 @@ zum Testen. Die Rollen findest du im Abschnitt [Testbenutzer](#testbenutzer).
 
 ### Geschichte
 
-Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung findet man im
+Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung findest du im
 [synyx Blog](https://www.synyx.de/blog/):
 
 * [Stand November 2011](https://www.synyx.de/blog/elektronische-urlaubsverwaltung-made-by-youngsters/)
@@ -83,14 +83,14 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 
 ## FAQ
 
-Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen können, gibt es ein
+Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein
 [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ).
-Sollte dieser Fragenkatalog nicht weiterhelfen, kann gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
-vom Typ "Question" erstellt werden.
+Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
+vom Typ "Question" erstellen.
 
 ## Changelog
 
-Alle Änderungen an der Anwendung werden im Changelog gepflegt: [Changelog](CHANGELOG.md)
+Alle Änderungen an der Anwendung werden im [Changelog](CHANGELOG.md) gepflegt.
 
 ## Berechtigungen
 
@@ -109,8 +109,8 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 ## REST-Schnittstelle
 
-Die Urlaubsverwaltung besitzt einen sich selbst beschreibende REST-Schnittstelle.
-Diese kann mit über `/api/` aufgerufen werden.
+Die Urlaubsverwaltung besitzt eine sich selbst beschreibende REST-Schnittstelle.
+Diese kann über `/api/` aufgerufen werden.
 
 ---
 
@@ -121,7 +121,7 @@ Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgen
 Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet wird, können Details zur Installation und
 Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
 
-Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synxy/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
+Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synyx/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
 Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
 ### Systemvoraussetzungen
@@ -132,7 +132,7 @@ Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
 ### Download
 
-Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
+Die Anwendung steht auf Github als deploybare WAR-Datei zum Download zur Verfügung.
 Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
 da die WAR-Datei einen Tomcat bundled.
@@ -141,7 +141,7 @@ da die WAR-Datei einen Tomcat bundled.
 
 ### Starten der Anwendung
 
-Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/)
+Um die Anwendung möglichst schnell ausprobieren zu können, bietet es sich an die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/)
 zu starten:
 
 ```bash
@@ -155,7 +155,7 @@ java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 ```
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbank gestartet und Testdaten generiert.
-Die Testdaten enthalten diese Nutzer, mit denen man alles ausprobieren kann:
+Die Testdaten enthalten folgende Nutzer:
 
 ### Testbenutzer
 
@@ -258,8 +258,8 @@ Die Urlaubsverwaltung bietet die Möglichkeit alle Urlaube und Krankheitstage mi
 
 ![Einstellungsdialog für Microsoft Exchange als Kalenderanbindung](docs/exchange-calendar-settings.png)
 
-Anhand der zu konfigurierenden Email-Adresse wird per Autodiscovery die dazugehörige Exchange Server Adresse ermittelt, 
-welche für die synchronisation verwendet wird. Wichtig ist, dass der gewünschte Kalender bereits zuvor angelegt wurde.
+Anhand der zu konfigurierenden E-Mail-Adresse wird per Autodiscovery die dazugehörige Exchange Server Adresse ermittelt,
+welche für die Synchronisation verwendet wird. Wichtig ist, dass der gewünschte Kalender bereits zuvor angelegt wurde.
 
 #### Konfiguration Google Calendar
 ![Einstellungsdialog für Google Calendar als Kalenderanbindung](docs/google-calendar-settings.png)
@@ -271,16 +271,16 @@ Sobald alle Konfigurationsfelder wie unten beschrieben für die Synchronisation 
 
 ![Anlage eines OAuth 2.0 Clients](docs/google-create-oauth-client.png)
 
-Um einen solchen OAuth 2.0 Handshake durchführen zu können ist es zunächst notwendig die Urlaubsverwaltung als Anwendung bei Google bekannt zu machen.
-Dies geschieht über [APIs und Services](https://console.developers.google.com). Hier muss zunächst ein [Projekt angelegt](https://console.developers.google.com/projectcreate) werden. Sobald das geschehen ist kann die [Calendar API](https://console.developers.google.com/apis/library/calendar-json.googleapis.com/) aktiviert werden. Nach der Aktivierung müssen außerdem [OAuth 2.0 Client Zugangsdaten](https://console.developers.google.com/apis/credentials/oauthclient) erzeugt werden. Es müssen außerdem die Autorisierte Weiterleitungs-URIs mit dem Wert gefüllt werden der in den Einstellungen unter Weiterleitungs-URL angezeigt wird. Direkt nach der Erstellung werden **Client Id** und **Client Secret** angezeigt. Diese müssen dann in den Einstellungen der Urlaubsverwaltung entsprechend hinterlegt werden.
+Um einen solchen OAuth 2.0 Handshake durchführen zu können, ist es zunächst notwendig die Urlaubsverwaltung als Anwendung bei Google bekannt zu machen.
+Dies geschieht über [APIs und Services](https://console.developers.google.com). Hier muss zunächst ein [Projekt angelegt](https://console.developers.google.com/projectcreate) werden. Sobald das geschehen ist, kann die [Calendar API](https://console.developers.google.com/apis/library/calendar-json.googleapis.com/) aktiviert werden. Nach der Aktivierung müssen außerdem [OAuth 2.0 Client Zugangsdaten](https://console.developers.google.com/apis/credentials/oauthclient) erzeugt werden. Es müssen außerdem die autorisierte Weiterleitungs-URIs mit dem Wert gefüllt werden, der in den Einstellungen unter Weiterleitungs-URL angezeigt wird. Direkt nach der Erstellung werden **Client Id** und **Client Secret** angezeigt. Diese müssen dann in den Einstellungen der Urlaubsverwaltung entsprechend hinterlegt werden.
 
 ##### Kalender anlegen/konfigurieren
 
-Eine weitere notwendige Information ist die **Kalender ID** welche später zur Synchronisation verwendet wird. Es kann dafür entweder ein bestehender Kalender verwendet werden oder ein [neuer Kalender angelegt](https://calendar.google.com/calendar/r/settings/createcalendar) werden. In Google Calendar kann man dann in den Kalendereinstellungen die **Kalendar ID** finden. Diese muss ebenfalls in der Urlaubsverwaltung gepflegt werden.
+Eine weitere notwendige Information ist die **Kalender ID**, welche später zur Synchronisation verwendet wird. Es kann dafür entweder ein bestehender Kalender verwendet oder ein [neuer Kalender angelegt](https://calendar.google.com/calendar/r/settings/createcalendar) werden. In Google Calendar kann man dann in den Kalendereinstellungen die **Kalendar ID** finden. Diese muss ebenfalls in der Urlaubsverwaltung gepflegt werden.
 
 ##### Urlaubsverwaltung Weiterleitungs-URL
 
-Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es notwendig die die Weiterleitungs-URL bei der Konfiguration der Webanwendung bei Google anzugeben. Diese ist abhängig von der Installation und wird in den Einstellungen des Google Kalenders angezeigt, z.B. `http://localhost:8080/web/google-api-handshake` für ein Testsystem. Sie ist nur für die initiale Freigabe des Kalenders nötig.
+Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es notwendig die Weiterleitungs-URL bei der Konfiguration der Webanwendung bei Google anzugeben. Diese ist abhängig von der Installation und wird in den Einstellungen des Google Kalenders angezeigt, z.B. `http://localhost:8080/web/google-api-handshake` für ein Testsystem. Sie ist nur für die initiale Freigabe des Kalenders nötig.
 
 ---
 
@@ -297,7 +297,7 @@ git clone git@github.com:synyx/urlaubsverwaltung.git
 ### Release
 
 Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
-Zum sorgenfreien Release Erstellung kann folgendes Script verwendet werden. 
+Zum sorgenfreien Erstellen eines Release kann folgendes Skript verwendet werden.
 
 ```bash
 export RELEASE_VERSION=0.10.0
@@ -308,7 +308,7 @@ git fetch
 
 ### Anwendung starten
 
-Da die Urlaubsverwaltung abhängig von einer MariaDB-Datenbank ist kann diese über
+Da die Urlaubsverwaltung abhängig von einer MariaDB-Datenbank ist, kann diese über
 
 ```bash
 docker-compose up
@@ -348,7 +348,7 @@ Assets sind in `<root>/src/main/webapp` zu finden
 
 * `bundles` sind in den JSPs zu integrieren
 * `components` sind einzelne Komponenten zur Wiederverwendung wie z. B. der _datepicker_
-* `js` beinhaltet Seitenspezifische Dinge 
+* `js` beinhaltet seitenspezifische Dinge
 * `lib` sind third-party Bibliotheken
 
 Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auch auf der Kommandozeile gebaut werden.
@@ -359,7 +359,7 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 * `npm run build:dev`
   * baut nicht minifizierte Assets
 * `npm run build:watch`
-  * baut automatisch nach dem editieren von JavaScript / CSS Dateien neue Assets 
+  * baut automatisch nach dem Editieren von JavaScript / CSS Dateien neue Assets
 
 #### Long term caching von Assets
 
