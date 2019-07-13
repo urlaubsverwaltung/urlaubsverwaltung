@@ -67,7 +67,7 @@ Außerdem können auch Krankmeldungen und Überstunden erfasst und überblickt w
 ### Demo System
 
 Zum Ausprobieren der Anwendung gibt es ein [Demo System mit dem 'Office' Benutzer](https://urlaubsverwaltung-demo.synyx.de/login?username=office&password=secret)
-zum Testen. Die Rollen findet ihr im Abschnitt [Starten der Anwendung](#starten-der-anwendung)
+zum Testen. Die Rollen findest du im Abschnitt [Testbenutzer](#testbenutzer).
 
 ### Geschichte
 
@@ -156,6 +156,8 @@ java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbank gestartet und Testdaten generiert.
 Die Testdaten enthalten diese Nutzer, mit denen man alles ausprobieren kann:
+
+### Testbenutzer
 
 | Rolle                         | Benutzername           | Passwort | 
 | -------------------------     | -------------          | -------- | 
@@ -336,7 +338,7 @@ Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteue
 
 Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Testdaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
-[Testbenutzern](#testbetrieb) anmelden.
+[Testbenutzern](#testbenutzer) anmelden.
 
 ### Frontend Entwicklung
 
