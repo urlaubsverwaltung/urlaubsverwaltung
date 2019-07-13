@@ -99,7 +99,7 @@ In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 * **inaktiv**: hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben zur Archivierung bestehen)
 * **User**: darf Urlaub für sich selbst beantragen
 * **Abteilungsleiter**: darf Urlaubsanträge für die Benutzer seiner Abteilungen einsehen, genehmigen und ablehnen
-* **Freigabe Verantwortlicher**: ist bei der zweistufigen Genehmigung von Anträgen verantwortlich für die endgültige Freigabe
+* **Freigabe-Verantwortlicher**: ist bei der zweistufigen Genehmigung von Anträgen verantwortlich für die endgültige Freigabe
 * **Chef**: darf Urlaubsanträge aller Benutzer einsehen, genehmigen und ablehnen
 * **Office**: darf Einstellungen zur Anwendung vornehmen, Mitarbeiter verwalten, Urlaub für Mitarbeiter
 beantragen/stornieren und Krankmeldungen pflegen
@@ -159,14 +159,14 @@ Die Testdaten enthalten diese Nutzer, mit denen man alles ausprobieren kann:
 
 ### Testbenutzer
 
-| Rolle                         | Benutzername           | Passwort | 
-| -------------------------     | -------------          | -------- | 
-| User                          | user                   | secret   | 
-| User und DepartmentHead       | departmentHead         | secret   | 
-| User und SecondStageAuthority | secondStageAuthority   | secret   | 
-| User und Boss                 | boss                   | secret   | 
-| User und Boss und Office      | office                 | secret   | 
-| User und Admin                | admin                  | secret   |
+| Rolle                            | Benutzername           | Passwort |
+| -------------------------        | -------------          | -------- |
+| User                             | user                   | secret   |
+| User & Abteilungsleiter          | departmentHead         | secret   |
+| User & Freigabe-Verantwortlicher | secondStageAuthority   | secret   |
+| User & Chef                      | boss                   | secret   |
+| User & Chef & Office             | office                 | secret   |
+| User & Admin                     | admin                  | secret   |
 
 ### Aufrufen der Anwendung
 
