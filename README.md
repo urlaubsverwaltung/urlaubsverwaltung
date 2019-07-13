@@ -3,21 +3,23 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 
-### Version 3
+## Version 3.x
 
-Die Urlaubsverwaltung (UV) wird ständig weiterentwickelt  
-und wir starten auf dem _master Branch_ mit der _3.x Version_ durch.  
-Diese gibt uns die Möglichkeit alte Zöpfe abzuschneiden und die UV transparent zu ändern.
+| Version 2.x wird nur noch bis zum **31.12.2019** mit Bug- und Sicherheitsupdates unterstützt.|
+| --- |
 
-**Version 2**  
-Falls ihr auf der Suche nach der Version 2.x der UV seid  
-dann geht es hier entlang zur [v2.x](https://github.com/synyx/urlaubsverwaltung/tree/v2.x)
+Aufgrund von umfangreicheren Neuerungen haben wir
+uns dafür entschieden, auf dem **master** Branch mit Version **3.x** durchzustarten.
 
-Einen [Migration Guide](https://github.com/synyx/urlaubsverwaltung/wiki/Urlaubsverwaltung-3.0-Migration-Guide) von der 
-Version 2 auf 3 findet  ihr im [Wiki](https://github.com/synyx/urlaubsverwaltung/wiki)
+**Version 2.x**
 
-Wir werden die Version 2.x der UV noch bis zum **31.12.2019** mit Bug- und Sicherheitsupdates unterstützen.  
-Danach wird nur noch die Version 3 unterstützt.
+Du bist auf der Suche nach Version 2.x? Diese findest du [hier](https://github.com/synyx/urlaubsverwaltung/tree/v2.x).
+
+Du möchtest wissen, was alles zu tun ist, um von 2.x auf 3.x umzusteigen?
+Dann wirf einen Blick in den [Migration Guide](https://github.com/synyx/urlaubsverwaltung/wiki/Urlaubsverwaltung-3.0-Migration-Guide).
+
+Bitte beachte, dass die Version 2.x nur noch bis zum **31.12.2019** mit Bug- und Sicherheitsupdates unterstützt wird.
+Danach wird ausschließlich an 3.x weiterentwickelt werden.
 
 # Urlaubsverwaltung
                              
