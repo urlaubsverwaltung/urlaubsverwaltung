@@ -53,11 +53,14 @@ Danach wird ausschließlich an 3.x weiterentwickelt werden.
 
 ## Übersicht
 
-Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu
-verwalten. Mitarbeiter stellen Urlaubsanträge, die von den jeweils Berechtigten genehmigt oder abgelehnt werden.
-Die Anwendung bietet eine Übersicht über die bestehenden Urlaubsanträge und ermöglicht außerdem Überblick und Pflege
-von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter. Zusätzlich können Krankmeldungen erfasst und
-überblickt werden.
+Die Urlaubsverwaltung ist eine Web-Anwendung, um Urlaubsanträge elektronisch
+verwalten zu können.
+
+Mitarbeiter stellen Urlaubsanträge, die von den jeweils Berechtigten genehmigt oder abgelehnt werden können.
+Die Anwendung bietet einen komfortablen Überblick über offene Urlaubsanträge und
+den (verbleibenden) Urlaubsanspruch von Mitarbeitern.
+
+Außerdem können auch Krankmeldungen und Überstunden erfasst und überblickt werden.
 
 ![Screenshot Urlaubsverwaltung](docs/uv-01.png)
 
