@@ -422,7 +422,7 @@ Oder in den `application.properties` konfigurieren:
 
 ### Externe Systeme mit Docker virtualisieren
 
-Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die extenen
+Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die externen
 Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gezeigt, wie man das mit Docker
 tun kann.](docs/UV_WITH_DOCKER.md)
 
