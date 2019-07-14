@@ -1,3 +1,6 @@
+### [urlaubsverwaltung-3.0.0.RC3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC3)
+* Add overtime controller tests [#744](https://github.com/synyx/urlaubsverwaltung/pull/744)
+
 ### [urlaubsverwaltung-3.0.0.RC2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC2)
 * Fix docker image build [#740](https://github.com/synyx/urlaubsverwaltung/pull/740)
 * Fix favicon security [#741](https://github.com/synyx/urlaubsverwaltung/pull/741)
