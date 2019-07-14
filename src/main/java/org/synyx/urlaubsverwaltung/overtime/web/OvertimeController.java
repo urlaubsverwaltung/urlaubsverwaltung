@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeAction;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -34,6 +33,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 
 /**
@@ -71,8 +71,7 @@ public class OvertimeController {
     @GetMapping("/overtime")
     public String showPersonalOvertime() {
 
-        Person signedInUser = personService.getSignedInUser();
-
+        final Person signedInUser = personService.getSignedInUser();
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
 
@@ -83,14 +82,14 @@ public class OvertimeController {
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
-        int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        Person signedInUser = personService.getSignedInUser();
+        final int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
+        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to see overtime records of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                "User '%s' has not the correct permissions to see overtime records of user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("year", year);
@@ -106,21 +105,19 @@ public class OvertimeController {
     @GetMapping("/overtime/{id}")
     public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
 
-        Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
-
-        Person person = overtime.getPerson();
-        Person signedInUser = personService.getSignedInUser();
+        final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final Person person = overtime.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to see overtime records of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                "User '%s' has not the correct permissions to see overtime records of user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("record", overtime);
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
-        model.addAttribute("overtimeTotal",
-            overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
 
         return "overtime/overtime_details";
@@ -132,8 +129,8 @@ public class OvertimeController {
         @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException {
 
-        Person signedInUser = personService.getSignedInUser();
-        Person person;
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person;
 
         if (personId != null) {
             person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -141,10 +138,10 @@ public class OvertimeController {
             person = signedInUser;
         }
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to record overtime for user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                "User '%s' has not the correct permissions to record overtime for user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("overtime", new OvertimeForm(person));
@@ -155,30 +152,29 @@ public class OvertimeController {
 
     @PostMapping("/overtime")
     public String recordOvertime(@ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
-        RedirectAttributes redirectAttributes) {
+                                 RedirectAttributes redirectAttributes) {
 
-        Person signedInUser = personService.getSignedInUser();
-        Person person = overtimeForm.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person = overtimeForm.getPerson();
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to record overtime for user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                "User '%s' has not the correct permissions to record overtime for user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
         }
 
         validator.validate(overtimeForm, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute("overtime", overtimeForm);
-
             return "overtime/overtime_form";
         }
 
-        Overtime recordedOvertime = overtimeService.record(overtimeForm.generateOvertime(),
-                Optional.ofNullable(overtimeForm.getComment()), personService.getSignedInUser());
+        final Overtime overtime = overtimeForm.generateOvertime();
+        final Optional<String> overtimeFormComment = Optional.ofNullable(overtimeForm.getComment());
+        final Overtime recordedOvertime = overtimeService.record(overtime, overtimeFormComment, signedInUser);
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.CREATED.name());
-
         return "redirect:/web/overtime/" + recordedOvertime.getId();
     }
 
@@ -186,15 +182,14 @@ public class OvertimeController {
     @GetMapping("/overtime/{id}/edit")
     public String editOvertime(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
 
-        Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person = overtime.getPerson();
 
-        Person signedInUser = personService.getSignedInUser();
-        Person person = overtime.getPerson();
-
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to edit overtime record of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("overtime", new OvertimeForm(overtime));
@@ -205,35 +200,30 @@ public class OvertimeController {
 
     @PostMapping("/overtime/{id}")
     public String updateOvertime(@PathVariable("id") Integer id,
-        @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
-        RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
+                                 @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
+                                 RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
 
-        Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person = overtime.getPerson();
 
-        Person signedInUser = personService.getSignedInUser();
-        Person person = overtime.getPerson();
-
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to edit overtime record of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
         }
 
         validator.validate(overtimeForm, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute("overtime", overtimeForm);
-
             return "overtime/overtime_form";
         }
 
         overtimeForm.updateOvertime(overtime);
-
-        overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()),
-            personService.getSignedInUser());
+        overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()), signedInUser);
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.EDITED.name());
-
         return "redirect:/web/overtime/" + id;
     }
 }
