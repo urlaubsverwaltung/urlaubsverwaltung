@@ -434,7 +434,7 @@ tun kann.](docs/UV_WITH_DOCKER.md)
 * Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt.
 * Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
 [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
-*Für die Darstellung der Benutzer Avatare wird [Gravatar](http://de.gravatar.com/) benutzt.
+* Für die Darstellung der Benutzer Avatare wird [Gravatar](http://de.gravatar.com/) benutzt.
 * Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Kalender wird die
 [EWS JAVA API](https://github.com/OfficeDev/ews-java-api) genutzt.
 * Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Google Calendar wird der
