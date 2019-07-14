@@ -1,5 +1,7 @@
 ### [urlaubsverwaltung-3.0.0.RC3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC3)
 * Add overtime controller tests [#744](https://github.com/synyx/urlaubsverwaltung/pull/744)
+* Improve Readme [#743](https://github.com/synyx/urlaubsverwaltung/pull/743)
+* Allow to add username and password via url and add demo system to readme [#742](https://github.com/synyx/urlaubsverwaltung/pull/742)
 
 ### [urlaubsverwaltung-3.0.0.RC2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC2)
 * Fix docker image build [#740](https://github.com/synyx/urlaubsverwaltung/pull/740)
