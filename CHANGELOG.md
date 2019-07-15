@@ -1,3 +1,6 @@
+### [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4)
+* Fix login parameter security
+
 ### [urlaubsverwaltung-3.0.0.RC3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC3)
 * Add overtime controller tests [#744](https://github.com/synyx/urlaubsverwaltung/pull/744)
 * Improve Readme [#743](https://github.com/synyx/urlaubsverwaltung/pull/743)
