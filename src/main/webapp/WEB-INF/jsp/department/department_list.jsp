@@ -106,7 +106,7 @@
                                         </c:choose>
                                     </td>
                                     <td class="hidden-xs">
-                                        <a href="${URL_PREFIX}/staff?active=true&department=${department.id}">
+                                        <a href="${URL_PREFIX}/person?active=true&department=${department.id}">
                                             <c:out value="${fn:length(department.members)}"/>
                                             <spring:message code="department.members"/>
                                         </a>

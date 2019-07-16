@@ -1,3 +1,6 @@
+### master
+* Fix broken link in department overview [#749](https://github.com/synyx/urlaubsverwaltung/pull/749)
+
 ### [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4)
 * Fix login parameter security
 
