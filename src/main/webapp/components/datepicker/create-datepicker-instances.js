@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { findWhere } from 'underscore';
 import datepicker from './datepicker';
-import { isWeekend } from 'date-fns';
+import { isWeekend, isToday } from 'date-fns';
 
 import '../calendar/calendar.css';
 
@@ -145,6 +145,7 @@ function colorizeDate(date, publicHolidays, absences) {
 
     const cssClasses = [
       'datepicker-day',
+      isToday(date) && 'datepicker-day-today',
       isPast() && 'datepicker-day-past',
       isPublicHolidayFull() && 'datepicker-day-public-holiday-full',
       isPublicHolidayMorning() && 'datepicker-day-public-holiday-morning',
