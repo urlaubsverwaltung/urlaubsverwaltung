@@ -37,25 +37,8 @@ public class PersonApiController {
         value = "Get all active persons of the application", notes = "Get all active persons of the application"
     )
     @GetMapping(ROOT_URL)
-    public ResponseWrapper<PersonListResponse> persons(
-        @ApiParam(value = "LDAP Login")
-        @RequestParam(value = "ldap", required = false)
-            String ldapName) {
+    public List<PersonResponse> persons() {
 
-        List<Person> persons = new ArrayList<>();
-
-        if (ldapName == null) {
-            persons = personService.getActivePersons();
-        } else {
-            Optional<Person> person = personService.getPersonByLogin(ldapName);
-
-            if (person.isPresent()) {
-                persons.add(person.get());
-            }
-        }
-
-        List<PersonResponse> personResponses = persons.stream().map(PersonResponse::new).collect(Collectors.toList());
-
-        return new ResponseWrapper<>(new PersonListResponse(personResponses));
+        return personService.getActivePersons().stream().map(PersonResponse::new).collect(Collectors.toList());
     }
 }
