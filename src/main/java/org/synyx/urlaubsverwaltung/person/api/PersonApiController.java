@@ -4,10 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 public class PersonApiController {
 
     private static final String ROOT_URL = "/persons";
+    private static final String PERSON_URL = ROOT_URL + "/{id}";
 
     private final PersonService personService;
 
@@ -37,8 +37,28 @@ public class PersonApiController {
         value = "Get all active persons of the application", notes = "Get all active persons of the application"
     )
     @GetMapping(ROOT_URL)
-    public List<PersonResponse> persons() {
+    public ResponseEntity<List<PersonResponse>> persons() {
 
-        return personService.getActivePersons().stream().map(PersonResponse::new).collect(Collectors.toList());
+        List<PersonResponse> persons = personService.getActivePersons().stream()
+            .map(PersonResponse::new)
+            .collect(Collectors.toList());
+
+        return new ResponseEntity<>(persons, HttpStatus.OK);
+    }
+
+    @ApiOperation(
+        value = "Get one active person by id", notes = "Get one active person by id"
+    )
+    @GetMapping(PERSON_URL)
+    public ResponseEntity<PersonResponse> getPerson(@PathVariable Integer id) {
+
+        Optional<Person> person = personService.getPersonByID(id);
+        if(person.isPresent()) {
+            return new ResponseEntity<>(new PersonResponse(person.get()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+
     }
 }
