@@ -4,9 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -75,15 +73,12 @@ public class PersonManagementControllerTest {
     @Test
     public void newPersonForwardsToViewIfValidationFails() throws Exception {
 
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+        doAnswer(invocation -> {
 
-                Errors errors = (Errors) invocation.getArgument(1);
-                errors.rejectValue("email", "invalid.email");
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("email", "invalid.email");
 
-                return null;
-            }
+            return null;
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person")).andExpect(view().name("person/person_form"));
@@ -135,7 +130,7 @@ public class PersonManagementControllerTest {
     }
 
     @Test
-    public void editPersonFormForUnknownIdThrowsUnknownPersonException() throws Exception {
+    public void editPersonFormForUnknownIdThrowsUnknownPersonException() {
 
         assertThatThrownBy(() ->
 
@@ -171,15 +166,12 @@ public class PersonManagementControllerTest {
     @Test
     public void editPersonForwardsToViewIfValidationFails() throws Exception {
 
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+        doAnswer(invocation -> {
 
-                Errors errors = (Errors) invocation.getArgument(1);
-                errors.rejectValue("email", "invalid.email");
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("email", "invalid.email");
 
-                return null;
-            }
+            return null;
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + PERSON_ID + "/edit")).andExpect(view().name("person/person_form"));
@@ -217,7 +209,7 @@ public class PersonManagementControllerTest {
     private static Person personWithId(int personId) {
 
         Person person = new Person();
-        person.setId(PERSON_ID);
+        person.setId(personId);
         return person;
     }
 
