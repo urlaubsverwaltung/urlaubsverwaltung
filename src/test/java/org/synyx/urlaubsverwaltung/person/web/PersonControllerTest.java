@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -45,15 +44,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersonControllerTest {
 
-    public static final int UNKNOWN_PERSON_ID = 365;
-    public static final int PERSON_ID = 1;
+    private static final int UNKNOWN_PERSON_ID = 365;
+    private static final int PERSON_ID = 1;
+    private static final int UNKNOWN_DEPARTMENT_ID = 456;
+
+    private static final String YEAR_ATTRIBUTE = "year";
+    private static final String DEPARTMENT_ATTRIBUTE = "department";
 
     private PersonController sut;
 
@@ -120,10 +126,10 @@ public class PersonControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(FederalState.BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
-        perform(get("/web/person/" + PERSON_ID).param(ControllerConstants.YEAR_ATTRIBUTE, "1985"))
-            .andExpect(model().attribute(ControllerConstants.YEAR_ATTRIBUTE,1985));
+        perform(get("/web/person/" + PERSON_ID).param(YEAR_ATTRIBUTE, "1985"))
+            .andExpect(model().attribute(YEAR_ATTRIBUTE,1985));
     }
 
     @Test
@@ -131,12 +137,12 @@ public class PersonControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(FederalState.BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
         final int currentYear = ZonedDateTime.now(UTC).getYear();
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute(ControllerConstants.YEAR_ATTRIBUTE, currentYear));
+            .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
     }
 
     @Test
@@ -144,7 +150,7 @@ public class PersonControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(FederalState.BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(model().attribute("workingTime", nullValue()));
@@ -161,10 +167,10 @@ public class PersonControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(FederalState.BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute("federalState", FederalState.BADEN_WUERTTEMBERG));
+            .andExpect(model().attribute("federalState", BADEN_WUERTTEMBERG));
 
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(FederalState.BERLIN);
@@ -180,7 +186,7 @@ public class PersonControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(FederalState.BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(model().attribute("account", nullValue()));
@@ -197,7 +203,7 @@ public class PersonControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(FederalState.BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(view().name("person/person_detail"));
@@ -206,7 +212,7 @@ public class PersonControllerTest {
     @Test
     public void showPersonWithActiveTrueForUserWithRoleBossCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(Role.BOSS));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
 
         perform(get("/web/person").param("active", "true"));
 
@@ -216,7 +222,7 @@ public class PersonControllerTest {
     @Test
     public void showPersonWithActiveTrueForUserWithRoleOfficeCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(Role.OFFICE));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         perform(get("/web/person").param("active", "true"));
 
@@ -248,7 +254,7 @@ public class PersonControllerTest {
     @Test
     public void showPersonWithActiveFalseForUserWithRoleBossCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(Role.BOSS));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
 
         perform(get("/web/person").param("active", "false"));
 
@@ -258,7 +264,7 @@ public class PersonControllerTest {
     @Test
     public void showPersonWithActiveFalseForUserWithRoleOfficeCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(Role.OFFICE));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         perform(get("/web/person").param("active", "false"));
 
@@ -294,7 +300,7 @@ public class PersonControllerTest {
 
             perform(get("/web/person")
                 .param("active", "false")
-                .param(ControllerConstants.DEPARTMENT_ATTRIBUTE, "456"))
+                .param(DEPARTMENT_ATTRIBUTE, Integer.toString(UNKNOWN_DEPARTMENT_ID)))
 
         ).hasCauseInstanceOf(UnknownDepartmentException.class);
     }
@@ -308,8 +314,8 @@ public class PersonControllerTest {
 
         perform(get("/web/person")
             .param("active", "true")
-            .param(ControllerConstants.DEPARTMENT_ATTRIBUTE, "1")
-        ).andExpect(model().attribute(ControllerConstants.DEPARTMENT_ATTRIBUTE, department));
+            .param(DEPARTMENT_ATTRIBUTE, "1")
+        ).andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, department));
     }
 
     @Test
@@ -324,8 +330,8 @@ public class PersonControllerTest {
 
         perform(get("/web/person/")
             .param("active", "true")
-            .param(ControllerConstants.YEAR_ATTRIBUTE, "1985")
-        ).andExpect(model().attribute(ControllerConstants.YEAR_ATTRIBUTE,1985));
+            .param(YEAR_ATTRIBUTE, "1985")
+        ).andExpect(model().attribute(YEAR_ATTRIBUTE,1985));
     }
 
     @Test
@@ -334,7 +340,7 @@ public class PersonControllerTest {
         final int currentYear = ZonedDateTime.now(UTC).getYear();
 
         perform(get("/web/person/").param("active", "true"))
-            .andExpect(model().attribute(ControllerConstants.YEAR_ATTRIBUTE, currentYear));
+            .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
