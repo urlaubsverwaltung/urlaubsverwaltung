@@ -1,4 +1,5 @@
 ### [urlaubsverwaltung-2.44.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.2)
+* Activate method security for @Pre and @PostAuthorize
 * Fix test data creation for application (No application date created)
 
 ### [urlaubsverwaltung-2.44.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.1)
