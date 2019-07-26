@@ -98,8 +98,7 @@ public class SickNoteApiControllerTest {
             .andExpect(jsonPath("$.response.sickNotes", hasSize(3)))
             .andExpect(jsonPath("$.response.sickNotes[0].from", is("2016-05-19")))
             .andExpect(jsonPath("$.response.sickNotes[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$.response.sickNotes[0].person").exists())
-            .andExpect(jsonPath("$.response.sickNotes[0].person.ldapName", is("foo")));
+            .andExpect(jsonPath("$.response.sickNotes[0].person").exists());
     }
 
 

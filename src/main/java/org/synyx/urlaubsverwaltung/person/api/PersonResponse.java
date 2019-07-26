@@ -6,8 +6,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 public class PersonResponse extends ResourceSupport {
 
-    private String ldapName;
-
     private String email;
 
     private String firstName;
@@ -18,22 +16,10 @@ public class PersonResponse extends ResourceSupport {
 
     public PersonResponse(Person person) {
 
-        this.ldapName = person.getLoginName();
         this.email = person.getEmail();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
         this.niceName = person.getNiceName();
-    }
-
-    public String getLdapName() {
-
-        return ldapName;
-    }
-
-
-    public void setLdapName(String ldapName) {
-
-        this.ldapName = ldapName;
     }
 
 
