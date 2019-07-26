@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -79,7 +79,7 @@ public class SettingsControllerTest {
 
         String actual = sut.getAuthorizedRedirectUrl("http://localhost:8080/web/settings", OATUH_REDIRECT_REL);
         String expected = "http://localhost:8080/web" + OATUH_REDIRECT_REL;
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -148,11 +148,12 @@ public class SettingsControllerTest {
         final Settings settings = someSettingsWithNoExchangeTimezone();
         when(settingsService.getSettings()).thenReturn(settings);
 
-        assertNull(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId());
+        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isNull();
 
         perform(get("/web/settings"));
 
-        assertEquals(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId(), TimeZone.getDefault().getID());
+        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId())
+            .isEqualTo(TimeZone.getDefault().getID());
     }
 
     @Test
@@ -162,11 +163,11 @@ public class SettingsControllerTest {
         final Settings settings = someSettingsWithExchangeTimeZone(timeZoneId);
         when(settingsService.getSettings()).thenReturn(someSettingsWithExchangeTimeZone(timeZoneId));
 
-        assertEquals(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId(), timeZoneId);
+        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
 
         perform(get("/web/settings"));
 
-        assertEquals(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId(), timeZoneId);
+        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
     }
 
     @Test
@@ -182,7 +183,7 @@ public class SettingsControllerTest {
 
         doAnswer(invocation -> {
 
-            Errors errors = (Errors) invocation.getArgument(1);
+            Errors errors = invocation.getArgument(1);
             errors.rejectValue("absenceSettings", "error");
             return null;
         }).when(settingsValidator).validate(any(), any());
