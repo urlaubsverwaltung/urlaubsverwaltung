@@ -52,44 +52,27 @@ public class PersonApiControllerTest {
         mockMvc.perform(get("/api/persons"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.persons").exists())
-            .andExpect(jsonPath("$.response.persons", hasSize(2)));
-
-        verify(personServiceMock).getActivePersons();
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$.[0].firstName", is("Foo")))
+            .andExpect(jsonPath("$.[1].lastName", is("Bar")))
+            .andExpect(jsonPath("$.[0].email", is("foo@test.de")));
     }
-
 
     @Test
-    public void ensureReturnsListWithOneElementIfLoginNameSpecified() throws Exception {
+    public void ensureReturnSpecificPerson() throws Exception {
 
-        Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
+        Person person1 = TestDataCreator.createPerson("foo");
+        person1.setId(42);
 
-        mockMvc.perform(get("/api/persons").param("ldap", "muster"))
+        when(personServiceMock.getPersonByID(person1.getId())).thenReturn(Optional.of(person1));
+
+        mockMvc.perform(get("/api/persons/42"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.persons").exists())
-            .andExpect(jsonPath("$.response.persons", hasSize(1)))
-            .andExpect(jsonPath("$.response.persons[0].ldapName", is("muster")));
-
-        verify(personServiceMock).getPersonByLogin("muster");
+            .andExpect(jsonPath("$.firstName", is("Foo")))
+            .andExpect(jsonPath("$.lastName", is("Foo")))
+            .andExpect(jsonPath("$.email", is("foo@test.de")));
     }
 
 
-    @Test
-    public void ensureReturnsEmptyListForUnknownLoginName() throws Exception {
-
-        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.empty());
-
-        mockMvc.perform(get("/api/persons").param("ldap", "muster"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.persons").exists())
-            .andExpect(jsonPath("$.response.persons", hasSize(0)));
-
-        verify(personServiceMock).getPersonByLogin("muster");
-    }
 }
