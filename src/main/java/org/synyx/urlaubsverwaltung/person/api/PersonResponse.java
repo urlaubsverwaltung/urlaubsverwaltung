@@ -1,9 +1,10 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
+import org.springframework.hateoas.ResourceSupport;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 
-public class PersonResponse {
+public class PersonResponse extends ResourceSupport {
 
     private String ldapName;
 
