@@ -54,11 +54,6 @@ public class SickNoteControllerTest {
     private final int UNKNOWN_SICK_NOTE_ID = 0;
     private final int SOME_SICK_NOTE_ID = 15;
 
-    private final int SOME_PERSON_ID = 1;
-    private final int ANOTHER_PERSON_ID = 2;
-
-    private final String ERRORS_ATTRIBUTE = "errors";
-
     @Mock
     private SickNoteService sickNoteServiceMock;
     @Mock
@@ -170,11 +165,14 @@ public class SickNoteControllerTest {
     }
 
     @Test
-    public void ensureGetSickNoteDetailsNotAccessableForOtherPersonIfNotRoleOffice() throws Exception {
+    public void ensureGetSickNoteDetailsNotAccessableForOtherPersonIfNotRoleOffice() {
 
-        when(personServiceMock.getSignedInUser()).thenReturn(personWithId(SOME_PERSON_ID));
+        final int somePersonId = 1;
+        when(personServiceMock.getSignedInUser()).thenReturn(personWithId(somePersonId));
+
+        final int anotherPersonId = 2;
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID))
-            .thenReturn(Optional.of(sickNoteOfPerson(personWithId(ANOTHER_PERSON_ID))));
+            .thenReturn(Optional.of(sickNoteOfPerson(personWithId(anotherPersonId))));
 
         assertThatThrownBy(() ->
 
@@ -294,6 +292,7 @@ public class SickNoteControllerTest {
             return null;
         }).when(validatorMock).validateComment(any(SickNoteComment.class), any(Errors.class));
 
+        String ERRORS_ATTRIBUTE = "errors";
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(flash().attribute(ERRORS_ATTRIBUTE, instanceOf(Errors.class)))
             .andExpect(status().isFound())
