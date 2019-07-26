@@ -1,7 +1,7 @@
 ### master
 * Fix broken link in department overview [#749](https://github.com/synyx/urlaubsverwaltung/pull/749)
 * Fix highlight current day on vacation request [#751](https://github.com/synyx/urlaubsverwaltung/pull/751)
-* Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
+*❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
 
 ### [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4)
 * Fix login parameter security
@@ -26,7 +26,7 @@
 * Fix availability and workdays api: Use http status 204 (instead of 500) for no working days present for given user [#728](https://github.com/synyx/urlaubsverwaltung/issues/728)
 
 ### [urlaubsverwaltung-2.44.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.2)
-* Activate method security for @Pre and @PostAuthorize [#760](https://github.com/synyx/urlaubsverwaltung/issues/760)
+* ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#760](https://github.com/synyx/urlaubsverwaltung/issues/760)
 * Fix test data creation for application (No application date created)
 
 ### [urlaubsverwaltung-2.44.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.1)
