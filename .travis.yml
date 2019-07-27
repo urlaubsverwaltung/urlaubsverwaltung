@@ -44,6 +44,7 @@ deploy:
       secure: dKVvxeiHtpKx2sNSxcmLvxRhNuE6uxKJtyZSa/KJhMwsAB+xGmSd03Su9OeOVZd3I83pIEzY8ZxRhnq2ck+aUJYQeOsAr+g9JOvv0JgsnV69Put/nFksXGjLtIwlCDME5seg+cCoxpqaKVyoXaJHL6URN+N15IETNyebytVWXbk=
     file: "${WAR_FILE}"
     body: "Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden."
+    prerelease: true
     skip_cleanup: true
     on:
       repo: synyx/urlaubsverwaltung
