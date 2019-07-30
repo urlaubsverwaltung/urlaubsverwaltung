@@ -728,12 +728,12 @@ public class ApplicationForLeaveDetailsControllerTest {
             .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID));
     }
 
-    public Person somePerson() {
+    private static Person somePerson() {
 
         return new Person();
     }
 
-    public Application applicationOfPerson(Person person) {
+    private static Application applicationOfPerson(Person person) {
 
         Application application = new Application();
 
@@ -745,12 +745,12 @@ public class ApplicationForLeaveDetailsControllerTest {
         return application;
     }
 
-    public Application someApplication() {
+    private static Application someApplication() {
 
         return applicationOfPerson(somePerson());
     }
 
-    public Application allowedApplication() {
+    private static Application allowedApplication() {
 
         Application application = someApplication();
         application.setStatus(ALLOWED);
@@ -758,7 +758,7 @@ public class ApplicationForLeaveDetailsControllerTest {
         return application;
     }
 
-    public Application temporaryAllowedApplication() {
+    private static Application temporaryAllowedApplication() {
 
         Application application = someApplication();
         application.setStatus(TEMPORARY_ALLOWED);
@@ -766,7 +766,7 @@ public class ApplicationForLeaveDetailsControllerTest {
         return application;
     }
 
-    public Application waitingApplication() {
+    private static Application waitingApplication() {
 
         Application application = someApplication();
         application.setStatus(WAITING);
@@ -774,7 +774,7 @@ public class ApplicationForLeaveDetailsControllerTest {
         return application;
     }
 
-    public Application rejectedApplication() {
+    private static Application rejectedApplication() {
 
         Application application = someApplication();
         application.setStatus(REJECTED);
