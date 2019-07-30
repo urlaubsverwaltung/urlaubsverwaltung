@@ -82,7 +82,7 @@ public class ApplyForLeaveControllerTest {
     @Test
     public void overtimeIsActivated() throws Exception {
 
-        when(accountService.getHolidaysAccount(2019,person)).thenReturn(Optional.of(new Account()));
+        when(accountService.getHolidaysAccount(2019, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
@@ -105,7 +105,7 @@ public class ApplyForLeaveControllerTest {
     @Test
     public void overtimeIsDeactivated() throws Exception {
 
-        when(accountService.getHolidaysAccount(2019,person)).thenReturn(Optional.of(new Account()));
+        when(accountService.getHolidaysAccount(2019, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));

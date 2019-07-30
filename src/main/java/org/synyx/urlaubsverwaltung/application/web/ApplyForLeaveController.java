@@ -103,8 +103,8 @@ public class ApplyForLeaveController {
         // only office may apply for leave on behalf of other users
         if (!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to apply for leave for user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+                "User '%s' has not the correct permissions to apply for leave for user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
         }
 
         Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(UTC).getYear(), person);
@@ -120,7 +120,7 @@ public class ApplyForLeaveController {
 
     @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
-        Model model, RedirectAttributes redirectAttributes) {
+                                 Model model, RedirectAttributes redirectAttributes) {
 
         LOG.info("POST new application received: {}", appForm);
 
@@ -142,7 +142,7 @@ public class ApplyForLeaveController {
         Application application = appForm.generateApplicationForLeave();
 
         Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
-                Optional.ofNullable(appForm.getComment()));
+            Optional.ofNullable(appForm.getComment()));
 
         LOG.info("new application with success applied {}", savedApplicationForLeave);
 
@@ -161,7 +161,7 @@ public class ApplyForLeaveController {
         model.addAttribute("overtimeActive", overtimeActive);
 
         List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
-        if(!overtimeActive) {
+        if (!overtimeActive) {
             vacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
         }
         model.addAttribute("vacationTypes", vacationTypes);
