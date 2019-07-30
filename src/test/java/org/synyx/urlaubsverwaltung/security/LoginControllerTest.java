@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -30,7 +28,8 @@ public class LoginControllerTest {
 
         perform(get("/login"))
             .andExpect(model().attribute("version", equalTo(APPLICATION_VERSION)))
-            .andExpect(view().name("login/login"));;
+            .andExpect(view().name("login/login"));
+        ;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
