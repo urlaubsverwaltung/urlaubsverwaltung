@@ -29,7 +29,6 @@ public class LoginControllerTest {
         perform(get("/login"))
             .andExpect(model().attribute("version", equalTo(APPLICATION_VERSION)))
             .andExpect(view().name("login/login"));
-        ;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
