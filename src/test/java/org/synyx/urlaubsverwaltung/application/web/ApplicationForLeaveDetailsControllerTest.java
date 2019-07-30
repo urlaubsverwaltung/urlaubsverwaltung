@@ -415,7 +415,7 @@ public class ApplicationForLeaveDetailsControllerTest {
     }
 
     @Test
-    public void rejectApplicationForUknownApplicationIdThrowsUnknownApplicationForLeaveException() {
+    public void rejectApplicationForUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
 
         assertThatThrownBy(() ->
 
@@ -586,7 +586,7 @@ public class ApplicationForLeaveDetailsControllerTest {
     }
 
     @Test
-    public void cancelApplicationOfAnotherPersonAllowedIfOfficeAndApplicationWating() throws Exception {
+    public void cancelApplicationOfAnotherPersonAllowedIfOfficeAndApplicationWaiting() throws Exception {
 
         final Person signedInPerson = personWithRole(OFFICE);
         final Application application = waitingApplication();
@@ -688,7 +688,7 @@ public class ApplicationForLeaveDetailsControllerTest {
     }
 
     @Test
-    public void remindBossAddsFlashAttributIfThrowsNoException() throws Exception {
+    public void remindBossAddsFlashAttributeIfThrowsNoException() throws Exception {
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
 
@@ -697,7 +697,7 @@ public class ApplicationForLeaveDetailsControllerTest {
     }
 
     @Test
-    public void remindBossAddsFlashAttributIfThrowsRemindAlreadySentException() throws Exception {
+    public void remindBossAddsFlashAttributeIfThrowsRemindAlreadySentException() throws Exception {
 
         final Application application = someApplication();
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
@@ -708,7 +708,7 @@ public class ApplicationForLeaveDetailsControllerTest {
     }
 
     @Test
-    public void remindBossAddsFlashAttributIfThrowsImpatientAboutApplicationForLeaveProcessException() throws Exception {
+    public void remindBossAddsFlashAttributeIfThrowsImpatientAboutApplicationForLeaveProcessException() throws Exception {
 
         final Application application = someApplication();
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
