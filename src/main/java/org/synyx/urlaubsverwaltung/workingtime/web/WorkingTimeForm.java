@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 class WorkingTimeForm {
@@ -73,5 +74,20 @@ class WorkingTimeForm {
     public void setFederalState(FederalState federalState) {
 
         this.federalState = federalState;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkingTimeForm that = (WorkingTimeForm) o;
+        return Objects.equals(validFrom, that.validFrom) &&
+            Objects.equals(workingDays, that.workingDays) &&
+            federalState == that.federalState;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(validFrom, workingDays, federalState);
     }
 }
