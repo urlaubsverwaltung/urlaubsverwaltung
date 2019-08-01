@@ -30,6 +30,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -220,10 +221,12 @@ public class ApplyForLeaveControllerTest {
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
             errors.rejectValue("reason", "errors");
+            errors.reject("globalErrors");
             return null;
         }).when(applicationValidator).validate(any(), any());
 
         perform(post("/web/application"))
+            .andExpect(model().attribute("errors", instanceOf(Errors.class)))
             .andExpect(view().name("application/app_form"));
     }
 
