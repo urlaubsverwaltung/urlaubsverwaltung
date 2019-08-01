@@ -3,11 +3,11 @@ package org.synyx.urlaubsverwaltung.overtime.web;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.validation.Errors;
 import org.springframework.web.util.NestedServletException;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
@@ -19,12 +19,16 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,6 +59,46 @@ public class OvertimeControllerTest {
         sut = new OvertimeController(overtimeService, personService, validator, departmentService);
     }
 
+    @Test
+    public void postRecordOvertimeShowsFormIfValidationFails() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(Collections.singletonList(OFFICE));
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("person", "errors");
+            return null;
+        }).when(validator).validate(any(), any());
+
+        perform(post("/web/overtime"))
+            .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
+            .andExpect(view().name("overtime/overtime_form"));
+    }
+
+    @Test
+    public void postUpdateOvertimeShowsFormIfValidationFails() throws Exception {
+
+        final Overtime overtime = new Overtime(new Person(), LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(overtime));
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(Collections.singletonList(OFFICE));
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("person", "errors");
+            return null;
+        }).when(validator).validate(any(), any());
+
+        perform(post("/web/overtime/5"))
+            .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
+            .andExpect(view().name("overtime/overtime_form"));
+    }
 
     @Test
     public void showPersonalOvertime() throws Exception {
@@ -211,7 +255,7 @@ public class OvertimeControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "5"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(any(OvertimeForm.class))));
+        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
     }
 
     @Test
@@ -223,7 +267,7 @@ public class OvertimeControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/new"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(any(OvertimeForm.class))));
+        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
     }
 
 
@@ -251,7 +295,7 @@ public class OvertimeControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/new"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(any(OvertimeForm.class))));
+        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
     }
 
     @Test
@@ -269,7 +313,7 @@ public class OvertimeControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(any(OvertimeForm.class))));
+        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
     }
 
     @Test(expected = NestedServletException.class)
@@ -318,7 +362,7 @@ public class OvertimeControllerTest {
 
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
         overtime.setId(2);
-        when(overtimeService.record(ArgumentMatchers.any(Overtime.class), ArgumentMatchers.any(Optional.class), ArgumentMatchers.any(Person.class))).thenReturn(overtime);
+        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         final ResultActions resultActions = perform(
             post("/web/overtime")
@@ -366,7 +410,7 @@ public class OvertimeControllerTest {
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
         overtime.setId(2);
 
-        when(overtimeService.record(ArgumentMatchers.any(Overtime.class), ArgumentMatchers.any(Optional.class), ArgumentMatchers.any(Person.class))).thenReturn(overtime);
+        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         final ResultActions resultActions = perform(
             post("/web/overtime")
@@ -393,7 +437,7 @@ public class OvertimeControllerTest {
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 
-        when(overtimeService.record(ArgumentMatchers.any(Overtime.class), ArgumentMatchers.any(Optional.class), ArgumentMatchers.any(Person.class))).thenReturn(overtime);
+        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         final ResultActions resultActions = perform(
             post("/web/overtime/2")
@@ -445,7 +489,7 @@ public class OvertimeControllerTest {
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 
-        when(overtimeService.record(ArgumentMatchers.any(Overtime.class), ArgumentMatchers.any(Optional.class), ArgumentMatchers.any(Person.class))).thenReturn(overtime);
+        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         final ResultActions resultActions = perform(
             post("/web/overtime/2")
