@@ -82,7 +82,7 @@ public class ApplicationForLeaveStatisticsControllerTest {
         final String startDate = "01.01.2019";
         final String endDate = "01.08.2019";
 
-        final FilterPeriod period = new FilterPeriod(Optional.ofNullable(startDate), Optional.ofNullable(endDate));
+        final FilterPeriod period = new FilterPeriod(Optional.of(startDate), Optional.of(endDate));
 
         final List<ApplicationForLeaveStatistics> statistics = Collections.emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(statistics);
