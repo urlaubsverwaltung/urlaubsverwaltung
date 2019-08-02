@@ -10,11 +10,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ApplicationForLeaveFormTest {
 
@@ -110,5 +112,50 @@ public class ApplicationForLeaveFormTest {
         assertHoursAreNotSet.accept(holiday);
         assertHoursAreNotSet.accept(specialLeave);
         assertHoursAreNotSet.accept(unpaidLeave);
+    }
+
+    @Test
+    public void ensureBuilderSetsAllPropertiesCorrectly() {
+
+        final Person person = new Person();
+        final Person holidayReplacement = new Person();
+
+        final LocalDate startDate = LocalDate.now().minusDays(10);
+        final Time startTime = Time.valueOf(LocalTime.now().minusHours(5));
+
+        final LocalDate endDate = LocalDate.now().minusDays(2);
+        final Time endTime = Time.valueOf(LocalTime.now().minusHours(7));
+
+        final VacationType vacationType = new VacationType();
+
+        ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
+            .person(person)
+            .startDate(startDate)
+            .startTime(startTime)
+            .endDate(endDate)
+            .endTime(endTime)
+            .vacationType(vacationType)
+            .dayLength(DayLength.ZERO)
+            .hours(BigDecimal.ZERO)
+            .reason("Good one.")
+            .holidayReplacement(holidayReplacement)
+            .address("Gartenstrasse 67")
+            .teamInformed(true)
+            .comment("Welcome!")
+            .build();
+
+        assertThat(form.getPerson()).isEqualTo(person);
+        assertThat(form.getStartDate()).isEqualTo(startDate);
+        assertThat(form.getStartTime()).isEqualTo(startTime);
+        assertThat(form.getEndDate()).isEqualTo(endDate);
+        assertThat(form.getEndTime()).isEqualTo(endTime);
+        assertThat(form.getVacationType()).isEqualTo(vacationType);
+        assertThat(form.getDayLength()).isEqualTo(DayLength.ZERO);
+        assertThat(form.getHours()).isEqualTo(BigDecimal.ZERO);
+        assertThat(form.getReason()).isEqualTo("Good one.");
+        assertThat(form.getHolidayReplacement()).isEqualTo(holidayReplacement);
+        assertThat(form.getAddress()).isEqualTo("Gartenstrasse 67");
+        assertThat(form.isTeamInformed()).isEqualTo(true);
+        assertThat(form.getComment()).isEqualTo("Welcome!");
     }
 }
