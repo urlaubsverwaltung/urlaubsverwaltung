@@ -49,6 +49,17 @@ public class AvailabilityControllerTest {
         when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(testPerson));
     }
 
+    @Test
+    public void ensurePersonsAvailabilitiesForUnknownPersonResultsInBadRequest() throws Exception {
+
+        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
+
+        perform(get("/api/availabilities")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31")
+            .param("person", LOGIN))
+            .andExpect(status().isBadRequest());
+    }
 
     @Test
     public void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
