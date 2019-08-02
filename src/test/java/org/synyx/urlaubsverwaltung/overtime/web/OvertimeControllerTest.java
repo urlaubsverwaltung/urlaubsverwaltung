@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -76,6 +77,8 @@ public class OvertimeControllerTest {
         perform(post("/web/overtime"))
             .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
             .andExpect(view().name("overtime/overtime_form"));
+
+        verify(validator).validate(any(OvertimeForm.class), any(Errors.class));
     }
 
     @Test
