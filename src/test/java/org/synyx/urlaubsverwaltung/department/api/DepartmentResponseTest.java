@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.department.api;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -52,19 +53,22 @@ public class DepartmentResponseTest {
         assertThat(sut.getDepartmentHeads()).isNotNull();
         assertThat(sut.getDepartmentHeads().getPersons()).hasSize(2);
 
-        for (int i = 0; i < 3; i++) {
-            assertThat(sut.getMembers().getPersons().get(i).getLdapName()).isEqualTo(members.get(i).getLoginName());
-            assertThat(sut.getMembers().getPersons().get(i).getEmail()).isEqualTo(members.get(i).getEmail());
-            assertThat(sut.getMembers().getPersons().get(i).getFirstName()).isEqualTo(members.get(i).getFirstName());
-            assertThat(sut.getMembers().getPersons().get(i).getLastName()).isEqualTo(members.get(i).getLastName());
-        }
+        final List<PersonResponse> memberPersons = sut.getMembers().getPersons();
+        assertPersonResponseEqualsPerson(memberPersons.get(0), members.get(0));
+        assertPersonResponseEqualsPerson(memberPersons.get(1), members.get(1));
+        assertPersonResponseEqualsPerson(memberPersons.get(2), members.get(2));
 
-        for (int i = 0; i < 2; i++) {
-            assertThat(sut.getDepartmentHeads().getPersons().get(i).getLdapName()).isEqualTo(departmentHeads.get(i).getLoginName());
-            assertThat(sut.getDepartmentHeads().getPersons().get(i).getEmail()).isEqualTo(departmentHeads.get(i).getEmail());
-            assertThat(sut.getDepartmentHeads().getPersons().get(i).getFirstName()).isEqualTo(departmentHeads.get(i).getFirstName());
-            assertThat(sut.getDepartmentHeads().getPersons().get(i).getLastName()).isEqualTo(departmentHeads.get(i).getLastName());
-        }
+        final List<PersonResponse> departmentHeadPersons = sut.getDepartmentHeads().getPersons();
+        assertPersonResponseEqualsPerson(departmentHeadPersons.get(0), departmentHeads.get(0));
+        assertPersonResponseEqualsPerson(departmentHeadPersons.get(1), departmentHeads.get(1));
+    }
+
+    private void assertPersonResponseEqualsPerson(PersonResponse personResponse, Person person) {
+
+        assertThat(personResponse.getLdapName()).isEqualTo(person.getLoginName());
+        assertThat(personResponse.getEmail()).isEqualTo(person.getEmail());
+        assertThat(personResponse.getFirstName()).isEqualTo(person.getFirstName());
+        assertThat(personResponse.getLastName()).isEqualTo(person.getLastName());
     }
 
     private Person person(String loginName, String email, String firstName, String lastName) {
