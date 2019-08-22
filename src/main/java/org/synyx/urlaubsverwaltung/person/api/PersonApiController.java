@@ -19,12 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.synyx.urlaubsverwaltung.person.api.PersonApiController.ROOT_URL;
-
-
 @Api("Persons: Get information about the persons of the application")
 @RestController("restApiPersonController")
-@RequestMapping(ROOT_URL)
+@RequestMapping(PersonApiController.ROOT_URL)
 public class PersonApiController {
 
     static final String ROOT_URL = "/api/persons";
