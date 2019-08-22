@@ -66,8 +66,8 @@ public class PersonApiController {
     }
 
     private PersonResponse createPersonResponse(Person person, HttpServletRequest request) {
-        PersonResponse personResponse = new PersonResponse(person);
-        String baseUri = new URIBuilder()
+        final PersonResponse personResponse = new PersonResponse(person);
+        final String baseUri = new URIBuilder()
             .setScheme(request.getScheme())
             .setPort(request.getServerPort())
             .setHost(request.getServerName())
