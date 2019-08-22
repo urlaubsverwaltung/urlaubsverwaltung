@@ -65,7 +65,6 @@ public class DepartmentResponseTest {
 
     private void assertPersonResponseEqualsPerson(PersonResponse personResponse, Person person) {
 
-        assertThat(personResponse.getLdapName()).isEqualTo(person.getLoginName());
         assertThat(personResponse.getEmail()).isEqualTo(person.getEmail());
         assertThat(personResponse.getFirstName()).isEqualTo(person.getFirstName());
         assertThat(personResponse.getLastName()).isEqualTo(person.getLastName());

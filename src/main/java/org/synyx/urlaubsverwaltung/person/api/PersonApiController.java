@@ -63,7 +63,7 @@ public class PersonApiController {
     }
 
     private PersonResponse createPersonResponse(Person person, HttpServletRequest request) {
-        final PersonResponse personResponse = new PersonResponse(person);
+        final PersonResponse personResponse = PersonResponseMapper.mapToResponse(person);
         final String baseUri = new URIBuilder()
             .setScheme(request.getScheme())
             .setPort(request.getServerPort())

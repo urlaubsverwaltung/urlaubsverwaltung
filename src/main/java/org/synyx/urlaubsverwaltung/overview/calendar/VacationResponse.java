@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +25,7 @@ public class VacationResponse {
         this.from = application.getStartDate().format(formatter);
         this.to = application.getEndDate().format(formatter);
         this.dayLength = application.getDayLength().getDuration();
-        this.person = new PersonResponse(application.getPerson());
+        this.person = PersonResponseMapper.mapToResponse(application.getPerson());
         this.status = application.getStatus().name();
 
         VacationType vacationType = application.getVacationType();
