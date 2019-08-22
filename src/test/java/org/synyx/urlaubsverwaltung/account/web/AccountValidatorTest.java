@@ -2,285 +2,239 @@ package org.synyx.urlaubsverwaltung.account.web;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static java.time.LocalDate.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class AccountValidatorTest {
 
-    private AccountValidator validator;
+    private AccountValidator sut;
 
-    private AccountForm form;
-    private Settings settings;
+    @Mock
+    private SettingsService settingsService;
+    @Mock
     private Errors errors;
+
+    private Settings settings;
 
     @Before
     public void setUp() {
-
-        SettingsService settingsService = mock(SettingsService.class);
-
         settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
 
-        validator = new AccountValidator(settingsService);
-
-        form = new AccountForm(2013);
-
-        errors = mock(Errors.class);
+        sut = new AccountValidator(settingsService);
     }
-
-
-    // TEST OF SUPPORTS METHOD
 
     @Test
     public void ensureSupportsOnlyAccountFormClass() {
 
         boolean returnValue;
 
-        returnValue = validator.supports(null);
-        assertFalse(returnValue);
+        returnValue = sut.supports(null);
+        assertThat(returnValue).isFalse();
 
-        returnValue = validator.supports(Application.class);
-        assertFalse(returnValue);
+        returnValue = sut.supports(Application.class);
+        assertThat(returnValue).isFalse();
 
-        returnValue = validator.supports(AccountForm.class);
-        assertTrue(returnValue);
+        returnValue = sut.supports(AccountForm.class);
+        assertThat(returnValue).isTrue();
     }
-
-
-    // VALIDATION OF ANNUAL VACATION FIELD
 
     @Test
     public void ensureAnnualVacationMustNotBeNull() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(null);
-        validator.validateAnnualVacation(form, errors);
+
+        sut.validateAnnualVacation(form, errors);
         verify(errors).rejectValue("annualVacationDays", "error.entry.mandatory");
     }
 
-
     @Test
     public void ensureAnnualVacationMustNotBeGreaterThanMaximumDaysConfiguredInSettings() {
-
         int maxDays = 40;
-
         settings.getAbsenceSettings().setMaximumAnnualVacationDays(maxDays);
 
+        final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
 
-        validator.validateAnnualVacation(form, errors);
+        sut.validateAnnualVacation(form, errors);
         verify(errors).rejectValue("annualVacationDays", "error.entry.invalid");
     }
 
-
     @Test
     public void ensureValidAnnualVacationHasNoValidationError() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("28"));
-        validator.validateAnnualVacation(form, errors);
+
+        sut.validateAnnualVacation(form, errors);
         verifyZeroInteractions(errors);
     }
-
-
-    // VALIDATION OF ACTUAL VACATION FIELD
 
     @Test
     public void ensureActualVacationMustNotBeNull() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setActualVacationDays(null);
-        validator.validateActualVacation(form, errors);
+        sut.validateActualVacation(form, errors);
         verify(errors).rejectValue("actualVacationDays", "error.entry.mandatory");
     }
 
-
     @Test
     public void ensureActualVacationMustNotBeGreaterThanAnnualVacation() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("30"));
         form.setActualVacationDays(new BigDecimal("31"));
 
-        validator.validateActualVacation(form, errors);
+        sut.validateActualVacation(form, errors);
         verify(errors).rejectValue("actualVacationDays", "error.entry.invalid");
     }
 
-
     @Test
     public void ensureValidActualVacationHasNoValidationError() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("30"));
         form.setActualVacationDays(new BigDecimal("28"));
 
-        validator.validateActualVacation(form, errors);
+        sut.validateActualVacation(form, errors);
         verifyZeroInteractions(errors);
     }
-
-
-    // VALIDATION OF REMAINING VACATION DAYS FIELD
 
     @Test
     public void ensureRemainingVacationDaysMustNotBeNull() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(null);
-        validator.validateRemainingVacationDays(form, errors);
+
+        sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDays", "error.entry.mandatory");
     }
 
-
     @Test
     public void ensureRemainingVacationDaysMustNotBeGreaterThanOneYear() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("367"));
-        validator.validateRemainingVacationDays(form, errors);
+
+        sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDays", "error.entry.invalid");
     }
 
-
     @Test
     public void ensureValidRemainingVacationDaysHaveNoValidationError() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5"));
-        validator.validateRemainingVacationDays(form, errors);
+
+        sut.validateRemainingVacationDays(form, errors);
         verifyZeroInteractions(errors);
     }
 
-
-    // VALIDATION OF REMAINING VACATION DAYS NOT EXPIRING FIELD
-
     @Test
     public void ensureRemainingVacationDaysNotExpiringMustNotBeNull() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDaysNotExpiring(null);
-        validator.validateRemainingVacationDays(form, errors);
+
+        sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
     }
 
-
     @Test
     public void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
-        validator.validateRemainingVacationDays(form, errors);
+
+        sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.invalid");
     }
 
-
-    // VALIDATION OF PERIOD
-
     @Test
     public void ensureHolidaysAccountValidFromMustNotBeNull() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidFrom(null);
 
-        validator.validatePeriod(form, errors);
-
+        sut.validatePeriod(form, errors);
         verify(errors).rejectValue("holidaysAccountValidFrom", "error.entry.mandatory");
     }
 
-
     @Test
     public void ensureHolidaysAccountValidToMustNotBeNull() {
-
+        final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidTo(null);
 
-        validator.validatePeriod(form, errors);
-
+        sut.validatePeriod(form, errors);
         verify(errors).rejectValue("holidaysAccountValidTo", "error.entry.mandatory");
     }
 
-
     @Test
     public void ensureFromOfPeriodMustBeBeforeTo() {
+        final AccountForm form = new AccountForm(2013);
+        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
+        form.setHolidaysAccountValidTo(of(2013, 1, 1));
 
-        // invalid period: 1.5.2013 - 1.1.2013
-
-        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2013, 1, 1));
-
-        validator.validatePeriod(form, errors);
-
+        sut.validatePeriod(form, errors);
         verify(errors).reject("error.entry.invalidPeriod");
     }
-
 
     @Test
     public void ensurePeriodMustBeGreaterThanOnlyOneDay() {
+        final AccountForm form = new AccountForm(2013);
+        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
+        form.setHolidaysAccountValidTo(of(2013, 5, 1));
 
-        // invalid period: 5.1.2013 - 5.1.2013
-
-        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 1));
-
-        validator.validatePeriod(form, errors);
-
+        sut.validatePeriod(form, errors);
         verify(errors).reject("error.entry.invalidPeriod");
     }
-
 
     @Test
     public void ensurePeriodMustBeWithinTheProvidedYear() {
+        final AccountForm form = new AccountForm(2014);
+        form.setHolidaysAccountValidFrom(of(2013, 1, 1));
+        form.setHolidaysAccountValidTo(of(2013, 5, 1));
 
-        form = new AccountForm(2014);
-
-        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 1, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 1));
-
-        validator.validatePeriod(form, errors);
-
+        sut.validatePeriod(form, errors);
         verify(errors).reject("error.entry.invalidPeriod");
     }
 
-
     @Test
     public void ensureValidPeriodHasNoValidationError() {
+        final AccountForm form = new AccountForm(2013);
+        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
+        form.setHolidaysAccountValidTo(of(2013, 5, 5));
 
-        // valid period: 1.5.2013 - 5.5.2013
-
-        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 5));
-
-        validator.validatePeriod(form, errors);
-
+        sut.validatePeriod(form, errors);
         verifyZeroInteractions(errors);
     }
 
     @Test
     public void ensureCommentHasNoValidationError() {
-
-        form = new AccountForm(2017);
+        final AccountForm form = new AccountForm(2017);
         form.setComment("blabla");
 
-        validator.validateComment(form, errors);
-
+        sut.validateComment(form, errors);
         verifyZeroInteractions(errors);
     }
 
     @Test
     public void ensureCommentHasLengthValidationError() {
-
-        form = new AccountForm(2017);
+        final AccountForm form = new AccountForm(2017);
         form.setComment("blablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
-                "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
-                "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
-                "bla");
+            "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
+            "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
+            "bla");
 
-        validator.validateComment(form, errors);
-
-        verify(errors).rejectValue("comment","error.entry.commentTooLong");
-
+        sut.validateComment(form, errors);
+        verify(errors).rejectValue("comment", "error.entry.commentTooLong");
     }
-
 }

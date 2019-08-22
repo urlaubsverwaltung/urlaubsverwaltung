@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.api;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class ErrorResponseTest {
@@ -12,10 +13,10 @@ public class ErrorResponseTest {
 
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, new NumberFormatException("foo"));
 
-        Assert.assertTrue("Wrong timestamp", errorResponse.getTimestamp() > 0);
-        Assert.assertEquals("Wrong status", 400, errorResponse.getStatus());
-        Assert.assertEquals("Wrong error", "Bad Request", errorResponse.getError());
-        Assert.assertEquals("Wrong error", "java.lang.NumberFormatException", errorResponse.getException());
-        Assert.assertEquals("Wrong error", "foo", errorResponse.getMessage());
+        assertThat(errorResponse.getTimestamp() > 0).isTrue();
+        assertThat(errorResponse.getStatus()).isEqualTo(400);
+        assertThat(errorResponse.getError()).isEqualTo("Bad Request");
+        assertThat(errorResponse.getException()).isEqualTo("java.lang.NumberFormatException");
+        assertThat(errorResponse.getMessage()).isEqualTo("foo");
     }
 }

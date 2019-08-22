@@ -1,11 +1,16 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 
 import java.math.BigDecimal;
 import java.util.Map;
+
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
+import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
 
 
 public class SickDaysTest {
@@ -14,13 +19,11 @@ public class SickDaysTest {
     public void ensureDaysMapIsInitialized() {
 
         SickDays sickDays = new SickDays();
-
         Map<String, BigDecimal> daysMap = sickDays.getDays();
 
-        Assert.assertEquals("Wrong number of elements", 2, daysMap.size());
-
-        Assert.assertEquals("Should have been initialized with 0", BigDecimal.ZERO, daysMap.get("WITH_AUB"));
-        Assert.assertEquals("Should have been initialized with 0", BigDecimal.ZERO, daysMap.get("TOTAL"));
+        assertThat(daysMap).hasSize(2);
+        assertThat(daysMap.get("WITH_AUB")).isEqualTo(ZERO);
+        assertThat(daysMap.get("TOTAL")).isEqualTo(ZERO);
     }
 
 
@@ -29,17 +32,14 @@ public class SickDaysTest {
 
         SickDays sickDays = new SickDays();
 
-        sickDays.addDays(SickDays.SickDayType.TOTAL, BigDecimal.ONE);
-        sickDays.addDays(SickDays.SickDayType.TOTAL, BigDecimal.ONE);
+        sickDays.addDays(TOTAL, ONE);
+        sickDays.addDays(TOTAL, ONE);
 
-        sickDays.addDays(SickDays.SickDayType.WITH_AUB, BigDecimal.ONE);
-        sickDays.addDays(SickDays.SickDayType.WITH_AUB, BigDecimal.ONE);
-        sickDays.addDays(SickDays.SickDayType.WITH_AUB, BigDecimal.ONE);
+        sickDays.addDays(WITH_AUB, ONE);
+        sickDays.addDays(WITH_AUB, ONE);
+        sickDays.addDays(WITH_AUB, ONE);
 
-        Assert.assertEquals("Sick days without AUB should have correct number of days", BigDecimal.valueOf(2),
-            sickDays.getDays().get("TOTAL"));
-
-        Assert.assertEquals("Sick days with AUB should have correct number of days", BigDecimal.valueOf(3),
-            sickDays.getDays().get("WITH_AUB"));
+        assertThat(sickDays.getDays().get("WITH_AUB")).isEqualTo(BigDecimal.valueOf(3));
+        assertThat(sickDays.getDays().get("TOTAL")).isEqualTo(BigDecimal.valueOf(2));
     }
 }
