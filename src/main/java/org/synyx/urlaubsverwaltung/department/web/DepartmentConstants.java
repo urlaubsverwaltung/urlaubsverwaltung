@@ -2,7 +2,7 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
 /**
- * Constants concerning {@link DepartmentController}.
+ * Constants concerning {@link DepartmentViewController}.
  */
 public final class DepartmentConstants {
 
