@@ -52,7 +52,7 @@ import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBE
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class PersonApiControllerTest {
+public class PersonViewControllerTest {
 
     private static final int UNKNOWN_PERSON_ID = 365;
     private static final int PERSON_ID = 1;
