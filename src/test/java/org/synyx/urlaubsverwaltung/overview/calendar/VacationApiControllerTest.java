@@ -105,8 +105,7 @@ public class VacationApiControllerTest {
             .andExpect(jsonPath("$.response.vacations", hasSize(2)))
             .andExpect(jsonPath("$.response.vacations[0].from", is("2016-05-19")))
             .andExpect(jsonPath("$.response.vacations[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$.response.vacations[0].person").exists())
-            .andExpect(jsonPath("$.response.vacations[0].person.ldapName", is("foo")));
+            .andExpect(jsonPath("$.response.vacations[0].person").exists());
     }
 
 

@@ -1,6 +1,7 @@
 ### master
 * Fix broken link in department overview [#749](https://github.com/synyx/urlaubsverwaltung/pull/749)
 * Fix highlight current day on vacation request [#751](https://github.com/synyx/urlaubsverwaltung/pull/751)
+* Decouple auth from api [#759](https://github.com/synyx/urlaubsverwaltung/pull/759)
 * ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
 * Upgrade spring boot parent to 2.1.7
 

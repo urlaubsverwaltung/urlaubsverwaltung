@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.api.PersonListResponse;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,14 +27,14 @@ class DepartmentResponse {
 
         List<PersonResponse> membersResponses = department.getMembers()
             .stream()
-            .map(PersonResponse::new)
+            .map(PersonResponseMapper::mapToResponse)
             .collect(Collectors.toList());
 
         this.members = new PersonListResponse(membersResponses);
 
         List<PersonResponse> departmentHeadsResponses = department.getDepartmentHeads()
             .stream()
-            .map(PersonResponse::new)
+            .map(PersonResponseMapper::mapToResponse)
             .collect(Collectors.toList());
 
         this.departmentHeads = new PersonListResponse(departmentHeadsResponses);

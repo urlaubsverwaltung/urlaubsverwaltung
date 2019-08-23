@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
@@ -101,9 +102,8 @@ public class VacationOverviewService {
     private VacationOverview getVacationOverview(Person person) {
         VacationOverview vacationOverview = new VacationOverview();
         vacationOverview.setDays(new ArrayList<>());
-        vacationOverview.setPerson(new PersonResponse(person));
+        vacationOverview.setPerson(PersonResponseMapper.mapToResponse(person));
         vacationOverview.setPersonID(person.getId());
         return vacationOverview;
     }
-
 }

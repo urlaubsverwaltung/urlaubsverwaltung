@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.api;
 
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
@@ -26,7 +27,7 @@ public class SickNoteResponse {
         this.from = sickNote.getStartDate().format(formatter);
         this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);
         this.dayLength = sickNote.getDayLength().getDuration();
-        this.person = new PersonResponse(sickNote.getPerson());
+        this.person = PersonResponseMapper.mapToResponse(sickNote.getPerson());
         this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";
 
         SickNoteType sickNoteType = sickNote.getSickNoteType();
