@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.application.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class VacationTypeTest {
 
@@ -36,9 +38,10 @@ public class VacationTypeTest {
     public void toStringTest() {
         VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
-        vacationType.setMessageKey("test");
+        vacationType.setMessageKey("messageKey");
         vacationType.setId(10);
 
-        System.out.println(vacationType.toString());
+        final String vacationTypeToString = vacationType.toString();
+        assertThat(vacationTypeToString).isEqualTo("VacationType{category=HOLIDAY, messageKey='messageKey'}");
     }
 }
