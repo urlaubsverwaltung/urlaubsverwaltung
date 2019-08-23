@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +15,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 @Api("Persons: Get information about the persons of the application")
 @RestController("restApiPersonController")
@@ -43,9 +44,9 @@ public class PersonApiController {
 
         List<PersonResponse> persons = personService.getActivePersons().stream()
             .map(p -> createPersonResponse(p, request))
-            .collect(Collectors.toList());
+            .collect(toList());
 
-        return new ResponseEntity<>(persons, HttpStatus.OK);
+        return new ResponseEntity<>(persons, OK);
     }
 
     @ApiOperation(
@@ -54,12 +55,9 @@ public class PersonApiController {
     @GetMapping(PERSON_URL)
     public ResponseEntity<PersonResponse> getPerson(@PathVariable Integer id, HttpServletRequest request) {
 
-        Optional<Person> person = personService.getPersonByID(id);
-        if (person.isPresent()) {
-            return new ResponseEntity<>(createPersonResponse(person.get(), request), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return personService.getPersonByID(id)
+            .map(value -> new ResponseEntity<>(createPersonResponse(value, request), OK))
+            .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
     private PersonResponse createPersonResponse(Person person, HttpServletRequest request) {
