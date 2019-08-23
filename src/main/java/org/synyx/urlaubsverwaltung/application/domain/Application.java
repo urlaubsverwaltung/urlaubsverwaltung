@@ -1,12 +1,9 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,7 +14,6 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -463,38 +459,32 @@ public class Application extends AbstractPersistable<Integer> {
         this.hours = hours;
     }
 
-
     @Override
     public String toString() {
-
-        ToStringBuilder toStringBuilder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
-        toStringBuilder.append("id", getId());
-        toStringBuilder.append("startDate", getStartDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
-        toStringBuilder.append("endDate", getEndDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
-        toStringBuilder.append("vacationType", getVacationType());
-        toStringBuilder.append("twoStageApproval", isTwoStageApproval());
-        toStringBuilder.append("status", getStatus().toString());
-        toStringBuilder.append("dayLength", getDayLength());
-
-        if (getPerson() != null) {
-            toStringBuilder.append("person", getPerson());
-        }
-
-        if (getApplier() != null) {
-            toStringBuilder.append("applier", getApplier());
-        }
-
-        if (getBoss() != null) {
-            toStringBuilder.append("boss", getBoss());
-        }
-
-        if (getCanceller() != null) {
-            toStringBuilder.append("canceller", getCanceller());
-        }
-
-        return toStringBuilder.toString();
+        return "Application{" +
+            "person=" + person +
+            ", applier=" + applier +
+            ", boss=" + boss +
+            ", canceller=" + canceller +
+            ", twoStageApproval=" + twoStageApproval +
+            ", startDate=" + startDate +
+            ", startTime=" + startTime +
+            ", endDate=" + endDate +
+            ", endTime=" + endTime +
+            ", vacationType=" + vacationType +
+            ", dayLength=" + dayLength +
+            ", reason='" + reason + '\'' +
+            ", holidayReplacement=" + holidayReplacement +
+            ", address='" + address + '\'' +
+            ", applicationDate=" + applicationDate +
+            ", cancelDate=" + cancelDate +
+            ", editedDate=" + editedDate +
+            ", remindDate=" + remindDate +
+            ", status=" + status +
+            ", teamInformed=" + teamInformed +
+            ", hours=" + hours +
+            '}';
     }
-
 
     /**
      * Checks if the application for leave has the given status.

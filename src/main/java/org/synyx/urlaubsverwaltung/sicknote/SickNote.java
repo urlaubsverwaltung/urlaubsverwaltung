@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -244,18 +242,20 @@ public class SickNote extends AbstractPersistable<Integer> {
         super.setId(id);
     }
 
-
     @Override
     public String toString() {
-
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-            .append("startDate", formatNullable(getStartDate()))
-            .append("endDate", formatNullable(getEndDate()))
-            .append("dayLength", getDayLength())
-            .append("sickNoteType", getSickNoteType())
-            .append("status", getStatus())
-            .append("person", getPerson())
-            .toString();
+        return "SickNote{" +
+            "id=" + getId() +
+            ", person=" + person +
+            ", sickNoteType=" + sickNoteType +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", dayLength=" + dayLength +
+            ", aubStartDate=" + aubStartDate +
+            ", aubEndDate=" + aubEndDate +
+            ", lastEdited=" + lastEdited +
+            ", status=" + status +
+            '}';
     }
 
     private Object formatNullable(LocalDate date) {

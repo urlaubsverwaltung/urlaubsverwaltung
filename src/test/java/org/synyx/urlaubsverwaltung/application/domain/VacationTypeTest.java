@@ -31,4 +31,14 @@ public class VacationTypeTest {
 
         Assert.assertFalse("Categories should not match", vacationType.isOfCategory(VacationCategory.OVERTIME));
     }
+
+    @Test
+    public void toStringTest() {
+        VacationType vacationType = new VacationType();
+        vacationType.setCategory(VacationCategory.HOLIDAY);
+        vacationType.setMessageKey("test");
+        vacationType.setId(10);
+
+        System.out.println(vacationType.toString());
+    }
 }

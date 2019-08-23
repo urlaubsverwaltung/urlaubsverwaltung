@@ -23,15 +23,8 @@ public class AccountTest {
         final Account account = new Account(person, LocalDate.MIN, LocalDate.MAX, TEN, TEN, TEN, "Comment");
 
         final String accountToString = account.toString();
-        assertThat(accountToString).isEqualTo("Account[" +
-            "person=10," +
-            "validFrom=01.01.+1000000000," +
-            "validTo=31.12.+999999999," +
-            "annualVacationDays=10," +
-            "vacationDays=<null>," +
-            "remainingVacationDays=10," +
-            "remainingVacationDaysNotExpiring=10," +
-            "comment=Comment]");
-        assertThat(accountToString).doesNotContain("Theo", "USER", "NOTIFICATION_USER");
+        assertThat(accountToString).isEqualTo("Account{person=Person{id='10'}, validFrom=-999999999-01-01," +
+            " validTo=+999999999-12-31, annualVacationDays=10, vacationDays=null, remainingVacationDays=10," +
+            " remainingVacationDaysNotExpiring=10, comment='Comment'}");
     }
 }

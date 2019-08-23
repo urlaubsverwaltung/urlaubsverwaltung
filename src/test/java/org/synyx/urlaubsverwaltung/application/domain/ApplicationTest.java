@@ -255,10 +255,12 @@ public class ApplicationTest {
         application.setTeamInformed(true);
 
         final String toString = application.toString();
-        assertThat(toString).isEqualTo("Application[id=1," +
-            "startDate=01.01.+1000000000,endDate=31.12.+999999999," +
-            "vacationType=VacationType[category=HOLIDAY,messageKey=<null>,id=<null>]," +
-            "twoStageApproval=true,status=ALLOWED,dayLength=FULL,person=Person{id='10'}," +
-            "applier=Person{id='10'},boss=Person{id='10'},canceller=Person{id='10'}");
+        assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, " +
+            "boss=Person{id='10'}, canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, " +
+            "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
+            "vacationType=VacationType{category=HOLIDAY, messageKey='null'}, dayLength=FULL, reason='Because', " +
+            "holidayReplacement=Person{id='10'}, address='Address', applicationDate=1970-01-01, " +
+            "cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, status=ALLOWED, " +
+            "teamInformed=true, hours=10}");
     }
 }

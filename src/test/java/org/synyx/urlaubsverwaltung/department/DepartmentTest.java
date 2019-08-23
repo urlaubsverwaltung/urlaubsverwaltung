@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class DepartmentTest {
@@ -78,5 +79,23 @@ public class DepartmentTest {
         } catch (UnsupportedOperationException ex) {
             // Expected
         }
+    }
+
+    @Test
+    public void toStringTest() {
+        final Department department = new Department();
+        department.setId(1);
+        department.setLastModification(LocalDate.MAX);
+        department.setDescription("Description");
+        department.setName("DepartmentName");
+        department.setTwoStageApproval(true);
+        department.setMembers(List.of(new Person("Member", "Theo", "Theo", "Theo")));
+        department.setDepartmentHeads(List.of(new Person("Heads", "Theo", "Theo", "Theo")));
+        department.setSecondStageAuthorities(List.of(new Person("Second", "Theo", "Theo", "Theo")));
+
+        final String departmentToString = department.toString();
+        assertThat(departmentToString).isEqualTo("Department{name='DepartmentName', description='Description', " +
+            "lastModification=+999999999-12-31, twoStageApproval=true, members=[Person{id='null'}], " +
+            "departmentHeads=[Person{id='null'}], secondStageAuthorities=[Person{id='null'}]}");
     }
 }

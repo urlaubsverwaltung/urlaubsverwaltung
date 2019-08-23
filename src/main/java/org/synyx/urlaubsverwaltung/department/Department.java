@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -159,15 +157,16 @@ public class Department extends AbstractPersistable<Integer> {
         this.secondStageAuthorities = secondStageAuthorities;
     }
 
-
     @Override
     public String toString() {
-
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-            .append("name", getName())
-            .append("members", getMembers().size())
-            .append("departmentHeads", getDepartmentHeads().size())
-            .append("secondStageAuthorities", getSecondStageAuthorities().size())
-            .toString();
+        return "Department{" +
+            "name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            ", lastModification=" + lastModification +
+            ", twoStageApproval=" + twoStageApproval +
+            ", members=" + members +
+            ", departmentHeads=" + departmentHeads +
+            ", secondStageAuthorities=" + secondStageAuthorities +
+            '}';
     }
 }

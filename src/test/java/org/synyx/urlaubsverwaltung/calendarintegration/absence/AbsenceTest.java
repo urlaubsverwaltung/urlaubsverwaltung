@@ -203,7 +203,7 @@ public class AbsenceTest {
         final Absence absence = new Absence(person, new Period(LocalDate.MIN, LocalDate.MAX.withYear(10), DayLength.FULL), new AbsenceTimeConfiguration(new CalendarSettings()));
 
         final String absenceToString = absence.toString();
-        assertThat(absenceToString).isEqualTo("Absence[person=10," +
-            "startDate=-999999999-01-01T00:00Z,endDate=0011-01-01T00:00Z,isAllDay=true]");
+        assertThat(absenceToString).isEqualTo("Absence{startDate=-999999999-01-01T00:00Z," +
+            " endDate=0011-01-01T00:00Z, person=Person{id='10'}, isAllDay=true}");
     }
 }

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.function.Consumer;
@@ -155,5 +156,33 @@ public class SickNoteTest {
         SickNote sickNote = new SickNote();
         String sickNoteString = sickNote.toString();
         assertThat(sickNoteString).isEqualTo("SickNote[id=<null>,startDate=<null>,endDate=<null>,dayLength=<null>,sickNoteType=<null>,status=<null>,person=<null>]");
+    }
+
+    @Test
+    public void toStringTest() {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
+        sickNoteType.setMessageKey("messageKey");
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final SickNote sickNote = new SickNote();
+        sickNote.setId(1);
+        sickNote.setSickNoteType(sickNoteType);
+        sickNote.setStartDate(LocalDate.MIN);
+        sickNote.setEndDate(LocalDate.MAX);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
+        sickNote.setDayLength(DayLength.FULL);
+        sickNote.setAubStartDate(LocalDate.MIN);
+        sickNote.setAubEndDate(LocalDate.MAX);
+        sickNote.setLastEdited(LocalDate.EPOCH);
+        sickNote.setPerson(person);
+
+        final String sickNoteToString = sickNote.toString();
+        assertThat(sickNoteToString).isEqualTo("SickNote{id=1, person=Person{id='1'}, " +
+            "sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=-999999999-01-01, " +
+            "endDate=+999999999-12-31, dayLength=FULL, aubStartDate=-999999999-01-01, aubEndDate=+999999999-12-31," +
+            " lastEdited=1970-01-01, status=ACTIVE}");
     }
 }

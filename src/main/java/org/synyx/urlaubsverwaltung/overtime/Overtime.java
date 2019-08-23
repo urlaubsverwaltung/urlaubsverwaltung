@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -41,7 +39,6 @@ public class Overtime extends AbstractPersistable<Integer> {
     private LocalDate lastModificationDate;
 
     Overtime() {
-
         // OK
     }
 
@@ -148,16 +145,15 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.lastModificationDate = LocalDate.now(UTC);
     }
 
-
     @Override
     public String toString() {
-
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) // NOSONAR - Formatting issue
-            .append("id", getId())
-            .append("startDate", getStartDate())
-            .append("endDate", getEndDate())
-            .append("hours", getHours())
-            .append("person", getPerson())
-            .toString();
+        return "Overtime{" +
+            "id=" + getId() +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", hours=" + hours +
+            ", lastModificationDate=" + lastModificationDate +
+            ", person=" + person +
+            '}';
     }
 }
