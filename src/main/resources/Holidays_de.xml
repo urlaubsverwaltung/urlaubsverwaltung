@@ -137,5 +137,10 @@
       <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMAN" validFrom="2019"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+  <tns:SubConfigurations hierarchy="th" description="Thüringen">
+    <tns:Holidays>
+      <tns:Fixed month="SEPTEMBER" day="20" descriptionPropertiesKey="CHILDRENS_DAY" validFrom="2019"/>
+    </tns:Holidays>
+  </tns:SubConfigurations>
 </tns:Configuration>
 
