@@ -151,7 +151,6 @@ public class Account extends AbstractPersistable<Integer> {
     public String toString() {
 
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            // NOSONAR - Formatting issues
             .append("person", getPerson().getId())
             .append("validFrom", getValidFrom().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
             .append("validTo", getValidTo().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
