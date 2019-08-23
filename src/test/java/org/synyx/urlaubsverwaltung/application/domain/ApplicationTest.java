@@ -4,12 +4,20 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
+import org.synyx.urlaubsverwaltung.person.Person;
+import springfox.documentation.spring.web.paths.AbstractPathProvider;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 /**
@@ -208,5 +216,49 @@ public class ApplicationTest {
         ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
         Assert.assertNull("Should be null", endDateWithTime);
+    }
+
+    @Test
+    public void toStringTest() {
+
+        final Person person = new Person("Theo", "Theo", "Theo", "Theo");
+        person.setId(10);
+        person.setPassword("Theo");
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(NOTIFICATION_USER));
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(VacationCategory.HOLIDAY);
+
+        final Application application = new Application();
+        application.setStatus(ApplicationStatus.ALLOWED);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setDayLength(DayLength.FULL);
+        application.setPerson(person);
+        application.setVacationType(vacationType);
+        application.setId(1);
+        application.setHours(BigDecimal.TEN);
+        application.setApplicationDate(LocalDate.EPOCH);
+        application.setTwoStageApproval(true);
+        application.setHolidayReplacement(person);
+        application.setApplier(person);
+        application.setRemindDate(LocalDate.MAX);
+        application.setBoss(person);
+        application.setEditedDate(LocalDate.MAX);
+        application.setEndTime(Time.valueOf(LocalTime.MAX));
+        application.setStartTime(Time.valueOf(LocalTime.MIN));
+        application.setCanceller(person);
+        application.setReason("Because");
+        application.setAddress("Address");
+        application.setCancelDate(LocalDate.MAX);
+        application.setTeamInformed(true);
+
+        final String toString = application.toString();
+        assertThat(toString).isEqualTo("Application[id=1," +
+            "startDate=01.01.+1000000000,endDate=31.12.+999999999," +
+            "vacationType=VacationType[category=HOLIDAY,messageKey=<null>,id=<null>]," +
+            "twoStageApproval=true,status=ALLOWED,dayLength=FULL,person=Person{id='10'}," +
+            "applier=Person{id='10'},boss=Person{id='10'},canceller=Person{id='10'}");
     }
 }

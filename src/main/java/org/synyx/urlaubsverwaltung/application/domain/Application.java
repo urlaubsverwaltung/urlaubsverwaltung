@@ -476,15 +476,16 @@ public class Application extends AbstractPersistable<Integer> {
         toStringBuilder.append("status", getStatus().toString());
         toStringBuilder.append("dayLength", getDayLength());
 
-        if (getPerson() != null && getApplier() != null && getPerson().equals(getApplier())) {
-            toStringBuilder.append("person", getPerson().getId());
-        } else {
-            toStringBuilder.append("person", getPerson().getId());
+        if (getPerson() != null) {
+            toStringBuilder.append("person", getPerson());
+        }
+
+        if (getApplier() != null) {
             toStringBuilder.append("applier", getApplier());
         }
 
         if (getBoss() != null) {
-            toStringBuilder.append("boss", getBoss().getId());
+            toStringBuilder.append("boss", getBoss());
         }
 
         if (getCanceller() != null) {
