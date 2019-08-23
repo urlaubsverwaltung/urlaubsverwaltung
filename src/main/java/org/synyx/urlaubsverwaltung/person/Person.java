@@ -156,4 +156,9 @@ public class Person extends AbstractPersistable<Integer> {
     public void setId(Integer id) { // NOSONAR - needed for setting ID in form
         super.setId(id);
     }
+
+    @Override
+    public String toString() {
+        return "Person{id='" + super.getId() + "'}";
+    }
 }
