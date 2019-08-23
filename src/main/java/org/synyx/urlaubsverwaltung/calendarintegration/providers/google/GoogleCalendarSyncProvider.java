@@ -124,7 +124,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 return Optional.of(eventInCalendar.getId());
 
             } catch (IOException ex) {
-                LOG.warn("An error occurred while trying to add appointment to calendar %s", calendarId, ex);
+                LOG.warn("An error occurred while trying to add appointment to calendar {}", calendarId, ex);
                 calendarMailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
