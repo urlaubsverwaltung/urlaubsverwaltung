@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
@@ -14,11 +12,8 @@ import javax.persistence.Entity;
 public class Settings extends AbstractPersistable<Integer> {
 
     private AbsenceSettings absenceSettings;
-
     private WorkingTimeSettings workingTimeSettings;
-
     private MailSettings mailSettings;
-
     private CalendarSettings calendarSettings;
 
     public AbsenceSettings getAbsenceSettings() {
@@ -89,12 +84,5 @@ public class Settings extends AbstractPersistable<Integer> {
     public void setId(Integer id) { // NOSONAR - make it public instead of protected
 
         super.setId(id);
-    }
-
-
-    @Override
-    public String toString() {
-
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }
