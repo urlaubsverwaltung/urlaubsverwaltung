@@ -22,13 +22,9 @@ public class Person extends AbstractPersistable<Integer> {
     private static final long serialVersionUID = 765672310978437L;
 
     private String loginName;
-
     private String password;
-
     private String lastName;
-
     private String firstName;
-
     private String email;
 
     @ElementCollection
@@ -46,9 +42,7 @@ public class Person extends AbstractPersistable<Integer> {
         /* OK */
     }
 
-
     public Person(String loginName, String lastName, String firstName, String email) {
-
         this.loginName = loginName;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -56,72 +50,50 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
     public String getEmail() {
-
         return email;
     }
 
-
     public void setEmail(String email) {
-
         this.email = email;
     }
 
-
     public String getFirstName() {
-
         return firstName;
     }
 
-
     public void setFirstName(String firstName) {
-
         this.firstName = firstName;
     }
 
-
     public String getLastName() {
-
         return lastName;
     }
 
-
     public void setLastName(String lastName) {
-
         this.lastName = lastName;
     }
 
-
     public String getLoginName() {
-
         return loginName;
     }
 
-
     public void setLoginName(String loginName) {
-
         this.loginName = loginName;
     }
 
-
     public String getPassword() {
-
         return password;
     }
 
-
     public void setPassword(String password) {
-
         this.password = password;
     }
 
     public void setPermissions(Collection<Role> permissions) {
-
         this.permissions = permissions;
     }
 
-
     public Collection<Role> getPermissions() {
-
         if (permissions == null) {
             return Collections.emptyList();
         }
@@ -129,15 +101,11 @@ public class Person extends AbstractPersistable<Integer> {
         return Collections.unmodifiableCollection(permissions);
     }
 
-
     public boolean hasRole(final Role role) {
-
         return getPermissions().stream().anyMatch(permission -> permission.equals(role));
     }
 
-
     public Collection<MailNotification> getNotifications() {
-
         if (notifications == null) {
             notifications = Collections.emptyList();
         }
@@ -147,13 +115,11 @@ public class Person extends AbstractPersistable<Integer> {
 
 
     public void setNotifications(Collection<MailNotification> notifications) {
-
         this.notifications = notifications;
     }
 
 
     public boolean hasNotificationType(final MailNotification notification) {
-
         return getNotifications().stream().anyMatch(element -> element.equals(notification));
     }
 
@@ -178,7 +144,6 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
     public String getGravatarURL() {
-
         if (StringUtils.hasText(this.email)) {
             return GravatarUtil.createImgURL(this.email);
         }
@@ -189,7 +154,6 @@ public class Person extends AbstractPersistable<Integer> {
 
     @Override
     public void setId(Integer id) { // NOSONAR - needed for setting ID in form
-
         super.setId(id);
     }
 }
