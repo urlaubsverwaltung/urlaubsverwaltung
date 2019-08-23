@@ -1,3 +1,6 @@
+### master
+* Add thuringia childrens day holiday [#790](https://github.com/synyx/urlaubsverwaltung/pull/790)
+
 ### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
 * Remove liquibase user demo creation on demo context [#810](https://github.com/synyx/urlaubsverwaltung/pull/810)
 
