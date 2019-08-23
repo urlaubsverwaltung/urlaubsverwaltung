@@ -120,7 +120,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 Event eventInCalendar = googleCalendarClient.events().insert(calendarId, eventToCommit).execute();
 
                 LOG.info("Event {} for '{}' added to calendar '{}'.", eventInCalendar.getId(),
-                        absence.getPerson().getNiceName(), eventInCalendar.getSummary());
+                    absence.getPerson().getId(), eventInCalendar.getSummary());
+
                 return Optional.of(eventInCalendar.getId());
 
             } catch (IOException ex) {
