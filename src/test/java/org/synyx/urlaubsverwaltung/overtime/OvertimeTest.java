@@ -9,8 +9,12 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 public class OvertimeTest {
@@ -188,5 +192,19 @@ public class OvertimeTest {
     public void ensureThrowsIfTryingToSetPersonToNull() {
 
         new Overtime().setPerson(null);
+    }
+
+    @Test
+    public void toStringTest() {
+        final Person person = new Person("Theo", "Theo", "Theo", "Theo");
+        person.setId(10);
+        person.setPassword("Theo");
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(NOTIFICATION_USER));
+        final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        overtime.setId(1);
+
+        final String overtimeToString = overtime.toString();
+        assertThat(overtimeToString).isEqualTo("Overtime[id=1,startDate=-999999999-01-01,endDate=+999999999-12-31,hours=10,person=Person{id='10'}]");
     }
 }
