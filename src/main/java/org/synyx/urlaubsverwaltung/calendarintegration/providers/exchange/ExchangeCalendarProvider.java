@@ -92,7 +92,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             }
 
             LOG.info("Appointment {} for '{}' added to exchange calendar '{}'.", appointment.getId(),
-                absence.getPerson().getNiceName(), calendarName);
+                absence.getPerson().getId(), calendarName);
 
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
