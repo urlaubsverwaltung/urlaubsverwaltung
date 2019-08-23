@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -18,7 +16,6 @@ import java.util.Collections;
 /**
  * This class describes a person.
  */
-
 @Entity
 public class Person extends AbstractPersistable<Integer> {
 
