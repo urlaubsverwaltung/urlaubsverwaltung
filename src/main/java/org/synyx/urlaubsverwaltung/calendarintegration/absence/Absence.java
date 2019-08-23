@@ -91,7 +91,8 @@ public class Absence {
     @Override
     public String toString() {
 
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("person", getPerson().getId())
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("person", getPerson().getId())
             .append("startDate", getStartDate())
             .append("endDate", getEndDate())
             .append("isAllDay", isAllDay())
