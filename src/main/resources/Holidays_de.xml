@@ -109,6 +109,7 @@
   </tns:SubConfigurations>
   <tns:SubConfigurations hierarchy="th" description="Thüringen">
     <tns:Holidays>
+      <tns:Fixed month="SEPTEMBER" day="20" descriptionPropertiesKey="CHILDRENS_DAY" validFrom="2019"/>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
@@ -135,11 +136,6 @@
   <tns:SubConfigurations hierarchy="b" description="Berlin">
     <tns:Holidays>
       <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMAN" validFrom="2019"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="th" description="Thüringen">
-    <tns:Holidays>
-      <tns:Fixed month="SEPTEMBER" day="20" descriptionPropertiesKey="CHILDRENS_DAY" validFrom="2019"/>
     </tns:Holidays>
   </tns:SubConfigurations>
 </tns:Configuration>
