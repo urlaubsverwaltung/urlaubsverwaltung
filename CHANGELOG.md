@@ -4,6 +4,7 @@
 * Decouple auth from api [#759](https://github.com/synyx/urlaubsverwaltung/pull/759)
 * ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
 * Upgrade spring boot parent to 2.1.7
+* Upgrade NodeJS to 12
 
 ### [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4)
 * Fix login parameter security
