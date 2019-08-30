@@ -21,9 +21,7 @@ export async function setup () {
     // jest is configured with 'jsdom' environment
     // so window is already available here
     // and we're able to attach additional custom stuff
-
-    const $ = await import('jquery');
-    window.jQuery = window.$ = $;
+    window.jQuery = window.$ = require('jquery');
 
     // defined in 'actions.js' as global function
     // setting as spy function to assert things in the tests
