@@ -47,7 +47,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "^23.4.2",
-    "babel-loader": "8.0.5",
+    "babel-loader": "8.0.6",
     "babel-plugin-date-fns": "0.2.1",
     "babel-plugin-dynamic-import-node": "1.2.0",
     "css-loader": "3.2.0",
