@@ -5,6 +5,7 @@
 * ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
 * Upgrade spring boot parent to 2.1.7
 * Upgrade NodeJS to 12
+* Upgrade date-fns from 1.x to 2.0.1
 
 ### [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4)
 * Fix login parameter security

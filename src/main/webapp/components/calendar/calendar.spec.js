@@ -14,6 +14,10 @@ describe ('calendar', () => {
           return instance[dateInstanceIdentifier];
         }
 
+        static now() {
+          return new RealDate(isoDate).getTime();
+        }
+
         // noinspection JSAnnotator
         constructor(...args) { // NOSONAR
           let d = args.length === 0 ? new RealDate(isoDate) : new RealDate(...args);
@@ -48,7 +52,6 @@ describe ('calendar', () => {
     async function calendarTestSetup () {
         await setup();
 
-        // window.dateFns = await import('date-fns');
         window.uv = {};
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;

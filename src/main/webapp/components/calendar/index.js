@@ -8,11 +8,12 @@ import {
   isBefore,
   isPast,
   isToday,
+  isValid as isValidDate,
   isWeekend,
-  isWithinRange,
+  isWithinInterval,
   getDay,
   getMonth,
-  parse,
+  parseISO,
   startOfMonth,
   subMonths,
 } from 'date-fns';
@@ -231,7 +232,7 @@ $(function() {
         function isOfType(type, matcherAttributes) {
           return function (date) {
             const year = getYear(date);
-            const formattedDate = format(date, 'YYYY-MM-DD');
+            const formattedDate = format(date, 'yyyy-MM-dd');
 
             if (!_CACHE[type]) {
                 return false;
@@ -271,7 +272,7 @@ $(function() {
 
             getDescription: function (date) {
               var year = getYear(date);
-              var formattedDate = format(date, 'YYYY-MM-DD');
+              var formattedDate = format(date, 'yyyy-MM-dd');
 
               if (!_CACHE['publicHoliday']) {
                   return '';
@@ -293,7 +294,7 @@ $(function() {
 
             getStatus: function (date) {
               var year = getYear(date);
-              var formattedDate = format(date, 'YYYY-MM-DD');
+              var formattedDate = format(date, 'yyyy-MM-dd');
 
               if (!_CACHE['holiday']) {
                   return null;
@@ -315,7 +316,7 @@ $(function() {
 
             getAbsenceId: function (date) {
               var year = getYear(date);
-              var formattedDate = format(date, 'YYYY-MM-DD');
+              var formattedDate = format(date, 'yyyy-MM-dd');
 
               if (!_CACHE['holiday']) {
                   return '-1';
@@ -347,7 +348,7 @@ $(function() {
 
             getAbsenceType: function (date) {
                 var year = getYear(date);
-                var formattedDate = format(date, 'YYYY-MM-DD');
+                var formattedDate = format(date, 'yyyy-MM-dd');
 
                 if (!_CACHE['holiday']) {
                     return '';
@@ -385,8 +386,8 @@ $(function() {
             bookHoliday: function(from, to) {
                 var params = {
                     personId: personId,
-                    from: format(from, 'YYYY-MM-DD'),
-                    to: to ? format(to, 'YYYY-MM-DD') : undefined
+                    from: format(from, 'yyyy-MM-dd'),
+                    to: to ? format(to, 'yyyy-MM-dd') : undefined
                 };
 
                 document.location.href = webPrefix + '/application/new' + paramize( params );
@@ -556,7 +557,7 @@ $(function() {
 
         function renderMonthTitle(date) {
             return render(TMPL.title, {
-                title: format(date, 'MMMM YYYY')
+                title: format(date, 'MMMM yyyy')
             });
         }
 
@@ -564,13 +565,13 @@ $(function() {
             var d = startOfWeek(date);
 
             return render(TMPL.weekdays, {
-                0: format(d, 'dd'),
-                1: format(addDays(d, 1), 'dd'),
-                2: format(addDays(d, 2), 'dd'),
-                3: format(addDays(d, 3), 'dd'),
-                4: format(addDays(d, 4), 'dd'),
-                5: format(addDays(d, 5), 'dd'),
-                6: format(addDays(d, 6), 'dd'),
+                0: format(d, 'EEEEEE'),
+                1: format(addDays(d, 1), 'EEEEEE'),
+                2: format(addDays(d, 2), 'EEEEEE'),
+                3: format(addDays(d, 3), 'EEEEEE'),
+                4: format(addDays(d, 4), 'EEEEEE'),
+                5: format(addDays(d, 5), 'EEEEEE'),
+                6: format(addDays(d, 6), 'EEEEEE'),
             });
         }
 
@@ -640,8 +641,8 @@ $(function() {
             }
 
             return render(TMPL.day, {
-                date: format(date, 'YYYY-MM-DD'),
-                day : format(date, 'DD'),
+                date: format(date, 'yyyy-MM-dd'),
+                day : format(date, 'dd'),
                 css : classes(),
                 selectable: isSelectable(),
                 title: assert.title(date),
@@ -718,7 +719,9 @@ $(function() {
 
                 var dateThis = getDateFromElement(this);
 
-                if ( !isWithinRange(dateThis, selectionFrom(), selectionTo()) ) {
+                const start = selectionFrom();
+                const end = selectionTo();
+                if ( !isValidDate(start) || !isValidDate(end) || !isWithinInterval(dateThis, { start, end }) ) {
 
                     clearSelection();
 
@@ -761,7 +764,7 @@ $(function() {
                     holidayService.navigateToApplicationForLeave(absenceId);
                 } else if(isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
                     holidayService.navigateToSickNote(absenceId);
-                } else if(isSelectable === "true" && isWithinRange(dateThis, dateFrom, dateTo)) {
+                } else if(isSelectable === "true" && isValidDate(dateFrom) && isValidDate(dateTo) && isWithinInterval(dateThis, { start: dateFrom, end: dateTo })) {
                     holidayService.bookHoliday(dateFrom, dateTo);
                 }
 
@@ -805,24 +808,25 @@ $(function() {
         };
 
         function getDateFromElement(element) {
-            return parse($(element).data(DATA.date));
+            return parseISO($(element).data(DATA.date));
         }
 
         function selectionFrom(date) {
             if (!date) {
-                return parse($datepicker.data(DATA.selectFrom));
+                const d = $datepicker.data(DATA.selectFrom);
+                return parseISO(d);
             }
 
-            $datepicker.data(DATA.selectFrom, format(date, 'YYYY-MM-DD'));
+            $datepicker.data(DATA.selectFrom, format(date, 'yyyy-MM-dd'));
             refreshDatepicker();
         }
 
         function selectionTo(date) {
             if (!date) {
-                return parse($datepicker.data(DATA.selectTo));
+                return parseISO($datepicker.data(DATA.selectTo));
             }
 
-            $datepicker.data(DATA.selectTo, format(date, 'YYYY-MM-DD'));
+            $datepicker.data(DATA.selectTo, format(date, 'yyyy-MM-dd'));
             refreshDatepicker();
         }
 
@@ -834,12 +838,18 @@ $(function() {
 
         function refreshDatepicker() {
 
-            var from = selectionFrom();
-            var to   = selectionTo();
+            const start = selectionFrom();
+            const end   = selectionTo();
+            const startIsValid = isValidDate(start);
+            const endIsValid = isValidDate(end);
 
             $('.' + CSS.day).each(function() {
-                var d = parse( $(this).data(DATA.date) );
-                select(this, isWithinRange(d, from, to));
+                if (!startIsValid || !endIsValid) {
+                  select(this, false);
+                } else {
+                  const date = parseISO($(this).data(DATA.date));
+                  select(this, isWithinInterval(date, { start, end }));
+                }
             });
         }
 
