@@ -16,4 +16,4 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
     - name: Build with Maven
-      run: ./mvnw --batch-mode clean verify
+      run: ./mvnw --batch-mode clean verify sonar:sonar
