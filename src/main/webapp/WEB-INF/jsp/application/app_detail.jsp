@@ -26,6 +26,7 @@
     </script>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='app_detail~app_form~person_overview.js' />"></script>
+    <script defer src="<asset:url value='app_detail~app_form~feedback_form~person_overview.js' />"></script>
     <script defer src="<asset:url value='app_detail.js' />"></script>
 </head>
 

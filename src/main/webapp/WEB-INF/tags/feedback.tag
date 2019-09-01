@@ -3,6 +3,8 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
+<script defer src="<asset:url value="feedback_form.js" />"></script>
+
 <style>
     .flex {
         display: flex;
@@ -48,6 +50,9 @@
     .px-4 {
         padding-left: 1em;
         padding-right: 1em;
+    }
+    .p-8 {
+        padding: 2em;
     }
     .mb-4 {
         margin-bottom: 1em;

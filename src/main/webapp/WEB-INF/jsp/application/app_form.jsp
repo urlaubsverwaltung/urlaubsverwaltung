@@ -39,6 +39,7 @@
     <script defer src="<asset:url value='npm.jquery-ui-themes.js' />"></script>
     <script defer src="<asset:url value='npm.timepicker.js' />"></script>
     <script defer src="<asset:url value='app_detail~app_form~person_overview.js' />"></script>
+    <script defer src="<asset:url value='app_detail~app_form~feedback_form~person_overview.js' />"></script>
     <script defer src="<asset:url value='app_form~overtime_form~sick_note_form.js' />"></script>
     <script defer src="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
     <script defer src="<asset:url value='app_form.js' />"></script>

@@ -1,8 +1,10 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld" %>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
+<sec:csrfMetaTags />
 <title><spring:message code="header.title"/></title>
 
 <link rel="manifest" href="<spring:url value='/manifest.json' />"/>
@@ -29,9 +31,9 @@
 <meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png"' />"/>
 <meta name="theme-color" content="#ffffff">
 
-<link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
-<link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
-<link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
+<link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />" />
+<link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />" />
+<link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
 <script defer src="<asset:url value='npm.babel.js' />"></script>
