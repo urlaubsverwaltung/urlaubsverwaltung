@@ -46,6 +46,10 @@
     <div class="container">
 
         <div class="row">
+            <uv:feedback />
+        </div>
+
+        <div class="row">
 
             <div class="col-xs-12">
                 <%@include file="include/overview_header.jsp" %>
@@ -231,7 +235,6 @@
 
     </div>
 </div>
-
 
 </body>
 
