@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.application.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class VacationTypeTest {
 
@@ -30,5 +32,16 @@ public class VacationTypeTest {
         vacationType.setCategory(VacationCategory.HOLIDAY);
 
         Assert.assertFalse("Categories should not match", vacationType.isOfCategory(VacationCategory.OVERTIME));
+    }
+
+    @Test
+    public void toStringTest() {
+        VacationType vacationType = new VacationType();
+        vacationType.setCategory(VacationCategory.HOLIDAY);
+        vacationType.setMessageKey("messageKey");
+        vacationType.setId(10);
+
+        final String vacationTypeToString = vacationType.toString();
+        assertThat(vacationTypeToString).isEqualTo("VacationType{category=HOLIDAY, messageKey='messageKey'}");
     }
 }

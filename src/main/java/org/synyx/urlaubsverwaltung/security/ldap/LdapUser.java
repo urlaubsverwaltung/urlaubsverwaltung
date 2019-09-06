@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -72,13 +70,12 @@ final class LdapUser {
         return Optional.ofNullable(email);
     }
 
-
     @Override
     public String toString() {
-
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        return "LdapUser{" +
+            "username='" + username + '\'' +
+            '}';
     }
-
 
     List<String> getMemberOf() {
 

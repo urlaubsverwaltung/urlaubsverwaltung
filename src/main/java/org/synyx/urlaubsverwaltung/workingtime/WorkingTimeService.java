@@ -92,7 +92,7 @@ public class WorkingTimeService {
 
         if (!optionalWorkingTime.isPresent()) {
             LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                    person.getLoginName(), date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
+                    person.getId(), date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
 
             return getSystemDefaultFederalState();
         }

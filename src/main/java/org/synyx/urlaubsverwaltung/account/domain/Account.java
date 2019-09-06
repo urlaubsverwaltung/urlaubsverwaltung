@@ -1,24 +1,18 @@
 package org.synyx.urlaubsverwaltung.account.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
  */
 @Entity
 public class Account extends AbstractPersistable<Integer> {
-
-    private static final long serialVersionUID = 890434378423784389L;
 
     @ManyToOne
     private Person person;
@@ -151,16 +145,16 @@ public class Account extends AbstractPersistable<Integer> {
 
     @Override
     public String toString() {
-
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            // NOSONAR - Formatting issues
-            .append("person", getPerson().getLoginName())
-            .append("validFrom", getValidFrom().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
-            .append("validTo", getValidTo().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)))
-            .append("annualVacationDays", getAnnualVacationDays()).append("vacationDays", getVacationDays())
-            .append("remainingVacationDays", getRemainingVacationDays())
-            .append("remainingVacationDaysNotExpiring", getRemainingVacationDaysNotExpiring())
-            .append("comment", getComment()).toString();
+        return "Account{" +
+            "person=" + person +
+            ", validFrom=" + validFrom +
+            ", validTo=" + validTo +
+            ", annualVacationDays=" + annualVacationDays +
+            ", vacationDays=" + vacationDays +
+            ", remainingVacationDays=" + remainingVacationDays +
+            ", remainingVacationDaysNotExpiring=" + remainingVacationDaysNotExpiring +
+            ", comment='" + comment + '\'' +
+            '}';
     }
 
     public String getComment() {

@@ -12,11 +12,12 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.function.BiConsumer;
+import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 /**
@@ -190,6 +191,19 @@ public class AbsenceTest {
 
         Assert.assertNotNull("Event subject must not be null", absence.getEventSubject());
         Assert.assertEquals("Wrong event subject", "Marlene Muster abwesend", absence.getEventSubject());
+    }
 
+    @Test
+    public void toStringTest() {
+        final Person person = new Person("Theo", "Theo", "Theo", "Theo");
+        person.setId(10);
+        person.setPassword("Theo");
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(NOTIFICATION_USER));
+        final Absence absence = new Absence(person, new Period(LocalDate.MIN, LocalDate.MAX.withYear(10), DayLength.FULL), new AbsenceTimeConfiguration(new CalendarSettings()));
+
+        final String absenceToString = absence.toString();
+        assertThat(absenceToString).isEqualTo("Absence{startDate=-999999999-01-01T00:00Z," +
+            " endDate=0011-01-01T00:00Z, person=Person{id='10'}, isAllDay=true}");
     }
 }

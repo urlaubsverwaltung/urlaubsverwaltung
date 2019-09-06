@@ -120,11 +120,12 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 Event eventInCalendar = googleCalendarClient.events().insert(calendarId, eventToCommit).execute();
 
                 LOG.info("Event {} for '{}' added to calendar '{}'.", eventInCalendar.getId(),
-                        absence.getPerson().getNiceName(), eventInCalendar.getSummary());
+                    absence.getPerson().getId(), eventInCalendar.getSummary());
+
                 return Optional.of(eventInCalendar.getId());
 
             } catch (IOException ex) {
-                LOG.warn("An error occurred while trying to add appointment to calendar %s", calendarId, ex);
+                LOG.warn("An error occurred while trying to add appointment to calendar {}", calendarId, ex);
                 calendarMailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }

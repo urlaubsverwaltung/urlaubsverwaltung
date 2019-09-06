@@ -68,29 +68,4 @@ public class SickNoteFormTest {
         assertThat(sickNoteForm.getAubStartDate()).isEqualTo(day2019_04_16);
         assertThat(sickNoteForm.getAubEndDate()).isEqualTo(day2019_04_16);
     }
-
-    @Test
-    public void verifyToString() {
-        String stringRepresentation = "SickNoteForm{" +
-            "id=1, " +
-            "person=Person[id=<null>," +
-                "loginName=<null>," +
-                "lastName=<null>," +
-                "firstName=<null>," +
-                "email=<null>," +
-                "permissions=[]" +
-            "], " +
-            "sickNoteType=SickNoteType[category=<null>," +
-                "messageKey=<null>,id=<null>" +
-            "], " +
-            "startDate=2019-04-16, " +
-            "endDate=2019-04-16, " +
-            "dayLength=FULL, " +
-            "aubStartDate=2019-04-16, " +
-            "aubEndDate=2019-04-16, " +
-            "comment='my comment'" +
-        "}";
-
-        assertThat(sut.toString()).isEqualTo(stringRepresentation);
-    }
 }

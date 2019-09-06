@@ -148,4 +148,17 @@ public class PersonTest {
             // Expected
         }
     }
+
+    @Test
+    public void toStringTest() {
+        final Person person = new Person("Theo", "Theo", "Theo", "Theo");
+        person.setId(10);
+        person.setPassword("Theo");
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(NOTIFICATION_USER));
+
+        final String personToString = person.toString();
+        assertThat(personToString).isEqualTo("Person{id='10'}");
+        assertThat(personToString).doesNotContain("Theo", "USER", "NOTIFICATION_USER");
+    }
 }

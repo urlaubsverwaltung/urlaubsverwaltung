@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendarintegration.absence;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -87,14 +85,13 @@ public class Absence {
         return String.format("%s abwesend", person.getNiceName());
     }
 
-
     @Override
     public String toString() {
-
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("person", getPerson().getLoginName())
-            .append("startDate", getStartDate())
-            .append("endDate", getEndDate())
-            .append("isAllDay", isAllDay())
-            .toString();
+        return "Absence{" +
+            "startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", person=" + person +
+            ", isAllDay=" + isAllDay +
+            '}';
     }
 }

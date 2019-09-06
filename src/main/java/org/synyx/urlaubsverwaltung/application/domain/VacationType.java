@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 
@@ -61,10 +59,11 @@ public class VacationType extends AbstractPersistable<Integer> {
         this.messageKey = messageKey;
     }
 
-
     @Override
     public String toString() {
-
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        return "VacationType{" +
+            "category=" + category +
+            ", messageKey='" + messageKey + '\'' +
+            '}';
     }
 }
