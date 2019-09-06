@@ -153,9 +153,9 @@ public class SickNoteTest {
 
     @Test
     public void nullsafeToString() {
-        SickNote sickNote = new SickNote();
-        String sickNoteString = sickNote.toString();
-        assertThat(sickNoteString).isEqualTo("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=2019-08-23, status=null}");
+        final SickNote sickNote = new SickNote();
+        sickNote.setLastEdited(null);
+        assertThat(sickNote.toString()).isEqualTo("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null, status=null}");
     }
 
     @Test

@@ -152,7 +152,6 @@ public class Overtime extends AbstractPersistable<Integer> {
             ", startDate=" + startDate +
             ", endDate=" + endDate +
             ", hours=" + hours +
-            ", lastModificationDate=" + lastModificationDate +
             ", person=" + person +
             '}';
     }

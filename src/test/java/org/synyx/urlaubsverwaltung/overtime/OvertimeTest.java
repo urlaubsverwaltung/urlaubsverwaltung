@@ -205,6 +205,6 @@ public class OvertimeTest {
         overtime.setId(1);
 
         final String overtimeToString = overtime.toString();
-        assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, hours=10, lastModificationDate=2019-08-23, person=Person{id='10'}}");
+        assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, hours=10, person=Person{id='10'}}");
     }
 }
