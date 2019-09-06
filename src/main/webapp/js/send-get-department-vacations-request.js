@@ -13,8 +13,8 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
     return;
   }
 
-  const startDateString = format(startDate, "YYYY-MM-DD");
-  const toDateString = format(endDate, "YYYY-MM-DD");
+  const startDateString = format(startDate, "yyyy-MM-dd");
+  const toDateString = format(endDate, "yyyy-MM-dd");
 
   const url = `${urlPrefix}/vacations?departmentMembers=true&from=${startDateString}&to=${toDateString}&person=${personId}`;
 
@@ -33,8 +33,8 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
 }
 
 function createHtmlForVacation(vacation) {
-  const startDate = format(vacation.from, "DD.MM.YYYY");
-  const endDate = format(vacation.to, "DD.MM.YYYY");
+  const startDate = format(vacation.from, "dd.MM.yyyy");
+  const endDate = format(vacation.to, "dd.MM.yyyy");
   const person = vacation.person.niceName;
 
   let html = `${person}: ${startDate} - ${endDate}`;

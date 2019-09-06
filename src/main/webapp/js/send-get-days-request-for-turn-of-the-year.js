@@ -47,8 +47,8 @@ export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, star
 }
 
 async function getWorkdaysForDateRange(requestUrl, dayLength, personId, fromDate, toDate) {
-  const startString = format(fromDate, "YYYY-MM-DD");
-  const toString = format(toDate, "YYYY-MM-DD");
+  const startString = format(fromDate, "yyyy-MM-dd");
+  const toString = format(toDate, "yyyy-MM-dd");
   const url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
   const json = await getJSON(url);

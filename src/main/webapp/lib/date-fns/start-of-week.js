@@ -1,4 +1,4 @@
-import dateFnsStartOfWeek from 'date-fns/start_of_week'
+import dateFnsStartOfWeek from 'date-fns/startOfWeek'
 
 export default function startOfWeek(date, options = {}) {
   if (options.weekStartsOn == undefined) {
