@@ -64,7 +64,7 @@
             <div class="login">
 
                 <spring:url var="LOGIN" value="/login"/>
-                <form method="post" class="login--form" action="${LOGIN}">
+                <form:form method="post" class="login--form" action="${LOGIN}">
                     <c:if test="${param.login_error != null}">
                         <div id="login--error" class="alert alert-danger">
                             <spring:message code="login.form.error"/>
@@ -87,7 +87,7 @@
                         </button>
                     </div>
 
-                </form>
+                </form:form>
 
             </div>
 

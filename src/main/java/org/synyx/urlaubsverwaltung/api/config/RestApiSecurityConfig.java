@@ -16,6 +16,7 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .antMatcher("/api/**")
+            .csrf().disable()
             .sessionManagement()
             .sessionCreationPolicy(NEVER)
             .and()

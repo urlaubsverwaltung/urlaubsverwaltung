@@ -27,8 +27,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-            .csrf()
-            .disable()
             .authorizeRequests()
             // TODO move to common url static or resources
             .antMatchers("/favicons/**").permitAll()
