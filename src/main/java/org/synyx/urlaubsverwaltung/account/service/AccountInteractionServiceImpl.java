@@ -9,10 +9,14 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -26,12 +30,40 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
+    private final Clock clock;
+
+    //TODO: extract application property
+    private static final int DEFAULT_ANNUAL_VACATION_DAYS = 20;
+    private static final double VACATION_DAYS_PER_MONTH = ((double) DEFAULT_ANNUAL_VACATION_DAYS) / 12;
 
     @Autowired
-    AccountInteractionServiceImpl(AccountService accountService, VacationDaysService vacationDaysService) {
+    AccountInteractionServiceImpl(AccountService accountService, VacationDaysService vacationDaysService, Clock clock) {
 
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
+        this.clock = clock;
+    }
+
+    @Override
+    public void createDefaultAccount(Person person) {
+
+        LocalDate today = LocalDate.now(clock);
+
+        BigDecimal remainingVacationDaysForThisYear = new BigDecimal(
+            VACATION_DAYS_PER_MONTH * today.getMonthValue(), // calculate remaining vacation days starting from todays month
+            new MathContext(0, RoundingMode.CEILING)
+        );
+        BigDecimal noRemainingVacationDaysForLastYear = BigDecimal.ZERO;
+
+        this.updateOrCreateHolidaysAccount(
+            person,
+            today, // from today...
+            today.with(lastDayOfYear()), //...until end of year
+            BigDecimal.valueOf(DEFAULT_ANNUAL_VACATION_DAYS), // assuming germany as default: http://www.gesetze-im-internet.de/burlg/__3.html
+            remainingVacationDaysForThisYear,
+            noRemainingVacationDaysForLastYear,
+            noRemainingVacationDaysForLastYear,
+            "");
     }
 
     @Override

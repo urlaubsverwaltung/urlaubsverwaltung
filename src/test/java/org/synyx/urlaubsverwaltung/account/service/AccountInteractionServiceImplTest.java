@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
@@ -11,26 +13,25 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Optional;
 
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.TEN;
-import static java.math.BigDecimal.ZERO;
-import static java.time.Month.DECEMBER;
-import static java.time.Month.JANUARY;
-import static java.time.Month.OCTOBER;
+import static java.math.BigDecimal.valueOf;
+import static java.math.BigDecimal.*;
+import static java.time.Month.*;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountInteractionServiceImplTest {
+
+    private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 9, 13);
 
     private AccountInteractionServiceImpl sut;
 
@@ -38,6 +39,8 @@ public class AccountInteractionServiceImplTest {
     private AccountService accountService;
     @Mock
     private VacationDaysService vacationDaysService;
+    @Mock
+    private Clock clock;
 
     private Person person;
 
@@ -45,11 +48,27 @@ public class AccountInteractionServiceImplTest {
     @Before
     public void setup() {
 
-        sut = new AccountInteractionServiceImpl(accountService, vacationDaysService);
+        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
+
+        sut = new AccountInteractionServiceImpl(accountService, vacationDaysService, clock);
 
         person = TestDataCreator.createPerson("horscht");
     }
 
+    @Test
+    public void testDefaultAccountCreation() {
+        ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
+
+        sut.createDefaultAccount(person);
+
+        Account expectedAccount = new Account(person, LocalDate.now(clock), LocalDate.now(clock).with(lastDayOfYear()), valueOf(20), ZERO, ZERO, "");
+        expectedAccount.setVacationDays(valueOf(15));
+
+        verify(accountService).save(argument.capture());
+        AssertionsForClassTypes.assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedAccount);
+    }
 
     @Test
     public void testUpdateRemainingVacationDays() {

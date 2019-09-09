@@ -12,6 +12,16 @@ import java.time.LocalDate;
 public interface AccountInteractionService {
 
     /**
+     * Creates a default {@link org.synyx.urlaubsverwaltung.account.domain.Account} for given person
+     *
+     * Assuming 20 days of holiday (based on http://www.gesetze-im-internet.de/burlg/__3.html with five days work per week).
+     * Calculates the number of remaining days based on account creation day.
+     *
+     * @param person to setup default account
+     */
+    void createDefaultAccount(Person person);
+
+    /**
      * Creates a {@link org.synyx.urlaubsverwaltung.account.domain.Account} with the given parameters.
      *
      * @param person
