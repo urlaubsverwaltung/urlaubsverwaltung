@@ -26,7 +26,7 @@ public class SettingsValidatorTest {
     @Before
     public void setUp() {
 
-        settingsValidator = new SettingsValidator();
+        settingsValidator = new SettingsValidator("unknown");
     }
 
 

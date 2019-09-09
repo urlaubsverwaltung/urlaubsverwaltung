@@ -5,8 +5,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,18 +24,18 @@ class MailServiceImpl implements MailService {
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
     private final MailSender mailSender;
+    private final MailOptionProvider mailOptionProvider;
     private final RecipientService recipientService;
-    private final SettingsService settingsService;
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
-                    RecipientService recipientService, SettingsService settingsService) {
+                    MailOptionProvider mailOptionProvider, RecipientService recipientService) {
 
         this.messageSource = messageSource;
         this.mailBuilder = mailBuilder;
+        this.mailOptionProvider = mailOptionProvider;
         this.mailSender = mailSender;
         this.recipientService = recipientService;
-        this.settingsService = settingsService;
     }
 
     @Override
@@ -67,8 +65,8 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model) {
 
-        MailSettings mailSettings = settingsService.getSettings().getMailSettings();
-        sendMailToRecipients(singletonList(mailSettings.getAdministrator()), subjectMessageKey, templateName, model);
+
+        sendMailToRecipients(singletonList(mailOptionProvider.getAdministrator()), subjectMessageKey, templateName, model);
     }
 
     private void sendMailToPersons(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
@@ -79,13 +77,12 @@ class MailServiceImpl implements MailService {
 
     private void sendMailToRecipients(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {
 
-        MailSettings mailSettings = getMailSettings();
-        model.put("baseLinkURL", mailSettings.getBaseLinkURL());
+        model.put("baseLinkURL", mailOptionProvider.getApplicationUrl());
 
         final String subject = getTranslation(subjectMessageKey, args);
         final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
 
-        mailSender.sendEmail(mailSettings, recipients, subject, text);
+        mailSender.sendEmail(mailOptionProvider.getSender(), recipients, subject, text);
     }
 
     private String getTranslation(String key, Object... args) {
@@ -93,9 +90,4 @@ class MailServiceImpl implements MailService {
         return messageSource.getMessage(key, args, LOCALE);
     }
 
-
-    private MailSettings getMailSettings() {
-
-        return settingsService.getSettings().getMailSettings();
-    }
 }

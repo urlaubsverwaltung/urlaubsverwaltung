@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings.web;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -29,6 +30,12 @@ public class SettingsValidator implements Validator {
     private static final int HOURS_PER_DAY = 24;
     private static final int MAX_CHARS = 255;
 
+    private final boolean isMailServerFromApplicationProperties;
+
+    public SettingsValidator(@Value("${spring.mail.host:unknown}") String mailServerFromApplicationProperties) {
+        this.isMailServerFromApplicationProperties = !mailServerFromApplicationProperties.equalsIgnoreCase("unknown");
+    }
+
     @Override
     public boolean supports(Class<?> clazz) {
 
@@ -51,7 +58,9 @@ public class SettingsValidator implements Validator {
 
         validateSickNoteSettings(settings, errors);
 
-        validateMailSettings(settings, errors);
+        if(!isMailServerFromApplicationProperties) {
+            validateMailSettings(settings, errors);
+        }
 
         validateCalendarSettings(settings, errors);
     }
