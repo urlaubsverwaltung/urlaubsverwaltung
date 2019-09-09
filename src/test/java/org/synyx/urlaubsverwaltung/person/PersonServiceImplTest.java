@@ -10,18 +10,19 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -35,13 +36,20 @@ public class PersonServiceImplTest {
 
     @Mock
     private PersonDAO personDAO;
+
+    @Mock
+    private AccountInteractionService accountInteractionService;
+
+    @Mock
+    private WorkingTimeService workingTimeService;
+
     @Mock
     private SecurityContext securityContext;
 
     @Before
     public void setUp() {
 
-        sut = new PersonServiceImpl(personDAO);
+        sut = new PersonServiceImpl(personDAO, accountInteractionService, workingTimeService);
     }
 
     @After
@@ -49,6 +57,12 @@ public class PersonServiceImplTest {
         SecurityContextHolder.clearContext();
     }
 
+    @Test
+    public void ensureDefaultAccountAndWorkingTimeCreation() {
+        sut.create("rick", "Grimes", "Rick", "rick@grimes.de", emptyList(), emptyList());
+        verify(accountInteractionService).createDefaultAccount(any(Person.class));
+        verify(workingTimeService).createDefaultWorkingTime(any(Person.class));
+    }
 
     @Test
     public void ensureCreatedPersonHasCorrectAttributes() {

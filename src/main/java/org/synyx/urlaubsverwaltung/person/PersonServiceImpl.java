@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.util.Comparator;
 import java.util.List;
@@ -25,11 +27,15 @@ class PersonServiceImpl implements PersonService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonDAO personDAO;
+    private final AccountInteractionService accountInteractionService;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
-    PersonServiceImpl(PersonDAO personDAO) {
+    PersonServiceImpl(PersonDAO personDAO, AccountInteractionService accountInteractionService, WorkingTimeService workingTimeService) {
 
         this.personDAO = personDAO;
+        this.accountInteractionService = accountInteractionService;
+        this.workingTimeService = workingTimeService;
     }
 
     @Override
@@ -43,7 +49,12 @@ class PersonServiceImpl implements PersonService {
 
         LOG.info("Create person: {}", person);
 
-        return save(person);
+        Person persistedPerson = save(person);
+
+        accountInteractionService.createDefaultAccount(person);
+        workingTimeService.createDefaultWorkingTime(person);
+
+        return persistedPerson;
     }
 
 

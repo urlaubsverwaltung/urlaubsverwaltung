@@ -3,49 +3,67 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class WorkingTimeServiceTest {
+    private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 9, 13);
+
+    @Mock
+    private WorkingTimeDAO workingTimeDAOMock;
+
+    @Mock
+    private SettingsService settingsServiceMock;
+
+    @Mock
+    private Clock clock;
 
     private WorkingTimeService workingTimeService;
 
-    private WorkingTimeDAO workingTimeDAOMock;
-    private SettingsService settingsServiceMock;
-
     @Before
     public void setUp() {
+        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
 
-        workingTimeDAOMock = mock(WorkingTimeDAO.class);
-        settingsServiceMock = mock(SettingsService.class);
-
-        workingTimeService = new WorkingTimeService(workingTimeDAOMock, settingsServiceMock);
+        workingTimeService = new WorkingTimeService(workingTimeDAOMock, settingsServiceMock, clock);
     }
 
     @Test
     public void ensureDefaultWorkingTimeCreation() {
+        ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
+
         Person person = TestDataCreator.createPerson();
         WorkingTime expectedWorkingTime = new WorkingTime();
-        expectedWorkingTime.setWorkingDays(List.of(0, 1, 2, 3, 4), FULL);
+        expectedWorkingTime.setWorkingDays(List.of(1, 2, 3, 4, 5), FULL);
+        expectedWorkingTime.setPerson(person);
+        expectedWorkingTime.setValidFrom(LocalDate.now(clock));
 
         workingTimeService.createDefaultWorkingTime(person);
 
-        verify(workingTimeDAOMock).save(eq(expectedWorkingTime));
+        verify(workingTimeDAOMock).save(argument.capture());
+        assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedWorkingTime);
     }
 
     @Test

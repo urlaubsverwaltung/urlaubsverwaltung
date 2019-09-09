@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,12 +34,14 @@ public class WorkingTimeService {
 
     private final WorkingTimeDAO workingTimeDAO;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
-    public WorkingTimeService(WorkingTimeDAO workingTimeDAO, SettingsService settingsService) {
+    public WorkingTimeService(WorkingTimeDAO workingTimeDAO, SettingsService settingsService, Clock clock) {
 
         this.workingTimeDAO = workingTimeDAO;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom,
@@ -117,7 +120,7 @@ public class WorkingTimeService {
 
     public void createDefaultWorkingTime(Person person) {
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(clock);
         this.touch(DEFAULT_WORKING_DAYS, Optional.empty(), today, person);
     }
 }
