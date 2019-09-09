@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.*;
 
 
 /**
@@ -27,6 +28,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class WorkingTimeService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+    //TODO: Extract as application property
+    private static final List<Integer> DEFAULT_WORKING_DAYS = List.of(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek());
 
     private final WorkingTimeDAO workingTimeDAO;
     private final SettingsService settingsService;
@@ -92,7 +95,7 @@ public class WorkingTimeService {
 
         if (!optionalWorkingTime.isPresent()) {
             LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                    person.getId(), date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
+                person.getId(), date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
 
             return getSystemDefaultFederalState();
         }
@@ -110,5 +113,11 @@ public class WorkingTimeService {
     private FederalState getSystemDefaultFederalState() {
 
         return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+    }
+
+    public void createDefaultWorkingTime(Person person) {
+
+        LocalDate today = LocalDate.now();
+        this.touch(DEFAULT_WORKING_DAYS, Optional.empty(), today, person);
     }
 }

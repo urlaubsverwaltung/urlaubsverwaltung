@@ -12,14 +12,13 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 public class WorkingTimeServiceTest {
@@ -38,6 +37,16 @@ public class WorkingTimeServiceTest {
         workingTimeService = new WorkingTimeService(workingTimeDAOMock, settingsServiceMock);
     }
 
+    @Test
+    public void ensureDefaultWorkingTimeCreation() {
+        Person person = TestDataCreator.createPerson();
+        WorkingTime expectedWorkingTime = new WorkingTime();
+        expectedWorkingTime.setWorkingDays(List.of(0, 1, 2, 3, 4), FULL);
+
+        workingTimeService.createDefaultWorkingTime(person);
+
+        verify(workingTimeDAOMock).save(eq(expectedWorkingTime));
+    }
 
     @Test
     public void ensureReturnsOverriddenFederalStateIfPersonHasSpecialFederalState() {
@@ -51,7 +60,6 @@ public class WorkingTimeServiceTest {
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(FederalState.BAYERN);
 
-        when(settingsServiceMock.getSettings()).thenReturn(settings);
         when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(workingTime);
 
