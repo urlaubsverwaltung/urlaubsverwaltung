@@ -15,7 +15,7 @@ public class AccountProperties {
 
     @NotNull
     @Min(0)
-    @Max(356)
+    @Max(365)
     private Integer defaultVacationDays = 20;
 
     public Integer getDefaultVacationDays() {
