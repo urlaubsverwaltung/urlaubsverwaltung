@@ -69,7 +69,7 @@ public class WebConfiguredMailSender implements MailSender {
                 this.mailSender.send(message);
 
                 for (String recipient : message.getTo()) {
-                    LOG.info("Sent email to {}", recipient);
+                    LOG.debug("Sent email to {}", recipient);
                 }
             } else {
                 for (String recipient : message.getTo()) {
