@@ -65,10 +65,20 @@ public class SickNoteApiControllerSecurityIT {
     }
 
     @Test
-    @WithMockUser(authorities = {"DEPARTMENT_HEAD"})
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
     public void getSicknotesWithDepartmentHeadUserIsForbidden() throws Exception {
 
         final LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getSicknotesWithSecondStageUserIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5))))
