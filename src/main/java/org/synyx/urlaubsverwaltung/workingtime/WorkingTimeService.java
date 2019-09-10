@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
+import org.synyx.urlaubsverwaltung.workingtime.config.WorkingTimeProperties;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -18,7 +19,6 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.*;
 
 
 /**
@@ -29,16 +29,16 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.*;
 public class WorkingTimeService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-    //TODO: Extract as application property
-    private static final List<Integer> DEFAULT_WORKING_DAYS = List.of(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek());
 
+    private final WorkingTimeProperties workingTimeProperties;
     private final WorkingTimeDAO workingTimeDAO;
     private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
-    public WorkingTimeService(WorkingTimeDAO workingTimeDAO, SettingsService settingsService, Clock clock) {
+    public WorkingTimeService(WorkingTimeProperties workingTimeProperties, WorkingTimeDAO workingTimeDAO, SettingsService settingsService, Clock clock) {
 
+        this.workingTimeProperties = workingTimeProperties;
         this.workingTimeDAO = workingTimeDAO;
         this.settingsService = settingsService;
         this.clock = clock;
@@ -121,6 +121,6 @@ public class WorkingTimeService {
     public void createDefaultWorkingTime(Person person) {
 
         LocalDate today = LocalDate.now(clock);
-        this.touch(DEFAULT_WORKING_DAYS, Optional.empty(), today, person);
+        this.touch(workingTimeProperties.getDefaultWorkingDays(), Optional.empty(), today, person);
     }
 }

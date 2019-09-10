@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.workingtime.config.WorkingTimeProperties;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -23,12 +24,18 @@ import java.util.Optional;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WorkingTimeServiceTest {
     private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 9, 13);
+
+    @Mock
+    private WorkingTimeProperties workingTimeProperties;
 
     @Mock
     private WorkingTimeDAO workingTimeDAOMock;
@@ -47,7 +54,9 @@ public class WorkingTimeServiceTest {
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
 
-        workingTimeService = new WorkingTimeService(workingTimeDAOMock, settingsServiceMock, clock);
+        when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
+
+        workingTimeService = new WorkingTimeService(workingTimeProperties, workingTimeDAOMock, settingsServiceMock, clock);
     }
 
     @Test
@@ -62,6 +71,7 @@ public class WorkingTimeServiceTest {
 
         workingTimeService.createDefaultWorkingTime(person);
 
+        verify(workingTimeProperties).getDefaultWorkingDays();
         verify(workingTimeDAOMock).save(argument.capture());
         assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedWorkingTime);
     }

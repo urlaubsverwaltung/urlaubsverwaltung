@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -28,6 +29,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
+    private final AccountProperties accountProperties;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final Clock clock;
@@ -37,7 +39,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private static final double VACATION_DAYS_PER_MONTH = ((double) DEFAULT_ANNUAL_VACATION_DAYS) / 12;
 
     @Autowired
-    AccountInteractionServiceImpl(AccountService accountService, VacationDaysService vacationDaysService, Clock clock) {
+    AccountInteractionServiceImpl(AccountProperties accountProperties, AccountService accountService, VacationDaysService vacationDaysService, Clock clock) {
+        this.accountProperties = accountProperties;
 
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -59,7 +62,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             person,
             today, // from today...
             today.with(lastDayOfYear()), //...until end of year
-            BigDecimal.valueOf(DEFAULT_ANNUAL_VACATION_DAYS), // assuming germany as default: http://www.gesetze-im-internet.de/burlg/__3.html
+            BigDecimal.valueOf(accountProperties.getDefaultVacationDays()), // assuming germany as default: http://www.gesetze-im-internet.de/burlg/__3.html
             remainingVacationDaysForThisYear,
             noRemainingVacationDaysForLastYear,
             noRemainingVacationDaysForLastYear,
