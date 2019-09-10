@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -29,14 +28,12 @@ public class WebConfiguredMailSender implements MailSender {
     private final JavaMailSenderImpl mailSender;
     private final SettingsService settingsService;
 
-    @Autowired
     public WebConfiguredMailSender(JavaMailSenderImpl mailSender,
                                    SettingsService settingsService) {
 
         this.mailSender = mailSender;
         this.settingsService = settingsService;
     }
-
 
     public void sendEmail(String from, List<String> recipients, String subject, String text) {
 

@@ -1,13 +1,11 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 public class WebConfiguredMailOptionProvider implements MailOptionProvider {
 
     private final SettingsService settingsService;
 
-    @Autowired
     public WebConfiguredMailOptionProvider(SettingsService settingsService) {
         this.settingsService = settingsService;
     }

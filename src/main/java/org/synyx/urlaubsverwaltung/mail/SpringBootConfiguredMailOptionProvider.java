@@ -1,44 +1,33 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.stereotype.Component;
+import org.synyx.urlaubsverwaltung.mail.config.SpringBootConfiguredMailConfig.UrlaubsverwaltungMailConfigurationProperties;
 
-@ConditionalOnProperty(prefix = "spring.mail", name = "host")
-@Component
 public class SpringBootConfiguredMailOptionProvider implements MailOptionProvider {
 
-    private final String sender;
-    private final String administrator;
-    private final String applicationUrl;
+
+    private final UrlaubsverwaltungMailConfigurationProperties urlaubsverwaltungMailConfigurationProperties;
     private final MailProperties mailProperties;
 
-    @Autowired
-    public SpringBootConfiguredMailOptionProvider(@Value("${uv.mail.from}") String sender,
-                                                  @Value("${uv.mail.administrator}") String administrator,
-                                                  @Value("${uv.mail.applicationurl}") String applicationUrl,
+    public SpringBootConfiguredMailOptionProvider(UrlaubsverwaltungMailConfigurationProperties urlaubsverwaltungMailConfigurationProperties,
                                                   MailProperties mailProperties) {
-        this.sender = sender;
-        this.administrator = administrator;
-        this.applicationUrl = applicationUrl;
+        this.urlaubsverwaltungMailConfigurationProperties = urlaubsverwaltungMailConfigurationProperties;
         this.mailProperties = mailProperties;
     }
 
     @Override
     public String getSender() {
-        return sender;
+        return urlaubsverwaltungMailConfigurationProperties.getSender();
     }
 
     @Override
     public String getAdministrator() {
-        return administrator;
+        return urlaubsverwaltungMailConfigurationProperties.getAdministrator();
     }
 
     @Override
     public String getApplicationUrl() {
-        return formatApplicationUrl(applicationUrl);
+        return formatApplicationUrl(urlaubsverwaltungMailConfigurationProperties.getApplicationurl());
     }
 
     @Override

@@ -1,12 +1,9 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,17 +11,13 @@ import java.util.List;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-
-@ConditionalOnProperty(prefix = "spring.mail", name = "host")
-@Service
 public class SpringBootConfiguredMailSender implements MailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final JavaMailSender javaMailSender;
 
-    @Autowired
-    SpringBootConfiguredMailSender(JavaMailSender javaMailSender) {
+    public SpringBootConfiguredMailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 

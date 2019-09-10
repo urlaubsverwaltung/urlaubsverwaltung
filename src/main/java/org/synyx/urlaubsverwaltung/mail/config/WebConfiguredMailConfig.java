@@ -7,12 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.synyx.urlaubsverwaltung.mail.MailOptionProvider;
 import org.synyx.urlaubsverwaltung.mail.MailSender;
-import org.synyx.urlaubsverwaltung.mail.SpringBootConfiguredMailSender;
 import org.synyx.urlaubsverwaltung.mail.WebConfiguredMailOptionProvider;
 import org.synyx.urlaubsverwaltung.mail.WebConfiguredMailSender;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-@ConditionalOnMissingBean(SpringBootConfiguredMailSender.class)
+@ConditionalOnMissingBean(SpringBootConfiguredMailConfig.class)
 @Configuration
 public class WebConfiguredMailConfig {
     @Bean
