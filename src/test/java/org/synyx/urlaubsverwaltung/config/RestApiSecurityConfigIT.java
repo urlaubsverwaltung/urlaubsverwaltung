@@ -116,24 +116,7 @@ public class RestApiSecurityConfigIT {
         resultActions.andExpect(status().isOk());
     }
 
-    @Test
-    public void getDepartmentsWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/departments"));
 
-        resultActions.andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void getDepartmentsWithBasicAuthIsOk() throws Exception {
-
-        createAuthenticatedPerson();
-
-        final ResultActions resultActions = perform(
-            get("/api/departments").with(httpBasic("authenticated", "secret"))
-        );
-
-        resultActions.andExpect(status().isOk());
-    }
 
     @Test
     public void getPersonsWithoutBasicAuthIsUnauthorized() throws Exception {
