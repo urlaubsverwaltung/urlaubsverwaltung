@@ -19,8 +19,6 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/api")
 public class DepartmentApiController {
 
-    private static final String ROOT_URL = "/departments";
-
     private final DepartmentService departmentService;
 
     @Autowired
@@ -30,7 +28,7 @@ public class DepartmentApiController {
     }
 
     @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
-    @GetMapping(ROOT_URL)
+    @GetMapping("/departments")
     public ResponseWrapper<DepartmentsListWrapper> departments() {
 
         final List<DepartmentResponse> departmentResponses = departmentService.getAllDepartments()
