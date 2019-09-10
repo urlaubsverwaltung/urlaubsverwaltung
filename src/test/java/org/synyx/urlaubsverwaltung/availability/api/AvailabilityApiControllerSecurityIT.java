@@ -52,14 +52,14 @@ public class AvailabilityApiControllerSecurityIT {
     public void getAvailabilitiesHasOfficeRole() throws Exception {
 
         final Person testPerson = createPerson("testPerson");
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(testPerson));
-        when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityList(emptyList(), testPerson));
+        when(personService.getPersonByID(5)).thenReturn(Optional.of(testPerson));
+        when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityListDto(emptyList(), testPerson.getId()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/availabilities")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5)))
-            .param("person", "testPerson"));
+            .param("person", "5"));
 
         resultActions.andExpect(status().isOk());
     }

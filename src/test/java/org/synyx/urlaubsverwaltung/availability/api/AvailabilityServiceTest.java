@@ -38,8 +38,8 @@ public class AvailabilityServiceTest {
         timedAbsenceSpansMock = mock(TimedAbsenceSpans.class);
 
         when(freeTimeAbsenceProvider.checkForAbsence(
-                any(Person.class),
-                any(LocalDate.class)))
+            any(Person.class),
+            any(LocalDate.class)))
             .thenReturn(timedAbsenceSpansMock);
 
         availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
@@ -69,8 +69,8 @@ public class AvailabilityServiceTest {
 
         when(timedAbsenceSpansMock.calculatePresenceRatio()).thenReturn(expectedAvailabilityRatio);
 
-        AvailabilityList personsAvailabilities = availabilityService.getPersonsAvailabilities(dayToTest, dayToTest,
-                testPerson);
+        AvailabilityListDto personsAvailabilities = availabilityService.getPersonsAvailabilities(dayToTest, dayToTest,
+            testPerson);
 
         verify(timedAbsenceSpansMock, times(1)).calculatePresenceRatio();
 

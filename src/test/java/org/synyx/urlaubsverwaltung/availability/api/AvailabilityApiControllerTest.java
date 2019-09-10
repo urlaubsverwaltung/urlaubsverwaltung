@@ -7,9 +7,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
 
@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @RunWith(MockitoJUnitRunner.class)
 public class AvailabilityApiControllerTest {
 
-    private static final String LOGIN = "login";
+    private static final Integer PERSON_ID = 1;
 
     private AvailabilityApiController sut;
 
@@ -46,18 +46,18 @@ public class AvailabilityApiControllerTest {
         sut = new AvailabilityApiController(availabilityService, personService);
 
         testPerson = TestDataCreator.createPerson("testPerson");
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(testPerson));
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
     }
 
     @Test
     public void ensurePersonsAvailabilitiesForUnknownPersonResultsInBadRequest() throws Exception {
 
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         perform(get("/api/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isBadRequest());
     }
 
@@ -67,10 +67,10 @@ public class AvailabilityApiControllerTest {
         perform(get("/api/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isOk());
 
-        verify(personService).getPersonByLogin(LOGIN);
+        verify(personService).getPersonByID(PERSON_ID);
 
         verify(availabilityService)
             .getPersonsAvailabilities(eq(LocalDate.of(2016, 1, 1)),
@@ -84,7 +84,7 @@ public class AvailabilityApiControllerTest {
         perform(get("/api/availabilities")
             .param("from", "2015-01-01")
             .param("to", "2015-01-31")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isNoContent());
     }
 
@@ -95,7 +95,7 @@ public class AvailabilityApiControllerTest {
         perform(get("/api/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2016-02-01")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isBadRequest());
     }
 
@@ -115,7 +115,7 @@ public class AvailabilityApiControllerTest {
 
         perform(get("/api/availabilities")
             .param("to", "2016-12-31")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isBadRequest());
     }
 
@@ -126,7 +126,7 @@ public class AvailabilityApiControllerTest {
         perform(get("/api/availabilities")
             .param("from", "foo")
             .param("to", "2016-12-31")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isBadRequest());
     }
 
@@ -136,7 +136,7 @@ public class AvailabilityApiControllerTest {
 
         perform(get("/api/availabilities")
             .param("from", "2016-01-01")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isBadRequest());
     }
 
@@ -147,7 +147,7 @@ public class AvailabilityApiControllerTest {
         perform(get("/api/availabilities")
             .param("from", "2016-01-01")
             .param("to", "foo")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isBadRequest());
     }
 
@@ -158,7 +158,7 @@ public class AvailabilityApiControllerTest {
         perform(get("/api/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01")
-            .param("person", LOGIN))
+            .param("person", PERSON_ID.toString()))
             .andExpect(status().isBadRequest());
     }
 

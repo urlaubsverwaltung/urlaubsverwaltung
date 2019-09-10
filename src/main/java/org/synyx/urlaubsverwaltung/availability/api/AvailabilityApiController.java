@@ -41,21 +41,21 @@ public class AvailabilityApiController {
     )
     @GetMapping("/availabilities")
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    public AvailabilityList personsAvailabilities(
+    public AvailabilityListDto personsAvailabilities(
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam("from")
             String startDateString,
-        @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_YEAR)
+        @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_MONTH)
         @RequestParam("to")
             String endDateString,
-        @ApiParam(value = "login name of the person")
+        @ApiParam(value = "id of the person")
         @RequestParam(value = "person")
-            String personLoginName) {
+            Integer personId) {
 
-        final Optional<Person> optionalPerson = personService.getPersonByLogin(personLoginName);
+        final Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
-        if (!optionalPerson.isPresent()) {
-            throw new IllegalArgumentException("No person found for loginName = " + personLoginName);
+        if (optionalPerson.isEmpty()) {
+            throw new IllegalArgumentException("No person found for id = " + personId);
         }
 
         final LocalDate startDate;
