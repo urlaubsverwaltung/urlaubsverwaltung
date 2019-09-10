@@ -117,32 +117,6 @@ public class RestApiSecurityConfigIT {
     }
 
     @Test
-    public void getHolidaysWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays"));
-
-        resultActions.andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void getHolidaysWithBasicAuthIsOk() throws Exception {
-
-        createAuthenticatedPerson();
-
-        final Person person = new Person("person", "Fresh", "Holy", "");
-        final Person savedPerson = personService.save(person);
-        final String savedPersonId = savedPerson.getId() == null ? "" : savedPerson.getId().toString();
-
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/holidays")
-            .param("year", String.valueOf(now.getYear()))
-            .param("month", String.valueOf(now.getMonthValue()))
-            .param("personId", savedPersonId)
-            .with(httpBasic("authenticated", "secret")));
-
-        resultActions.andExpect(status().isOk());
-    }
-
-    @Test
     public void getSicknotesWithSecondStageUserIsForbidden() throws Exception {
 
         createSecondStagePerson();

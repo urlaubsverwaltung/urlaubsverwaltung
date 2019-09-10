@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,7 @@ import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -53,6 +55,7 @@ public class PublicHolidayApiController {
         value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
     )
     @GetMapping("/holidays")
+    @PreAuthorize(SecurityRules.IS_OFFICE + " or @securityProvider.loggedInUserRequestsOwnData(authentication, #personId)")
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
