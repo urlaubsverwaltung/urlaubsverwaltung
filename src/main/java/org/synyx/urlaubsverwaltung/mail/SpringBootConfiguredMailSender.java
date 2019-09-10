@@ -43,7 +43,7 @@ public class SpringBootConfiguredMailSender implements MailSender {
             this.javaMailSender.send(message);
 
             for (String recipient : message.getTo()) {
-                LOG.info("Sent email to {}", recipient);
+                LOG.debug("Sent email to {}", recipient);
             }
 
             if (LOG.isDebugEnabled()) {
