@@ -6,12 +6,14 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -40,6 +42,7 @@ public class PersonApiController {
         value = "Get all active persons of the application", notes = "Get all active persons of the application"
     )
     @GetMapping
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     public ResponseEntity<List<PersonResponse>> persons(HttpServletRequest request) {
 
         List<PersonResponse> persons = personService.getActivePersons().stream()
@@ -49,10 +52,9 @@ public class PersonApiController {
         return new ResponseEntity<>(persons, OK);
     }
 
-    @ApiOperation(
-        value = "Get one active person by id", notes = "Get one active person by id"
-    )
+    @ApiOperation(value = "Get one active person by id", notes = "Get one active person by id")
     @GetMapping(PERSON_URL)
+    @PreAuthorize(SecurityRules.IS_OFFICE + " or @securityProvider.loggedInUserRequestsOwnData(authentication, #id)")
     public ResponseEntity<PersonResponse> getPerson(@PathVariable Integer id, HttpServletRequest request) {
 
         return personService.getPersonByID(id)
