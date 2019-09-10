@@ -71,6 +71,7 @@ public class WorkingTimeService {
         }
 
         workingTimeDAO.save(workingTime);
+        LOG.info("Successfully created working time for person {}", person);
     }
 
 
