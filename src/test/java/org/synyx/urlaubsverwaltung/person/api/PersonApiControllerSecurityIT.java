@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.WithMockCustomUser;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -48,12 +49,19 @@ public class PersonApiControllerSecurityIT {
         resultActions.andExpect(status().isUnauthorized());
     }
 
-    //TODO @Test
-    //@WithMockUser
-    //public void getPersonAuthenticatedIsNotOk() throws Exception {
-    //    final ResultActions resultActions = perform(get("/api/persons/1"));
-    //    resultActions.andExpect(status().isForbidden());
-    //}
+    @Test
+    @WithMockCustomUser
+    public void getPersonForMyIdIsOk() throws Exception {
+        final ResultActions resultActions = perform(get("/api/persons/1"));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockCustomUser(id = 3)
+    public void getPersonForAnotherIdIsNotOk() throws Exception {
+        final ResultActions resultActions = perform(get("/api/persons/1"));
+        resultActions.andExpect(status().isForbidden());
+    }
 
     @Test
     @WithMockUser(authorities = "OFFICE")
