@@ -2,7 +2,11 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.absence.api.AbsenceApiController;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
@@ -13,88 +17,84 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class AbsenceApiControllerTest {
 
-    private MockMvc mockMvc;
+    private AbsenceApiController sut;
 
-    private PersonService personServiceMock;
-    private SickNoteService sickNoteServiceMock;
-    private ApplicationService applicationServiceMock;
+    @Mock
+    private PersonService personService;
+    @Mock
+    private SickNoteService sickNoteService;
+    @Mock
+    private ApplicationService applicationService;
 
     @Before
     public void setUp() {
-
-        personServiceMock = mock(PersonService.class);
-        applicationServiceMock = mock(ApplicationService.class);
-        sickNoteServiceMock = mock(SickNoteService.class);
-
-        mockMvc = MockMvcBuilders.standaloneSetup(new AbsenceApiController(personServiceMock, applicationServiceMock,
-                        sickNoteServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
+        sut = new AbsenceApiController(personService, applicationService, sickNoteService);
     }
-
 
     @Test
     public void ensureReturnsAbsencesOfPerson() throws Exception {
+        final Person person = createPerson("muster");
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
-        Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-
-        mockMvc.perform(get("/api/absences").param("from", "2016-01-01").param("year", "2016").param("person", "23"))
+        perform(get("/api/absences")
+            .param("from", "2016-01-01")
+            .param("year", "2016")
+            .param("person", "23"))
             .andExpect(status().isOk());
 
-        verify(sickNoteServiceMock)
+        verify(sickNoteService)
             .getByPersonAndPeriod(any(Person.class), eq(LocalDate.of(2016, 1, 1)),
                 eq(LocalDate.of(2016, 12, 31)));
-        verify(applicationServiceMock)
+        verify(applicationService)
             .getApplicationsForACertainPeriodAndPerson(eq(LocalDate.of(2016, 1, 1)),
                 eq(LocalDate.of(2016, 12, 31)), any(Person.class));
-        verify(personServiceMock).getPersonByID(23);
+        verify(personService).getPersonByID(23);
     }
-
 
     @Test
     public void ensureCorrectConversionOfVacationAndSickNotes() throws Exception {
-
-        Person person = TestDataCreator.createPerson("muster");
-
-        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 5, 19),
-                LocalDate.of(2016, 5, 20), DayLength.FULL);
+        final Person person = createPerson("muster");
+        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
+            LocalDate.of(2016, 5, 20), DayLength.FULL);
         sickNote.setId(1);
-
-        Application vacation = TestDataCreator.createApplication(person, LocalDate.of(2016, 4, 6),
+        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
             LocalDate.of(2016, 4, 6), DayLength.FULL);
 
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
-        when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
-                    any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(Collections.singletonList(sickNote));
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class),
+            any(LocalDate.class), any(LocalDate.class)))
+            .thenReturn(singletonList(sickNote));
 
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
-            .thenReturn(Collections.singletonList(vacation));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
+            .thenReturn(singletonList(vacation));
 
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23"))
+        perform(get("/api/absences").param("year", "2016").param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.response").exists())
@@ -110,26 +110,16 @@ public class AbsenceApiControllerTest {
             .andExpect(jsonPath("$.response.absences[2].href", is("1")));
     }
 
-
     @Test
     public void ensureTypeFilterIsWorking() throws Exception {
-
-        Person person = TestDataCreator.createPerson("muster");
-
-        Application vacation = TestDataCreator.createApplication(person, LocalDate.of(2016, 4, 6),
+        final Person person = createPerson("muster");
+        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
             LocalDate.of(2016, 4, 6), DayLength.FULL);
 
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
 
-        when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
-                    any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(Collections.singletonList(TestDataCreator.createSickNote(person)));
-
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
-            .thenReturn(Collections.singletonList(vacation));
-
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "VACATION"))
+        perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "VACATION"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.response").exists())
@@ -139,29 +129,19 @@ public class AbsenceApiControllerTest {
             .andExpect(jsonPath("$.response.absences[0].type", is("VACATION")));
     }
 
-
     @Test
     public void ensureMonthFilterIsWorking() throws Exception {
-
-        Person person = TestDataCreator.createPerson("muster");
-
-        Application vacation = TestDataCreator.createApplication(person, LocalDate.of(2016, 5, 30),
+        final Person person = createPerson("muster");
+        final Application vacation = createApplication(person, LocalDate.of(2016, 5, 30),
             LocalDate.of(2016, 6, 1), DayLength.FULL);
-
-        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 6, 30),
+        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 6, 30),
             LocalDate.of(2016, 7, 6), DayLength.FULL);
 
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(singletonList(sickNote));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
 
-        when(sickNoteServiceMock.getByPersonAndPeriod(any(Person.class),
-                    any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(Collections.singletonList(sickNote));
-
-        when(applicationServiceMock.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
-            .thenReturn(Collections.singletonList(vacation));
-
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))
+        perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.response").exists())
@@ -173,79 +153,84 @@ public class AbsenceApiControllerTest {
             .andExpect(jsonPath("$.response.absences[1].type", is("SICK_NOTE")));
     }
 
-
     @Test
     public void ensureBadRequestForMissingYearParameter() throws Exception {
-
-        mockMvc.perform(get("/api/absences").param("person", "23")).andExpect(status().isBadRequest());
+        perform(get("/api/absences")
+            .param("person", "23"))
+            .andExpect(status().isBadRequest());
     }
-
 
     @Test
     public void ensureBadRequestForInvalidYearParameter() throws Exception {
+        final Person person = createPerson("muster");
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
-        Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-
-        mockMvc.perform(get("/api/absences").param("year", "foo").param("person", "23"))
+        perform(get("/api/absences")
+            .param("year", "foo")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
-
 
     @Test
     public void ensureBadRequestForInvalidMonthParameter() throws Exception {
+        final Person person = createPerson("muster");
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
-        Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "foo").param("person", "23"))
+        perform(get("/api/absences")
+            .param("year", "2016")
+            .param("month", "foo")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
-
 
     @Test
     public void ensureBadRequestForOtherInvalidMonthParameter() throws Exception {
+        final Person person = createPerson("muster");
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
-        Person person = TestDataCreator.createPerson("muster");
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "30").param("person", "23"))
+        perform(get("/api/absences")
+            .param("year", "2016")
+            .param("month", "30")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
-
 
     @Test
     public void ensureBadRequestForMissingPersonParameter() throws Exception {
-
-        mockMvc.perform(get("/api/absences").param("year", "2016")).andExpect(status().isBadRequest());
+        perform(get("/api/absences").param("year", "2016")).andExpect(status().isBadRequest());
     }
-
 
     @Test
     public void ensureBadRequestForInvalidPersonParameter() throws Exception {
-
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "foo"))
+        perform(get("/api/absences")
+            .param("year", "2016")
+            .param("person", "foo"))
             .andExpect(status().isBadRequest());
     }
-
 
     @Test
     public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
-
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23"))
+        perform(get("/api/absences")
+            .param("year", "2016")
+            .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void ensureBadRequestForInvalidTypeParameter() throws Exception {
+        when(personService.getPersonByID(anyInt()))
+            .thenReturn(Optional.of(createPerson()));
 
-        when(personServiceMock.getPersonByID(anyInt()))
-            .thenReturn(Optional.of(TestDataCreator.createPerson()));
-
-        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "FOO"))
+        perform(get("/api/absences")
+            .param("year", "2016")
+            .param("person", "23")
+            .param("type", "FOO"))
             .andExpect(status().isBadRequest());
+    }
+
+    private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
+        return MockMvcBuilders.standaloneSetup(sut).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build().perform(builder);
     }
 }
