@@ -22,7 +22,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Api("Sick Notes: Get all sick notes for a certain period")
@@ -58,8 +59,8 @@ public class SickNoteApiController {
         @RequestParam(value = "person", required = false)
             Integer personId) {
 
-        LocalDate startDate;
-        LocalDate endDate;
+        final LocalDate startDate;
+        final LocalDate endDate;
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
             startDate = LocalDate.parse(from, formatter);
@@ -72,9 +73,9 @@ public class SickNoteApiController {
             throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
+        final Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
 
-        List<SickNote> sickNotes;
+        final List<SickNote> sickNotes;
 
         if (optionalPerson.isPresent()) {
             sickNotes = sickNoteService.getByPersonAndPeriod(optionalPerson.get(), startDate, endDate);
@@ -82,10 +83,10 @@ public class SickNoteApiController {
             sickNotes = sickNoteService.getByPeriod(startDate, endDate);
         }
 
-        List<SickNoteResponse> sickNoteResponses = sickNotes.stream()
+        final List<SickNoteResponse> sickNoteResponses = sickNotes.stream()
             .filter(SickNote::isActive)
             .map(SickNoteResponse::new)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         return new ResponseWrapper<>(new SickNoteListResponse(sickNoteResponses));
     }

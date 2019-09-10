@@ -66,8 +66,8 @@ public class WorkDayApiController {
         @RequestParam("person")
             Integer personId) {
 
-        LocalDate startDate;
-        LocalDate endDate;
+        final LocalDate startDate;
+        final LocalDate endDate;
         try{
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
             startDate = LocalDate.parse(from, fmt);
@@ -80,14 +80,14 @@ public class WorkDayApiController {
             throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        Optional<Person> person = personService.getPersonByID(personId);
+        final Optional<Person> person = personService.getPersonByID(personId);
 
         if (!person.isPresent()) {
             throw new IllegalArgumentException("No person found for ID=" + personId);
         }
 
-        DayLength howLong = DayLength.valueOf(length);
-        BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
+        final DayLength howLong = DayLength.valueOf(length);
+        final BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
 
         return new ResponseWrapper<>(new WorkDayResponse(days.toString()));
     }

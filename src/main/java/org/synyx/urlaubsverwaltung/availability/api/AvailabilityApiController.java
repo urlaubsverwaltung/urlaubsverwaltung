@@ -49,14 +49,14 @@ public class AvailabilityApiController {
         @RequestParam(value = "person")
         String personLoginName) {
 
-        Optional<Person> optionalPerson = personService.getPersonByLogin(personLoginName);
+        final Optional<Person> optionalPerson = personService.getPersonByLogin(personLoginName);
 
         if (!optionalPerson.isPresent()) {
             throw new IllegalArgumentException("No person found for loginName = " + personLoginName);
         }
 
-        LocalDate startDate;
-        LocalDate endDate;
+        final LocalDate startDate;
+        final LocalDate endDate;
         try{
             startDate = LocalDate.parse(startDateString);
             endDate = LocalDate.parse(endDateString);
@@ -65,8 +65,7 @@ public class AvailabilityApiController {
         }
 
         if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("startdate " + startDateString + " must not be after endDate "
-                + endDateString);
+            throw new IllegalArgumentException("startdate " + startDateString + " must not be after endDate " + endDateString);
         }
 
         boolean requestedDateRangeIsMoreThanOneMonth = startDate.minusDays(1).isBefore(endDate.minusMonths(1));

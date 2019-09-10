@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 
-import java.util.stream.Collectors;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Api("Departments: Get information about the departments of the application")
@@ -31,10 +33,11 @@ public class DepartmentApiController {
     @GetMapping(ROOT_URL)
     public ResponseWrapper<DepartmentsListWrapper> departments() {
 
-        return new ResponseWrapper<>(new DepartmentsListWrapper(
-            departmentService.getAllDepartments()
-                .stream()
-                .map(DepartmentResponse::new)
-                .collect(Collectors.toList())));
+        final List<DepartmentResponse> departmentResponses = departmentService.getAllDepartments()
+            .stream()
+            .map(DepartmentResponse::new)
+            .collect(toList());
+
+        return new ResponseWrapper<>(new DepartmentsListWrapper(departmentResponses));
     }
 }
