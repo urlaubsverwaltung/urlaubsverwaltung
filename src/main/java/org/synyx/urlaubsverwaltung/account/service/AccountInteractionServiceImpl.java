@@ -10,8 +10,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -34,14 +32,9 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private final VacationDaysService vacationDaysService;
     private final Clock clock;
 
-    //TODO: extract application property
-    private static final int DEFAULT_ANNUAL_VACATION_DAYS = 20;
-    private static final double VACATION_DAYS_PER_MONTH = ((double) DEFAULT_ANNUAL_VACATION_DAYS) / 12;
-
     @Autowired
     AccountInteractionServiceImpl(AccountProperties accountProperties, AccountService accountService, VacationDaysService vacationDaysService, Clock clock) {
         this.accountProperties = accountProperties;
-
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.clock = clock;
@@ -51,22 +44,27 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     public void createDefaultAccount(Person person) {
 
         LocalDate today = LocalDate.now(clock);
+        Integer defaultVacationDays = accountProperties.getDefaultVacationDays();
 
-        BigDecimal remainingVacationDaysForThisYear = new BigDecimal(
-            VACATION_DAYS_PER_MONTH * today.getMonthValue(), // calculate remaining vacation days starting from todays month
-            new MathContext(0, RoundingMode.CEILING)
-        );
+        BigDecimal remainingVacationDaysForThisYear = getRemainingVacationDaysForThisYear(today, defaultVacationDays);
         BigDecimal noRemainingVacationDaysForLastYear = BigDecimal.ZERO;
 
         this.updateOrCreateHolidaysAccount(
             person,
             today, // from today...
             today.with(lastDayOfYear()), //...until end of year
-            BigDecimal.valueOf(accountProperties.getDefaultVacationDays()), // assuming germany as default: http://www.gesetze-im-internet.de/burlg/__3.html
+            BigDecimal.valueOf(defaultVacationDays),
             remainingVacationDaysForThisYear,
-            noRemainingVacationDaysForLastYear,
+            noRemainingVacationDaysForLastYear, // for initial user creation there is no remaining vacation from last year
             noRemainingVacationDaysForLastYear,
             "");
+    }
+
+    // calculate remaining vacation days starting from todays month, round to ceiling
+    private BigDecimal getRemainingVacationDaysForThisYear(LocalDate today, Integer defaultVacationDays) {
+        double vacationDaysPerMonth = ((double) defaultVacationDays) / 12;
+        int remainingMonthForThisYear = 12 - today.getMonthValue();
+        return new BigDecimal((int) Math.ceil(vacationDaysPerMonth * remainingMonthForThisYear));
     }
 
     @Override

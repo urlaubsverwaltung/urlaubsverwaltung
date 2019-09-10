@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AccountInteractionServiceImplTest {
 
-    private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 9, 13);
+    private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 8, 13);
 
     private AccountInteractionServiceImpl sut;
 
@@ -74,7 +74,7 @@ public class AccountInteractionServiceImplTest {
         ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
 
         Account expectedAccount = new Account(person, LocalDate.now(clock), LocalDate.now(clock).with(lastDayOfYear()), valueOf(20), ZERO, ZERO, "");
-        expectedAccount.setVacationDays(valueOf(15));
+        expectedAccount.setVacationDays(valueOf(7));
 
         sut.createDefaultAccount(person);
 
