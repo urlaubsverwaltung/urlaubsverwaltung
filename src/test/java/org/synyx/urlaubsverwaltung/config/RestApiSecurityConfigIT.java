@@ -130,27 +130,6 @@ public class RestApiSecurityConfigIT {
     }
 
     @Test
-    public void getVacationsWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/vacations"));
-
-        resultActions.andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void getVacationsWithBasicAuthIsOk() throws Exception {
-
-        createAuthenticatedPerson();
-
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/vacations")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-            .with(httpBasic("authenticated", "secret")));
-
-        resultActions.andExpect(status().isOk());
-    }
-
-    @Test
     public void getVacationOverviewWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/vacationoverview"));
 

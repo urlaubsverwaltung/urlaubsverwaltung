@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -54,6 +56,7 @@ public class VacationApiController {
             + "Information only reachable for users with role office."
     )
     @GetMapping("/vacations")
+    @PreAuthorize(SecurityRules.IS_OFFICE + " or @securityProvider.loggedInUserRequestsOwnData(authentication, #personId)")
     public ResponseWrapper<VacationListResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
