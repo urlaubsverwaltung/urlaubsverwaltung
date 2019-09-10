@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -38,16 +40,17 @@ public class AvailabilityApiController {
             "Get all availabilities for a certain period and person. Maximum allowed period per request is one month."
     )
     @GetMapping("/availabilities")
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     public AvailabilityList personsAvailabilities(
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam("from")
-        String startDateString,
+            String startDateString,
         @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam("to")
-        String endDateString,
+            String endDateString,
         @ApiParam(value = "login name of the person")
         @RequestParam(value = "person")
-        String personLoginName) {
+            String personLoginName) {
 
         final Optional<Person> optionalPerson = personService.getPersonByLogin(personLoginName);
 
@@ -57,7 +60,7 @@ public class AvailabilityApiController {
 
         final LocalDate startDate;
         final LocalDate endDate;
-        try{
+        try {
             startDate = LocalDate.parse(startDateString);
             endDate = LocalDate.parse(endDateString);
         } catch (DateTimeParseException exception) {

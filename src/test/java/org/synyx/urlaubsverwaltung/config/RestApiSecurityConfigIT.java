@@ -42,9 +42,6 @@ public class RestApiSecurityConfigIT {
     @Autowired
     private PersonService personService;
 
-    @Autowired
-    private WorkingTimeService workingTimeService;
-
     @Test
     public void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/absences"));
@@ -89,34 +86,6 @@ public class RestApiSecurityConfigIT {
     }
 
     @Test
-    public void getAvailabilitiesWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/availabilities"));
-
-        resultActions.andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void getAvailabilitiesWithBasicAuthIsOk() throws Exception {
-
-        createAuthenticatedPerson();
-
-        final Person person = new Person("John", "Fresh", "John", "");
-        personService.save(person);
-
-        List<Integer> workingDays = singletonList(MONDAY.getValue());
-        workingTimeService.touch(workingDays, Optional.empty(), LocalDate.now(), person);
-
-        LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-            .param("person", "John")
-            .with(httpBasic("authenticated", "secret")));
-
-        resultActions.andExpect(status().isOk());
-    }
-
-    @Test
     public void getSicknotesWithSecondStageUserIsForbidden() throws Exception {
 
         createSecondStagePerson();
@@ -127,28 +96,6 @@ public class RestApiSecurityConfigIT {
             .param("to", dtf.format(now.plusDays(5)))
             .with(httpBasic("secondStage", "secret")))
             .andExpect(status().isForbidden());
-    }
-
-    @Test
-    public void getVacationOverviewWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/vacationoverview"));
-
-        resultActions.andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void getVacationOverviewWithBasicAuthIsOk() throws Exception {
-
-        createAuthenticatedPerson();
-
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/vacationoverview")
-            .param("selectedYear", String.valueOf(now.getYear()))
-            .param("selectedMonth", String.valueOf(now.getMonthValue()))
-            .param("selectedDepartment", "1")
-            .with(httpBasic("authenticated", "secret")));
-
-        resultActions.andExpect(status().isOk());
     }
 
     private Person createAuthenticatedPerson() {
