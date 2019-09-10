@@ -198,36 +198,6 @@ public class RestApiSecurityConfigIT {
         resultActions.andExpect(status().isOk());
     }
 
-    @Test
-    public void getWorkdaysWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/vacationoverview"));
-
-        resultActions.andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void getWorkdaysWithBasicAuthIsOk() throws Exception {
-
-        createAuthenticatedPerson();
-
-        final Person person = new Person("person", "Fresh", "Holy", "");
-        final Person savedPerson = personService.save(person);
-        final String savedPersonId = savedPerson.getId() == null ? "" : savedPerson.getId().toString();
-
-        List<Integer> workingDays = singletonList(MONDAY.getValue());
-        workingTimeService.touch(workingDays, Optional.empty(), LocalDate.now(), savedPerson);
-
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/workdays")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-            .param("length", "FULL")
-            .param("person", savedPersonId)
-            .with(httpBasic("authenticated", "secret")));
-
-        resultActions.andExpect(status().isOk());
-    }
-
     private Person createAuthenticatedPerson() {
         final Person authenticated = new Person("authenticated", "Only", "Aussie", "");
         authenticated.setPassword("bc49b860775c4e6a813800fe827f093d40cd34a84134af9c6c67f5b68b0ccc43be73479103f8b714"); // secret
