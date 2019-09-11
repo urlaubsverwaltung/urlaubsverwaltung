@@ -3,6 +3,7 @@
 * Fix highlight current day on vacation request [#751](https://github.com/synyx/urlaubsverwaltung/pull/751)
 * Decouple auth from api [#759](https://github.com/synyx/urlaubsverwaltung/pull/759)
 * ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
+* Secure Api Access [#695](https://github.com/synyx/urlaubsverwaltung/pull/695)
 * Upgrade spring boot parent to 2.1.7
 * Upgrade NodeJS to 12
 * Upgrade date-fns from 1.x to 2.0.1
