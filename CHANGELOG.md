@@ -2,12 +2,12 @@
 * Fix broken link in department overview [#749](https://github.com/synyx/urlaubsverwaltung/pull/749)
 * Fix highlight current day on vacation request [#751](https://github.com/synyx/urlaubsverwaltung/pull/751)
 * Decouple auth from api [#759](https://github.com/synyx/urlaubsverwaltung/pull/759)
+* API-Change: `api/availability` now uses `personId` instead of `loginName`. The id of a person can be discovered via `api/person` [736](https://github.com/synyx/urlaubsverwaltung/issues/736)
 * ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
 * Secure Api Access [#695](https://github.com/synyx/urlaubsverwaltung/pull/695)
 * Upgrade spring boot parent to 2.1.7
 * Upgrade NodeJS to 12
 * Upgrade date-fns from 1.x to 2.0.1
-* API-Change: `api/availability` now uses `personId` instead of `loginName`. The id of a person can be discovered via `api/person` [736](https://github.com/synyx/urlaubsverwaltung/issues/736)
 
 ### [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4)
 * Fix login parameter security
