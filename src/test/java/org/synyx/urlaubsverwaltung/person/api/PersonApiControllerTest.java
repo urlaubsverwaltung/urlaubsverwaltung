@@ -58,6 +58,8 @@ public class PersonApiControllerTest {
             .andExpect(jsonPath("$.[0].firstName", is("Foo")))
             .andExpect(jsonPath("$.[0].links..rel", hasItem("self")))
             .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1"))))
+            .andExpect(jsonPath("$.[0].links..rel", hasItem("availabilities")))
+            .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/availabilities?from={from}&to={to}&person=1"))))
             .andExpect(jsonPath("$.[0].email", is("foo@test.de")))
             .andExpect(jsonPath("$.[1].lastName", is("Bar")));
     }
@@ -77,6 +79,8 @@ public class PersonApiControllerTest {
             .andExpect(jsonPath("$.lastName", is("Foo")))
             .andExpect(jsonPath("$.email", is("foo@test.de")))
             .andExpect(jsonPath("$.links..rel", hasItem("self")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42"))));
+            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42"))))
+            .andExpect(jsonPath("$.links..rel", hasItem("availabilities")))
+            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/availabilities?from={from}&to={to}&person=42"))));
     }
 }

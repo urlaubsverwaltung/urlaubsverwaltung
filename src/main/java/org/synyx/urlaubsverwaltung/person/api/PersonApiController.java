@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
@@ -20,6 +21,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
+import static org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController.AVAILABILITIES;
 
 @Api("Persons: Get information about the persons of the application")
 @RestController("restApiPersonController")
@@ -64,6 +66,8 @@ public class PersonApiController {
     private PersonResponse createPersonResponse(Person person) {
         final PersonResponse personResponse = PersonResponseMapper.mapToResponse(person);
         personResponse.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
+        personResponse.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(null, null, person.getId()))
+                .withRel(AVAILABILITIES));
         return personResponse;
     }
 }
