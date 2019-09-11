@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.security.CustomPrincipal;
 
 import java.util.Comparator;
 import java.util.List;
@@ -165,7 +164,7 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalStateException("No authentication found in context.");
         }
 
-        String username = ((CustomPrincipal)authentication.getPrincipal()).getName();
+        String username = authentication.getName();
 
         Optional<Person> person = getPersonByLogin(username);
 

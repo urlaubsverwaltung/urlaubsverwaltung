@@ -28,7 +28,65 @@ public class PublicHolidayApiControllerSecurityIT {
         resultActions.andExpect(status().isUnauthorized());
     }
 
-    // TODO self test
+    @Test
+    @WithMockUser
+    public void getHolidaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void getHolidaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getHolidaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void getHolidaysAsBossUserForOtherUserIsForbidden() throws Exception {
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getHolidaysAsAdminUserForOtherUserIsForbidden() throws Exception {
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getHolidaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
 
     @Test
     @WithMockUser(authorities = "OFFICE")

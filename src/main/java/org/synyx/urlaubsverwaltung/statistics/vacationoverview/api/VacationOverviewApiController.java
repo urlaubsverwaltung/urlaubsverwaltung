@@ -29,7 +29,7 @@ public class VacationOverviewApiController {
             value = "Get Vacation-Overview Metadata",
             notes = "Get Vacation-Overview metadata for all members of a department")
     @GetMapping("/vacationoverview")
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     public ResponseWrapper<VacationOverviewResponse> getHolidayOverview(
             @RequestParam("selectedDepartment") String selectedDepartment,
             @RequestParam("selectedYear") Integer selectedYear,

@@ -37,16 +37,83 @@ public class WorkDayApiControllerSecurityIT {
         resultActions.andExpect(status().isUnauthorized());
     }
 
-    //@Test TODO
-    //@WithMockUser
-    //public void getWorkdaysWithAuthenticatedIsNotOk() throws Exception {
-    //   final ResultActions resultActions = perform(get("/api/workdays")
-    //       .param("from", "2016-01-04")
-    //       .param("to", "2016-01-04")
-    //       .param("length", "FULL")
-    //       .param("person", "23"));
-    //   resultActions.andExpect(status().isForbidden());
-    //}
+    @Test
+    @WithMockUser
+    public void getWorkdaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void getWorkdaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getWorkdaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void getWorkdaysAsBossUserForOtherUserIsForbidden() throws Exception {
+        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getWorkdaysAsAdminUserForOtherUserIsForbidden() throws Exception {
+        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getWorkdaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
+        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
 
     @Test
     @WithMockUser(authorities = "OFFICE")

@@ -34,6 +34,72 @@ public class VacationApiControllerSecurityIT {
     }
 
     @Test
+    @WithMockUser
+    public void getVacationsAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void getVacationsAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getVacationsAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void getVacationsAsBossUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getVacationsAsAdminUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getVacationsAsInactiveUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
     @WithMockUser(authorities = "OFFICE")
     public void getVacationsWithBasicAuthIsOk() throws Exception {
         final LocalDateTime now = LocalDateTime.now();

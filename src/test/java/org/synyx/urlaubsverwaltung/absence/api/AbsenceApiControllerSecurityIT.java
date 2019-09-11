@@ -30,23 +30,59 @@ public class AbsenceApiControllerSecurityIT {
         resultActions.andExpect(status().isUnauthorized());
     }
 
-    // TODO @Test
-    // @WithMockUser
-    // public void getAbsencesForOneselfIsOk() throws Exception {
-    //    perform(get("/api/absences")
-    //        .param("year", String.valueOf(LocalDate.now().getYear()))
-    //        .param("person", "1"))
-    //        .andExpect(status().isOk());
-    // }
+    @Test
+    @WithMockUser
+    public void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isForbidden());
+    }
 
-    //TODO @Test
-    //@WithMockUser
-    //public void getAbsencesAsNotPrivilegedUserForOtherUserIsForbidden() throws Exception {
-    //    perform(get("/api/absences")
-    //        .param("year", String.valueOf(LocalDate.now().getYear()))
-    //         .param("person", "2"))
-    //         .andExpect(status().isForbidden());
-    //}
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void getAbsencesAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void getAbsencesAsBossUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isForbidden());
+    }
 
     @Test
     @WithMockUser(authorities = "OFFICE")
@@ -56,6 +92,7 @@ public class AbsenceApiControllerSecurityIT {
             .param("person", "1"))
             .andExpect(status().isOk());
     }
+
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);

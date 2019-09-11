@@ -56,7 +56,7 @@ public class VacationApiController {
             + "Information only reachable for users with role office."
     )
     @GetMapping("/vacations")
-    @PreAuthorize(SecurityRules.IS_OFFICE + " or @securityProvider.loggedInUserRequestsOwnData(authentication, #personId)")
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     public ResponseWrapper<VacationListResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)

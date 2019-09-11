@@ -54,7 +54,7 @@ public class PersonApiController {
 
     @ApiOperation(value = "Get one active person by id", notes = "Get one active person by id")
     @GetMapping(PERSON_URL)
-    @PreAuthorize(SecurityRules.IS_OFFICE + " or @securityProvider.loggedInUserRequestsOwnData(authentication, #id)")
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     public ResponseEntity<PersonResponse> getPerson(@PathVariable Integer id, HttpServletRequest request) {
 
         return personService.getPersonByID(id)

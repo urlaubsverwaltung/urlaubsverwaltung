@@ -47,7 +47,7 @@ public class SickNoteApiController {
         + "Information only reachable for users with role office."
     )
     @GetMapping("/sicknotes")
-    @PreAuthorize(SecurityRules.IS_OFFICE + " or @securityProvider.loggedInUserRequestsOwnData(authentication, #personId)")
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     public ResponseWrapper<SickNoteListResponse> sickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")

@@ -85,6 +85,36 @@ public class SickNoteApiControllerSecurityIT {
             .andExpect(status().isForbidden());
     }
 
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void getSicknotesWithUserIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getSicknotesWithInactiveIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getSicknotesWithAdminIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }

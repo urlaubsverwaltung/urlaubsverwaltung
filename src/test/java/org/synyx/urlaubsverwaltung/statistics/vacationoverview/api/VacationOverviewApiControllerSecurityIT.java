@@ -30,16 +30,56 @@ public class VacationOverviewApiControllerSecurityIT {
     private VacationOverviewService vacationOverviewService;
 
     @Test
-    public void getWorkdaysWithoutAuthIsUnauthorized() throws Exception {
+    public void getHolidayOverviewWithoutAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/vacationoverview"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
-    // TODO self test
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void getHolidayOverviewWithUserRoleIsForbidden() throws Exception {
+
+        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
+            .thenReturn(List.of(new VacationOverview()));
+
+        final ResultActions resultActions = perform(get("/api/vacationoverview")
+            .param("selectedDepartment", "niceDepartment")
+            .param("selectedYear", "2015")
+            .param("selectedMonth", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getHolidayOverviewWithAdminRoleIsForbidden() throws Exception {
+
+        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
+            .thenReturn(List.of(new VacationOverview()));
+
+        final ResultActions resultActions = perform(get("/api/vacationoverview")
+            .param("selectedDepartment", "niceDepartment")
+            .param("selectedYear", "2015")
+            .param("selectedMonth", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getHolidayOverviewWithInactiveRoleIsForbidden() throws Exception {
+
+        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
+            .thenReturn(List.of(new VacationOverview()));
+
+        final ResultActions resultActions = perform(get("/api/vacationoverview")
+            .param("selectedDepartment", "niceDepartment")
+            .param("selectedYear", "2015")
+            .param("selectedMonth", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getWorkdaysWithOfficeRoleIsOk() throws Exception {
+    public void getHolidayOverviewWithOfficeRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
             .thenReturn(List.of(new VacationOverview()));
@@ -50,6 +90,50 @@ public class VacationOverviewApiControllerSecurityIT {
             .param("selectedMonth", "1"));
         resultActions.andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void getHolidayOverviewWithDepartmentHeadRoleIsOk() throws Exception {
+
+        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
+            .thenReturn(List.of(new VacationOverview()));
+
+        final ResultActions resultActions = perform(get("/api/vacationoverview")
+            .param("selectedDepartment", "niceDepartment")
+            .param("selectedYear", "2015")
+            .param("selectedMonth", "1"));
+        resultActions.andExpect(status().isOk());
+    }
+
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void getHolidayOverviewWithBossRoleIsOk() throws Exception {
+
+        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
+            .thenReturn(List.of(new VacationOverview()));
+
+        final ResultActions resultActions = perform(get("/api/vacationoverview")
+            .param("selectedDepartment", "niceDepartment")
+            .param("selectedYear", "2015")
+            .param("selectedMonth", "1"));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getHolidayOverviewWithSecondStageAuthorityRoleIsOk() throws Exception {
+
+        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
+            .thenReturn(List.of(new VacationOverview()));
+
+        final ResultActions resultActions = perform(get("/api/vacationoverview")
+            .param("selectedDepartment", "niceDepartment")
+            .param("selectedYear", "2015")
+            .param("selectedMonth", "1"));
+        resultActions.andExpect(status().isOk());
+    }
+
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);

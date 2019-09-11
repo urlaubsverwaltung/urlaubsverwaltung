@@ -47,8 +47,6 @@ public class AvailabilityApiControllerSecurityIT {
         resultActions.andExpect(status().isUnauthorized());
     }
 
-    // TODO self
-
     @Test
     @WithMockUser(authorities = "OFFICE")
     public void getAvailabilitiesHasOfficeRole() throws Exception {

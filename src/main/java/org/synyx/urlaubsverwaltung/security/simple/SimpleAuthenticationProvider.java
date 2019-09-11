@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.CustomPrincipal;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -71,7 +70,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
         if (encoder.matches(rawPassword, userPassword)) {
             LOG.info("User '{}' has signed in with roles: {}", username, grantedAuthorities);
 
-            return new UsernamePasswordAuthenticationToken(new CustomPrincipal(person.getId(), username), userPassword, grantedAuthorities);
+            return new UsernamePasswordAuthenticationToken(username, userPassword, grantedAuthorities);
         } else {
             LOG.info("User '{}' has tried to sign in with a wrong password", username);
 

@@ -40,6 +40,51 @@ public class DepartmentApiControllerSecurityIT {
     }
 
     @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void getDepartmentsAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+
+        final ResultActions resultActions = perform(get("/api/departments")
+            .with(httpBasic("user", "password")));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getDepartmentsAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+
+        final ResultActions resultActions = perform(get("/api/departments")
+            .with(httpBasic("user", "password")));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void getDepartmentsAsBossUserForOtherUserIsForbidden() throws Exception {
+
+        final ResultActions resultActions = perform(get("/api/departments")
+            .with(httpBasic("user", "password")));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getDepartmentsAsAdminUserForOtherUserIsForbidden() throws Exception {
+
+        final ResultActions resultActions = perform(get("/api/departments")
+            .with(httpBasic("user", "password")));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getDepartmentsAsInactiveUserForOtherUserIsForbidden() throws Exception {
+
+        final ResultActions resultActions = perform(get("/api/departments")
+            .with(httpBasic("user", "password")));
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
     @WithMockUser(authorities = "OFFICE")
     public void getDepartmentsWithOfficeRoleIsOk() throws Exception {
 
