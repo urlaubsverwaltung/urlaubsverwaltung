@@ -18,9 +18,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * This MailSender is configured via the settings page.
  *
- * @deprecated will be removed in version 3.0 - configure mail settings via application.properties
+ * @deprecated will be removed in version 3.0.0 - configure mail settings via application.properties
  */
-@Deprecated
+@Deprecated(since = "3.0.0")
 public class WebConfiguredMailSender implements MailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
