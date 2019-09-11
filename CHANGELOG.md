@@ -1,6 +1,7 @@
 ### master
 * Introduce application.properties based mail configuration [#634](https://github.com/synyx/urlaubsverwaltung/pull/634)
 * Add ability to create new user with default working days and vacation days [#365](https://github.com/synyx/urlaubsverwaltung/issues/365) [#805](https://github.com/synyx/urlaubsverwaltung/pull/805)
+* Add possibility to disable new user creation [#807](https://github.com/synyx/urlaubsverwaltung/pull/807)
 
 ### [urlaubsverwaltung-3.0.0.RC5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC5)
 * Fix broken link in department overview [#749](https://github.com/synyx/urlaubsverwaltung/pull/749)
