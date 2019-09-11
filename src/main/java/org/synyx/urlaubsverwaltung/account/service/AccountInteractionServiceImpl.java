@@ -4,15 +4,18 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -24,14 +27,44 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
+    private final AccountProperties accountProperties;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
+    private final Clock clock;
 
     @Autowired
-    AccountInteractionServiceImpl(AccountService accountService, VacationDaysService vacationDaysService) {
-
+    AccountInteractionServiceImpl(AccountProperties accountProperties, AccountService accountService, VacationDaysService vacationDaysService, Clock clock) {
+        this.accountProperties = accountProperties;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
+        this.clock = clock;
+    }
+
+    @Override
+    public void createDefaultAccount(Person person) {
+
+        LocalDate today = LocalDate.now(clock);
+        Integer defaultVacationDays = accountProperties.getDefaultVacationDays();
+
+        BigDecimal remainingVacationDaysForThisYear = getRemainingVacationDaysForThisYear(today, defaultVacationDays);
+        BigDecimal noRemainingVacationDaysForLastYear = BigDecimal.ZERO;
+
+        this.updateOrCreateHolidaysAccount(
+            person,
+            today, // from today...
+            today.with(lastDayOfYear()), //...until end of year
+            BigDecimal.valueOf(defaultVacationDays),
+            remainingVacationDaysForThisYear,
+            noRemainingVacationDaysForLastYear, // for initial user creation there is no remaining vacation from last year
+            noRemainingVacationDaysForLastYear,
+            "");
+    }
+
+    // calculate remaining vacation days starting from todays month, round to ceiling
+    private BigDecimal getRemainingVacationDaysForThisYear(LocalDate today, Integer defaultVacationDays) {
+        double vacationDaysPerMonth = ((double) defaultVacationDays) / 12;
+        int remainingMonthForThisYear = 12 - today.getMonthValue();
+        return new BigDecimal((int) Math.ceil(vacationDaysPerMonth * remainingMonthForThisYear));
     }
 
     @Override
