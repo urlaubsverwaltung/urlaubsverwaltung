@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SickNoteApiControllerTest {
+public class SickNoteViewControllerTest {
 
     private SickNoteViewController sut;
 

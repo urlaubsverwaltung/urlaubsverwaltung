@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 
 
 @Api("Vacations: Get all vacations for a certain period")
@@ -54,6 +56,7 @@ public class VacationApiController {
             + "Information only reachable for users with role office."
     )
     @GetMapping("/vacations")
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     public ResponseWrapper<VacationListResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
@@ -68,8 +71,8 @@ public class VacationApiController {
         @RequestParam(value = "person", required = false)
         Integer personId) {
 
-        LocalDate startDate;
-        LocalDate endDate;
+        final LocalDate startDate;
+        final LocalDate endDate;
         try{
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
             startDate = LocalDate.parse(from, fmt);
@@ -85,17 +88,16 @@ public class VacationApiController {
         List<Application> applications = new ArrayList<>();
 
         if (personId == null && departmentMembers == null) {
-            applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate,
-                    ApplicationStatus.ALLOWED);
+            applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED);
         }
 
         if (personId != null) {
-            Optional<Person> person = personService.getPersonByID(personId);
+            final Optional<Person> person = personService.getPersonByID(personId);
 
             if (person.isPresent()) {
                 if (departmentMembers == null || !departmentMembers) {
                     applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate,
-                            endDate, person.get(), ApplicationStatus.ALLOWED);
+                        endDate, person.get(), ALLOWED);
                 } else {
                     applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(),
                             startDate, endDate);

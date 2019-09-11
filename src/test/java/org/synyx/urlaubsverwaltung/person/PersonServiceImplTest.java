@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +42,11 @@ public class PersonServiceImplTest {
     public void setUp() {
 
         sut = new PersonServiceImpl(personDAO);
+    }
+
+    @After
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
 
@@ -349,8 +356,6 @@ public class PersonServiceImplTest {
 
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIfNoPersonCanBeFoundForTheCurrentlySignedInUser() {
-
-        when(personDAO.findByLoginName(anyString())).thenReturn(null);
 
         sut.getSignedInUser();
     }

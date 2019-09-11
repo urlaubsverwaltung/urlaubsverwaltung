@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -52,6 +54,7 @@ public class WorkDayApiController {
         notes = "The calculation depends on the working time of the person."
     )
     @GetMapping("/workdays")
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     public ResponseWrapper<WorkDayResponse> workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
@@ -66,8 +69,8 @@ public class WorkDayApiController {
         @RequestParam("person")
             Integer personId) {
 
-        LocalDate startDate;
-        LocalDate endDate;
+        final LocalDate startDate;
+        final LocalDate endDate;
         try{
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
             startDate = LocalDate.parse(from, fmt);
@@ -80,14 +83,14 @@ public class WorkDayApiController {
             throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        Optional<Person> person = personService.getPersonByID(personId);
+        final Optional<Person> person = personService.getPersonByID(personId);
 
         if (!person.isPresent()) {
             throw new IllegalArgumentException("No person found for ID=" + personId);
         }
 
-        DayLength howLong = DayLength.valueOf(length);
-        BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
+        final DayLength howLong = DayLength.valueOf(length);
+        final BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
 
         return new ResponseWrapper<>(new WorkDayResponse(days.toString()));
     }
