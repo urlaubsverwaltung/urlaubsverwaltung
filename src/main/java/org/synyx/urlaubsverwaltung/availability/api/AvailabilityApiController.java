@@ -21,9 +21,10 @@ import java.util.Optional;
 
 @Api("Availabilities: Get all availabilities for a certain period")
 @RestController("restApiAvailabilityController")
-@RequestMapping("/api")
+@RequestMapping("/api/")
 public class AvailabilityApiController {
 
+    public static final String AVAILABILITIES = "availabilities";
     private final PersonService personService;
     private final AvailabilityService availabilityService;
 
@@ -39,7 +40,7 @@ public class AvailabilityApiController {
         notes =
             "Get all availabilities for a certain period and person. Maximum allowed period per request is one month."
     )
-    @GetMapping("/availabilities")
+    @GetMapping(AVAILABILITIES)
     @PreAuthorize(SecurityRules.IS_OFFICE)
     public AvailabilityListDto personsAvailabilities(
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
