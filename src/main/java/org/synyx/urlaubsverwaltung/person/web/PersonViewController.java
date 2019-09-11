@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -59,17 +60,19 @@ public class PersonViewController {
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
+    private final PersonConfigurationProperties personConfigurationProperties;
 
     @Autowired
     public PersonViewController(PersonService personService, AccountService accountService,
                                 VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                WorkingTimeService workingTimeService, SettingsService settingsService) {
+                                WorkingTimeService workingTimeService, SettingsService settingsService, PersonConfigurationProperties personConfigurationProperties) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
+        this.personConfigurationProperties = personConfigurationProperties;
     }
 
     @GetMapping("/person/{personId}")
@@ -149,6 +152,8 @@ public class PersonViewController {
         }
 
         preparePersonView(signedInUser, persons, year, model);
+
+        model.addAttribute("userCanBeManipulated", personConfigurationProperties.isCanBeManipulated());
 
         return "person/person_view";
     }

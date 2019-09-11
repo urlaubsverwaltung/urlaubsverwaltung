@@ -89,13 +89,14 @@
 
                     <uv:print/>
 
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/person/new" class="fa-action pull-right" aria-hidden="true"
-                           data-title="<spring:message code="action.person.create"/>">
-                            <i class="fa fa-fw fa-user-plus" aria-hidden="true"></i>
-                        </a>
-                    </sec:authorize>
-
+                    <c:if test="${userCanBeManipulated}">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/person/new" class="fa-action pull-right" aria-hidden="true"
+                               data-title="<spring:message code="action.person.create"/>">
+                                <i class="fa fa-fw fa-user-plus" aria-hidden="true"></i>
+                            </a>
+                        </sec:authorize>
+                    </c:if>
                 </legend>
 
                 <c:choose>

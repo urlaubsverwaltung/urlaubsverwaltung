@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
@@ -54,7 +55,7 @@ public class PersonManagementViewControllerTest {
     @Before
     public void setUp() {
 
-        sut = new PersonManagementViewController(personService, departmentService, validator);
+        sut = new PersonManagementViewController(personService, departmentService, validator, new PersonConfigurationProperties());
     }
 
     @Test

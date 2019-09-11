@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -81,7 +82,8 @@ public class PersonViewControllerTest {
     @Before
     public void setUp() {
 
-        sut = new PersonViewController(personService, accountService, vacationDaysService, departmentService, workingTimeService, settingsService);
+        sut = new PersonViewController(personService, accountService, vacationDaysService, departmentService,
+            workingTimeService, settingsService, new PersonConfigurationProperties());
 
         person = new Person();
         person.setId(1);
