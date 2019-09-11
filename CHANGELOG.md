@@ -1,4 +1,6 @@
 ### master
+
+### [urlaubsverwaltung-3.0.0.RC5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC5)
 * Fix broken link in department overview [#749](https://github.com/synyx/urlaubsverwaltung/pull/749)
 * Fix highlight current day on vacation request [#751](https://github.com/synyx/urlaubsverwaltung/pull/751)
 * Decouple auth from api [#759](https://github.com/synyx/urlaubsverwaltung/pull/759)
