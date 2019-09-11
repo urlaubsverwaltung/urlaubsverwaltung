@@ -84,10 +84,12 @@
                             <a href="#publicHolidays" aria-controls="publicHolidays" role="tab"
                                data-toggle="tab"><spring:message code="settings.tabs.workingTime"/></a>
                         </li>
-                        <li role="presentation" class="${MAIL_ERROR_CSS_CLASS}">
-                            <a href="#mail" aria-controls="mail" role="tab" data-toggle="tab"><spring:message
-                                code="settings.tabs.mail"/></a>
-                        </li>
+                        <c:if test="${not isMailServerFromApplicationProperties}">
+                            <li role="presentation" class="${MAIL_ERROR_CSS_CLASS}">
+                                <a href="#mail" aria-controls="mail" role="tab" data-toggle="tab"><spring:message
+                                        code="settings.tabs.mail"/></a>
+                            </li>
+                        </c:if>
                         <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
                             <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab"><spring:message
                                 code="settings.tabs.calendar"/></a>
@@ -367,121 +369,122 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="mail">
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.mail.title"/></legend>
-                            </div>
-                            <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.mail.description"/>
-                        </span>
-                            </div>
-                            <div class="col-md-8 col-md-pull-4">
-                                <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="mailSettings.active.true">
-                                        <spring:message code='settings.mail.active'/>:
-                                    </label>
-                                    <div class="col-md-8 radio">
-                                        <label class="halves">
-                                            <form:radiobutton id="mailSettings.active.true" path="mailSettings.active"
-                                                              value="true"/>
-                                            <spring:message code="settings.mail.active.true"/>
+                    <c:if test="${not isMailServerFromApplicationProperties}">
+                        <div class="tab-pane" id="mail">
+                            <div class="form-section">
+                                <div class="col-xs-12">
+                                    <legend><spring:message code="settings.mail.title"/></legend>
+                                </div>
+                                <div class="col-md-4 col-md-push-8">
+                            <span class="help-block">
+                                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                                <spring:message code="settings.mail.description"/>
+                            </span>
+                                </div>
+                                <div class="col-md-8 col-md-pull-4">
+                                    <div class="form-group is-required">
+                                        <label class="control-label col-md-4" for="mailSettings.active.true">
+                                            <spring:message code='settings.mail.active'/>:
                                         </label>
-                                        <label class="halves">
-                                            <form:radiobutton id="mailSettings.active.false" path="mailSettings.active"
-                                                              value="false"/>
-                                            <spring:message code="settings.mail.active.false"/>
+                                        <div class="col-md-8 radio">
+                                            <label class="halves">
+                                                <form:radiobutton id="mailSettings.active.true" path="mailSettings.active"
+                                                                  value="true"/>
+                                                <spring:message code="settings.mail.active.true"/>
+                                            </label>
+                                            <label class="halves">
+                                                <form:radiobutton id="mailSettings.active.false" path="mailSettings.active"
+                                                                  value="false"/>
+                                                <spring:message code="settings.mail.active.false"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4" for="mailSettings.from">
+                                            <spring:message code='settings.mail.from'/>:
                                         </label>
+                                        <div class="col-md-8">
+                                            <form:input id="mailSettings.from" path="mailSettings.from" class="form-control"
+                                                        cssErrorClass="form-control error" type="email"/>
+                                            <span class="help-inline"><form:errors path="mailSettings.from"
+                                                                                   cssClass="error"/></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="mailSettings.from">
-                                        <spring:message code='settings.mail.from'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="mailSettings.from" path="mailSettings.from" class="form-control"
-                                                    cssErrorClass="form-control error" type="email"/>
-                                        <span class="help-inline"><form:errors path="mailSettings.from"
-                                                                               cssClass="error"/></span>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4" for="mailSettings.administrator">
+                                            <spring:message code='settings.mail.administrator'/>:
+                                        </label>
+                                        <div class="col-md-8">
+                                            <form:input id="mailSettings.administrator" path="mailSettings.administrator"
+                                                        class="form-control" cssErrorClass="form-control error"
+                                                        type="email"/>
+                                            <span class="help-inline"><form:errors path="mailSettings.administrator"
+                                                                                   cssClass="error"/></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="mailSettings.administrator">
-                                        <spring:message code='settings.mail.administrator'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="mailSettings.administrator" path="mailSettings.administrator"
-                                                    class="form-control" cssErrorClass="form-control error"
-                                                    type="email"/>
-                                        <span class="help-inline"><form:errors path="mailSettings.administrator"
-                                                                               cssClass="error"/></span>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4" for="mailSettings.baseLinkURL">
+                                            <spring:message code='settings.mail.baseURL'/>:
+                                        </label>
+                                        <div class="col-md-8">
+                                            <form:input id="mailSettings.baseLinkURL" path="mailSettings.baseLinkURL"
+                                                        placeholder="http://urlaubsverwaltung.mydomain.com/"
+                                                        class="form-control" cssErrorClass="form-control error"/>
+                                            <span class="help-inline"><form:errors path="mailSettings.baseLinkURL"
+                                                                                   cssClass="error"/></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="mailSettings.baseLinkURL">
-                                        <spring:message code='settings.mail.baseURL'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="mailSettings.baseLinkURL" path="mailSettings.baseLinkURL"
-                                                    placeholder="http://urlaubsverwaltung.mydomain.com/"
-                                                    class="form-control" cssErrorClass="form-control error"/>
-                                        <span class="help-inline"><form:errors path="mailSettings.baseLinkURL"
-                                                                               cssClass="error"/></span>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4" for="mailSettings.host">
+                                            <spring:message code='settings.mail.host'/>:
+                                        </label>
+                                        <div class="col-md-8">
+                                            <form:input id="mailSettings.host" path="mailSettings.host" class="form-control"
+                                                        cssErrorClass="form-control error"/>
+                                            <span class="help-inline"><form:errors path="mailSettings.host"
+                                                                                   cssClass="error"/></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="mailSettings.host">
-                                        <spring:message code='settings.mail.host'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="mailSettings.host" path="mailSettings.host" class="form-control"
-                                                    cssErrorClass="form-control error"/>
-                                        <span class="help-inline"><form:errors path="mailSettings.host"
-                                                                               cssClass="error"/></span>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4" for="mailSettings.port">
+                                            <spring:message code='settings.mail.port'/>:
+                                        </label>
+                                        <div class="col-md-8">
+                                            <form:input id="mailSettings.port" path="mailSettings.port" class="form-control"
+                                                        cssErrorClass="form-control error"/>
+                                            <span class="help-inline"><form:errors path="mailSettings.port"
+                                                                                   cssClass="error"/></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="mailSettings.port">
-                                        <spring:message code='settings.mail.port'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="mailSettings.port" path="mailSettings.port" class="form-control"
-                                                    cssErrorClass="form-control error"/>
-                                        <span class="help-inline"><form:errors path="mailSettings.port"
-                                                                               cssClass="error"/></span>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4" for="mailSettings.username">
+                                            <spring:message code='settings.mail.username'/>:
+                                        </label>
+                                        <div class="col-md-8">
+                                            <form:input id="mailSettings.username" path="mailSettings.username"
+                                                        class="form-control" cssErrorClass="form-control error"
+                                                        autocomplete="new-password"/>
+                                            <span class="help-inline"><form:errors path="mailSettings.username"
+                                                                                   cssClass="error"/></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="mailSettings.username">
-                                        <spring:message code='settings.mail.username'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="mailSettings.username" path="mailSettings.username"
-                                                    class="form-control" cssErrorClass="form-control error"
-                                                    autocomplete="new-password"/>
-                                        <span class="help-inline"><form:errors path="mailSettings.username"
-                                                                               cssClass="error"/></span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="mailSettings.password">
-                                        <spring:message code='settings.mail.password'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:password showPassword="true" id="mailSettings.password"
-                                                       path="mailSettings.password" class="form-control"
-                                                       cssErrorClass="form-control error"
-                                                       autocomplete="new-password"/>
-                                        <span class="help-inline"><form:errors path="mailSettings.password"
-                                                                               cssClass="error"/></span>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4" for="mailSettings.password">
+                                            <spring:message code='settings.mail.password'/>:
+                                        </label>
+                                        <div class="col-md-8">
+                                            <form:password showPassword="true" id="mailSettings.password"
+                                                           path="mailSettings.password" class="form-control"
+                                                           cssErrorClass="form-control error"
+                                                           autocomplete="new-password"/>
+                                            <span class="help-inline"><form:errors path="mailSettings.password"
+                                                                                   cssClass="error"/></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
+                    </c:if>
                     <div class="tab-pane" id="calendar">
                         <div class="form-section">
                             <div class="col-xs-12">

@@ -32,6 +32,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -71,7 +72,7 @@ public class SettingsViewControllerTest {
     @Before
     public void setUp() {
 
-        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator);
+        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator, "unknown");
     }
 
     @Test
@@ -202,12 +203,21 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsSavedSendsTechnicalMailIfValidationSuccessfully() throws Exception {
+    public void ensureSettingsSavedSendsTechnicalMailIfValidationSuccessfullyAndMailSettingsWebConfigured() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 
         perform(post("/web/settings"));
         verify(mailService).sendTechnicalMail(anyString(), anyString(), anyMap());
+    }
+
+    @Test
+    public void ensureSettingsSavedSendsNoTechnicalMailIfValidationSuccessfullyAndMailSettingsFromApplicationProperties() throws Exception {
+        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator, "my.smtp.server");
+        when(settingsService.getSettings()).thenReturn(someSettings());
+
+        perform(post("/web/settings"));
+        verifyZeroInteractions(mailService);
     }
 
     @Test

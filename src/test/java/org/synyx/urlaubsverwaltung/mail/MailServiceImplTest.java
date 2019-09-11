@@ -7,9 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,22 +33,18 @@ public class MailServiceImplTest {
     @Mock
     private MailSender mailSender;
     @Mock
-    private RecipientService recipientService;
+    private MailOptionProvider mailOptionProvider;
     @Mock
-    private SettingsService settingsService;
+    private RecipientService recipientService;
 
     @Before
     public void setUp() {
 
-        final Settings settings = new Settings();
-        settings.getMailSettings().setActive(true);
-        settings.getMailSettings().setAdministrator("admin@firma.test");
-        when(settingsService.getSettings()).thenReturn(settings);
-
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
         when(mailBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
+        when(mailOptionProvider.getSender()).thenReturn("no-reply@firma.test");
 
-        sut = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, settingsService);
+        sut = new MailServiceImpl(messageSource, mailBuilder, mailSender, mailOptionProvider, recipientService);
     }
 
     @Test
@@ -72,7 +65,7 @@ public class MailServiceImplTest {
 
         sut.sendMailTo(OVERTIME_NOTIFICATION_OFFICE, subjectMessageKey, templateName, model);
 
-        verify(mailSender).sendEmail(any(MailSettings.class), eq(recipients), eq("subject"), eq("emailBody"));
+        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(recipients), eq("subject"), eq("emailBody"));
     }
 
     @Test
@@ -89,7 +82,7 @@ public class MailServiceImplTest {
 
         sut.sendMailTo(hans, subjectMessageKey, templateName, new HashMap<>());
 
-        verify(mailSender).sendEmail(any(MailSettings.class), eq(recipients), eq("subject"), eq("emailBody"));
+        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(recipients), eq("subject"), eq("emailBody"));
     }
 
     @Test
@@ -112,8 +105,8 @@ public class MailServiceImplTest {
 
         sut.sendMailToEach(persons, subjectMessageKey, templateName, new HashMap<>());
 
-        verify(mailSender).sendEmail(any(MailSettings.class), eq(singletonList(hansMail)), eq("subject"), eq("emailBody"));
-        verify(mailSender).sendEmail(any(MailSettings.class), eq(singletonList(franzMail)), eq("subject"), eq("emailBody"));
+        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(singletonList(hansMail)), eq("subject"), eq("emailBody"));
+        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(singletonList(franzMail)), eq("subject"), eq("emailBody"));
     }
 
 
@@ -122,9 +115,11 @@ public class MailServiceImplTest {
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
+        String to = "admin@firma.test";
+        when(mailOptionProvider.getAdministrator()).thenReturn(to);
 
         sut.sendTechnicalMail(subjectMessageKey, templateName, new HashMap<>());
 
-        verify(mailSender).sendEmail(any(MailSettings.class), eq(singletonList("admin@firma.test")), eq("subject"), eq("emailBody"));
+        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(singletonList(to)), eq("subject"), eq("emailBody"));
     }
 }
