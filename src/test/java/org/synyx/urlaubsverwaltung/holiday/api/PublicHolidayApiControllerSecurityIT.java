@@ -4,16 +4,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -21,6 +31,11 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
+
+    @MockBean
+    private PersonService personService;
+    @MockBean
+    private WorkingTimeService workingTimeService;
 
     @Test
     public void getHolidaysWithoutAuthIsUnauthorized() throws Exception {
@@ -91,6 +106,10 @@ public class PublicHolidayApiControllerSecurityIT {
     @Test
     @WithMockUser(authorities = "OFFICE")
     public void getHolidaysWithOfficeRoleIsOk() throws Exception {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
+
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
             .param("month", "11")
