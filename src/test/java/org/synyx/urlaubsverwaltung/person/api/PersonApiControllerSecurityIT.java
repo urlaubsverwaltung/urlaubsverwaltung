@@ -4,13 +4,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,6 +27,9 @@ public class PersonApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
+
+    @MockBean
+    private PersonService personService;
 
     @Test
     public void getPersonsWithoutBasicAuthIsUnauthorized() throws Exception {
@@ -128,6 +137,9 @@ public class PersonApiControllerSecurityIT {
     @Test
     @WithMockUser(authorities = "OFFICE")
     public void getPersonAuthenticatedWithOfficeRoleIsOk() throws Exception {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isOk());
     }

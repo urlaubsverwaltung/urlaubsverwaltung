@@ -11,9 +11,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -30,6 +33,8 @@ public class WorkDayApiControllerSecurityIT {
 
     @MockBean
     private WorkDaysService workDaysService;
+    @MockBean
+    private PersonService personService;
 
     @Test
     public void getWorkdaysWithoutAuthIsUnauthorized() throws Exception {
@@ -119,6 +124,7 @@ public class WorkDayApiControllerSecurityIT {
     @WithMockUser(authorities = "OFFICE")
     public void getWorkdaysWithOfficeRoleIsOk() throws Exception {
 
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
         when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
