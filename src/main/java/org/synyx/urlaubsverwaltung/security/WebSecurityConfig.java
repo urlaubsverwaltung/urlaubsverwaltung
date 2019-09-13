@@ -17,10 +17,12 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private boolean isOauth2Enabled;
+    private final boolean isBasicAuthEnabled;
     private SecurityContextLogoutHandler oidcLogoutHandler;
 
     public WebSecurityConfig(SecurityConfigurationProperties properties) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+        this.isBasicAuthEnabled = properties.isBasicAuth();
     }
 
     @Override
@@ -66,6 +68,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login");
+        }
+
+        if (isBasicAuthEnabled) {
+            http.httpBasic();
         }
     }
 

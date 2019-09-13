@@ -16,6 +16,7 @@ public class SecurityConfigurationProperties {
     }
 
     private AuthenticationProvider auth;
+    private boolean basicAuth;
 
     public AuthenticationProvider getAuth() {
         return auth;
@@ -23,6 +24,14 @@ public class SecurityConfigurationProperties {
 
     public void setAuth(AuthenticationProvider auth) {
         this.auth = auth;
+    }
+
+    public boolean isBasicAuth() {
+        return basicAuth;
+    }
+
+    public void setBasicAuth(boolean basicAuth) {
+        this.basicAuth = basicAuth;
     }
 }
 
