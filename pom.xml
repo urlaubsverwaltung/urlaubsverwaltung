@@ -551,6 +551,7 @@
             <exclude>.mvn/**</exclude>
             <exclude>.m2/**</exclude>
             <exclude>.jdk/**</exclude>
+            <exclude>mvnw</exclude>
             <exclude>mvnw.cmd</exclude>
             <exclude>src/main/resources/static/lib/**</exclude>
           </excludes>
