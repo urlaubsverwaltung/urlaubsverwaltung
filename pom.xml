@@ -509,7 +509,7 @@
                     </ports>
                     <wait>
                       <healthy>true</healthy>
-                      <time>60000</time>
+                      <time>120000</time>
                     </wait>
                   </run>
                 </image>
