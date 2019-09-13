@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentConstants.DEPARTMENTS_ATTRIBUTE;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DepartmentApiControllerTest {
+public class DepartmentViewControllerTest {
 
     private DepartmentViewController sut;
 
