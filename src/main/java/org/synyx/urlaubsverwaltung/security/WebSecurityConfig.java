@@ -31,7 +31,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
             .authorizeRequests()
                 // TODO move to common url static or resources
-                .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/favicons/**").permitAll()
+                .antMatchers("/browserconfig.xml").permitAll()
+                .antMatchers("/manifest.json").permitAll()
                 .antMatchers("/css/**").permitAll()
                 .antMatchers("/fonts/**").permitAll()
                 .antMatchers("/images/**").permitAll()
