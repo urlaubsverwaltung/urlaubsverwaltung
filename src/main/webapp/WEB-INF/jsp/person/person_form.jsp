@@ -29,7 +29,7 @@
             <c:otherwise>
                 <c:set var="ACTION" value="${URL_PREFIX}/person/${person.id}/edit"/>
                 <c:set var="userCanBeCreated" value="true"/>
-                <c:set var="userCanBeEdited" value="${!userCanBeManipulated}"/>
+                <c:set var="userCanBeEdited" value="${userCanBeManipulated}"/>
             </c:otherwise>
         </c:choose>
 
