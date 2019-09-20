@@ -2,9 +2,8 @@ package org.synyx.urlaubsverwaltung.person.api;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -23,11 +22,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
 public class PersonApiControllerTest {
-
-    private MockMvc mockMvc;
 
     private PersonService personServiceMock;
 
@@ -35,10 +33,6 @@ public class PersonApiControllerTest {
     public void setUp() {
 
         personServiceMock = mock(PersonService.class);
-
-        mockMvc = MockMvcBuilders.standaloneSetup(new PersonApiController(personServiceMock))
-            .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
-            .build();
     }
 
 
@@ -52,7 +46,7 @@ public class PersonApiControllerTest {
 
         when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(person1, person2));
 
-        MvcResult mvcResult = mockMvc.perform(get("/api/persons"))
+        perform(get("/api/persons"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$", hasSize(2)))
@@ -75,7 +69,7 @@ public class PersonApiControllerTest {
 
         when(personServiceMock.getPersonByID(person1.getId())).thenReturn(Optional.of(person1));
 
-        mockMvc.perform(get("/api/persons/42"))
+        perform(get("/api/persons/42"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.firstName", is("Foo")))
@@ -85,5 +79,12 @@ public class PersonApiControllerTest {
             .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42"))))
             .andExpect(jsonPath("$.links..rel", hasItem("availabilities")))
             .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42/availabilities?from={from}&to={to}"))));
+    }
+
+    private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
+
+        return standaloneSetup(new PersonApiController(personServiceMock))
+            .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
+            .build().perform(builder);
     }
 }
