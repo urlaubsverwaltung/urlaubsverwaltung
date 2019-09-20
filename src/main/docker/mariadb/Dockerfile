@@ -5,6 +5,8 @@ ENV MYSQL_USER=urlaubsverwaltung \
     MYSQL_PASSWORD=urlaubsverwaltung \
     MYSQL_RANDOM_ROOT_PASSWORD=yes
 
+ADD more-connections.cnf /etc/mysql/conf.d/
+
 HEALTHCHECK --interval=10s --timeout=3s --start-period=15s \
   CMD /usr/bin/mysql --user=urlaubsverwaltung --password=urlaubsverwaltung --execute "SHOW DATABASES;"
 

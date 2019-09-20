@@ -24,7 +24,6 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -128,6 +127,45 @@ public class AbsenceApiControllerSecurityIT {
             .param("year", String.valueOf(LocalDate.now().getYear()))
             .param("person", "1"))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user")
+    public void getAbsencesAsOfficeUserForSameUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setLoginName("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
+            LocalDate.of(2016, 5, 20), DayLength.FULL);
+        sickNote.setId(1);
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+            .thenReturn(singletonList(sickNote));
+
+        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
+            LocalDate.of(2016, 4, 6), DayLength.FULL);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+            .thenReturn(singletonList(vacation));
+
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "differentUser")
+    public void getAbsencesAsOfficeUserForDifferentUserIsForbidden() throws Exception {
+
+        final Person person = new Person();
+        person.setLoginName("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(get("/api/absences")
+            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("person", "1"))
+            .andExpect(status().isForbidden());
     }
 
 

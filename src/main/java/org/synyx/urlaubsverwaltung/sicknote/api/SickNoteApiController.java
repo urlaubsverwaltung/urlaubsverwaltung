@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 
 @Api("Sick Notes: Get all sick notes for a certain period")
@@ -47,7 +47,7 @@ public class SickNoteApiController {
         + "Information only reachable for users with role office."
     )
     @GetMapping("/sicknotes")
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public ResponseWrapper<SickNoteListResponse> sickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")

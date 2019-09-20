@@ -117,6 +117,37 @@ public class PublicHolidayApiControllerSecurityIT {
         resultActions.andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(username = "user")
+    public void getHolidaysWithSameUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setLoginName("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
+
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "differentUser")
+    public void getHolidaysWithDifferentUserIsForbidden() throws Exception {
+
+        final Person person = new Person();
+        person.setLoginName("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final ResultActions resultActions = perform(get("/api/holidays")
+            .param("year", "2016")
+            .param("month", "11")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }
