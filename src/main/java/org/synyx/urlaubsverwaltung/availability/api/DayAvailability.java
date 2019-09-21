@@ -12,7 +12,7 @@ class DayAvailability {
     private final BigDecimal availabilityRatio;
     private final TimedAbsenceSpans timedAbsenceSpans;
 
-    public DayAvailability(BigDecimal availabilityRatio, String date, TimedAbsenceSpans timedAbsenceSpans) {
+    DayAvailability(BigDecimal availabilityRatio, String date, TimedAbsenceSpans timedAbsenceSpans) {
 
         this.availabilityRatio = availabilityRatio;
         this.date = date;
@@ -25,13 +25,13 @@ class DayAvailability {
     }
 
 
-    public TimedAbsenceSpans getTimedAbsenceSpans() {
+    TimedAbsenceSpans getTimedAbsenceSpans() {
 
         return timedAbsenceSpans;
     }
 
 
-    public BigDecimal getAvailabilityRatio() {
+    BigDecimal getAvailabilityRatio() {
 
         return availabilityRatio;
     }

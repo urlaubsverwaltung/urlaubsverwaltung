@@ -22,7 +22,7 @@ class TimedAbsenceSpans {
         }
     }
 
-    public List<TimedAbsence> getAbsencesList() {
+    List<TimedAbsence> getAbsencesList() {
 
         return absencesList;
     }

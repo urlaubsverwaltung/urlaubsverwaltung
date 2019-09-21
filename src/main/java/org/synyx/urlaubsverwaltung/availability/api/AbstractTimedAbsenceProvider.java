@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 abstract class AbstractTimedAbsenceProvider {
 
-    protected final AbstractTimedAbsenceProvider nextPriorityAbsenceProvider;
+    private final AbstractTimedAbsenceProvider nextPriorityAbsenceProvider;
 
     public AbstractTimedAbsenceProvider(AbstractTimedAbsenceProvider nextPriorityAbsenceProvider) {
 
@@ -24,7 +24,7 @@ abstract class AbstractTimedAbsenceProvider {
     /**
      * Convenience function for initial call, so that the caller does not have to create an empty list himself.
      */
-    public TimedAbsenceSpans checkForAbsence(Person person, LocalDate date) {
+    TimedAbsenceSpans checkForAbsence(Person person, LocalDate date) {
 
         return checkForAbsence(new TimedAbsenceSpans(new ArrayList<>()), person, date);
     }
@@ -34,7 +34,7 @@ abstract class AbstractTimedAbsenceProvider {
      * Checks for absences for the given person on the given day. Recursively calls the next priority provider if the
      * absence spans do not yet sum up to a full day.
      */
-    public TimedAbsenceSpans checkForAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
+    TimedAbsenceSpans checkForAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
         TimedAbsenceSpans updatedAbsences = addAbsence(knownAbsences, person, date);
 

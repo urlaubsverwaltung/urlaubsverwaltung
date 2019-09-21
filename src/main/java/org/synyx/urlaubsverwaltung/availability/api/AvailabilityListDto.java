@@ -7,7 +7,7 @@ class AvailabilityListDto {
     private final Integer personId;
     private final List<DayAvailability> availabilities;
 
-    public AvailabilityListDto(List<DayAvailability> availabilities, Integer personId) {
+    AvailabilityListDto(List<DayAvailability> availabilities, Integer personId) {
 
         this.availabilities = availabilities;
         this.personId = personId;
