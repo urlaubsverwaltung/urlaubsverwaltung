@@ -9,15 +9,13 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @Component
 @ConfigurationProperties("uv.workingtime")
 @Validated
 public class WorkingTimeProperties {
 
     @NotNull
-    private List<@Min(1) @Max(7) Integer> defaultWorkingDays = emptyList();
+    private List<@Min(1) @Max(7) Integer> defaultWorkingDays = List.of(1, 2, 3, 4, 5);
 
     public List<Integer> getDefaultWorkingDays() {
         return defaultWorkingDays;
