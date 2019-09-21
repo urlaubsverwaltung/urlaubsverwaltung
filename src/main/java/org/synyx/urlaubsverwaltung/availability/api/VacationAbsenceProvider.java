@@ -3,14 +3,18 @@ package org.synyx.urlaubsverwaltung.availability.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
 
 
 @Service
@@ -29,7 +33,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
     @Override
     TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
-        Optional<TimedAbsence> vacationAbsence = checkForVacation(date, person);
+        final Optional<TimedAbsence> vacationAbsence = checkForVacation(date, person);
 
         if (vacationAbsence.isPresent()) {
             List<TimedAbsence> knownAbsencesList = knownAbsences.getAbsencesList();
@@ -51,14 +55,11 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private Optional<TimedAbsence> checkForVacation(LocalDate date, Person person) {
 
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date,
-                    person)
-                .stream()
-                .filter(application ->
-                            application.hasStatus(ApplicationStatus.WAITING)
-                            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-                            || application.hasStatus(ApplicationStatus.ALLOWED))
-                .collect(Collectors.toList());
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date, person)
+            .stream()
+            .filter(application ->
+                application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED))
+            .collect(toList());
 
         if (applications.isEmpty()) {
             return Optional.empty();
@@ -66,6 +67,6 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
         Application application = applications.get(0);
 
-        return Optional.of(new TimedAbsence(application.getDayLength(), TimedAbsence.Type.VACATION));
+        return Optional.of(new TimedAbsence(application.getDayLength(), VACATION));
     }
 }
