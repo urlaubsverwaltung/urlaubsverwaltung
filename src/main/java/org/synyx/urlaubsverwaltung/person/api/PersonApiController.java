@@ -66,7 +66,7 @@ public class PersonApiController {
     private PersonResponse createPersonResponse(Person person) {
         final PersonResponse personResponse = PersonResponseMapper.mapToResponse(person);
         personResponse.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
-        personResponse.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(null, null, person.getId()))
+        personResponse.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null))
                 .withRel(AVAILABILITIES));
         return personResponse;
     }

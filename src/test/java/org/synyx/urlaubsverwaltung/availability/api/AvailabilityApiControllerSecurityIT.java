@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,8 +42,80 @@ public class AvailabilityApiControllerSecurityIT {
 
     @Test
     public void getAvailabilitiesIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/availabilities"));
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities"));
         resultActions.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    public void getAvailabilityAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+        );
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void getAvailabilityAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+        );
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void getAvailabilityAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+        );
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void getAvailabilityAsBossUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+        );
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getAvailabilityAsAdminUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+        );
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void getAvailabilityAsInactiveUserForOtherUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+        );
+
+        resultActions.andExpect(status().isForbidden());
     }
 
     @Test
@@ -56,10 +127,10 @@ public class AvailabilityApiControllerSecurityIT {
         when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityListDto(emptyList(), testPerson.getId()));
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/availabilities")
+        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5)))
-            .param("person", "5"));
+        );
 
         resultActions.andExpect(status().isOk());
     }

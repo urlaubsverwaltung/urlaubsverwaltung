@@ -1,5 +1,6 @@
 ### master
 * Add thuringia childrens day holiday [#790](https://github.com/synyx/urlaubsverwaltung/pull/790)
+* API-Change: Move `api/availability` to `api/person/persons/{personId}/availabilities` [808](https://github.com/synyx/urlaubsverwaltung/issues/808)
 * Upgrade spring boot parent to 2.1.8
 * Upgrade google api client to 1.25.0
 
