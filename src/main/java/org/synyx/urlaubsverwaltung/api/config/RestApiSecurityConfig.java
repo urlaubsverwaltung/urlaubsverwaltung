@@ -22,7 +22,6 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
             .and()
                 .authorizeRequests()
-                    .antMatchers("/api/sicknotes/**").hasAuthority("OFFICE")
                     .antMatchers("/api/**").authenticated()
                     .anyRequest().authenticated();
     }

@@ -55,7 +55,7 @@ public class PublicHolidayApiController {
         value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
     )
     @GetMapping("/holidays")
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")

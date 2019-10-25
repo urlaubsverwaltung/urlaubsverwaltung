@@ -135,6 +135,39 @@ public class WorkDayApiControllerSecurityIT {
         resultActions.andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(username = "user")
+    public void getWorkdaysWithSameUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setLoginName("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "differentUser")
+    public void getWorkdaysWithDifferentUserIsForbidden() throws Exception {
+
+        final Person person = new Person();
+        person.setLoginName("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final ResultActions resultActions = perform(get("/api/workdays")
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", "FULL")
+            .param("person", "1"));
+        resultActions.andExpect(status().isForbidden());
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }

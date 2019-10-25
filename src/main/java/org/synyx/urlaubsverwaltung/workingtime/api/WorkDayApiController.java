@@ -54,7 +54,7 @@ public class WorkDayApiController {
         notes = "The calculation depends on the working time of the person."
     )
     @GetMapping("/workdays")
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public ResponseWrapper<WorkDayResponse> workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
