@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
+
 
 @Service
 class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
@@ -39,13 +41,11 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
         return knownAbsences;
     }
 
-
     @Override
     boolean isLastPriorityProvider() {
 
         return false;
     }
-
 
     private Optional<TimedAbsence> checkForSickDay(LocalDate date, Person person) {
 
@@ -55,7 +55,7 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
             SickNote sickNote = sickNotes.get(0);
 
             if (sickNote != null && sickNote.isActive()) {
-                return Optional.of(new TimedAbsence(sickNote.getDayLength(), TimedAbsence.Type.SICK_NOTE));
+                return Optional.of(new TimedAbsence(sickNote.getDayLength(), SICK_NOTE));
             }
         }
 

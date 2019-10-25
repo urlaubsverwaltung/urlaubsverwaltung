@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
@@ -12,6 +11,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 
 @Service
@@ -45,33 +49,30 @@ class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
         return knownAbsences;
     }
 
-
     @Override
     boolean isLastPriorityProvider() {
 
         return false;
     }
 
-
     private Optional<TimedAbsence> checkForHolidays(LocalDate currentDay, Person person) {
 
         BigDecimal expectedWorkingDuration = publicHolidaysService.getWorkingDurationOfDate(currentDay,
                 getFederalState(currentDay, person));
 
-        boolean fullDayHoliday = expectedWorkingDuration.compareTo(DayLength.ZERO.getDuration()) == 0;
-        boolean halfDayHoliday = expectedWorkingDuration.compareTo(DayLength.NOON.getDuration()) == 0;
+        boolean fullDayHoliday = expectedWorkingDuration.compareTo(ZERO.getDuration()) == 0;
+        boolean halfDayHoliday = expectedWorkingDuration.compareTo(NOON.getDuration()) == 0;
 
         TimedAbsence absence = null;
 
         if (fullDayHoliday) {
-            absence = new TimedAbsence(DayLength.FULL, TimedAbsence.Type.HOLIDAY);
+            absence = new TimedAbsence(FULL, HOLIDAY);
         } else if (halfDayHoliday) {
-            absence = new TimedAbsence(DayLength.NOON, TimedAbsence.Type.HOLIDAY);
+            absence = new TimedAbsence(NOON, HOLIDAY);
         }
 
         return Optional.ofNullable(absence);
     }
-
 
     private FederalState getFederalState(LocalDate date, Person person) {
 
