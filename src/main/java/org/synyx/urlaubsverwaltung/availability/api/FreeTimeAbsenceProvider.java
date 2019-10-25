@@ -51,20 +51,20 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private Optional<TimedAbsence> checkForFreeTime(LocalDate currentDay, Person person) {
 
-        DayLength expectedWorktime = getExpectedWorktimeFor(person, currentDay);
-        BigDecimal expectedWorktimeDuration = expectedWorktime.getDuration();
+        DayLength expectedWorkTime = getExpectedWorkTimeFor(person, currentDay);
+        BigDecimal expectedWorkTimeDuration = expectedWorkTime.getDuration();
 
-        boolean expectedWorktimeIsLessThanFullDay = expectedWorktimeDuration.compareTo(BigDecimal.ONE) < 0;
+        boolean expectedWorkTimeIsLessThanFullDay = expectedWorkTimeDuration.compareTo(BigDecimal.ONE) < 0;
 
-        if (expectedWorktimeIsLessThanFullDay) {
-            return Optional.of(new TimedAbsence(expectedWorktime.getInverse(), TimedAbsence.Type.FREETIME));
+        if (expectedWorkTimeIsLessThanFullDay) {
+            return Optional.of(new TimedAbsence(expectedWorkTime.getInverse(), TimedAbsence.Type.FREETIME));
         }
 
         return Optional.empty();
     }
 
 
-    private DayLength getExpectedWorktimeFor(Person person, LocalDate currentDay) {
+    private DayLength getExpectedWorkTimeFor(Person person, LocalDate currentDay) {
 
         Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
                 currentDay);
