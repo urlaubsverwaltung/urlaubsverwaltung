@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -46,36 +44,36 @@ public class PersonSyncServiceTest {
     @Test
     public void ensurePersonIsCreatedWithCorrectAttributes() {
 
-        final String loginName = "murygina";
+        final String username = "murygina";
         final String firstName = "Aljona";
         final String lastName = "Murygina";
         final String email = "murygina@synyx.de";
 
         final Person person = new Person();
-        person.setLoginName(loginName);
-        when(personService.create(loginName, lastName, firstName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
+        person.setUsername(username);
+        when(personService.create(username, lastName, firstName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
 
-        final Person createdPerson = sut.createPerson(loginName, of(firstName), of(lastName), of(email));
-        assertThat(createdPerson.getLoginName()).isEqualTo(loginName);
+        final Person createdPerson = sut.createPerson(username, of(firstName), of(lastName), of(email));
+        assertThat(createdPerson.getUsername()).isEqualTo(username);
     }
 
 
     @Test
-    public void ensurePersonCanBeCreatedWithOnlyLoginName() {
+    public void ensurePersonCanBeCreatedWithOnlyUsername() {
 
-        final String loginName = "murygina";
+        final String username = "murygina";
 
         final Person person = new Person();
-        person.setLoginName(loginName);
-        when(personService.create(loginName, null, null, null, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
+        person.setUsername(username);
+        when(personService.create(username, null, null, null, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
 
-        final Person createdPerson = sut.createPerson(loginName, Optional.empty(), Optional.empty(), Optional.empty());
-        assertThat(createdPerson.getLoginName()).isEqualTo(loginName);
+        final Person createdPerson = sut.createPerson(username, Optional.empty(), Optional.empty(), Optional.empty());
+        assertThat(createdPerson.getUsername()).isEqualTo(username);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfNoLoginNameIsGiven() {
+    public void ensureThrowsIfNoUsernameIsGiven() {
 
         sut.createPerson(null, of("Aljona"), of("Murygina"), of("murygina@synyx.de"));
     }
@@ -89,12 +87,12 @@ public class PersonSyncServiceTest {
 
         final Person syncedPerson = sut.syncPerson(person, of("Aljona"), of("Murygina"), of("murygina@synyx.de"));
 
-        Assert.assertNotNull("Missing login name", syncedPerson.getLoginName());
+        Assert.assertNotNull("Missing username", syncedPerson.getUsername());
         Assert.assertNotNull("Missing first name", syncedPerson.getFirstName());
         Assert.assertNotNull("Missing last name", syncedPerson.getLastName());
         Assert.assertNotNull("Missing mail address", syncedPerson.getEmail());
 
-        Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
+        Assert.assertEquals("Wrong username", "muster", syncedPerson.getUsername());
         Assert.assertEquals("Wrong first name", "Aljona", syncedPerson.getFirstName());
         Assert.assertEquals("Wrong last name", "Murygina", syncedPerson.getLastName());
         Assert.assertEquals("Wrong mail address", "murygina@synyx.de", syncedPerson.getEmail());
@@ -109,7 +107,7 @@ public class PersonSyncServiceTest {
 
         Person syncedPerson = sut.syncPerson(person, Optional.empty(), Optional.empty(), Optional.empty());
 
-        Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
+        Assert.assertEquals("Wrong username", "muster", syncedPerson.getUsername());
         Assert.assertEquals("Wrong first name", "Marlene", syncedPerson.getFirstName());
         Assert.assertEquals("Wrong last name", "Muster", syncedPerson.getLastName());
         Assert.assertEquals("Wrong mail address", "marlene@firma.test", syncedPerson.getEmail());

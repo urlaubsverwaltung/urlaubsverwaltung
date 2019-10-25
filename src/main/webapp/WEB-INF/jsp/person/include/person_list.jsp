@@ -54,7 +54,7 @@
                 <td class="lastname">
                     <c:choose>
                         <c:when test="${person.firstName == null && person.lastName == null}">
-                            <c:out value="${person.loginName}"/>
+                            <c:out value="${person.username}"/>
                         </c:when>
                         <c:otherwise>
                             <c:out value="${person.lastName}"/>

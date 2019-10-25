@@ -50,7 +50,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
             final String userUniqueID = oidcUserAuthority.getIdToken().getSubject();
 
-            final Optional<Person> maybePerson = personService.getPersonByLogin(userUniqueID);
+            final Optional<Person> maybePerson = personService.getPersonByUsername(userUniqueID);
 
             final Person person;
 

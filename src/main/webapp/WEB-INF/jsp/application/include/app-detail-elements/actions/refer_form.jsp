@@ -15,9 +15,9 @@
     </div>
 
     <div class="form-group">
-        <form:select path="loginName" cssClass="form-control">
+        <form:select path="username" cssClass="form-control">
             <c:forEach items="${bosses}" var="boss">
-                <option value="${boss.loginName}"><c:out value="${boss.firstName} ${boss.lastName}"/></option>
+                <option value="${boss.username}"><c:out value="${boss.firstName} ${boss.lastName}"/></option>
             </c:forEach>
         </form:select>
     </div>

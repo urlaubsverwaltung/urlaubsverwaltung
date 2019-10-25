@@ -105,7 +105,7 @@ public class ExchangeCalendarProviderTest {
         ExchangeCalendarProvider cut = new ExchangeCalendarProvider(exchangeService, exchangeFactory, calendarMailService);
 
         Absence absence = mock(Absence.class);
-        when(absence.getPerson()).thenReturn(new Person("login", "lastName", "firstName", "abc@de.f"));
+        when(absence.getPerson()).thenReturn(new Person("username", "lastName", "firstName", "abc@de.f"));
         when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
         when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
 

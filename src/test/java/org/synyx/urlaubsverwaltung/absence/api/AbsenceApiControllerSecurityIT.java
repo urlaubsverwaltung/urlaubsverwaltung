@@ -134,7 +134,7 @@ public class AbsenceApiControllerSecurityIT {
     public void getAbsencesAsOfficeUserForSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
@@ -159,7 +159,7 @@ public class AbsenceApiControllerSecurityIT {
     public void getAbsencesAsOfficeUserForDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         perform(get("/api/absences")

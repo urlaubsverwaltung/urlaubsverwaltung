@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 interface PersonDAO extends JpaRepository<Person, Integer> {
 
-    Person findByLoginName(String loginName);
+    Person findByUsername(String username);
 }

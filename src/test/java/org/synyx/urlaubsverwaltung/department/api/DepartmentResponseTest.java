@@ -70,11 +70,11 @@ public class DepartmentResponseTest {
         assertThat(personResponse.getLastName()).isEqualTo(person.getLastName());
     }
 
-    private Person person(String loginName, String email, String firstName, String lastName) {
+    private Person person(String username, String email, String firstName, String lastName) {
 
         final Person person = new Person();
 
-        person.setLoginName(loginName);
+        person.setUsername(username);
         person.setEmail(email);
         person.setFirstName(firstName);
         person.setLastName(lastName);

@@ -129,7 +129,7 @@ public class VacationApiControllerSecurityIT {
     public void getVacationsForSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();
@@ -147,7 +147,7 @@ public class VacationApiControllerSecurityIT {
     public void getVacationsForDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();

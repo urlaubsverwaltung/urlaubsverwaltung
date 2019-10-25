@@ -14,8 +14,8 @@ public class UnknownPersonException extends AbstractNoResultFoundException {
     }
 
 
-    public UnknownPersonException(String loginName) {
+    public UnknownPersonException(String username) {
 
-        super(loginName, "person");
+        super(username, "person");
     }
 }

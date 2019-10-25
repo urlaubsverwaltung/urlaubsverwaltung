@@ -52,14 +52,14 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
             throw new BadCredentialsException("No authentication possible for user = " + username, ex);
         }
 
-        final String login = ldapUser.getUsername();
+        final String ldapUsername = ldapUser.getUsername();
         final Optional<String> firstName = ldapUser.getFirstName();
         final Optional<String> lastName = ldapUser.getLastName();
         final Optional<String> email = ldapUser.getEmail();
 
         final Person person;
 
-        final Optional<Person> maybePerson = personService.getPersonByLogin(login);
+        final Optional<Person> maybePerson = personService.getPersonByUsername(ldapUsername);
         if (maybePerson.isPresent()) {
             final Person existentPerson = maybePerson.get();
 
@@ -73,7 +73,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         } else {
             LOG.info("No user found for username '{}'", username);
 
-            final Person createdPerson = personSyncService.createPerson(login, firstName, lastName, email);
+            final Person createdPerson = personSyncService.createPerson(ldapUsername, firstName, lastName, email);
             person = personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
 
@@ -82,7 +82,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
          */
 
         final Essence user = new Essence(ctx);
-        user.setUsername(login);
+        user.setUsername(ldapUsername);
         user.setAuthorities(getGrantedAuthorities(person));
 
         LOG.info("User '{}' has signed in with roles: {}", username, person.getPermissions());

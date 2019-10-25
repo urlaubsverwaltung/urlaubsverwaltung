@@ -48,14 +48,14 @@ public class LdapUserDataImporterTest {
     @Test
     public void ensureCreatesPersonIfLdapUserNotYetExists() {
 
-        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.empty());
+        when(personServiceMock.getPersonByUsername(anyString())).thenReturn(Optional.empty());
         when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
                     new LdapUser("muster", Optional.empty(), Optional.empty(), Optional.empty())));
 
         ldapUserDataImporter.sync();
 
-        verify(personServiceMock, times(1)).getPersonByLogin("muster");
+        verify(personServiceMock, times(1)).getPersonByUsername("muster");
         verify(personSyncServiceMock)
             .createPerson("muster", Optional.empty(), Optional.empty(), Optional.empty());
     }
@@ -66,15 +66,15 @@ public class LdapUserDataImporterTest {
 
         Person person = TestDataCreator.createPerson();
 
-        when(personServiceMock.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
+        when(personServiceMock.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(ldapUserServiceMock.getLdapUsers())
             .thenReturn(Collections.singletonList(
-                    new LdapUser(person.getLoginName(), Optional.of("Vorname"), Optional.of("Nachname"),
+                    new LdapUser(person.getUsername(), Optional.of("Vorname"), Optional.of("Nachname"),
                         Optional.of("Email"))));
 
         ldapUserDataImporter.sync();
 
-        verify(personServiceMock, times(1)).getPersonByLogin(person.getLoginName());
+        verify(personServiceMock, times(1)).getPersonByUsername(person.getUsername());
         verify(personSyncServiceMock)
             .syncPerson(person, Optional.of("Vorname"), Optional.of("Nachname"), Optional.of("Email"));
     }

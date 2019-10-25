@@ -4,6 +4,7 @@
 * Add default workdays to the configuration properties [828](https://github.com/synyx/urlaubsverwaltung/pull/828)
 * Upgrade spring boot parent to 2.1.9
 * Upgrade google api client to 1.25.0
+* rename loginName to username [839](https://github.com/synyx/urlaubsverwaltung/pull/839)
 
 ### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
 * Remove liquibase user demo creation on demo context [#810](https://github.com/synyx/urlaubsverwaltung/pull/810)

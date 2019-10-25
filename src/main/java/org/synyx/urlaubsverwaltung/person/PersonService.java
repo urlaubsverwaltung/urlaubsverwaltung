@@ -13,7 +13,7 @@ public interface PersonService {
     /**
      * Create a new person using the given attributes, generating and setting key pair.
      *
-     * @param  loginName  with that the person can sign in
+     * @param  username  with that the person can sign in
      * @param  lastName  of the person
      * @param  firstName  of the person
      * @param  email  address to get mail notifications
@@ -22,7 +22,7 @@ public interface PersonService {
      *
      * @return  created person
      */
-    Person create(String loginName, String lastName, String firstName, String email,
+    Person create(String username, String lastName, String firstName, String email,
         List<MailNotification> notifications, List<Role> permissions);
 
 
@@ -30,7 +30,7 @@ public interface PersonService {
      * Updates a person using the given attributes.
      *
      * @param  id  identifies the person to be updated
-     * @param  loginName  with that the person can sign in
+     * @param  username  with that the person can sign in
      * @param  lastName  of the person
      * @param  firstName  of the person
      * @param  email  address to get mail notifications
@@ -39,7 +39,7 @@ public interface PersonService {
      *
      * @return  updated person
      */
-    Person update(Integer id, String loginName, String lastName, String firstName, String email,
+    Person update(Integer id, String username, String lastName, String firstName, String email,
         List<MailNotification> notifications, List<Role> permissions);
 
 
@@ -84,13 +84,13 @@ public interface PersonService {
 
 
     /**
-     * finds a {@link Person} in the database by login name.
+     * finds a {@link Person} in the database by username.
      *
-     * @param  loginName  of the person
+     * @param  username  of the person
      *
-     * @return  optional {@link Person} for the given login name
+     * @return  optional {@link Person} for the given username
      */
-    Optional<Person> getPersonByLogin(String loginName);
+    Optional<Person> getPersonByUsername(String username);
 
 
     /**

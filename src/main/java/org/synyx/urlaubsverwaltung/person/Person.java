@@ -21,7 +21,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 765672310978437L;
 
-    private String loginName;
+    private String username;
     private String password;
     private String lastName;
     private String firstName;
@@ -42,8 +42,8 @@ public class Person extends AbstractPersistable<Integer> {
         /* OK */
     }
 
-    public Person(String loginName, String lastName, String firstName, String email) {
-        this.loginName = loginName;
+    public Person(String username, String lastName, String firstName, String email) {
+        this.username = username;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -73,12 +73,12 @@ public class Person extends AbstractPersistable<Integer> {
         this.lastName = lastName;
     }
 
-    public String getLoginName() {
-        return loginName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLoginName(String loginName) {
-        this.loginName = loginName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
