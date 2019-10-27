@@ -55,7 +55,7 @@ abstract class AbstractTimedAbsenceProvider {
     /**
      * This method is used to check if the provider has a follow up provider to call.
      *
-     * @return  {@code true} if no follow up provider exists.
+     * @return {@code true} if no follow up provider exists.
      */
     abstract boolean isLastPriorityProvider();
 

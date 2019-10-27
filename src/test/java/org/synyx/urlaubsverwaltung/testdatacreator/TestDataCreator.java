@@ -122,8 +122,7 @@ public final class TestDataCreator {
         return createApplication(person, vacationType, now, now.plusDays(3), DayLength.FULL);
     }
 
-    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate,
-                                                DayLength dayLength) {
+    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
         VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 

@@ -25,13 +25,13 @@ class DayAvailability {
     }
 
 
-    TimedAbsenceSpans getTimedAbsenceSpans() {
+    public TimedAbsenceSpans getTimedAbsenceSpans() {
 
         return timedAbsenceSpans;
     }
 
 
-    BigDecimal getAvailabilityRatio() {
+    public BigDecimal getAvailabilityRatio() {
 
         return availabilityRatio;
     }

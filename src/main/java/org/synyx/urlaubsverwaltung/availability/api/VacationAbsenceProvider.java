@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,16 +34,16 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
     @Override
     TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
-        final Optional<TimedAbsence> vacationAbsence = checkForVacation(date, person);
-
-        if (vacationAbsence.isPresent()) {
-            List<TimedAbsence> knownAbsencesList = knownAbsences.getAbsencesList();
-            knownAbsencesList.add(vacationAbsence.get());
-
-            return new TimedAbsenceSpans(knownAbsencesList);
+        final List<Optional<TimedAbsence>> optionalTimedAbsences = checkForVacation(date, person);
+        if (optionalTimedAbsences.isEmpty()) {
+            return knownAbsences;
         }
 
-        return knownAbsences;
+        List<TimedAbsence> knownAbsencesList = knownAbsences.getAbsencesList();
+        for (Optional<TimedAbsence> optionalTimedAbsence : optionalTimedAbsences) {
+            optionalTimedAbsence.ifPresent(knownAbsencesList::add);
+        }
+        return new TimedAbsenceSpans(knownAbsencesList);
     }
 
     @Override
@@ -51,7 +52,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
         return true;
     }
 
-    private Optional<TimedAbsence> checkForVacation(LocalDate date, Person person) {
+    private List<Optional<TimedAbsence>> checkForVacation(LocalDate date, Person person) {
 
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date, person)
             .stream()
@@ -60,11 +61,14 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
             .collect(toList());
 
         if (applications.isEmpty()) {
-            return Optional.empty();
+            return List.of();
         }
 
-        Application application = applications.get(0);
+        final List<Optional<TimedAbsence>> vacationTimeAbsence = new ArrayList<>();
+        for (Application application : applications) {
+            vacationTimeAbsence.add(Optional.of(new TimedAbsence(application.getDayLength(), VACATION)));
+        }
 
-        return Optional.of(new TimedAbsence(application.getDayLength(), VACATION));
+        return vacationTimeAbsence;
     }
 }

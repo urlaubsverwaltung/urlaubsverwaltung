@@ -26,7 +26,7 @@ class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     @Autowired
     HolidayAbsenceProvider(SickDayAbsenceProvider nextPriorityProvider, PublicHolidaysService publicHolidaysService,
-        WorkingTimeService workingTimeService) {
+                           WorkingTimeService workingTimeService) {
 
         super(nextPriorityProvider);
 
@@ -58,7 +58,7 @@ class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
     private Optional<TimedAbsence> checkForHolidays(LocalDate currentDay, Person person) {
 
         BigDecimal expectedWorkingDuration = publicHolidaysService.getWorkingDurationOfDate(currentDay,
-                getFederalState(currentDay, person));
+            getFederalState(currentDay, person));
 
         boolean fullDayHoliday = expectedWorkingDuration.compareTo(ZERO.getDuration()) == 0;
         boolean halfDayHoliday = expectedWorkingDuration.compareTo(NOON.getDuration()) == 0;
@@ -75,7 +75,6 @@ class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     private FederalState getFederalState(LocalDate date, Person person) {
-
         return workingTimeService.getFederalStateForPerson(person, date);
     }
 }
