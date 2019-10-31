@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
@@ -34,8 +35,8 @@ class TestDataConfiguration {
     }
 
     @Bean
-    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService) {
-        return new PersonDataProvider(personService, workingTimeService, accountInteractionService);
+    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder) {
+        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, passwordEncoder) ;
     }
 
     @Bean
