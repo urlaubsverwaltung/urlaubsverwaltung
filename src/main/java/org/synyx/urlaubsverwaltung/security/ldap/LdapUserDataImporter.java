@@ -52,7 +52,7 @@ public class LdapUserDataImporter {
             Optional<String> lastName = user.getLastName();
             Optional<String> email = user.getEmail();
 
-            Optional<Person> optionalPerson = personService.getPersonByLogin(username);
+            Optional<Person> optionalPerson = personService.getPersonByUsername(username);
 
             if (optionalPerson.isPresent()) {
                 personSyncService.syncPerson(optionalPerson.get(), firstName, lastName, email);

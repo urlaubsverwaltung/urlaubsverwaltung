@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.simple.SimpleAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.ArrayList;
@@ -53,12 +52,12 @@ public class SimpleAuthenticationProviderTest {
         Person user = TestDataCreator.createPerson(username, Role.USER, Role.OFFICE);
         user.setPassword(encodedPassword);
 
-        when(personService.getPersonByLogin(username)).thenReturn(Optional.of(user));
+        when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
 
         Authentication credentials = new UsernamePasswordAuthenticationToken(username, rawPassword, null);
         Authentication authentication = authenticationProvider.authenticate(credentials);
 
-        verify(personService).getPersonByLogin(username);
+        verify(personService).getPersonByUsername(username);
 
         Assert.assertNotNull("Missing authentication", authentication);
         Assert.assertEquals("Wrong username", username, authentication.getName());
@@ -69,7 +68,7 @@ public class SimpleAuthenticationProviderTest {
     @Test(expected = UsernameNotFoundException.class)
     public void ensureExceptionIsThrownIfUserCanNotBeFoundWithinDatabase() {
 
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.empty());
+        when(personService.getPersonByUsername(anyString())).thenReturn(Optional.empty());
 
         Authentication credentials = new UsernamePasswordAuthenticationToken("user", "password", null);
         authenticationProvider.authenticate(credentials);
@@ -86,7 +85,7 @@ public class SimpleAuthenticationProviderTest {
         Person user = TestDataCreator.createPerson(username, Role.INACTIVE);
         user.setPassword(encodedPassword);
 
-        when(personService.getPersonByLogin(username)).thenReturn(Optional.of(user));
+        when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
 
         Authentication credentials = new UsernamePasswordAuthenticationToken(username, rawPassword, null);
         authenticationProvider.authenticate(credentials);
@@ -102,7 +101,7 @@ public class SimpleAuthenticationProviderTest {
         Person user = TestDataCreator.createPerson(username, Role.USER, Role.OFFICE);
         user.setPassword(encodedPassword);
 
-        when(personService.getPersonByLogin(username)).thenReturn(Optional.of(user));
+        when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
 
         Authentication credentials = new UsernamePasswordAuthenticationToken(username, "invalid", null);
         authenticationProvider.authenticate(credentials);

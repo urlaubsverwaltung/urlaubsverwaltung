@@ -30,12 +30,12 @@ public class UserApiMethodSecurity {
         boolean allowed = false;
         if (authentication.getPrincipal() instanceof org.springframework.security.ldap.userdetails.Person) {
             final String username = ((org.springframework.security.ldap.userdetails.Person) authentication.getPrincipal()).getUsername();
-            allowed = username.equals(person.get().getLoginName());
+            allowed = username.equals(person.get().getUsername());
         } else if (authentication.getPrincipal() instanceof User) {
-            allowed = ((User) authentication.getPrincipal()).getUsername().equals(person.get().getLoginName());
+            allowed = ((User) authentication.getPrincipal()).getUsername().equals(person.get().getUsername());
         } else if(authentication.getPrincipal() instanceof DefaultOidcUser) {
             final String username = ((DefaultOidcUser) authentication.getPrincipal()).getIdToken().getSubject();
-            allowed = username.equals(person.get().getLoginName());
+            allowed = username.equals(person.get().getUsername());
         }
 
         return allowed;

@@ -122,7 +122,7 @@ public class PublicHolidayApiControllerSecurityIT {
     public void getHolidaysWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
 
@@ -138,7 +138,7 @@ public class PublicHolidayApiControllerSecurityIT {
     public void getHolidaysWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final ResultActions resultActions = perform(get("/api/holidays")

@@ -140,7 +140,7 @@ public class WorkDayApiControllerSecurityIT {
     public void getWorkdaysWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
@@ -157,7 +157,7 @@ public class WorkDayApiControllerSecurityIT {
     public void getWorkdaysWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final ResultActions resultActions = perform(get("/api/workdays")

@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,7 +77,7 @@ public class PersonServiceImplTest {
 
         Person createdPerson = sut.create(person);
 
-        Assert.assertEquals("Wrong login name", "rick", createdPerson.getLoginName());
+        Assert.assertEquals("Wrong username", "rick", createdPerson.getUsername());
         Assert.assertEquals("Wrong first name", "Rick", createdPerson.getFirstName());
         Assert.assertEquals("Wrong last name", "Grimes", createdPerson.getLastName());
         Assert.assertEquals("Wrong email", "rick@grimes.de", createdPerson.getEmail());
@@ -113,7 +112,7 @@ public class PersonServiceImplTest {
             asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL),
             asList(USER, BOSS));
 
-        Assert.assertEquals("Wrong login name", "rick", updatedPerson.getLoginName());
+        Assert.assertEquals("Wrong username", "rick", updatedPerson.getUsername());
         Assert.assertEquals("Wrong first name", "Rick", updatedPerson.getFirstName());
         Assert.assertEquals("Wrong last name", "Grimes", updatedPerson.getLastName());
         Assert.assertEquals("Wrong email", "rick@grimes.de", updatedPerson.getEmail());
@@ -170,12 +169,10 @@ public class PersonServiceImplTest {
 
     @Test
     public void ensureGetPersonByLoginCallsCorrectDaoMethod() {
+        String username = "foo";
+        sut.getPersonByUsername(username);
 
-        String login = "foo";
-
-        sut.getPersonByLogin(login);
-
-        verify(personDAO).findByLoginName(login);
+        verify(personDAO).findByUsername(username);
     }
 
 
@@ -388,7 +385,7 @@ public class PersonServiceImplTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        when(personDAO.findByLoginName(anyString())).thenReturn(person);
+        when(personDAO.findByUsername(anyString())).thenReturn(person);
 
         Person signedInUser = sut.getSignedInUser();
 

@@ -59,4 +59,5 @@
   <include file="dbchangelogs/changelog-2.39.0-add-unique-constraint-year-and-person-id-to-account.xml"/>
   <include file="dbchangelogs/changelog-2.42.1-migrate-boss-notification.xml"/>
   <include file="dbchangelogs/changelog-2.43.0-add-unique-constraint-loginname-to-person.xml"/>
+  <include file="dbchangelogs/changelog-3.0.0-rename-login-to-username.xml"/>
 </databaseChangeLog>

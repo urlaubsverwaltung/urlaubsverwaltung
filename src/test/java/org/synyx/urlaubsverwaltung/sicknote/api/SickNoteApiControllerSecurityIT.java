@@ -135,7 +135,7 @@ public class SickNoteApiControllerSecurityIT {
     public void getSickNotesWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
@@ -155,7 +155,7 @@ public class SickNoteApiControllerSecurityIT {
     public void getSickNotesWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setLoginName("user");
+        person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();

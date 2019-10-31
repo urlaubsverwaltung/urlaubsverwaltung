@@ -52,33 +52,33 @@ class PersonDataProvider {
         this.accountInteractionService = accountInteractionService;
     }
 
-    boolean isPersonAlreadyCreated(String loginName){
+    boolean isPersonAlreadyCreated(String username){
 
-        final Optional<Person> personByLogin = personService.getPersonByLogin(loginName);
-        return personByLogin.isPresent();
+        final Optional<Person> personByUsername = personService.getPersonByUsername(username);
+        return personByUsername.isPresent();
     }
 
     Person createTestPerson(TestUser testUser, String firstName, String lastName, String email) {
 
-        final String login = testUser.getLogin();
+        final String username = testUser.getUsername();
         final String password = testUser.getPassword();
         final Role[] roles = testUser.getRoles();
 
-        return createTestPerson(login, password, firstName, lastName, email, roles);
+        return createTestPerson(username, password, firstName, lastName, email, roles);
     }
 
-    Person createTestPerson(String login, String password, String firstName, String lastName, String email, Role... roles) {
+    Person createTestPerson(String username, String password, String firstName, String lastName, String email, Role... roles) {
 
 
-        final Optional<Person> personByLogin = personService.getPersonByLogin(login);
-        if (personByLogin.isPresent()) {
-            return personByLogin.get();
+        final Optional<Person> personByUsername = personService.getPersonByUsername(username);
+        if (personByUsername.isPresent()) {
+            return personByUsername.get();
         }
 
         final List<Role> permissions = asList(roles);
         final List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
-        final Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
+        final Person person = personService.create(username, lastName, firstName, email, notifications, permissions);
         person.setPassword(new StandardPasswordEncoder().encode(password));
 
         final Person savedPerson = personService.save(person);

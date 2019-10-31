@@ -144,15 +144,15 @@ public class PersonValidatorTest {
 
     @Test
     public void ensureUsernameMustBeUnique() {
-        when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
-        sut.validateLogin("foo", errors);
-        verify(errors).rejectValue("loginName", "person.form.data.login.error");
+        when(personService.getPersonByUsername("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
+        sut.validateUsername("foo", errors);
+        verify(errors).rejectValue("username", "person.form.data.login.error");
     }
 
     @Test
     public void ensureUniqueUsernameHasNoValidationError() {
-        when(personService.getPersonByLogin("foo")).thenReturn(Optional.empty());
-        sut.validateLogin("foo", errors);
+        when(personService.getPersonByUsername("foo")).thenReturn(Optional.empty());
+        sut.validateUsername("foo", errors);
         verify(errors, never()).rejectValue(anyString(), anyString());
     }
 

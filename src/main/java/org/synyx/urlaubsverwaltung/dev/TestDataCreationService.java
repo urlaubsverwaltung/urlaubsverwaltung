@@ -61,7 +61,7 @@ public class TestDataCreationService {
 
         LOG.info(">> TestData Creation (uv.development.testdata.create={})", testDataProperties.isCreate());
 
-        if (personDataProvider.isPersonAlreadyCreated(TestUser.USER.getLogin())) {
+        if (personDataProvider.isPersonAlreadyCreated(TestUser.USER.getUsername())) {
             LOG.info("-> Test data was already created. Abort.");
             return;
         }

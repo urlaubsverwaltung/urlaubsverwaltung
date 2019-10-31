@@ -5,16 +5,16 @@ package org.synyx.urlaubsverwaltung.application.web;
  */
 public class ReferredPerson {
 
-    private String loginName;
+    private String username;
 
-    public String getLoginName() {
+    public String getUsername() {
 
-        return loginName;
+        return username;
     }
 
 
-    public void setLoginName(String loginName) {
+    public void setUsername(String username) {
 
-        this.loginName = loginName;
+        this.username = username;
     }
 }

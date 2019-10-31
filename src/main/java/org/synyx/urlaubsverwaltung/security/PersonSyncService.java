@@ -65,18 +65,18 @@ public class PersonSyncService {
      * Creates a {@link Person} with the role {@link Role#USER} resp. with the roles {@link Role#USER} and
      * {@link Role#OFFICE} if this is the first person that is created.
      *
-     * @param login       of the person to be created, is mandatory to create a person
+     * @param username       of the person to be created, is mandatory to create a person
      * @param firstName   of the person to be created, is optional
      * @param lastName    of the person to be created, is optional
      * @param mailAddress of the person to be created, is optional
      * @return the created person
      */
-    public Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
+    public Person createPerson(String username, Optional<String> firstName, Optional<String> lastName,
                         Optional<String> mailAddress) {
 
-        Assert.notNull(login, "Missing login name!");
+        Assert.notNull(username, "Missing username!");
 
-        final Person person = personService.create(login, lastName.orElse(null), firstName.orElse(null),
+        final Person person = personService.create(username, lastName.orElse(null), firstName.orElse(null),
             mailAddress.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
 
         LOG.info("Successfully auto-created person: {}", person);

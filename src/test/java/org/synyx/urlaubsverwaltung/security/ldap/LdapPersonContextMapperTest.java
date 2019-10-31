@@ -33,7 +33,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.security.ldap.SecurityTestUtil.authorityForRoleExists;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
@@ -106,7 +105,7 @@ public class LdapPersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                 Optional.of("murygina@synyx.de")));
-        when(personService.getPersonByLogin(anyString())).thenReturn(empty());
+        when(personService.getPersonByUsername(anyString())).thenReturn(empty());
         when(personSyncService.createPerson(anyString(), any(), any(), any())).thenReturn(createPerson());
         when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
@@ -128,7 +127,7 @@ public class LdapPersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
                 Optional.of("murygina@synyx.de")));
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(personSyncService.syncPerson(any(Person.class), any(), any(), any())).thenReturn(person);
 
         sut.mapUserFromContext(context, "murygina", null);
@@ -147,7 +146,7 @@ public class LdapPersonContextMapperTest {
         final String userNameSignedInWith = "mgroehning@simpsons.com";
 
         when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser(userIdentifier, empty(), empty(), empty()));
-        when(personService.getPersonByLogin(anyString())).thenReturn(empty());
+        when(personService.getPersonByUsername(anyString())).thenReturn(empty());
 
         final Person person = createPerson();
         when(personSyncService.createPerson(anyString(), any(), any(), any())).thenReturn(person);
@@ -164,12 +163,12 @@ public class LdapPersonContextMapperTest {
         final Person person = createPerson();
         person.setPermissions(singletonList(INACTIVE));
 
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser(person.getLoginName(), Optional.of(person.getFirstName()),
+            .thenReturn(new LdapUser(person.getUsername(), Optional.of(person.getFirstName()),
                 Optional.of(person.getLastName()), Optional.of(person.getEmail())));
 
-        sut.mapUserFromContext(context, person.getLoginName(), null);
+        sut.mapUserFromContext(context, person.getUsername(), null);
     }
 
 
@@ -201,7 +200,7 @@ public class LdapPersonContextMapperTest {
 
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("username", empty(), empty(), empty()));
-        when(personService.getPersonByLogin(anyString())).thenReturn(Optional.of(person));
+        when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(personSyncService.syncPerson(any(Person.class), any(), any(), any())).thenReturn(person);
 
         final UserDetails userDetails = sut.mapUserFromContext(context, "username", null);
@@ -220,7 +219,7 @@ public class LdapPersonContextMapperTest {
         person.setPermissions(singletonList(USER));
 
         when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", empty(), empty(), empty()));
-        when(personService.getPersonByLogin("username")).thenReturn(Optional.empty());
+        when(personService.getPersonByUsername("username")).thenReturn(Optional.empty());
         when(personSyncService.createPerson("username", empty(), empty(), empty())).thenReturn(person);
         when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(person)).thenReturn(person);
 

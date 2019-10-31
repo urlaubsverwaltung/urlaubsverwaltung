@@ -55,7 +55,7 @@ public class OidcPersonAuthoritiesMapperTest {
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER));
         final Optional<Person> person = Optional.of(personForLogin);
-        when(personService.getPersonByLogin(uniqueID)).thenReturn(person);
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
 
         when(personSyncService.syncPerson(personForLogin, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
 
@@ -75,7 +75,7 @@ public class OidcPersonAuthoritiesMapperTest {
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER));
 
-        when(personService.getPersonByLogin(uniqueID)).thenReturn(Optional.empty());
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
         when(personSyncService.createPerson(uniqueID, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
         when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
@@ -96,7 +96,7 @@ public class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER, INACTIVE));
 
         final Optional<Person> person = Optional.of(personForLogin);
-        when(personService.getPersonByLogin(uniqueID)).thenReturn(person);
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
         when(personSyncService.syncPerson(personForLogin, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
 
         sut.mapAuthorities(List.of(oidcUserAuthority));
@@ -114,7 +114,7 @@ public class OidcPersonAuthoritiesMapperTest {
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER));
 
-        when(personService.getPersonByLogin(uniqueID)).thenReturn(Optional.empty());
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
         when(personSyncService.createPerson(uniqueID, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
         when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
@@ -134,7 +134,7 @@ public class OidcPersonAuthoritiesMapperTest {
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER));
 
-        when(personService.getPersonByLogin(uniqueID)).thenReturn(Optional.empty());
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
         when(personSyncService.createPerson(uniqueID, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
         when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 

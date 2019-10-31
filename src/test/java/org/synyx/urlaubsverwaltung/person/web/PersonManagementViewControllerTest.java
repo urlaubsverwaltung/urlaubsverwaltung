@@ -91,12 +91,12 @@ public class PersonManagementViewControllerTest {
         when(personService.create(any())).thenReturn(personWithId(PERSON_ID));
 
         perform(post("/web/person")
-            .param("loginName", "login")
+            .param("username", "username")
             .param("lastName", "Meier")
             .param("firstName", "Nina")
             .param("email", "nina@inter.net"));
 
-        Person personWithExpectedAttributes = new Person("login", "Meier", "Nina", "nina@inter.net");
+        Person personWithExpectedAttributes = new Person("username", "Meier", "Nina", "nina@inter.net");
 
         verify(personService).create(refEq(personWithExpectedAttributes));
     }
@@ -182,12 +182,12 @@ public class PersonManagementViewControllerTest {
     public void editPersonUpdatesPersonCorrectly() throws Exception {
 
         perform(post("/web/person/" + PERSON_ID + "/edit")
-            .param("loginName", "login")
+            .param("username", "username")
             .param("lastName", "Meier")
             .param("firstName", "Nina")
             .param("email", "nina@inter.net"));
 
-        Person personWithExpectedAttributes = new Person("login", "Meier", "Nina", "nina@inter.net");
+        Person personWithExpectedAttributes = new Person("username", "Meier", "Nina", "nina@inter.net");
 
         verify(personService).update(refEq(personWithExpectedAttributes));
     }

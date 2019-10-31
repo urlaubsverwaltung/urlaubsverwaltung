@@ -41,7 +41,7 @@ public class SickNoteCronMailServiceTest {
     public void ensureSendEndOfSickPayNotification() {
 
         final Person person = new Person();
-        person.setLoginName("Hulk");
+        person.setUsername("Hulk");
 
         final SickNote sickNoteA = new SickNote();
         sickNoteA.setId(1);

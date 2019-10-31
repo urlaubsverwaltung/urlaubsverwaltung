@@ -39,10 +39,10 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person create(String loginName, String lastName, String firstName, String email,
+    public Person create(String username, String lastName, String firstName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
-        final Person person = new Person(loginName, lastName, firstName, email);
+        final Person person = new Person(username, lastName, firstName, email);
 
         person.setNotifications(notifications);
         person.setPermissions(permissions);
@@ -59,13 +59,13 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public Person update(Integer id, String loginName, String lastName, String firstName, String email,
+    public Person update(Integer id, String username, String lastName, String firstName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
         Person person = getPersonByID(id).orElseThrow(() ->
             new IllegalArgumentException("Can not find a person for ID = " + id));
 
-        person.setLoginName(loginName);
+        person.setUsername(username);
         person.setLastName(lastName);
         person.setFirstName(firstName);
         person.setEmail(email);
@@ -116,9 +116,9 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public Optional<Person> getPersonByLogin(String loginName) {
+    public Optional<Person> getPersonByUsername(String username) {
 
-        return Optional.ofNullable(personDAO.findByLoginName(loginName));
+        return Optional.ofNullable(personDAO.findByUsername(username));
     }
 
 
@@ -177,7 +177,7 @@ class PersonServiceImpl implements PersonService {
 
         String username = authentication.getName();
 
-        Optional<Person> person = getPersonByLogin(username);
+        Optional<Person> person = getPersonByUsername(username);
 
         if (!person.isPresent()) {
             throw new IllegalStateException("Can not get the person for the signed in user with username = " + username);

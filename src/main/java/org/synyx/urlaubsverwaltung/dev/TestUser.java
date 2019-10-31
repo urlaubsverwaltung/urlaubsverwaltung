@@ -15,20 +15,20 @@ enum TestUser {
     OFFICE("office", "secret", Role.USER, Role.BOSS, Role.OFFICE),
     ADMIN("admin", "secret", Role.USER, Role.ADMIN);
 
-    private final String login;
+    private final String username;
     private final String password;
     private final Role[] roles;
 
-    TestUser(String login, String password, Role... roles) {
+    TestUser(String username, String password, Role... roles) {
 
-        this.login = login;
+        this.username = username;
         this.password = password;
         this.roles = roles;
     }
 
-    String getLogin() {
+    String getUsername() {
 
-        return login;
+        return username;
     }
 
     Role[] getRoles() {

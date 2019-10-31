@@ -231,9 +231,9 @@ public class ApplicationForLeaveDetailsViewController {
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
 
-        String referLoginName = referredPerson.getLoginName();
-        Person recipient = personService.getPersonByLogin(referLoginName).orElseThrow(() ->
-                    new UnknownPersonException(referLoginName));
+        String referUsername = referredPerson.getUsername();
+        Person recipient = personService.getPersonByUsername(referUsername).orElseThrow(() ->
+                    new UnknownPersonException(referUsername));
 
         Person sender = personService.getSignedInUser();
 
@@ -250,7 +250,7 @@ public class ApplicationForLeaveDetailsViewController {
 
         throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to refer application for leave to user '%s'",
-                sender.getId(), referLoginName));
+                sender.getId(), referUsername));
     }
 
 

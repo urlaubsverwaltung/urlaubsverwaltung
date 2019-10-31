@@ -57,21 +57,21 @@
                         <div class="col-md-8 col-md-pull-4">
                             <c:set var="LOGIN_IS_REQUIRED" value="${person.id == null ? 'is-required' : ''}"/>
                             <div class="form-group ${LOGIN_IS_REQUIRED}">
-                                <label class="control-label col-md-3" for="loginName">
+                                <label class="control-label col-md-3" for="username">
                                     <spring:message code="person.form.data.login"/>:
                                 </label>
 
                                 <div class="col-md-9">
                                     <c:choose>
                                         <c:when test="${person.id == null}">
-                                            <form:input path="loginName" class="form-control"
+                                            <form:input path="username" class="form-control"
                                                         cssErrorClass="form-control error"/>
-                                            <span class="help-inline"><form:errors path="loginName"
+                                            <span class="help-inline"><form:errors path="username"
                                                                                    cssClass="error"/></span>
                                         </c:when>
                                         <c:otherwise>
-                                            <form:input path="loginName" class="form-control" disabled="true"/>
-                                            <form:hidden path="loginName" value="${person.loginName}"/>
+                                            <form:input path="username" class="form-control" disabled="true"/>
+                                            <form:hidden path="username" value="${person.username}"/>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>

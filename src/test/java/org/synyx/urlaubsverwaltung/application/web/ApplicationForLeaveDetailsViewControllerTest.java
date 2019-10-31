@@ -345,17 +345,17 @@ public class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    public void referApplicationThrowsUnknownPersonExceptionIfNoPersonForProvidedLoginName() {
+    public void referApplicationThrowsUnknownPersonExceptionIfNoPersonForProvidedUsername() {
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
 
-        final String loginName = "horst";
-        when(personService.getPersonByLogin(loginName)).thenReturn(Optional.empty());
+        final String username = "horst";
+        when(personService.getPersonByUsername(username)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
 
             perform(post("/web/application/" + APPLICATION_ID + "/refer")
-                .param("loginName", loginName))
+                .param("username", username))
 
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
@@ -365,7 +365,7 @@ public class ApplicationForLeaveDetailsViewControllerTest {
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(personService.getSignedInUser()).thenReturn(somePerson());
-        when(personService.getPersonByLogin(any())).thenReturn(Optional.of(somePerson()));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(somePerson()));
 
         assertThatThrownBy(() ->
 
@@ -383,7 +383,7 @@ public class ApplicationForLeaveDetailsViewControllerTest {
         final Application application = applicationOfPerson(applicationPerson);
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(personService.getPersonByLogin(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadOfPerson(signedInPerson, applicationPerson)).thenReturn(false);
 
@@ -403,7 +403,7 @@ public class ApplicationForLeaveDetailsViewControllerTest {
         final Application application = applicationOfPerson(applicationPerson);
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(personService.getPersonByLogin(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadOfPerson(signedInPerson, applicationPerson)).thenReturn(true);
 

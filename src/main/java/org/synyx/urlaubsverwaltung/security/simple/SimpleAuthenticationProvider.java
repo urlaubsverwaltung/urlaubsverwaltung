@@ -47,7 +47,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String rawPassword = authentication.getCredentials().toString();
 
-        Optional<Person> userOptional = personService.getPersonByLogin(username);
+        Optional<Person> userOptional = personService.getPersonByUsername(username);
 
         if (userOptional.isEmpty()) {
             LOG.info("No user found for username '{}'", username);
