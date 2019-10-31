@@ -13,15 +13,17 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 /**
@@ -32,12 +34,10 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
-    private final PersonSyncService personSyncService;
     private final LdapUserMapper ldapUserMapper;
 
-    LdapPersonContextMapper(PersonService personService, PersonSyncService personSyncService, LdapUserMapper ldapUserMapper) {
+    LdapPersonContextMapper(PersonService personService, LdapUserMapper ldapUserMapper) {
         this.personService = personService;
-        this.personSyncService = personSyncService;
         this.ldapUserMapper = ldapUserMapper;
     }
 
@@ -69,12 +69,18 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
                 throw new DisabledException("User '" + username + "' has been deactivated");
             }
 
-            person = personSyncService.syncPerson(existentPerson, firstName, lastName, email);
+            firstName.ifPresent(existentPerson::setFirstName);
+            lastName.ifPresent(existentPerson::setLastName);
+            email.ifPresent(existentPerson::setEmail);
+
+            person = personService.save(existentPerson);
         } else {
             LOG.info("No user found for username '{}'", username);
 
-            final Person createdPerson = personSyncService.createPerson(ldapUsername, firstName, lastName, email);
-            person = personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
+            final Person createdPerson = personService.create(ldapUsername, lastName.orElse(null), firstName.orElse(null),
+                email.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
+
+            person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
 
         /*
@@ -94,9 +100,8 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
     /**
      * Gets the granted authorities using the {@link Role}s of the given {@link Person}.
      *
-     * @param  person  to get the granted authorities for, may not be {@code null}
-     *
-     * @return  the granted authorities for the person
+     * @param person to get the granted authorities for, may not be {@code null}
+     * @return the granted authorities for the person
      */
     Collection<GrantedAuthority> getGrantedAuthorities(Person person) {
 

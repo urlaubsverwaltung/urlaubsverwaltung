@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -23,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -35,12 +36,10 @@ public class OidcPersonAuthoritiesMapperTest {
 
     @Mock
     private PersonService personService;
-    @Mock
-    private PersonSyncService personSyncService;
 
     @Before
     public void setUp() {
-        sut = new OidcPersonAuthoritiesMapper(personService, personSyncService);
+        sut = new OidcPersonAuthoritiesMapper(personService);
     }
 
     @Test
@@ -57,7 +56,7 @@ public class OidcPersonAuthoritiesMapperTest {
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
 
-        when(personSyncService.syncPerson(personForLogin, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
+        when(personService.save(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
@@ -76,8 +75,8 @@ public class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personSyncService.createPerson(uniqueID, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
-        when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(personForLogin);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
@@ -97,7 +96,7 @@ public class OidcPersonAuthoritiesMapperTest {
 
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
-        when(personSyncService.syncPerson(personForLogin, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
+        when(personService.save(personForLogin)).thenReturn(personForLogin);
 
         sut.mapAuthorities(List.of(oidcUserAuthority));
     }
@@ -115,8 +114,8 @@ public class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personSyncService.createPerson(uniqueID, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
-        when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(personForLogin);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
@@ -135,8 +134,8 @@ public class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personSyncService.createPerson(uniqueID, Optional.of(givenName), Optional.of(familyName), Optional.of(email))).thenReturn(personForLogin);
-        when(personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(personForLogin);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());

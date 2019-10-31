@@ -15,7 +15,6 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 @Configuration
 public class LdapSecurityConfiguration {
@@ -86,15 +85,11 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapPersonContextMapper personContextMapper(PersonService personService, PersonSyncService personSyncService,
+        public LdapPersonContextMapper personContextMapper(PersonService personService,
                                                            LdapUserMapper ldapUserMapper) {
-            return new LdapPersonContextMapper(personService, personSyncService, ldapUserMapper);
+            return new LdapPersonContextMapper(personService, ldapUserMapper);
         }
 
-        @Bean
-        public PersonSyncService ldapSyncService(PersonService personService) {
-            return new PersonSyncService(personService);
-        }
     }
 
     @Configuration
@@ -116,9 +111,9 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonSyncService personSyncService,
+        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService,
                                                          PersonService personService) {
-            return new LdapUserDataImporter(ldapUserService, personSyncService, personService);
+            return new LdapUserDataImporter(ldapUserService, personService);
         }
 
         @Bean

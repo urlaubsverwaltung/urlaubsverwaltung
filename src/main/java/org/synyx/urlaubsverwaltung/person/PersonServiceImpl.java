@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 
 /**
@@ -184,5 +186,31 @@ class PersonServiceImpl implements PersonService {
         }
 
         return person.get();
+    }
+
+    /**
+     * Adds {@link Role#OFFICE} to the roles of the given person if no
+     * other active user with a office role is defined.
+     *
+     * @param person that maybe gets the role {@link Role#OFFICE}
+     * @return saved {@link Person} with {@link Role#OFFICE} rights
+     * if no other active person with {@link Role#OFFICE} is available.
+     */
+    public Person appointAsOfficeUserIfNoOfficeUserPresent(Person person) {
+
+        boolean activeOfficeUserAvailable = !getActivePersonsByRole(OFFICE).isEmpty();
+        if (activeOfficeUserAvailable) {
+            return person;
+        }
+
+        final List<Role> permissions = new ArrayList<>(person.getPermissions());
+        permissions.add(OFFICE);
+        person.setPermissions(permissions);
+
+        final Person savedPerson = save(person);
+
+        LOG.info("Add 'OFFICE' role to person: {}", person);
+
+        return savedPerson;
     }
 }
