@@ -3,10 +3,11 @@
 * API-Change: Move `api/availability` to `api/person/persons/{personId}/availabilities` [808](https://github.com/synyx/urlaubsverwaltung/issues/808)
 * Add default workdays to the configuration properties [828](https://github.com/synyx/urlaubsverwaltung/pull/828)
 * Fix missing absence entries in availabilities api [829](https://github.com/synyx/urlaubsverwaltung/pull/829)
+* Rename loginName to username [839](https://github.com/synyx/urlaubsverwaltung/pull/839)
+* Remove all deprecations [841](https://github.com/synyx/urlaubsverwaltung/pull/841)
 * Upgrade spring boot parent to 2.1.10
 * Upgrade google api client to 1.25.0
 * Upgrade jollyday to 0.5.9
-* rename loginName to username [839](https://github.com/synyx/urlaubsverwaltung/pull/839)
 
 ### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
 * Remove liquibase user demo creation on demo context [#810](https://github.com/synyx/urlaubsverwaltung/pull/810)
