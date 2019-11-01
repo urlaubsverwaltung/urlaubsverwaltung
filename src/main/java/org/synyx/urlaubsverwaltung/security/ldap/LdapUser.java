@@ -24,7 +24,7 @@ final class LdapUser {
     private final Set<String> memberOf = new HashSet<>();
 
     LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email,
-        String... memberOf) {
+             String... memberOf) {
 
         if (!StringUtils.hasText(username)) {
             throw new IllegalArgumentException("Username must be given.");

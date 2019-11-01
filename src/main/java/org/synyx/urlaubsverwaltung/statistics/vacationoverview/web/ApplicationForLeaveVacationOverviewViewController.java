@@ -22,7 +22,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 
 /**
  * Controller to generate applications for leave vacation overview.
- *
  */
 @RequestMapping("/web/application")
 @Controller

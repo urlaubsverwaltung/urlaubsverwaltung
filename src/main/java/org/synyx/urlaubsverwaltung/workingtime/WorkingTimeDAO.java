@@ -23,14 +23,14 @@ interface WorkingTimeDAO extends CrudRepository<WorkingTime, Integer> {
 
     @Query(
         "SELECT x FROM WorkingTime x WHERE x.person = ?1 "
-        + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
+            + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
     )
     WorkingTime findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
 
 
     @Query(
         "SELECT x FROM WorkingTime x WHERE x.person = ?1 "
-        + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1)"
+            + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1)"
     )
     WorkingTime findLastOneByPerson(Person person);
 }

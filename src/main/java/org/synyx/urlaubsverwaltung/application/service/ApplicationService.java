@@ -20,9 +20,8 @@ public interface ApplicationService {
     /**
      * Gets an {@link Application} by its primary key.
      *
-     * @param  id  to get the {@link Application} by.
-     *
-     * @return  optional {@link Application} for the given id
+     * @param id to get the {@link Application} by.
+     * @return optional {@link Application} for the given id
      */
     Optional<Application> getApplicationById(Integer id);
 
@@ -30,8 +29,7 @@ public interface ApplicationService {
     /**
      * Saves a new {@link Application}.
      *
-     * @param  application  to be saved
-     *
+     * @param application to be saved
      * @return the saved {@link Application}
      */
     Application save(Application application);
@@ -40,9 +38,8 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with the given state.
      *
-     * @param  state  of the {@link Application}s for leave to be fetched
-     *
-     * @return  all {@link Application}s for leave with the given state
+     * @param state of the {@link Application}s for leave to be fetched
+     * @return all {@link Application}s for leave with the given state
      */
     List<Application> getApplicationsForACertainState(ApplicationStatus state);
 
@@ -50,11 +47,10 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
-     * @param  startDate {@link LocalDate}
-     * @param  endDate {@link LocalDate}
-     * @param  person {@link Person}
-     *
-     * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y
+     * @param startDate {@link LocalDate}
+     * @param endDate   {@link LocalDate}
+     * @param person    {@link Person}
+     * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
                                                                 Person person);
@@ -63,11 +59,10 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
      *
-     * @param  startDate {@link LocalDate}
-     * @param  endDate {@link LocalDate}
-     * @param  status {@link ApplicationStatus}
-     *
-     * @return  all {@link Application}s with the given state and vacation time between startDate x and endDate y
+     * @param startDate {@link LocalDate}
+     * @param endDate   {@link LocalDate}
+     * @param status    {@link ApplicationStatus}
+     * @return all {@link Application}s with the given state and vacation time between startDate x and endDate y
      */
     List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate,
                                                                ApplicationStatus status);
@@ -77,13 +72,12 @@ public interface ApplicationService {
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
      * state.
      *
-     * @param  startDate {@link LocalDate}
-     * @param  endDate {@link LocalDate}
-     * @param  person {@link Person}
-     * @param  status {@link ApplicationStatus}
-     *
-     * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y and
-     *          with a certain state
+     * @param startDate {@link LocalDate}
+     * @param endDate   {@link LocalDate}
+     * @param person    {@link Person}
+     * @param status    {@link ApplicationStatus}
+     * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y and
+     * with a certain state
      */
     List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate,
                                                                         Person person, ApplicationStatus status);
@@ -92,9 +86,8 @@ public interface ApplicationService {
     /**
      * Get the total hours of overtime reduction for a certain person.
      *
-     * @param  person  to get the total hours of overtime reduction for
-     *
-     * @return  the total overtime reduction of a person, never {@code null}
+     * @param person to get the total hours of overtime reduction for
+     * @return the total overtime reduction of a person, never {@code null}
      */
     BigDecimal getTotalOvertimeReductionOfPerson(Person person);
 }

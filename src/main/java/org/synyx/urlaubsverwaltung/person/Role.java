@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.person;
 
 /**

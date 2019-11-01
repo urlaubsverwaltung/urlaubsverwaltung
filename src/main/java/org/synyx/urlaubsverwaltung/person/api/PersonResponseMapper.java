@@ -8,7 +8,7 @@ public final class PersonResponseMapper {
         // prevents initialisation
     }
 
-    public static PersonResponse mapToResponse(Person person){
+    public static PersonResponse mapToResponse(Person person) {
         return new PersonResponse(person.getEmail(), person.getFirstName(), person.getLastName(), person.getNiceName());
     }
 }

@@ -17,6 +17,7 @@ public interface VacationTypeService {
 
     /**
      * Returns the vacation types filter by the given vacationCategory parameter
+     *
      * @param vacationCategory to filter out
      * @return a filtered list of @{VacationCategory}
      */

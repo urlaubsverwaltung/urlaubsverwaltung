@@ -31,15 +31,15 @@ public class UsedDaysOverview {
 
         this.year = year;
         this.holidayDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED,
-                ApplicationStatus.TEMPORARY_ALLOWED);
+            ApplicationStatus.TEMPORARY_ALLOWED);
         this.otherDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED,
-                ApplicationStatus.TEMPORARY_ALLOWED);
+            ApplicationStatus.TEMPORARY_ALLOWED);
 
         for (Application application : applications) {
             ApplicationStatus status = application.getStatus();
 
             if (application.hasStatus(ApplicationStatus.WAITING) || application.hasStatus(ApplicationStatus.ALLOWED)
-                    || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 BigDecimal days = getVacationDays(application, calendarService);
 
                 if (application.getVacationType().isOfCategory(VacationCategory.HOLIDAY)) {

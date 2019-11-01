@@ -29,9 +29,8 @@ final class GravatarUtil {
     /**
      * This method generates the complete Gravatar URL to the given mail address.
      *
-     * @param  email  String
-     *
-     * @return  complete Gravatar URL
+     * @param email String
+     * @return complete Gravatar URL
      */
     static String createImgURL(String email) {
 

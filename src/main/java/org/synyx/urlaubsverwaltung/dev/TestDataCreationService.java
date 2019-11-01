@@ -73,7 +73,7 @@ public class TestDataCreationService {
         final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@firma.test");
         final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@firma.test");
         final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@firma.test");
-        personDataProvider.createTestPerson(TestUser.ADMIN,"Senor", "Operation", "admin@firma.test");
+        personDataProvider.createTestPerson(TestUser.ADMIN, "Senor", "Operation", "admin@firma.test");
 
         // Users
         final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test", USER);

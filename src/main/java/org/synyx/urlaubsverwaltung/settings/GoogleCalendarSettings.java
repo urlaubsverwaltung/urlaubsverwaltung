@@ -61,9 +61,9 @@ public class GoogleCalendarSettings {
         if (o == null || getClass() != o.getClass()) return false;
         GoogleCalendarSettings that = (GoogleCalendarSettings) o;
         return Objects.equals(getClientId(), that.getClientId()) &&
-                Objects.equals(getClientSecret(), that.getClientSecret()) &&
-                Objects.equals(getCalendarId(), that.getCalendarId()) &&
-                Objects.equals(getRefreshToken(), that.getRefreshToken());
+            Objects.equals(getClientSecret(), that.getClientSecret()) &&
+            Objects.equals(getCalendarId(), that.getCalendarId()) &&
+            Objects.equals(getRefreshToken(), that.getRefreshToken());
     }
 
     @Override

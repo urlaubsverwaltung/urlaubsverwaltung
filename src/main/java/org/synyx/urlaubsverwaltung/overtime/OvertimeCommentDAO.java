@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Allows access to overtime comments.
  *
- * @since  2.11.0
+ * @since 2.11.0
  */
 interface OvertimeCommentDAO extends CrudRepository<OvertimeComment, Integer> {
 

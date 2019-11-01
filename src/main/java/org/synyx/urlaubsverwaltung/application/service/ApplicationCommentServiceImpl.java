@@ -30,7 +30,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
     @Override
     public ApplicationComment create(Application application, ApplicationAction action, Optional<String> text,
-        Person author) {
+                                     Person author) {
 
         final ApplicationComment comment = new ApplicationComment(author);
 

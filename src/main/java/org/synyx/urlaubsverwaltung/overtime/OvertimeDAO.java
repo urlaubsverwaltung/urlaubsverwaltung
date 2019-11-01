@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Allows access to overtime records.
  *
- * @since  2.11.0
+ * @since 2.11.0
  */
 interface OvertimeDAO extends CrudRepository<Overtime, Integer> {
 
@@ -26,10 +26,10 @@ interface OvertimeDAO extends CrudRepository<Overtime, Integer> {
 
     @Query(
         "SELECT overtime FROM Overtime overtime WHERE overtime.person = :person "
-        + "AND ((overtime.startDate BETWEEN :start AND :end) "
-        + "OR (overtime.endDate BETWEEN :start AND :end) "
-        + "OR (overtime.startDate < :start and overtime.endDate > :end)) "
-        + "ORDER BY overtime.startDate"
+            + "AND ((overtime.startDate BETWEEN :start AND :end) "
+            + "OR (overtime.endDate BETWEEN :start AND :end) "
+            + "OR (overtime.startDate < :start and overtime.endDate > :end)) "
+            + "ORDER BY overtime.startDate"
     )
     List<Overtime> findByPersonAndPeriod(@Param("person") Person person, @Param("start") LocalDate start, @Param("end") LocalDate end);
 }

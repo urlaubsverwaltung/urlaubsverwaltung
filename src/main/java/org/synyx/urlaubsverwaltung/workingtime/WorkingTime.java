@@ -194,11 +194,7 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
     public void setValidFrom(LocalDate validFrom) {
 
-        if (validFrom == null) {
-            this.validFrom = null;
-        } else {
-            this.validFrom = validFrom;
-        }
+        this.validFrom = validFrom;
     }
 
 

@@ -54,7 +54,10 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private List<Optional<TimedAbsence>> checkForVacation(LocalDate date, Person person) {
 
-        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date, person)
+        final
+
+        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date,
+            person)
             .stream()
             .filter(application -> application.hasStatus(WAITING) ||
                 application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED))

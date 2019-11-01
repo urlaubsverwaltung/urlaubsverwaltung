@@ -36,7 +36,8 @@ class AssetFilenameHashMapper {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(manifest, new TypeReference<Map<String, String>>() {});
+            return objectMapper.readValue(manifest, new TypeReference<Map<String, String>>() {
+            });
         } catch (IOException e) {
             throw new IllegalStateException("could not parse manifest json file");
         }

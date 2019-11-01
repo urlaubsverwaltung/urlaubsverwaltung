@@ -58,7 +58,7 @@ public class SettingsValidator implements Validator {
 
         validateSickNoteSettings(settings, errors);
 
-        if(!isMailServerFromApplicationProperties) {
+        if (!isMailServerFromApplicationProperties) {
             validateMailSettings(settings, errors);
         }
 
@@ -161,7 +161,7 @@ public class SettingsValidator implements Validator {
         }
 
         if (maximumSickPayDays != null && daysBeforeEndOfSickPayNotification != null
-                && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
+            && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
             errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
         }

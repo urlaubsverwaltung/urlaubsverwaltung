@@ -37,9 +37,8 @@ public enum WeekDay {
     /**
      * Get the week day for the given day of week representation.
      *
-     * @param  dayOfWeek  to detect the week day for, use {@link java.time.DayOfWeek} by preference.
-     *
-     * @return  the matching week day, never {@code null}
+     * @param dayOfWeek to detect the week day for, use {@link java.time.DayOfWeek} by preference.
+     * @return the matching week day, never {@code null}
      */
     public static WeekDay getByDayOfWeek(int dayOfWeek) {
 

@@ -58,16 +58,16 @@ public class AbsenceApiController {
     public ResponseWrapper<DayAbsenceList> personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = RestApiDateFormat.EXAMPLE_YEAR)
         @RequestParam("year")
-        String year,
+            String year,
         @ApiParam(value = "Month of year to get the absences for")
         @RequestParam(value = "month", required = false)
-        String month,
+            String month,
         @ApiParam(value = "ID of the person")
         @RequestParam("person")
-        Integer personId,
+            Integer personId,
         @ApiParam(value = "Type of absences, vacation or sick notes", allowableValues = "VACATION, SICK_NOTE")
         @RequestParam(value = "type", required = false)
-        String type) {
+            String type) {
 
 
         Optional<Person> optionalPerson = personService.getPersonByID(personId);
@@ -121,13 +121,13 @@ public class AbsenceApiController {
         List<DayAbsence> absences = new ArrayList<>();
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end,
-                    person)
-                .stream()
-                .filter(application ->
-                            application.hasStatus(ApplicationStatus.WAITING)
-                            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-                            || application.hasStatus(ApplicationStatus.ALLOWED))
-                .collect(Collectors.toList());
+            person)
+            .stream()
+            .filter(application ->
+                application.hasStatus(ApplicationStatus.WAITING)
+                    || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
+                    || application.hasStatus(ApplicationStatus.ALLOWED))
+            .collect(Collectors.toList());
 
         for (Application application : applications) {
             LocalDate startDate = application.getStartDate();
@@ -138,7 +138,7 @@ public class AbsenceApiController {
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
                     absences.add(new DayAbsence(day, application.getDayLength().getDuration(), application.getDayLength().toString(), DayAbsence.Type.VACATION,
-                            application.getStatus().name(), application.getId()));
+                        application.getStatus().name(), application.getId()));
                 }
 
                 day = day.plusDays(1);
@@ -154,9 +154,9 @@ public class AbsenceApiController {
         List<DayAbsence> absences = new ArrayList<>();
 
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, start, end)
-                .stream()
-                .filter(SickNote::isActive)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(SickNote::isActive)
+            .collect(Collectors.toList());
 
         for (SickNote sickNote : sickNotes) {
             LocalDate startDate = sickNote.getStartDate();

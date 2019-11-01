@@ -20,7 +20,7 @@ public class CustomPasswordEncoder implements PasswordEncoder {
         final Pbkdf2PasswordEncoder defaultEncoder = new Pbkdf2PasswordEncoder();
 
         Map<String, PasswordEncoder> encoders = new HashMap<>();
-        encoders.put( idForEncode, defaultEncoder);
+        encoders.put(idForEncode, defaultEncoder);
         encoders.put("bcrypt", new BCryptPasswordEncoder());
         encoders.put("scrypt", new SCryptPasswordEncoder());
         final DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(idForEncode, encoders);

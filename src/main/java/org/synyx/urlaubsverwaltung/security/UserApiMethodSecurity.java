@@ -33,7 +33,7 @@ public class UserApiMethodSecurity {
             allowed = username.equals(person.get().getUsername());
         } else if (authentication.getPrincipal() instanceof User) {
             allowed = ((User) authentication.getPrincipal()).getUsername().equals(person.get().getUsername());
-        } else if(authentication.getPrincipal() instanceof DefaultOidcUser) {
+        } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
             final String username = ((DefaultOidcUser) authentication.getPrincipal()).getIdToken().getSubject();
             allowed = username.equals(person.get().getUsername());
         }

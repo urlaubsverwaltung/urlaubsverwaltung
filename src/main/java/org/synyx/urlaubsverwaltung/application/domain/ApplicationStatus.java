@@ -13,7 +13,7 @@ public enum ApplicationStatus {
     /**
      * After the HeadOf has allowed the application in a two stage approval process.
      *
-     * @since  2.15.0
+     * @since 2.15.0
      */
     TEMPORARY_ALLOWED,
 
@@ -36,7 +36,7 @@ public enum ApplicationStatus {
     /**
      * If an application for leave has not been allowed yet and is cancelled, it gets this status.
      *
-     * @since  2.5.2
+     * @since 2.5.2
      */
     REVOKED
 }

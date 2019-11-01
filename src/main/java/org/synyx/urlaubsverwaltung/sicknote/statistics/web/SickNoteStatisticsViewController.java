@@ -33,7 +33,7 @@ public class SickNoteStatisticsViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping("/sicknote/statistics")
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
-        Model model) {
+                                      Model model) {
 
         int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
         SickNoteStatistics statistics = statisticsService.createStatistics(year);

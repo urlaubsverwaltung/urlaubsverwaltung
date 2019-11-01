@@ -39,10 +39,9 @@ public class PublicHolidaysService {
      * public holiday. The working duration for Christmas Eve and New Year's Eve are configured in the business
      * properties; normally the working duration for these holidays is a half day (0.5)
      *
-     * @param  date  to get working duration for
-     * @param  federalState  the federal state to consider holiday settings for
-     *
-     * @return  working duration of the given date
+     * @param date         to get working duration for
+     * @param federalState the federal state to consider holiday settings for
+     * @return working duration of the given date
      */
     public BigDecimal getWorkingDurationOfDate(LocalDate date, FederalState federalState) {
 

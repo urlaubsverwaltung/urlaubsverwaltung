@@ -92,15 +92,15 @@ public class OverviewViewController {
     @GetMapping("/person/{personId}/overview")
     public String showOverview(@PathVariable("personId") Integer personId,
                                @RequestParam(value = YEAR_ATTRIBUTE, required = false) Integer year, Model model)
-            throws UnknownPersonException {
+        throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(
-                    String.format("User '%s' has not the correct permissions to access the overview page of user '%s'",
-                            signedInUser.getId(), person.getId()));
+                String.format("User '%s' has not the correct permissions to access the overview page of user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
@@ -121,7 +121,7 @@ public class OverviewViewController {
     private void prepareSickNoteList(Person person, int year, Model model) {
 
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year),
-                DateUtil.getLastDayOfYear(year));
+            DateUtil.getLastDayOfYear(year));
 
         List<ExtendedSickNote> extendedSickNotes = sickNotes.stream()
             .map(input -> new ExtendedSickNote(input, calendarService))

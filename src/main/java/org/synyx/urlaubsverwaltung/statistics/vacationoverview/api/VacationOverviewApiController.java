@@ -26,17 +26,17 @@ public class VacationOverviewApiController {
     }
 
     @ApiOperation(
-            value = "Get Vacation-Overview Metadata",
-            notes = "Get Vacation-Overview metadata for all members of a department")
+        value = "Get Vacation-Overview Metadata",
+        notes = "Get Vacation-Overview metadata for all members of a department")
     @GetMapping("/vacationoverview")
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     public ResponseWrapper<VacationOverviewResponse> getHolidayOverview(
-            @RequestParam("selectedDepartment") String selectedDepartment,
-            @RequestParam("selectedYear") Integer selectedYear,
-            @RequestParam("selectedMonth") Integer selectedMonth) {
+        @RequestParam("selectedDepartment") String selectedDepartment,
+        @RequestParam("selectedYear") Integer selectedYear,
+        @RequestParam("selectedMonth") Integer selectedMonth) {
 
         List<VacationOverview> holidayOverviewList =
-                vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
+            vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
 
         return new ResponseWrapper<>(new VacationOverviewResponse(holidayOverviewList));
     }

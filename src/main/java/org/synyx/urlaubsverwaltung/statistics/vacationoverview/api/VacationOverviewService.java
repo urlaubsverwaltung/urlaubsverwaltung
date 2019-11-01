@@ -78,7 +78,7 @@ public class VacationOverviewService {
 
         FederalState state = workingTimeService.getFederalStateForPerson(person, currentDay);
         if (DateUtil.isWorkDay(currentDay)
-                && (publicHolidayService.getWorkingDurationOfDate(currentDay, state).longValue() > 0)) {
+            && (publicHolidayService.getWorkingDurationOfDate(currentDay, state).longValue() > 0)) {
 
             typeOfDay = WORKDAY;
         } else {

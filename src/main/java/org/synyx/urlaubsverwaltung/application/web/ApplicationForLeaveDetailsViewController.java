@@ -84,21 +84,21 @@ public class ApplicationForLeaveDetailsViewController {
 
     @GetMapping("/{applicationId}")
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
-        @RequestParam(value = "action", required = false) String action,
-        @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model)
+                                        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
+                                        @RequestParam(value = "action", required = false) String action,
+                                        @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model)
         throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-                    new UnknownApplicationForLeaveException(applicationId));
+            new UnknownApplicationForLeaveException(applicationId));
 
         Person signedInUser = personService.getSignedInUser();
         Person person = application.getPerson();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to see application for leave of user '%s'",
-                    signedInUser.getId(), person.getId()));
+                "User '%s' has not the correct permissions to see application for leave of user '%s'",
+                signedInUser.getId(), person.getId()));
         }
 
         int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
@@ -136,7 +136,7 @@ public class ApplicationForLeaveDetailsViewController {
 
         // WORKING TIME FOR VACATION PERIOD
         Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-                application.getPerson(), application.getStartDate());
+            application.getPerson(), application.getStartDate());
 
         optionalWorkingTime.ifPresent(workingTime -> model.addAttribute("workingTime", workingTime));
 
@@ -170,12 +170,12 @@ public class ApplicationForLeaveDetailsViewController {
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/allow")
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") ApplicationCommentForm comment,
-        @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
-        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+                                   @ModelAttribute("comment") ApplicationCommentForm comment,
+                                   @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
+                                   RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-                    new UnknownApplicationForLeaveException(applicationId));
+            new UnknownApplicationForLeaveException(applicationId));
 
         Person signedInUser = personService.getSignedInUser();
         Person person = application.getPerson();
@@ -188,8 +188,8 @@ public class ApplicationForLeaveDetailsViewController {
 
         if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to allow application for leave of user '%s'",
-                    signedInUser.getId(), person.getId()));
+                "User '%s' has not the correct permissions to allow application for leave of user '%s'",
+                signedInUser.getId(), person.getId()));
         }
 
         comment.setMandatory(false);
@@ -202,7 +202,7 @@ public class ApplicationForLeaveDetailsViewController {
         }
 
         Application allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser,
-                Optional.ofNullable(comment.getText()));
+            Optional.ofNullable(comment.getText()));
 
         if (allowedApplicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
             redirectAttributes.addFlashAttribute("allowSuccess", true);
@@ -225,15 +225,15 @@ public class ApplicationForLeaveDetailsViewController {
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @PostMapping("/{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
+                                   @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-                    new UnknownApplicationForLeaveException(applicationId));
+            new UnknownApplicationForLeaveException(applicationId));
 
         String referUsername = referredPerson.getUsername();
         Person recipient = personService.getPersonByUsername(referUsername).orElseThrow(() ->
-                    new UnknownPersonException(referUsername));
+            new UnknownPersonException(referUsername));
 
         Person sender = personService.getSignedInUser();
 
@@ -249,20 +249,20 @@ public class ApplicationForLeaveDetailsViewController {
         }
 
         throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to refer application for leave to user '%s'",
-                sender.getId(), referUsername));
+            "User '%s' has not the correct permissions to refer application for leave to user '%s'",
+            sender.getId(), referUsername));
     }
 
 
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/reject")
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") ApplicationCommentForm comment,
-        @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
-        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+                                    @ModelAttribute("comment") ApplicationCommentForm comment,
+                                    @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
+                                    RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-                    new UnknownApplicationForLeaveException(applicationId));
+            new UnknownApplicationForLeaveException(applicationId));
 
         Person person = application.getPerson();
         Person signedInUser = personService.getSignedInUser();
@@ -296,8 +296,8 @@ public class ApplicationForLeaveDetailsViewController {
         }
 
         throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to reject application for leave of user '%s'",
-                signedInUser.getId(), person.getId()));
+            "User '%s' has not the correct permissions to reject application for leave of user '%s'",
+            signedInUser.getId(), person.getId()));
     }
 
 
@@ -307,11 +307,11 @@ public class ApplicationForLeaveDetailsViewController {
      */
     @PostMapping("/{applicationId}/cancel")
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
+                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-                    new UnknownApplicationForLeaveException(applicationId));
+            new UnknownApplicationForLeaveException(applicationId));
 
         Person signedInUser = personService.getSignedInUser();
 
@@ -331,8 +331,8 @@ public class ApplicationForLeaveDetailsViewController {
             comment.setMandatory(true);
         } else {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to cancel application for leave of user '%s'",
-                    signedInUser.getId(), application.getPerson().getId()));
+                "User '%s' has not the correct permissions to cancel application for leave of user '%s'",
+                signedInUser.getId(), application.getPerson().getId()));
         }
 
         commentValidator.validate(comment, errors);
@@ -354,10 +354,10 @@ public class ApplicationForLeaveDetailsViewController {
      */
     @PostMapping("/{applicationId}/remind")
     public String remindBoss(@PathVariable("applicationId") Integer applicationId,
-        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+                             RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-                    new UnknownApplicationForLeaveException(applicationId));
+            new UnknownApplicationForLeaveException(applicationId));
 
         try {
             applicationInteractionService.remind(application);

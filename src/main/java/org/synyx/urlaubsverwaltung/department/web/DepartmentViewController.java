@@ -84,7 +84,7 @@ public class DepartmentViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/department")
     public String newDepartment(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department,
-        Errors errors, Model model, RedirectAttributes redirectAttributes) {
+                                Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
         validator.validate(department, errors);
 
@@ -104,7 +104,7 @@ public class DepartmentViewController {
         throws UnknownDepartmentException {
 
         Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
-                    new UnknownDepartmentException(departmentId));
+            new UnknownDepartmentException(departmentId));
 
         List<Person> persons = getPersons();
 
@@ -118,8 +118,8 @@ public class DepartmentViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
-        @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
-        RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
+                                   @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
+                                   RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
         Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
             new UnknownDepartmentException(departmentId)).getId();
@@ -144,7 +144,7 @@ public class DepartmentViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @DeleteMapping("/department/{departmentId}")
     public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
-        RedirectAttributes redirectAttributes) {
+                                   RedirectAttributes redirectAttributes) {
 
         Optional<Department> department = departmentService.getDepartmentById(departmentId);
 

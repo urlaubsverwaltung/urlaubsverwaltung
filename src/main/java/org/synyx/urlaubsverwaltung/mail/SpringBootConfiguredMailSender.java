@@ -23,7 +23,7 @@ public class SpringBootConfiguredMailSender implements MailSender {
 
     public void sendEmail(String from, List<String> recipients, String subject, String text) {
 
-        if(recipients == null || recipients.isEmpty()) {
+        if (recipients == null || recipients.isEmpty()) {
             LOG.warn("Could not send email to empty recipients!");
             return;
         }
@@ -48,7 +48,7 @@ public class SpringBootConfiguredMailSender implements MailSender {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("To={}\n\nSubject={}\n\nText={}",
-                        Arrays.toString(message.getTo()), message.getSubject(), message.getText());
+                    Arrays.toString(message.getTo()), message.getSubject(), message.getText());
             }
         } catch (MailException ex) {
             for (String recipient : message.getTo()) {

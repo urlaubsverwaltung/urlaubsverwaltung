@@ -126,13 +126,13 @@ public class SettingsViewController {
             return "settings/settings_form";
         }
 
-        if(isMailServerFromApplicationProperties) {
+        if (isMailServerFromApplicationProperties) {
             settings.setMailSettings(new MailSettings());
         }
 
         settingsService.save(processGoogleRefreshToken(settings));
 
-        if(!isMailServerFromApplicationProperties) {
+        if (!isMailServerFromApplicationProperties) {
             sendSuccessfullyUpdatedSettingsNotification(settings);
         }
 

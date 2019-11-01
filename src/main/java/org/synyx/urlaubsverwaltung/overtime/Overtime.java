@@ -16,7 +16,7 @@ import static java.time.ZoneOffset.UTC;
 /**
  * Represents the overtime of a person for a certain period of time.
  *
- * @since  2.11.0
+ * @since 2.11.0
  */
 @Entity
 public class Overtime extends AbstractPersistable<Integer> {

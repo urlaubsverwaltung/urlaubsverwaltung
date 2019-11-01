@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.account.service;
 
 import org.slf4j.Logger;

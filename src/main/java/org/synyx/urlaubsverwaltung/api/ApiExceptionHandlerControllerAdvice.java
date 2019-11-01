@@ -31,7 +31,7 @@ public class ApiExceptionHandlerControllerAdvice {
     }
 
     @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler({ NumberFormatException.class, IllegalArgumentException.class })
+    @ExceptionHandler({NumberFormatException.class, IllegalArgumentException.class})
     @ResponseBody
     public ErrorResponse handleException(IllegalArgumentException exception) {
 

@@ -36,7 +36,7 @@ class TestDataConfiguration {
 
     @Bean
     PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder) {
-        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, passwordEncoder) ;
+        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, passwordEncoder);
     }
 
     @Bean

@@ -53,7 +53,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Flag for two stage approval process.
      *
-     * @since  2.15.0
+     * @since 2.15.0
      */
     private boolean twoStageApproval;
 
@@ -65,7 +65,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Start time of the application for leave.
      *
-     * @since  2.15.0
+     * @since 2.15.0
      */
     private Time startTime;
 
@@ -77,7 +77,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * End time of the application for leave.
      *
-     * @since  2.15.0
+     * @since 2.15.0
      */
     private Time endTime;
 
@@ -144,7 +144,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * The number of overtime hours that are used for this application for leave.
      *
-     * @since  2.11.0
+     * @since 2.11.0
      */
     private BigDecimal hours;
 
@@ -178,11 +178,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setApplicationDate(LocalDate applicationDate) {
 
-        if (applicationDate == null) {
-            this.applicationDate = null;
-        } else {
-            this.applicationDate = applicationDate;
-        }
+        this.applicationDate = applicationDate;
     }
 
 
@@ -198,11 +194,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setCancelDate(LocalDate cancelDate) {
 
-        if (cancelDate == null) {
-            this.cancelDate = null;
-        } else {
-            this.cancelDate = cancelDate;
-        }
+        this.cancelDate = cancelDate;
     }
 
 
@@ -218,11 +210,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setEditedDate(LocalDate editedDate) {
 
-        if (editedDate == null) {
-            this.editedDate = null;
-        } else {
-            this.editedDate = editedDate;
-        }
+        this.editedDate = editedDate;
     }
 
 
@@ -286,11 +274,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setEndDate(LocalDate endDate) {
 
-        if (endDate == null) {
-            this.endDate = null;
-        } else {
-            this.endDate = endDate;
-        }
+        this.endDate = endDate;
     }
 
 
@@ -378,11 +362,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setStartDate(LocalDate startDate) {
 
-        if (startDate == null) {
-            this.startDate = null;
-        } else {
-            this.startDate = startDate;
-        }
+        this.startDate = startDate;
     }
 
 
@@ -428,11 +408,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setRemindDate(LocalDate remindDate) {
 
-        if (remindDate == null) {
-            this.remindDate = null;
-        } else {
-            this.remindDate = remindDate;
-        }
+        this.remindDate = remindDate;
     }
 
 
@@ -489,9 +465,8 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Checks if the application for leave has the given status.
      *
-     * @param  status  to be checked
-     *
-     * @return  {@code true} if the application for leave has the given status, else {@code false}
+     * @param status to be checked
+     * @return {@code true} if the application for leave has the given status, else {@code false}
      */
     public boolean hasStatus(ApplicationStatus status) {
 
@@ -502,7 +477,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Return period of time of the application for leave.
      *
-     * @return  period of time, never {@code null}
+     * @return period of time, never {@code null}
      */
     public Period getPeriod() {
 
@@ -513,7 +488,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Get start of application for leave as date with time.
      *
-     * @return  start date with time or {@code null} if start date or start time is missing
+     * @return start date with time or {@code null} if start date or start time is missing
      */
     public ZonedDateTime getStartDateWithTime() {
 
@@ -531,7 +506,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Get end of application for leave as date with time.
      *
-     * @return  end date with time or {@code null} if end date or end time is missing
+     * @return end date with time or {@code null} if end date or end time is missing
      */
     public ZonedDateTime getEndDateWithTime() {
 

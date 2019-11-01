@@ -42,12 +42,11 @@ public class WorkDayApiController {
     /**
      * Calculate number of work days for the given period and person.
      *
-     * @param  from  start date as String (e.g. 2013-3-21)
-     * @param  to  end date as String (e.g. 2013-3-21)
-     * @param  length  day length as String (FULL, MORNING or NOON)
-     * @param  personId  id of the person to number of work days for
-     *
-     * @return  number of days as String for the given parameters or "N/A" if parameters are not valid in any way
+     * @param from     start date as String (e.g. 2013-3-21)
+     * @param to       end date as String (e.g. 2013-3-21)
+     * @param length   day length as String (FULL, MORNING or NOON)
+     * @param personId id of the person to number of work days for
+     * @return number of days as String for the given parameters or "N/A" if parameters are not valid in any way
      */
     @ApiOperation(
         value = "Calculate the work days for a certain period and person",
@@ -71,7 +70,7 @@ public class WorkDayApiController {
 
         final LocalDate startDate;
         final LocalDate endDate;
-        try{
+        try {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
             startDate = LocalDate.parse(from, fmt);
             endDate = LocalDate.parse(to, fmt);

@@ -63,7 +63,7 @@ public class AccountViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping("/person/{personId}/account")
     public String editAccount(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
+                              @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
         throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -82,8 +82,8 @@ public class AccountViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Integer personId,
-        @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
-        RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
+                                RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
