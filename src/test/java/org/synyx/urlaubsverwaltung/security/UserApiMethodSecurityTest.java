@@ -50,7 +50,8 @@ public class UserApiMethodSecurityTest {
     public void isSamePersonIdWithOidc() {
 
         final String username = "Hans";
-        final OidcIdToken token = new OidcIdToken("token", Instant.now(), Instant.now(), Map.of(IdTokenClaimNames.SUB, username));
+        final Instant now = Instant.now();
+        final OidcIdToken token = new OidcIdToken("token", now, now.plusSeconds(60), Map.of(IdTokenClaimNames.SUB, username));
         final DefaultOidcUser oidcUser = new DefaultOidcUser(List.of(new OidcUserAuthority(token)), token);
         final TestingAuthenticationToken authentication = new TestingAuthenticationToken(oidcUser, List.of());
 
@@ -63,7 +64,8 @@ public class UserApiMethodSecurityTest {
     @Test
     public void isNotSamePersonIdWithOidc() {
 
-        final OidcIdToken token = new OidcIdToken("token", Instant.now(), Instant.now().plusSeconds(5), Map.of(IdTokenClaimNames.SUB, "username"));
+        final Instant now = Instant.now();
+        final OidcIdToken token = new OidcIdToken("token", now, now.plusSeconds(60), Map.of(IdTokenClaimNames.SUB, "username"));
         final DefaultOidcUser oidcUser = new DefaultOidcUser(List.of(new OidcUserAuthority(token)), token);
         final TestingAuthenticationToken authentication = new TestingAuthenticationToken(oidcUser, List.of());
 
