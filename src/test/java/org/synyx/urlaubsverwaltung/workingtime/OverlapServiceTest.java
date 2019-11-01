@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.Assert;

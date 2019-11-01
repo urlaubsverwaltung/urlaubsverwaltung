@@ -12,11 +12,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
-        "spring.mail.host=my.smtp.server",
-        "spring.mail.port=1025",
-        "uv.mail.from=sender@firma.test",
-        "uv.mail.administrator=admin@firma.test",
-        "uv.mail.applicationurl=http://localhost:8080"
+    "spring.mail.host=my.smtp.server",
+    "spring.mail.port=1025",
+    "uv.mail.from=sender@firma.test",
+    "uv.mail.administrator=admin@firma.test",
+    "uv.mail.applicationurl=http://localhost:8080"
 })
 public class SpringBootConfiguredMailConfigIT {
 

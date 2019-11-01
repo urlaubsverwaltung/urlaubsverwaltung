@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 
 import java.util.Collections;
 
@@ -29,7 +29,7 @@ public class DepartmentApiControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(new DepartmentApiController(departmentServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
-                .build();
+            .build();
     }
 
 

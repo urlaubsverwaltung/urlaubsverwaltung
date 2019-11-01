@@ -12,8 +12,6 @@ import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
-import static java.time.LocalDate.parse;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;

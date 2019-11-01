@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.VacationOverview;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -55,7 +54,7 @@ public class VacationOverviewServiceTest {
         when(publicHolidayService.getWorkingDurationOfDate(ArgumentMatchers.any(LocalDate.class), ArgumentMatchers.any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 
         List<VacationOverview> vacationOverviews =
-                sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthValue());
+            sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthValue());
 
         assertThat(vacationOverviews, Matchers.hasSize(1));
         assertThat(vacationOverviews.get(0).getPerson().getEmail(), Is.is(email));

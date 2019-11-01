@@ -83,7 +83,7 @@ public class PublicHolidayApiControllerTest {
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(FederalState.BAYERN);
 
         perform(get("/api/holidays")
@@ -103,7 +103,7 @@ public class PublicHolidayApiControllerTest {
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(FederalState.BAYERN);
 
         perform(get("/api/holidays")

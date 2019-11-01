@@ -99,7 +99,7 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong state", WAITING, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong applier", applier, applicationForLeave.getApplier());
-        Assert.assertEquals("Wrong application date", LocalDate.now(UTC) , applicationForLeave.getApplicationDate());
+        Assert.assertEquals("Wrong application date", LocalDate.now(UTC), applicationForLeave.getApplicationDate());
 
         verify(applicationService).save(applicationForLeave);
 
@@ -219,7 +219,7 @@ public class ApplicationInteractionServiceImplTest {
 
 
     private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
-        Person person, Person privilegedUser) {
+                                                           Person person, Person privilegedUser) {
 
         Assert.assertEquals("Wrong state", status, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -229,7 +229,7 @@ public class ApplicationInteractionServiceImplTest {
 
 
     private void assertApplicationForLeaveAndCommentAreSaved(Application applicationForLeave, ApplicationAction action,
-        Optional<String> optionalComment, Person privilegedUser) {
+                                                             Optional<String> optionalComment, Person privilegedUser) {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(eq(applicationForLeave), eq(action), eq(optionalComment), eq(privilegedUser));
@@ -803,7 +803,7 @@ public class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
-                .thenReturn(new ApplicationComment(person));
+            .thenReturn(new ApplicationComment(person));
 
         sut.cancel(applicationForLeave, person, comment);
 
@@ -859,7 +859,7 @@ public class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
-                .thenReturn(new ApplicationComment(person));
+            .thenReturn(new ApplicationComment(person));
 
         sut.cancel(applicationForLeave, canceller, comment);
 
@@ -889,7 +889,7 @@ public class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
-                .thenReturn(new ApplicationComment(person));
+            .thenReturn(new ApplicationComment(person));
 
         sut.cancel(applicationForLeave, canceller, comment);
 
@@ -1001,7 +1001,7 @@ public class ApplicationInteractionServiceImplTest {
 
         Person person = createPerson();
         Application applicationForLeave = TestDataCreator.createApplication(person,
-                TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+            TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         applicationForLeave.setApplicationDate(LocalDate.now(UTC).minusDays(3));
         applicationForLeave.setRemindDate(LocalDate.now(UTC).minusDays(1));
 

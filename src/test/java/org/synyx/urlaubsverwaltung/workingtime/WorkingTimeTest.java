@@ -45,7 +45,7 @@ public class WorkingTimeTest {
             WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
 
         List<Integer> workingDaysToCompare = Arrays.asList(FRIDAY.getValue(), TUESDAY.getValue(),
-                WEDNESDAY.getValue(), MONDAY.getValue(), THURSDAY.getValue());
+            WEDNESDAY.getValue(), MONDAY.getValue(), THURSDAY.getValue());
 
         WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
@@ -63,7 +63,7 @@ public class WorkingTimeTest {
             WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
 
         List<Integer> workingDaysToCompare = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
-                WEDNESDAY.getValue(), THURSDAY.getValue(), SUNDAY.getValue());
+            WEDNESDAY.getValue(), THURSDAY.getValue(), SUNDAY.getValue());
 
         WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, DayLength.FULL);

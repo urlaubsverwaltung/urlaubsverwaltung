@@ -7,9 +7,9 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -49,7 +49,7 @@ public class HolidayAbsenceProviderTest {
         setupHolidayServiceMock();
 
         holidayAbsenceProvider = new HolidayAbsenceProvider(sickDayAbsenceProvider, publicHolidaysService,
-                workingTimeService);
+            workingTimeService);
     }
 
 
@@ -57,7 +57,7 @@ public class HolidayAbsenceProviderTest {
 
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getFederalStateForPerson(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
 
@@ -70,7 +70,7 @@ public class HolidayAbsenceProviderTest {
             .thenReturn(new BigDecimal(0));
 
         when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay,
-                    FederalState.BADEN_WUERTTEMBERG))
+            FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(new BigDecimal(1));
     }
 
@@ -79,7 +79,7 @@ public class HolidayAbsenceProviderTest {
     public void ensurePersonIsNotAvailableOnHoliDays() {
 
         TimedAbsenceSpans updatedTimedAbsenceSpans = holidayAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
-                testPerson, newYearsDay);
+            testPerson, newYearsDay);
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
 

@@ -79,7 +79,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendAllowedNotification(application, applicationComment);
 
-        verify(mailService).sendMailTo(person,"subject.application.allowed.user", "allowed_user", model);
+        verify(mailService).sendMailTo(person, "subject.application.allowed.user", "allowed_user", model);
         verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.application.allowed.office", "allowed_office", model);
     }
 
@@ -112,7 +112,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendRejectedNotification(application, applicationComment);
 
-        verify(mailService).sendMailTo(person,"subject.application.rejected", "rejected", model);
+        verify(mailService).sendMailTo(person, "subject.application.rejected", "rejected", model);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendReferApplicationNotification(application, recipient, sender);
 
-        verify(mailService).sendMailTo(recipient,"subject.application.refer", "refer", model);
+        verify(mailService).sendMailTo(recipient, "subject.application.refer", "refer", model);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendCancellationRequest(application, applicationComment);
 
-        verify(mailService).sendMailTo(NOTIFICATION_OFFICE,"subject.application.cancellationRequest", "application_cancellation_request", model);
+        verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.application.cancellationRequest", "application_cancellation_request", model);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
-        verify(mailService).sendMailTo(person,"subject.sicknote.converted", "sicknote_converted", model);
+        verify(mailService).sendMailTo(person, "subject.sicknote.converted", "sicknote_converted", model);
     }
 
     @Test
@@ -190,7 +190,7 @@ public class ApplicationMailServiceTest {
 
         sut.notifyHolidayReplacement(application);
 
-        verify(mailService).sendMailTo(holidayReplacement,"subject.application.holidayReplacement", "notify_holiday_replacement", model);
+        verify(mailService).sendMailTo(holidayReplacement, "subject.application.holidayReplacement", "notify_holiday_replacement", model);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendConfirmation(application, comment);
 
-        verify(mailService).sendMailTo(person,"subject.application.applied.user", "confirm", model);
+        verify(mailService).sendMailTo(person, "subject.application.applied.user", "confirm", model);
     }
 
 
@@ -258,7 +258,7 @@ public class ApplicationMailServiceTest {
 
         sut.sendAppliedForLeaveByOfficeNotification(application, comment);
 
-        verify(mailService).sendMailTo(person,"subject.application.appliedByOffice", "new_application_by_office", model);
+        verify(mailService).sendMailTo(person, "subject.application.appliedByOffice", "new_application_by_office", model);
     }
 
     @Test

@@ -66,7 +66,7 @@ public class SickNoteInteractionServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         sickNoteInteractionService = new SickNoteInteractionServiceImpl(sickNoteService, commentService,
-                applicationInteractionService, calendarSyncService, absenceMappingService, settingsService);
+            applicationInteractionService, calendarSyncService, absenceMappingService, settingsService);
 
         sickNote = new SickNote();
         sickNote.setId(42);

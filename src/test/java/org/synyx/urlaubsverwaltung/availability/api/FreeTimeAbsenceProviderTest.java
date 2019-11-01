@@ -52,10 +52,10 @@ public class FreeTimeAbsenceProviderTest {
         WorkingTime testWorkingTime = TestDataCreator.createWorkingTime();
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(Optional.of(testWorkingTime));
         when(workingTimeService.getFederalStateForPerson(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
 
@@ -66,7 +66,7 @@ public class FreeTimeAbsenceProviderTest {
         LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
 
         TimedAbsenceSpans updatedTimedAbsenceSpans = freeTimeAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
-                testPerson, firstSundayIn2016);
+            testPerson, firstSundayIn2016);
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
 

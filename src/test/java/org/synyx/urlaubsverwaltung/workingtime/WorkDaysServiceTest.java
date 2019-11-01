@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import de.jollyday.HolidayManager;
@@ -64,12 +63,12 @@ public class WorkDaysServiceTest {
 
         person = TestDataCreator.createPerson();
         application = TestDataCreator.createApplication(person,
-                TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+            TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         workingTime = TestDataCreator.createWorkingTime();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
     }
 
@@ -169,7 +168,7 @@ public class WorkDaysServiceTest {
     public void testGetWorkDaysForTeilzeitPersons() {
 
         List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.WEDNESDAY.getValue(),
-                DayOfWeek.FRIDAY.getValue(), DayOfWeek.SATURDAY.getValue());
+            DayOfWeek.FRIDAY.getValue(), DayOfWeek.SATURDAY.getValue());
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         LocalDate startDate = LocalDate.of(2013, Month.DECEMBER, 16);
@@ -185,7 +184,7 @@ public class WorkDaysServiceTest {
     public void testGetWorkDaysForVollzeitPersons() {
 
         List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.TUESDAY.getValue(),
-                DayOfWeek.WEDNESDAY.getValue(), DayOfWeek.THURSDAY.getValue(), DayOfWeek.FRIDAY.getValue());
+            DayOfWeek.WEDNESDAY.getValue(), DayOfWeek.THURSDAY.getValue(), DayOfWeek.FRIDAY.getValue());
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         LocalDate startDate = LocalDate.of(2013, Month.DECEMBER, 16);
@@ -325,7 +324,7 @@ public class WorkDaysServiceTest {
         workingTime.setFederalStateOverride(FederalState.BAYERN_AUGSBURG);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         BigDecimal workDays = instance.getWorkDays(DayLength.FULL, from, to, person);

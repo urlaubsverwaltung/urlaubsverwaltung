@@ -50,13 +50,13 @@ public class SickNoteValidatorTest {
         Mockito.reset(errors);
 
         sickNote = TestDataCreator.createSickNote(TestDataCreator.createPerson(),
-                LocalDate.of(2013, NOVEMBER, 19),
-                LocalDate.of(2013, NOVEMBER, 20),
-                DayLength.FULL);
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            DayLength.FULL);
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
     }
 
@@ -241,7 +241,7 @@ public class SickNoteValidatorTest {
         sickNote.setEndDate(endDate);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(Optional.empty());
 
         validator.validate(sickNote, errors);

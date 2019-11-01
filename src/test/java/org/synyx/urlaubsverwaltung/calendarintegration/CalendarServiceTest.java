@@ -43,7 +43,7 @@ public class CalendarServiceTest {
     private List<CalendarProvider> getTypicalProviderList() {
         List<CalendarProvider> calendarProviders = new ArrayList<>();
         calendarProviders.add(new NoopCalendarSyncProvider());
-        calendarProviders.add(new ExchangeCalendarProvider( null));
+        calendarProviders.add(new ExchangeCalendarProvider(null));
         calendarProviders.add(new GoogleCalendarSyncProvider(null, null));
 
         return calendarProviders;
@@ -58,11 +58,11 @@ public class CalendarServiceTest {
 
     @Parameterized.Parameters(name = "{2}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                { GoogleCalendarSyncProvider.class, GoogleCalendarSyncProvider.class , "select GoogleCalendar"},
-                { ExchangeCalendarProvider.class  , ExchangeCalendarProvider.class   , "select Exchange"},
-                { NoopCalendarSyncProvider.class  , NoopCalendarSyncProvider.class   , "select NOOPCalendar"},
-                { String.class                    , NoopCalendarSyncProvider.class   , "select fallback"}
+        return Arrays.asList(new Object[][]{
+            {GoogleCalendarSyncProvider.class, GoogleCalendarSyncProvider.class, "select GoogleCalendar"},
+            {ExchangeCalendarProvider.class, ExchangeCalendarProvider.class, "select Exchange"},
+            {NoopCalendarSyncProvider.class, NoopCalendarSyncProvider.class, "select NOOPCalendar"},
+            {String.class, NoopCalendarSyncProvider.class, "select fallback"}
         });
     }
 

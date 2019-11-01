@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import de.jollyday.HolidayManager;
@@ -170,7 +169,7 @@ public class PublicHolidaysServiceTest {
     public void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-                    Month.AUGUST, 15), FederalState.BERLIN);
+            Month.AUGUST, 15), FederalState.BERLIN);
 
         assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -180,7 +179,7 @@ public class PublicHolidaysServiceTest {
     public void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-                    Month.AUGUST, 15), BADEN_WUERTTEMBERG);
+            Month.AUGUST, 15), BADEN_WUERTTEMBERG);
 
         assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -190,7 +189,7 @@ public class PublicHolidaysServiceTest {
     public void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-                    Month.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
+            Month.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
 
         assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }

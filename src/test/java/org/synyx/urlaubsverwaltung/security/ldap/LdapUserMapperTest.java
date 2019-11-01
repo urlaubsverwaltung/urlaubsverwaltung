@@ -4,11 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ldap.core.DirContextOperations;
-import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
-import org.synyx.urlaubsverwaltung.security.ldap.InvalidSecurityConfigurationException;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapUser;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapUserMapper;
-import org.synyx.urlaubsverwaltung.security.ldap.UnsupportedMemberAffiliationException;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
@@ -151,7 +146,7 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
-        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[] { MEMBER_OF_FILTER });
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[]{MEMBER_OF_FILTER});
 
         LdapUser ldapUser = ldapUserMapper.mapFromContext(ctx);
 
@@ -177,14 +172,14 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
 
         when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
-            .thenReturn(new String[] { "CN=foo, DC=mydomain, DC=com" });
+            .thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
 
         ldapUserMapper.mapFromContext(ctx);
     }
 
 
     @Test
-    public void ensureNoMemberOfCheckIfMemberOfFilterIsNull()  {
+    public void ensureNoMemberOfCheckIfMemberOfFilterIsNull() {
 
         final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
         directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
@@ -202,7 +197,7 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
 
         when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
-            .thenReturn(new String[] { "CN=foo, DC=mydomain, DC=com" });
+            .thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
 
         try {
             ldapUserMapper.mapFromContext(ctx);
@@ -233,7 +228,7 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
 
         when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
-            .thenReturn(new String[] { "CN=foo, DC=mydomain, DC=com" });
+            .thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
 
         try {
             ldapUserMapper.mapFromContext(ctx);
