@@ -45,8 +45,7 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapPersonContextMapper personContextMapper(PersonService personService,
-                                                           LdapUserMapper ldapUserMapper) {
+        public LdapPersonContextMapper personContextMapper(PersonService personService, LdapUserMapper ldapUserMapper) {
             return new LdapPersonContextMapper(personService, ldapUserMapper);
         }
     }
@@ -70,8 +69,7 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService,
-                                                         PersonService personService) {
+        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
             return new LdapUserDataImporter(ldapUserService, personService);
         }
 
