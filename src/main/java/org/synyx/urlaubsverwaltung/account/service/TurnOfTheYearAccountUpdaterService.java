@@ -2,8 +2,12 @@ package org.synyx.urlaubsverwaltung.account.service;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -27,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
  * Is to be scheduled every turn of the year: calculates the remaining vacation days for the new year.
  */
 @Service
-public class TurnOfTheYearAccountUpdaterService {
+public class TurnOfTheYearAccountUpdaterService implements SchedulingConfigurer {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -35,38 +39,47 @@ public class TurnOfTheYearAccountUpdaterService {
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final MailService mailService;
+    private final AccountProperties accountProperties;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                              AccountInteractionService accountInteractionService, MailService mailService) {
+                                              AccountInteractionService accountInteractionService, MailService mailService, AccountProperties accountProperties) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.mailService = mailService;
+        this.accountProperties = accountProperties;
     }
 
-    @Scheduled(cron = "${uv.cron.updateHolidaysAccounts}")
-    void updateHolidaysAccounts() {
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
+        scheduledTaskRegistrar.addTriggerTask(this::updateAccountsForNextPeriod, determinePeriodicExecutionTrigger());
+    }
+
+    private Trigger determinePeriodicExecutionTrigger() {
+        return new CronTrigger(accountProperties.getUpdate().getCron());
+    }
+
+    void updateAccountsForNextPeriod() {
 
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
         // what's the new year?
-        int year = ZonedDateTime.now(UTC).getYear();
+        final int year = ZonedDateTime.now(UTC).getYear();
 
         // get all persons
-        List<Person> persons = personService.getActivePersons();
-
-        List<Account> updatedAccounts = new ArrayList<>();
+        final List<Person> persons = personService.getActivePersons();
 
         // get all their accounts and calculate the remaining vacation days for the new year
+        final List<Account> updatedAccounts = new ArrayList<>();
         for (Person person : persons) {
             LOG.info("Updating account of person with id {}", person.getId());
 
-            Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
+            final Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
-                Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
+                final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
                     accountLastYear.get());
 
                 LOG.info("Setting remaining vacation days of person with id {} to {} for {}",

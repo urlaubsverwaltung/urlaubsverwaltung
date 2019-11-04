@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -46,7 +47,8 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
 
     @Before
     public void setUp() {
-        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService);
+        final AccountProperties accountProperties = new AccountProperties();
+        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService, accountProperties);
     }
 
     @Test
@@ -70,7 +72,7 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class)))
             .thenReturn(newAccount);
 
-        sut.updateHolidaysAccounts();
+        sut.updateAccountsForNextPeriod();
 
         verify(personService).getActivePersons();
 
