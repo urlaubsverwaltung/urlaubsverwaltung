@@ -1,7 +1,10 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.slf4j.Logger;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -21,38 +24,47 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
  * Import person data from configured LDAP or Active Directory.
  */
 @Transactional
-public class LdapUserDataImporter {
+public class LdapUserDataImporter implements SchedulingConfigurer {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final LdapUserService ldapUserService;
     private final PersonService personService;
+    private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
 
     LdapUserDataImporter(LdapUserService ldapUserService,
-                         PersonService personService) {
+                         PersonService personService, DirectoryServiceSecurityProperties directoryServiceSecurityProperties) {
 
         this.ldapUserService = ldapUserService;
         this.personService = personService;
+        this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
     }
 
-    // Sync LDAP/AD data during startup and on uv.cron.ldapSync
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
+        scheduledTaskRegistrar.addTriggerTask(this::sync, determinePeriodicExecutionTrigger());
+    }
+
+    private Trigger determinePeriodicExecutionTrigger() {
+        return new CronTrigger(directoryServiceSecurityProperties.getSync().getCron());
+    }
+
     @PostConstruct
-    @Scheduled(cron = "${uv.cron.ldapSync}")
-    public void sync() {
+    void sync() {
 
-        LOG.info("STARTING LDAP SYNC --------------------------------------------------------------------------------");
+        LOG.info("STARTING DIRECTORY SERVICE SYNC --------------------------------------------------------------------------------");
 
-        List<LdapUser> users = ldapUserService.getLdapUsers();
+        final List<LdapUser> users = ldapUserService.getLdapUsers();
 
         LOG.info("Found {} user(s)", users.size());
 
         for (LdapUser user : users) {
-            String username = user.getUsername();
-            Optional<String> firstName = user.getFirstName();
-            Optional<String> lastName = user.getLastName();
-            Optional<String> email = user.getEmail();
+            final String username = user.getUsername();
+            final Optional<String> firstName = user.getFirstName();
+            final Optional<String> lastName = user.getLastName();
+            final Optional<String> email = user.getEmail();
 
-            Optional<Person> optionalPerson = personService.getPersonByUsername(username);
+            final Optional<Person> optionalPerson = personService.getPersonByUsername(username);
 
             if (optionalPerson.isPresent()) {
 
@@ -69,6 +81,6 @@ public class LdapUserDataImporter {
             }
         }
 
-        LOG.info("DONE LDAP SYNC ------------------------------------------------------------------------------------");
+        LOG.info("DONE DIRECTORY SERVICE SYNC ------------------------------------------------------------------------------------");
     }
 }

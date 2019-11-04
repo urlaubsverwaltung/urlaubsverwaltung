@@ -12,6 +12,7 @@ public class DirectoryServiceSecurityProperties {
     private String lastName;
     private String mailAddress;
     private SecurityFilter filter = new SecurityFilter();
+    private SecuritySync sync = new SecuritySync();
 
     public String getIdentifier() {
         return identifier;
@@ -53,6 +54,14 @@ public class DirectoryServiceSecurityProperties {
         this.filter = filter;
     }
 
+    public SecuritySync getSync() {
+        return sync;
+    }
+
+    public void setSync(SecuritySync sync) {
+        this.sync = sync;
+    }
+
     public static class SecurityFilter {
 
         private String objectClass;
@@ -72,6 +81,23 @@ public class DirectoryServiceSecurityProperties {
 
         public void setMemberOf(String memberOf) {
             this.memberOf = memberOf;
+        }
+    }
+
+    public static class SecuritySync {
+
+        /**
+         * Syncs directory services data by default every night at 01:00 am
+         * if `ldap` or `activedirectory` is activated via `uv.security.auth`
+         */
+        private String cron = "0 0 1 * * ?";
+
+        public String getCron() {
+            return cron;
+        }
+
+        public void setCron(String cron) {
+            this.cron = cron;
         }
     }
 }

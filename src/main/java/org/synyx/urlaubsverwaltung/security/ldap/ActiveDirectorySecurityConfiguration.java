@@ -70,7 +70,7 @@ public class ActiveDirectorySecurityConfiguration {
 
         @Bean
         public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
-            return new LdapUserDataImporter(ldapUserService, personService);
+            return new LdapUserDataImporter(ldapUserService, personService, directoryServiceSecurityProperties);
         }
 
         @Bean
