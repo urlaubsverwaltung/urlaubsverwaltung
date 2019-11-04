@@ -34,7 +34,8 @@ public class SickNoteCronMailServiceTest {
 
     @Before
     public void setUp() {
-        sut = new SickNoteCronMailService(settingsService, sickNoteService, mailService);
+        final SickNoteProperties sickNoteProperties = new SickNoteProperties();
+        sut = new SickNoteCronMailService(settingsService, sickNoteService, mailService, sickNoteProperties);
     }
 
     @Test

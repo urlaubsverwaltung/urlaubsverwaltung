@@ -2,7 +2,10 @@ package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -20,27 +23,36 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
  * Service to send emails at a particular time. (Cronjob)
  */
 @Service
-public class SickNoteCronMailService {
+public class SickNoteCronMailService implements SchedulingConfigurer {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
     private final MailService mailService;
+    private final SickNoteProperties sickNoteProperties;
 
     @Autowired
-    public SickNoteCronMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
+    public SickNoteCronMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService, SickNoteProperties sickNoteProperties) {
 
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
+        this.sickNoteProperties = sickNoteProperties;
+    }
+
+    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
+        scheduledTaskRegistrar.addTriggerTask(this::sendEndOfSickPayNotification, determinePeriodicExecutionTrigger());
+    }
+
+    private Trigger determinePeriodicExecutionTrigger() {
+        return new CronTrigger(sickNoteProperties.getEndOfPayNotificationCron());
     }
 
     /**
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      */
-    @Scheduled(cron = "${uv.cron.endOfSickPayNotification}")
-    public void sendEndOfSickPayNotification() {
+    void sendEndOfSickPayNotification() {
 
         List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 
