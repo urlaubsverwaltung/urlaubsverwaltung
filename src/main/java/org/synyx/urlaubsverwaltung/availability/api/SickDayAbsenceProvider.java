@@ -7,8 +7,11 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
 
 
 @Service
@@ -27,18 +30,18 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
     @Override
     TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
 
-        Optional<TimedAbsence> sickDayAbsence = checkForSickDay(date, person);
-
-        if (sickDayAbsence.isPresent()) {
-            List<TimedAbsence> knownAbsencesList = knownAbsences.getAbsencesList();
-            knownAbsencesList.add(sickDayAbsence.get());
-
-            return new TimedAbsenceSpans(knownAbsencesList);
+        final List<Optional<TimedAbsence>> optionalSickDayAbsences = checkForSickDay(date, person);
+        if (optionalSickDayAbsences.isEmpty()) {
+            return knownAbsences;
         }
 
-        return knownAbsences;
-    }
+        List<TimedAbsence> knownAbsencesList = knownAbsences.getAbsencesList();
+        for (Optional<TimedAbsence> optionalSickDayAbsence : optionalSickDayAbsences) {
+            optionalSickDayAbsence.ifPresent(knownAbsencesList::add);
+        }
 
+        return new TimedAbsenceSpans(knownAbsencesList);
+    }
 
     @Override
     boolean isLastPriorityProvider() {
@@ -46,19 +49,20 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
         return false;
     }
 
+    private List<Optional<TimedAbsence>> checkForSickDay(LocalDate date, Person person) {
 
-    private Optional<TimedAbsence> checkForSickDay(LocalDate date, Person person) {
+        final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, date, date);
+        if (sickNotes.isEmpty()) {
+            return List.of();
+        }
 
-        List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, date, date);
-
-        if (!sickNotes.isEmpty()) {
-            SickNote sickNote = sickNotes.get(0);
-
+        final List<Optional<TimedAbsence>> sickNoteTimeAbsence = new ArrayList<>();
+        for (SickNote sickNote : sickNotes) {
             if (sickNote != null && sickNote.isActive()) {
-                return Optional.of(new TimedAbsence(sickNote.getDayLength(), TimedAbsence.Type.SICK_NOTE));
+                sickNoteTimeAbsence.add(Optional.of(new TimedAbsence(sickNote.getDayLength(), SICK_NOTE)));
             }
         }
 
-        return Optional.empty();
+        return sickNoteTimeAbsence;
     }
 }

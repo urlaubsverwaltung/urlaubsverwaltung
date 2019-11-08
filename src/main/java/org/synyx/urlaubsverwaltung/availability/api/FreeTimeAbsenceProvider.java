@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.FREETIME;
+
 
 @Service
 class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
@@ -51,23 +53,23 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private Optional<TimedAbsence> checkForFreeTime(LocalDate currentDay, Person person) {
 
-        DayLength expectedWorktime = getExpectedWorktimeFor(person, currentDay);
-        BigDecimal expectedWorktimeDuration = expectedWorktime.getDuration();
+        DayLength expectedWorkTime = getExpectedWorkTimeFor(person, currentDay);
+        BigDecimal expectedWorkTimeDuration = expectedWorkTime.getDuration();
 
-        boolean expectedWorktimeIsLessThanFullDay = expectedWorktimeDuration.compareTo(BigDecimal.ONE) < 0;
+        boolean expectedWorkTimeIsLessThanFullDay = expectedWorkTimeDuration.compareTo(BigDecimal.ONE) < 0;
 
-        if (expectedWorktimeIsLessThanFullDay) {
-            return Optional.of(new TimedAbsence(expectedWorktime.getInverse(), TimedAbsence.Type.FREETIME));
+        if (expectedWorkTimeIsLessThanFullDay) {
+            return Optional.of(new TimedAbsence(expectedWorkTime.getInverse(), FREETIME));
         }
 
         return Optional.empty();
     }
 
 
-    private DayLength getExpectedWorktimeFor(Person person, LocalDate currentDay) {
+    private DayLength getExpectedWorkTimeFor(Person person, LocalDate currentDay) {
 
         Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
-                currentDay);
+            currentDay);
 
         if (workingTimeOrNot.isEmpty()) {
             throw new FreeTimeAbsenceException("Person " + person + " does not have workingTime configured");
