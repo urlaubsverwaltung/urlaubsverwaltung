@@ -8,6 +8,7 @@
 * Upgrade spring boot parent to 2.1.10
 * Upgrade google api client to 1.25.0
 * Upgrade jollyday to 0.5.9
+* Upgrade frontend maven plugin to 1.8.0
 
 ### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
 * Remove liquibase user demo creation on demo context [#810](https://github.com/synyx/urlaubsverwaltung/pull/810)
