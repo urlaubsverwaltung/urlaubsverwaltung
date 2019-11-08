@@ -4,12 +4,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
@@ -46,7 +46,7 @@ public class SickNoteApiControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(new SickNoteApiController(sickNoteServiceMock, personServiceMock))
             .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
-                .build();
+            .build();
     }
 
 
@@ -68,8 +68,8 @@ public class SickNoteApiControllerTest {
             .thenReturn(Optional.of(TestDataCreator.createPerson()));
 
         mockMvc.perform(get("/api/sicknotes").param("from", "2016-01-01")
-                .param("to", "2016-12-31")
-                .param("person", "23"))
+            .param("to", "2016-12-31")
+            .param("person", "23"))
             .andExpect(status().isOk());
 
         verify(sickNoteServiceMock)
@@ -83,7 +83,7 @@ public class SickNoteApiControllerTest {
     public void ensureCorrectConversionOfSickNotes() throws Exception {
 
         SickNote sickNote1 = TestDataCreator.createSickNote(TestDataCreator.createPerson("foo"),
-                LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
+            LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
         SickNote sickNote2 = TestDataCreator.createSickNote(TestDataCreator.createPerson("bar"));
         SickNote sickNote3 = TestDataCreator.createSickNote(TestDataCreator.createPerson("baz"));
 

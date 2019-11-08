@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 /**
  * Recorded comment after executed an overtime action, e.g. create a new overtime record.
  *
- * @since  2.11.0
+ * @since 2.11.0
  */
 @Entity
 public class OvertimeComment extends AbstractComment {

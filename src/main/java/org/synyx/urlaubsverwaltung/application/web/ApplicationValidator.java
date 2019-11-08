@@ -79,8 +79,8 @@ public class ApplicationValidator implements Validator {
 
     @Autowired
     public ApplicationValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
-        OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-        OvertimeService overtimeService) {
+                                OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
+                                OvertimeService overtimeService) {
 
         this.workingTimeService = workingTimeService;
         this.calendarService = calendarService;
@@ -114,7 +114,7 @@ public class ApplicationValidator implements Validator {
 
         // check if reason is not filled
         if (VacationCategory.SPECIALLEAVE.equals(applicationForm.getVacationType().getCategory())
-                && !StringUtils.hasText(applicationForm.getReason())) {
+            && !StringUtils.hasText(applicationForm.getReason())) {
             errors.rejectValue(ATTRIBUTE_REASON, ERROR_MISSING_REASON);
         }
 
@@ -251,7 +251,7 @@ public class ApplicationValidator implements Validator {
         LocalDate future = ZonedDateTime.now(UTC).plusMonths(maximumMonths).toLocalDate();
 
         if (date.isAfter(future)) {
-            errors.reject(ERROR_TOO_LONG, new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance() }, null);
+            errors.reject(ERROR_TOO_LONG, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
         }
     }
 
@@ -268,7 +268,7 @@ public class ApplicationValidator implements Validator {
 
 
     private void validateSameDayIfHalfDayPeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength,
-        Errors errors) {
+                                                Errors errors) {
 
         boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
 
@@ -326,7 +326,7 @@ public class ApplicationValidator implements Validator {
 
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings,
-        Errors errors) {
+                                                      Errors errors) {
 
         Application application = applicationForm.generateApplicationForLeave();
 
@@ -378,7 +378,7 @@ public class ApplicationValidator implements Validator {
     private boolean personHasWorkingTime(Application application) {
 
         Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-                application.getPerson(), application.getStartDate());
+            application.getPerson(), application.getStartDate());
 
         return workingTime.isPresent();
     }
@@ -387,7 +387,7 @@ public class ApplicationValidator implements Validator {
     private boolean vacationOfZeroDays(Application application) {
 
         BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
-                application.getEndDate(), application.getPerson());
+            application.getEndDate(), application.getPerson());
 
         return CalcUtil.isZero(days);
     }

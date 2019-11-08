@@ -71,11 +71,11 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     private com.google.api.services.calendar.Calendar getOrCreateGoogleCalendarClient() {
 
         String refreshToken =
-                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
+            settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
 
         if (googleCalendarClient != null &&
-                refreshToken != null &&
-                refreshTokenHashCode == refreshToken.hashCode()) {
+            refreshToken != null &&
+            refreshTokenHashCode == refreshToken.hashCode()) {
             LOG.debug("use cached googleCalendarClient");
             return googleCalendarClient;
         }
@@ -93,7 +93,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             Credential credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
 
             return new com.google.api.services.calendar.Calendar.Builder(
-                    httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
+                httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
 
         } catch (GeneralSecurityException | IOException e) {
             LOG.error("Something went wrong!", e);
@@ -110,7 +110,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
         if (googleCalendarClient != null) {
             GoogleCalendarSettings googleCalendarSettings =
-                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
+                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
             String calendarId = googleCalendarSettings.getCalendarId();
 
             try {
@@ -141,7 +141,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         if (googleCalendarClient != null) {
 
             String calendarId =
-                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
 
             try {
                 // gather exiting event
@@ -170,7 +170,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         if (googleCalendarClient != null) {
 
             String calendarId =
-                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
 
             try {
                 googleCalendarClient.events().delete(calendarId, eventId).execute();
@@ -191,7 +191,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
         if (googleCalendarClient != null) {
             String calendarId =
-                    settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
             try {
                 HttpResponse httpResponse = googleCalendarClient.calendarList().get(calendarId).executeUsingHead();
                 if (httpResponse.getStatusCode() == SC_OK) {
@@ -206,25 +206,25 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     }
 
     private Credential createCredentialWithRefreshToken(
-            HttpTransport transport,
-            JsonFactory jsonFactory,
-            TokenResponse tokenResponse) {
+        HttpTransport transport,
+        JsonFactory jsonFactory,
+        TokenResponse tokenResponse) {
 
         String clientId =
-                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getClientId();
+            settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getClientId();
         String clientSecret =
-                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getClientSecret();
+            settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getClientSecret();
 
         return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
-                transport)
-                .setJsonFactory(jsonFactory)
-                .setTokenServerUrl(
-                        new GenericUrl(GOOGLEAPIS_OAUTH2_V4_TOKEN))
-                .setClientAuthentication(new BasicAuthentication(
-                        clientId,
-                        clientSecret))
-                .build()
-                .setFromTokenResponse(tokenResponse);
+            transport)
+            .setJsonFactory(jsonFactory)
+            .setTokenServerUrl(
+                new GenericUrl(GOOGLEAPIS_OAUTH2_V4_TOKEN))
+            .setClientAuthentication(new BasicAuthentication(
+                clientId,
+                clientSecret))
+            .build()
+            .setFromTokenResponse(tokenResponse);
     }
 
     private static void fillEvent(Absence absence, Event event) {

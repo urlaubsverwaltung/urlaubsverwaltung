@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.security.ldap.LdapUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,7 @@ public class LdapUserTest {
     public void ensureCanBeInitializedWithEmptyAttributes() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.empty(), Optional.empty(),
-                Optional.empty());
+            Optional.empty());
 
         Assert.assertEquals("Wrong username", "username", ldapUser.getUsername());
         Assert.assertEquals("First name should be empty", Optional.<String>empty(), ldapUser.getFirstName());
@@ -29,7 +28,7 @@ public class LdapUserTest {
     public void ensureCanBeInitializedWithAttributes() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@firma.test"));
+            Optional.of("max@firma.test"));
 
         Assert.assertEquals("Wrong username", "username", ldapUser.getUsername());
 
@@ -48,7 +47,7 @@ public class LdapUserTest {
     public void ensureMemberOfInformationIsOptional() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@firma.test"));
+            Optional.of("max@firma.test"));
 
         List<String> memberOf = ldapUser.getMemberOf();
 
@@ -61,7 +60,7 @@ public class LdapUserTest {
     public void ensureCanBeInitializedWithAttributesAndMemberOfInformation() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@firma.test"), "GroupA", "GroupB");
+            Optional.of("max@firma.test"), "GroupA", "GroupB");
 
         List<String> memberOf = ldapUser.getMemberOf();
 
@@ -76,7 +75,7 @@ public class LdapUserTest {
     public void ensureMemberOfListIsUnmodifiable() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
-                Optional.of("max@firma.test"), "GroupA", "GroupB");
+            Optional.of("max@firma.test"), "GroupA", "GroupB");
 
         List<String> memberOf = ldapUser.getMemberOf();
 

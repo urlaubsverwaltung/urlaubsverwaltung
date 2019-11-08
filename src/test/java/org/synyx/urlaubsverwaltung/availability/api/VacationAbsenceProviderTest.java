@@ -208,7 +208,8 @@ public class VacationAbsenceProviderTest {
         final LocalDate vacationDay = LocalDate.of(2016, 1, 4);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 
-        final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(emptyTimedAbsenceSpans, person, vacationDay);
+        final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(emptyTimedAbsenceSpans,
+            person, vacationDay);
         assertThat(updatedTimedAbsenceSpans).isEqualTo(emptyTimedAbsenceSpans);
     }
 }

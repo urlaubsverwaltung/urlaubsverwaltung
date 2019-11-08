@@ -43,9 +43,8 @@ public class OverlapService {
     /**
      * Check if there are any overlapping applications for leave or sick notes for the given application for leave.
      *
-     * @param  application  to be checked if there are any overlaps
-     *
-     * @return  {@link OverlapCase} - none, partly, fully
+     * @param application to be checked if there are any overlaps
+     * @return {@link OverlapCase} - none, partly, fully
      */
     public OverlapCase checkOverlap(final Application application) {
 
@@ -54,7 +53,7 @@ public class OverlapService {
         LocalDate endDate = application.getEndDate();
 
         List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
-                application.getDayLength());
+            application.getDayLength());
 
         if (!application.isNew()) {
             applications = applications.stream()
@@ -71,9 +70,8 @@ public class OverlapService {
     /**
      * Check if there are any overlapping applications for leave or sick notes for the given sick note.
      *
-     * @param  sickNote  to be checked if there are any overlaps
-     *
-     * @return  {@link OverlapCase} - none, partly, fully
+     * @param sickNote to be checked if there are any overlaps
+     * @return {@link OverlapCase} - none, partly, fully
      */
     public OverlapCase checkOverlap(final SickNote sickNote) {
 
@@ -82,7 +80,7 @@ public class OverlapService {
         LocalDate endDate = sickNote.getEndDate();
 
         List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
-                sickNote.getDayLength());
+            sickNote.getDayLength());
 
         List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
 
@@ -99,12 +97,11 @@ public class OverlapService {
     /**
      * Determine the case of overlap for the given period and overlapping applications for leave and sick notes.
      *
-     * @param  startDate  defines the start of the period to be checked
-     * @param  endDate  defines the end of the period to be checked
-     * @param  applications  for leave that are overlapping in the given period
-     * @param  sickNotes  that are overlapping in the given period
-     *
-     * @return  {@link OverlapCase} - none, partly, fully
+     * @param startDate    defines the start of the period to be checked
+     * @param endDate      defines the end of the period to be checked
+     * @param applications for leave that are overlapping in the given period
+     * @param sickNotes    that are overlapping in the given period
+     * @return {@link OverlapCase} - none, partly, fully
      */
     OverlapCase getOverlapCase(LocalDate startDate, LocalDate endDate, List<Application> applications,
                                List<SickNote> sickNotes) {
@@ -144,18 +141,17 @@ public class OverlapService {
     /**
      * Get all active applications for leave of the given person that are in the given period.
      *
-     * @param  person  to get overlapping applications for leave for
-     * @param  startDate  defines the start of the period
-     * @param  endDate  defines the end of the period
-     * @param  dayLength  defines the time of day of the period
-     *
-     * @return  {@link List} of {@link Application}s overlapping with the period
+     * @param person    to get overlapping applications for leave for
+     * @param startDate defines the start of the period
+     * @param endDate   defines the end of the period
+     * @param dayLength defines the time of day of the period
+     * @return {@link List} of {@link Application}s overlapping with the period
      */
     private List<Application> getRelevantApplicationsForLeave(Person person, LocalDate startDate,
                                                               LocalDate endDate, DayLength dayLength) {
 
         // get all applications for leave
-        List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson( startDate, endDate, person);
+        List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
 
         // remove the non-relevant ones
         return applicationsForLeave.stream()
@@ -166,8 +162,8 @@ public class OverlapService {
     private Predicate<Application> withOverlappingDayLength(DayLength dayLength) {
         return application ->
             application.getDayLength().equals(DayLength.FULL) ||
-            dayLength.equals(DayLength.FULL) ||
-            application.getDayLength().equals(dayLength);
+                dayLength.equals(DayLength.FULL) ||
+                application.getDayLength().equals(dayLength);
 
     }
 
@@ -179,11 +175,10 @@ public class OverlapService {
     /**
      * Get all active sick notes of the given person that are in the given period.
      *
-     * @param  person  to get overlapping sick notes for
-     * @param  startDate  defines the start of the period
-     * @param  endDate  defines the end of the period
-     *
-     * @return  {@link List} of {@link SickNote}s overlapping with the period of the given {@link Application}
+     * @param person    to get overlapping sick notes for
+     * @param startDate defines the start of the period
+     * @param endDate   defines the end of the period
+     * @return {@link List} of {@link SickNote}s overlapping with the period of the given {@link Application}
      */
     private List<SickNote> getRelevantSickNotes(Person person, LocalDate startDate, LocalDate endDate) {
 
@@ -198,12 +193,11 @@ public class OverlapService {
     /**
      * Get a list of intervals that overlap with the period of the given {@link Application} for leave.
      *
-     * @param  startDate  defines the start of the period
-     * @param  endDate  defines the end of the period
-     * @param  applicationsForLeave  overlapping the reference application for leave
-     * @param  sickNotes  overlapping the reference application for leave
-     *
-     * @return  {@link List} of overlap intervals
+     * @param startDate            defines the start of the period
+     * @param endDate              defines the end of the period
+     * @param applicationsForLeave overlapping the reference application for leave
+     * @param sickNotes            overlapping the reference application for leave
+     * @return {@link List} of overlap intervals
      */
     public List<Interval> getListOfOverlaps(LocalDate startDate, LocalDate endDate,
                                             List<Application> applicationsForLeave, List<SickNote> sickNotes) {
@@ -251,11 +245,10 @@ public class OverlapService {
     /**
      * Get a list of gaps within the given intervals.
      *
-     * @param  startDate  defines the start of the period
-     * @param  endDate  defines the end of the period
-     * @param  listOfOverlaps  list of overlaps
-     *
-     * @return  {@link List} of gaps
+     * @param startDate      defines the start of the period
+     * @param endDate        defines the end of the period
+     * @param listOfOverlaps list of overlaps
+     * @return {@link List} of gaps
      */
     private List<Interval> getListOfGaps(LocalDate startDate, LocalDate endDate, List<Interval> listOfOverlaps) {
 
@@ -306,10 +299,9 @@ public class OverlapService {
      *
      * <p>(2) period 16.-18. and period 20.-22. --> they have a gap</p>
      *
-     * @param  firstInterval
-     * @param  secondInterval
-     *
-     * @return  {@code true} if they have a gap between or {@code false} if they have no gap
+     * @param firstInterval
+     * @param secondInterval
+     * @return {@code true} if they have a gap between or {@code false} if they have no gap
      */
     private boolean intervalsHaveGap(Interval firstInterval, Interval secondInterval) {
 
@@ -319,6 +311,6 @@ public class OverlapService {
         LocalDate startOfSecondInterval = Instant.ofEpochMilli(secondInterval.getStartMillis()).atOffset(ZoneOffset.UTC).toLocalDate();
 
         return !(endOfFirstInterval.equals(startOfSecondInterval)
-                || endOfFirstInterval.plusDays(1).equals(startOfSecondInterval));
+            || endOfFirstInterval.plusDays(1).equals(startOfSecondInterval));
     }
 }

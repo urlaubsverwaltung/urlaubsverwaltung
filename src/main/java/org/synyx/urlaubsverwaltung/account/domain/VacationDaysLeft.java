@@ -10,20 +10,28 @@ import java.math.BigDecimal;
  */
 public final class VacationDaysLeft {
 
-    /** Vacation days for this year that have not been used yet */
+    /**
+     * Vacation days for this year that have not been used yet
+     */
     private final BigDecimal vacationDays;
 
-    /** Additional vacation days left over from last year */
+    /**
+     * Additional vacation days left over from last year
+     */
     private final BigDecimal remainingVacationDays;
 
-    /** Non-expiring vacation days left over from last year (included in `remainingVacationDays`) */
+    /**
+     * Non-expiring vacation days left over from last year (included in `remainingVacationDays`)
+     */
     private final BigDecimal remainingVacationDaysNotExpiring;
 
-    /** Vacaction days for this year that have already been used NEXT year */
+    /**
+     * Vacaction days for this year that have already been used NEXT year
+     */
     private final BigDecimal vacationDaysUsedNextYear;
 
     private VacationDaysLeft(BigDecimal vacationDays, BigDecimal remainingVacationDays,
-        BigDecimal remainingVacationDaysNotExpiring, BigDecimal vacationDaysUsedNextYear) {
+                             BigDecimal remainingVacationDaysNotExpiring, BigDecimal vacationDaysUsedNextYear) {
 
         this.vacationDays = vacationDays;
         this.remainingVacationDays = remainingVacationDays;
@@ -136,7 +144,7 @@ public final class VacationDaysLeft {
                 }
 
                 leftRemainingVacationDaysNotExpiring = leftRemainingVacationDaysNotExpiring.subtract(
-                        usedDaysAfterApril);
+                    usedDaysAfterApril);
 
                 if (CalcUtil.isNegative(leftRemainingVacationDaysNotExpiring)) {
                     // not expiring remaining vacation days are not enough for the days after April
@@ -176,7 +184,7 @@ public final class VacationDaysLeft {
             }
 
             return new VacationDaysLeft(leftVacationDays, leftRemainingVacationDays,
-                    leftRemainingVacationDaysNotExpiring, vacationDaysUsedNextYear);
+                leftRemainingVacationDaysNotExpiring, vacationDaysUsedNextYear);
         }
     }
 

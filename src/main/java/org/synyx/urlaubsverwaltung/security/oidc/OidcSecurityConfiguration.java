@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAut
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import java.util.List;
 
@@ -65,13 +64,8 @@ public class OidcSecurityConfiguration {
     }
 
     @Bean
-    public PersonSyncService personSyncService(PersonService personService) {
-        return new PersonSyncService(personService);
-    }
-
-    @Bean
-    public OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService, PersonSyncService personSyncService) {
-        return new OidcPersonAuthoritiesMapper(personService, personSyncService);
+    public OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
+        return new OidcPersonAuthoritiesMapper(personService);
     }
 
     @Bean

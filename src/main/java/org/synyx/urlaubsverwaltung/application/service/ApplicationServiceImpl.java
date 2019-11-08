@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,7 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
                                                                        Person person) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate,endDate, person);
+        return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
     }
 
 

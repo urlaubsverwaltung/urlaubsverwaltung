@@ -291,7 +291,7 @@ public class OvertimeValidatorTest {
 
         verify(errors)
             .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertime",
-                new Object[] { new BigDecimal("16") }, null);
+                new Object[]{new BigDecimal("16")}, null);
 
         verify(settingsServiceMock).getSettings();
         verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
@@ -312,7 +312,7 @@ public class OvertimeValidatorTest {
 
         verify(errors)
             .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.minOvertime",
-                new Object[] { new BigDecimal("10") }, null);
+                new Object[]{new BigDecimal("10")}, null);
 
         verify(settingsServiceMock).getSettings();
         verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
@@ -437,7 +437,7 @@ public class OvertimeValidatorTest {
 
         overtimeForm.setComment(
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore "
-            + "et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores e");
+                + "et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores e");
 
         validator.validate(overtimeForm, errors);
 

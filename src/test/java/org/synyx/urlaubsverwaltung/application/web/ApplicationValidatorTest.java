@@ -72,7 +72,7 @@ public class ApplicationValidatorTest {
         overtimeService = mock(OvertimeService.class);
 
         validator = new ApplicationValidator(workingTimeService, calendarService, overlapService, calculationService,
-                settingsService, overtimeService);
+            settingsService, overtimeService);
         errors = mock(Errors.class);
 
         appForm = new ApplicationForLeaveForm();
@@ -89,7 +89,7 @@ public class ApplicationValidatorTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
-                    any(Person.class))).thenReturn(BigDecimal.ONE);
+            any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.TEN);
@@ -187,7 +187,7 @@ public class ApplicationValidatorTest {
 
         verify(errors)
             .reject("application.error.tooFarInTheFuture",
-                new Object[] { settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance() }, null);
+                new Object[]{settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance()}, null);
     }
 
 
@@ -403,8 +403,8 @@ public class ApplicationValidatorTest {
 
         appForm.setAddress(
             "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
-            + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
-            + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
+                + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
+                + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
 
         validator.validate(appForm, errors);
 
@@ -420,7 +420,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
-                    any(Person.class))).thenReturn(BigDecimal.ZERO);
+            any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         validator.validate(appForm, errors);
 
@@ -442,7 +442,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
-                    any(Person.class))).thenReturn(BigDecimal.ONE);
+            any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
 
@@ -465,7 +465,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(calendarService.getWorkDays(eq(appForm.getDayLength()), eq(appForm.getStartDate()),
-                    eq(appForm.getEndDate()), eq(appForm.getPerson())))
+            eq(appForm.getEndDate()), eq(appForm.getPerson())))
             .thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
@@ -486,7 +486,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
-                    any(Person.class))).thenReturn(BigDecimal.ONE);
+            any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
 
@@ -607,7 +607,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    eq(appForm.getStartDate()))).thenReturn(Optional.empty());
+            eq(appForm.getStartDate()))).thenReturn(Optional.empty());
 
         validator.validate(appForm, errors);
 
@@ -635,7 +635,7 @@ public class ApplicationValidatorTest {
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    eq(appForm.getStartDate())))
+            eq(appForm.getStartDate())))
             .thenReturn(Optional.empty());
 
         validator.validate(appForm, errors);

@@ -55,7 +55,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
     @Autowired
     public GoogleCalendarOAuthHandshakeViewController(SettingsService settingsService, CalendarSyncService calendarSyncService)
-            throws GeneralSecurityException, IOException {
+        throws GeneralSecurityException, IOException {
 
         this.settingsService = settingsService;
         this.calendarSyncService = calendarSyncService;
@@ -80,8 +80,8 @@ public class GoogleCalendarOAuthHandshakeViewController {
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUrl).execute();
             Credential credential = flow.createAndStoreCredential(response, "userID");
             com.google.api.services.calendar.Calendar client =
-                    new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential)
-                            .setApplicationName(APPLICATION_NAME).build();
+                new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME).build();
 
             Settings settings = settingsService.getSettings();
             HttpResponse httpResponse = checkGoogleCalendar(client, settings);
@@ -94,7 +94,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
                     LOG.info("OAuth Handshake was successful!");
                 }
                 settings.getCalendarSettings().getGoogleCalendarSettings()
-                        .setRefreshToken(refreshToken);
+                    .setRefreshToken(refreshToken);
                 settingsService.save(settings);
                 calendarSyncService.checkCalendarSyncSettings();
             } else {
@@ -119,7 +119,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
         Details web = new Details();
         GoogleCalendarSettings googleCalendarSettings =
-                settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
+            settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
 
         web.setClientId(googleCalendarSettings.getClientId());
         web.setClientSecret(googleCalendarSettings.getClientSecret());
@@ -129,10 +129,10 @@ public class GoogleCalendarOAuthHandshakeViewController {
         clientSecrets.setWeb(web);
 
         flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
-                Collections.singleton(CalendarScopes.CALENDAR))
-                .setApprovalPrompt("force")
-                .setAccessType("offline")
-                .build();
+            Collections.singleton(CalendarScopes.CALENDAR))
+            .setApprovalPrompt("force")
+            .setAccessType("offline")
+            .build();
 
         authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri);
 

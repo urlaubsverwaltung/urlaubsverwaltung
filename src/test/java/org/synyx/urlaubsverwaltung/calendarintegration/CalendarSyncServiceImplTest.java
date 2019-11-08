@@ -2,12 +2,12 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -95,7 +95,7 @@ public class CalendarSyncServiceImplTest {
         calendarSyncService.checkCalendarSyncSettings();
 
         verify(calendarService.getCalendarProvider())
-                .checkCalendarSyncSettings(any(CalendarSettings.class));
+            .checkCalendarSyncSettings(any(CalendarSettings.class));
     }
 
 

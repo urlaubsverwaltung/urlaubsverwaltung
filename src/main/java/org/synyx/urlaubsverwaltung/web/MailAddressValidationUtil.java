@@ -14,7 +14,7 @@ public final class MailAddressValidationUtil {
     // modified by adding following characters: äöüß
     private static final String EMAIL_PATTERN =
         "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@"
-        + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
+            + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
     private MailAddressValidationUtil() {
 
@@ -24,9 +24,8 @@ public final class MailAddressValidationUtil {
     /**
      * Checks if the provided mail address has a valid format, for example `marlene@firma.test`.
      *
-     * @param  mailAddress  to be checked
-     *
-     * @return  {@code true} if the provided mail address has a valid format, {@code false} else
+     * @param mailAddress to be checked
+     * @return {@code true} if the provided mail address has a valid format, {@code false} else
      */
     public static boolean hasValidFormat(String mailAddress) {
 

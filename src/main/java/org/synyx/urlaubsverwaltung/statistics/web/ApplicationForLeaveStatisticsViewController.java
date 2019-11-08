@@ -56,8 +56,8 @@ public class ApplicationForLeaveStatisticsViewController {
     public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period) {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("redirect:" + STATISTICS_REL)
-                .queryParam("from", period.getStartDateAsString())
-                .queryParam("to", period.getEndDateAsString());
+            .queryParam("from", period.getStartDateAsString())
+            .queryParam("to", period.getEndDateAsString());
         return builder.toUriString();
     }
 

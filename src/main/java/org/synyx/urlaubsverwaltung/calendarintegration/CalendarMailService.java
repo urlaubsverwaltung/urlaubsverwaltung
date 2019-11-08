@@ -22,9 +22,9 @@ public class CalendarMailService {
     /**
      * Send an email to the tool's manager if an error occurs during adding calendar event.
      *
-     * @param  calendarName  that is used for syncing
-     * @param  absence  represents the absence of a person
-     * @param  exception  describes the error
+     * @param calendarName that is used for syncing
+     * @param absence      represents the absence of a person
+     * @param exception    describes the error
      */
     public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
 
@@ -33,16 +33,16 @@ public class CalendarMailService {
         model.put("absence", absence);
         model.put(EXCEPTION, exception);
 
-        mailService.sendTechnicalMail("subject.error.calendar.sync","error_calendar_sync", model);
+        mailService.sendTechnicalMail("subject.error.calendar.sync", "error_calendar_sync", model);
     }
 
     /**
      * Send an email to the tool's manager if an error occurs during update of calendar event.
      *
-     * @param  calendarName  that is used for syncing
-     * @param  absence  represents the absence of a person
-     * @param  eventId  unique calendar event id
-     * @param  exception  describes the error
+     * @param calendarName that is used for syncing
+     * @param absence      represents the absence of a person
+     * @param eventId      unique calendar event id
+     * @param exception    describes the error
      */
     public void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId,
                                                     String exception) {
@@ -53,15 +53,15 @@ public class CalendarMailService {
         model.put("eventId", eventId);
         model.put(EXCEPTION, exception);
 
-        mailService.sendTechnicalMail("subject.error.calendar.update","error_calendar_update", model);
+        mailService.sendTechnicalMail("subject.error.calendar.update", "error_calendar_update", model);
     }
 
     /**
      * Send an email to the tool's manager if an error occurs during syncing delete action to calendar.
      *
-     * @param  calendarName  name of calendar that is used for syncing
-     * @param  eventId  id of event which should be deleted
-     * @param  exception  describes the error
+     * @param calendarName name of calendar that is used for syncing
+     * @param eventId      id of event which should be deleted
+     * @param exception    describes the error
      */
     public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
 
@@ -70,6 +70,6 @@ public class CalendarMailService {
         model.put("eventId", eventId);
         model.put(EXCEPTION, exception);
 
-        mailService.sendTechnicalMail("subject.error.calendar.delete","error_calendar_delete", model);
+        mailService.sendTechnicalMail("subject.error.calendar.delete", "error_calendar_delete", model);
     }
 }

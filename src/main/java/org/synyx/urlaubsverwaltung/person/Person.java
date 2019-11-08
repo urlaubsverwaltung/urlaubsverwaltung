@@ -127,16 +127,16 @@ public class Person extends AbstractPersistable<Integer> {
     public String getNiceName() {
 
         StringBuilder builder = new StringBuilder();
-        if(StringUtils.hasText(this.firstName)) {
+        if (StringUtils.hasText(this.firstName)) {
             builder.append(this.firstName);
             builder.append(" ");
         }
-        if(StringUtils.hasText(this.lastName)) {
+        if (StringUtils.hasText(this.lastName)) {
             builder.append(this.lastName);
         }
         String nicename = builder.toString().trim();
 
-        if(!StringUtils.hasText(nicename)) {
+        if (!StringUtils.hasText(nicename)) {
             return "---";
         }
 

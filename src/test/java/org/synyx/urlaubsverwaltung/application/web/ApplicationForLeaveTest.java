@@ -7,8 +7,8 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,10 +36,10 @@ public class ApplicationForLeaveTest {
         Person person = TestDataCreator.createPerson();
 
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
-                LocalDate.of(2015, 3, 6), DayLength.FULL);
+            LocalDate.of(2015, 3, 6), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
         ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);
@@ -66,10 +66,10 @@ public class ApplicationForLeaveTest {
         Person person = TestDataCreator.createPerson();
 
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
-                LocalDate.of(2016, 3, 4), DayLength.FULL);
+            LocalDate.of(2016, 3, 4), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 
         ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);

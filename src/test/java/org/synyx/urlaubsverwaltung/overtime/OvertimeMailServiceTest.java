@@ -35,7 +35,7 @@ public class OvertimeMailServiceTest {
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
 
-        sut.sendOvertimeNotification(overtime,overtimeComment);
+        sut.sendOvertimeNotification(overtime, overtimeComment);
 
         verify(mailService).sendMailTo(OVERTIME_NOTIFICATION_OFFICE, "subject.overtime.created", "overtime_office", model);
     }

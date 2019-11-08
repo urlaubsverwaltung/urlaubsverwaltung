@@ -146,16 +146,16 @@ public class ApplicationRecipientServiceTest {
      * Members: head1, secondStage
      * head: head1
      * secondStage: secondStage
-     *
+     * <p>
      * Department 2:
      * Members: head1, head2, secondStage
      * head: head2
      * secondStage: secondStage
-     *
+     * <p>
      * WHEN:
      * application head1
-     *
-     *
+     * <p>
+     * <p>
      * THEN:
      * recipient head2, secondStage
      */

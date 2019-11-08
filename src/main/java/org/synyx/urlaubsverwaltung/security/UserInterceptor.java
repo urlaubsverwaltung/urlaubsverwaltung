@@ -33,10 +33,10 @@ public class UserInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-        ModelAndView modelAndView) {
+                           ModelAndView modelAndView) {
 
         if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")
-                && !modelAndView.getViewName().startsWith("login")) {
+            && !modelAndView.getViewName().startsWith("login")) {
             modelAndView.addObject("signedInUser", sessionService.getSignedInUser());
         }
     }
@@ -44,7 +44,7 @@ public class UserInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-        Object o, Exception e) {
+                                Object o, Exception e) {
 
         // OK
     }

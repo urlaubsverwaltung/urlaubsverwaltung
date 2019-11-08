@@ -9,7 +9,6 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 @Configuration
 public class ActiveDirectorySecurityConfiguration {
@@ -46,14 +45,8 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapPersonContextMapper personContextMapper(PersonService personService, PersonSyncService personSyncService,
-                                                           LdapUserMapper ldapUserMapper) {
-            return new LdapPersonContextMapper(personService, personSyncService, ldapUserMapper);
-        }
-
-        @Bean
-        public PersonSyncService ldapSyncService(PersonService personService) {
-            return new PersonSyncService(personService);
+        public LdapPersonContextMapper personContextMapper(PersonService personService, LdapUserMapper ldapUserMapper) {
+            return new LdapPersonContextMapper(personService, ldapUserMapper);
         }
     }
 
@@ -76,9 +69,8 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonSyncService personSyncService,
-                                                         PersonService personService) {
-            return new LdapUserDataImporter(ldapUserService, personSyncService, personService);
+        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
+            return new LdapUserDataImporter(ldapUserService, personService);
         }
 
         @Bean

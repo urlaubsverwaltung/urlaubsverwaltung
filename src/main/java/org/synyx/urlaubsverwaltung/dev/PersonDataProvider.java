@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -43,16 +43,18 @@ class PersonDataProvider {
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final AccountInteractionService accountInteractionService;
+    private final PasswordEncoder passwordEncoder;
 
     PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
-                       AccountInteractionService accountInteractionService) {
+                       AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder) {
 
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountInteractionService = accountInteractionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    boolean isPersonAlreadyCreated(String username){
+    boolean isPersonAlreadyCreated(String username) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         return personByUsername.isPresent();
@@ -79,13 +81,13 @@ class PersonDataProvider {
         final List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
         final Person person = personService.create(username, lastName, firstName, email, notifications, permissions);
-        person.setPassword(new StandardPasswordEncoder().encode(password));
+        person.setPassword(passwordEncoder.encode(password));
 
         final Person savedPerson = personService.save(person);
 
         final int currentYear = ZonedDateTime.now(UTC).getYear();
         workingTimeService.touch(
-            asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(),WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
+            asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
             Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);
 
         final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(currentYear);

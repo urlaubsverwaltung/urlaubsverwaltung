@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -29,12 +30,14 @@ public class SimpleAuthenticationProviderTest {
 
     private PersonService personService;
     private SimpleAuthenticationProvider authenticationProvider;
+    private PasswordEncoder passwordEncoder;
 
     @Before
     public void setUp() {
 
         personService = mock(PersonService.class);
-        authenticationProvider = new SimpleAuthenticationProvider(personService);
+        passwordEncoder = new CustomPasswordEncoder();
+        authenticationProvider = new SimpleAuthenticationProvider(personService, passwordEncoder);
     }
 
 

@@ -42,8 +42,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Autowired
     public SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
-        ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-        AbsenceMappingService absenceMappingService, SettingsService settingsService) {
+                                          ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
+                                          AbsenceMappingService absenceMappingService, SettingsService settingsService) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
@@ -107,14 +107,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         LOG.info("Converted sick note to vacation: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
-                AbsenceType.SICKNOTE);
+            AbsenceType.SICKNOTE);
 
         if (absenceMapping.isPresent()) {
             String eventId = absenceMapping.get().getEventId();
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
 
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                    new AbsenceTimeConfiguration(calendarSettings)), eventId);
+                new AbsenceTimeConfiguration(calendarSettings)), eventId);
             absenceMappingService.delete(absenceMapping.get());
             absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId);
         }
@@ -134,7 +134,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         LOG.info("Cancelled sick note: {}", sickNote);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
-                AbsenceType.SICKNOTE);
+            AbsenceType.SICKNOTE);
 
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());

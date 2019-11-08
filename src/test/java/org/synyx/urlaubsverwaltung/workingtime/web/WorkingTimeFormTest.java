@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class WorkingTimeFormTest {
 
     private static final LocalDate VALID_FROM = LocalDate.now().minusDays(10);
-    private static final List<Integer> WORKING_DAYS = Arrays.asList(3,4,5,7);
+    private static final List<Integer> WORKING_DAYS = Arrays.asList(3, 4, 5, 7);
     private static final FederalState FEDERAL_STATE = FederalState.BERLIN;
 
     @Test

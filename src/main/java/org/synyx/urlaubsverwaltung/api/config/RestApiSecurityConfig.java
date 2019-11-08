@@ -16,13 +16,13 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .antMatcher("/api/**")
-                .sessionManagement()
-                    .sessionCreationPolicy(NEVER)
+            .sessionManagement()
+            .sessionCreationPolicy(NEVER)
             .and()
-                .httpBasic()
+            .httpBasic()
             .and()
-                .authorizeRequests()
-                    .antMatchers("/api/**").authenticated()
-                    .anyRequest().authenticated();
+            .authorizeRequests()
+            .antMatchers("/api/**").authenticated()
+            .anyRequest().authenticated();
     }
 }

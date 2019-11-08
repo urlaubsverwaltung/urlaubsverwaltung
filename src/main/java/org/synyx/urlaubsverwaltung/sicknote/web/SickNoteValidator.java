@@ -135,10 +135,11 @@ public class SickNoteValidator implements Validator {
 
     /**
      * Validate that the given start date is not after the given end date.
-     *  @param  startDate
-     * @param  endDate
-     * @param  field
-     * @param  errors
+     *
+     * @param startDate
+     * @param endDate
+     * @param field
+     * @param errors
      */
     private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, String field,
                                 Errors errors) {
@@ -161,7 +162,7 @@ public class SickNoteValidator implements Validator {
          * Ensure the person has a working time for the period of the sick note
          */
         Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-                sickNote.getPerson(), sickNote.getStartDate());
+            sickNote.getPerson(), sickNote.getStartDate());
 
         if (!workingTime.isPresent()) {
             errors.reject(ERROR_WORKING_TIME);

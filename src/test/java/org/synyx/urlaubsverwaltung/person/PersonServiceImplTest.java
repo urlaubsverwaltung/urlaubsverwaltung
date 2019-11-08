@@ -13,12 +13,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,6 +31,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
@@ -189,7 +193,7 @@ public class PersonServiceImplTest {
         boss.setPermissions(asList(USER, BOSS));
 
         Person office = createPerson("office");
-        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
+        office.setPermissions(asList(USER, BOSS, OFFICE));
 
         List<Person> allPersons = asList(inactive, user, boss, office);
 
@@ -218,7 +222,7 @@ public class PersonServiceImplTest {
         boss.setPermissions(asList(USER, BOSS));
 
         Person office = createPerson("office");
-        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
+        office.setPermissions(asList(USER, BOSS, OFFICE));
 
         List<Person> allPersons = asList(inactive, user, boss, office);
 
@@ -242,7 +246,7 @@ public class PersonServiceImplTest {
         boss.setPermissions(asList(USER, BOSS));
 
         Person office = createPerson("office");
-        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
+        office.setPermissions(asList(USER, BOSS, OFFICE));
 
         List<Person> allPersons = asList(user, boss, office);
 
@@ -269,7 +273,7 @@ public class PersonServiceImplTest {
         boss.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
         Person office = createPerson("office");
-        office.setPermissions(asList(USER, BOSS, Role.OFFICE));
+        office.setPermissions(asList(USER, BOSS, OFFICE));
         office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL,
             MailNotification.NOTIFICATION_OFFICE));
 
@@ -396,5 +400,40 @@ public class PersonServiceImplTest {
     public void ensureThrowsIllegalOnNullAuthentication() {
 
         sut.getSignedInUser();
+    }
+
+    @Test
+   public void ensureCanAppointPersonAsOfficeUser() {
+
+       when(personDAO.findAll()).thenReturn(emptyList());
+       when(personDAO.save(any())).then(returnsFirstArg());
+
+       final Person person = createPerson();
+       person.setPermissions(singletonList(USER));
+       assertThat(person.getPermissions()).containsOnly(USER);
+
+       final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
+
+       final Collection<Role> permissions = personWithOfficeRole.getPermissions();
+       assertThat(permissions).hasSize(2);
+       assertThat(permissions).contains(USER, OFFICE);
+   }
+
+    @Test
+    public void ensureCanNotAppointPersonAsOfficeUser() {
+
+        Person officePerson = new Person();
+        officePerson.setPermissions(singletonList(OFFICE));
+        when(personDAO.findAll()).thenReturn(singletonList(officePerson));
+
+        final Person person = createPerson();
+        person.setPermissions(singletonList(USER));
+        assertThat(person.getPermissions()).containsOnly(USER);
+
+        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
+
+        final Collection<Role> permissions = personWithOfficeRole.getPermissions();
+        assertThat(permissions).hasSize(1);
+        assertThat(permissions).containsOnly(USER);
     }
 }

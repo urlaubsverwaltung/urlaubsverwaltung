@@ -56,7 +56,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
 
         final FilterPeriod filterPeriod = new FilterPeriod();
         final String expectedRedirect = "/web/application/statistics?from=" + filterPeriod.getStartDateAsString() +
-                                        "&to=" + filterPeriod.getEndDateAsString();
+            "&to=" + filterPeriod.getEndDateAsString();
 
         perform(post("/web/application/statistics"))
             .andExpect(status().isFound())
@@ -88,7 +88,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(statistics);
 
         final List<VacationType> vacationType = Collections.singletonList(new VacationType());
-        when( vacationTypeService.getVacationTypes()).thenReturn(vacationType);
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationType);
 
         perform(get("/web/application/statistics")
             .param("from", startDate)
@@ -149,7 +149,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
 
         final FilterPeriod period = new FilterPeriod(Optional.ofNullable(startDate), Optional.ofNullable(endDate));
 
-        when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn( Collections.emptyList());
+        when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(Collections.emptyList());
 
         perform(get("/web/application/statistics/download")
             .param("from", startDate)

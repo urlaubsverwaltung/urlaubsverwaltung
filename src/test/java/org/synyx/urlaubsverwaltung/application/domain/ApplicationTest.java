@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import springfox.documentation.spring.web.paths.AbstractPathProvider;
 
 import java.math.BigDecimal;
 import java.sql.Time;

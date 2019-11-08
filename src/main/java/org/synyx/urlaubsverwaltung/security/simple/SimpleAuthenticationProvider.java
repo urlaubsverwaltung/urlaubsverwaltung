@@ -10,7 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-
 /**
  * Provides authentication with password, which is saved in database.
  */
@@ -31,18 +30,16 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
+    private final PasswordEncoder passwordEncoder;
 
-    SimpleAuthenticationProvider(PersonService personService) {
+    SimpleAuthenticationProvider(PersonService personService, PasswordEncoder passwordEncoder) {
 
         this.personService = personService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) {
-
-        // TODO replace StandardPasswordEncoder
-
-        StandardPasswordEncoder encoder = new StandardPasswordEncoder();
 
         String username = authentication.getName();
         String rawPassword = authentication.getCredentials().toString();
@@ -68,7 +65,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
         String userPassword = person.getPassword();
 
-        if (encoder.matches(rawPassword, userPassword)) {
+        if (passwordEncoder.matches(rawPassword, userPassword)) {
             LOG.info("User '{}' has signed in with roles: {}", username, grantedAuthorities);
 
             return new UsernamePasswordAuthenticationToken(new User(username, userPassword, grantedAuthorities), userPassword, grantedAuthorities);

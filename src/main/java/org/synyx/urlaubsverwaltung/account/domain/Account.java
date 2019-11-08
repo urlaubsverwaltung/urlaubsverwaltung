@@ -113,11 +113,7 @@ public class Account extends AbstractPersistable<Integer> {
 
     public void setValidFrom(LocalDate validFrom) {
 
-        if (validFrom == null) {
-            this.validFrom = null;
-        } else {
-            this.validFrom = validFrom;
-        }
+        this.validFrom = validFrom;
     }
 
     public LocalDate getValidTo() {
@@ -131,11 +127,7 @@ public class Account extends AbstractPersistable<Integer> {
 
     public void setValidTo(LocalDate validTo) {
 
-        if (validTo == null) {
-            this.validTo = null;
-        } else {
-            this.validTo = validTo;
-        }
+        this.validTo = validTo;
     }
 
     public int getYear() {

@@ -31,7 +31,7 @@ public class SickNoteServiceImplTest {
     private SettingsService settingsService;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         sut = new SickNoteServiceImpl(sickNoteDAO, settingsService);
     }
 
@@ -54,7 +54,7 @@ public class SickNoteServiceImplTest {
     @Test
     public void findByPeriod() {
         final LocalDate from = LocalDate.of(2015, 1, 1);
-        final LocalDate to= LocalDate.of(2016, 1, 1);
+        final LocalDate to = LocalDate.of(2016, 1, 1);
         final SickNote sickNote = new SickNote();
         when(sickNoteDAO.findByPeriod(from, to)).thenReturn(singletonList(sickNote));
 
@@ -76,7 +76,7 @@ public class SickNoteServiceImplTest {
         when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2017)).thenReturn(5L);
 
         final Long numberOfPersonsWithMinimumOneSickNote = sut.getNumberOfPersonsWithMinimumOneSickNote(2017);
-        assertThat(numberOfPersonsWithMinimumOneSickNote ).isSameAs(5L);
+        assertThat(numberOfPersonsWithMinimumOneSickNote).isSameAs(5L);
     }
 
     @Test

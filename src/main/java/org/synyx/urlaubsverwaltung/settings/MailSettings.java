@@ -34,7 +34,7 @@ public class MailSettings {
     /**
      * Is used as base URL for links within sent mails.
      *
-     * @since  2.16.0
+     * @since 2.16.0
      */
     @Column(name = "mail_base_link_url")
     private String baseLinkURL = "http://localhost:8080/";

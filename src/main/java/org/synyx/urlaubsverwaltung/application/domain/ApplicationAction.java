@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.domain;
 /**
  * Executed action on an application for leave.
  *
- * @since  2.11.0
+ * @since 2.11.0
  */
 public enum ApplicationAction {
 

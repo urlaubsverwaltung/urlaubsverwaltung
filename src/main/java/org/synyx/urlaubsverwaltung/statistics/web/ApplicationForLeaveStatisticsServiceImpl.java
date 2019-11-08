@@ -33,8 +33,8 @@ class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveSta
         List<Person> persons = getRelevantPersons();
 
         return persons.stream()
-                .map(person -> applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate()))
-                .collect(Collectors.toList());
+            .map(person -> applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate()))
+            .collect(Collectors.toList());
     }
 
     private List<Person> getRelevantPersons() {

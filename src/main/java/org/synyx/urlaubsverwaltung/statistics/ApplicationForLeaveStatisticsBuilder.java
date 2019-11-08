@@ -38,8 +38,8 @@ public class ApplicationForLeaveStatisticsBuilder {
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-        WorkDaysService calendarService, VacationDaysService vacationDaysService, OvertimeService overtimeService,
-        VacationTypeService vacationTypeService) {
+                                                WorkDaysService calendarService, VacationDaysService vacationDaysService, OvertimeService overtimeService,
+                                                VacationTypeService vacationTypeService) {
 
         this.accountService = accountService;
         this.applicationService = applicationService;
@@ -70,7 +70,7 @@ public class ApplicationForLeaveStatisticsBuilder {
 
         for (Application application : applications) {
             if (application.hasStatus(ApplicationStatus.WAITING)
-                    || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 statistics.addWaitingVacationDays(application.getVacationType(),
                     getVacationDays(application, from.getYear()));
             } else if (application.hasStatus(ApplicationStatus.ALLOWED)) {

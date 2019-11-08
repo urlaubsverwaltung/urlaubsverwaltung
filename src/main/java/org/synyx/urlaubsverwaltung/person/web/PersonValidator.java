@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.person.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,7 +191,7 @@ class PersonValidator implements Validator {
 
 
     private void validateCombinationOfNotificationAndRole(Collection<Role> roles,
-        Collection<MailNotification> notifications, Role role, MailNotification notification, Errors errors) {
+                                                          Collection<MailNotification> notifications, Role role, MailNotification notification, Errors errors) {
 
         if (notifications.contains(notification) && !roles.contains(role)) {
             errors.rejectValue("notifications", ERROR_NOTIFICATIONS_COMBINATION);

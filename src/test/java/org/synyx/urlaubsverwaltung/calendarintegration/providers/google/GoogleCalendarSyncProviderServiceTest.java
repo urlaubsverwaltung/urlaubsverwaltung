@@ -81,18 +81,18 @@ public class GoogleCalendarSyncProviderServiceTest {
     }
 
     private static Credential createCredentialWithRefreshToken(
-            HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse) {
+        HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse) {
 
         return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
-                transport)
-                .setJsonFactory(jsonFactory)
-                .setTokenServerUrl(
-                        new GenericUrl(GOOGLEAPIS_OAUTH2_V4_TOKEN))
-                .setClientAuthentication(new BasicAuthentication(
-                        CLIENT_ID,
-                        CLIENT_SECRET))
-                .build()
-                .setFromTokenResponse(tokenResponse);
+            transport)
+            .setJsonFactory(jsonFactory)
+            .setTokenServerUrl(
+                new GenericUrl(GOOGLEAPIS_OAUTH2_V4_TOKEN))
+            .setClientAuthentication(new BasicAuthentication(
+                CLIENT_ID,
+                CLIENT_SECRET))
+            .build()
+            .setFromTokenResponse(tokenResponse);
     }
 
     private Integer getCalendarEventCount() throws GeneralSecurityException, IOException {
@@ -104,7 +104,7 @@ public class GoogleCalendarSyncProviderServiceTest {
         Credential credential = createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse);
 
         Calendar calendar = new com.google.api.services.calendar.Calendar.Builder(
-                httpTransport, jsonFactory, credential).setApplicationName(APPLICATION_NAME).build();
+            httpTransport, jsonFactory, credential).setApplicationName(APPLICATION_NAME).build();
 
         Calendar.Events.List events = calendar.events().list(CALENDAR_ID);
 
@@ -164,4 +164,5 @@ public class GoogleCalendarSyncProviderServiceTest {
         settings.setCalendarSettings(calendarSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         return settingsService;
-    }}
+    }
+}

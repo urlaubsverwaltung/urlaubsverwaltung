@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
@@ -11,8 +13,6 @@ import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -170,7 +170,7 @@ public class SettingsValidatorTest {
         verify(mockError)
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.mandatory");
         verify(mockError)
-                .rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
+            .rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
     }
 
 
@@ -195,7 +195,7 @@ public class SettingsValidatorTest {
         verify(mockError)
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
         verify(mockError)
-                .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
+            .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
     }
 
 
@@ -539,7 +539,7 @@ public class SettingsValidatorTest {
 
         Settings settings = new Settings();
         GoogleCalendarSettings googleCalendarSettings = settings.getCalendarSettings()
-                .getGoogleCalendarSettings();
+            .getGoogleCalendarSettings();
 
         settings.getCalendarSettings().setProvider(GoogleCalendarSyncProvider.class.getSimpleName());
         googleCalendarSettings.setCalendarId(null);
@@ -550,10 +550,10 @@ public class SettingsValidatorTest {
         settingsValidator.validate(settings, mockError);
 
         verify(mockError)
-                .rejectValue("calendarSettings.googleCalendarSettings.calendarId", "error.entry.mandatory");
+            .rejectValue("calendarSettings.googleCalendarSettings.calendarId", "error.entry.mandatory");
         verify(mockError)
-                .rejectValue("calendarSettings.googleCalendarSettings.clientId", "error.entry.mandatory");
+            .rejectValue("calendarSettings.googleCalendarSettings.clientId", "error.entry.mandatory");
         verify(mockError)
-                .rejectValue("calendarSettings.googleCalendarSettings.clientSecret", "error.entry.mandatory");
+            .rejectValue("calendarSettings.googleCalendarSettings.clientSecret", "error.entry.mandatory");
     }
 }

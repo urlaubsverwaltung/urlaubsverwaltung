@@ -33,9 +33,9 @@ public class LdapUserServiceImpl implements LdapUserService {
 
         if (hasText(memberOf)) {
             return ldapTemplate.search(query().where(OBJECT_CLASS_ATTRIBUTE)
-                    .is(objectClass)
-                    .and(MEMBER_OF_ATTRIBUTE)
-                    .is(memberOf), ldapUserMapper);
+                .is(objectClass)
+                .and(MEMBER_OF_ATTRIBUTE)
+                .is(memberOf), ldapUserMapper);
         }
 
         return ldapTemplate.search(query().where(OBJECT_CLASS_ATTRIBUTE).is(objectClass), ldapUserMapper);

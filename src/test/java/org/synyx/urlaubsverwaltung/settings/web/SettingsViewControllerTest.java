@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -118,7 +117,7 @@ public class SettingsViewControllerTest {
         when(settingsService.getSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
 
         perform(get("/web/settings")
-        .param(OAUTH_ERROR_ATTRIBUTE, OAUTH_ERROR_VALUE))
+            .param(OAUTH_ERROR_ATTRIBUTE, OAUTH_ERROR_VALUE))
             .andExpect(model().attribute(OAUTH_ERROR_ATTRIBUTE, nullValue()))
             .andExpect(model().attribute(ERRORS_ATTRIBUTE, nullValue()));
     }

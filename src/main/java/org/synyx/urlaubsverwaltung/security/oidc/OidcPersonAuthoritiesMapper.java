@@ -8,13 +8,15 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import java.util.Collection;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * @author Florian Krupicka - krupicka@synyx.de
@@ -22,12 +24,10 @@ import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private final PersonService personService;
-    private final PersonSyncService personSyncService;
 
-    public OidcPersonAuthoritiesMapper(PersonService personService, PersonSyncService personSyncService) {
+    public OidcPersonAuthoritiesMapper(PersonService personService) {
 
         this.personService = personService;
-        this.personSyncService = personSyncService;
     }
 
     @Override
@@ -44,33 +44,41 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
 
-            final Optional<String> firstName = extractGivenName(oidcUserAuthority);
-            final Optional<String> lastName = extractFamilyName(oidcUserAuthority);
-            final Optional<String> mailAddress = extractMailAddress(oidcUserAuthority);
+        final Optional<String> firstName = extractGivenName(oidcUserAuthority);
+        final Optional<String> lastName = extractFamilyName(oidcUserAuthority);
+        final Optional<String> mailAddress = extractMailAddress(oidcUserAuthority);
 
-            final String userUniqueID = oidcUserAuthority.getIdToken().getSubject();
+        final String userUniqueID = oidcUserAuthority.getIdToken().getSubject();
 
-            final Optional<Person> maybePerson = personService.getPersonByUsername(userUniqueID);
+        final Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
 
-            final Person person;
+        final Person person;
 
-            if (maybePerson.isPresent()) {
-                person = personSyncService.syncPerson(maybePerson.get(), firstName, lastName, mailAddress);
+        if (optionalPerson.isPresent()) {
 
-                if (person.hasRole(INACTIVE)) {
-                    throw new DisabledException("User '" + person.getId() + "' has been deactivated");
-                }
+            Person tmpPerson = optionalPerson.get();
 
-            } else {
-                final Person createdPerson = personSyncService.createPerson(userUniqueID, firstName, lastName, mailAddress);
-                person = personSyncService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
+            firstName.ifPresent(tmpPerson::setFirstName);
+            lastName.ifPresent(tmpPerson::setLastName);
+            mailAddress.ifPresent(tmpPerson::setEmail);
+
+            person = personService.save(tmpPerson);
+
+            if (person.hasRole(INACTIVE)) {
+                throw new DisabledException("User '" + person.getId() + "' has been deactivated");
             }
 
-            return person.getPermissions()
-                .stream()
-                .map(Role::name)
-                .map(SimpleGrantedAuthority::new)
-                .collect(toList());
+        } else {
+            final Person createdPerson = personService.create(userUniqueID, lastName.orElse(null),
+                firstName.orElse(null), mailAddress.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
+            person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
+        }
+
+        return person.getPermissions()
+            .stream()
+            .map(Role::name)
+            .map(SimpleGrantedAuthority::new)
+            .collect(toList());
     }
 
 

@@ -39,7 +39,7 @@ class ApplicationForLeaveDataProvider {
         Application application = null;
 
         if (durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate)
-                && durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
+            && durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
 
             final VacationType vacationType = getVacationType(vacationCategory);
 
@@ -52,8 +52,8 @@ class ApplicationForLeaveDataProvider {
             application.setDayLength(dayLength);
             application.setReason(
                 "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
-                + "ut labore et dolore magna aliquyam erat, sed diam voluptua."
-                + "At vero eos et accusam et justo duo dolores");
+                    + "ut labore et dolore magna aliquyam erat, sed diam voluptua."
+                    + "At vero eos et accusam et justo duo dolores");
 
             if (vacationCategory.equals(OVERTIME)) {
                 if (dayLength == FULL) {

@@ -92,7 +92,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonRedirectsToPersonActiveTrue() throws Exception{
+    public void showPersonRedirectsToPersonActiveTrue() throws Exception {
 
         final ResultActions resultActions = perform(get("/web/person"));
 
@@ -131,7 +131,7 @@ public class PersonViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID).param(YEAR_ATTRIBUTE, "1985"))
-            .andExpect(model().attribute(YEAR_ATTRIBUTE,1985));
+            .andExpect(model().attribute(YEAR_ATTRIBUTE, 1985));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class PersonViewControllerTest {
             .andExpect(model().attribute("account", nullValue()));
 
         final Account account = accountForPerson(person);
-        when(accountService.getHolidaysAccount(anyInt(),any())).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(model().attribute("account", account));
@@ -333,7 +333,7 @@ public class PersonViewControllerTest {
         perform(get("/web/person/")
             .param("active", "true")
             .param(YEAR_ATTRIBUTE, "1985")
-        ).andExpect(model().attribute(YEAR_ATTRIBUTE,1985));
+        ).andExpect(model().attribute(YEAR_ATTRIBUTE, 1985));
     }
 
     @Test

@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.account.dao;
 
 import org.springframework.data.jpa.repository.Query;

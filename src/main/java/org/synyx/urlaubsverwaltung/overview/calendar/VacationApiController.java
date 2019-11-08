@@ -60,20 +60,20 @@ public class VacationApiController {
     public ResponseWrapper<VacationListResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
-        Boolean departmentMembers,
+            Boolean departmentMembers,
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")
-        String from,
+            String from,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam(value = "to")
-        String to,
+            String to,
         @ApiParam(value = "ID of the person")
         @RequestParam(value = "person", required = false)
-        Integer personId) {
+            Integer personId) {
 
         final LocalDate startDate;
         final LocalDate endDate;
-        try{
+        try {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
             startDate = LocalDate.parse(from, fmt);
             endDate = LocalDate.parse(to, fmt);
@@ -100,7 +100,7 @@ public class VacationApiController {
                         endDate, person.get(), ALLOWED);
                 } else {
                     applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(),
-                            startDate, endDate);
+                        startDate, endDate);
                 }
             }
         }

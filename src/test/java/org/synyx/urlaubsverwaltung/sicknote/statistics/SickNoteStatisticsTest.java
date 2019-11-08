@@ -43,12 +43,12 @@ public class SickNoteStatisticsTest {
         Person person = TestDataCreator.createPerson();
 
         SickNote sickNote1 = TestDataCreator.createSickNote(person,
-                LocalDate.of(2013, OCTOBER, 7),
-                LocalDate.of(2013, OCTOBER, 11), DayLength.FULL);
+            LocalDate.of(2013, OCTOBER, 7),
+            LocalDate.of(2013, OCTOBER, 11), DayLength.FULL);
 
         SickNote sickNote2 = TestDataCreator.createSickNote(person,
-                LocalDate.of(2013, DECEMBER, 18),
-                LocalDate.of(2014, JANUARY, 3), DayLength.FULL);
+            LocalDate.of(2013, DECEMBER, 18),
+            LocalDate.of(2014, JANUARY, 3), DayLength.FULL);
 
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
@@ -57,11 +57,11 @@ public class SickNoteStatisticsTest {
         when(sickNoteDAO.getAllActiveByYear(2013)).thenReturn(sickNotes);
 
         when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
-                    LocalDate.of(2013, OCTOBER, 11), person))
+            LocalDate.of(2013, OCTOBER, 11), person))
             .thenReturn(new BigDecimal("5"));
 
         when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
-                    LocalDate.of(2013, DECEMBER, 31), person))
+            LocalDate.of(2013, DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 
         statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);

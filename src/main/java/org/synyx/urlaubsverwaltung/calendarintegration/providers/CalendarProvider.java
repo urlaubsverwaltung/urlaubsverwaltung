@@ -14,10 +14,9 @@ public interface CalendarProvider {
     /**
      * Add a person's absence to calendar.
      *
-     * @param  absence  represents the absence of a person
-     * @param  calendarSettings  contains configuration for calendar provider
-     *
-     * @return  id of added absence event, may be empty if an error occurred during the calendar sync
+     * @param absence          represents the absence of a person
+     * @param calendarSettings contains configuration for calendar provider
+     * @return id of added absence event, may be empty if an error occurred during the calendar sync
      */
     Optional<String> add(Absence absence, CalendarSettings calendarSettings);
 
@@ -25,9 +24,9 @@ public interface CalendarProvider {
     /**
      * Updates a given event with absence content.
      *
-     * @param  absence  represents the updated absence
-     * @param  eventId  id of event to be updated
-     * @param  calendarSettings  contains configuration for calendar provider
+     * @param absence          represents the updated absence
+     * @param eventId          id of event to be updated
+     * @param calendarSettings contains configuration for calendar provider
      */
     void update(Absence absence, String eventId, CalendarSettings calendarSettings);
 
@@ -35,8 +34,8 @@ public interface CalendarProvider {
     /**
      * Deletes a person's absence in calendar.
      *
-     * @param  eventId  id of absence event, which should be deleted
-     * @param  calendarSettings  contains configuration for calendar provider
+     * @param eventId          id of absence event, which should be deleted
+     * @param calendarSettings contains configuration for calendar provider
      */
     void delete(String eventId, CalendarSettings calendarSettings);
 
@@ -44,7 +43,7 @@ public interface CalendarProvider {
     /**
      * Check the settings for calendar sync.
      *
-     * @param  calendarSettings  to be checked, containing configuration for calendar provider
+     * @param calendarSettings to be checked, containing configuration for calendar provider
      */
     void checkCalendarSyncSettings(CalendarSettings calendarSettings);
 }

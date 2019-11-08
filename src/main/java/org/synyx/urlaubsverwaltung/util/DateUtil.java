@@ -24,9 +24,7 @@ public final class DateUtil {
     /**
      * Check if the given date is a work day.
      *
-     * @param date
-     *            to check
-     *
+     * @param date to check
      * @return {@code true} if the given date is a work day, else {@code false}
      */
     public static boolean isWorkDay(LocalDate date) {
@@ -37,11 +35,8 @@ public final class DateUtil {
     /**
      * Check if given date is before April of the given year
      *
-     * @param date
-     *            to check
-     * @param year
-     *            the year whose April the date will be compared to
-     *
+     * @param date to check
+     * @param year the year whose April the date will be compared to
      * @return {@code true} if the given date is before April of the given year, {@code false} if it is in or after that April
      */
     public static boolean isBeforeApril(LocalDate date, int year) {
@@ -52,9 +47,7 @@ public final class DateUtil {
     /**
      * Check if given date is on Christmas Eve.
      *
-     * @param date
-     *            to check
-     *
+     * @param date to check
      * @return {@code true} if the given date is on Christmas Eve, else {@code false}
      */
     public static boolean isChristmasEve(LocalDate date) {
@@ -65,9 +58,7 @@ public final class DateUtil {
     /**
      * Check if given date is on New Year's Eve.
      *
-     * @param date
-     *            to check
-     *
+     * @param date to check
      * @return {@code true} if the given date is on New Year's Eve, else {@code false}
      */
     public static boolean isNewYearsEve(LocalDate date) {
@@ -78,9 +69,7 @@ public final class DateUtil {
     /**
      * Get the first day of the given year.
      *
-     * @param year
-     *            to get the first day of
-     *
+     * @param year to get the first day of
      * @return the first day of the given year
      */
     public static LocalDate getFirstDayOfYear(int year) {
@@ -91,9 +80,7 @@ public final class DateUtil {
     /**
      * Get the last day of the given year.
      *
-     * @param year
-     *            to get the last day of
-     *
+     * @param year to get the last day of
      * @return the last day of the given year
      */
     public static LocalDate getLastDayOfYear(int year) {
@@ -104,11 +91,8 @@ public final class DateUtil {
     /**
      * Get the first day of the given month in the given year.
      *
-     * @param year
-     *            of the month to get the first day of
-     * @param month
-     *            to get the first day of
-     *
+     * @param year  of the month to get the first day of
+     * @param month to get the first day of
      * @return the first day of the given month in the given year
      */
     public static LocalDate getFirstDayOfMonth(int year, int month) {
@@ -119,11 +103,8 @@ public final class DateUtil {
     /**
      * Get the last day of the given month in the given year.
      *
-     * @param year
-     *            of the month to get the last day of
-     * @param month
-     *            to get the first day of
-     *
+     * @param year  of the month to get the last day of
+     * @param month to get the first day of
      * @return the last day of the given month in the given year
      */
     public static LocalDate getLastDayOfMonth(int year, int month) {
@@ -134,8 +115,7 @@ public final class DateUtil {
     /**
      * Get the German name of a month as text.
      *
-     * @param month
-     *            month as number from 1 to 12
+     * @param month month as number from 1 to 12
      * @return month as String
      */
     public static String getMonthName(Integer month) {

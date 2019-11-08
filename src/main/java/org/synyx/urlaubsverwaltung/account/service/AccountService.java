@@ -14,11 +14,10 @@ public interface AccountService {
     /**
      * Gets the {@link org.synyx.urlaubsverwaltung.account.domain.Account} for the given year and person.
      *
-     * @param  year  to get the holidays account for
-     * @param  person  to get the holidays account for
-     *
-     * @return  optional of {@link org.synyx.urlaubsverwaltung.account.domain.Account} that matches the given
-     *          parameters
+     * @param year   to get the holidays account for
+     * @param person to get the holidays account for
+     * @return optional of {@link org.synyx.urlaubsverwaltung.account.domain.Account} that matches the given
+     * parameters
      */
     Optional<Account> getHolidaysAccount(int year, Person person);
 
@@ -26,8 +25,7 @@ public interface AccountService {
     /**
      * Saves the given {@link Account}.
      *
-     * @param  account  to be saved
-     *
+     * @param account to be saved
      * @return saved {@link Account}
      */
     Account save(Account account);

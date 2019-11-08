@@ -5,14 +5,16 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.PersonSyncService;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 /**
@@ -24,14 +26,12 @@ public class LdapUserDataImporter {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final LdapUserService ldapUserService;
-    private final PersonSyncService personSyncService;
     private final PersonService personService;
 
-    LdapUserDataImporter(LdapUserService ldapUserService, PersonSyncService personSyncService,
-        PersonService personService) {
+    LdapUserDataImporter(LdapUserService ldapUserService,
+                         PersonService personService) {
 
         this.ldapUserService = ldapUserService;
-        this.personSyncService = personSyncService;
         this.personService = personService;
     }
 
@@ -55,9 +55,17 @@ public class LdapUserDataImporter {
             Optional<Person> optionalPerson = personService.getPersonByUsername(username);
 
             if (optionalPerson.isPresent()) {
-                personSyncService.syncPerson(optionalPerson.get(), firstName, lastName, email);
+
+                Person person = optionalPerson.get();
+
+                firstName.ifPresent(person::setFirstName);
+                lastName.ifPresent(person::setLastName);
+                email.ifPresent(person::setEmail);
+
+                personService.save(person);
             } else {
-                personSyncService.createPerson(username, firstName, lastName, email);
+                personService.create(username, lastName.orElse(null), firstName.orElse(null),
+                    email.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
             }
         }
 

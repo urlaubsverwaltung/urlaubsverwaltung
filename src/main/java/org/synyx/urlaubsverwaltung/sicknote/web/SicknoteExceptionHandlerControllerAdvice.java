@@ -26,9 +26,8 @@ public class SicknoteExceptionHandlerControllerAdvice {
     /**
      * Get the common error page.
      *
-     * @param  exception  has information about cause of error
-     *
-     * @return  the error page as {@link ModelAndView}
+     * @param exception has information about cause of error
+     * @return the error page as {@link ModelAndView}
      */
     private static ModelAndView getErrorPage(Exception exception, HttpStatus httpStatus) {
 
@@ -44,7 +43,7 @@ public class SicknoteExceptionHandlerControllerAdvice {
     @ExceptionHandler(SickNoteAlreadyInactiveException.class)
     public ModelAndView handleException(AbstractNoResultFoundException exception) {
 
-        if(LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("An exception was thrown: {}", exception.getClass().getName());
             LOG.debug("An error occurred: {}", exception.getMessage());
         }

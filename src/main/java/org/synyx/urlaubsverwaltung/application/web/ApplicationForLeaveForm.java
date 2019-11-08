@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -235,20 +234,20 @@ public class ApplicationForLeaveForm {
     @Override
     public String toString() {
         return "ApplicationForLeaveForm{" +
-                "person=" + person +
-                ", startDate=" + startDate +
-                ", startTime=" + startTime +
-                ", endDate=" + endDate +
-                ", endTime=" + endTime +
-                ", vacationType=" + vacationType +
-                ", dayLength=" + dayLength +
-                ", hours=" + hours +
-                ", reason='" + reason + '\'' +
-                ", holidayReplacement=" + holidayReplacement +
-                ", address='" + address + '\'' +
-                ", teamInformed=" + teamInformed +
-                ", comment='" + comment + '\'' +
-                '}';
+            "person=" + person +
+            ", startDate=" + startDate +
+            ", startTime=" + startTime +
+            ", endDate=" + endDate +
+            ", endTime=" + endTime +
+            ", vacationType=" + vacationType +
+            ", dayLength=" + dayLength +
+            ", hours=" + hours +
+            ", reason='" + reason + '\'' +
+            ", holidayReplacement=" + holidayReplacement +
+            ", address='" + address + '\'' +
+            ", teamInformed=" + teamInformed +
+            ", comment='" + comment + '\'' +
+            '}';
     }
 
     public static class Builder {

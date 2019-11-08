@@ -93,18 +93,18 @@ public class OvertimeDAOIT {
 
         // records for 2015
         overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
-                new BigDecimal("1")));
+            new BigDecimal("1")));
         overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
-                new BigDecimal("2")));
+            new BigDecimal("2")));
         overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
-                new BigDecimal("3")));
+            new BigDecimal("3")));
 
         // record for 2014
         overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
-                new BigDecimal("4")));
+            new BigDecimal("4")));
 
         List<Overtime> records = overtimeDAO.findByPersonAndPeriod(savedPerson,
-            LocalDate.of(2015, 1, 1),LocalDate.of(2015, 12, 31));
+            LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31));
 
         assertThat(records).isNotNull();
         assertThat(records.size()).isEqualTo(3);

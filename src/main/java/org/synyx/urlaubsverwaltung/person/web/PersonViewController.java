@@ -85,8 +85,8 @@ public class PersonViewController {
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to access data of user '%s'",
-                    signedInUser.getId(), person.getId()));
+                "User '%s' has not the correct permissions to access data of user '%s'",
+                signedInUser.getId(), person.getId()));
         }
 
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
@@ -138,12 +138,12 @@ public class PersonViewController {
 
         Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)
-                                            : getRelevantInactivePersons(signedInUser);
+            : getRelevantInactivePersons(signedInUser);
 
         if (requestedDepartmentId.isPresent()) {
             Integer departmentId = requestedDepartmentId.get();
             Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
-                        new UnknownDepartmentException(departmentId));
+                new UnknownDepartmentException(departmentId));
 
             // if department filter is active, only department members are relevant
             persons.retainAll(department.getMembers());
@@ -244,7 +244,7 @@ public class PersonViewController {
             if (account.isPresent()) {
                 Account holidaysAccount = account.get();
                 accounts.put(person, holidaysAccount);
-                vacationDaysLeftMap.put(person, vacationDaysService.getVacationDaysLeft(holidaysAccount, accountService.getHolidaysAccount(year+1, person)));
+                vacationDaysLeftMap.put(person, vacationDaysService.getVacationDaysLeft(holidaysAccount, accountService.getHolidaysAccount(year + 1, person)));
             }
         }
 

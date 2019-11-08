@@ -26,7 +26,7 @@ public enum DayLength {
     /**
      * Pairs of enum members can be added to get a full day.
      *
-     * @return  the matching enum member which represents the rest of the day.
+     * @return the matching enum member which represents the rest of the day.
      */
     public DayLength getInverse() {
 

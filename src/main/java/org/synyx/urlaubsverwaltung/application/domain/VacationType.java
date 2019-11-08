@@ -11,7 +11,7 @@ import javax.persistence.Enumerated;
 /**
  * Describes a type of vacation.
  *
- * @since  2.15.0
+ * @since 2.15.0
  */
 @Entity
 public class VacationType extends AbstractPersistable<Integer> {

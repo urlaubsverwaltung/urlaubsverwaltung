@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.mail;
 
 import org.synyx.urlaubsverwaltung.person.MailNotification;

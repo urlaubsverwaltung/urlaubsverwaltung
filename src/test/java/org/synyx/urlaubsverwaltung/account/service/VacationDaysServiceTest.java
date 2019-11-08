@@ -79,11 +79,11 @@ public class VacationDaysServiceTest {
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();
         List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
-                WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
+            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
         workingTime.setWorkingDays(workingDays, FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-                    any(LocalDate.class)))
+            any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         SettingsService settingsService = mock(SettingsService.class);
@@ -95,7 +95,7 @@ public class VacationDaysServiceTest {
         HolidayManager holidayManager = HolidayManager.getInstance(managerParameter);
 
         WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService, holidayManager),
-                workingTimeService, settingsService);
+            workingTimeService, settingsService);
 
         vacationDaysService = new VacationDaysService(calendarService, nowService, applicationService);
     }
@@ -146,7 +146,7 @@ public class VacationDaysServiceTest {
         a4.setPerson(person);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(Arrays.asList(a1, a2, a3, a4));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
@@ -193,7 +193,7 @@ public class VacationDaysServiceTest {
         a4.setVacationType(getVacationType(HOLIDAY));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(Arrays.asList(a1, a2, a4));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
@@ -245,9 +245,9 @@ public class VacationDaysServiceTest {
         allowedOvertime.setStatus(ALLOWED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-                    any(LocalDate.class), any(Person.class)))
+            any(LocalDate.class), any(Person.class)))
             .thenReturn(Arrays.asList(cancelledHoliday, rejectedHoliday, waitingSpecialLeave, allowedSpecialLeave,
-                    waitingUnpaidLeave, allowedUnpaidLeave, waitingOvertime, allowedOvertime));
+                waitingUnpaidLeave, allowedUnpaidLeave, waitingOvertime, allowedOvertime));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
 
@@ -312,9 +312,9 @@ public class VacationDaysServiceTest {
 
         Assert.assertEquals("Wrong number of vacation days", BigDecimal.ZERO, vacationDaysLeft.getVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days", BigDecimal.ZERO,
-                vacationDaysLeft.getRemainingVacationDays());
+            vacationDaysLeft.getRemainingVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
-                vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
     }
 
     @Test
@@ -428,7 +428,7 @@ public class VacationDaysServiceTest {
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
 
         WorkDaysService workDaysService = mock(WorkDaysService.class);
-        when(workDaysService.getWorkDays(any(),any(),any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+        when(workDaysService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
         VacationDaysService vacationDaysService = new VacationDaysService(
             workDaysService,
@@ -455,7 +455,7 @@ public class VacationDaysServiceTest {
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
 
         WorkDaysService workDaysService = mock(WorkDaysService.class);
-        when(workDaysService.getWorkDays(any(),any(),any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+        when(workDaysService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
         VacationDaysService vacationDaysService = new VacationDaysService(
             workDaysService,
@@ -487,7 +487,7 @@ public class VacationDaysServiceTest {
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
         vacationDaysService = new VacationDaysService(mock(WorkDaysService.class), nowService,
-                applicationService) {
+            applicationService) {
 
             @Override
             protected BigDecimal getUsedDaysBeforeApril(Account account) {

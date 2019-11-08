@@ -15,17 +15,17 @@ interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
 
     @Query(
         "SELECT x FROM SickNote x WHERE x.person = ?1 AND "
-        + "((x.startDate BETWEEN ?2 AND ?3) OR (x.endDate BETWEEN ?2 AND ?3) "
-        + "OR (x.startDate < ?2 and x.endDate > ?3)) "
-        + "ORDER BY x.startDate"
+            + "((x.startDate BETWEEN ?2 AND ?3) OR (x.endDate BETWEEN ?2 AND ?3) "
+            + "OR (x.startDate < ?2 and x.endDate > ?3)) "
+            + "ORDER BY x.startDate"
     )
     List<SickNote> findByPersonAndPeriod(Person person, LocalDate startDate, LocalDate endDate);
 
 
     @Query(
         "SELECT x FROM SickNote x WHERE ((x.startDate BETWEEN ?1 AND ?2) OR (x.endDate BETWEEN ?1 AND ?2) "
-        + "OR (x.startDate < ?1 and x.endDate > ?2)) "
-        + "ORDER BY x.startDate"
+            + "OR (x.startDate < ?1 and x.endDate > ?2)) "
+            + "ORDER BY x.startDate"
     )
     List<SickNote> findByPeriod(LocalDate startDate, LocalDate endDate);
 

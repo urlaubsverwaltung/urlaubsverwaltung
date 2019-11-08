@@ -13,9 +13,8 @@ public interface CalendarSyncService {
     /**
      * Add a person's absence to calendar.
      *
-     * @param  absence  represents the absence of a person
-     *
-     * @return  id of added absence event, may be empty if an error occurred during the calendar sync
+     * @param absence represents the absence of a person
+     * @return id of added absence event, may be empty if an error occurred during the calendar sync
      */
     Optional<String> addAbsence(Absence absence);
 
@@ -23,8 +22,8 @@ public interface CalendarSyncService {
     /**
      * Updates a given event with absence content.
      *
-     * @param  absence  represents the updated absence
-     * @param  eventId  id of event to be updated
+     * @param absence represents the updated absence
+     * @param eventId id of event to be updated
      */
     void update(Absence absence, String eventId);
 
@@ -32,7 +31,7 @@ public interface CalendarSyncService {
     /**
      * Deletes a person's absence in calendar.
      *
-     * @param  eventId  id of absence event, which should be deleted.
+     * @param eventId id of absence event, which should be deleted.
      */
     void deleteAbsence(String eventId);
 
