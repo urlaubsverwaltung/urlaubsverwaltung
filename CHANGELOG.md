@@ -5,6 +5,7 @@
 * Fix missing absence entries in availabilities api [829](https://github.com/synyx/urlaubsverwaltung/pull/829)
 * Upgrade spring boot parent to 2.1.10
 * Upgrade google api client to 1.25.0
+* Upgrade jollyday to 0.5.9
 * rename loginName to username [839](https://github.com/synyx/urlaubsverwaltung/pull/839)
 
 ### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
