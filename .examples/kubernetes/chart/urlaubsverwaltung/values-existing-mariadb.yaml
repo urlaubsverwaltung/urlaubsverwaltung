@@ -1,5 +1,5 @@
 image:
-  tag: 2.35.0
+  tag: 2.44.2
 
 applicationProperties: |-
   # AUTHENTICATION
