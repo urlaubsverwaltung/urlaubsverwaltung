@@ -74,12 +74,12 @@
                         <table cellspacing="0" class="list-table sortable tablesorter">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
-                                <th class="sortable-field"><spring:message code="department.data.name"/></th>
-                                <th class="sortable-field"><spring:message code="department.members"/></th>
-                                <th class="sortable-field"><spring:message
+                                <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>
+                                <th scope="col" class="sortable-field"><spring:message code="department.members"/></th>
+                                <th scope="col" class="sortable-field"><spring:message
                                     code='department.data.lastModification'/></th>
                                 <sec:authorize access="hasAuthority('OFFICE')">
-                                    <th><%-- placeholder to ensure correct number of th --%></th>
+                                    <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
                                 </sec:authorize>
                             </tr>
                             </thead>
