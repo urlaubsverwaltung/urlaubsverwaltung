@@ -129,7 +129,7 @@ public class PersonViewController {
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping(value = "/person", params = "active")
-    public String showPerson(@RequestParam(value = "active") Boolean active,
+    public String showPerson(@RequestParam(value = "active") boolean active,
                              @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
                              @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
                              Model model) throws UnknownDepartmentException {

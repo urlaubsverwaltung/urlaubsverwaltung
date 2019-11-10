@@ -415,11 +415,11 @@ public class ApplicationValidator implements Validator {
 
     private boolean enoughOvertimeHoursLeft(Application application, Settings settings) {
 
-        Boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
+        boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
 
         if (isOvertime) {
             WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-            Boolean overtimeActive = workingTimeSettings.isOvertimeActive();
+            boolean overtimeActive = workingTimeSettings.isOvertimeActive();
 
             if (overtimeActive && application.getHours() != null) {
                 return checkOvertimeHours(application, workingTimeSettings);
