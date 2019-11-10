@@ -29,7 +29,7 @@
 <c:set var="CAN_ALLOW" value="${IS_BOSS || IS_DEPARTMENT_HEAD || IS_SECOND_STAGE_AUTHORITY}"/>
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale}">
 
 <head>
     <uv:head/>

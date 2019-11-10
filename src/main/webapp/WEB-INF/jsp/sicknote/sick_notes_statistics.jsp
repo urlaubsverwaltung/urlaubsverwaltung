@@ -6,7 +6,7 @@
 
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale}">
 
 <head>
     <uv:head/>

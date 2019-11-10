@@ -5,7 +5,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale}">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

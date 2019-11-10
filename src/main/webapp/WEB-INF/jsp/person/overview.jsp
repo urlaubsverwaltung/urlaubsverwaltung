@@ -8,7 +8,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale}">
 
 <head>
     <uv:head/>
@@ -29,6 +29,7 @@
 </head>
 
 <body>
+
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <sec:authorize access="hasAuthority('OFFICE')">

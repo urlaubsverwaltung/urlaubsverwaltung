@@ -8,7 +8,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale}">
 
 <head>
     <uv:head/>

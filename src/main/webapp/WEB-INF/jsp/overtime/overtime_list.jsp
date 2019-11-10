@@ -5,7 +5,7 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale}">
 <head>
     <uv:head/>
 </head>

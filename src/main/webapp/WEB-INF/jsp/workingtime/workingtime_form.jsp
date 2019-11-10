@@ -7,7 +7,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale}">
 <head>
     <uv:head/>
     <script defer src="<asset:url value='workingtime_form.js' />"></script>
