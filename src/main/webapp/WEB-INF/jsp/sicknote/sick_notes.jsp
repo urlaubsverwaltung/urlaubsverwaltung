@@ -68,14 +68,14 @@
                 <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
-                        <th class="hidden-print"></th>
-                        <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
-                        <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
-                        <th class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
-                        <th class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.title"/></th>
-                        <th class="sortable-field"><spring:message
+                        <th scope="col" class="hidden-print"></th>
+                        <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
+                        <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
+                        <th scope="col" class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
+                        <th scope="col" class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.title"/></th>
+                        <th scope="col" class="sortable-field"><spring:message
                             code="sicknotes.daysOverview.sickDays.child.title"/></th>
-                        <th class="hidden"><%-- tablesorter placeholder for sick days column in xs screen --%></th>
+                        <th scope="col" class="hidden"><%-- tablesorter placeholder for sick days column in xs screen --%></th>
                     </tr>
                     </thead>
                     <tbody>

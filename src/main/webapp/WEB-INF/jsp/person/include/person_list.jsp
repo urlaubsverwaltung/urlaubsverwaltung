@@ -24,19 +24,19 @@
     <table cellspacing="0" class="list-table selectable-table sortable tablesorter">
         <thead class="hidden-xs hidden-sm">
         <tr>
-            <th><%-- placeholder to ensure correct number of th --%></th>
-            <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
-            <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
-            <th class="sortable-field is-centered"><spring:message
+            <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
+            <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
+            <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
+            <th scope="col" class="sortable-field is-centered"><spring:message
                 code='persons.account.vacation.entitlement.year'/></th>
-            <th class="sortable-field is-centered"><spring:message
+            <th scope="col" class="sortable-field is-centered"><spring:message
                 code='persons.account.vacation.entitlement.actual'/></th>
-            <th class="sortable-field is-centered"><spring:message
+            <th scope="col" class="sortable-field is-centered"><spring:message
                 code='persons.account.vacation.entitlement.remaining'/></th>
-            <th class="sortable-field is-centered"><spring:message
+            <th scope="col" class="sortable-field is-centered"><spring:message
                 code="persons.account.vacation.vacationDaysLeft"/></th>
             <sec:authorize access="hasAuthority('OFFICE')">
-                <th><%-- placeholder to ensure correct number of th --%></th>
+                <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
             </sec:authorize>
         </tr>
         </thead>
