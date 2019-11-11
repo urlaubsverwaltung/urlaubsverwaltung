@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +45,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
         String headerNote = getTranslation("absence.period", "Zeitraum") + ": " + period.getStartDateAsString() + " - "
             + period.getEndDateAsString();
 
-        DecimalFormat decimalFormat = (DecimalFormat) DecimalFormat.getInstance(LOCALE);
+        DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getInstance(LOCALE);
         DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
         newSymbols.setDecimalSeparator(',');
         newSymbols.setGroupingSeparator('.');
