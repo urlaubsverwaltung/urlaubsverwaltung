@@ -54,6 +54,9 @@
     .p-8 {
         padding: 2em;
     }
+    .mt-4 {
+        margin-top: 1em;
+    }
     .mb-4 {
         margin-bottom: 1em;
     }
@@ -110,34 +113,41 @@
         max-width: 800px;
         height: 60px;
     }
+
+    #feedback-form-additional {
+        display: none;
+    }
+    input[name="type"]:checked ~ #feedback-form-additional {
+        display: block;
+    }
 </style>
 
 <form:form id="feedback-form" action="/web/feedback" method="post" class="mb-8 shadow bg-orange-200">
     <c:if test="${empty showFeedbackThankYou}">
-    <div id="feedback-form-inputs" class="flex flex-column p-4">
-        <div class="flex flex-row justify-center mb-4">
-            <input type="radio" name="type" id="feedback-type-UGLY" value="UGLY" class="visually-hidden" required />
-            <label for="feedback-type-UGLY" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
-                :-(
-            </label>
-            <input type="radio" name="type" id="feedback-type-BAD" value="BAD" class="visually-hidden" required />
-            <label for="feedback-type-BAD" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
-                :-\
-            </label>
-            <input type="radio" name="type" id="feedback-type-GOOD" value="GOOD" class="visually-hidden" required />
-            <label for="feedback-type-GOOD" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
-                :-)
-            </label>
-            <input type="radio" name="type" id="feedback-type-AWESOME" value="AWESOME" class="visually-hidden" required />
-            <label for="feedback-type-AWESOME" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
-                :-D
-            </label>
-        </div>
-        <div class="flex mb-4 justify-center">
-            <textarea name="text" placeholder="Du m&ouml;chtest uns noch etwas mitteilen?" cols="80" wrap="off" class="p-2 text-2xl"></textarea>
-        </div>
-        <div class="flex justify-center">
-            <button type="submit" class="btn btn-default">Feedback geben</button>
+    <div id="feedback-form-inputs" class="p-4 text-center">
+        <input type="radio" name="type" id="feedback-type-UGLY" value="UGLY" class="visually-hidden" required />
+        <label for="feedback-type-UGLY" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
+            :-(
+        </label>
+        <input type="radio" name="type" id="feedback-type-BAD" value="BAD" class="visually-hidden" required />
+        <label for="feedback-type-BAD" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
+            :-\
+        </label>
+        <input type="radio" name="type" id="feedback-type-GOOD" value="GOOD" class="visually-hidden" required />
+        <label for="feedback-type-GOOD" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
+            :-)
+        </label>
+        <input type="radio" name="type" id="feedback-type-AWESOME" value="AWESOME" class="visually-hidden" required />
+        <label for="feedback-type-AWESOME" class="cursor-pointer px-4 py-2 mx-2 text-2xl">
+            :-D
+        </label>
+        <div id="feedback-form-additional" class="mt-4">
+            <div class="flex mb-4 justify-center">
+                <textarea name="text" placeholder="Du m&ouml;chtest uns noch etwas mitteilen?" cols="80" wrap="off" class="p-2 text-2xl"></textarea>
+            </div>
+            <div class="flex justify-center">
+                <button type="submit" class="btn btn-default">Feedback geben</button>
+            </div>
         </div>
     </div>
     </c:if>
