@@ -2,12 +2,7 @@ package org.synyx.urlaubsverwaltung.account.service;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.Trigger;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -31,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
  * Is to be scheduled every turn of the year: calculates the remaining vacation days for the new year.
  */
 @Service
-public class TurnOfTheYearAccountUpdaterService implements SchedulingConfigurer {
+public class TurnOfTheYearAccountUpdaterService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -39,26 +34,15 @@ public class TurnOfTheYearAccountUpdaterService implements SchedulingConfigurer 
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final MailService mailService;
-    private final AccountProperties accountProperties;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                              AccountInteractionService accountInteractionService, MailService mailService, AccountProperties accountProperties) {
+                                              AccountInteractionService accountInteractionService, MailService mailService) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.mailService = mailService;
-        this.accountProperties = accountProperties;
-    }
-
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-        scheduledTaskRegistrar.addTriggerTask(this::updateAccountsForNextPeriod, determinePeriodicExecutionTrigger());
-    }
-
-    private Trigger determinePeriodicExecutionTrigger() {
-        return new CronTrigger(accountProperties.getUpdate().getCron());
     }
 
     void updateAccountsForNextPeriod() {

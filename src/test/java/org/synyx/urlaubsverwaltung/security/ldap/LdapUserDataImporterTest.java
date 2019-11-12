@@ -32,8 +32,7 @@ public class LdapUserDataImporterTest {
 
     @Before
     public void setUp() {
-        final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
-        sut = new LdapUserDataImporter(ldapUserServiceMock, personServiceMock, directoryServiceSecurityProperties);
+        sut = new LdapUserDataImporter(ldapUserServiceMock, personServiceMock);
     }
 
     @Test
