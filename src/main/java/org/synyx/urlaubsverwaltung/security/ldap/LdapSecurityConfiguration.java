@@ -111,9 +111,13 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService,
-                                                         PersonService personService) {
-            return new LdapUserDataImporter(ldapUserService, personService, directoryServiceSecurityProperties);
+        public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter) {
+            return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter);
+        }
+
+        @Bean
+        public LdapUserDataImporter ldapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
+            return new LdapUserDataImporter(ldapUserService, personService);
         }
 
         @Bean

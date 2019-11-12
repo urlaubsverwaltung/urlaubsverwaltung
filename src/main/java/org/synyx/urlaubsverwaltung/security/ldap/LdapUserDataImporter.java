@@ -1,10 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.slf4j.Logger;
-import org.springframework.scheduling.Trigger;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -24,29 +20,17 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
  * Import person data from configured LDAP or Active Directory.
  */
 @Transactional
-public class LdapUserDataImporter implements SchedulingConfigurer {
+public class LdapUserDataImporter {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final LdapUserService ldapUserService;
     private final PersonService personService;
-    private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
 
-    LdapUserDataImporter(LdapUserService ldapUserService,
-                         PersonService personService, DirectoryServiceSecurityProperties directoryServiceSecurityProperties) {
+    LdapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
 
         this.ldapUserService = ldapUserService;
         this.personService = personService;
-        this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
-    }
-
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-        scheduledTaskRegistrar.addTriggerTask(this::sync, determinePeriodicExecutionTrigger());
-    }
-
-    private Trigger determinePeriodicExecutionTrigger() {
-        return new CronTrigger(directoryServiceSecurityProperties.getSync().getCron());
     }
 
     @PostConstruct
