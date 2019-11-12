@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.synyx.urlaubsverwaltung.application.ApplicationProperties;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
@@ -41,8 +40,7 @@ public class ApplicationSickNoteMailServiceTest {
 
     @Before
     public void setUp() {
-        final ApplicationProperties applicationProperties = new ApplicationProperties();
-        sut = new ApplicationCronMailService(applicationService, settingsService, applicationMailService, applicationProperties);
+        sut = new ApplicationCronMailService(applicationService, settingsService, applicationMailService);
     }
 
     @Test

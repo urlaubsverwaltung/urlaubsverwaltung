@@ -2,12 +2,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.Trigger;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.application.ApplicationProperties;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -22,32 +17,19 @@ import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
-class ApplicationCronMailService implements SchedulingConfigurer {
+class ApplicationCronMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationService applicationService;
     private final SettingsService settingsService;
     private final ApplicationMailService applicationMailService;
-    private final ApplicationProperties applicationProperties;
-
 
     @Autowired
-    ApplicationCronMailService(ApplicationService applicationService, SettingsService settingsService,
-                               ApplicationMailService applicationMailService, ApplicationProperties applicationProperties) {
+    ApplicationCronMailService(ApplicationService applicationService, SettingsService settingsService, ApplicationMailService applicationMailService) {
         this.applicationService = applicationService;
         this.settingsService = settingsService;
         this.applicationMailService = applicationMailService;
-        this.applicationProperties = applicationProperties;
-    }
-
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-        scheduledTaskRegistrar.addTriggerTask(this::sendWaitingApplicationsReminderNotification, determinePeriodicExecutionTrigger());
-    }
-
-    private Trigger determinePeriodicExecutionTrigger() {
-        return new CronTrigger(applicationProperties.getReminderNotificationCron());
     }
 
     void sendWaitingApplicationsReminderNotification() {
