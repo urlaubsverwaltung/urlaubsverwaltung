@@ -4,8 +4,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Component
@@ -18,6 +20,7 @@ public class AccountProperties {
     @Max(365)
     private Integer defaultVacationDays = 20;
 
+    @Valid
     private Update update = new Update();
 
     public Integer getDefaultVacationDays() {
@@ -41,6 +44,7 @@ public class AccountProperties {
         /**
          * Update remaining vacation days for each account by default on 1st January at 05:00 am
          */
+        @NotEmpty
         private String cron = "0 0 5 1 1 *";
 
         public String getCron() {
