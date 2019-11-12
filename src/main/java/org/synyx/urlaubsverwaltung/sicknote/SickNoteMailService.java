@@ -2,10 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.Trigger;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -19,34 +15,21 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 
-/**
- * Service to send emails at a particular time. (Cronjob)
- */
 @Service
-public class SickNoteCronMailService implements SchedulingConfigurer {
+public class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
     private final MailService mailService;
-    private final SickNoteProperties sickNoteProperties;
 
     @Autowired
-    public SickNoteCronMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService, SickNoteProperties sickNoteProperties) {
+    public SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
 
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
-        this.sickNoteProperties = sickNoteProperties;
-    }
-
-    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-        scheduledTaskRegistrar.addTriggerTask(this::sendEndOfSickPayNotification, determinePeriodicExecutionTrigger());
-    }
-
-    private Trigger determinePeriodicExecutionTrigger() {
-        return new CronTrigger(sickNoteProperties.getEndOfPayNotificationCron());
     }
 
     /**
