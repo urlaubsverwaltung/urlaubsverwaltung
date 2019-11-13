@@ -20,6 +20,6 @@ class ApplicationCronMailConfiguration implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-        scheduledTaskRegistrar.addCronTask(applicationCronMailService::sendWaitingApplicationsReminderNotification, applicationProperties.getReminderNotificationCron());
+        scheduledTaskRegistrar.addCronTask(applicationCronMailService::sendWaitingApplicationsReminderNotification, applicationProperties.getReminderNotification().getCron());
     }
 }
