@@ -5,7 +5,7 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
-<html lang="${pageContext.response.locale}">
+<html lang="${language}">
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
