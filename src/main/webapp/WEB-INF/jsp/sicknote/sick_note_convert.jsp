@@ -6,7 +6,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html lang="${pageContext.response.locale}">
+<html lang="${language}">
 <head>
     <uv:head/>
     <script defer src="<asset:url value='sick_note_convert.js' />"></script>
