@@ -2,9 +2,14 @@ package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+import org.synyx.urlaubsverwaltung.validation.CronExpression;
+
+import javax.validation.Valid;
 
 @Component
 @ConfigurationProperties("uv.security.directory-service")
+@Validated
 public class DirectoryServiceSecurityProperties {
 
     private String identifier;
@@ -12,6 +17,8 @@ public class DirectoryServiceSecurityProperties {
     private String lastName;
     private String mailAddress;
     private SecurityFilter filter = new SecurityFilter();
+
+    @Valid
     private SecuritySync sync = new SecuritySync();
 
     public String getIdentifier() {
@@ -90,6 +97,7 @@ public class DirectoryServiceSecurityProperties {
          * Syncs directory services data by default every night at 01:00 am
          * if `ldap` or `activedirectory` is activated via `uv.security.auth`
          */
+        @CronExpression
         private String cron = "0 0 1 * * ?";
 
         public String getCron() {
