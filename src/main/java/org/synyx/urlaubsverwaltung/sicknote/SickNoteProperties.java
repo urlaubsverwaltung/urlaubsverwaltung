@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 @Component
@@ -11,18 +12,32 @@ import javax.validation.constraints.NotEmpty;
 @Validated
 public class SickNoteProperties {
 
-    /**
-     * Send notification about the end of sick pay by default every day at 06:00 am
-     */
-    @NotEmpty
-    private String endOfPayNotificationCron = "0 0 6 * * *";
+    @Valid
+    private EndOfPayNotification endOfPayNotification = new EndOfPayNotification();
 
-    public String getEndOfPayNotificationCron() {
-        return endOfPayNotificationCron;
+    public EndOfPayNotification getEndOfPayNotification() {
+        return endOfPayNotification;
     }
 
-    public void setEndOfPayNotificationCron(String endOfPayNotificationCron) {
-        this.endOfPayNotificationCron = endOfPayNotificationCron;
+    public void setEndOfPayNotification(EndOfPayNotification endOfPayNotification) {
+        this.endOfPayNotification = endOfPayNotification;
+    }
+
+    public static class EndOfPayNotification {
+
+        /**
+         * Send notification about the end of sick pay by default every day at 06:00 am
+         */
+        @NotEmpty
+        private String cron = "0 0 6 * * *";
+
+        public String getCron() {
+            return cron;
+        }
+
+        public void setCron(String cron) {
+            this.cron = cron;
+        }
     }
 }
 

@@ -21,6 +21,6 @@ public class SickNoteMailConfiguration implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-        scheduledTaskRegistrar.addCronTask(sickNoteMailService::sendEndOfSickPayNotification, sickNoteProperties.getEndOfPayNotificationCron());
+        scheduledTaskRegistrar.addCronTask(sickNoteMailService::sendEndOfSickPayNotification, sickNoteProperties.getEndOfPayNotification().getCron());
     }
 }
