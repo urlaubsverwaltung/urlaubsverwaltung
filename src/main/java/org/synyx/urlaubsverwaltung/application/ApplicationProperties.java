@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import org.synyx.urlaubsverwaltung.validation.CronExpression;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 
 @Component
 @ConfigurationProperties("uv.application")
