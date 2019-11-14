@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -16,11 +15,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 
-/**
- * Service to send emails at a particular time. (Cronjob)
- */
 @Service
-public class SickNoteCronMailService {
+public class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -29,7 +25,7 @@ public class SickNoteCronMailService {
     private final MailService mailService;
 
     @Autowired
-    public SickNoteCronMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
+    public SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
 
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
@@ -39,8 +35,7 @@ public class SickNoteCronMailService {
     /**
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      */
-    @Scheduled(cron = "${uv.cron.endOfSickPayNotification}")
-    public void sendEndOfSickPayNotification() {
+    void sendEndOfSickPayNotification() {
 
         List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 

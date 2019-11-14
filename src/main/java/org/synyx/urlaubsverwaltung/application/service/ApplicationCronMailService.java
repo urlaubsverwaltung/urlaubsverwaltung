@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.service;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -27,14 +26,12 @@ class ApplicationCronMailService {
     private final ApplicationMailService applicationMailService;
 
     @Autowired
-    ApplicationCronMailService(ApplicationService applicationService, SettingsService settingsService,
-                               ApplicationMailService applicationMailService) {
+    ApplicationCronMailService(ApplicationService applicationService, SettingsService settingsService, ApplicationMailService applicationMailService) {
         this.applicationService = applicationService;
         this.settingsService = settingsService;
         this.applicationMailService = applicationMailService;
     }
 
-    @Scheduled(cron = "${uv.cron.daysBeforeWaitingApplicationsReminderNotification}")
     void sendWaitingApplicationsReminderNotification() {
 
         boolean isRemindForWaitingApplicationsActive =

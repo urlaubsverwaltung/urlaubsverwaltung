@@ -21,9 +21,9 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SickNoteCronMailServiceTest {
+public class SickNoteMailServiceTest {
 
-    private SickNoteCronMailService sut;
+    private SickNoteMailService sut;
 
     @Mock
     private SettingsService settingsService;
@@ -34,7 +34,7 @@ public class SickNoteCronMailServiceTest {
 
     @Before
     public void setUp() {
-        sut = new SickNoteCronMailService(settingsService, sickNoteService, mailService);
+        sut = new SickNoteMailService(settingsService, sickNoteService, mailService);
     }
 
     @Test

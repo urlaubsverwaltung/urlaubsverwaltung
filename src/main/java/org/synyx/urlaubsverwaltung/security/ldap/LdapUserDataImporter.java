@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.slf4j.Logger;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -28,31 +27,28 @@ public class LdapUserDataImporter {
     private final LdapUserService ldapUserService;
     private final PersonService personService;
 
-    LdapUserDataImporter(LdapUserService ldapUserService,
-                         PersonService personService) {
+    LdapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
 
         this.ldapUserService = ldapUserService;
         this.personService = personService;
     }
 
-    // Sync LDAP/AD data during startup and on uv.cron.ldapSync
     @PostConstruct
-    @Scheduled(cron = "${uv.cron.ldapSync}")
-    public void sync() {
+    void sync() {
 
-        LOG.info("STARTING LDAP SYNC --------------------------------------------------------------------------------");
+        LOG.info("STARTING DIRECTORY SERVICE SYNC --------------------------------------------------------------------------------");
 
-        List<LdapUser> users = ldapUserService.getLdapUsers();
+        final List<LdapUser> users = ldapUserService.getLdapUsers();
 
         LOG.info("Found {} user(s)", users.size());
 
         for (LdapUser user : users) {
-            String username = user.getUsername();
-            Optional<String> firstName = user.getFirstName();
-            Optional<String> lastName = user.getLastName();
-            Optional<String> email = user.getEmail();
+            final String username = user.getUsername();
+            final Optional<String> firstName = user.getFirstName();
+            final Optional<String> lastName = user.getLastName();
+            final Optional<String> email = user.getEmail();
 
-            Optional<Person> optionalPerson = personService.getPersonByUsername(username);
+            final Optional<Person> optionalPerson = personService.getPersonByUsername(username);
 
             if (optionalPerson.isPresent()) {
 
@@ -69,6 +65,6 @@ public class LdapUserDataImporter {
             }
         }
 
-        LOG.info("DONE LDAP SYNC ------------------------------------------------------------------------------------");
+        LOG.info("DONE DIRECTORY SERVICE SYNC ------------------------------------------------------------------------------------");
     }
 }

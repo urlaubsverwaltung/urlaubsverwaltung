@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.account.service;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -46,27 +45,25 @@ public class TurnOfTheYearAccountUpdaterService {
         this.mailService = mailService;
     }
 
-    @Scheduled(cron = "${uv.cron.updateHolidaysAccounts}")
-    void updateHolidaysAccounts() {
+    void updateAccountsForNextPeriod() {
 
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
         // what's the new year?
-        int year = ZonedDateTime.now(UTC).getYear();
+        final int year = ZonedDateTime.now(UTC).getYear();
 
         // get all persons
-        List<Person> persons = personService.getActivePersons();
-
-        List<Account> updatedAccounts = new ArrayList<>();
+        final List<Person> persons = personService.getActivePersons();
 
         // get all their accounts and calculate the remaining vacation days for the new year
+        final List<Account> updatedAccounts = new ArrayList<>();
         for (Person person : persons) {
             LOG.info("Updating account of person with id {}", person.getId());
 
-            Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
+            final Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
-                Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
+                final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
                     accountLastYear.get());
 
                 LOG.info("Setting remaining vacation days of person with id {} to {} for {}",

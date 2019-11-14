@@ -70,7 +70,7 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
         when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class)))
             .thenReturn(newAccount);
 
-        sut.updateHolidaysAccounts();
+        sut.updateAccountsForNextPeriod();
 
         verify(personService).getActivePersons();
 
