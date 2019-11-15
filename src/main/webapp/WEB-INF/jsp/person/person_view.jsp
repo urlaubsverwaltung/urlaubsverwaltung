@@ -8,7 +8,7 @@
 
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <spring:url var="URL_PREFIX" value="/web"/>
 

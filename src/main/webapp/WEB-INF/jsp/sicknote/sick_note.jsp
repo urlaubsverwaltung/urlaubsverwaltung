@@ -7,7 +7,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 <head>
     <uv:head/>
     <script defer src="<asset:url value='sick_note.js' />"></script>

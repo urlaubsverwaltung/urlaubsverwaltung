@@ -6,7 +6,7 @@
 
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <head>
     <uv:head/>
