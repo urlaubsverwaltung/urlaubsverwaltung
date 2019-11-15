@@ -1,4 +1,6 @@
 ### master
+
+### [urlaubsverwaltung-3.0.0.RC8](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC8)
 * API-Change: Move `api/availability` to `api/person/persons/{personId}/availabilities` [#808](https://github.com/synyx/urlaubsverwaltung/issues/808)
 * Add thuringia childrens day holiday [#790](https://github.com/synyx/urlaubsverwaltung/pull/790)
 * Add default workdays to the configuration properties [#828](https://github.com/synyx/urlaubsverwaltung/pull/828)
