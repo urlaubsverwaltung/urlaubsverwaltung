@@ -4,7 +4,7 @@
 * Add default workdays to the configuration properties [#828](https://github.com/synyx/urlaubsverwaltung/pull/828)
 * Add the correct locale to as html element attribute [#856](https://github.com/synyx/urlaubsverwaltung/pull/856)
 * Add scope attribute to th to define col or row [#857](https://github.com/synyx/urlaubsverwaltung/pull/857)
-* Add Add favicons for all types of devices [#819](https://github.com/synyx/urlaubsverwaltung/pull/819)
+* Add favicons for all types of devices [#819](https://github.com/synyx/urlaubsverwaltung/pull/819)
 * Allow user to get their own data via the api [#825](https://github.com/synyx/urlaubsverwaltung/pull/825)
 * Fix missing absence entries in availabilities api [#829](https://github.com/synyx/urlaubsverwaltung/pull/829)
 * Fix broken selector label on persons page [#860](https://github.com/synyx/urlaubsverwaltung/pull/860)
