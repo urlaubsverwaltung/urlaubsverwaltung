@@ -44,7 +44,7 @@
                             <c:choose>
                                 <c:when test="${param.active}">
                                     <c:choose>
-                                        <c:when test="${param.department != null}">
+                                        <c:when test="${department != null}">
                                             <c:out value="${department.name}"/><span class="caret"></span>
                                         </c:when>
                                         <c:otherwise>
