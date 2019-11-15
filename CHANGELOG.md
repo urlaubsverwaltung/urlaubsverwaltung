@@ -1,16 +1,22 @@
 ### master
-* Add thuringia childrens day holiday [#790](https://github.com/synyx/urlaubsverwaltung/pull/790)
 * API-Change: Move `api/availability` to `api/person/persons/{personId}/availabilities` [#808](https://github.com/synyx/urlaubsverwaltung/issues/808)
+* Add thuringia childrens day holiday [#790](https://github.com/synyx/urlaubsverwaltung/pull/790)
 * Add default workdays to the configuration properties [#828](https://github.com/synyx/urlaubsverwaltung/pull/828)
 * Add the correct locale to as html element attribute [#856](https://github.com/synyx/urlaubsverwaltung/pull/856)
+* Add scope attribute to th to define col or row [#857](https://github.com/synyx/urlaubsverwaltung/pull/857)
+* Add Add favicons for all types of devices [#819](https://github.com/synyx/urlaubsverwaltung/pull/819)
+* Allow user to get their own data via the api [#825](https://github.com/synyx/urlaubsverwaltung/pull/825)
 * Fix missing absence entries in availabilities api [#829](https://github.com/synyx/urlaubsverwaltung/pull/829)
 * Fix broken selector label on persons page [#860](https://github.com/synyx/urlaubsverwaltung/pull/860)
+* Fix user can be manipulated [#822](https://github.com/synyx/urlaubsverwaltung/pull/822)
 * Rename loginName to username [#839](https://github.com/synyx/urlaubsverwaltung/pull/839)
+* Rename to view controller test [#814](https://github.com/synyx/urlaubsverwaltung/pull/814)
 * Remove all deprecations [#841](https://github.com/synyx/urlaubsverwaltung/pull/841)
 * Upgrade spring boot parent to 2.1.10
 * Upgrade google api client to 1.25.0
 * Upgrade jollyday to 0.5.9
 * Upgrade frontend maven plugin to 1.8.0
+* Upgrade maven wrapper to 3.6.2
 
 ### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
 * Remove liquibase user demo creation on demo context [#810](https://github.com/synyx/urlaubsverwaltung/pull/810)
