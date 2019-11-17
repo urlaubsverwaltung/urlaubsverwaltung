@@ -44,6 +44,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 public class OvertimeViewController {
 
     private static final String PERSON_ATTRIBUTE = "person";
+    private static final String OVERTIME = "overtime";
+    private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
@@ -93,7 +95,7 @@ public class OvertimeViewController {
         }
 
         model.addAttribute("year", year);
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
@@ -144,14 +146,14 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute("overtime", new OvertimeForm(person));
+        model.addAttribute(OVERTIME, new OvertimeForm(person));
 
-        return "overtime/overtime_form";
+        return OVERTIME_OVERTIME_FORM;
     }
 
 
     @PostMapping("/overtime")
-    public String recordOvertime(@ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
+    public String recordOvertime(@ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
                                  RedirectAttributes redirectAttributes) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -166,8 +168,8 @@ public class OvertimeViewController {
         validator.validate(overtimeForm, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute("overtime", overtimeForm);
-            return "overtime/overtime_form";
+            model.addAttribute(OVERTIME, overtimeForm);
+            return OVERTIME_OVERTIME_FORM;
         }
 
         final Overtime overtime = overtimeForm.generateOvertime();
@@ -192,15 +194,15 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute("overtime", new OvertimeForm(overtime));
+        model.addAttribute(OVERTIME, new OvertimeForm(overtime));
 
-        return "overtime/overtime_form";
+        return OVERTIME_OVERTIME_FORM;
     }
 
 
     @PostMapping("/overtime/{id}")
     public String updateOvertime(@PathVariable("id") Integer id,
-                                 @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
+                                 @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
                                  RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
 
         final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
@@ -216,8 +218,8 @@ public class OvertimeViewController {
         validator.validate(overtimeForm, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute("overtime", overtimeForm);
-            return "overtime/overtime_form";
+            model.addAttribute(OVERTIME, overtimeForm);
+            return OVERTIME_OVERTIME_FORM;
         }
 
         overtimeForm.updateOvertime(overtime);
