@@ -43,6 +43,10 @@ import java.util.List;
 public class SickNoteViewController {
 
     private static final String PERSONS_ATTRIBUTE = "persons";
+    private static final String SICKNOTE_SICK_NOTE_FORM = "sicknote/sick_note_form";
+    private static final String SICK_NOTE = "sickNote";
+    private static final String SICK_NOTE_TYPES = "sickNoteTypes";
+    private static final String REDIRECT_WEB_SICKNOTE = "redirect:/web/sicknote/";
 
     private final SickNoteService sickNoteService;
     private final SickNoteInteractionService sickNoteInteractionService;
@@ -87,7 +91,7 @@ public class SickNoteViewController {
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
         if (signedInUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(signedInUser)) {
-            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
+            model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, calendarService));
             model.addAttribute("comment", new SickNoteComment());
 
             List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
@@ -106,17 +110,17 @@ public class SickNoteViewController {
     @GetMapping("/sicknote/new")
     public String newSickNote(Model model) {
 
-        model.addAttribute("sickNote", new SickNoteForm());
+        model.addAttribute(SICK_NOTE, new SickNoteForm());
         model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
-        model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
+        model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
-        return "sicknote/sick_note_form";
+        return SICKNOTE_SICK_NOTE_FORM;
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote")
-    public String newSickNote(@ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+    public String newSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
         SickNote sickNote = sickNoteForm.generateSickNote();
 
@@ -124,16 +128,16 @@ public class SickNoteViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            model.addAttribute("sickNote", sickNoteForm);
+            model.addAttribute(SICK_NOTE, sickNoteForm);
             model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
-            model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
+            model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
-            return "sicknote/sick_note_form";
+            return SICKNOTE_SICK_NOTE_FORM;
         }
 
         sickNoteInteractionService.create(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
 
-        return "redirect:/web/sicknote/" + sickNote.getId();
+        return REDIRECT_WEB_SICKNOTE + sickNote.getId();
     }
 
 
@@ -150,17 +154,17 @@ public class SickNoteViewController {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
-        model.addAttribute("sickNote", sickNoteForm);
-        model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
+        model.addAttribute(SICK_NOTE, sickNoteForm);
+        model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
-        return "sicknote/sick_note_form";
+        return SICKNOTE_SICK_NOTE_FORM;
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id,
-                               @ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+                               @ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
         SickNote sickNote = sickNoteForm.generateSickNote();
 
@@ -168,15 +172,15 @@ public class SickNoteViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            model.addAttribute("sickNote", sickNoteForm);
-            model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
+            model.addAttribute(SICK_NOTE, sickNoteForm);
+            model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
-            return "sicknote/sick_note_form";
+            return SICKNOTE_SICK_NOTE_FORM;
         }
 
         sickNoteInteractionService.update(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
 
-        return "redirect:/web/sicknote/" + id;
+        return REDIRECT_WEB_SICKNOTE + id;
     }
 
 
@@ -196,7 +200,7 @@ public class SickNoteViewController {
             sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, personService.getSignedInUser(), comment.getText());
         }
 
-        return "redirect:/web/sicknote/" + id;
+        return REDIRECT_WEB_SICKNOTE + id;
     }
 
 
@@ -211,7 +215,7 @@ public class SickNoteViewController {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
-        model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
+        model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, calendarService));
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
         model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
@@ -231,7 +235,7 @@ public class SickNoteViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
+            model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, calendarService));
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
@@ -241,7 +245,7 @@ public class SickNoteViewController {
         sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(),
             personService.getSignedInUser());
 
-        return "redirect:/web/sicknote/" + id;
+        return REDIRECT_WEB_SICKNOTE + id;
     }
 
 
@@ -253,6 +257,6 @@ public class SickNoteViewController {
 
         sickNoteInteractionService.cancel(sickNote, personService.getSignedInUser());
 
-        return "redirect:/web/sicknote/" + id;
+        return REDIRECT_WEB_SICKNOTE + id;
     }
 }
