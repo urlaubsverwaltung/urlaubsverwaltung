@@ -8,6 +8,9 @@
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
+    <title>
+        <spring:message code="sicknote.convert.title"/>
+    </title>
     <uv:head/>
     <script defer src="<asset:url value='sick_note_convert.js' />"></script>
 </head>

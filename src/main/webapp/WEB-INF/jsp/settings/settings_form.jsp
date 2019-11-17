@@ -11,6 +11,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="settings.header.title"/>
+    </title>
     <uv:head/>
     <script defer src="<asset:url value='npm.chosen-js.js' />"></script>
     <script defer src="<asset:url value='settings_form.js' />"></script>

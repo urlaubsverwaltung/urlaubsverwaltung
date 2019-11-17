@@ -9,6 +9,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="applications.statistics.header.title"/>
+    </title>
     <uv:head/>
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
     <script defer src="<asset:url value='app_statistics.js' />"></script>

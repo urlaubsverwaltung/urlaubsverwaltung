@@ -9,6 +9,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="sicknotes.statistics.header.title" arguments="${statistics.year}"/>
+    </title>
     <uv:head/>
 </head>
 

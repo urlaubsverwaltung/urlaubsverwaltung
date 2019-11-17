@@ -32,6 +32,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="applications.header.title"/>
+    </title>
     <uv:head/>
     <script defer src="<asset:url value='app_list.js' />"></script>
 </head>
