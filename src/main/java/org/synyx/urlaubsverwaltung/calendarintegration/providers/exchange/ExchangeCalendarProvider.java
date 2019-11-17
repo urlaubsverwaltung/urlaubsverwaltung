@@ -30,12 +30,12 @@ import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
-import java.sql.Date;
 import java.util.Optional;
 import java.util.TimeZone;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Date.from;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -215,9 +215,9 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
         OlsonTimeZoneDefinition timeZone = new OlsonTimeZoneDefinition(TimeZone.getTimeZone(exchangeTimeZoneId));
 
-        appointment.setStart(Date.from(absence.getStartDate().toInstant()));
+        appointment.setStart(from(absence.getStartDate().toInstant()));
         appointment.setStartTimeZone(timeZone);
-        appointment.setEnd(Date.from(absence.getEndDate().toInstant()));
+        appointment.setEnd(from(absence.getEndDate().toInstant()));
         appointment.setEndTimeZone(timeZone);
 
         appointment.setIsAllDayEvent(absence.isAllDay());
