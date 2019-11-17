@@ -69,6 +69,7 @@ public class ApplicationValidator implements Validator {
     private static final String ATTRIBUTE_ADDRESS = "address";
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTRIBUTE_HOURS = "hours";
+    private static final String DAY_LENGTH = "dayLength";
 
     private final WorkingTimeService workingTimeService;
     private final WorkDaysService calendarService;
@@ -156,19 +157,19 @@ public class ApplicationValidator implements Validator {
         switch (workingDurationForChristmasEve) {
             case ZERO:
                 if (applicationDayLength != DayLength.ZERO) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                 }
                 return;
             case MORNING:
                 if (applicationDayLength == DayLength.NOON) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                 }
                 return;
             case NOON:
                 if (applicationDayLength == DayLength.MORNING) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                 }
                 return;
@@ -184,19 +185,19 @@ public class ApplicationValidator implements Validator {
         switch (workingDurationForNewYearsEve) {
             case ZERO:
                 if (applicationDayLength != DayLength.ZERO) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                 }
                 return;
             case MORNING:
                 if (applicationDayLength == DayLength.NOON) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                 }
                 return;
             case NOON:
                 if (applicationDayLength == DayLength.MORNING) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                 }
                 return;
