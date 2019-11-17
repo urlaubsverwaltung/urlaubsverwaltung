@@ -64,7 +64,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <table cellspacing="0" class="list-table sortable tablesorter">
+                        <table class="list-table sortable tablesorter">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="hidden-print"><%-- placeholder to ensure correct number of th --%></th>

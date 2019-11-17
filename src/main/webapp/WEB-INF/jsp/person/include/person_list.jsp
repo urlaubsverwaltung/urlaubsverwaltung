@@ -21,7 +21,7 @@
         </div>
     </form>
 
-    <table cellspacing="0" class="list-table selectable-table sortable tablesorter">
+    <table class="list-table selectable-table sortable tablesorter">
         <thead class="hidden-xs hidden-sm">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>

@@ -65,7 +65,7 @@
                     <spring:message code="filter.validity"/> <uv:date date="${today}"/>
                 </p>
 
-                <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
+                <table class="list-table selectable-table sortable tablesorter">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
                         <th scope="col" class="hidden-print"></th>

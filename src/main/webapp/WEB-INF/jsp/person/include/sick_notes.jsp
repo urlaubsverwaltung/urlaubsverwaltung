@@ -3,7 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<table class="list-table selectable-table" cellspacing="0">
+<table class="list-table selectable-table">
     <tbody>
     <c:forEach items="${sickNotes}" var="sickNote" varStatus="loopStatus">
     <c:choose>
