@@ -346,8 +346,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
             </form:form>
         </c:otherwise>
     </c:choose>
