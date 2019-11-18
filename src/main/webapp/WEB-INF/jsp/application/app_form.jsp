@@ -11,6 +11,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="application.data.new.header.title"/>
+    </title>
     <uv:head/>
     <script>
         if(!window.uv) {
