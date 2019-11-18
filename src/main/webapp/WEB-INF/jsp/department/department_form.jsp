@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -43,10 +43,10 @@
                 </div>
 
                 <div class="col-md-4 col-md-push-8">
-            <span class="help-block">
-                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                <spring:message code="department.data.description"/>
-            </span>
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.data.description"/>
+                    </span>
                 </div>
                 <div class="col-md-8 col-md-pull-4">
                     <div class="form-group is-required">
@@ -74,10 +74,10 @@
                 </div>
 
                 <div class="col-md-4 col-md-push-8">
-            <span class="help-block">
-                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                <spring:message code="department.data.twoStageApproval.help"/>
-            </span>
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.data.twoStageApproval.help"/>
+                    </span>
                 </div>
                 <div class="col-md-8 col-md-pull-4">
                     <div class="form-group">
@@ -120,14 +120,14 @@
 
 
                 <div class="col-md-4 col-md-push-8">
-            <span class="help-block">
-                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                <spring:message code="department.members.description"/>
-            </span>
                     <span class="help-block">
-                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                <spring:message code="department.members.secondStageAuthority.description"/>
-            </span>
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.members.description"/>
+                    </span>
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.members.secondStageAuthority.description"/>
+                    </span>
                 </div>
 
                 <div class="col-md-8 col-md-pull-4">
@@ -195,7 +195,7 @@
 
         </div>
     </div>
+</div>
 
 </body>
-
 </html>
