@@ -35,8 +35,9 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-sonarqube
           restore-keys: |
+            ${{ runner.os }}-maven-${{ env.cache-name }}-sonarqube
             ${{ runner.os }}-maven-
       - name: Run SonarCloud analyse
         run: >
