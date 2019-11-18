@@ -9,6 +9,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="sicknotes.header.title"/>
+    </title>
     <uv:head/>
     <script>
         window.uv = {};
