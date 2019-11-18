@@ -51,6 +51,7 @@ import static java.time.ZoneOffset.UTC;
 public class ApplicationForLeaveDetailsViewController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+    private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -198,7 +199,7 @@ public class ApplicationForLeaveDetailsViewController {
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
-            return "redirect:/web/application/" + applicationId + "?action=allow";
+            return REDIRECT_WEB_APPLICATION + applicationId + "?action=allow";
         }
 
         Application allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser,
@@ -214,7 +215,7 @@ public class ApplicationForLeaveDetailsViewController {
             return "redirect:" + redirectUrl;
         }
 
-        return "redirect:/web/application/" + applicationId;
+        return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
 
@@ -245,7 +246,7 @@ public class ApplicationForLeaveDetailsViewController {
 
             redirectAttributes.addFlashAttribute("referSuccess", true);
 
-            return "redirect:/web/application/" + applicationId;
+            return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
         throw new AccessDeniedException(String.format(
@@ -279,10 +280,10 @@ public class ApplicationForLeaveDetailsViewController {
                 redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
                 if (redirectUrl != null) {
-                    return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
+                    return REDIRECT_WEB_APPLICATION + applicationId + "?action=reject&shortcut=true";
                 }
 
-                return "redirect:/web/application/" + applicationId + "?action=reject";
+                return REDIRECT_WEB_APPLICATION + applicationId + "?action=reject";
             }
 
             applicationInteractionService.reject(application, signedInUser, Optional.ofNullable(comment.getText()));
@@ -292,7 +293,7 @@ public class ApplicationForLeaveDetailsViewController {
                 return "redirect:" + redirectUrl;
             }
 
-            return "redirect:/web/application/" + applicationId;
+            return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
         throw new AccessDeniedException(String.format(
@@ -340,12 +341,12 @@ public class ApplicationForLeaveDetailsViewController {
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
-            return "redirect:/web/application/" + applicationId + "?action=cancel";
+            return REDIRECT_WEB_APPLICATION + applicationId + "?action=cancel";
         }
 
         applicationInteractionService.cancel(application, signedInUser, Optional.ofNullable(comment.getText()));
 
-        return "redirect:/web/application/" + applicationId;
+        return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
 
@@ -368,6 +369,6 @@ public class ApplicationForLeaveDetailsViewController {
             redirectAttributes.addFlashAttribute("remindNoWay", true);
         }
 
-        return "redirect:/web/application/" + applicationId;
+        return REDIRECT_WEB_APPLICATION + applicationId;
     }
 }

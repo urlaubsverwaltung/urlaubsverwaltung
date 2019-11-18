@@ -69,6 +69,7 @@ public class ApplicationValidator implements Validator {
     private static final String ATTRIBUTE_ADDRESS = "address";
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTRIBUTE_HOURS = "hours";
+    private static final String DAY_LENGTH = "dayLength";
 
     private final WorkingTimeService workingTimeService;
     private final WorkDaysService calendarService;
@@ -156,19 +157,19 @@ public class ApplicationValidator implements Validator {
         switch (workingDurationForChristmasEve) {
             case ZERO:
                 if (applicationDayLength != DayLength.ZERO) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                 }
                 return;
             case MORNING:
                 if (applicationDayLength == DayLength.NOON) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                 }
                 return;
             case NOON:
                 if (applicationDayLength == DayLength.MORNING) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                 }
                 return;
@@ -184,19 +185,19 @@ public class ApplicationValidator implements Validator {
         switch (workingDurationForNewYearsEve) {
             case ZERO:
                 if (applicationDayLength != DayLength.ZERO) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                 }
                 return;
             case MORNING:
                 if (applicationDayLength == DayLength.NOON) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                 }
                 return;
             case NOON:
                 if (applicationDayLength == DayLength.MORNING) {
-                    errors.rejectValue("dayLength", ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
+                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                 }
                 return;
@@ -330,7 +331,7 @@ public class ApplicationValidator implements Validator {
 
         Application application = applicationForm.generateApplicationForLeave();
 
-        /**
+        /*
          * Ensure the person has a working time for the period of the application for leave
          */
         if (!personHasWorkingTime(application)) {
@@ -339,7 +340,7 @@ public class ApplicationValidator implements Validator {
             return;
         }
 
-        /**
+        /*
          * Ensure that no one applies for leave for a vacation of 0 days
          */
         if (vacationOfZeroDays(application)) {
@@ -348,7 +349,7 @@ public class ApplicationValidator implements Validator {
             return;
         }
 
-        /**
+        /*
          * Ensure that there is no application for leave and no sick note in the same period
          */
         if (vacationIsOverlapping(application)) {
@@ -357,7 +358,7 @@ public class ApplicationValidator implements Validator {
             return;
         }
 
-        /**
+        /*
          * Ensure that the person has enough vacation days left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY}
          */
@@ -365,7 +366,7 @@ public class ApplicationValidator implements Validator {
             errors.reject(ERROR_NOT_ENOUGH_DAYS);
         }
 
-        /**
+        /*
          * Ensure that the person has enough overtime hours left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME}
          */

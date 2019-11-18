@@ -31,6 +31,7 @@ import java.util.Optional;
 public class DepartmentViewController {
 
     private static final String PERSONS_ATTRIBUTE = "persons";
+    private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
 
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -94,7 +95,7 @@ public class DepartmentViewController {
 
         redirectAttributes.addFlashAttribute("createdDepartment", department);
 
-        return "redirect:/web/department/";
+        return REDIRECT_WEB_DEPARTMENT;
     }
 
 
@@ -137,7 +138,7 @@ public class DepartmentViewController {
 
         redirectAttributes.addFlashAttribute("updatedDepartment", department);
 
-        return "redirect:/web/department/";
+        return REDIRECT_WEB_DEPARTMENT;
     }
 
 
@@ -152,7 +153,7 @@ public class DepartmentViewController {
 
         department.ifPresent(department1 -> redirectAttributes.addFlashAttribute("deletedDepartment", department1));
 
-        return "redirect:/web/department/";
+        return REDIRECT_WEB_DEPARTMENT;
     }
 
 
