@@ -3,6 +3,7 @@ on:
 
 jobs:
   apply-label:
+    name: Add label 'status planned' to issue when milestoned
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@0.2.0
