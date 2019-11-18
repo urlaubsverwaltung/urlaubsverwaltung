@@ -41,7 +41,7 @@
 
                     <thead>
                     <tr>
-                        <th colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
+                        <th scope="col" colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
                             date="${statistics.created}"/></th>
                     </tr>
                     </thead>
