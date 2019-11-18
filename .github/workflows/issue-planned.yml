@@ -1,3 +1,5 @@
+name: Mark issue as planned
+
 on:
   issues: {types: milestoned}
 
