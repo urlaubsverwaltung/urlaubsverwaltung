@@ -37,7 +37,7 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-sonarqube
           restore-keys: |
-            ${{ runner.os }}-maven-${{ env.cache-name }}-sonarqube
+            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-sonarqube
             ${{ runner.os }}-maven-
       - name: Run SonarCloud analyse
         run: >
