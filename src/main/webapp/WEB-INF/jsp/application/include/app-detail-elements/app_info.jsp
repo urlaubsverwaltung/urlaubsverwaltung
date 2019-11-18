@@ -78,7 +78,7 @@
     </span>
 </div>
 
-<table class="list-table striped-table bordered-table" cellspacing="0">
+<table class="list-table striped-table bordered-table">
 
     <tr>
         <td><spring:message code="absence.period.duration"/></td>
