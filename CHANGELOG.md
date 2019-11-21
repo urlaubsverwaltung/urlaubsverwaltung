@@ -1,4 +1,5 @@
 ### master
+* Fix logging of user data on google calendar event [#875](https://github.com/synyx/urlaubsverwaltung/pull/875)
 
 ### [urlaubsverwaltung-3.0.0.RC8](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC8)
 * API-Change: Move `api/availability` to `api/person/persons/{personId}/availabilities` [#808](https://github.com/synyx/urlaubsverwaltung/issues/808)
