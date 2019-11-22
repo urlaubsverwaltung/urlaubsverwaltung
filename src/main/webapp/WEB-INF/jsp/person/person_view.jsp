@@ -13,6 +13,9 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <head>
+    <title>
+        <spring:message code="person.overview.header.title"/>
+    </title>
     <uv:head/>
     <c:if test="${not empty persons}">
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>

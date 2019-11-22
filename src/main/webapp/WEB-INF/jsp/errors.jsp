@@ -9,6 +9,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="errorPage.header.title"/>
+    </title>
     <uv:head/>
 </head>
 

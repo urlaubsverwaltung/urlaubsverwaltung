@@ -7,6 +7,9 @@
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
+    <title>
+        <spring:message code="overtime.header.title" arguments="${person.niceName}"/>
+    </title>
     <uv:head/>
 </head>
 <body>

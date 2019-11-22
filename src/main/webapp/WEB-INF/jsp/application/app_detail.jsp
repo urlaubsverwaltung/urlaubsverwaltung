@@ -14,6 +14,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="application.data.header.title" arguments="${application.person.niceName}"/>
+    </title>
     <uv:head/>
     <script>
         window.uv = {};

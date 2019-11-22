@@ -11,6 +11,9 @@
 <html lang="${language}">
 
 <head>
+    <title>
+        <spring:message code="overview.header.title" arguments="${person.niceName}, ${year}"/>
+    </title>
     <uv:head/>
     <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />" />
     <script>
