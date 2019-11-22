@@ -64,6 +64,9 @@ class PersonServiceImpl implements PersonService {
 
         LOG.info("Create person: {}", person);
 
+        accountInteractionService.createDefaultAccount(person);
+        workingTimeService.createDefaultWorkingTime(person);
+
         return save(person);
     }
 
