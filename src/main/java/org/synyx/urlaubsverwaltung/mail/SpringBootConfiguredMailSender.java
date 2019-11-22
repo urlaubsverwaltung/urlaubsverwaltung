@@ -28,6 +28,11 @@ public class SpringBootConfiguredMailSender implements MailSender {
             return;
         }
 
+        if(from == null || from.isEmpty()) {
+            LOG.warn("Could not send email from empty from!");
+            return;
+        }
+
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(from);
         mailMessage.setTo(recipients.toArray(new String[0]));
@@ -43,7 +48,7 @@ public class SpringBootConfiguredMailSender implements MailSender {
             this.javaMailSender.send(message);
 
             for (String recipient : message.getTo()) {
-                LOG.debug("Sent email to {}", recipient);
+                LOG.debug("Sent email to {} from={}", recipient, message.getFrom());
             }
 
             if (LOG.isDebugEnabled()) {
