@@ -26,7 +26,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="<spring:url value='/favicons/favicon-192x192.png' />"/>
 <link rel="icon" type="image/png" sizes="196x196" href="<spring:url value='/favicons/favicon-196x196.png' />"/>
 <meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png"' />"/>
+<meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png' />"/>
 <meta name="theme-color" content="#ffffff">
 
 <link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
