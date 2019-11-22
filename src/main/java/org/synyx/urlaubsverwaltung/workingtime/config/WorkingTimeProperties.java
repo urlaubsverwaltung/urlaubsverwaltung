@@ -14,6 +14,12 @@ import java.util.List;
 @Validated
 public class WorkingTimeProperties {
 
+    /**
+     * Define the default working days that will be configured for
+     * every newly created person.
+     *
+     * Default values: Monday, Tuesday, Wednesday, Thursday, Friday
+     */
     @NotNull
     private List<@Min(1) @Max(7) Integer> defaultWorkingDays = List.of(1, 2, 3, 4, 5);
 
