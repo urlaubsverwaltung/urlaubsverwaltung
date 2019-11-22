@@ -2,7 +2,7 @@
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title><spring:message code="header.title"/></title>
 
 <link rel="manifest" href="<spring:url value='/manifest.json' />"/>
