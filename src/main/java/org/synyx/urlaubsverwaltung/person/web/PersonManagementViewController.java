@@ -75,7 +75,6 @@ public class PersonManagementViewController {
     public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE) Person person, Errors errors,
                             RedirectAttributes redirectAttributes) {
 
-        // TODO We need a concept and fix this in the 3.0 release
         if (personConfigurationProperties.isCanBeManipulated()) {
 
             validator.validate(person, errors);

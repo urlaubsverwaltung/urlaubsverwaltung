@@ -52,10 +52,12 @@ public class PersonManagementViewControllerTest {
     @Mock
     private PersonValidator validator;
 
+    private PersonConfigurationProperties personConfigurationProperties = new PersonConfigurationProperties();
+
     @Before
     public void setUp() {
 
-        sut = new PersonManagementViewController(personService, departmentService, validator, new PersonConfigurationProperties());
+        sut = new PersonManagementViewController(personService, departmentService, validator, personConfigurationProperties);
     }
 
     @Test
@@ -74,6 +76,8 @@ public class PersonManagementViewControllerTest {
     @Test
     public void newPersonForwardsToViewIfValidationFails() throws Exception {
 
+        personConfigurationProperties.setCanBeManipulated(true);
+
         doAnswer(invocation -> {
 
             Errors errors = invocation.getArgument(1);
@@ -87,6 +91,8 @@ public class PersonManagementViewControllerTest {
 
     @Test
     public void newPersonCreatesPersonCorrectly() throws Exception {
+
+        personConfigurationProperties.setCanBeManipulated(true);
 
         when(personService.create(any())).thenReturn(personWithId(PERSON_ID));
 
@@ -104,6 +110,8 @@ public class PersonManagementViewControllerTest {
     @Test
     public void newPersonAddsFlashAttribute() throws Exception {
 
+        personConfigurationProperties.setCanBeManipulated(true);
+
         when(personService.create(any())).thenReturn(personWithId(PERSON_ID));
 
         perform(post("/web/person")).andExpect(flash().attribute("createSuccess", true));
@@ -112,11 +120,21 @@ public class PersonManagementViewControllerTest {
     @Test
     public void newPersonRedirectsToCreatedPerson() throws Exception {
 
+        personConfigurationProperties.setCanBeManipulated(true);
+
         when(personService.create(any())).thenReturn(personWithId(PERSON_ID));
 
         perform(post("/web/person"))
             .andExpect(status().isFound())
             .andExpect(header().string("Location", "/web/person/" + PERSON_ID));
+    }
+
+    @Test
+    public void newPersonRedirectsToPersonOverviewIfCreationIsNotAllowed() throws Exception {
+
+        perform(post("/web/person"))
+            .andExpect(status().isFound())
+            .andExpect(header().string("Location", "/web/person"));
     }
 
     @Test
