@@ -59,6 +59,16 @@ class PersonServiceImpl implements PersonService {
         return persistedPerson;
     }
 
+    @Override
+    public Person create(Person person) {
+
+        LOG.info("Create person: {}", person);
+
+        accountInteractionService.createDefaultAccount(person);
+        workingTimeService.createDefaultWorkingTime(person);
+
+        return save(person);
+    }
 
     @Override
     public Person update(Integer id, String username, String lastName, String firstName, String email,
@@ -80,16 +90,6 @@ class PersonServiceImpl implements PersonService {
         return save(person);
     }
 
-
-    @Override
-    public Person create(Person person) {
-
-        LOG.info("Create person: {}", person);
-
-        return save(person);
-    }
-
-
     @Override
     public Person update(Person person) {
 
@@ -102,13 +102,11 @@ class PersonServiceImpl implements PersonService {
         return save(person);
     }
 
-
     @Override
     public Person save(Person person) {
 
         return personDAO.save(person);
     }
-
 
     @Override
     public Optional<Person> getPersonByID(Integer id) {
@@ -123,7 +121,6 @@ class PersonServiceImpl implements PersonService {
         return Optional.ofNullable(personDAO.findByUsername(username));
     }
 
-
     @Override
     public List<Person> getActivePersons() {
 
@@ -134,13 +131,6 @@ class PersonServiceImpl implements PersonService {
             .collect(toList());
     }
 
-
-    private Comparator<Person> personComparator() {
-
-        return Comparator.comparing(p -> p.getNiceName().toLowerCase());
-    }
-
-
     @Override
     public List<Person> getInactivePersons() {
 
@@ -150,7 +140,6 @@ class PersonServiceImpl implements PersonService {
             .sorted(personComparator())
             .collect(toList());
     }
-
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
@@ -166,7 +155,6 @@ class PersonServiceImpl implements PersonService {
             .filter(person -> person.hasNotificationType(notification))
             .collect(toList());
     }
-
 
     @Override
     public Person getSignedInUser() {
@@ -196,6 +184,7 @@ class PersonServiceImpl implements PersonService {
      * @return saved {@link Person} with {@link Role#OFFICE} rights
      * if no other active person with {@link Role#OFFICE} is available.
      */
+    @Override
     public Person appointAsOfficeUserIfNoOfficeUserPresent(Person person) {
 
         boolean activeOfficeUserAvailable = !getActivePersonsByRole(OFFICE).isEmpty();
@@ -212,5 +201,9 @@ class PersonServiceImpl implements PersonService {
         LOG.info("Add 'OFFICE' role to person: {}", person);
 
         return savedPerson;
+    }
+
+    private Comparator<Person> personComparator() {
+        return Comparator.comparing(p -> p.getNiceName().toLowerCase());
     }
 }

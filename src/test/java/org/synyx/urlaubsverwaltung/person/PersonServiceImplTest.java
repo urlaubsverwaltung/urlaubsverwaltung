@@ -93,6 +93,9 @@ public class PersonServiceImplTest {
         Assert.assertEquals("Wrong number of permissions", 2, createdPerson.getPermissions().size());
         Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(USER));
         Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(BOSS));
+
+        verify(accountInteractionService).createDefaultAccount(person);
+        verify(workingTimeService).createDefaultWorkingTime(person);
     }
 
 

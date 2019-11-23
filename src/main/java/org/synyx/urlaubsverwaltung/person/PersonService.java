@@ -7,7 +7,6 @@ import java.util.Optional;
 /**
  * Service provides access to {@link Person} entities.
  */
-
 public interface PersonService {
 
     /**
@@ -24,6 +23,13 @@ public interface PersonService {
     Person create(String username, String lastName, String firstName, String email,
                   List<MailNotification> notifications, List<Role> permissions);
 
+    /**
+     * Creates a new person.
+     *
+     * @param person to be created
+     * @return created person
+     */
+    Person create(Person person);
 
     /**
      * Updates a person using the given attributes.
@@ -40,16 +46,6 @@ public interface PersonService {
     Person update(Integer id, String username, String lastName, String firstName, String email,
                   List<MailNotification> notifications, List<Role> permissions);
 
-
-    /**
-     * Creates a new person.
-     *
-     * @param person to be created
-     * @return created person
-     */
-    Person create(Person person);
-
-
     /**
      * Updates the given person.
      *
@@ -57,7 +53,6 @@ public interface PersonService {
      * @return updated person
      */
     Person update(Person person);
-
 
     /**
      * saves a {@link Person}.
@@ -67,7 +62,6 @@ public interface PersonService {
      */
     Person save(Person person);
 
-
     /**
      * finds a {@link Person} in the database by its primary key.
      *
@@ -75,7 +69,6 @@ public interface PersonService {
      * @return optional {@link Person} for the given id
      */
     Optional<Person> getPersonByID(Integer id);
-
 
     /**
      * finds a {@link Person} in the database by username.
@@ -85,7 +78,6 @@ public interface PersonService {
      */
     Optional<Person> getPersonByUsername(String username);
 
-
     /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
      *
@@ -93,7 +85,6 @@ public interface PersonService {
      * @return {@link List} of {@link Person}
      */
     List<Person> getActivePersonsByRole(Role role);
-
 
     /**
      * returns all {@link Person}s that have the given {@link MailNotification} type.
@@ -103,14 +94,12 @@ public interface PersonService {
      */
     List<Person> getPersonsWithNotificationType(MailNotification notification);
 
-
     /**
      * returns all active persons ordered by first name.
      *
      * @return returns all active persons
      */
     List<Person> getActivePersons();
-
 
     /**
      * returns all inactive persons ordered by first name.
