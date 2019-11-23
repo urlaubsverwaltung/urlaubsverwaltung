@@ -65,10 +65,6 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Maven clean
         run: ./mvnw clean
-      - uses: actions/download-artifact@v1.0.0
-        with:
-          name: dependency-check-report
-          path: target/dependency-check-report.html
       - name: Run SonarCloud analyse
         run: >
           ./mvnw --batch-mode
@@ -79,7 +75,6 @@ jobs:
           -Dsonar.organization=synyx
           -Dsonar.projectKey=org.synyx:urlaubsverwaltung
           -Dsonar.javascript.lcov.reportPaths=target/js-coverage/lcov.info
-          -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
