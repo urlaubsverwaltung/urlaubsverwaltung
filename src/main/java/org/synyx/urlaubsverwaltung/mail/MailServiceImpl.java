@@ -64,8 +64,6 @@ class MailServiceImpl implements MailService {
 
     @Override
     public void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model) {
-
-
         sendMailToRecipients(singletonList(mailOptionProvider.getAdministrator()), subjectMessageKey, templateName, model);
     }
 

@@ -14,9 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(properties = {
     "spring.mail.host=my.smtp.server",
     "spring.mail.port=1025",
-    "uv.mail.from=sender@firma.test",
-    "uv.mail.administrator=admin@firma.test",
-    "uv.mail.applicationurl=http://localhost:8080"
+    "uv.mail.sender=sender@example.org",
+    "uv.mail.administrator=admin@example.org",
+    "uv.mail.application-url=http://localhost:8080"
 })
 public class SpringBootConfiguredMailConfigIT {
 
@@ -24,7 +24,7 @@ public class SpringBootConfiguredMailConfigIT {
     private ApplicationContext applicationContext;
 
     @Test
-    public void hasSpringBootConfiguredMailconfig() {
+    public void hasSpringBootConfiguredMailConfig() {
         assertThat(applicationContext.containsBean("springBootConfiguredMailConfig")).isTrue();
         assertThat(applicationContext.containsBean("webConfiguredMailConfig")).isFalse();
     }

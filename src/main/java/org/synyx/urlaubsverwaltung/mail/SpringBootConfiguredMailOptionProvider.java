@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.synyx.urlaubsverwaltung.mail.config.SpringBootConfiguredMailConfig.UrlaubsverwaltungMailConfigurationProperties;
+import org.synyx.urlaubsverwaltung.mail.config.UrlaubsverwaltungMailConfigurationProperties;
 
 public class SpringBootConfiguredMailOptionProvider implements MailOptionProvider {
-
 
     private final UrlaubsverwaltungMailConfigurationProperties urlaubsverwaltungMailConfigurationProperties;
     private final MailProperties mailProperties;
@@ -27,7 +26,7 @@ public class SpringBootConfiguredMailOptionProvider implements MailOptionProvide
 
     @Override
     public String getApplicationUrl() {
-        return formatApplicationUrl(urlaubsverwaltungMailConfigurationProperties.getApplicationurl());
+        return formatApplicationUrl(urlaubsverwaltungMailConfigurationProperties.getApplicationUrl());
     }
 
     @Override
