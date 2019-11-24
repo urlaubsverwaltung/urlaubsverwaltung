@@ -13,40 +13,31 @@ data:
     spring.datasource.url=jdbc:mysql://xxx:3306/urlaubsverwaltung
 
     # AUTHENTICATION
-    auth=ldap
-
-    # LDAP CONFIG
-    uv.security.ldap.url=xxx
-    uv.security.ldap.base=dc=xxx,dc=xxx
-    uv.security.ldap.managerDn=
-    uv.security.ldap.managerPassword=
-    # Authentication
-    uv.security.ldap.userSearchBase=ou=accounts
-    uv.security.ldap.userSearchFilter=(uid={0})
-
-    # LDAP Data Sync
-    uv.security.ldap.sync.enabled=true
-    uv.security.ldap.sync.userSearchBase=ou=xxx,ou=xxx
-    uv.security.ldap.sync.userDn=
-    uv.security.ldap.sync.password=
-    uv.security.filter.objectClass=person
-
-    # Let empty for no filter by certain group
-    uv.security.filter.memberOf=
+    uv.security.auth=ldap
 
     # LDAP / ACTIVE DIRECTORY ATTRIBUTES
-    # Attribute that identifies a user by unique username within LDAP / Active Directory
-    # Recommended attribute for LDAP: `uid`
-    # Recommended attribute for Active Directory: `sAMAccountName`
-    uv.security.identifier=uid
-    uv.security.firstName=givenName
-    uv.security.lastName=sn
-    uv.security.mailAddress=mail
+    uv.security.directory-service.identifier=uid
+    uv.security.directory-service.firstName=givenName
+    uv.security.directory-service.lastName=sn
+    uv.security.directory-service.mailAddress=mail
 
-    # Update remaining vacation days for each user on 1st January at 05:00 am
-    uv.cron.updateHolidaysAccounts=0 0 5 1 1 *
-    # Send notification about end of sick pay every day at 06:00 am
-    uv.cron.endOfSickPayNotification=0 0 6 * * ?
+    # LDAP Filter Attributes
+    uv.security.directory-service.filter.objectClass=person
+    uv.security.directory-service.filter.memberOf=
+
+    # LDAP
+    uv.security.directory-service.ldap.url=xxx
+    uv.security.directory-service.ldap.base=dc=xxx,dc=xxx
+    uv.security.directory-service.ldap.managerDn=
+    uv.security.directory-service.ldap.managerPassword=
+    uv.security.directory-service.ldap.userSearchBase=ou=accounts
+    uv.security.directory-service.ldap.userSearchFilter=(uid={0})
+
+    # LDAP Data Sync
+    uv.security.directory-service.ldap.sync.enabled=true
+    uv.security.directory-service.ldap.sync.userSearchBase=ou=xxx,ou=xxx
+    uv.security.directory-service.ldap.sync.userDn=
+    uv.security.directory-service.ldap.sync.password=
 
     # Deactivate mail health check to prevent k8s to crashLoop,
     # because mail will be configured after the first mail was sent.
@@ -83,7 +74,7 @@ spec:
     spec:
       containers:
         - name: urlaubsverwaltung
-          image: synyx/urlaubsverwaltung:2.32.0
+          image: synyx/urlaubsverwaltung:3.0.0
           ports:
             - containerPort: 8080
           livenessProbe:
