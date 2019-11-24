@@ -16,7 +16,7 @@
     <title>
         <spring:message code="person.overview.header.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <c:if test="${not empty persons}">
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
     <script defer src="<asset:url value='npm.list.js.js' />"></script>

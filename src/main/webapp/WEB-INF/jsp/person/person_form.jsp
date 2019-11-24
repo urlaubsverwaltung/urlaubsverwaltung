@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
-    <uv:head/>
+    <uv:custom-head/>
     <script defer src="<asset:url value='person_form.js' />"></script>
 </head>
 

@@ -13,7 +13,7 @@
     <title>
         <spring:message code="department.data.header.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script defer src="<asset:url value='department_form.js' />"></script>
 </head>
 

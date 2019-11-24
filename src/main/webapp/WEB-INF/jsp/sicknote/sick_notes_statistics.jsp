@@ -12,7 +12,7 @@
     <title>
         <spring:message code="sicknotes.statistics.header.title" arguments="${statistics.year}"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
 </head>
 
 <body>

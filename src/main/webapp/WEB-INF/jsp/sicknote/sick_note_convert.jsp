@@ -11,7 +11,7 @@
     <title>
         <spring:message code="sicknote.convert.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script defer src="<asset:url value='sick_note_convert.js' />"></script>
 </head>
 <body>

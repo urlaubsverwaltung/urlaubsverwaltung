@@ -12,7 +12,7 @@
     <title>
         <spring:message code="person.form.workingTime.header.title" arguments="${person.niceName}"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script defer src="<asset:url value='workingtime_form.js' />"></script>
 </head>
 

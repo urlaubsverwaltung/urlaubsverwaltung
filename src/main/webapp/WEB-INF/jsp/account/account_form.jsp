@@ -12,7 +12,7 @@
     <title>
         <spring:message code="person.form.annualVacation.header.title" arguments="${person.niceName}"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script defer src="<asset:url value='account_form.js' />"></script>
 </head>
 
