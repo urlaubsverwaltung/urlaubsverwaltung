@@ -171,9 +171,13 @@ Die Testdaten enthalten folgende Nutzer:
 
 ### Aufrufen der Anwendung
 
-Die Anwendung ist nun erreichbar unter
+Folgende systeme sind erreichbar
 
-`<servername>:8080/`
+| Service                   | Port    |
+| ------------------------- | ------- |
+| Urlaubsverwaltung         | 8080    |
+| Mailhog                   | 8025    |
+| Mailhog SMTP              | 1025    |
 
 ## Produktivbetrieb
 
