@@ -1,21 +1,25 @@
 package org.synyx.urlaubsverwaltung.mail.config;
 
+import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Validated
 @ConfigurationProperties(prefix = "uv.mail")
 public class UrlaubsverwaltungMailConfigurationProperties {
 
+    @Email
     @NotEmpty
     private String sender;
 
+    @Email
     @NotEmpty
     private String administrator;
 
-    @NotEmpty
+    @URL
     private String applicationUrl;
 
     public String getSender() {
