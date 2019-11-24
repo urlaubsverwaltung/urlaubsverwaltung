@@ -13,12 +13,12 @@ import org.synyx.urlaubsverwaltung.mail.SpringBootConfiguredMailSender;
 
 @ConditionalOnProperty(prefix = "spring.mail", name = "host")
 @Configuration
-@EnableConfigurationProperties(UrlaubsverwaltungMailConfigurationProperties.class)
+@EnableConfigurationProperties(MailConfigurationProperties.class)
 public class SpringBootConfiguredMailConfig {
 
     @Bean
-    public MailOptionProvider springBootConfiguredMailOptionProvider(UrlaubsverwaltungMailConfigurationProperties urlaubsverwaltungMailConfigurationProperties, MailProperties mailProperties) {
-        return new SpringBootConfiguredMailOptionProvider(urlaubsverwaltungMailConfigurationProperties, mailProperties);
+    public MailOptionProvider springBootConfiguredMailOptionProvider(MailConfigurationProperties mailConfigurationProperties, MailProperties mailProperties) {
+        return new SpringBootConfiguredMailOptionProvider(mailConfigurationProperties, mailProperties);
     }
 
     @Bean

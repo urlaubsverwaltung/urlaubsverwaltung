@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Validated
 @ConfigurationProperties(prefix = "uv.mail")
-public class UrlaubsverwaltungMailConfigurationProperties {
+public class MailConfigurationProperties {
 
     @Email
     @NotEmpty
