@@ -1,4 +1,5 @@
 ### master
+* Configuration-Change: `uv.person.canBeManipulated` is now `false` by default [#880](https://github.com/synyx/urlaubsverwaltung/pull/880)
 * Fix logging of user data on google calendar event [#875](https://github.com/synyx/urlaubsverwaltung/pull/875)
 
 ### [urlaubsverwaltung-3.0.0.RC8](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC8)

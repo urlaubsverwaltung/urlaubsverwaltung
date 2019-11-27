@@ -12,7 +12,7 @@ public class PersonConfigurationProperties {
      * manipulated means to create and edit a user
      * but not their permissions.
      */
-    private boolean canBeManipulated = true;
+    private boolean canBeManipulated = false;
 
     public boolean isCanBeManipulated() {
         return canBeManipulated;
