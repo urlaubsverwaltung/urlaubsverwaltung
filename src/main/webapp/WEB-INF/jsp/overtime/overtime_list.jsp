@@ -10,7 +10,7 @@
     <title>
         <spring:message code="overtime.header.title" arguments="${person.niceName}"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
 </head>
 <body>
 

@@ -12,7 +12,7 @@
     <title>
         <spring:message code="sicknotes.header.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script>
         window.uv = {};
         window.uv.personId = '<c:out value="${person.id}" />';

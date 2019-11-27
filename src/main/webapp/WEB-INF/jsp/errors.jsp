@@ -12,7 +12,7 @@
     <title>
         <spring:message code="errorPage.header.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
 </head>
 
 <body>

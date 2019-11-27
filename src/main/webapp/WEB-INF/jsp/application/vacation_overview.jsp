@@ -29,7 +29,7 @@
     <title>
         <spring:message code="overview.vacationOverview.header.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <link rel="stylesheet" href="<asset:url value='vacation_overview.css' />" />
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
     <script defer src="<asset:url value='vacation_overview.js' />"></script>

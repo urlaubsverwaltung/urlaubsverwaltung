@@ -17,7 +17,7 @@
     <title>
         <spring:message code="application.data.header.title" arguments="${application.person.niceName}"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script>
         window.uv = {};
         window.uv.personId = '<c:out value="${application.person.id}" />';

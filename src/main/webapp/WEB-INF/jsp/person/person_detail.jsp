@@ -10,7 +10,7 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <head>
-    <uv:head/>
+    <uv:custom-head/>
 </head>
 
 <body>

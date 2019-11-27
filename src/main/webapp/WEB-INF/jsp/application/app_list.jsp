@@ -35,7 +35,7 @@
     <title>
         <spring:message code="applications.header.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script defer src="<asset:url value='app_list.js' />"></script>
 </head>
 

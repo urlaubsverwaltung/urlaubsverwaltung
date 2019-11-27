@@ -14,7 +14,7 @@
     <title>
         <spring:message code="departments.header.title"/>
     </title>
-    <uv:head/>
+    <uv:custom-head/>
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
     <script defer src="<asset:url value='department_list.js' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>

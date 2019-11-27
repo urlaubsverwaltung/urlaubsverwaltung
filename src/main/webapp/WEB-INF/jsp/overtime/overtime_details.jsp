@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
-    <uv:head/>
+    <uv:custom-head/>
 </head>
 <body>
 
