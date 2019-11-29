@@ -43,5 +43,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./target/urlaubsverwaltung-*.war
           asset_name: Urlaubsverwaltung
+          asset_content_type: application/zip
       - name: Create docker image
         run: ./mvnw --batch-mode docker:build docker:push -Ddocker.username=${{ secrets.DOCKER_USERNAME }} -Ddocker.password=${{ secrets.DOCKER_PASSWORD }}
