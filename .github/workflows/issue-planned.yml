@@ -13,4 +13,8 @@ jobs:
           github-token: ${{github.token}}
           script: |
             github.issues.addLabels({...context.issue, labels: ['status: planned']})
-            github.issues.removeLabel({...context.issue, name: 'status: new'})
+
+            const newLabel = github.issues.getLabel({...context.issue, name: 'status: new'})
+            if (newLabel) {
+              github.issues.removeLabel({...context.issue, name: 'status: new'})
+            }
