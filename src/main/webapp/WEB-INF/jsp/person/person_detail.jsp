@@ -10,6 +10,9 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <head>
+    <title>
+        <spring:message code="person.details.header.title" arguments="${person.niceName}"/>
+    </title>
     <uv:custom-head/>
 </head>
 
