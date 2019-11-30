@@ -30,8 +30,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
+          body: "Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden."
           draft: false
           prerelease: false
       - name: Create docker image
