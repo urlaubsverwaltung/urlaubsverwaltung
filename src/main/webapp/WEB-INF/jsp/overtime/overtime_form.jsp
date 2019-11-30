@@ -8,6 +8,16 @@
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
+    <title>
+        <c:choose>
+            <c:when test="${overtime.id == null}">
+                <spring:message code="overtime.record.header.title.new"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="overtime.record.header.title.edit"/>
+            </c:otherwise>
+        </c:choose>
+    </title>
     <uv:custom-head/>
     <script>
         window.uv = {};
