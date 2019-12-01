@@ -7,6 +7,9 @@
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
+    <title>
+        <spring:message code="overtime.details.header.title"/>
+    </title>
     <uv:custom-head/>
 </head>
 <body>
