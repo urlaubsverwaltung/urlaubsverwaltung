@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.synyx.urlaubsverwaltung.availability.api.FreeTimeAbsenceException;
 import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -23,7 +22,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 public class ApiExceptionHandlerControllerAdvice {
 
     @ResponseStatus(NO_CONTENT)
-    @ExceptionHandler({NoValidWorkingTimeException.class, FreeTimeAbsenceException.class})
+    @ExceptionHandler({NoValidWorkingTimeException.class})
     @ResponseBody
     public ErrorResponse handleException(IllegalStateException exception) {
 
