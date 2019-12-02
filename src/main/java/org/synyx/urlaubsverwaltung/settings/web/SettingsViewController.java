@@ -70,7 +70,7 @@ public class SettingsViewController {
         fillModel(model, settings, authorizedRedirectUrl);
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, googleOAuthError);
+            model.addAttribute("errors", googleOAuthError);
             model.addAttribute(ControllerConstants.OAUTH_ERROR_ATTRIBUTE, googleOAuthError);
         }
 
@@ -121,7 +121,7 @@ public class SettingsViewController {
         if (errors.hasErrors()) {
             fillModel(model, settings, authorizedRedirectUrl);
 
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute("errors", errors);
 
             return "settings/settings_form";
         }

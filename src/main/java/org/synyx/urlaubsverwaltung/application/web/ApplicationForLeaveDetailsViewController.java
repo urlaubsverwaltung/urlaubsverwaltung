@@ -31,7 +31,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -52,6 +51,7 @@ public class ApplicationForLeaveDetailsViewController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
+    private static final String ATTRIBUTE_ERRORS = "errors";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -197,7 +197,7 @@ public class ApplicationForLeaveDetailsViewController {
         commentValidator.validate(comment, errors);
 
         if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
 
             return REDIRECT_WEB_APPLICATION + applicationId + "?action=allow";
         }
@@ -277,7 +277,7 @@ public class ApplicationForLeaveDetailsViewController {
             commentValidator.validate(comment, errors);
 
             if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+                redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
 
                 if (redirectUrl != null) {
                     return REDIRECT_WEB_APPLICATION + applicationId + "?action=reject&shortcut=true";
@@ -339,7 +339,7 @@ public class ApplicationForLeaveDetailsViewController {
         commentValidator.validate(comment, errors);
 
         if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
 
             return REDIRECT_WEB_APPLICATION + applicationId + "?action=cancel";
         }
