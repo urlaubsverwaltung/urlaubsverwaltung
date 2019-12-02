@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -63,7 +62,7 @@ public class SettingsViewController {
                                   HttpServletRequest request) {
 
         String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-            request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
+            request.getRequestURL().toString(), "/google-api-handshake");
 
         Settings settings = settingsService.getSettings();
 
@@ -114,7 +113,7 @@ public class SettingsViewController {
                                 HttpServletRequest request) {
 
         String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-            request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
+            request.getRequestURL().toString(), "oautherrors");
 
         settingsValidator.validate(settings, errors);
 

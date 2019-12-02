@@ -54,23 +54,19 @@ public class SettingsViewControllerTest {
 
     private static final CalendarProvider SOME_CALENDAR_PROVIDER = new SomeCalendarProvider();
     private static final CalendarProvider ANOTHER_CALENDAR_PROVIDER = new AnotherCalendarProvider();
-    private static final List<CalendarProvider> CALENDAR_PROVIDER_LIST =
-        Arrays.asList(SOME_CALENDAR_PROVIDER, ANOTHER_CALENDAR_PROVIDER);
+    private static final List<CalendarProvider> CALENDAR_PROVIDER_LIST = List.of(SOME_CALENDAR_PROVIDER, ANOTHER_CALENDAR_PROVIDER);
 
     private static final String SOME_GOOGLE_REFRESH_TOKEN = "0815-4711-242";
 
     @Mock
     private SettingsService settingsService;
-
     @Mock
     private MailService mailService;
-
     @Mock
     private SettingsValidator settingsValidator;
 
     @Before
     public void setUp() {
-
         sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator, "unknown");
     }
 
