@@ -59,7 +59,7 @@ public class SettingsViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping
     public String settingsDetails(Model model,
-                                  @RequestParam(value = ControllerConstants.OAUTH_ERROR_ATTRIBUTE, required = false) String googleOAuthError,
+                                  @RequestParam(value = "oautherrors", required = false) String googleOAuthError,
                                   HttpServletRequest request) {
 
         String authorizedRedirectUrl = getAuthorizedRedirectUrl(
@@ -71,7 +71,7 @@ public class SettingsViewController {
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
             model.addAttribute("errors", googleOAuthError);
-            model.addAttribute(ControllerConstants.OAUTH_ERROR_ATTRIBUTE, googleOAuthError);
+            model.addAttribute("oautherrors", googleOAuthError);
         }
 
         return "settings/settings_form";

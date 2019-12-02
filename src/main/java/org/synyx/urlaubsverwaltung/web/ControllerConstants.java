@@ -6,7 +6,6 @@ package org.synyx.urlaubsverwaltung.web;
 public final class ControllerConstants {
 
     // Attributes
-    public static final String OAUTH_ERROR_ATTRIBUTE = "oautherrors";
     public static final String OATUH_REDIRECT_REL = "/google-api-handshake";
 
     private ControllerConstants() {
