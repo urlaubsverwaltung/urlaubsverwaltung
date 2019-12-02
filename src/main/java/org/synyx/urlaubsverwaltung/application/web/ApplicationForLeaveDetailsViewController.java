@@ -85,7 +85,7 @@ public class ApplicationForLeaveDetailsViewController {
 
     @GetMapping("/{applicationId}")
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
-                                        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
+                                        @RequestParam(value = "year", required = false) Integer requestedYear,
                                         @RequestParam(value = "action", required = false) String action,
                                         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model)
         throws UnknownApplicationForLeaveException {
@@ -159,7 +159,7 @@ public class ApplicationForLeaveDetailsViewController {
         }
 
         // UNSPECIFIC ATTRIBUTES
-        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
+        model.addAttribute("year", year);
         model.addAttribute("action", action);
         model.addAttribute("shortcut", shortcut);
     }

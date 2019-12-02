@@ -37,7 +37,6 @@ import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.web.ControllerConstants.YEAR_ATTRIBUTE;
 
 /**
  * Controller to display the personal overview page with basic information about
@@ -78,7 +77,7 @@ public class OverviewViewController {
     }
 
     @GetMapping("/overview")
-    public String showOverview(@RequestParam(value = YEAR_ATTRIBUTE, required = false) String year) {
+    public String showOverview(@RequestParam(value = "year", required = false) String year) {
 
         Person user = personService.getSignedInUser();
 
@@ -91,7 +90,7 @@ public class OverviewViewController {
 
     @GetMapping("/person/{personId}/overview")
     public String showOverview(@PathVariable("personId") Integer personId,
-                               @RequestParam(value = YEAR_ATTRIBUTE, required = false) Integer year, Model model)
+                               @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -111,7 +110,7 @@ public class OverviewViewController {
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
 
-        model.addAttribute(YEAR_ATTRIBUTE, ZonedDateTime.now(UTC).getYear());
+        model.addAttribute("year", ZonedDateTime.now(UTC).getYear());
         model.addAttribute("currentYear", ZonedDateTime.now(UTC).getYear());
         model.addAttribute("currentMonth", ZonedDateTime.now(UTC).getMonthValue());
 

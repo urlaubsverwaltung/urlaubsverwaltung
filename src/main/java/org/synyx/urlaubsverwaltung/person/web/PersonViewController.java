@@ -77,7 +77,7 @@ public class PersonViewController {
 
     @GetMapping("/person/{personId}")
     public String showPersonInformation(@PathVariable("personId") Integer personId,
-                                        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
+                                        @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                                         Model model) throws UnknownPersonException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -91,7 +91,7 @@ public class PersonViewController {
 
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
-        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
+        model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
         model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
@@ -131,7 +131,7 @@ public class PersonViewController {
     @GetMapping(value = "/person", params = "active")
     public String showPerson(@RequestParam(value = "active") boolean active,
                              @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
-                             @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
+                             @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              Model model) throws UnknownDepartmentException {
 
         Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
@@ -252,7 +252,7 @@ public class PersonViewController {
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
         model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
-        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
+        model.addAttribute("year", year);
         model.addAttribute("now", LocalDate.now(UTC));
 
         List<Department> departments = getRelevantDepartments(signedInUser);

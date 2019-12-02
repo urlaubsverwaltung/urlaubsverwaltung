@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
@@ -81,7 +80,7 @@ public class OvertimeViewController {
     @GetMapping(value = "/overtime", params = PERSON_ATTRIBUTE)
     public String showOvertime(
         @RequestParam(value = PERSON_ATTRIBUTE) Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
+        @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
         final int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
