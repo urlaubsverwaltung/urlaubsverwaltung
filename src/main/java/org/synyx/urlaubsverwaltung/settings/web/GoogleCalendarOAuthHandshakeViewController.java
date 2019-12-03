@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -63,7 +62,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping(ControllerConstants.OATUH_REDIRECT_REL)
+    @GetMapping("/google-api-handshake")
     public String googleConnectionStatus(HttpServletRequest request) {
         String redirectUrl = request.getRequestURL().toString();
 
@@ -71,7 +70,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @GetMapping(value = ControllerConstants.OATUH_REDIRECT_REL, params = "code")
+    @GetMapping(value = "/google-api-handshake", params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) {
 
         String redirectUrl = request.getRequestURL().toString();

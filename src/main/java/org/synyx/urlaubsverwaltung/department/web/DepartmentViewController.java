@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.util.List;
 import java.util.Optional;
@@ -129,7 +128,7 @@ public class DepartmentViewController {
         validator.validate(department, errors);
 
         if (errors.hasGlobalErrors()) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute("errors", errors);
         }
 
         if (returnModelErrorAttributes(department, errors, model)) return DepartmentConstants.DEPARTMENT_FORM_JSP;

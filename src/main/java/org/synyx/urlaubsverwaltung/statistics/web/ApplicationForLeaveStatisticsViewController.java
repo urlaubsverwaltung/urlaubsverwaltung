@@ -16,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
@@ -72,7 +71,7 @@ public class ApplicationForLeaveStatisticsViewController {
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
+            model.addAttribute("errors", "INVALID_PERIOD");
 
             return "application/app_statistics";
         }
@@ -101,7 +100,7 @@ public class ApplicationForLeaveStatisticsViewController {
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
+            model.addAttribute("errors", "INVALID_PERIOD");
 
             return "application/app_statistics";
         }

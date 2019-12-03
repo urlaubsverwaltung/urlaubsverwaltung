@@ -27,7 +27,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
@@ -47,6 +46,7 @@ public class SickNoteViewController {
     private static final String SICK_NOTE = "sickNote";
     private static final String SICK_NOTE_TYPES = "sickNoteTypes";
     private static final String REDIRECT_WEB_SICKNOTE = "redirect:/web/sicknote/";
+    private static final String ATTRIBUTE_ERRORS = "errors";
 
     private final SickNoteService sickNoteService;
     private final SickNoteInteractionService sickNoteInteractionService;
@@ -127,7 +127,7 @@ public class SickNoteViewController {
         validator.validate(sickNote, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, sickNoteForm);
             model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
             model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
@@ -171,7 +171,7 @@ public class SickNoteViewController {
         validator.validate(sickNote, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, sickNoteForm);
             model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
@@ -195,7 +195,7 @@ public class SickNoteViewController {
         validator.validateComment(comment, errors);
 
         if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
         } else {
             sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, personService.getSignedInUser(), comment.getText());
         }
@@ -234,7 +234,7 @@ public class SickNoteViewController {
         sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, calendarService));
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());

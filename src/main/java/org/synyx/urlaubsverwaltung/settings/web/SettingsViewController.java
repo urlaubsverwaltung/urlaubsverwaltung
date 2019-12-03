@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -59,19 +58,19 @@ public class SettingsViewController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping
     public String settingsDetails(Model model,
-                                  @RequestParam(value = ControllerConstants.OAUTH_ERROR_ATTRIBUTE, required = false) String googleOAuthError,
+                                  @RequestParam(value = "oautherrors", required = false) String googleOAuthError,
                                   HttpServletRequest request) {
 
         String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-            request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
+            request.getRequestURL().toString(), "/google-api-handshake");
 
         Settings settings = settingsService.getSettings();
 
         fillModel(model, settings, authorizedRedirectUrl);
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, googleOAuthError);
-            model.addAttribute(ControllerConstants.OAUTH_ERROR_ATTRIBUTE, googleOAuthError);
+            model.addAttribute("errors", googleOAuthError);
+            model.addAttribute("oautherrors", googleOAuthError);
         }
 
         return "settings/settings_form";
@@ -114,14 +113,14 @@ public class SettingsViewController {
                                 HttpServletRequest request) {
 
         String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-            request.getRequestURL().toString(), ControllerConstants.OATUH_REDIRECT_REL);
+            request.getRequestURL().toString(), "oautherrors");
 
         settingsValidator.validate(settings, errors);
 
         if (errors.hasErrors()) {
             fillModel(model, settings, authorizedRedirectUrl);
 
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute("errors", errors);
 
             return "settings/settings_form";
         }

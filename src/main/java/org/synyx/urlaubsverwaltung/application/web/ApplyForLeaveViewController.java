@@ -27,7 +27,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
@@ -131,7 +130,7 @@ public class ApplyForLeaveViewController {
         if (errors.hasErrors()) {
             prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
             if (errors.hasGlobalErrors()) {
-                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+                model.addAttribute("errors", errors);
             }
 
             LOG.info("new application ({}) has errors: {}", appForm, errors);
