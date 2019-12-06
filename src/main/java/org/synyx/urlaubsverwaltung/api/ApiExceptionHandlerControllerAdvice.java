@@ -62,13 +62,4 @@ public class ApiExceptionHandlerControllerAdvice {
 
         return new ErrorResponse(HttpStatus.FORBIDDEN, exception);
     }
-
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    @ResponseBody
-    public ErrorResponse handleException(Exception exception) {
-
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception);
-    }
 }

@@ -137,6 +137,6 @@ public class AvailabilityApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).build().perform(builder);
+        return standaloneSetup(sut).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build().perform(builder);
     }
 }
