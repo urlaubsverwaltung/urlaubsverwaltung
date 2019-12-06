@@ -1,8 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <table class="list-table selectable-table">
@@ -26,19 +26,19 @@
                 <span>
                      <c:choose>
                          <c:when test="${app.status == 'WAITING'}">
-                             <i class="fa fa-question"></i>
+                             <i class="fa fa-question" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'ALLOWED'}">
-                             <i class="fa fa-check"></i>
+                             <i class="fa fa-check" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
-                             <i class="fa fa-check"></i>
+                             <i class="fa fa-check" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'REJECTED'}">
-                             <i class="fa fa-ban"></i>
+                             <i class="fa fa-ban" aria-hidden="true"></i>
                          </c:when>
                          <c:when test="${app.status == 'CANCELLED'}">
-                             <i class="fa fa-trash"></i>
+                             <i class="fa fa-trash" aria-hidden="true"></i>
                          </c:when>
                          <c:otherwise>
                              &nbsp;
@@ -102,29 +102,24 @@
                 <c:if test="${app.startDate.year != app.endDate.year}">
                     <span class="days-${loopStatus.index}">
                         <%--is filled by javascript--%>
-                        <script type="text/javascript">
-
-                          $(document).ready(function () {
-
-                              var dayLength = '<c:out value="${app.dayLength}" />';
-                              var personId = '<c:out value="${app.person.id}" />';
-
-                              var startDate = "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";
-                              var endDate = "<joda:format pattern='yyyy/MM/dd' value='${app.endDate}' />";
-
-                              var from = new Date(startDate);
-                              var to = new Date(endDate);
-
-                              sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
-
-                          });
-
-                        </script>
                     </span>
+                    <script type="text/javascript">
+                        document.addEventListener('DOMContentLoaded', function() {
+                          const dayLength = '<c:out value="${app.dayLength}" />';
+                          const personId = '<c:out value="${app.person.id}" />';
+
+                          <fmt:parseDate value="${app.startDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date" />
+                          <fmt:parseDate value="${app.endDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date" />
+                          const startDate = "<fmt:formatDate value="${parsedStartDate}" type="date" pattern="yyyy-MM-dd" />";
+                          const endDate = "<fmt:formatDate value="${parsedEndDate}" type="date" pattern="yyyy-MM-dd" />";
+
+                          sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", new Date(startDate), new Date(endDate), dayLength, personId, ".days-${loopStatus.index}");
+                        })
+                    </script>
                 </c:if>
             </td>
             <td class="is-centered hidden-xs hidden-print">
-                <i class="fa fa-clock-o"></i>
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
                 <span>
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">

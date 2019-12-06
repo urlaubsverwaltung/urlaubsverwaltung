@@ -1,45 +1,45 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="hammann" id="add_department_table">
+  <changeSet author="hammann" id="add_department_table">
 
-        <createTable tableName="Department">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="VARCHAR(255)"/>
-            <column name="lastModification" type="date"/>
-        </createTable>
+    <createTable tableName="Department">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="VARCHAR(255)"/>
+      <column name="lastModification" type="date"/>
+    </createTable>
 
-        <createTable tableName="Department_Member">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="Department_id" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="members_id" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+    <createTable tableName="Department_Member">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="Department_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="members_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
 
-        <createTable tableName="Department_DepartmentHead">
-            <column autoIncrement="true" name="id" type="INT(10)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="Department_id" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="departmentHeads_id" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+    <createTable tableName="Department_DepartmentHead">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="Department_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="departmentHeads_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

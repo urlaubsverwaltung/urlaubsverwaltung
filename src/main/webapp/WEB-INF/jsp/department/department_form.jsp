@@ -1,17 +1,20 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <head>
-    <uv:head/>
+    <title>
+        <spring:message code="department.data.header.title"/>
+    </title>
+    <uv:custom-head/>
+    <script defer src="<asset:url value='department_form.js' />"></script>
 </head>
 
 <body>
@@ -43,10 +46,10 @@
                 </div>
 
                 <div class="col-md-4 col-md-push-8">
-            <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
-                <spring:message code="department.data.description"/>
-            </span>
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.data.description"/>
+                    </span>
                 </div>
                 <div class="col-md-8 col-md-pull-4">
                     <div class="form-group is-required">
@@ -74,10 +77,10 @@
                 </div>
 
                 <div class="col-md-4 col-md-push-8">
-            <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
-                <spring:message code="department.data.twoStageApproval.help"/>
-            </span>
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.data.twoStageApproval.help"/>
+                    </span>
                 </div>
                 <div class="col-md-8 col-md-pull-4">
                     <div class="form-group">
@@ -120,20 +123,20 @@
 
 
                 <div class="col-md-4 col-md-push-8">
-            <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
-                <spring:message code="department.members.description"/>
-            </span>
                     <span class="help-block">
-                <i class="fa fa-fw fa-info-circle"></i>
-                <spring:message code="department.members.secondStageAuthority.description"/>
-            </span>
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.members.description"/>
+                    </span>
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <spring:message code="department.members.secondStageAuthority.description"/>
+                    </span>
                 </div>
 
                 <div class="col-md-8 col-md-pull-4">
                     <div class="form-group">
                         <label class="control-label col-md-3" for="members">
-                            <spring:message code='department.members.staff'/>:
+                            <spring:message code='department.members.person'/>:
                         </label>
                         <div class="col-md-9">
                             <div class="department--members">
@@ -195,7 +198,7 @@
 
         </div>
     </div>
+</div>
 
 </body>
-
 </html>

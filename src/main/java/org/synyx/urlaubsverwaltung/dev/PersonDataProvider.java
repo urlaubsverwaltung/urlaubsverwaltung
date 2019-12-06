@@ -1,93 +1,125 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.core.period.WeekDay;
-import org.synyx.urlaubsverwaltung.core.person.MailNotification;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
+import static java.time.ZoneOffset.UTC;
+import static java.util.Arrays.asList;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+
 /**
  * Provides person test data.
- *
- * @author Aljona Murygina - murygina@synyx.de
  */
-@Component
-@ConditionalOnProperty("testdata.create")
 class PersonDataProvider {
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final AccountInteractionService accountInteractionService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
-                       AccountInteractionService accountInteractionService) {
+                       AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder) {
 
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountInteractionService = accountInteractionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    Person createTestPerson(String login, String password, String firstName, String lastName, String email,
-                            Role... roles) throws NoSuchAlgorithmException {
+    boolean isPersonAlreadyCreated(String username) {
 
-        List<Role> permissions = Arrays.asList(roles);
-        List<MailNotification> notifications = getNotificationsForRoles(permissions);
+        final Optional<Person> personByUsername = personService.getPersonByUsername(username);
+        return personByUsername.isPresent();
+    }
 
-        Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
+    Person createTestPerson(TestUser testUser, String firstName, String lastName, String email) {
 
-        // workaround for non generated password
-        person.setPassword(CryptoUtil.encodePassword(password));
-        personService.save(person);
+        final String username = testUser.getUsername();
+        final String password = testUser.getPassword();
+        final Role[] roles = testUser.getRoles();
 
-        int currentYear = DateMidnight.now().getYear();
+        return createTestPerson(username, password, firstName, lastName, email, roles);
+    }
+
+    Person createTestPerson(String username, String password, String firstName, String lastName, String email, Role... roles) {
+
+
+        final Optional<Person> personByUsername = personService.getPersonByUsername(username);
+        if (personByUsername.isPresent()) {
+            return personByUsername.get();
+        }
+
+        final List<Role> permissions = asList(roles);
+        final List<MailNotification> notifications = getNotificationsForRoles(permissions);
+
+        final Person person = personService.create(username, lastName, firstName, email, notifications, permissions);
+        person.setPassword(passwordEncoder.encode(password));
+
+        final Person savedPerson = personService.save(person);
+
+        final int currentYear = ZonedDateTime.now(UTC).getYear();
         workingTimeService.touch(
-                Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek(),
-                        WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()),
-                Optional.empty(), new DateMidnight(currentYear - 1, 1, 1), person);
+            asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
+            Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);
 
-        accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),
-                DateUtil.getLastDayOfYear(currentYear), new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
-                BigDecimal.ZERO, null);
+        final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(currentYear);
+        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(currentYear);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,
+            lastDayOfYear, new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
+            ZERO, null);
 
-        return person;
+        return savedPerson;
     }
 
-    List<MailNotification> getNotificationsForRoles(List<Role> roles) {
+    private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
         List<MailNotification> notifications = new ArrayList<>();
 
-        notifications.add(MailNotification.NOTIFICATION_USER);
+        notifications.add(NOTIFICATION_USER);
 
-        if (roles.contains(Role.DEPARTMENT_HEAD)) {
-            notifications.add(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
+        if (roles.contains(DEPARTMENT_HEAD)) {
+            notifications.add(NOTIFICATION_DEPARTMENT_HEAD);
         }
 
-        if (roles.contains(Role.SECOND_STAGE_AUTHORITY)) {
-            notifications.add(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY);
+        if (roles.contains(SECOND_STAGE_AUTHORITY)) {
+            notifications.add(NOTIFICATION_SECOND_STAGE_AUTHORITY);
         }
 
-        if (roles.contains(Role.BOSS)) {
-            notifications.add(MailNotification.NOTIFICATION_BOSS);
+        if (roles.contains(BOSS)) {
+            notifications.add(NOTIFICATION_BOSS_ALL);
         }
 
-        if (roles.contains(Role.OFFICE)) {
-            notifications.add(MailNotification.NOTIFICATION_OFFICE);
+        if (roles.contains(OFFICE)) {
+            notifications.add(NOTIFICATION_OFFICE);
+            notifications.add(OVERTIME_NOTIFICATION_OFFICE);
         }
 
         return notifications;

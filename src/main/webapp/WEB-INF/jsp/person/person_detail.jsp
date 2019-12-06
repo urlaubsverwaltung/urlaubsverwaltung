@@ -5,12 +5,15 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <head>
-    <uv:head/>
+    <title>
+        <spring:message code="person.details.header.title" arguments="${person.niceName}"/>
+    </title>
+    <uv:custom-head/>
 </head>
 
 <body>
@@ -38,15 +41,17 @@
                 <legend>
                     <spring:message code="person.details.masterData.title"/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/staff/${person.id}/edit" class="fa-action pull-right"
+                        <a href="${URL_PREFIX}/person/${person.id}/edit" class="fa-action pull-right" aria-hidden="true"
                            data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil"></i>
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
                 </legend>
                 <uv:person person="${person}"/>
                 <div class="box">
-                    <span class="box-icon bg-blue"><i class="fa fa-key"></i></span>
+                    <span class="box-icon bg-blue">
+                        <i class="fa fa-key" aria-hidden="true"></i>
+                    </span>
                     <span class="box-text">
                         <ul>
                             <c:forEach items="${person.permissions}" var="role">
@@ -60,7 +65,9 @@
 
                 <legend><spring:message code="person.details.departments.title"/></legend>
                 <div class="box">
-                    <span class="box-icon bg-blue"><i class="fa fa-group"></i></span>
+                    <span class="box-icon bg-blue">
+                        <i class="fa fa-group" aria-hidden="true"></i>
+                    </span>
                     <span class="box-text">
                         <c:choose>
                             <c:when test="${empty departments}">
@@ -81,12 +88,12 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <legend>
                     <spring:message code="person.details.annualVacation.title"/>
-                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff/${person.id}?year="/>
+                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/staff/${person.id}/account?year=${param.year}"
-                           class="fa-action pull-right"
+                        <a href="${URL_PREFIX}/person/${person.id}/account?year=${param.year}"
+                           class="fa-action pull-right" aria-hidden="true"
                            data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil"></i>
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
                 </legend>
@@ -95,14 +102,17 @@
                 <legend>
                     <spring:message code="person.details.workingTime.title"/>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/staff/${person.id}/workingtime" class="fa-action pull-right"
+                        <a href="${URL_PREFIX}/person/${person.id}/workingtime"
+                           class="fa-action pull-right" aria-hidden="true"
                            data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil"></i>
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
                 </legend>
                 <div class="box">
-                    <span class="box-icon bg-green"><i class="fa fa-clock-o"></i></span>
+                    <span class="box-icon bg-green">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                    </span>
                     <span class="box-text">
                             <c:choose>
                                 <c:when test="${workingTime != null}">
@@ -153,7 +163,9 @@
                     </span>
                 </div>
                 <div class="box">
-                    <span class="box-icon bg-green"><i class="fa fa-map"></i></span>
+                    <span class="box-icon bg-green">
+                        <i class="fa fa-map" aria-hidden="true"></i>
+                    </span>
                     <span class="box-text">
                         <spring:message code="person.details.workingTime.federalState"/>
                         <h5><spring:message code="federalState.${federalState}"/></h5>

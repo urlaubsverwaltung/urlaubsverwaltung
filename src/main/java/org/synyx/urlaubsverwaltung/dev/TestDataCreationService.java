@@ -1,231 +1,170 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.List;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.BOSS;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.OFFICE;
+import static org.synyx.urlaubsverwaltung.dev.TestUser.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 
-/**
- * @author Aljona Murygina - murygina@synyx.de
- */
-@Service
-@ConditionalOnProperty("testdata.create")
 public class TestDataCreationService {
 
-    private static final String PASSWORD = "secret";
     private static final String NO_PASSWORD = "";
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestDataCreationService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonDataProvider personDataProvider;
     private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
     private final SickNoteDataProvider sickNoteDataProvider;
-    private final SickNoteTypeService sickNoteTypeService;
-    private final VacationTypeService vacationTypeService;
     private final OvertimeRecordDataProvider overtimeRecordDataProvider;
     private final DepartmentDataProvider departmentDataProvider;
+    private final TestDataProperties testDataProperties;
 
-    private Person boss;
-    private Person office;
-
-    @Autowired
-    public TestDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider, SickNoteDataProvider sickNoteDataProvider, SickNoteTypeService sickNoteTypeService, VacationTypeService vacationTypeService, OvertimeRecordDataProvider overtimeRecordDataProvider, DepartmentDataProvider departmentDataProvider) {
+    public TestDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
+                                   SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
+                                   DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;
-        this.sickNoteTypeService = sickNoteTypeService;
-        this.vacationTypeService = vacationTypeService;
         this.overtimeRecordDataProvider = overtimeRecordDataProvider;
         this.departmentDataProvider = departmentDataProvider;
+        this.testDataProperties = testDataProperties;
     }
 
     @PostConstruct
-    public void createTestData() throws NoSuchAlgorithmException {
+    public void createTestData() {
 
-        LOG.info("STARTING CREATION OF TEST DATA --------------------------------------------------------------------");
+        LOG.info(">> TestData Creation (uv.development.testdata.create={})", testDataProperties.isCreate());
 
-        // Users to be able to sign in with
-        Person user = personDataProvider.createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller",
-            "user@firma.test", TestUser.USER.getRoles());
-        Person departmentHead = personDataProvider.createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD,
-            "Thorsten", "Krüger", "departmentHead@firma.test", TestUser.DEPARTMENT_HEAD.getRoles());
-        boss = personDataProvider.createTestPerson(TestUser.BOSS.getLogin(), PASSWORD, "Max", "Mustermann",
-            "boss@firma.test", TestUser.BOSS.getRoles());
-        office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
-            "office@firma.test", TestUser.OFFICE.getRoles());
+        if (personDataProvider.isPersonAlreadyCreated(TestUser.USER.getUsername())) {
+            LOG.info("-> Test data was already created. Abort.");
+            return;
+        }
 
-        Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
-            "Peter", "Huber", "secondStageAuthority@firma.test", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
+        LOG.info("-> Starting test data creation...");
+        // Users to be able to SIGN-IN with
+        final Person user = personDataProvider.createTestPerson(TestUser.USER, "Klaus", "Müller", "user@firma.test");
+        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@firma.test");
+        final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@firma.test");
+        final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@firma.test");
+        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@firma.test");
+        personDataProvider.createTestPerson(TestUser.ADMIN, "Senor", "Operation", "admin@firma.test");
 
         // Users
-        Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test",
-            Role.USER);
-        Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier",
-            "baier@firma.test", Role.USER);
-        Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider",
-            "schneider@firma.test", Role.USER);
-        Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel",
-            "haendel@firma.test", Role.USER);
-        Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt",
-            "schmidt@firma.test", Role.USER);
+        final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test", USER);
+        final Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier", "baier@firma.test", USER);
+        final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider", "schneider@firma.test", USER);
+        final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel", "haendel@firma.test", USER);
+        final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt", "schmidt@firma.test", USER);
 
-        personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@firma.test",
-            Role.INACTIVE);
+        personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@firma.test", INACTIVE);
 
         // Departments
-        departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
-            asList(hans, brigitte, departmentHead, manager), singletonList(departmentHead), singletonList(manager));
-        departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln",
-            asList(user, niko, departmentHead), emptyList(), emptyList());
-        departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
-            asList(guenther, elena), emptyList(), emptyList());
-        departmentDataProvider.createTestDepartment("Geschäftsführung",
-            "Das sind die, die so Geschäftsführung Sachen machen", asList(boss, office), emptyList(),
-            emptyList());
+        final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);
+        final List<Person> adminDepartmentHeads = singletonList(departmentHead);
+        final List<Person> adminSecondStageAuthorities = singletonList(secondStageAuthority);
+        departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen", adminDepartmentUser, adminDepartmentHeads, adminSecondStageAuthorities);
+
+        final List<Person> developmentMembers = asList(user, niko, departmentHead);
+        departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln", developmentMembers, emptyList(), emptyList());
+
+        final List<Person> marketingMembers = asList(guenther, elena);
+        departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen", marketingMembers, emptyList(), emptyList());
+
+        final List<Person> bossMembers = asList(boss, office);
+        departmentDataProvider.createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen", bossMembers, emptyList(), emptyList());
 
         // Applications for leave and sick notes
-        createTestData(user);
-        createTestData(boss);
-        createTestData(office);
-        createTestData(hans);
-        createTestData(niko);
-        createTestData(manager);
+        createTestData(user, boss, office);
+        createTestData(boss, boss, office);
+        createTestData(office, boss, office);
+        createTestData(hans, boss, office);
+        createTestData(niko, boss, office);
+        createTestData(secondStageAuthority, boss, office);
 
-        LOG.info("DONE CREATION OF TEST DATA ------------------------------------------------------------------------");
+        LOG.info("-> Test data was created");
     }
 
 
-    private void createTestData(Person person) {
+    private void createTestData(Person person, Person boss, Person office) {
 
-        createApplicationsForLeave(person, null);
-        createSickNotes(person);
+        createApplicationsForLeave(person, boss, office);
+        createSickNotes(person, office);
         createOvertimeRecords(person);
     }
 
 
-    private void createApplicationsForLeave(Person person, Person headOf) {
+    private void createApplicationsForLeave(Person person, Person boss, Person office) {
 
-        DateMidnight now = DateMidnight.now();
-
-        VacationType holiday = null;
-        VacationType overtime = null;
-        VacationType specialLeave = null;
-
-        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
-
-        for (VacationType vacationType : vacationTypes) {
-            if (vacationType.isOfCategory(VacationCategory.HOLIDAY)) {
-                holiday = vacationType;
-            }
-
-            if (vacationType.isOfCategory(VacationCategory.OVERTIME)) {
-                overtime = vacationType;
-            }
-
-            if (vacationType.isOfCategory(VacationCategory.SPECIALLEAVE)) {
-                specialLeave = vacationType;
-            }
-        }
+        final LocalDate now = LocalDate.now(UTC);
 
         // FUTURE APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createWaitingApplication(person, holiday, DayLength.FULL, now.plusDays(10), // NOSONAR
-            now.plusDays(16)); // NOSONAR
-        applicationForLeaveDataProvider.createWaitingApplication(person, overtime, DayLength.FULL, now.plusDays(1), // NOSONAR
-            now.plusDays(1)); // NOSONAR
-        applicationForLeaveDataProvider.createWaitingApplication(person, specialLeave, DayLength.FULL, now.plusDays(4), // NOSONAR
-            now.plusDays(6)); // NOSONAR
+        applicationForLeaveDataProvider.createWaitingApplication(person, HOLIDAY, FULL, now.plusDays(10), now.plusDays(16));
+        applicationForLeaveDataProvider.createWaitingApplication(person, OVERTIME, FULL, now.plusDays(1), now.plusDays(1));
+        applicationForLeaveDataProvider.createWaitingApplication(person, SPECIALLEAVE, FULL, now.plusDays(4), now.plusDays(6));
 
         // PAST APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, holiday, DayLength.FULL,
-            now.minusDays(20), now.minusDays(13)); // NOSONAR
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, holiday, DayLength.MORNING,
-            now.minusDays(5), now.minusDays(5)); // NOSONAR
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, specialLeave, DayLength.MORNING,
-            now.minusDays(9), // NOSONAR
-            now.minusDays(9)); // NOSONAR
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, FULL, now.minusDays(20), now.minusDays(13));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(5), now.minusDays(5));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, SPECIALLEAVE, MORNING, now.minusDays(9), now.minusDays(9));
 
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, holiday, DayLength.FULL,
-            now.minusDays(33), now.minusDays(30)); // NOSONAR
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, FULL, now.minusDays(33), now.minusDays(30));
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(32), now.minusDays(32));
 
-        applicationForLeaveDataProvider.createCancelledApplication(person, office, holiday, DayLength.FULL,
-            now.minusDays(11), now.minusDays(10)); // NOSONAR
-
-        if ("hdampf".equals(person.getLoginName()) && headOf != null) {
-            applicationForLeaveDataProvider.createPremilinaryAllowedApplication(person, headOf, holiday, DayLength.FULL,
-                now.plusDays(5), now.plusDays(8)); // NOSONAR
-        }
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, FULL, now.minusDays(11), now.minusDays(10));
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, NOON, now.minusDays(12), now.minusDays(12));
     }
 
 
-    private void createSickNotes(Person person) {
+    private void createSickNotes(Person person, Person office) {
 
-        DateMidnight now = DateMidnight.now();
-
-        SickNoteType sickNoteTypeStandard = null;
-        SickNoteType sickNoteTypeChild = null;
-        List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
-
-        for (SickNoteType sickNoteType : sickNoteTypes) {
-            if (sickNoteType.isOfCategory(SickNoteCategory.SICK_NOTE)) {
-                sickNoteTypeStandard = sickNoteType;
-            }
-
-            if (sickNoteType.isOfCategory(SickNoteCategory.SICK_NOTE_CHILD)) {
-                sickNoteTypeChild = sickNoteType;
-            }
-        }
+        final LocalDate now = LocalDate.now(UTC);
 
         // SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, DayLength.NOON, now.minusDays(10), now.minusDays(10), // NOSONAR
-            sickNoteTypeStandard, false);
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(2), now.minusDays(2), // NOSONAR
-            sickNoteTypeStandard, false);
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(30), now.minusDays(25), // NOSONAR
-            sickNoteTypeStandard, true);
+        sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), SICK_NOTE, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(2), now.minusDays(2), SICK_NOTE, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(30), now.minusDays(25), SICK_NOTE, true);
 
         // CHILD SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(40), now.minusDays(38), // NOSONAR
-            sickNoteTypeChild, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), SICK_NOTE_CHILD, false);
     }
 
 
     private void createOvertimeRecords(Person person) {
 
-        DateMidnight now = DateMidnight.now();
+        final LocalDate now = LocalDate.now(UTC);
 
-        DateMidnight lastWeek = now.minusWeeks(1);
-        DateMidnight weekBeforeLast = now.minusWeeks(2);
-        DateMidnight lastYear = now.minusYears(1);
+        final LocalDate lastWeek = now.minusWeeks(1);
+        final LocalDate weekBeforeLast = now.minusWeeks(2);
+        final LocalDate lastYear = now.minusYears(1);
 
-        overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.withDayOfWeek(DateTimeConstants.MONDAY),
-            lastWeek.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("2.5")); // NOSONAR
-
-        overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.withDayOfWeek(DateTimeConstants.MONDAY),
-            weekBeforeLast.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("3")); // NOSONAR
-
-        overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.withDayOfWeek(DateTimeConstants.MONDAY),
-            lastYear.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("4")); // NOSONAR
+        overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.with(MONDAY), lastWeek.with(FRIDAY), new BigDecimal("2.5"));
+        overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.with(MONDAY), weekBeforeLast.with(FRIDAY), new BigDecimal("3"));
+        overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.with(MONDAY), lastYear.with(FRIDAY), new BigDecimal("4"));
     }
 }

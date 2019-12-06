@@ -1,21 +1,23 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <head>
-    <uv:head/>
-
+    <title>
+        <spring:message code="departments.header.title"/>
+    </title>
+    <uv:custom-head/>
+    <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
+    <script defer src="<asset:url value='department_list.js' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>
-
 </head>
 
 <body>
@@ -39,7 +41,7 @@
                     <sec:authorize access="hasAuthority('OFFICE')">
                         <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
                            data-title="<spring:message code="action.department.create"/>">
-                            <i class="fa fa-fw fa-plus-circle"></i>
+                            <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
                 </legend>
@@ -67,31 +69,20 @@
                     </c:choose>
                 </div>
 
-                <script type="text/javascript">
-                    $(document).ready(function () {
-
-                        $("table.sortable").tablesorter({
-                            sortList: [[0, 0]]
-                        });
-
-                    });
-                </script>
-
-
                 <c:choose>
                     <c:when test="${empty departments}">
                         <spring:message code="departments.none"/>
                     </c:when>
                     <c:otherwise>
-                        <table cellspacing="0" class="list-table sortable tablesorter">
+                        <table class="list-table sortable tablesorter">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
-                                <th class="sortable-field"><spring:message code="department.data.name"/></th>
-                                <th class="sortable-field"><spring:message code="department.members"/></th>
-                                <th class="sortable-field"><spring:message
+                                <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>
+                                <th scope="col" class="sortable-field"><spring:message code="department.members"/></th>
+                                <th scope="col" class="sortable-field"><spring:message
                                     code='department.data.lastModification'/></th>
                                 <sec:authorize access="hasAuthority('OFFICE')">
-                                    <th><%-- placeholder to ensure correct number of th --%></th>
+                                    <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
                                 </sec:authorize>
                             </tr>
                             </thead>
@@ -108,7 +99,8 @@
                                                      title="<spring:message code='department.data.info'/>"
                                                      data-content="${department.description}">
                                                     <c:out value="${department.name}"/>
-                                                    <i class="fa fa-fw fa-info-circle hidden-print"></i>
+                                                    <i class="fa fa-fw fa-info-circle hidden-print"
+                                                       aria-hidden="true"></i>
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
@@ -117,11 +109,13 @@
                                         </c:choose>
                                     </td>
                                     <td class="hidden-xs">
-                                        <c:out value="${fn:length(department.members)}"/> <spring:message
-                                        code="department.members"/>
+                                        <a href="${URL_PREFIX}/person?active=true&department=${department.id}">
+                                            <c:out value="${fn:length(department.members)}"/>
+                                            <spring:message code="department.members"/>
+                                        </a>
                                     </td>
                                     <td class="hidden-xs">
-                                        <uv:dateTime dateTime="${department.lastModification}"/>
+                                        <uv:date date="${department.lastModification}"/>
                                     </td>
                                     <sec:authorize access="hasAuthority('OFFICE')">
                                         <td>
@@ -133,7 +127,8 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal"
-                                                                        aria-hidden="true"><i class="fa fa-remove"></i>
+                                                                        aria-hidden="true"><i class="fa fa-remove"
+                                                                                              aria-hidden="true"></i>
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
                                                                     <spring:message
@@ -160,13 +155,13 @@
                                                href="#modal-cancel-${department.id}"
                                                data-toggle="modal"
                                                data-title="<spring:message code='action.department.delete' />">
-                                                <i class="fa fa-fw fa-trash"></i>
+                                                <i class="fa fa-fw fa-trash" aria-hidden="true"></i>
                                             </a>
 
                                             <a class="fa-action pull-right"
                                                href="${URL_PREFIX}/department/${department.id}/edit"
                                                data-title="<spring:message code="action.edit" />">
-                                                <i class="fa fa-fw fa-pencil"></i>
+                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
                                             </a>
                                         </td>
                                     </sec:authorize>

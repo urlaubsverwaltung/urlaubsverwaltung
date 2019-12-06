@@ -1,12 +1,12 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec"
           uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <sec:authorize access="hasAuthority('USER')">
     <c:set var="IS_USER" value="${true}"/>
@@ -23,11 +23,16 @@
 <c:set var="IS_ALLOWED" value="${IS_USER || IS_BOSS || IS_DEPARTMENT_HEAD || IS_OFFICE }"/>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <head>
-    <uv:head/>
-    <%@include file="include/app-detail-elements/vacation_overview_js.jsp" %>
+    <title>
+        <spring:message code="overview.vacationOverview.header.title"/>
+    </title>
+    <uv:custom-head/>
+    <link rel="stylesheet" href="<asset:url value='vacation_overview.css' />" />
+    <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
+    <script defer src="<asset:url value='vacation_overview.js' />"></script>
 </head>
 
 <body>
@@ -86,7 +91,7 @@
                                     <c:if test="${currentMonth == i }">
                                         <option value="${i}" selected="${i}">
                                             <spring:eval
-                                                expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)"
+                                                expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)"
                                                 var="month"/>
                                             <c:out value="${month}"/>
                                         </option>
@@ -94,7 +99,7 @@
                                     <c:if test="${currentMonth != i }">
                                         <option value="${i}">
                                             <spring:eval
-                                                expression="T(org.synyx.urlaubsverwaltung.core.util.DateUtil).getMonthName(i)"
+                                                expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)"
                                                 var="month"/>
                                             <c:out value="${month}"/>
                                         </option>

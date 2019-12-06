@@ -1,37 +1,38 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MAY;
+import static java.time.ZoneOffset.UTC;
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
+
 public class FilterPeriodTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfInitializedWithNullStartDate() {
 
-        new FilterPeriod(null, DateMidnight.now());
+        new FilterPeriod(null, LocalDate.now(UTC));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfInitializedWithNullEndDate() {
 
-        new FilterPeriod(DateMidnight.now(), null);
+        new FilterPeriod(LocalDate.now(UTC), null);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfInitializedWithEndDateThatIsBeforeStartDate() {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         new FilterPeriod(now, now.minusDays(1));
     }
@@ -40,8 +41,8 @@ public class FilterPeriodTest {
     @Test
     public void ensureCanBeInitializedWithStartAndEndDate() {
 
-        DateMidnight now = DateMidnight.now();
-        DateMidnight later = now.plusDays(2);
+        LocalDate now = LocalDate.now(UTC);
+        LocalDate later = now.plusDays(2);
 
         FilterPeriod period = new FilterPeriod(now, later);
 
@@ -56,7 +57,7 @@ public class FilterPeriodTest {
     @Test
     public void ensureCanBeInitializedWithSameStartAndEndDate() {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         FilterPeriod period = new FilterPeriod(now, now);
 
@@ -71,16 +72,16 @@ public class FilterPeriodTest {
     @Test
     public void ensureHasDefaultStartAndEndDateIfInitializedWithoutStartAndEndDate() {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         FilterPeriod period = new FilterPeriod();
 
         Assert.assertNotNull("Start date should not be null", period.getStartDate());
-        Assert.assertEquals("Wrong start date", new DateMidnight(now.getYear(), DateTimeConstants.JANUARY, 1),
+        Assert.assertEquals("Wrong start date", LocalDate.of(now.getYear(), JANUARY, 1),
             period.getStartDate());
 
         Assert.assertNotNull("End date should not be null", period.getEndDate());
-        Assert.assertEquals("Wrong end date", new DateMidnight(now.getYear(), DateTimeConstants.DECEMBER, 31),
+        Assert.assertEquals("Wrong end date", LocalDate.of(now.getYear(), DECEMBER, 31),
             period.getEndDate());
     }
 
@@ -88,8 +89,8 @@ public class FilterPeriodTest {
     @Test
     public void ensureReturnsCorrectStringRepresentationOfDates() {
 
-        DateMidnight startDate = new DateMidnight(2015, 12, 13);
-        DateMidnight endDate = new DateMidnight(2016, 1, 6);
+        LocalDate startDate = LocalDate.of(2015, 12, 13);
+        LocalDate endDate = LocalDate.of(2016, 1, 6);
 
         FilterPeriod period = new FilterPeriod(startDate, endDate);
 
@@ -125,8 +126,8 @@ public class FilterPeriodTest {
     @Test
     public void ensureDatesCanBeParsedFromString() {
 
-        DateMidnight startDate = new DateMidnight(2015, DateTimeConstants.MAY, 19);
-        DateMidnight endDate = new DateMidnight(2015, DateTimeConstants.DECEMBER, 21);
+        LocalDate startDate = LocalDate.of(2015, MAY, 19);
+        LocalDate endDate = LocalDate.of(2015, DECEMBER, 21);
 
         FilterPeriod period = new FilterPeriod(Optional.of("19.05.2015"), Optional.of("21.12.2015"));
 
@@ -141,16 +142,16 @@ public class FilterPeriodTest {
     @Test
     public void ensureDefaultDatesForEmptyStrings() {
 
-        DateMidnight now = DateMidnight.now();
+        LocalDate now = LocalDate.now(UTC);
 
         FilterPeriod period = new FilterPeriod(Optional.empty(), Optional.empty());
 
         Assert.assertNotNull("Start date should not be null", period.getStartDate());
-        Assert.assertEquals("Wrong start date", new DateMidnight(now.getYear(), DateTimeConstants.JANUARY, 1),
+        Assert.assertEquals("Wrong start date", LocalDate.of(now.getYear(), JANUARY, 1),
             period.getStartDate());
 
         Assert.assertNotNull("End date should not be null", period.getEndDate());
-        Assert.assertEquals("Wrong end date", new DateMidnight(now.getYear(), DateTimeConstants.DECEMBER, 31),
+        Assert.assertEquals("Wrong end date", LocalDate.of(now.getYear(), DECEMBER, 31),
             period.getEndDate());
     }
 

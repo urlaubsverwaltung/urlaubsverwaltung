@@ -4,9 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-/**
- * @author  Aljona Murygina - murygina@synyx.de
- */
 public class AbstractNoResultFoundExceptionTest {
 
     @Test

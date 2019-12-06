@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Customize default Spring Boot error page.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 public class ErrorController extends BasicErrorController {

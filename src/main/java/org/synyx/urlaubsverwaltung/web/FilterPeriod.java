@@ -1,35 +1,36 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.core.util.DateFormat;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.util.DateFormat;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
  * Represents a period of time to filter requests by.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class FilterPeriod {
 
-    private DateMidnight startDate;
-    private DateMidnight endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     public FilterPeriod() {
 
-        int currentYear = DateMidnight.now().getYear();
+        int currentYear = ZonedDateTime.now(UTC).getYear();
 
         this.startDate = DateUtil.getFirstDayOfYear(currentYear);
         this.endDate = DateUtil.getLastDayOfYear(currentYear);
     }
 
 
-    public FilterPeriod(DateMidnight startDate, DateMidnight endDate) {
+    public FilterPeriod(LocalDate startDate, LocalDate endDate) {
 
         Assert.notNull(startDate, "Start date must be given");
         Assert.notNull(endDate, "End date must be given");
@@ -46,38 +47,41 @@ public class FilterPeriod {
         Assert.notNull(endDateAsString, "End date must be given");
 
         // Set default values for dates
-        int currentYear = DateMidnight.now().getYear();
+        int currentYear = ZonedDateTime.now(UTC).getYear();
         this.startDate = DateUtil.getFirstDayOfYear(currentYear);
         this.endDate = DateUtil.getLastDayOfYear(currentYear);
 
         // Override default values with parsed dates
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-
-        startDateAsString.ifPresent(startDateString -> this.startDate = DateMidnight.parse(startDateString, formatter));
-        endDateAsString.ifPresent(endDateString -> this.endDate = DateMidnight.parse(endDateString, formatter));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
+        try {
+            startDateAsString.ifPresent(startDateString -> this.startDate = LocalDate.parse(startDateString, formatter));
+            endDateAsString.ifPresent(endDateString -> this.endDate = LocalDate.parse(endDateString, formatter));
+        } catch (DateTimeParseException exception) {
+            throw new IllegalArgumentException(exception.getMessage());
+        }
 
         Assert.isTrue(endDate.isAfter(startDate) || endDate.isEqual(startDate), "Start date must be before end date");
     }
 
-    public DateMidnight getStartDate() {
+    public LocalDate getStartDate() {
 
         return startDate;
     }
 
 
-    public DateMidnight getEndDate() {
+    public LocalDate getEndDate() {
 
         return endDate;
     }
 
 
-    public void setStartDate(DateMidnight startDate) {
+    public void setStartDate(LocalDate startDate) {
 
         this.startDate = startDate;
     }
 
 
-    public void setEndDate(DateMidnight endDate) {
+    public void setEndDate(LocalDate endDate) {
 
         this.endDate = endDate;
     }
@@ -85,12 +89,20 @@ public class FilterPeriod {
 
     public String getStartDateAsString() {
 
-        return getStartDate().toString(DateFormat.PATTERN);
+        return getStartDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN));
     }
 
 
     public String getEndDateAsString() {
 
-        return getEndDate().toString(DateFormat.PATTERN);
+        return getEndDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN));
+    }
+
+    @Override
+    public String toString() {
+        return "FilterPeriod{" +
+            "startDate=" + startDate +
+            ", endDate=" + endDate +
+            '}';
     }
 }

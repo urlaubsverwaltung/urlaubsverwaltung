@@ -5,6 +5,7 @@ something, or simply want to hack on the code this document should help you get 
 
 
 ## Using GitHub Issues
+
 We use GitHub issues to track bugs and enhancements.
 
 If you are reporting a bug, please help to speed up problem diagnosis by providing as much
@@ -14,11 +15,14 @@ Please look for other issues or pull requests which already work on this topic. 
 
 Have you already checked the [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki)?
 
+
 ## Reporting Security Vulnerabilities
+
 If you think you have found a security vulnerability in the Urlaubsverwaltung please *DO NOT*
 disclose it publicly until we've had a chance to fix it. Please *don't report security
 vulnerabilities using GitHub issues*, instead head over to urlaubsverwaltung@synyx.de and
 learn how to disclose them responsibly.
+
 
 ## Pull Request Contribution
 
@@ -49,7 +53,7 @@ automatically use our EditorConfig.
 
 ### Building from Source
 The Urlaubsverwaltungs source can be build from the command line using
-[Apache Maven](http://maven.apache.org/run-maven/index.html) on JDK 1.8 or above.
+[Apache Maven](http://maven.apache.org/run-maven/index.html) on JDK 11 or above.
 We include '`Maven Wrapper`' scripts (`./mvnw` or `mvnw.bat`) that you can run rather
 than needing to install Maven locally.
 

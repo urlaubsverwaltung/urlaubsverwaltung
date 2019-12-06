@@ -1,17 +1,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
+<c:if test="${action == 'cancel'}">
 <script type="text/javascript">
-    $(document).ready(function () {
-        <c:if test="${action == 'cancel'}">
+    document.addEventListener('DOMContentLoaded', function() {
         $("#cancel").show();
-        </c:if>
-    });
+    })
 </script>
+</c:if>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 

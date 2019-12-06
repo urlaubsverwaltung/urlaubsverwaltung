@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.util.StringUtils;
@@ -12,8 +11,6 @@ import java.util.Locale;
 
 /**
  * Converts a string to decimal number and vice versa.
- *
- * @author  Aljona Murygina
  */
 public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
 

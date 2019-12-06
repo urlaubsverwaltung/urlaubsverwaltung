@@ -1,16 +1,18 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <head>
-    <uv:head/>
+    <title>
+        <spring:message code="sicknotes.statistics.header.title" arguments="${statistics.year}"/>
+    </title>
+    <uv:custom-head/>
 </head>
 
 <body>
@@ -42,7 +44,7 @@
 
                     <thead>
                     <tr>
-                        <th colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
+                        <th scope="col" colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
                             date="${statistics.created}"/></th>
                     </tr>
                     </thead>
@@ -66,7 +68,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <spring:message code="sicknotes.statistics.staffWithSickNotes"/>
+                            <spring:message code="sicknotes.statistics.personWithSickNotes"/>
                         </td>
                         <td>
                             <c:out value="${statistics.numberOfPersonsWithMinimumOneSickNote}"/>

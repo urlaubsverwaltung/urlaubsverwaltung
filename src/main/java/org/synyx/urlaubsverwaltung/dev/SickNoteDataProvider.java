@@ -1,47 +1,45 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.joda.time.DateMidnight;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
 
 /**
  * Provides sick note test data.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
-@Component
-@ConditionalOnProperty("testdata.create")
 class SickNoteDataProvider {
 
     private final SickNoteInteractionService sickNoteInteractionService;
     private final DurationChecker durationChecker;
+    private final SickNoteTypeService sickNoteTypeService;
 
-    @Autowired
-    SickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker) {
+    SickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker, SickNoteTypeService sickNoteTypeService) {
 
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.durationChecker = durationChecker;
+        this.sickNoteTypeService = sickNoteTypeService;
     }
 
-    SickNote createSickNote(Person person, Person office, DayLength dayLength, DateMidnight startDate,
-        DateMidnight endDate, SickNoteType type, boolean withAUB) {
-
-        SickNote sickNote = null;
-
+    void createSickNote(Person person, Person office, DayLength dayLength, LocalDate startDate, LocalDate endDate, SickNoteCategory sickNoteCategory, boolean withAUB) {
         if (durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
-            sickNote = new SickNote();
+
+            final SickNoteType type = getSickNoteType(sickNoteCategory);
+
+            final SickNote sickNote = new SickNote();
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
             sickNote.setEndDate(endDate);
-            sickNote.setStatus(SickNoteStatus.ACTIVE);
+            sickNote.setStatus(ACTIVE);
             sickNote.setSickNoteType(type);
             sickNote.setDayLength(dayLength);
 
@@ -50,9 +48,19 @@ class SickNoteDataProvider {
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNote = sickNoteInteractionService.create(sickNote, office);
+            sickNoteInteractionService.create(sickNote, office);
         }
+    }
 
-        return sickNote;
+    private SickNoteType getSickNoteType(SickNoteCategory sickNoteCategory) {
+
+        SickNoteType type = null;
+        final List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
+        for (SickNoteType sickNoteType : sickNoteTypes) {
+            if (sickNoteType.isOfCategory(sickNoteCategory)) {
+                type = sickNoteType;
+            }
+        }
+        return type;
     }
 }

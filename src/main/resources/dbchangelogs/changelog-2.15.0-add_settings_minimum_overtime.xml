@@ -1,21 +1,21 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="sommer" id="add_settings_minimum_overtime">
+  <changeSet author="sommer" id="add_settings_minimum_overtime">
 
-        <preConditions>
-            <tableExists tableName="Settings"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Settings"/>
+    </preConditions>
 
-        <addColumn tableName="Settings">
-            <column name="overtime_active" type="BIT(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="overtime_minimum" type="INT(10)" valueNumeric="100"/>
-        </addColumn>
+    <addColumn tableName="Settings">
+      <column name="overtime_active" type="BIT(1)" defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+      <column name="overtime_minimum" type="INT(10)" valueNumeric="100"/>
+    </addColumn>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

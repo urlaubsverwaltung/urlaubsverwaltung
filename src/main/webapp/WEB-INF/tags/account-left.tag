@@ -1,13 +1,15 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<%@attribute name="account" type="org.synyx.urlaubsverwaltung.core.account.domain.Account" required="true" %>
-<%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft"
+<%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.domain.Account" required="true" %>
+<%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft"
              required="true" %>
 <%@attribute name="beforeApril" type="java.lang.Boolean" required="true" %>
 
 <div class="box">
-    <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
+    <span class="box-icon bg-green">
+        <i class="fa fa-bar-chart" aria-hidden="true"></i>
+    </span>
     <span class="box-text">
         <c:choose>
             <c:when test="${account != null}">
@@ -25,7 +27,8 @@
                 <c:choose>
                     <c:when test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
                         <br/>
-                        <b><spring:message code="person.account.vacation.left.alreadyUsedNextYear" arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" /></b>
+                        <spring:message code="person.account.vacation.left.alreadyUsedNextYear"
+                                           arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" />
                     </c:when>
                 </c:choose>
             </c:when>

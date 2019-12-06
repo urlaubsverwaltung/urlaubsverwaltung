@@ -2,13 +2,17 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 <head>
-    <uv:head/>
+    <title>
+        <spring:message code="sicknote.convert.title"/>
+    </title>
+    <uv:custom-head/>
+    <script defer src="<asset:url value='sick_note_convert.js' />"></script>
 </head>
 <body>
 
@@ -35,7 +39,7 @@
                     <div class="form-group">
                         <form:hidden path="person" value="${sickNoteConvertForm.person.id}"/>
                         <label class="control-label col-sm-12 col-md-4">
-                            <spring:message code='sicknote.data.staff'/>:
+                            <spring:message code='sicknote.data.person'/>:
                         </label>
 
                         <div class="col-md-7">
@@ -106,10 +110,10 @@
                     <span class="box-icon bg-red">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
-                                <i class="fa fa-child"></i>
+                                <i class="fa fa-child" aria-hidden="true"></i>
                             </c:when>
                             <c:otherwise>
-                                <i class="fa fa-medkit"></i>
+                                <i class="fa fa-medkit" aria-hidden="true"></i>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -173,12 +177,12 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${sickNote.aubPresent}">
-                                        <i class="fa fa-check hidden-print"></i>
+                                        <i class="fa fa-check hidden-print" aria-hidden="true"></i>
                                         <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
                                         date="${sickNote.aubEndDate}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <i class="fa fa-remove hidden-print"></i>
+                                        <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
                                         <spring:message code="sicknote.data.aub.notPresent"/>
                                     </c:otherwise>
                                 </c:choose>

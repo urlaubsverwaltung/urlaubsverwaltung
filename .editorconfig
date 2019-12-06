@@ -11,8 +11,14 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 
+[.eslintrc]
+indent_size = 2
+
 [*.{html,js,css,json,svg,xml,yml,yaml}]
 indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+
+[assets-manifest.json]
+insert_final_newline = false

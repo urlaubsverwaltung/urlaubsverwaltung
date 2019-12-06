@@ -1,0 +1,67 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: urlaubsverwaltung-mariadb
+  labels:
+    app: urlaubsverwaltung-mariadb
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: urlaubsverwaltung-mariadb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: urlaubsverwaltung-mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: urlaubsverwaltung-mariadb
+  template:
+    metadata:
+      labels:
+        app: urlaubsverwaltung-mariadb
+    spec:
+      containers:
+        - name: urlaubsverwaltung-mariadb
+          image: mariadb:10.4
+          ports:
+            - containerPort: 3306
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "/usr/bin/mysql --user=$MYSQL_USER --password=$MYSQL_PASSWORD --execute \"SHOW DATABASES;\""]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "/usr/bin/mysql --user=$MYSQL_USER --password=$MYSQL_PASSWORD --execute \"SHOW DATABASES;\""]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 5
+          env:
+            - name: MYSQL_RANDOM_ROOT_PASSWORD
+              value: "yes"
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: urlaubsverwaltung-mariadb
+                  key: databaseUser
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: urlaubsverwaltung-mariadb
+                  key: databasePassword
+            - name: MYSQL_DATABASE
+              value: "urlaubsverwaltung"
+          volumeMounts:
+            - name: urlaubsverwaltung-mariadb-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: urlaubsverwaltung-mariadb-data
+          persistentVolumeClaim:
+            claimName: urlaubsverwaltung-mariadb

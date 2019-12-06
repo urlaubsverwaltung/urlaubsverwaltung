@@ -1,19 +1,19 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="add_index_for_workingTime">
+  <changeSet author="murygina" id="add_index_for_workingTime">
 
-        <preConditions>
-            <tableExists tableName="WorkingTime"/>
-            <columnExists tableName="WorkingTime" columnName="person_id"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="WorkingTime"/>
+      <columnExists tableName="WorkingTime" columnName="person_id"/>
+    </preConditions>
 
-        <createIndex tableName="WorkingTime" indexName="Index_WorkingTime_person">
-            <column name="person_id"/>
-        </createIndex>
+    <createIndex tableName="WorkingTime" indexName="Index_WorkingTime_person">
+      <column name="person_id"/>
+    </createIndex>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

@@ -1,0 +1,18 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="Tobias Schneider" id="add-unique-constraint-year-and-person-id-to-account">
+
+    <preConditions>
+      <tableExists tableName="Account"/>
+    </preConditions>
+
+    <addUniqueConstraint tableName="Account"
+                         columnNames="validFrom, person_id"
+                         constraintName="unique_account_by_valid-from_and_person"/>
+
+  </changeSet>
+
+</databaseChangeLog>

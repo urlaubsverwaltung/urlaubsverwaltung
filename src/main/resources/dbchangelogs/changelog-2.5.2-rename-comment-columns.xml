@@ -1,19 +1,19 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="rename_columns_of_comment_table">
+  <changeSet author="murygina" id="rename_columns_of_comment_table">
 
-        <preConditions>
-            <tableExists tableName="Comment"/>
-            <columnExists tableName="Comment" columnName="dateOfComment"/>
-            <columnExists tableName="Comment" columnName="reason"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Comment"/>
+      <columnExists tableName="Comment" columnName="dateOfComment"/>
+      <columnExists tableName="Comment" columnName="reason"/>
+    </preConditions>
 
-        <renameColumn tableName="Comment" oldColumnName="dateOfComment" newColumnName="date" columnDataType="date"/>
-        <renameColumn tableName="Comment" oldColumnName="reason" newColumnName="text" columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="Comment" oldColumnName="dateOfComment" newColumnName="date" columnDataType="date"/>
+    <renameColumn tableName="Comment" oldColumnName="reason" newColumnName="text" columnDataType="VARCHAR(255)"/>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

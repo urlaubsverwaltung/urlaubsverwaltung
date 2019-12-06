@@ -1,17 +1,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<c:if test="${action == 'allow'}">
 <script type="text/javascript">
-    $(document).ready(function () {
-        <c:if test="${action == 'allow'}">
+    document.addEventListener('DOMContentLoaded', function() {
         $("#allow").show();
-        </c:if>
-    });
+    })
 </script>
+</c:if>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 

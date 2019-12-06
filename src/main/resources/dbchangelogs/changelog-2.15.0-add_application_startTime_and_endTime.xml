@@ -1,19 +1,19 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="sommer" id="add_application_startTime_and_endTime">
+  <changeSet author="sommer" id="add_application_startTime_and_endTime">
 
-        <preConditions>
-            <tableExists tableName="Application"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Application"/>
+    </preConditions>
 
-        <addColumn tableName="Application">
-            <column name="startTime" type="TIME"/>
-            <column name="endTime" type="TIME"/>
-        </addColumn>
+    <addColumn tableName="Application">
+      <column name="startTime" type="TIME"/>
+      <column name="endTime" type="TIME"/>
+    </addColumn>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

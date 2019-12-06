@@ -1,7 +1,7 @@
 apiVersion: v1
 name: urlaubsverwaltung
 version: 0.1.0
-appVersion: 2.35.0
+appVersion: 3.0.0
 description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
 keywords:
   - urlaub
@@ -11,3 +11,5 @@ sources:
 maintainers:
   - name: Johannes Graf
     email: graf@synyx.de
+  - name: Tobias Schneider
+    email: schneider@synyx.de

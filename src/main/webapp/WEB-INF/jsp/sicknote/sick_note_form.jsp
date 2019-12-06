@@ -3,67 +3,52 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 <head>
-    <uv:head/>
-
-    <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            var person = '${param.person}';
-            $("#employee").val(person);
-
-            <%-- DATEPICKER --%>
-
-            var datepickerLocale = "${pageContext.response.locale.language}";
-            var urlPrefix = "<spring:url value='/api' />";
-
-            <c:choose>
-            <c:when test="${sickNote.id == null}">
-            var getPersonId = function () {
-                return $("#employee option:selected").val();
-            };
-            </c:when>
-            <c:otherwise>
-            var getPersonId = function () {
-                var personId = "<c:out value="${sickNote.person.id}" />";
-                return personId;
-            };
-            </c:otherwise>
-            </c:choose>
-
-            var onSelect = function (selectedDate) {
-                if (this.id == "from" && $("#to").val() === "") {
-                    $("#to").datepicker("setDate", selectedDate);
-                }
-            };
-
-            var onSelectAUB = function (selectedDate) {
-                if (this.id == "aubFrom" && $("#aubTo").val() === "") {
-                    $("#aubTo").datepicker("setDate", selectedDate);
-                }
-            };
-
-            createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
-            createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
-
-            <%-- DATEPICKER END --%>
-
-        });
-
+    <c:choose>
+        <c:when test="${sickNote.id == null}">
+            <spring:message code="sicknote.create.header.title"/>
+        </c:when>
+        <c:otherwise>
+            <spring:message code="sicknote.edit.header.title"/>
+        </c:otherwise>
+    </c:choose>
+    <uv:custom-head/>
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        window.uv.sickNote = {};
+        window.uv.sickNote.id = "<c:out value="${sickNote.id}" />";
+        window.uv.sickNote.person = {};
+        window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
+        window.uv.params = {};
+        window.uv.params.person = "${param.person}";
     </script>
-
+    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />" />
+    <script defer src="<asset:url value='npm.date-fns.js' />"></script>
+    <script defer src="<asset:url value='date-fns-localized.js' />"></script>
+    <script defer src="<asset:url value='npm.jquery-ui.js' />"></script>
+    <script defer src="<asset:url value='npm.jquery-ui-themes.js' />"></script>
+    <script defer src="<asset:url value='app_form~overtime_form~sick_note_form.js' />"></script>
+    <script defer src="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
+    <script defer src="<asset:url value='sick_note_form.js' />"></script>
 </head>
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <uv:menu/>
+
+<c:set var="DATE_PATTERN">
+    <spring:message code="pattern.date"/>
+</c:set>
 
 <div class="content">
 
@@ -107,7 +92,7 @@
 
                     <div class="col-md-4 col-md-push-8">
                 <span class="help-block">
-                    <i class="fa fa-fw fa-info-circle"></i>
+                    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
                     <spring:message code="sicknote.data.description"/>
                 </span>
                     </div>
@@ -116,7 +101,7 @@
 
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="employee">
-                                <spring:message code='sicknote.data.staff'/>:
+                                <spring:message code='sicknote.data.person'/>:
                             </label>
 
                             <div class="col-md-9">
@@ -203,7 +188,8 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input id="from" path="startDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -214,7 +200,8 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input id="to" path="endDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -231,8 +218,8 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                 <span class="help-block">
-                    <i class="fa fa-fw fa-info-circle"></i>
-                    <spring:message code="sicknote.data.aub.description"/>
+                    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                    <spring:message code="sicknote.data.person"/>
                 </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
@@ -243,7 +230,8 @@
 
                             <div class="col-md-9">
                                 <form:input id="aubFrom" path="aubStartDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
                             </div>
                         </div>
@@ -254,11 +242,42 @@
 
                             <div class="col-md-9">
                                 <form:input id="aubTo" path="aubEndDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"/>
+                                            cssErrorClass="form-control error" autocomplete="off"
+                                            placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="aubEndDate" cssClass="error"/></span>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="col-xs-12">
+                        <legend>
+                            <spring:message code="sicknote.data.furtherInformation.title"/>
+                        </legend>
+                    </div>
+                    <div class="col-md-4 col-md-push-8">
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <spring:message code="sicknote.data.furtherInformation.description"/>
+                        </span>
+                    </div>
+                    <div class="col-md-8 col-md-pull-4">
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="comment">
+                                <spring:message code="sicknote.data.furtherInformation.comment"/>:
+                            </label>
+                            <div class="col-md-9">
+                                <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                <form:textarea id="comment" rows="1" path="comment" class="form-control"
+                                               cssErrorClass="form-control error"
+                                               onkeyup="count(this.value, 'text-comment');"
+                                               onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
+                                <form:errors path="comment" cssClass="error"/>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="form-section">

@@ -2,13 +2,11 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 
 /**
  * Unit test for {@link TestUser}.
- *
- * @author  Aljona Murygina - murygina@synyx.de
  */
 public class TestUserTest {
 

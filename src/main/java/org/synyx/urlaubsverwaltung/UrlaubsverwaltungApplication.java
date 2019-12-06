@@ -7,8 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Spring Boot Entry Point.
- *
- * @author  David Schilling - schilling@synyx.de
  */
 @SpringBootApplication
 @EnableScheduling
@@ -17,7 +15,7 @@ public class UrlaubsverwaltungApplication { // NOSONAR - no private constructor 
     /**
      * Start the Urlaubsverwaltung Spring Boot application.
      *
-     * @param  args  arguments
+     * @param args arguments
      */
     public static void main(String[] args) { // NOSONAR - yes, this main method really should be uncommented!
 

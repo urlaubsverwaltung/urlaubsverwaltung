@@ -1,3 +1,166 @@
+### master
+* Configuration-Change: `uv.person.canBeManipulated` is now `false` by default [#880](https://github.com/synyx/urlaubsverwaltung/pull/880)
+* Fix logging of user data on google calendar event [#875](https://github.com/synyx/urlaubsverwaltung/pull/875)
+
+### [urlaubsverwaltung-3.0.0.RC8](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC8)
+* API-Change: Move `api/availability` to `api/person/persons/{personId}/availabilities` [#808](https://github.com/synyx/urlaubsverwaltung/issues/808)
+* Add thuringia childrens day holiday [#790](https://github.com/synyx/urlaubsverwaltung/pull/790)
+* Add default workdays to the configuration properties [#828](https://github.com/synyx/urlaubsverwaltung/pull/828)
+* Add the correct locale to as html element attribute [#856](https://github.com/synyx/urlaubsverwaltung/pull/856)
+* Add scope attribute to th to define col or row [#857](https://github.com/synyx/urlaubsverwaltung/pull/857)
+* Add favicons for all types of devices [#819](https://github.com/synyx/urlaubsverwaltung/pull/819)
+* Allow user to get their own data via the api [#825](https://github.com/synyx/urlaubsverwaltung/pull/825)
+* Fix missing absence entries in availabilities api [#829](https://github.com/synyx/urlaubsverwaltung/pull/829)
+* Fix broken selector label on persons page [#860](https://github.com/synyx/urlaubsverwaltung/pull/860)
+* Fix user can be manipulated [#822](https://github.com/synyx/urlaubsverwaltung/pull/822)
+* Rename loginName to username [#839](https://github.com/synyx/urlaubsverwaltung/pull/839)
+* Rename to view controller test [#814](https://github.com/synyx/urlaubsverwaltung/pull/814)
+* Remove all deprecations [#841](https://github.com/synyx/urlaubsverwaltung/pull/841)
+* Upgrade spring boot parent to 2.1.11
+* Upgrade google api client to 1.25.0
+* Upgrade jollyday to 0.5.9
+* Upgrade frontend maven plugin to 1.8.0
+* Upgrade maven wrapper to 3.6.3
+
+### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
+* Remove liquibase user demo creation on demo context [#810](https://github.com/synyx/urlaubsverwaltung/pull/810)
+
+### [urlaubsverwaltung-3.0.0.RC6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC6)
+* Introduce application.properties based mail configuration [#634](https://github.com/synyx/urlaubsverwaltung/pull/634)
+* Add ability to create new user with default working days and vacation days [#365](https://github.com/synyx/urlaubsverwaltung/issues/365) [#805](https://github.com/synyx/urlaubsverwaltung/pull/805)
+* Add possibility to disable new user creation [#807](https://github.com/synyx/urlaubsverwaltung/pull/807)
+
+### [urlaubsverwaltung-3.0.0.RC5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC5)
+* Fix broken link in department overview [#749](https://github.com/synyx/urlaubsverwaltung/pull/749)
+* Fix highlight current day on vacation request [#751](https://github.com/synyx/urlaubsverwaltung/pull/751)
+* Decouple auth from api [#759](https://github.com/synyx/urlaubsverwaltung/pull/759)
+* API-Change: `api/availability` now uses `personId` instead of `loginName`. The id of a person can be discovered via `api/person` [736](https://github.com/synyx/urlaubsverwaltung/issues/736)
+* ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#761](https://github.com/synyx/urlaubsverwaltung/pull/761)
+* Secure Api Access [#695](https://github.com/synyx/urlaubsverwaltung/pull/695)
+* Upgrade spring boot parent to 2.1.7
+* Upgrade NodeJS to 12
+* Upgrade date-fns from 1.x to 2.0.1
+
+### [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4)
+* Fix login parameter security
+
+### [urlaubsverwaltung-3.0.0.RC3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC3)
+* Add overtime controller tests [#744](https://github.com/synyx/urlaubsverwaltung/pull/744)
+* Improve Readme [#743](https://github.com/synyx/urlaubsverwaltung/pull/743)
+* Allow to add username and password via url and add demo system to readme [#742](https://github.com/synyx/urlaubsverwaltung/pull/742)
+
+### [urlaubsverwaltung-3.0.0.RC2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC2)
+* Fix docker image build [#740](https://github.com/synyx/urlaubsverwaltung/pull/740)
+* Fix favicon security [#741](https://github.com/synyx/urlaubsverwaltung/pull/741)
+* Fixes and cleanups [#739](https://github.com/synyx/urlaubsverwaltung/pull/739)
+
+### [urlaubsverwaltung-3.0.0.RC1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC1)
+* Upgrade to java 11 [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
+* Upgrade spring boot to 2.1.6 [#710](https://github.com/synyx/urlaubsverwaltung/pull/710)
+* Migrate database to mariadb [#518](https://github.com/synyx/urlaubsverwaltung/pull/518)
+* Migrate double used configuration paths for uv.security [#712](https://github.com/synyx/urlaubsverwaltung/pull/712)
+* Add configuration properties for security and some cleanups [#696](https://github.com/synyx/urlaubsverwaltung/pull/696)
+* Add new security provider with OpenId Connect (oidc) [#716](https://github.com/synyx/urlaubsverwaltung/pull/716)
+* Fix availability and workdays api: Use http status 204 (instead of 500) for no working days present for given user [#728](https://github.com/synyx/urlaubsverwaltung/issues/728)
+
+### [urlaubsverwaltung-2.44.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.2)
+* ❗Security-Fix: Activate method security for @Pre and @PostAuthorize [#760](https://github.com/synyx/urlaubsverwaltung/issues/760)
+* Fix test data creation for application (No application date created)
+
+### [urlaubsverwaltung-2.44.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.1)
+* Fix availability and workdays api: Use http status 204 (instead of 500) for no working days present for given user [#728](https://github.com/synyx/urlaubsverwaltung/issues/728)
+
+### [urlaubsverwaltung-2.44.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.0)
+* Added comment in sick-note creation dialog [#472](https://github.com/synyx/urlaubsverwaltung/issues/472)
+* Quickfix for better overview about department members: add link to department
+  members on departments page [#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
+* Fix double half day applications for leave on Christmas/New Year's Eve [#478](https://github.com/synyx/urlaubsverwaltung/issues/478)
+* Fix of empty calender in sick note edit form [#708](https://github.com/synyx/urlaubsverwaltung/issues/708)
+
+### [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2)
+* Fix release for broken war / container image
+
+### [urlaubsverwaltung-2.43.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.0)
+* Make event subjects for calendar sync more generic [#198](https://github.com/synyx/urlaubsverwaltung/issues/198) + [#654](https://github.com/synyx/urlaubsverwaltung/issues/654)
+* Fix security vulnerabilities [#704](https://github.com/synyx/urlaubsverwaltung/pull/704) [#705](https://github.com/synyx/urlaubsverwaltung/pull/705)
+
+### [urlaubsverwaltung-2.42.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.3)
+* Fix login issues caused by missing ldap security configuration
+  properties [#697](https://github.com/synyx/urlaubsverwaltung/pull/697)
+
+### [urlaubsverwaltung-2.42.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.2)
+* Replace h2 with mysql for development [#694](https://github.com/synyx/urlaubsverwaltung/pull/694)
+* Fix calculation of days between start date and end date of sick notes [#686](https://github.com/synyx/urlaubsverwaltung/issues/686)
+* Fix (missing) asset caching [#684](https://github.com/synyx/urlaubsverwaltung/issues/684)
+
+### [urlaubsverwaltung-2.42.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.1)
+* Fix mail notification permissions [#681](https://github.com/synyx/urlaubsverwaltung/pull/681)
+
+### [urlaubsverwaltung-2.42.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.0)
+* Upgrade jquery to 3.4.1 [#679](https://github.com/synyx/urlaubsverwaltung/pull/679)
+* Allow assignment of departments for bosses [#317](https://github.com/synyx/urlaubsverwaltung/issues/317) [#374](https://github.com/synyx/urlaubsverwaltung/issues/374)
+
+### [urlaubsverwaltung-2.41.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.41.0)
+* Show morning, noon and full absence in calendar [#624](https://github.com/synyx/urlaubsverwaltung/issues/624)
+* Fix second stage auth does not have to be in department [#663](https://github.com/synyx/urlaubsverwaltung/pull/663) [#192](https://github.com/synyx/urlaubsverwaltung/issues/192) [#439](https://github.com/synyx/urlaubsverwaltung/issues/439) [#317](https://github.com/synyx/urlaubsverwaltung/issues/317)
+* Set annualVacation and actualVacation settings steps to 0.5 [#664](https://github.com/synyx/urlaubsverwaltung/issues/664)
+
+### [urlaubsverwaltung-2.40.6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.6)
+* Calendar settings not configurable for google and exchange [#675](https://github.com/synyx/urlaubsverwaltung/pull/675)
+
+### [urlaubsverwaltung-2.40.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.5)
+* Fix broken umlauts on error page [#665](https://github.com/synyx/urlaubsverwaltung/issues/665)
+* Fix creation of admin user for testdata [#662](https://github.com/synyx/urlaubsverwaltung/pull/662)
+* Fix overlapping temporary allowed applications [#325](https://github.com/synyx/urlaubsverwaltung/issues/325)
+* Show approvable applications for departmentHead and secondStageAuth [#657](https://github.com/synyx/urlaubsverwaltung/pull/657)
+* Fix character counter in overtime form [#673](https://github.com/synyx/urlaubsverwaltung/issues/673)
+* Fix i18n in dynamic application information [#558](https://github.com/synyx/urlaubsverwaltung/issues/558)
+
+### [urlaubsverwaltung-2.40.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.4)
+* Fix maximum sick pay days [#579](https://github.com/synyx/urlaubsverwaltung/issues/579) [#650](https://github.com/synyx/urlaubsverwaltung/pull/650)
+* Allow half day input on account form for remaining vacation days [#652](https://github.com/synyx/urlaubsverwaltung/pull/652)
+* Replace … with ... [#656](https://github.com/synyx/urlaubsverwaltung/pull/656)
+* Fix workdays and vacations api usage [#651](https://github.com/synyx/urlaubsverwaltung/pull/651)
+
+### [urlaubsverwaltung-2.40.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.3)
+* Fix autocompletion for sick note datepicker [#644](https://github.com/synyx/urlaubsverwaltung/pull/644)
+* Fix character count in textareas of application form [#647](https://github.com/synyx/urlaubsverwaltung/issues/647)
+
+### [urlaubsverwaltung-2.40.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.2)
+* Allow overtime entries in 0.25 hour steps [#638](https://github.com/synyx/urlaubsverwaltung/pull/638)
+* Fix jquery ui themes import [#639](https://github.com/synyx/urlaubsverwaltung/pull/639)
+* Fix datepicker for sick notes [#641](https://github.com/synyx/urlaubsverwaltung/pull/641)
+* Fix datepicker for overtime [#642](https://github.com/synyx/urlaubsverwaltung/pull/642)
+
+### [urlaubsverwaltung-2.40.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.1)
+* Add missing fmt import in overview [#628](https://github.com/synyx/urlaubsverwaltung/pull/628)
+* Fix sicknote to vacation converting [#635](https://github.com/synyx/urlaubsverwaltung/pull/635)
+* Fix to use correct java 8 DateTimeFormatter [#631](https://github.com/synyx/urlaubsverwaltung/pull/631)
+* Fix to hide unused input fields in E-Mails [#585](https://github.com/synyx/urlaubsverwaltung/issues/585) [#633](https://github.com/synyx/urlaubsverwaltung/pull/630)
+* Add toString to VacationDaysLeft [#629](https://github.com/synyx/urlaubsverwaltung/pull/629)
+
+### [urlaubsverwaltung-2.40.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.0)
+* Improve input fields [#597](https://github.com/synyx/urlaubsverwaltung/pull/597)
+* Architecture refactoring [#595](https://github.com/synyx/urlaubsverwaltung/pull/595)
+* Add .editorconfig lint [#594](https://github.com/synyx/urlaubsverwaltung/pull/594)
+* Code Cleanups [#590](https://github.com/synyx/urlaubsverwaltung/pull/590) [#592](https://github.com/synyx/urlaubsverwaltung/pull/592) [#588](https://github.com/synyx/urlaubsverwaltung/pull/588) [#591](https://github.com/synyx/urlaubsverwaltung/pull/591)
+* Improve javadoc [#589](https://github.com/synyx/urlaubsverwaltung/pull/589) [#593](https://github.com/synyx/urlaubsverwaltung/pull/593)
+* Optimierung der JavaScript / CSS Assets [#572](https://github.com/synyx/urlaubsverwaltung/pull/572)
+* Integration des maven frontend plugin und js/css tooling [#390](https://github.com/synyx/urlaubsverwaltung/issues/390)
+* Upgrade bootstrap to 3.4.1 [#603](https://github.com/synyx/urlaubsverwaltung/pull/603)
+* No autocomplete on 'Email delivery' Settings username and password [#255](https://github.com/synyx/urlaubsverwaltung/issues/255)
+* Exchange calendar delete discovery directory logging [#604](https://github.com/synyx/urlaubsverwaltung/pull/604)
+* Replace joda with java time [#613](https://github.com/synyx/urlaubsverwaltung/pull/613)
+* Fix NPE when creating a SickNote [#627](https://github.com/synyx/urlaubsverwaltung/pull/627) [#625](https://github.com/synyx/urlaubsverwaltung/issues/625)
+* Fix #585 "Unausgefüllte Felder in E-Mails nicht ausgeblendet" [#630](https://github.com/synyx/urlaubsverwaltung/pull/630)
+
+### [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0)
+* Bugfix: (Rest)urlaub wird nicht korrekt berechnet [#372](https://github.com/synyx/urlaubsverwaltung/issues/372) [#551](https://github.com/synyx/urlaubsverwaltung/pull/551)
+* Verbesserung Urlaubsübersicht durch dynamische Sortierung [#395](https://github.com/synyx/urlaubsverwaltung/issues/395)
+* Kleine inhaltliche Verbesserungen in den E-Mail-Templates [#580](https://github.com/synyx/urlaubsverwaltung/issues/580) & [#584](https://github.com/synyx/urlaubsverwaltung/issues/584)
+* Fix for double account creation [#457](https://github.com/synyx/urlaubsverwaltung/issues/457)
+* Add a separat security config for rest api [#571](https://github.com/synyx/urlaubsverwaltung/pull/571)
+
 ### [urlaubsverwaltung-2.38.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.3)
 * Bugfix: Fehlende englische Übersetzung für die Urlaubsübersicht [#559](https://github.com/synyx/urlaubsverwaltung/pull/559)
 * Bugfix: Falls der 'server.servlet.context-path' gesetzt wird kann man sich nicht einloggen [#565](https://github.com/synyx/urlaubsverwaltung/pull/565)
@@ -20,8 +183,8 @@
 * Exchange Kalender Integration: Manuelle Pflege der EWS URL ermöglicht [#524](https://github.com/synyx/urlaubsverwaltung/pull/524)
 * Exchange Kalender Integration: Kalender für Synchronisation konfigurierbar gemacht [#527](https://github.com/synyx/urlaubsverwaltung/pull/527)
 * Exchange Kalender Integration: Timezone für Exchange-Kalender hinzugefügt [#452](https://github.com/synyx/urlaubsverwaltung/pull/452)
-* Englische Übersetzung hinzugefügt [#516](https://github.com/synyx/urlaubsverwaltung/pull/516) 
-* Neues buntes Favicon hinzugefügt [#536](https://github.com/synyx/urlaubsverwaltung/pull/536) 
+* Englische Übersetzung hinzugefügt [#516](https://github.com/synyx/urlaubsverwaltung/pull/516)
+* Neues buntes Favicon hinzugefügt [#536](https://github.com/synyx/urlaubsverwaltung/pull/536)
 
 ### [urlaubsverwaltung-2.36.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.2)
 * Fixup Release: Veröffentlichung der Dockercontainer berichtigt

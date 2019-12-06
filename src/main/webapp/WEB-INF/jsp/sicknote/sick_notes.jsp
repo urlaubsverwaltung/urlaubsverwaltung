@@ -1,26 +1,30 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <head>
-    <uv:head/>
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            $("table.sortable").tablesorter({
-                sortList: [[1, 0]]
-            });
-
-        });
-
+    <title>
+        <spring:message code="sicknotes.header.title"/>
+    </title>
+    <uv:custom-head/>
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+        window.uv.sickNote = {};
+        window.uv.sickNote.id = "<c:out value="${sickNote.id}" />";
+        window.uv.sickNote.person = {};
+        window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
     </script>
+    <script defer type="text/javascript" src="<asset:url value='npm.tablesorter.js' />"></script>
+    <script defer type="text/javascript" src="<asset:url value='sick_notes.js' />"></script>
 </head>
 
 <body>
@@ -45,11 +49,11 @@
                     <uv:print/>
                     <a href="${URL_PREFIX}/sicknote/statistics" class="fa-action pull-right"
                        data-title="<spring:message code="action.sicknotes.statistics"/>">
-                        <i class="fa fa-fw fa-bar-chart"></i>
+                        <i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>
                     </a>
                     <a href="${URL_PREFIX}/sicknote/new" class="fa-action pull-right"
                        data-title="<spring:message code="action.apply.sicknote"/>">
-                        <i class="fa fa-fw fa-plus-circle"></i>
+                        <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
                     </a>
                 </legend>
 
@@ -64,22 +68,22 @@
                     <spring:message code="filter.validity"/> <uv:date date="${today}"/>
                 </p>
 
-                <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
+                <table class="list-table selectable-table sortable tablesorter">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
-                        <th class="hidden-print"></th>
-                        <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
-                        <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
-                        <th class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
-                        <th class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.title"/></th>
-                        <th class="sortable-field"><spring:message
+                        <th scope="col" class="hidden-print"></th>
+                        <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
+                        <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
+                        <th scope="col" class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
+                        <th scope="col" class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.title"/></th>
+                        <th scope="col" class="sortable-field"><spring:message
                             code="sicknotes.daysOverview.sickDays.child.title"/></th>
-                        <th class="hidden"><%-- tablesorter placeholder for sick days column in xs screen --%></th>
+                        <th scope="col" class="hidden"><%-- tablesorter placeholder for sick days column in xs screen --%></th>
                     </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${persons}" var="person">
-                    <tr onclick="navigate('${URL_PREFIX}/staff/${person.id}/overview#anchorSickNotes');">
+                    <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered hidden-print">
                             <div class="gravatar img-circle hidden-print"
                                  data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
@@ -94,33 +98,33 @@
                             <c:out value="${person.niceName}"/>
                         </td>
                         <td class="hidden-xs">
-                            <i class="fa fa-medkit hidden-print"></i>
+                            <i class="fa fa-medkit hidden-print" aria-hidden="true"></i>
                             <uv:number number="${sickDays[person].days['TOTAL']}"/>
                             <spring:message code="sicknotes.daysOverview.sickDays.number"/>
                             <c:if test="${sickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
-                                    <i class="fa fa-check positive"></i> <spring:message
+                                    <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
                                     code="overview.sicknotes.sickdays.aub"
                                     arguments="${sickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="hidden-xs">
-                            <i class="fa fa-child hidden-print"></i>
+                            <i class="fa fa-child hidden-print" aria-hidden="true"></i>
                             <uv:number number="${childSickDays[person].days['TOTAL']}"/>
                             <spring:message code="sicknotes.daysOverview.sickDays.child.number"/>
                             <c:if test="${childSickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
-                                    <i class="fa fa-check positive"></i> <spring:message
+                                    <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
                                     code="overview.sicknotes.sickdays.aub"
                                     arguments="${childSickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="visible-xs">
-                            <i class="fa fa-medkit hidden-print"></i> <uv:number
+                            <i class="fa fa-medkit hidden-print" aria-hidden="true"></i> <uv:number
                             number="${sickDays[person].days['TOTAL']}"/>
-                            <i class="fa fa-child hidden-print"></i> <uv:number
+                            <i class="fa fa-child hidden-print" aria-hidden="true"></i> <uv:number
                             number="${childSickDays[person].days['TOTAL']}"/>
                         </td>
                         </c:forEach>

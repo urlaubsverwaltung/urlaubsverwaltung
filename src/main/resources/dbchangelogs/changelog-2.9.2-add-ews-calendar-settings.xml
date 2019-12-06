@@ -1,24 +1,24 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="add_ews_calendar_settings">
+  <changeSet author="murygina" id="add_ews_calendar_settings">
 
-        <preConditions>
-            <tableExists tableName="Settings"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Settings"/>
+    </preConditions>
 
-        <addColumn tableName="Settings">
-            <column name="calendar_workDayBeginHour" type="INT(2)"/>
-            <column name="calendar_workDayEndHour" type="INT(2)"/>
-            <column name="calendar_ews_active" type="BIT(1)"/>
-            <column name="calendar_ews_email" type="VARCHAR(255)"/>
-            <column name="calendar_ews_password" type="VARCHAR(255)"/>
-            <column name="calendar_ews_calendar" type="VARCHAR(255)"/>
-            <column name="calendar_ews_sendInvitationActive" type="BIT(1)"/>
-        </addColumn>
+    <addColumn tableName="Settings">
+      <column name="calendar_workDayBeginHour" type="INT(2)"/>
+      <column name="calendar_workDayEndHour" type="INT(2)"/>
+      <column name="calendar_ews_active" type="BIT(1)"/>
+      <column name="calendar_ews_email" type="VARCHAR(255)"/>
+      <column name="calendar_ews_password" type="VARCHAR(255)"/>
+      <column name="calendar_ews_calendar" type="VARCHAR(255)"/>
+      <column name="calendar_ews_sendInvitationActive" type="BIT(1)"/>
+    </addColumn>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

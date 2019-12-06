@@ -1,33 +1,33 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="add_column_sick_note_id_to_sick_note_comment_table">
+  <changeSet author="murygina" id="add_column_sick_note_id_to_sick_note_comment_table">
 
-        <preConditions>
-            <tableExists tableName="SickNoteComment"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="SickNoteComment"/>
+    </preConditions>
 
-        <addColumn tableName="SickNoteComment">
-            <column name="sickNote_id" type="INT(10)"/>
-        </addColumn>
+    <addColumn tableName="SickNoteComment">
+      <column name="sickNote_id" type="INT(10)"/>
+    </addColumn>
 
-        <sql>
-            UPDATE SickNoteComment comment SET comment.sickNote_id =
-            (SELECT mapping.SickNote_id FROM SickNote_SickNoteComment mapping WHERE mapping.comments_id = comment.id);
-        </sql>
+    <sql>
+      UPDATE SickNoteComment comment SET comment.sickNote_id =
+      (SELECT mapping.SickNote_id FROM SickNote_SickNoteComment mapping WHERE mapping.comments_id = comment.id);
+    </sql>
 
-    </changeSet>
+  </changeSet>
 
-    <changeSet author="murygina" id="remove_sick_note_comment_mapping_table">
+  <changeSet author="murygina" id="remove_sick_note_comment_mapping_table">
 
-        <preConditions>
-            <tableExists tableName="SickNote_SickNoteComment"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="SickNote_SickNoteComment"/>
+    </preConditions>
 
-        <dropTable tableName="SickNote_SickNoteComment"/>
+    <dropTable tableName="SickNote_SickNoteComment"/>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

@@ -1,0 +1,144 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: urlaubsverwaltung
+data:
+  application.properties: |
+    # generic
+    server.port=8080
+    logging.file=
+
+    # DATABASE CONFIG
+    spring.datasource.url=jdbc:mysql://xxx:3306/urlaubsverwaltung
+
+    # AUTHENTICATION
+    uv.security.auth=ldap
+
+    # LDAP / ACTIVE DIRECTORY ATTRIBUTES
+    uv.security.directory-service.identifier=uid
+    uv.security.directory-service.firstName=givenName
+    uv.security.directory-service.lastName=sn
+    uv.security.directory-service.mailAddress=mail
+
+    # LDAP Filter Attributes
+    uv.security.directory-service.filter.objectClass=person
+    uv.security.directory-service.filter.memberOf=
+
+    # LDAP
+    uv.security.directory-service.ldap.url=xxx
+    uv.security.directory-service.ldap.base=dc=xxx,dc=xxx
+    uv.security.directory-service.ldap.managerDn=
+    uv.security.directory-service.ldap.managerPassword=
+    uv.security.directory-service.ldap.userSearchBase=ou=accounts
+    uv.security.directory-service.ldap.userSearchFilter=(uid={0})
+
+    # LDAP Data Sync
+    uv.security.directory-service.ldap.sync.enabled=true
+    uv.security.directory-service.ldap.sync.userSearchBase=ou=xxx,ou=xxx
+    uv.security.directory-service.ldap.sync.userDn=
+    uv.security.directory-service.ldap.sync.password=
+
+    # Deactivate mail health check to prevent k8s to crashLoop,
+    # because mail will be configured after the first mail was sent.
+    # see https://github.com/synyx/urlaubsverwaltung/issues/507
+    management.health.mail.enabled=false
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: urlaubsverwaltung
+  name: urlaubsverwaltung
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  selector:
+    app: urlaubsverwaltung
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: urlaubsverwaltung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: urlaubsverwaltung
+  template:
+    metadata:
+      labels:
+        app: urlaubsverwaltung
+    spec:
+      containers:
+        - name: urlaubsverwaltung
+          image: synyx/urlaubsverwaltung:3.0.0
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+              httpGet:
+                  path: /actuator/health
+                  port: 8080
+              initialDelaySeconds: 120
+              periodSeconds: 10
+              failureThreshold: 10
+          readinessProbe:
+              httpGet:
+                  path: /actuator/health
+                  port: 8080
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              failureThreshold: 10
+          resources:
+              requests:
+                  cpu: 0.5
+                  memory: "512Mi"
+              limits:
+                  cpu: 1.5
+                  memory: "1024Mi"
+          securityContext:
+              privileged: false
+              allowPrivilegeEscalation: false
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default
+            - name: JVM_OPTIONS
+              value: "-XX:+PrintFlagsFinal -XX:+PrintGCDetails -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: urlaubsverwaltung-mariadb
+                  key: databaseUser
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: urlaubsverwaltung-mariadb
+                  key: databasePassword
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: urlaubsverwaltung
+      securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+          runAsNonRoot: true
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: urlaubsverwaltung
+spec:
+  rules:
+    - host: xxx
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: urlaubsverwaltung
+              servicePort: http

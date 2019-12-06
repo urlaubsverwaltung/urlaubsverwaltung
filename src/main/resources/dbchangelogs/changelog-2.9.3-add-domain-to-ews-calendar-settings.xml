@@ -1,18 +1,18 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="murygina" id="add_domain_to_ews_calendar_settings">
+  <changeSet author="murygina" id="add_domain_to_ews_calendar_settings">
 
-        <preConditions>
-            <tableExists tableName="Settings"/>
-        </preConditions>
+    <preConditions>
+      <tableExists tableName="Settings"/>
+    </preConditions>
 
-        <addColumn tableName="Settings">
-            <column name="calendar_ews_domain" type="VARCHAR(255)"/>
-        </addColumn>
+    <addColumn tableName="Settings">
+      <column name="calendar_ews_domain" type="VARCHAR(255)"/>
+    </addColumn>
 
-    </changeSet>
+  </changeSet>
 
 </databaseChangeLog>

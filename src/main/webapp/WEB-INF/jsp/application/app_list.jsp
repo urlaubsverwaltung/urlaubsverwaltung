@@ -1,10 +1,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <sec:authorize access="hasAuthority('USER')">
     <c:set var="IS_USER" value="${true}"/>
@@ -29,10 +29,14 @@
 <c:set var="CAN_ALLOW" value="${IS_BOSS || IS_DEPARTMENT_HEAD || IS_SECOND_STAGE_AUTHORITY}"/>
 
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 
 <head>
-    <uv:head/>
+    <title>
+        <spring:message code="applications.header.title"/>
+    </title>
+    <uv:custom-head/>
+    <script defer src="<asset:url value='app_list.js' />"></script>
 </head>
 
 <body>
@@ -56,16 +60,16 @@
 
                     <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
                        data-title="<spring:message code="action.applications.statistics"/>">
-                        <i class="fa fa-fw fa-bar-chart"></i>
+                        <i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>
                     </a>
                     <a href="${URL_PREFIX}/application/vacationoverview" class="fa-action pull-right"
                        data-title="<spring:message code="action.applications.vacation_overview"/>">
-                        <i class="fa fa-fw fa-calendar"></i>
+                        <i class="fa fa-fw fa-calendar" aria-hidden="true"></i>
                     </a>
                     <sec:authorize access="hasAuthority('OFFICE')">
                         <a href="${URL_PREFIX}/application/new" class="fa-action pull-right"
                            data-title="<spring:message code="action.apply.vacation"/>">
-                            <i class="fa fa-fw fa-plus-circle"></i>
+                            <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
 
@@ -101,7 +105,7 @@
 
                     <c:otherwise>
 
-                        <table class="list-table selectable-table" cellspacing="0">
+                        <table class="list-table selectable-table">
                             <tbody>
                             <c:forEach items="${applications}" var="application" varStatus="loopStatus">
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
@@ -188,7 +192,7 @@
                                             <a class="fa-action positive"
                                                href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
                                                data-title="<spring:message code='action.allow'/>">
-                                                <i class="fa fa-check"></i>
+                                                <i class="fa fa-check" aria-hidden="true"></i>
                                             </a>
                                         </c:if>
                                         <c:if
@@ -196,7 +200,7 @@
                                             <a class="fa-action negative"
                                                href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                                data-title="<spring:message code='action.reject'/>">
-                                                <i class="fa fa-ban"></i>
+                                                <i class="fa fa-ban" aria-hidden="true"></i>
                                             </a>
                                         </c:if>
                                     </td>

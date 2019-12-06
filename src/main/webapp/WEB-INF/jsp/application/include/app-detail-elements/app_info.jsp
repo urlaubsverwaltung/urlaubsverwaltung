@@ -1,17 +1,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <div class="box">
     <span class="box-icon bg-yellow hidden-print">
         <c:choose>
             <c:when test="${application.vacationType.category == 'HOLIDAY'}">
-                <i class="fa fa-sun-o"></i>
+                <i class="fa fa-sun-o" aria-hidden="true"></i>
             </c:when>
             <c:otherwise>
-                <i class="fa fa-flag-o"></i>
+                <i class="fa fa-flag-o" aria-hidden="true"></i>
             </c:otherwise>
         </c:choose>
     </span>
@@ -24,19 +23,19 @@
                   title="<spring:message code='${application.status}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
-                    <i class="fa fa-question"></i>
+                    <i class="fa fa-question" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
-                    <i class="fa fa-check"></i>
+                    <i class="fa fa-check" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'ALLOWED'}">
-                    <i class="fa fa-check"></i>
+                    <i class="fa fa-check" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'REJECTED'}">
-                    <i class="fa fa-ban"></i>
+                    <i class="fa fa-ban" aria-hidden="true"></i>
                 </c:when>
                 <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
-                    <i class="fa fa-trash"></i>
+                    <i class="fa fa-trash" aria-hidden="true"></i>
                 </c:when>
                 <c:otherwise>
                     &nbsp;
@@ -79,7 +78,7 @@
     </span>
 </div>
 
-<table class="list-table striped-table bordered-table" cellspacing="0">
+<table class="list-table striped-table bordered-table">
 
     <tr>
         <td><spring:message code="absence.period.duration"/></td>
@@ -87,27 +86,12 @@
             <strong>
                 <uv:number number="${application.workDays}"/> <spring:message code="duration.days"/>
             </strong>
+            <c:if test="${application.startDate.year != application.endDate.year}">
             <span class="text-muted days">
                 <%-- filled by javascript --%>
+                <%-- see app_info.js --%>
             </span>
-            <script type="text/javascript">
-                $(document).ready(function () {
-                    <c:if test="${application.startDate.year != application.endDate.year}">
-
-                    var dayLength = '<c:out value="${application.dayLength}" />';
-                    var personId = '<c:out value="${application.person.id}" />';
-
-                    var startDate = "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
-                    var endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
-
-                    var from = new Date(startDate);
-                    var to = new Date(endDate);
-
-                    sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
-
-                    </c:if>
-                });
-            </script>
+            </c:if>
             <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
                 <span class="text-muted">
                     <br/>
@@ -200,11 +184,11 @@
         <td>
             <c:choose>
                 <c:when test="${application.teamInformed == true}">
-                    <i class="fa fa-check positive hidden-print"></i>
+                    <i class="fa fa-check positive hidden-print" aria-hidden="true"></i>
                     <spring:message code='application.data.teamInformed.true'/>
                 </c:when>
                 <c:otherwise>
-                    <i class="fa fa-remove hidden-print"></i>
+                    <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
                     <spring:message code='application.data.teamInformed.false'/>
                 </c:otherwise>
             </c:choose>
