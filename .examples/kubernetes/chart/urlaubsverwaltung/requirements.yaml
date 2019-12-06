@@ -1,5 +1,5 @@
 dependencies:
   - name: mariadb
-    version: 10.4
+    version: 5.7.2
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: urlaubsverwaltung.deployMariaDb
