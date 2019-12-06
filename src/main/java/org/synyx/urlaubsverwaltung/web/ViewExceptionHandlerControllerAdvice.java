@@ -11,13 +11,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 
 /**
  * Handles exceptions and redirects to error page.
  */
 @ControllerAdvice(annotations = Controller.class)
-public class ExceptionHandlerControllerAdvice {
+public class ViewExceptionHandlerControllerAdvice {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -39,36 +42,35 @@ public class ExceptionHandlerControllerAdvice {
     }
 
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(
-        {AbstractNoResultFoundException.class, NumberFormatException.class}
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler({AbstractNoResultFoundException.class, NumberFormatException.class}
     )
     public ModelAndView handleException(AbstractNoResultFoundException exception) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("An exception was thrown", exception);
         }
-        return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.BAD_REQUEST);
+        return ViewExceptionHandlerControllerAdvice.getErrorPage(exception, BAD_REQUEST);
     }
 
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public ModelAndView handleException(AccessDeniedException exception) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("An exception was thrown", exception);
         }
-        return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.FORBIDDEN);
+        return ViewExceptionHandlerControllerAdvice.getErrorPage(exception, FORBIDDEN);
     }
 
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception exception) {
 
         LOG.warn("An exception was thrown", exception);
 
-        return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ViewExceptionHandlerControllerAdvice.getErrorPage(exception, INTERNAL_SERVER_ERROR);
     }
 }
