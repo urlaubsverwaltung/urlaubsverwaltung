@@ -16,7 +16,7 @@
 * Rename loginName to username [#839](https://github.com/synyx/urlaubsverwaltung/pull/839)
 * Rename to view controller test [#814](https://github.com/synyx/urlaubsverwaltung/pull/814)
 * Remove all deprecations [#841](https://github.com/synyx/urlaubsverwaltung/pull/841)
-* Upgrade spring boot parent to 2.1.10
+* Upgrade spring boot parent to 2.1.11
 * Upgrade google api client to 1.25.0
 * Upgrade jollyday to 0.5.9
 * Upgrade frontend maven plugin to 1.8.0
