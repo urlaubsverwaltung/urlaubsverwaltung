@@ -295,6 +295,77 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 git clone git@github.com:synyx/urlaubsverwaltung.git
 ```
 
+
+### Konfiguration
+
+```
+# account
+uv.account.default-vacation-days = 20
+uv.account.update.cron = 0 0 5 1 1 * (on 1st January at 05:00 am)
+
+# application
+uv.application.reminder-notification.cron = 0 0 7 * * * (every day at 07:00 am)
+
+# development
+uv.development.testdata.create
+
+# mail
+uv.mail.administrator
+uv.mail.application-url
+uv.mail.sender
+
+# security
+uv.security.auth =  default
+
+uv.security.directory-service.identifier
+uv.security.directory-service.last-name
+uv.security.directory-service.first-name
+uv.security.directory-service.mail-address
+uv.security.directory-service.sync.cron = 0 0 1 * * ? (every night at 01:00 am)
+uv.security.directory-service.filter.member-of
+uv.security.directory-service.filter.object-class = person
+
+## active directory
+uv.security.directory-service.active-directory.url = ldap://ad.example.org/
+uv.security.directory-service.active-directory.domain = example.org
+uv.security.directory-service.active-directory.sync.enabled = false
+uv.security.directory-service.active-directory.sync.password = password
+uv.security.directory-service.active-directory.sync.user-dn = cn=Administrator,cn=users,dc=example,dc=org
+uv.security.directory-service.active-directory.sync.user-search-base = dc=example,dc=org
+
+## ldap
+uv.security.directory-service.ldap.url = ldap://ldap.example.org/
+uv.security.directory-service.ldap.base = dc=example,dc=org
+uv.security.directory-service.ldap.manager-dn
+uv.security.directory-service.ldap.manager-password
+uv.security.directory-service.ldap.user-search-filter = (uid={0})
+uv.security.directory-service.ldap.user-search-base = ou=accounts
+uv.security.directory-service.ldap.sync.enabled = false
+uv.security.directory-service.ldap.sync.password = password
+uv.security.directory-service.ldap.sync.user-dn = uid=username,ou=other,ou=accounts,dc=example,dc=org
+uv.security.directory-service.ldap.sync.user-search-base = ou=people,ou=accounts
+
+# oidc (openid connect)
+uv.security.oidc.client-id
+uv.security.oidc.client-secret
+uv.security.oidc.issuer-uri
+uv.security.oidc.logout-path
+
+# person
+uv.person.can-be-manipulated = false
+
+# sick-note
+uv.sick-note.end-of-pay-notification.cron = 0 0 6 * * * (every day at 06:00 am)
+
+# workingtime
+uv.workingtime.default-working-days[0] = 1 (monday till friday)
+uv.workingtime.default-working-days[1] = 2
+uv.workingtime.default-working-days[2] = 3
+uv.workingtime.default-working-days[3] = 4
+uv.workingtime.default-working-days[4] = 5
+```
+with their default properties.
+
 ### Release
 
 Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
