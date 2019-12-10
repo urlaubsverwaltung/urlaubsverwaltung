@@ -118,9 +118,6 @@ Diese kann über `/api/` aufgerufen werden.
 
 Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgende Anleitung befolgen.
 
-Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet wird, können Details zur Installation und
-Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
-
 Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synyx/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
 Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
