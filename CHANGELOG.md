@@ -1,3 +1,6 @@
+### master
+* Remove 'comment' from account logging [#902](https://github.com/synyx/urlaubsverwaltung/pull/902)
+
 ### [urlaubsverwaltung-3.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0)
 * Configuration-Change: `uv.person.canBeManipulated` is now `false` by default [#880](https://github.com/synyx/urlaubsverwaltung/pull/880)
 * Configuration-Change: Change default security auth mechanism to default [#883](https://github.com/synyx/urlaubsverwaltung/pull/883)
