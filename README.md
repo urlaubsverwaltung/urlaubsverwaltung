@@ -231,7 +231,7 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Authentifizierung via OpenID Connect (OIDC)
     * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
       Ausserdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggfs weitere Einstellungeun vorgenommen werden.
+      die 'Allowed Callback URLs' und ggfs weitere Einstellungen vorgenommen werden.
 
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
