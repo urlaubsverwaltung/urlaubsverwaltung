@@ -257,7 +257,7 @@ public class ApplicationTest {
         assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, " +
             "boss=Person{id='10'}, canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, " +
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
-            "vacationType=VacationType{category=HOLIDAY, messageKey='null'}, dayLength=FULL, reason='Because', " +
+            "vacationType=VacationType{category=HOLIDAY, messageKey='null'}, dayLength=FULL, " +
             "holidayReplacement=Person{id='10'}, address='Address', applicationDate=1970-01-01, " +
             "cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, status=ALLOWED, " +
             "teamInformed=true, hours=10}");

@@ -1,4 +1,5 @@
 ### master
+* Remove 'reason' from application logging [#901](https://github.com/synyx/urlaubsverwaltung/pull/901)
 * Remove 'comment' from account logging [#902](https://github.com/synyx/urlaubsverwaltung/pull/902)
 
 ### [urlaubsverwaltung-3.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0)
