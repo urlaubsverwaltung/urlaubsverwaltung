@@ -145,7 +145,6 @@ public class Account extends AbstractPersistable<Integer> {
             ", vacationDays=" + vacationDays +
             ", remainingVacationDays=" + remainingVacationDays +
             ", remainingVacationDaysNotExpiring=" + remainingVacationDaysNotExpiring +
-            ", comment='" + comment + '\'' +
             '}';
     }
 
