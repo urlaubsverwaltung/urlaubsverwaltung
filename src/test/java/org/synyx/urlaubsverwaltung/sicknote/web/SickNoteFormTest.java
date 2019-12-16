@@ -17,8 +17,6 @@ public class SickNoteFormTest {
     private final Integer id = 1;
     private final Person person = new Person();
     private final SickNoteType type = new SickNoteType();
-    private final DayLength dayLength = DayLength.FULL;
-    private final String comment = "my comment";
 
     private SickNoteForm sut;
 
@@ -31,10 +29,10 @@ public class SickNoteFormTest {
         sut.setSickNoteType(type);
         sut.setStartDate(day2019_04_16);
         sut.setEndDate(day2019_04_16);
-        sut.setDayLength(dayLength);
+        sut.setDayLength(DayLength.FULL);
         sut.setAubStartDate(day2019_04_16);
         sut.setAubEndDate(day2019_04_16);
-        sut.setComment(comment);
+        sut.setComment("my comment");
     }
 
     @Test
@@ -48,7 +46,7 @@ public class SickNoteFormTest {
         assertThat(sickNote.getSickNoteType()).isEqualTo(type);
         assertThat(sickNote.getStartDate()).isEqualTo(day2019_04_16);
         assertThat(sickNote.getEndDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNote.getDayLength()).isEqualTo(dayLength);
+        assertThat(sickNote.getDayLength()).isEqualTo(DayLength.FULL);
         assertThat(sickNote.getAubStartDate()).isEqualTo(day2019_04_16);
         assertThat(sickNote.getAubEndDate()).isEqualTo(day2019_04_16);
     }
@@ -64,8 +62,18 @@ public class SickNoteFormTest {
         assertThat(sickNoteForm.getSickNoteType()).isEqualTo(type);
         assertThat(sickNoteForm.getStartDate()).isEqualTo(day2019_04_16);
         assertThat(sickNoteForm.getEndDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNoteForm.getDayLength()).isEqualTo(dayLength);
+        assertThat(sickNoteForm.getDayLength()).isEqualTo(DayLength.FULL);
         assertThat(sickNoteForm.getAubStartDate()).isEqualTo(day2019_04_16);
         assertThat(sickNoteForm.getAubEndDate()).isEqualTo(day2019_04_16);
+    }
+
+    @Test
+    public void toStringTest() {
+        SickNote sickNote = sut.generateSickNote();
+        SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
+
+        assertThat(sickNoteForm.toString()).isEqualTo("SickNoteForm{id=1, person=Person{id='null'}, " +
+            "sickNoteType=SickNoteType{category=null, messageKey='null'}, " +
+            "startDate=2019-04-16, endDate=2019-04-16, dayLength=FULL, aubStartDate=2019-04-16, aubEndDate=2019-04-16'}");
     }
 }
