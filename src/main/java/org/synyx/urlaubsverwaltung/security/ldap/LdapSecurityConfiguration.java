@@ -34,8 +34,7 @@ public class LdapSecurityConfiguration {
 
         @Bean
         public LdapContextSource ldapContextSource() {
-
-            LdapContextSource source = new LdapContextSource();
+            final LdapContextSource source = new LdapContextSource();
             source.setUserDn(ldapProperties.getManagerDn());
             source.setPassword(ldapProperties.getManagerPassword());
             source.setBase(ldapProperties.getBase());
@@ -46,23 +45,20 @@ public class LdapSecurityConfiguration {
 
         @Bean
         public LdapAuthoritiesPopulator authoritiesPopulator() {
-
             return new DefaultLdapAuthoritiesPopulator(ldapContextSource(), null);
         }
 
         @Bean
         public FilterBasedLdapUserSearch ldapUserSearch() {
-
-            String searchBase = ldapProperties.getUserSearchBase();
-            String searchFilter = ldapProperties.getUserSearchFilter();
+            final String searchBase = ldapProperties.getUserSearchBase();
+            final String searchFilter = ldapProperties.getUserSearchFilter();
 
             return new FilterBasedLdapUserSearch(searchBase, searchFilter, ldapContextSource());
         }
 
         @Bean
         public LdapAuthenticator authenticator() {
-
-            BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource());
+            final BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource());
             authenticator.setUserSearch(ldapUserSearch());
 
             return authenticator;
@@ -70,8 +66,7 @@ public class LdapSecurityConfiguration {
 
         @Bean
         public AuthenticationProvider ldapAuthenticationProvider(LdapPersonContextMapper ldapPersonContextMapper) {
-
-            LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(authenticator(), authoritiesPopulator());
+            final LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(authenticator(), authoritiesPopulator());
             ldapAuthenticationProvider.setUserDetailsContextMapper(ldapPersonContextMapper);
 
             return ldapAuthenticationProvider;
@@ -80,13 +75,11 @@ public class LdapSecurityConfiguration {
 
         @Bean
         public LdapUserMapper ldapUserMapper() {
-
             return new LdapUserMapper(directoryServiceSecurityProperties);
         }
 
         @Bean
-        public LdapPersonContextMapper personContextMapper(PersonService personService,
-                                                           LdapUserMapper ldapUserMapper) {
+        public LdapPersonContextMapper personContextMapper(PersonService personService, LdapUserMapper ldapUserMapper) {
             return new LdapPersonContextMapper(personService, ldapUserMapper);
         }
 
