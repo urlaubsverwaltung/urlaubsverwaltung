@@ -242,11 +242,9 @@ public class ApplicationForLeaveForm {
             ", vacationType=" + vacationType +
             ", dayLength=" + dayLength +
             ", hours=" + hours +
-            ", reason='" + reason + '\'' +
             ", holidayReplacement=" + holidayReplacement +
             ", address='" + address + '\'' +
             ", teamInformed=" + teamInformed +
-            ", comment='" + comment + '\'' +
             '}';
     }
 
