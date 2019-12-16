@@ -50,9 +50,9 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OV
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ApplyForLeaveViewControllerTest {
+public class ApplicationForLeaveFormViewControllerTest {
 
-    private ApplyForLeaveViewController sut;
+    private ApplicationForLeaveFormViewController sut;
 
     @Mock
     private PersonService personService;
@@ -73,7 +73,7 @@ public class ApplyForLeaveViewControllerTest {
 
     @Before
     public void setUp() {
-        sut = new ApplyForLeaveViewController(personService, accountService, vacationTypeService,
+        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService,
             applicationInteractionService, applicationForLeaveFormValidator, settingsService);
 
         person = new Person();

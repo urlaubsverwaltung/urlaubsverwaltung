@@ -48,7 +48,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Controller
 @RequestMapping("/web")
-public class ApplyForLeaveViewController {
+public class ApplicationForLeaveFormViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final String PERSONS_ATTRIBUTE = "persons";
@@ -62,8 +62,8 @@ public class ApplyForLeaveViewController {
     private final SettingsService settingsService;
 
     @Autowired
-    public ApplyForLeaveViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
-                                       ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService) {
+    public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
+                                                 ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
