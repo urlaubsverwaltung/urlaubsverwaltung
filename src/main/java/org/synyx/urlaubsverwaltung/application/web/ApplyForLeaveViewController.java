@@ -58,17 +58,17 @@ public class ApplyForLeaveViewController {
     private final AccountService accountService;
     private final VacationTypeService vacationTypeService;
     private final ApplicationInteractionService applicationInteractionService;
-    private final ApplicationValidator applicationValidator;
+    private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
 
     @Autowired
     public ApplyForLeaveViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
-                                       ApplicationInteractionService applicationInteractionService, ApplicationValidator applicationValidator, SettingsService settingsService) {
+                                       ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
         this.applicationInteractionService = applicationInteractionService;
-        this.applicationValidator = applicationValidator;
+        this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
     }
 
@@ -125,7 +125,7 @@ public class ApplyForLeaveViewController {
 
         Person applier = personService.getSignedInUser();
 
-        applicationValidator.validate(appForm, errors);
+        applicationForLeaveFormValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
             prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);

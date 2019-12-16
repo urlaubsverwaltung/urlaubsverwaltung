@@ -63,7 +63,7 @@ public class ApplyForLeaveViewControllerTest {
     @Mock
     private ApplicationInteractionService applicationInteractionService;
     @Mock
-    private ApplicationValidator applicationValidator;
+    private ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     @Mock
     private SettingsService settingsService;
 
@@ -74,7 +74,7 @@ public class ApplyForLeaveViewControllerTest {
     @Before
     public void setUp() {
         sut = new ApplyForLeaveViewController(personService, accountService, vacationTypeService,
-            applicationInteractionService, applicationValidator, settingsService);
+            applicationInteractionService, applicationForLeaveFormValidator, settingsService);
 
         person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
@@ -223,7 +223,7 @@ public class ApplyForLeaveViewControllerTest {
             errors.rejectValue("reason", "errors");
             errors.reject("globalErrors");
             return null;
-        }).when(applicationValidator).validate(any(), any());
+        }).when(applicationForLeaveFormValidator).validate(any(), any());
 
         perform(post("/web/application"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))

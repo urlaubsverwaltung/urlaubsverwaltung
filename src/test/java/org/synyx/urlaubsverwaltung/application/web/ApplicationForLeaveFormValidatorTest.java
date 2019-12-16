@@ -39,11 +39,11 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * Unit test for {@link ApplicationValidator}.
+ * Unit test for {@link ApplicationForLeaveFormValidator}.
  */
-public class ApplicationValidatorTest {
+public class ApplicationForLeaveFormValidatorTest {
 
-    private ApplicationValidator validator;
+    private ApplicationForLeaveFormValidator validator;
 
     private WorkingTimeService workingTimeService;
     private WorkDaysService calendarService;
@@ -71,7 +71,7 @@ public class ApplicationValidatorTest {
         workingTimeService = mock(WorkingTimeService.class);
         overtimeService = mock(OvertimeService.class);
 
-        validator = new ApplicationValidator(workingTimeService, calendarService, overlapService, calculationService,
+        validator = new ApplicationForLeaveFormValidator(workingTimeService, calendarService, overlapService, calculationService,
             settingsService, overtimeService);
         errors = mock(Errors.class);
 
