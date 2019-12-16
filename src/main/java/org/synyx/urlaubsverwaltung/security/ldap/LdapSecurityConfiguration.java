@@ -93,7 +93,7 @@ public class LdapSecurityConfiguration {
     }
 
     @Configuration
-    @ConditionalOnExpression("'${uv.security.auth}'=='ldap' and '${uv.security.ldap.sync.enabled}'=='true'")
+    @ConditionalOnExpression("'${uv.security.auth}'=='ldap' and '${uv.security.directory-service.ldap.sync.enabled}'=='true'")
     public static class LdapAuthSyncConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
