@@ -158,4 +158,40 @@ public class ApplicationForLeaveFormTest {
         assertThat(form.isTeamInformed()).isEqualTo(true);
         assertThat(form.getComment()).isEqualTo("Welcome!");
     }
+
+    @Test
+    public void toStringTest() {
+
+        final Person person = new Person();
+        final Person holidayReplacement = new Person();
+
+        final LocalDate startDate = LocalDate.MIN;
+        final Time startTime = Time.valueOf(LocalTime.MIN);
+
+        final LocalDate endDate = LocalDate.MAX;
+        final Time endTime = Time.valueOf(LocalTime.MAX);
+
+        final VacationType vacationType = new VacationType();
+
+        final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
+            .person(person)
+            .startDate(startDate)
+            .startTime(startTime)
+            .endDate(endDate)
+            .endTime(endTime)
+            .vacationType(vacationType)
+            .dayLength(DayLength.ZERO)
+            .hours(BigDecimal.ZERO)
+            .reason("Reason")
+            .holidayReplacement(holidayReplacement)
+            .address("Address")
+            .teamInformed(true)
+            .comment("Comment")
+            .build();
+
+        assertThat(form.toString()).isEqualTo("ApplicationForLeaveForm{person=Person{id='null'}, startDate=-999999999-01-01, " +
+            "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
+            "vacationType=VacationType{category=null, messageKey='null'}, dayLength=ZERO, hours=0, " +
+            "holidayReplacement=Person{id='null'}, address='Address', teamInformed=true}");
+    }
 }
