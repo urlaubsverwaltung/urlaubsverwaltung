@@ -37,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
  * correctly by the user, else it saves error messages in errors object.
  */
 @Component
-public class ApplicationValidator implements Validator {
+public class ApplicationForLeaveFormValidator implements Validator {
 
     private static final int MAX_CHARS = 200;
 
@@ -79,9 +79,9 @@ public class ApplicationValidator implements Validator {
     private final OvertimeService overtimeService;
 
     @Autowired
-    public ApplicationValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
-                                OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-                                OvertimeService overtimeService) {
+    public ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
+                                            OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
+                                            OvertimeService overtimeService) {
 
         this.workingTimeService = workingTimeService;
         this.calendarService = calendarService;
