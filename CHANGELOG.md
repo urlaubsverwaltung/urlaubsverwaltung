@@ -2,6 +2,8 @@
 * Add admin roles message property [#905](https://github.com/synyx/urlaubsverwaltung/pull/905)
 * Remove 'reason' from application logging [#901](https://github.com/synyx/urlaubsverwaltung/pull/901)
 * Remove 'comment' from account logging [#902](https://github.com/synyx/urlaubsverwaltung/pull/902)
+* Remove 'comment' from SickNoteForm logging [#913](https://github.com/synyx/urlaubsverwaltung/pull/913)
+* Remove 'reason' and 'comment' from ApplicationForLeaveForm logging [#912](https://github.com/synyx/urlaubsverwaltung/pull/912) 
 
 ### [urlaubsverwaltung-3.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0)
 * Configuration-Change: `uv.person.canBeManipulated` is now `false` by default [#880](https://github.com/synyx/urlaubsverwaltung/pull/880)
