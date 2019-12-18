@@ -50,9 +50,9 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OV
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ApplyForLeaveViewControllerTest {
+public class ApplicationForLeaveFormViewControllerTest {
 
-    private ApplyForLeaveViewController sut;
+    private ApplicationForLeaveFormViewController sut;
 
     @Mock
     private PersonService personService;
@@ -63,7 +63,7 @@ public class ApplyForLeaveViewControllerTest {
     @Mock
     private ApplicationInteractionService applicationInteractionService;
     @Mock
-    private ApplicationValidator applicationValidator;
+    private ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     @Mock
     private SettingsService settingsService;
 
@@ -73,8 +73,8 @@ public class ApplyForLeaveViewControllerTest {
 
     @Before
     public void setUp() {
-        sut = new ApplyForLeaveViewController(personService, accountService, vacationTypeService,
-            applicationInteractionService, applicationValidator, settingsService);
+        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService,
+            applicationInteractionService, applicationForLeaveFormValidator, settingsService);
 
         person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
@@ -223,7 +223,7 @@ public class ApplyForLeaveViewControllerTest {
             errors.rejectValue("reason", "errors");
             errors.reject("globalErrors");
             return null;
-        }).when(applicationValidator).validate(any(), any());
+        }).when(applicationForLeaveFormValidator).validate(any(), any());
 
         perform(post("/web/application"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))

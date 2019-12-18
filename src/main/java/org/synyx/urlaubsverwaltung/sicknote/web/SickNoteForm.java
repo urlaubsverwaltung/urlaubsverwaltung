@@ -141,8 +141,7 @@ public class SickNoteForm {
             ", endDate=" + endDate +
             ", dayLength=" + dayLength +
             ", aubStartDate=" + aubStartDate +
-            ", aubEndDate=" + aubEndDate +
-            ", comment='" + comment + '\'' +
+            ", aubEndDate=" + aubEndDate + '\'' +
             '}';
     }
 }

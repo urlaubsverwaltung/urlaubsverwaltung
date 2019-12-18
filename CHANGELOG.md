@@ -1,6 +1,27 @@
 ### master
+
+### [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.1)
+* Fix ldap and ad sync can not be enabled [#914](https://github.com/synyx/urlaubsverwaltung/pull/914)
+* Add admin roles message property [#905](https://github.com/synyx/urlaubsverwaltung/pull/905)
+* Remove 'reason' from application logging [#901](https://github.com/synyx/urlaubsverwaltung/pull/901)
+* Remove 'comment' from account logging [#902](https://github.com/synyx/urlaubsverwaltung/pull/902)
+* Remove 'comment' from SickNoteForm logging [#913](https://github.com/synyx/urlaubsverwaltung/pull/913)
+* Remove 'reason' and 'comment' from ApplicationForLeaveForm logging [#912](https://github.com/synyx/urlaubsverwaltung/pull/912) 
+
+### [urlaubsverwaltung-3.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0)
 * Configuration-Change: `uv.person.canBeManipulated` is now `false` by default [#880](https://github.com/synyx/urlaubsverwaltung/pull/880)
+* Configuration-Change: Change default security auth mechanism to default [#883](https://github.com/synyx/urlaubsverwaltung/pull/883)
+* Fix working time default behaviour [#878](https://github.com/synyx/urlaubsverwaltung/pull/878)
 * Fix logging of user data on google calendar event [#875](https://github.com/synyx/urlaubsverwaltung/pull/875)
+* Fix to early deleted mail configuration [#877](https://github.com/synyx/urlaubsverwaltung/pull/877)
+* Fix exception handling [#899](https://github.com/synyx/urlaubsverwaltung/pull/899)
+* Catch `FreeTimeAbsenceException` on availability api if working time not set [#862](https://github.com/synyx/urlaubsverwaltung/pull/862)
+* Improve a11y [#871](https://github.com/synyx/urlaubsverwaltung/pull/871) [#868](https://github.com/synyx/urlaubsverwaltung/pull/868) [#896](https://github.com/synyx/urlaubsverwaltung/pull/896) [#896](https://github.com/synyx/urlaubsverwaltung/pull/896) [#879](https://github.com/synyx/urlaubsverwaltung/pull/879) [#864](https://github.com/synyx/urlaubsverwaltung/pull/864) [#865](https://github.com/synyx/urlaubsverwaltung/pull/865)
+* Add Mailhog as local smtp service [#884](https://github.com/synyx/urlaubsverwaltung/pull/884)
+* Upgrade spring boot parent to 2.1.11
+* Upgrade maven wrapper to 3.6.3
+* Some cleanups [#897](https://github.com/synyx/urlaubsverwaltung/pull/897) [#889](https://github.com/synyx/urlaubsverwaltung/pull/889) [#882](https://github.com/synyx/urlaubsverwaltung/pull/882) [#866](https://github.com/synyx/urlaubsverwaltung/pull/866)
+
 
 ### [urlaubsverwaltung-3.0.0.RC8](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC8)
 * API-Change: Move `api/availability` to `api/person/persons/{personId}/availabilities` [#808](https://github.com/synyx/urlaubsverwaltung/issues/808)
@@ -16,11 +37,11 @@
 * Rename loginName to username [#839](https://github.com/synyx/urlaubsverwaltung/pull/839)
 * Rename to view controller test [#814](https://github.com/synyx/urlaubsverwaltung/pull/814)
 * Remove all deprecations [#841](https://github.com/synyx/urlaubsverwaltung/pull/841)
-* Upgrade spring boot parent to 2.1.11
+* Upgrade spring boot parent to 2.1.10
 * Upgrade google api client to 1.25.0
 * Upgrade jollyday to 0.5.9
 * Upgrade frontend maven plugin to 1.8.0
-* Upgrade maven wrapper to 3.6.3
+* Upgrade maven wrapper to 3.6.2
 
 ### [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7)
 * Remove liquibase user demo creation on demo context [#810](https://github.com/synyx/urlaubsverwaltung/pull/810)

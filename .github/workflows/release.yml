@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK
-        uses: actions/setup-java@v1.2.0
+        uses: actions/setup-java@v1
         with:
           java-version: 11
       - uses: actions/cache@v1
@@ -24,13 +24,13 @@ jobs:
         run: ./mvnw --batch-mode clean verify
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1.0.0
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: "Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden."
+          body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
           draft: false
           prerelease: false
       - name: Create docker image

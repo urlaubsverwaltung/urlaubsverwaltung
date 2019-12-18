@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -18,6 +19,9 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.time.LocalDate;
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 
 @Api("Availabilities: Get all availabilities for a certain person and period")
@@ -44,9 +48,10 @@ public class AvailabilityApiController {
     @GetMapping(AVAILABILITIES)
     @PreAuthorize(SecurityRules.IS_OFFICE)
     public AvailabilityListDto personsAvailabilities(
-        @ApiParam(value = "id of the person")
-        @PathVariable(value = "personId")
-            Integer personId, @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
+        @ApiParam("id of the person")
+        @PathVariable("personId")
+            Integer personId,
+        @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam("from")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate startDate,
@@ -55,22 +60,24 @@ public class AvailabilityApiController {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate endDate) {
 
-        final Optional<Person> optionalPerson = personService.getPersonByID(personId);
-
-        if (optionalPerson.isEmpty()) {
-            throw new IllegalArgumentException("No person found for id = " + personId);
+        if (startDate.isAfter(endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
         }
 
-        if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("startdate " + startDate + " must not be after endDate " + endDate);
+        final Optional<Person> optionalPerson = personService.getPersonByID(personId);
+        if (optionalPerson.isEmpty()) {
+            throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
         }
 
         boolean requestedDateRangeIsMoreThanOneMonth = startDate.minusDays(1).isBefore(endDate.minusMonths(1));
-
         if (requestedDateRangeIsMoreThanOneMonth) {
-            throw new IllegalArgumentException("Requested date range to large. Maximum allowed range is one month");
+            throw new ResponseStatusException(BAD_REQUEST, "Requested date range to large. Maximum allowed range is one month");
         }
 
-        return availabilityService.getPersonsAvailabilities(startDate, endDate, optionalPerson.get());
+        try {
+            return availabilityService.getPersonsAvailabilities(startDate, endDate, optionalPerson.get());
+        } catch (FreeTimeAbsenceException e) {
+            throw new ResponseStatusException(NO_CONTENT, "There is no content available for this person and the date range");
+        }
     }
 }

@@ -42,7 +42,6 @@ public class AvailabilityApiControllerTest {
 
     @Before
     public void setUp() {
-
         sut = new AvailabilityApiController(availabilityService, personService);
 
         testPerson = TestDataCreator.createPerson("testPerson");
@@ -51,7 +50,6 @@ public class AvailabilityApiControllerTest {
 
     @Test
     public void ensurePersonsAvailabilitiesForUnknownPersonResultsInBadRequest() throws Exception {
-
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
@@ -62,7 +60,6 @@ public class AvailabilityApiControllerTest {
 
     @Test
     public void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"))
@@ -78,75 +75,61 @@ public class AvailabilityApiControllerTest {
     @Test
     public void ensureNoContentAvailabilitiesForGivenPersonWithoutConfiguredWorkingTime() throws Exception {
 
-        when(availabilityService.getPersonsAvailabilities(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenThrow(NoValidWorkingTimeException.class);
+        when(availabilityService.getPersonsAvailabilities(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenThrow(FreeTimeAbsenceException.class);
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2015-01-01")
             .param("to", "2015-01-31"))
             .andExpect(status().isNoContent());
     }
 
-
     @Test
     public void ensureRequestsAreOnlyAllowedForADateRangeOfMaxOneMonth() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2016-02-01"))
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void ensureBadRequestForMissingPersonParameter() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("to", "2016-12-31")
             .param("to", "2016-12-31"))
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void ensureBadRequestForMissingFromParameter() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("to", "2016-12-31"))
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void ensureBadRequestForInvalidFromParameter() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "foo")
             .param("to", "2016-12-31"))
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void ensureBadRequestForMissingToParameter() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01"))
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void ensureBadRequestForInvalidToParameter() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "foo"))
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void ensureBadRequestForInvalidPeriod() throws Exception {
-
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))

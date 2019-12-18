@@ -48,7 +48,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Controller
 @RequestMapping("/web")
-public class ApplyForLeaveViewController {
+public class ApplicationForLeaveFormViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final String PERSONS_ATTRIBUTE = "persons";
@@ -58,17 +58,17 @@ public class ApplyForLeaveViewController {
     private final AccountService accountService;
     private final VacationTypeService vacationTypeService;
     private final ApplicationInteractionService applicationInteractionService;
-    private final ApplicationValidator applicationValidator;
+    private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
 
     @Autowired
-    public ApplyForLeaveViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
-                                       ApplicationInteractionService applicationInteractionService, ApplicationValidator applicationValidator, SettingsService settingsService) {
+    public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
+                                                 ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
         this.applicationInteractionService = applicationInteractionService;
-        this.applicationValidator = applicationValidator;
+        this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
     }
 
@@ -125,7 +125,7 @@ public class ApplyForLeaveViewController {
 
         Person applier = personService.getSignedInUser();
 
-        applicationValidator.validate(appForm, errors);
+        applicationForLeaveFormValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
             prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);

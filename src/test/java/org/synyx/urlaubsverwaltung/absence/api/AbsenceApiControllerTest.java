@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.absence.api;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -449,7 +449,6 @@ public class Application extends AbstractPersistable<Integer> {
             ", endTime=" + endTime +
             ", vacationType=" + vacationType +
             ", dayLength=" + dayLength +
-            ", reason='" + reason + '\'' +
             ", holidayReplacement=" + holidayReplacement +
             ", address='" + address + '\'' +
             ", applicationDate=" + applicationDate +

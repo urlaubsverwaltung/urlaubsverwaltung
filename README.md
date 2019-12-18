@@ -1,5 +1,4 @@
-[![GitHub Actions Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Urlaubsverwaltung%20CI/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Urlaubsverwaltung+CI%22)
-[![Build Status](https://img.shields.io/travis/synyx/urlaubsverwaltung.svg)](https://travis-ci.org/synyx/urlaubsverwaltung)
+[![Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Urlaubsverwaltung%20CI/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Urlaubsverwaltung+CI%22)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung)
 [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
@@ -119,9 +118,6 @@ Diese kann über `/api/` aufgerufen werden.
 
 Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgende Anleitung befolgen.
 
-Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet wird, können Details zur Installation und
-Konfiguration [hier](docs/LEGACY_WAR_INSTALLATION.md) nachgelesen werden.
-
 Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synyx/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
 Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
 
@@ -235,7 +231,7 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Authentifizierung via OpenID Connect (OIDC)
     * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
       Ausserdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggfs weitere Einstellungeun vorgenommen werden.
+      die 'Allowed Callback URLs' und ggfs weitere Einstellungen vorgenommen werden.
 
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
@@ -251,9 +247,9 @@ bzw.
 ### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
-Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync.enabled` bzw. `uv.security.active-directory.sync.enabled` auf `true` gesetzt wird:
+Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.directory-service.ldap.sync.enabled` bzw. `uv.security.directory-service.active-directory.sync.enabled` auf `true` gesetzt wird:
 
-<pre>uv.security.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.active-directory.sync.enabled=true</pre>
+<pre>uv.security.directory-service.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.directory-service.active-directory.sync.enabled=true</pre>
 
 ### Synchronisation mit Kalender
 
