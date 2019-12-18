@@ -247,9 +247,9 @@ bzw.
 ### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
-Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.ldap.sync.enabled` bzw. `uv.security.active-directory.sync.enabled` auf `true` gesetzt wird:
+Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.directory-service.ldap.sync.enabled` bzw. `uv.security.directory-service.active-directory.sync.enabled` auf `true` gesetzt wird:
 
-<pre>uv.security.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.active-directory.sync.enabled=true</pre>
+<pre>uv.security.directory-service.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.directory-service.active-directory.sync.enabled=true</pre>
 
 ### Synchronisation mit Kalender
 

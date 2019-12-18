@@ -1,4 +1,5 @@
 ### master
+* Fix ldap and ad sync can not be enabled [#914](https://github.com/synyx/urlaubsverwaltung/pull/914)
 * Add admin roles message property [#905](https://github.com/synyx/urlaubsverwaltung/pull/905)
 * Remove 'reason' from application logging [#901](https://github.com/synyx/urlaubsverwaltung/pull/901)
 * Remove 'comment' from account logging [#902](https://github.com/synyx/urlaubsverwaltung/pull/902)
