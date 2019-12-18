@@ -81,28 +81,28 @@ spec:
                   key: databasePassword
             {{- end }}
             {{- if .Values.secrets.ldapManagerDn }}
-            - name: UV_SECURITY_LDAP_MANAGER_DN
+            - name: UV_SECURITY_DIRECTORYSERVICE_LDAP_MANAGER_DN
               valueFrom:
                 secretKeyRef:
                   name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-manager
                   key: ldapManagerDn
             {{- end }}
             {{- if .Values.secrets.ldapManagerPassword }}
-            - name: UV_SECURITY_LDAP_MANAGER_PASSWORD
+            - name: UV_SECURITY_DIRECTORYSERVICE_LDAP_MANAGER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-manager
                   key: ldapManagerPassword
             {{- end }}
             {{- if .Values.secrets.ldapSyncUserDn }}
-            - name: UV_SECURITY_LDAP_SYNC_USERDN
+            - name: UV_SECURITY_DIRECTORYSERVICE_LDAP_SYNC_USERDN
               valueFrom:
                 secretKeyRef:
                   name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-sync
                   key: ldapSyncUserDn
             {{- end }}
             {{- if .Values.secrets.ldapSyncPassword }}
-            - name: UV_SECURITY_LDAP_SYNC_PASSWORD
+            - name: UV_SECURITY_DIRECTORYSERVICE_LDAP_SYNC_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "urlaubsverwaltung.fullname" . }}-ldap-sync
