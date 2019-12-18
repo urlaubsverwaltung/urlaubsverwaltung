@@ -1,4 +1,6 @@
 ### master
+
+### [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.1)
 * Fix ldap and ad sync can not be enabled [#914](https://github.com/synyx/urlaubsverwaltung/pull/914)
 * Add admin roles message property [#905](https://github.com/synyx/urlaubsverwaltung/pull/905)
 * Remove 'reason' from application logging [#901](https://github.com/synyx/urlaubsverwaltung/pull/901)
