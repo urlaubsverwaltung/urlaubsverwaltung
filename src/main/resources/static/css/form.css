@@ -75,26 +75,6 @@ textarea.error {
   margin-top: 0;
 }
 
-
-/**************************************************************************
-
-  PERSON FORM
-
-**************************************************************************/
-
-.person--role {
-    border-bottom: 1px dotted #d5d5d5;
-}
-
-.person--role:last-of-type {
-    border-bottom: 0;
-}
-
-.person--mail-notification {
-    margin-left: 24px;
-    padding-bottom: 6px;
-}
-
 /**************************************************************************
 
   DEPARTMENT FORM
