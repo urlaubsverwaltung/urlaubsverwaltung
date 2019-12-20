@@ -58,7 +58,6 @@ public class SickNoteValidator implements Validator {
         return SickNote.class.equals(clazz);
     }
 
-
     @Override
     public void validate(Object target, Errors errors) {
 
@@ -70,7 +69,6 @@ public class SickNoteValidator implements Validator {
             validateAUPeriod(sickNote, errors);
         }
     }
-
 
     private void validateSickNotePeriod(SickNote sickNote, Errors errors) {
 
@@ -90,7 +88,6 @@ public class SickNoteValidator implements Validator {
             validateNoOverlapping(sickNote, errors);
         }
     }
-
 
     private void validateAUPeriod(SickNote sickNote, Errors errors) {
 
@@ -123,7 +120,6 @@ public class SickNoteValidator implements Validator {
         }
     }
 
-
     private void validateNotNull(LocalDate date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
@@ -132,14 +128,8 @@ public class SickNoteValidator implements Validator {
         }
     }
 
-
     /**
      * Validate that the given start date is not after the given end date.
-     *
-     * @param startDate
-     * @param endDate
-     * @param field
-     * @param errors
      */
     private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, String field,
                                 Errors errors) {
@@ -155,22 +145,21 @@ public class SickNoteValidator implements Validator {
         }
     }
 
-
     private void validateNoOverlapping(SickNote sickNote, Errors errors) {
 
-        /**
+        /*
          * Ensure the person has a working time for the period of the sick note
          */
         Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             sickNote.getPerson(), sickNote.getStartDate());
 
-        if (!workingTime.isPresent()) {
+        if (workingTime.isEmpty()) {
             errors.reject(ERROR_WORKING_TIME);
 
             return;
         }
 
-        /**
+        /*
          * Ensure that there is no application for leave and no sick note in the same period
          */
         OverlapCase overlap = overlapService.checkOverlap(sickNote);
@@ -181,7 +170,6 @@ public class SickNoteValidator implements Validator {
             errors.reject(ERROR_OVERLAP);
         }
     }
-
 
     public void validateComment(SickNoteComment comment, Errors errors) {
 
