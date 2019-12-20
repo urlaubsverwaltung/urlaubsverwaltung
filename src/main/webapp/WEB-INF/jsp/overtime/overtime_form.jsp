@@ -125,9 +125,8 @@
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <uv:input-number id="numberOfHours" path="numberOfHours" cssClass="form-control"
-                                                 cssErrorClass="form-control error" step="0.1"
-                                                 value="${overtime.numberOfHours}"/>
+                                <form:input path="numberOfHours" cssClass="form-control"
+                                            cssErrorClass="form-control error"/>
                                 <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
                             </div>
                         </div>
