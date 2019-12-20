@@ -184,28 +184,37 @@
 
                                 <div class="col-md-9">
 
-                                    <div class="person--role checkbox">
+                                    <div class="checkbox pb-2 mb-4">
+                                        <strong class="mb-2 block">
+                                            <spring:message code="person.form.permissions.roles.INACTIVE"/>
+                                        </strong>
                                         <label>
                                             <form:checkbox path="permissions" value="INACTIVE"/><spring:message
-                                            code="person.form.permissions.roles.INACTIVE"/>
+                                            code="person.form.permissions.roles.INACTIVE.description"/>
                                         </label>
                                     </div>
 
-                                    <div class="person--role checkbox">
+                                    <div class="checkbox pb-2 mb-4">
+                                        <strong class="mb-2 block">
+                                            <spring:message code="person.form.permissions.roles.USER"/>
+                                        </strong>
                                         <label>
                                             <form:checkbox path="permissions" value="USER"/><spring:message
-                                            code="person.form.permissions.roles.USER"/>
+                                            code="person.form.permissions.roles.USER.description"/>
                                         </label>
                                             <%-- It's obligatory for now that users get mail notifications about progress of their own applications for leave --%>
                                         <form:hidden path="notifications" value="NOTIFICATION_USER"/>
                                     </div>
 
-                                    <div class="person--role checkbox">
-                                        <label>
+                                    <div class="checkbox pb-2 mb-4">
+                                        <strong class="mb-2 block">
+                                            <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
+                                        </strong>
+                                        <label class="mb-2">
                                             <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message
-                                            code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
+                                            code="person.form.permissions.roles.DEPARTMENT_HEAD.description"/>
                                         </label>
-                                        <label class="person--mail-notification">
+                                        <label class="ml-8 pb-2">
                                             <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
                                             <spring:message code="person.form.notifications.DEPARTMENT_HEAD"/>
                                         </label>
@@ -214,11 +223,11 @@
                                             <c:choose>
                                                 <c:when test="${empty departments}">
                                                     <spring:message
-                                                        code="person.form.permissions.roles.DEPARTMENT_HEAD.departments.none"/>
+                                                        code="person.form.permissions.roles.DEPARTMENT_HEAD.departments.none.description"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <spring:message
-                                                        code="person.form.permissions.roles.DEPARTMENT_HEAD.departments"/>
+                                                        code="person.form.permissions.roles.DEPARTMENT_HEAD.departments.description"/>
                                                     <c:forEach items="${departments}" var="department" varStatus="loop">
                                                         <c:out value="${department.name}${!loop.last ? ',' : ''}"/>
                                                     </c:forEach>
@@ -227,13 +236,16 @@
                                         </label>
                                     </div>
 
-                                    <div class="person--role checkbox">
-                                        <label>
+                                    <div class="checkbox pb-2 mb-4">
+                                        <strong class="mb-2 block">
+                                            <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
+                                        </strong>
+                                        <label class="mb-2">
                                             <form:checkbox path="permissions"
                                                            value="SECOND_STAGE_AUTHORITY"/><spring:message
-                                            code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
+                                            code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
                                         </label>
-                                        <label class="person--mail-notification">
+                                        <label class="ml-8 pb-2">
                                             <form:checkbox path="notifications"
                                                            value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
                                             <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
@@ -243,11 +255,11 @@
                                             <c:choose>
                                                 <c:when test="${empty secondStageDepartments}">
                                                     <spring:message
-                                                        code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none"/>
+                                                        code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none.description"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <spring:message
-                                                        code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments"/>
+                                                        code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.description"/>
                                                     <c:forEach items="${secondStageDepartments}" var="department"
                                                                varStatus="loop">
                                                         <c:out value="${department.name}${!loop.last ? ',' : ''}"/>
@@ -257,12 +269,15 @@
                                         </label>
                                     </div>
 
-                                    <div class="person--role checkbox">
-                                        <label>
+                                    <div class="checkbox pb-2 mb-4">
+                                        <strong class="mb-2 block">
+                                            <spring:message code="person.form.permissions.roles.BOSS"/>
+                                        </strong>
+                                        <label class="mb-2">
                                             <form:checkbox path="permissions" value="BOSS"/><spring:message
-                                            code="person.form.permissions.roles.BOSS"/>
+                                            code="person.form.permissions.roles.BOSS.description"/>
                                         </label>
-                                        <label>
+                                        <label class="mb-2">
                                             <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_ALL"/>
                                             <spring:message code="person.form.notifications.BOSS.all"/>
                                         </label>
@@ -272,16 +287,19 @@
                                         </label>
                                     </div>
 
-                                    <div class="person--role checkbox">
-                                        <label>
+                                    <div class="checkbox">
+                                        <strong class="mb-2 block">
+                                            <spring:message code="person.form.permissions.roles.OFFICE"/>
+                                        </strong>
+                                        <label class="mb-2">
                                             <form:checkbox path="permissions" value="OFFICE"/><spring:message
-                                            code="person.form.permissions.roles.OFFICE"/>
+                                            code="person.form.permissions.roles.OFFICE.description"/>
                                         </label>
-                                        <label class="person--mail-notification">
+                                        <label class="ml-8 pb-2">
                                             <form:checkbox path="notifications" value="NOTIFICATION_OFFICE"/>
                                             <spring:message code="person.form.notifications.OFFICE"/>
                                         </label>
-                                        <label class="person--mail-notification">
+                                        <label class="ml-8 pb-2">
                                             <form:checkbox path="notifications" value="OVERTIME_NOTIFICATION_OFFICE"/>
                                             <spring:message code="person.form.notifications.OFFICE.overtime"/>
                                         </label>
