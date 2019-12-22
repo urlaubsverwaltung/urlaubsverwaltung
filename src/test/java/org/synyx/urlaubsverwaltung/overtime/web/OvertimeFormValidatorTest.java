@@ -28,9 +28,9 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
-public class OvertimeValidatorTest {
+public class OvertimeFormValidatorTest {
 
-    private OvertimeValidator validator;
+    private OvertimeFormValidator validator;
 
     private OvertimeForm overtimeForm;
     private Settings settings;
@@ -45,7 +45,7 @@ public class OvertimeValidatorTest {
         overtimeServiceMock = mock(OvertimeService.class);
         settingsServiceMock = mock(SettingsService.class);
 
-        validator = new OvertimeValidator(overtimeServiceMock, settingsServiceMock);
+        validator = new OvertimeFormValidator(overtimeServiceMock, settingsServiceMock);
         errors = mock(Errors.class);
 
         Overtime overtimeRecord = TestDataCreator.createOvertimeRecord();
