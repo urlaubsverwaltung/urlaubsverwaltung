@@ -215,7 +215,6 @@ public class ApplicationForLeaveFormViewControllerTest {
     @Test
     public void postNewApplicationFormShowFormIfValidationFails() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(somePerson());
         when(settingsService.getSettings()).thenReturn(someSettings());
 
         doAnswer(invocation -> {

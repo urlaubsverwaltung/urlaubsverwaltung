@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionSer
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -39,9 +38,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 /**
  * Controller to apply for leave.
@@ -87,10 +88,9 @@ public class ApplicationForLeaveFormViewController {
         @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException {
 
-        Person signedInUser = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
 
         Person person;
-
         if (personId == null) {
             person = signedInUser;
         } else {
@@ -100,19 +100,16 @@ public class ApplicationForLeaveFormViewController {
         boolean isApplyingForOneSelf = person.equals(signedInUser);
 
         // only office may apply for leave on behalf of other users
-        if (!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE)) {
-            throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to apply for leave for user '%s'",
-                signedInUser.getId(), person.getId()));
+        if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to apply for leave for user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(UTC).getYear(), person);
-
+        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(UTC).getYear(), person);
         if (holidaysAccount.isPresent()) {
             prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
         }
 
-        model.addAttribute("noHolidaysAccount", !holidaysAccount.isPresent());
+        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
 
         return "application/app_form";
     }
@@ -120,10 +117,7 @@ public class ApplicationForLeaveFormViewController {
     @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
                                  Model model, RedirectAttributes redirectAttributes) {
-
         LOG.info("POST new application received: {}", appForm);
-
-        Person applier = personService.getSignedInUser();
 
         applicationForLeaveFormValidator.validate(appForm, errors);
 
@@ -132,16 +126,13 @@ public class ApplicationForLeaveFormViewController {
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
-
             LOG.info("new application ({}) has errors: {}", appForm, errors);
-
             return "application/app_form";
         }
 
-        Application application = appForm.generateApplicationForLeave();
-
-        Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
-            Optional.ofNullable(appForm.getComment()));
+        final Application application = appForm.generateApplicationForLeave();
+        final Person applier = personService.getSignedInUser();
+        final Application savedApplicationForLeave = applicationInteractionService.apply(application, applier, Optional.ofNullable(appForm.getComment()));
 
         LOG.info("new application with success applied {}", savedApplicationForLeave);
 
@@ -152,11 +143,11 @@ public class ApplicationForLeaveFormViewController {
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
-        List<Person> persons = personService.getActivePersons();
+        final List<Person> persons = personService.getActivePersons();
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
-        boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
+        final boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
 
         List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
