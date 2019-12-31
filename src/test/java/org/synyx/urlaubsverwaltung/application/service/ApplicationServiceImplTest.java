@@ -101,9 +101,9 @@ public class ApplicationServiceImplTest {
 
         final Person person = TestDataCreator.createPerson();
 
-        when(applicationDAO.findByStatusInAndPerson(singletonList(WAITING), person)).thenReturn(applications);
+        when(applicationDAO.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
 
-        final List<Application> result = applicationService.getForStatesAndPerson(singletonList(WAITING), person);
+        final List<Application> result = applicationService.getForStatesAndPerson(List.of(WAITING), List.of(person));
         assertEquals(applications, result);
     }
 

@@ -9,6 +9,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
@@ -37,22 +40,25 @@ public class ICalServiceTest {
     private AbsenceService absenceService;
     @Mock
     private PersonService personService;
+    @Mock
+    private DepartmentService departmentService;
+
 
     @Before
     public void setUp() {
 
-        sut = new ICalService(absenceService, personService);
+        sut = new ICalService(absenceService, personService, departmentService);
     }
 
     @Test
-    public void getICalForOneFullDay() {
+    public void getCalendarForPersonForOneFullDay() {
 
         final Person person = createPerson();
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
-        when(absenceService.getOpenAbsences(person)).thenReturn(List.of(fullDayAbsence));
+        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(fullDayAbsence));
 
         final String iCal = sut.getCalendarForPerson(1);
 
@@ -66,14 +72,14 @@ public class ICalServiceTest {
     }
 
     @Test
-    public void getICalForHalfDayMorning() {
+    public void getCalendarForPersonForHalfDayMorning() {
 
         final Person person = createPerson();
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
-        when(absenceService.getOpenAbsences(person)).thenReturn(List.of(morningAbsence));
+        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(morningAbsence));
 
         final String iCal = sut.getCalendarForPerson(1);
 
@@ -88,14 +94,14 @@ public class ICalServiceTest {
     }
 
     @Test
-    public void getICalForMultipleFullDays() {
+    public void getCalendarForPersonForMultipleFullDays() {
 
         final Person person = createPerson();
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final Absence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
-        when(absenceService.getOpenAbsences(person)).thenReturn(List.of(manyFullDayAbsence));
+        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(manyFullDayAbsence));
 
         final String iCal = sut.getCalendarForPerson(1);
 
@@ -110,14 +116,14 @@ public class ICalServiceTest {
     }
 
     @Test
-    public void getICalForHalfDayNoon() {
+    public void getCalendarForPersonForHalfDayNoon() {
 
         final Person person = createPerson();
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
-        when(absenceService.getOpenAbsences(person)).thenReturn(List.of(noonAbsence));
+        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(noonAbsence));
 
         final String iCal = sut.getCalendarForPerson(1);
 
@@ -145,11 +151,43 @@ public class ICalServiceTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getICalButPersonNotFound() {
+    public void getCalendarForPersonButPersonNotFound() {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.ofNullable(null));
 
         sut.getCalendarForPerson(1);
+    }
+
+    @Test
+    public void getCalendarForDepartmentForOneFullDay() {
+
+        final Department department = createDepartment("DepartmentName");
+        department.setId(1);
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+
+        final Person person = createPerson();
+        department.setMembers(List.of(person));
+
+        final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(fullDayAbsence));
+
+        final String iCal = sut.getCalendarForDepartment(1);
+
+        assertThat(iCal).contains("VERSION:2.0");
+        assertThat(iCal).contains("CALSCALE:GREGORIAN");
+        assertThat(iCal).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
+        assertThat(iCal).contains("X-WR-CALNAME:Abwesenheitskalender der Abteilung DepartmentName");
+
+        assertThat(iCal).contains("SUMMARY:Marlene Muster abwesend");
+        assertThat(iCal).contains("DTSTART;VALUE=DATE:20190326");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForDepartmentButDepartmentNotFound() {
+
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.ofNullable(null));
+
+        sut.getCalendarForDepartment(1);
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

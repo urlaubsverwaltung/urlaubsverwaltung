@@ -32,7 +32,7 @@ public class ICalApiControllerTest {
     }
 
     @Test
-    public void getCalendar() throws Exception {
+    public void getCalendarForPerson() throws Exception {
 
         when(iCalService.getCalendarForPerson(1)).thenReturn("iCal string");
 
@@ -44,13 +44,35 @@ public class ICalApiControllerTest {
     }
 
     @Test
-    public void getCalendarWithBadRequest() throws Exception {
+    public void getCalendarForPersonWithBadRequest() throws Exception {
 
         when(iCalService.getCalendarForPerson(1)).thenThrow(new IllegalArgumentException());
 
         perform(get("/api/persons/1/calendar"))
             .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void getCalendarForDepartment() throws Exception {
+
+        when(iCalService.getCalendarForDepartment(1)).thenReturn("calendar department");
+
+        perform(get("/api/departments/1/calendar"))
+            .andExpect(status().isOk())
+            .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
+            .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
+            .andExpect(content().string("calendar department"));
+    }
+
+    @Test
+    public void getCalendarForDepartmentWithBadRequest() throws Exception {
+
+        when(iCalService.getCalendarForDepartment(1)).thenThrow(new IllegalArgumentException());
+
+        perform(get("/api/departments/1/calendar"))
+            .andExpect(status().isBadRequest());
+    }
+
 
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
