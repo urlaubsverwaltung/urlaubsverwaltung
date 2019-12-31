@@ -74,9 +74,9 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, Person person) {
+    public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons) {
 
-        return applicationDAO.findByStatusInAndPerson(statuses, person);
+        return applicationDAO.findByStatusInAndPersonIn(statuses, persons);
     }
 
 

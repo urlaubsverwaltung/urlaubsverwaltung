@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -33,12 +35,14 @@ class ICalService {
 
     private final AbsenceService absenceService;
     private final PersonService personService;
+    private final DepartmentService departmentService;
 
     @Autowired
-    ICalService(AbsenceService absenceService, PersonService personService) {
+    ICalService(AbsenceService absenceService, PersonService personService, DepartmentService departmentService) {
 
         this.absenceService = absenceService;
         this.personService = personService;
+        this.departmentService = departmentService;
     }
 
     String getCalendarForPerson(Integer personId) {
@@ -50,7 +54,21 @@ class ICalService {
 
         final Person person = optionalPerson.get();
         final String title = "Abwesenheitskalender von " + person.getNiceName();
-        final List<Absence> absences = absenceService.getOpenAbsences(person);
+        final List<Absence> absences = absenceService.getOpenAbsences(List.of(person));
+
+        return this.generateCalendar(title, absences).toString();
+    }
+
+    String getCalendarForDepartment(Integer departmentId) {
+
+        final Optional<Department> optionalDepartment = departmentService.getDepartmentById(departmentId);
+        if (optionalDepartment.isEmpty()) {
+            throw new IllegalArgumentException("No department found for ID=" + departmentId);
+        }
+
+        final Department department = optionalDepartment.get();
+        final String title = "Abwesenheitskalender der Abteilung " + department.getName();
+        final List<Absence> absences = absenceService.getOpenAbsences(department.getMembers());
 
         return this.generateCalendar(title, absences).toString();
     }

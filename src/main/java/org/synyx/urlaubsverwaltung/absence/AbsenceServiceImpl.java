@@ -32,11 +32,11 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
 
     @Override
-    public List<Absence> getOpenAbsences(Person person) {
+    public List<Absence> getOpenAbsences(List<Person> persons) {
 
         final CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         final AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(calendarSettings);
-        final List<Application> applications = applicationService.getForStatesAndPerson(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED), person);
+        final List<Application> applications = applicationService.getForStatesAndPerson(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED), persons);
 
         return applications.stream()
             .map(application -> new Absence(application.getPerson(), application.getPeriod(), config))

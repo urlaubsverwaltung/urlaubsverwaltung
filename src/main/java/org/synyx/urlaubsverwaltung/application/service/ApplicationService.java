@@ -84,11 +84,11 @@ public interface ApplicationService {
 
 
     /**
-     * Get all {@link Application}.
+     * Get all {@link Application} with specific states and persons
      *
      * @return  all {@link Application}
      */
-    List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, Person person);
+    List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons);
 
 
     /**

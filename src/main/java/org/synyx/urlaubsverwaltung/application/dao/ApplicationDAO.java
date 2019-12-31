@@ -21,7 +21,7 @@ public interface ApplicationDAO extends CrudRepository<Application, Integer> {
     List<Application> getApplicationsForACertainState(ApplicationStatus status);
 
 
-    List<Application> findByStatusInAndPerson(List<ApplicationStatus> statuses, Person person);
+    List<Application> findByStatusInAndPersonIn(List<ApplicationStatus> statuses, List<Person> persons);
 
 
     @Query(
