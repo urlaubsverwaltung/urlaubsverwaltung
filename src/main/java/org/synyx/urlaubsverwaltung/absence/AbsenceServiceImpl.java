@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.absence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
@@ -33,13 +34,26 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public List<Absence> getOpenAbsences(List<Person> persons) {
+        final List<ApplicationStatus> openStatuses = List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED);
+        final List<Application> openApplications = applicationService.getForStatesAndPerson(openStatuses, persons);
+        return generateAbsences(openApplications);
+    }
+
+    @Override
+    public List<Absence> getOpenAbsences(){
+        final List<ApplicationStatus> openStatuses = List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED);
+        final List<Application> openApplications = applicationService.getForStates(openStatuses);
+        return generateAbsences(openApplications);
+    }
+
+    private List<Absence> generateAbsences(List<Application> applications) {
 
         final CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         final AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(calendarSettings);
-        final List<Application> applications = applicationService.getForStatesAndPerson(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED), persons);
 
         return applications.stream()
             .map(application -> new Absence(application.getPerson(), application.getPeriod(), config))
             .collect(toList());
     }
+
 }

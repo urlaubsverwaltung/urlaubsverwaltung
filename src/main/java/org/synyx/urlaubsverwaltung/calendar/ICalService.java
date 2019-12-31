@@ -73,6 +73,14 @@ class ICalService {
         return this.generateCalendar(title, absences).toString();
     }
 
+    String getCalendarForAll() {
+
+        final String title = "Abwesenheitskalender der Firma";
+        final List<Absence> absences = absenceService.getOpenAbsences();
+
+        return this.generateCalendar(title, absences).toString();
+    }
+
 
     Calendar generateCalendar(String title, List<Absence> absences) {
 

@@ -190,6 +190,24 @@ public class ICalServiceTest {
         sut.getCalendarForDepartment(1);
     }
 
+    @Test
+    public void getCalendarForAllForOneFullDay() {
+
+        final Person person = createPerson();
+        final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        when(absenceService.getOpenAbsences()).thenReturn(List.of(fullDayAbsence));
+
+        final String iCal = sut.getCalendarForAll();
+
+        assertThat(iCal).contains("VERSION:2.0");
+        assertThat(iCal).contains("CALSCALE:GREGORIAN");
+        assertThat(iCal).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
+        assertThat(iCal).contains("X-WR-CALNAME:Abwesenheitskalender der Firma");
+
+        assertThat(iCal).contains("SUMMARY:Marlene Muster abwesend");
+        assertThat(iCal).contains("DTSTART;VALUE=DATE:20190326");
+    }
+
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
