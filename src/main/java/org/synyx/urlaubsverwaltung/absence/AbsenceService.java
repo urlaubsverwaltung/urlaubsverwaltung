@@ -9,5 +9,11 @@ import java.util.List;
 
 public interface AbsenceService {
 
-    List<Absence> getOpenAbsences(Person person);
+    /**
+     * Get absences from a list of persons
+     *
+     * @param persons
+     * @return
+     */
+    List<Absence> getOpenAbsences(List<Person> persons);
 }

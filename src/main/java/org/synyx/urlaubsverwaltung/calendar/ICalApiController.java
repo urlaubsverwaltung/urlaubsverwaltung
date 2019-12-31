@@ -27,9 +27,9 @@ public class ICalApiController {
         this.iCalService = iCalService;
     }
 
-    @GetMapping(path = "/persons/{personId}/calendar")
+    @GetMapping("/persons/{personId}/calendar")
     @PreAuthorize("@userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String getCalendar(HttpServletResponse response, @PathVariable Integer personId) {
+    public String getCalendarForPerson(HttpServletResponse response, @PathVariable Integer personId) {
 
         final String iCal;
         try {
@@ -44,4 +44,22 @@ public class ICalApiController {
 
         return iCal;
     }
+
+    @GetMapping("/departments/{departmentId}/calendar")
+    public String getCalendarForDepartment(HttpServletResponse response, @PathVariable Integer departmentId) {
+
+        final String iCal;
+        try {
+            iCal = iCalService.getCalendarForDepartment(departmentId);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(BAD_REQUEST, "No department found for id = " + departmentId);
+        }
+
+        response.setContentType("text/calendar");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=calendar.ics");
+
+        return iCal;
+    }
+
 }
