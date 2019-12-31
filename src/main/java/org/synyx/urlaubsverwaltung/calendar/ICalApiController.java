@@ -38,9 +38,7 @@ public class ICalApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
         }
 
-        response.setContentType("text/calendar");
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Disposition", "attachment; filename=calendar.ics");
+        setContentTypeAndHeaders(response);
 
         return iCal;
     }
@@ -55,11 +53,22 @@ public class ICalApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No department found for id = " + departmentId);
         }
 
-        response.setContentType("text/calendar");
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Disposition", "attachment; filename=calendar.ics");
+        setContentTypeAndHeaders(response);
 
         return iCal;
     }
 
+    @GetMapping("/company/calendar")
+    public String getCalendarForCompany(HttpServletResponse response) {
+
+        setContentTypeAndHeaders(response);
+
+        return iCalService.getCalendarForAll();
+    }
+
+    private void setContentTypeAndHeaders(HttpServletResponse response) {
+        response.setContentType("text/calendar");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=calendar.ics");
+    }
 }

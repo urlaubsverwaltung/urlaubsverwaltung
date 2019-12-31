@@ -43,7 +43,7 @@ public class AbsenceServiceImplTest {
     }
 
     @Test
-    public void getOpenAbsences() {
+    public void getOpenAbsencesForPersons() {
 
         final Settings settings = new Settings();
         settings.setCalendarSettings(new CalendarSettings());
@@ -61,5 +61,26 @@ public class AbsenceServiceImplTest {
         assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
         assertThat(openAbsences.get(0).getStartDate()).isEqualTo("2019-12-10T00:00Z");
         assertThat(openAbsences.get(0).getEndDate()).isEqualTo("2019-12-24T00:00Z");
+    }
+
+    @Test
+    public void getOpenAbsences() {
+
+        final Settings settings = new Settings();
+        settings.setCalendarSettings(new CalendarSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = createPerson();
+
+        final LocalDate startDate = LocalDate.of(2019, 11, 10);
+        final LocalDate endDate = LocalDate.of(2019, 11, 23);
+        final Application application = createApplication(person, startDate, endDate, FULL);
+        when(applicationService.getForStates(eq(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED)))).thenReturn(List.of(application));
+
+        final List<Absence> openAbsences = sut.getOpenAbsences();
+        assertThat(openAbsences).hasSize(1);
+        assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
+        assertThat(openAbsences.get(0).getStartDate()).isEqualTo("2019-11-10T00:00Z");
+        assertThat(openAbsences.get(0).getEndDate()).isEqualTo("2019-11-24T00:00Z");
     }
 }

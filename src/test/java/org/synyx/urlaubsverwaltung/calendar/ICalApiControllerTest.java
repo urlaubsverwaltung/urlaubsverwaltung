@@ -73,7 +73,17 @@ public class ICalApiControllerTest {
             .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void getCalendarForAll() throws Exception {
 
+        when(iCalService.getCalendarForAll()).thenReturn("calendar all");
+
+        perform(get("/api/company/calendar"))
+            .andExpect(status().isOk())
+            .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
+            .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
+            .andExpect(content().string("calendar all"));
+    }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build().perform(builder);

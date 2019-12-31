@@ -92,6 +92,17 @@ public class ApplicationServiceImplTest {
         assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
     }
 
+    @Test
+    public void getForStates() {
+
+        final Application application = new Application();
+        final List<Application> applications = List.of(application);
+
+        when(applicationDAO.findByStatusIn(List.of(WAITING))).thenReturn(applications);
+
+        final List<Application> result = applicationService.getForStates(List.of(WAITING));
+        assertEquals(applications, result);
+    }
 
     @Test
     public void getForStatesAndPerson() {

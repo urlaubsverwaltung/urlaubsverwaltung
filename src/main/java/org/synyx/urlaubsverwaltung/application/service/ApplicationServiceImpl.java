@@ -72,6 +72,11 @@ class ApplicationServiceImpl implements ApplicationService {
         return applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status);
     }
 
+    @Override
+    public List<Application> getForStates(List<ApplicationStatus> statuses) {
+
+        return applicationDAO.findByStatusIn(statuses);
+    }
 
     @Override
     public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons) {

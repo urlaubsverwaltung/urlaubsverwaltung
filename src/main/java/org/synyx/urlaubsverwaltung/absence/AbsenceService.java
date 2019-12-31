@@ -16,4 +16,12 @@ public interface AbsenceService {
      * @return
      */
     List<Absence> getOpenAbsences(List<Person> persons);
+
+    /**
+     * Get all absences with one of the status:
+     * ALLOWED, WAITING, TEMPORARY_ALLOWED
+     *
+     * @return
+     */
+    List<Absence> getOpenAbsences();
 }
