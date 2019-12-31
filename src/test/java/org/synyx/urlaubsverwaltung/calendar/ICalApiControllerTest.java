@@ -53,6 +53,15 @@ public class ICalApiControllerTest {
     }
 
     @Test
+    public void getCalendarForPersonWithNoContent() throws Exception {
+
+        when(iCalService.getCalendarForPerson(1)).thenThrow(CalendarException.class);
+
+        perform(get("/api/persons/1/calendar"))
+            .andExpect(status().isNoContent());
+    }
+
+    @Test
     public void getCalendarForDepartment() throws Exception {
 
         when(iCalService.getCalendarForDepartment(1)).thenReturn("calendar department");
@@ -74,6 +83,15 @@ public class ICalApiControllerTest {
     }
 
     @Test
+    public void getCalendarForDepartmentWithNoContent() throws Exception {
+
+        when(iCalService.getCalendarForDepartment(1)).thenThrow(CalendarException.class);
+
+        perform(get("/api/departments/1/calendar"))
+            .andExpect(status().isNoContent());
+    }
+
+    @Test
     public void getCalendarForAll() throws Exception {
 
         when(iCalService.getCalendarForAll()).thenReturn("calendar all");
@@ -83,6 +101,15 @@ public class ICalApiControllerTest {
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
             .andExpect(content().string("calendar all"));
+    }
+
+    @Test
+    public void getCalendarForAllWithNoContent() throws Exception {
+
+        when(iCalService.getCalendarForAll()).thenThrow(CalendarException.class);
+
+        perform(get("/api/company/calendar"))
+            .andExpect(status().isNoContent());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

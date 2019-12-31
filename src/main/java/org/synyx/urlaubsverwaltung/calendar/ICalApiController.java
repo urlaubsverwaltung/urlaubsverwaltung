@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 
 @Api("calendar")
@@ -36,6 +37,8 @@ public class ICalApiController {
             iCal = iCalService.getCalendarForPerson(personId);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
+        } catch (CalendarException e) {
+            throw new ResponseStatusException(NO_CONTENT);
         }
 
         setContentTypeAndHeaders(response);
@@ -51,6 +54,8 @@ public class ICalApiController {
             iCal = iCalService.getCalendarForDepartment(departmentId);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No department found for id = " + departmentId);
+        } catch (CalendarException e) {
+            throw new ResponseStatusException(NO_CONTENT);
         }
 
         setContentTypeAndHeaders(response);
@@ -61,9 +66,16 @@ public class ICalApiController {
     @GetMapping("/company/calendar")
     public String getCalendarForCompany(HttpServletResponse response) {
 
+        final String iCal;
+        try {
+            iCal = iCalService.getCalendarForAll();
+        } catch (CalendarException e) {
+            throw new ResponseStatusException(NO_CONTENT);
+        }
+
         setContentTypeAndHeaders(response);
 
-        return iCalService.getCalendarForAll();
+        return iCal;
     }
 
     private void setContentTypeAndHeaders(HttpServletResponse response) {

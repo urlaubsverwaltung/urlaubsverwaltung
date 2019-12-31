@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.validate.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +49,18 @@ public class ICalServiceTest {
     public void setUp() {
 
         sut = new ICalService(absenceService, personService, departmentService);
+    }
+
+    @Test(expected = CalendarException.class)
+    public void getCalendarForPersonAndNoAbsenceFound() {
+
+        final Person person = createPerson();
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of());
+
+        sut.getCalendarForPerson(1);
     }
 
     @Test
@@ -135,19 +148,6 @@ public class ICalServiceTest {
         assertThat(iCal).contains("SUMMARY:Marlene Muster abwesend");
         assertThat(iCal).contains("DTSTART;TZID=Etc/UTC:20190526T120000");
         assertThat(iCal).contains("DTEND;TZID=Etc/UTC:20190526T160000");
-    }
-
-    @Test
-    public void validateICal() {
-
-        final Person person = createPerson();
-        final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
-        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
-        final Absence fullMultipleDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-28"), FULL);
-        final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
-
-        final Calendar calendar = sut.generateCalendar("title", List.of(morningAbsence, noonAbsence, fullDayAbsence, fullMultipleDayAbsence));
-        calendar.validate();
     }
 
     @Test(expected = IllegalArgumentException.class)

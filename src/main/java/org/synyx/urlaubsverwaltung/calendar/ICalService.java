@@ -11,6 +11,7 @@ import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
+import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ class ICalService {
     }
 
 
-    Calendar generateCalendar(String title, List<Absence> absences) {
+    private Calendar generateCalendar(String title, List<Absence> absences) {
 
         final Calendar calendar = new Calendar();
         calendar.getProperties().add(VERSION_2_0);
@@ -92,6 +93,12 @@ class ICalService {
 
         final List<VEvent> absencesVEvents = absences.stream().map(this::toVEvent).collect(toList());
         calendar.getComponents().addAll(absencesVEvents);
+
+        try {
+            calendar.validate();
+        } catch (ValidationException e) {
+            throw new CalendarException("Validation does not pass", e);
+        }
 
         return calendar;
     }
