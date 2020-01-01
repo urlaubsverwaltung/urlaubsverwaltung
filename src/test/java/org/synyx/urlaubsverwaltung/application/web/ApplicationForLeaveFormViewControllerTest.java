@@ -24,9 +24,11 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -83,7 +85,8 @@ public class ApplicationForLeaveFormViewControllerTest {
     @Test
     public void overtimeIsActivated() throws Exception {
 
-        when(accountService.getHolidaysAccount(2019, person)).thenReturn(Optional.of(new Account()));
+        final int year = ZonedDateTime.now(UTC).getYear();
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
@@ -95,9 +98,7 @@ public class ApplicationForLeaveFormViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final MockHttpServletRequestBuilder builder = get("/web/application/new");
-
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(get("/web/application/new"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("overtimeActive", is(true)));
         resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));
@@ -106,7 +107,8 @@ public class ApplicationForLeaveFormViewControllerTest {
     @Test
     public void overtimeIsDeactivated() throws Exception {
 
-        when(accountService.getHolidaysAccount(2019, person)).thenReturn(Optional.of(new Account()));
+        final int year = ZonedDateTime.now(UTC).getYear();
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
@@ -118,9 +120,7 @@ public class ApplicationForLeaveFormViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        MockHttpServletRequestBuilder builder = get("/web/application/new");
-
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(get("/web/application/new"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("overtimeActive", is(false)));
         resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));

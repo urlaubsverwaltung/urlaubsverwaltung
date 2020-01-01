@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sickdays.web;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +13,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -36,7 +34,6 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasValue;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -67,20 +64,11 @@ public class SickDaysOverviewViewControllerTest {
 
     @Test
     public void filterSickNotes() throws Exception {
+        final int year = ZonedDateTime.now(UTC).getYear();
 
-        LocalDate from = LocalDate.of(2019, 1, 1);
-        LocalDate to = LocalDate.of(2019, 12, 31);
-        final FilterPeriod filterPeriod = new FilterPeriod(from, to);
-        final String requestBody = new ObjectMapper().writeValueAsString(filterPeriod);
-
-        final MockHttpServletRequestBuilder builder = post("/web/sicknote/filter");
-        builder.accept(APPLICATION_JSON);
-        builder.contentType(APPLICATION_JSON);
-        builder.content(requestBody);
-
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(post("/web/sicknote/filter"));
         resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/sicknote?from=01.01.2019&to=31.12.2019"));
+        resultActions.andExpect(view().name("redirect:/web/sicknote?from=01.01." + year + "&to=31.12." + year));
     }
 
     @Test
