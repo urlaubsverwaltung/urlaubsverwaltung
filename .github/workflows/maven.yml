@@ -68,6 +68,7 @@ jobs:
         run: >
           ./mvnw --batch-mode
           org.jacoco:jacoco-maven-plugin:prepare-agent
+          org.jacoco:jacoco-maven-plugin:report
           verify
           org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -Dsonar.host.url=https://sonarcloud.io
