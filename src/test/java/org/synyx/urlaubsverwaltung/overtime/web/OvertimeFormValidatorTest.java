@@ -1,8 +1,10 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
@@ -19,15 +21,15 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class OvertimeFormValidatorTest {
 
     private OvertimeFormValidator validator;
@@ -35,29 +37,26 @@ public class OvertimeFormValidatorTest {
     private OvertimeForm overtimeForm;
     private Settings settings;
 
+    @Mock
     private Errors errors;
-    private OvertimeService overtimeServiceMock;
-    private SettingsService settingsServiceMock;
+    @Mock
+    private OvertimeService overtimeService;
+    @Mock
+    private SettingsService settingsService;
 
     @Before
     public void setUp() {
 
-        overtimeServiceMock = mock(OvertimeService.class);
-        settingsServiceMock = mock(SettingsService.class);
+        validator = new OvertimeFormValidator(overtimeService, settingsService);
 
-        validator = new OvertimeFormValidator(overtimeServiceMock, settingsServiceMock);
-        errors = mock(Errors.class);
-
-        Overtime overtimeRecord = TestDataCreator.createOvertimeRecord();
+        final Overtime overtimeRecord = TestDataCreator.createOvertimeRecord();
         overtimeForm = new OvertimeForm(overtimeRecord);
 
         settings = new Settings();
         settings.getWorkingTimeSettings().setOvertimeActive(true);
 
-        when(settingsServiceMock.getSettings()).thenReturn(settings);
-
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
-            .thenReturn(BigDecimal.ZERO);
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.ZERO);
     }
 
 
@@ -65,15 +64,13 @@ public class OvertimeFormValidatorTest {
 
     @Test
     public void ensureSupportsOvertimeFormClass() {
-
-        Assert.assertTrue("Should support overtime form class", validator.supports(OvertimeForm.class));
+        assertThat(validator.supports(OvertimeForm.class)).isTrue();
     }
 
 
     @Test
     public void ensureDoesNotSupportOtherClass() {
-
-        Assert.assertFalse("Should not support other class than overtime form class", validator.supports(Person.class));
+        assertThat(validator.supports(Person.class)).isFalse();
     }
 
 
@@ -250,8 +247,8 @@ public class OvertimeFormValidatorTest {
 
         verify(errors).reject("overtime.record.error.deactivated");
 
-        verify(settingsServiceMock).getSettings();
-        verifyZeroInteractions(overtimeServiceMock);
+        verify(settingsService).getSettings();
+        verifyZeroInteractions(overtimeService);
     }
 
 
@@ -260,8 +257,7 @@ public class OvertimeFormValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(16);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
-            .thenReturn(new BigDecimal("8"));
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(new BigDecimal("8"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("8"));
 
@@ -269,8 +265,8 @@ public class OvertimeFormValidatorTest {
 
         verifyZeroInteractions(errors);
 
-        verify(settingsServiceMock).getSettings();
-        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(settingsService).getSettings();
+        verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -279,7 +275,7 @@ public class OvertimeFormValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(16);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("8"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("8.5"));
@@ -290,8 +286,8 @@ public class OvertimeFormValidatorTest {
             .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertime",
                 new Object[]{new BigDecimal("16")}, null);
 
-        verify(settingsServiceMock).getSettings();
-        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(settingsService).getSettings();
+        verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -300,7 +296,7 @@ public class OvertimeFormValidatorTest {
 
         settings.getWorkingTimeSettings().setMinimumOvertime(10);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("-9"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("-1.5"));
@@ -311,8 +307,8 @@ public class OvertimeFormValidatorTest {
             .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.minOvertime",
                 new Object[]{new BigDecimal("10")}, null);
 
-        verify(settingsServiceMock).getSettings();
-        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(settingsService).getSettings();
+        verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -323,7 +319,7 @@ public class OvertimeFormValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(100);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("99.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("2"));
@@ -336,16 +332,16 @@ public class OvertimeFormValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("3"));
 
-        when(overtimeServiceMock.getOvertimeById(anyInt()))
+        when(overtimeService.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
 
         verifyZeroInteractions(errors);
 
-        verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
-        verify(settingsServiceMock).getSettings();
-        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(overtimeService).getOvertimeById(overtimeForm.getId());
+        verify(settingsService).getSettings();
+        verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -354,7 +350,7 @@ public class OvertimeFormValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(4);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("3.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("3"));
@@ -367,16 +363,16 @@ public class OvertimeFormValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("2.5"));
 
-        when(overtimeServiceMock.getOvertimeById(anyInt()))
+        when(overtimeService.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
 
         verifyZeroInteractions(errors);
 
-        verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
-        verify(settingsServiceMock).getSettings();
-        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(overtimeService).getOvertimeById(overtimeForm.getId());
+        verify(settingsService).getSettings();
+        verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
@@ -385,7 +381,7 @@ public class OvertimeFormValidatorTest {
 
         settings.getWorkingTimeSettings().setMinimumOvertime(4);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(new BigDecimal("-3.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("-3"));
@@ -398,16 +394,16 @@ public class OvertimeFormValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
 
-        when(overtimeServiceMock.getOvertimeById(anyInt()))
+        when(overtimeService.getOvertimeById(anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
 
         verifyZeroInteractions(errors);
 
-        verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
-        verify(settingsServiceMock).getSettings();
-        verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+        verify(overtimeService).getOvertimeById(overtimeForm.getId());
+        verify(settingsService).getSettings();
+        verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
 
 
