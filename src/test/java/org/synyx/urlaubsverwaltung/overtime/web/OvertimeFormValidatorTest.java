@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
@@ -14,7 +13,6 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -315,7 +313,7 @@ public class OvertimeFormValidatorTest {
     // Validate changes in existing overtime record --------------------------------------------------------------------
 
     @Test
-    public void foo() throws IllegalAccessException {
+    public void foo() {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(100);
 
@@ -323,11 +321,7 @@ public class OvertimeFormValidatorTest {
             .thenReturn(new BigDecimal("99.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("2"));
-
-        // ensure overtime form has ID
-        Field idField = ReflectionUtils.findField(OvertimeForm.class, "id");
-        idField.setAccessible(true);
-        idField.set(overtimeForm, 42);
+        overtimeForm.setId(42);
 
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("3"));
@@ -346,7 +340,7 @@ public class OvertimeFormValidatorTest {
 
 
     @Test
-    public void ensureCanEditOvertimeRecordChangingPositiveHours() throws IllegalAccessException {
+    public void ensureCanEditOvertimeRecordChangingPositiveHours() {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(4);
 
@@ -354,11 +348,7 @@ public class OvertimeFormValidatorTest {
             .thenReturn(new BigDecimal("3.5"));
 
         overtimeForm.setNumberOfHours(new BigDecimal("3"));
-
-        // ensure overtime form has ID
-        Field idField = ReflectionUtils.findField(OvertimeForm.class, "id");
-        idField.setAccessible(true);
-        idField.set(overtimeForm, 42);
+        overtimeForm.setId(42);
 
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("2.5"));
@@ -386,10 +376,7 @@ public class OvertimeFormValidatorTest {
 
         overtimeForm.setNumberOfHours(new BigDecimal("-3"));
 
-        // ensure overtime form has ID
-        Field idField = ReflectionUtils.findField(OvertimeForm.class, "id");
-        idField.setAccessible(true);
-        idField.set(overtimeForm, 42);
+        overtimeForm.setId(42);
 
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
