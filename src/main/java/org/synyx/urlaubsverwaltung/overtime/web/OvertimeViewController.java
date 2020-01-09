@@ -48,12 +48,12 @@ public class OvertimeViewController {
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
-    private final OvertimeValidator validator;
+    private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
-                                  OvertimeValidator validator, DepartmentService departmentService) {
+                                  OvertimeFormValidator validator, DepartmentService departmentService) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.validator = validator;

@@ -20,7 +20,7 @@ import java.util.Optional;
  * Validates overtime record.
  */
 @Component
-public class OvertimeValidator implements Validator {
+public class OvertimeFormValidator implements Validator {
 
     private static final int MAX_CHARS = 200;
 
@@ -40,7 +40,7 @@ public class OvertimeValidator implements Validator {
     private final SettingsService settingsService;
 
     @Autowired
-    public OvertimeValidator(OvertimeService overtimeService, SettingsService settingsService) {
+    public OvertimeFormValidator(OvertimeService overtimeService, SettingsService settingsService) {
 
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;

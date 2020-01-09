@@ -51,7 +51,7 @@ public class OvertimeViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private OvertimeValidator validator;
+    private OvertimeFormValidator validator;
     @Mock
     private DepartmentService departmentService;
 
