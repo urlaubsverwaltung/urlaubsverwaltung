@@ -394,8 +394,7 @@ public class OvertimeFormValidatorTest {
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
 
-        when(overtimeService.getOvertimeById(anyInt()))
-            .thenReturn(Optional.of(originalOvertimeRecord));
+        when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
 
         validator.validate(overtimeForm, errors);
 
@@ -408,6 +407,18 @@ public class OvertimeFormValidatorTest {
 
 
     // Validate comment ------------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureCommentInsideMaximumCharacterLength() {
+
+        overtimeForm.setComment(
+            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore "
+                + "et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores");
+
+        validator.validate(overtimeForm, errors);
+
+        verifyZeroInteractions(errors);
+    }
 
     @Test
     public void ensureCommentIsNotMandatory() {
