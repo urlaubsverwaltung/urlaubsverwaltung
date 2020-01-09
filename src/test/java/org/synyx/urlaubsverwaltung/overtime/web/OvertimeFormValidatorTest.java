@@ -243,9 +243,6 @@ public class OvertimeFormValidatorTest {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(0);
 
-        when(overtimeServiceMock.getLeftOvertimeForPerson(any(Person.class)))
-            .thenReturn(BigDecimal.ZERO);
-
         // just not important how many number of hours, can not record overtime!
         overtimeForm.setNumberOfHours(BigDecimal.ZERO);
 
