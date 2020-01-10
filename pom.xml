@@ -53,20 +53,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <repositories>
-    <repository>
-      <id>sonatype-snapshots</id>
-      <name>Sonatype OSS Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/releases/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencies>
 
     <!-- Logging -->
