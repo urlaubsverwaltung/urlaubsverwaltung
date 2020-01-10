@@ -1,5 +1,6 @@
 ### master
 * Remove html5 validation of addition and reduction of overtime [#834](https://github.com/synyx/urlaubsverwaltung/pull/834) [#693](https://github.com/synyx/urlaubsverwaltung/issues/693)
+* Add micrometer export for [Stackdriver](https://micrometer.io/docs/registry/stackdriver)
 
 ### [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.1)
 * Fix ldap and ad sync can not be enabled [#914](https://github.com/synyx/urlaubsverwaltung/pull/914)
