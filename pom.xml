@@ -53,19 +53,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>releases.nexus.synyx.de</id>
-      <name>Synyx Nexus: Releases</name>
-      <url>https://nexus.synyx.de/content/repositories/releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots.nexus.synyx.de</id>
-      <name>Synyx Nexus: Snapshots</name>
-      <url>https://nexus.synyx.de/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <repositories>
     <repository>
       <id>sonatype-snapshots</id>
