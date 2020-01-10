@@ -28,7 +28,7 @@
     <java.version>11</java.version>
     <mail.version>1.4.7</mail.version>
     <mock-javamail.version>1.9</mock-javamail.version>
-    <jollyday.version>0.5.9</jollyday.version>
+    <jollyday.version>0.5.10</jollyday.version>
     <ews-java-api.version>2.0</ews-java-api.version>
     <httpcore.version>4.4.1</httpcore.version>
     <httpclient.version>4.5</httpclient.version>
