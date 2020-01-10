@@ -30,7 +30,7 @@
     <mock-javamail.version>1.9</mock-javamail.version>
     <jollyday.version>0.5.9</jollyday.version>
     <ews-java-api.version>2.0</ews-java-api.version>
-    <httpcore.version>4.4.1</httpcore.version>
+    <httpcore.version>4.4.12</httpcore.version>
     <httpclient.version>4.5</httpclient.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <google-api-client.version>1.30.2</google-api-client.version>
