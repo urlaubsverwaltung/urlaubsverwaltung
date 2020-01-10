@@ -1,5 +1,16 @@
 ### master
 * Remove html5 validation of addition and reduction of overtime [#834](https://github.com/synyx/urlaubsverwaltung/pull/834) [#693](https://github.com/synyx/urlaubsverwaltung/issues/693)
+* Frontend asset tooling [#921](https://github.com/synyx/urlaubsverwaltung/pull/921)
+* Improve user role edit form [#922](https://github.com/synyx/urlaubsverwaltung/pull/922)
+* Fix coverage in builds [#929](https://github.com/synyx/urlaubsverwaltung/pull/929)
+* Rename overtime validator to overtime form validator [#925](https://github.com/synyx/urlaubsverwaltung/pull/925)
+* Vacation overview does not show absences with role boss [#924](https://github.com/synyx/urlaubsverwaltung/issues/924) [#926](https://github.com/synyx/urlaubsverwaltung/pull/926)
+* Upgrade jollyday to 0.5.10 [#931](https://github.com/synyx/urlaubsverwaltung/pull/931)
+* Upgrade docker maven plugin to 0.32.0 [#932](https://github.com/synyx/urlaubsverwaltung/pull/932)
+* Upgrade httpcore to 4.4.12 [#934](https://github.com/synyx/urlaubsverwaltung/pull/934)
+* Upgrade google api dependencies [#933](https://github.com/synyx/urlaubsverwaltung/pull/933)
+* Remove distribution repository from pom [#936](https://github.com/synyx/urlaubsverwaltung/pull/936)
+* Remove sonatype snapshot repository [#937](https://github.com/synyx/urlaubsverwaltung/pull/937)
 
 ### [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.1)
 * Fix ldap and ad sync can not be enabled [#914](https://github.com/synyx/urlaubsverwaltung/pull/914)
