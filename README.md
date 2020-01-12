@@ -221,7 +221,8 @@ uv.workingtime.default-working-days[2] = 3
 uv.workingtime.default-working-days[3] = 4
 uv.workingtime.default-working-days[4] = 5
 ```
-with their default properties.
+
+mit ihren Standartwerten.
 
 
 ### Testbetrieb
