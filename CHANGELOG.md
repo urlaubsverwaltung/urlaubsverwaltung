@@ -1,5 +1,6 @@
 ### master
 * Remove html5 validation of addition and reduction of overtime [#834](https://github.com/synyx/urlaubsverwaltung/pull/834) [#693](https://github.com/synyx/urlaubsverwaltung/issues/693)
+* Add micrometer export for [Stackdriver](https://micrometer.io/docs/registry/stackdriver)
 * Frontend asset tooling [#921](https://github.com/synyx/urlaubsverwaltung/pull/921)
 * Improve user role edit form [#922](https://github.com/synyx/urlaubsverwaltung/pull/922)
 * Fix coverage in builds [#929](https://github.com/synyx/urlaubsverwaltung/pull/929)

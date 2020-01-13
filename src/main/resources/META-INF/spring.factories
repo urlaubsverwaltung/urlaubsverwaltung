@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.synyx.urlaubsverwaltung.plattform.gcp.stackdriver.StackdriverMetricsExportAutoConfiguration
