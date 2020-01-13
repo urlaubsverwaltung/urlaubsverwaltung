@@ -32,19 +32,21 @@ Danach wird ausschließlich an 3.x weiterentwickelt werden.
  * [Installation](#installation)
    * [Systemvoraussetzungen](#systemvoraussetzungen)
    * [Download](#download)
- * [Testbetrieb](#testbetrieb)
-   * [Starten der Anwendung](#starten-der-anwendung)
-   * [Aufrufen der Anwendung](#aufrufen-der-anwendung)
- * [Produktivbetrieb](#produktivbetrieb)
-   * [Anwendung als Service](#anwendung-als-service)
-   * [Konfiguration](#konfigurationsdatei)
-   * [Datenbank](#datenbank)
-   * [Starten der Anwendung](#achtung-produktives-starten-der-anwendung)
-   * [Authentifizierung](#authentifizierung)
-   * [Synchronisation der User-Datenbank](#synchronisation-der-user-datenbank)
-   * [Synchronisation mit Kalender](#synchronisation-mit-kalender)
-    * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
-    * [Konfiguration Google Calendar](#konfiguration-google-calendar)
+ * [Betrieb](#betrieb)
+   * [Konfiguration](#konfiguration)
+   * [Testbetrieb](#testbetrieb)
+     * [Starten der Anwendung](#starten-der-anwendung)
+     * [Aufrufen der Anwendung](#aufrufen-der-anwendung)
+   * [Produktivbetrieb](#produktivbetrieb)
+     * [Anwendung als Service](#anwendung-als-service)
+     * [Konfiguration](#konfiguration)
+     * [Datenbank](#datenbank)
+     * [Starten der Anwendung](#starten-der-anwendung)
+     * [Authentifizierung](#authentifizierung)
+     * [Synchronisation der User-Datenbank](#synchronisation-der-user-datenbank)
+     * [Synchronisation mit Kalender](#synchronisation-mit-kalender)
+      * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
+      * [Konfiguration Google Calendar](#konfiguration-google-calendar)
  * [Entwicklung](#entwicklung)
  * [Technologien](#technologien)
  * [Lizenz](#lizenz)
@@ -134,9 +136,98 @@ Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/ur
 downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
 da die WAR-Datei einen Tomcat bundled.
 
-## Testbetrieb
+## Betrieb
 
-### Starten der Anwendung
+### Konfiguration
+
+Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
+Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
+Anwendung allerdings noch nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
+eigene Properties-Datei hinterlegt werden.
+
+**Einfachste Möglichkeit**:
+Man kann in dem Verzeichnis, in dem man die Anwendung startet eine Datei namens `application.properties` mit eigener
+Konfiguration hinterlegen. Die dort konfigurierten Properties überschreiben dann die Standardwerte.
+
+Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann
+[hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
+nachgelesen werden.
+
+Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung
+
+```
+# account
+uv.account.default-vacation-days = 20
+uv.account.update.cron = 0 0 5 1 1 * (on 1st January at 05:00 am)
+
+# application
+uv.application.reminder-notification.cron = 0 0 7 * * * (every day at 07:00 am)
+
+# development
+uv.development.testdata.create
+
+# mail
+uv.mail.administrator
+uv.mail.application-url
+uv.mail.sender
+
+# security
+uv.security.auth =  default
+
+uv.security.directory-service.identifier
+uv.security.directory-service.last-name
+uv.security.directory-service.first-name
+uv.security.directory-service.mail-address
+uv.security.directory-service.sync.cron = 0 0 1 * * ? (every night at 01:00 am)
+uv.security.directory-service.filter.member-of
+uv.security.directory-service.filter.object-class = person
+
+## active directory
+uv.security.directory-service.active-directory.url = ldap://ad.example.org/
+uv.security.directory-service.active-directory.domain = example.org
+uv.security.directory-service.active-directory.sync.enabled = false
+uv.security.directory-service.active-directory.sync.password = password
+uv.security.directory-service.active-directory.sync.user-dn = cn=Administrator,cn=users,dc=example,dc=org
+uv.security.directory-service.active-directory.sync.user-search-base = dc=example,dc=org
+
+## ldap
+uv.security.directory-service.ldap.url = ldap://ldap.example.org/
+uv.security.directory-service.ldap.base = dc=example,dc=org
+uv.security.directory-service.ldap.manager-dn
+uv.security.directory-service.ldap.manager-password
+uv.security.directory-service.ldap.user-search-filter = (uid={0})
+uv.security.directory-service.ldap.user-search-base = ou=accounts
+uv.security.directory-service.ldap.sync.enabled = false
+uv.security.directory-service.ldap.sync.password = password
+uv.security.directory-service.ldap.sync.user-dn = uid=username,ou=other,ou=accounts,dc=example,dc=org
+uv.security.directory-service.ldap.sync.user-search-base = ou=people,ou=accounts
+
+# oidc (openid connect)
+uv.security.oidc.client-id
+uv.security.oidc.client-secret
+uv.security.oidc.issuer-uri
+uv.security.oidc.logout-path
+
+# person
+uv.person.can-be-manipulated = false
+
+# sick-note
+uv.sick-note.end-of-pay-notification.cron = 0 0 6 * * * (every day at 06:00 am)
+
+# workingtime
+uv.workingtime.default-working-days[0] = 1 (monday till friday)
+uv.workingtime.default-working-days[1] = 2
+uv.workingtime.default-working-days[2] = 3
+uv.workingtime.default-working-days[3] = 4
+uv.workingtime.default-working-days[4] = 5
+```
+
+mit ihren Standartwerten.
+
+
+### Testbetrieb
+
+#### Starten der Anwendung
 
 Um die Anwendung möglichst schnell ausprobieren zu können, bietet es sich an die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/)
 zu starten:
@@ -154,7 +245,7 @@ java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbank gestartet und Testdaten generiert.
 Die Testdaten enthalten folgende Nutzer:
 
-### Testbenutzer
+#### Testbenutzer
 
 | Rolle                            | Benutzername           | Passwort |
 | -------------------------        | -------------          | -------- |
@@ -165,7 +256,7 @@ Die Testdaten enthalten folgende Nutzer:
 | User & Chef & Office             | office                 | secret   |
 | User & Admin                     | admin                  | secret   |
 
-### Aufrufen der Anwendung
+#### Aufrufen der Anwendung
 
 Folgende systeme sind erreichbar
 
@@ -175,9 +266,10 @@ Folgende systeme sind erreichbar
 | Mailhog                   | 8025    |
 | Mailhog SMTP              | 1025    |
 
-## Produktivbetrieb
 
-### Anwendung als Service
+### Produktivbetrieb
+
+#### Anwendung als Service
 
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
 funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation entnommen werden:
@@ -185,26 +277,11 @@ funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation ent
 * [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
 * [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
 
-### Konfiguration
-
-Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
-Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
-Anwendung allerdings noch nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
-eigene Properties-Datei hinterlegt werden.
-
-Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann
-[hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
-nachgelesen werden.
-
-**Einfachste Möglichkeit**:
-Man kann in dem Verzeichnis, in dem man die Anwendung startet eine Datei namens `application.properties` mit eigener
-Konfiguration hinterlegen. Die dort konfigurierten Properties überschreiben dann die Standardwerte.
-
-### Datenbank
+#### Datenbank
 
 Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 
-###  Starten der Anwendung
+####  Starten der Anwendung
 
 Im Produktivbetrieb mit der Produktivdatenbank darf die Anwendung natürlich **nicht** mehr mit Testdaten
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdata` gestartet werden:
@@ -213,7 +290,7 @@ gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdat
 java -jar urlaubsverwaltung.war
 ```
 
-### Authentifizierung
+#### Authentifizierung
 
 Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkeiten:
 
@@ -244,42 +321,42 @@ bzw.
 
 <pre>uv.security.auth=activedirectory</pre>
 
-### Synchronisation der User-Datenbank
+#### Synchronisation der User-Datenbank
 
 Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
 Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.directory-service.ldap.sync.enabled` bzw. `uv.security.directory-service.active-directory.sync.enabled` auf `true` gesetzt wird:
 
 <pre>uv.security.directory-service.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.directory-service.active-directory.sync.enabled=true</pre>
 
-### Synchronisation mit Kalender
+#### Synchronisation mit Kalender
 
 Die Urlaubsverwaltung bietet die Möglichkeit alle Urlaube und Krankheitstage mit einem Kalender zu synchronisieren. Dafür werden Microsoft Exchange bzw. Office 356 und Google Calendar unterstützt.
 
-#### Konfiguration Microsoft Exchange
+##### Konfiguration Microsoft Exchange
 
 ![Einstellungsdialog für Microsoft Exchange als Kalenderanbindung](docs/exchange-calendar-settings.png)
 
 Anhand der zu konfigurierenden E-Mail-Adresse wird per Autodiscovery die dazugehörige Exchange Server Adresse ermittelt,
 welche für die Synchronisation verwendet wird. Wichtig ist, dass der gewünschte Kalender bereits zuvor angelegt wurde.
 
-#### Konfiguration Google Calendar
+##### Konfiguration Google Calendar
 ![Einstellungsdialog für Google Calendar als Kalenderanbindung](docs/google-calendar-settings.png)
 
 Die Anbindung von Google Calendar basiert auf einem OAuth 2.0 Handshake.
 Sobald alle Konfigurationsfelder wie unten beschrieben für die Synchronisation mit Google Calendar befüllt sind, kann mit dem Button "Zugriff erlauben..." der OAuth 2.0 Handshake durchgeführt werden. Sofern dieser Schritt erfolgreich war und die Synchronisation eingerichtet ist, steht neben dem Button "Verbindung zum Google-Kalender ist hergestellt."
 
-##### Client anlegen
+###### Client anlegen
 
 ![Anlage eines OAuth 2.0 Clients](docs/google-create-oauth-client.png)
 
 Um einen solchen OAuth 2.0 Handshake durchführen zu können, ist es zunächst notwendig die Urlaubsverwaltung als Anwendung bei Google bekannt zu machen.
 Dies geschieht über [APIs und Services](https://console.developers.google.com). Hier muss zunächst ein [Projekt angelegt](https://console.developers.google.com/projectcreate) werden. Sobald das geschehen ist, kann die [Calendar API](https://console.developers.google.com/apis/library/calendar-json.googleapis.com/) aktiviert werden. Nach der Aktivierung müssen außerdem [OAuth 2.0 Client Zugangsdaten](https://console.developers.google.com/apis/credentials/oauthclient) erzeugt werden. Es müssen außerdem die autorisierte Weiterleitungs-URIs mit dem Wert gefüllt werden, der in den Einstellungen unter Weiterleitungs-URL angezeigt wird. Direkt nach der Erstellung werden **Client Id** und **Client Secret** angezeigt. Diese müssen dann in den Einstellungen der Urlaubsverwaltung entsprechend hinterlegt werden.
 
-##### Kalender anlegen/konfigurieren
+###### Kalender anlegen/konfigurieren
 
 Eine weitere notwendige Information ist die **Kalender ID**, welche später zur Synchronisation verwendet wird. Es kann dafür entweder ein bestehender Kalender verwendet oder ein [neuer Kalender angelegt](https://calendar.google.com/calendar/r/settings/createcalendar) werden. In Google Calendar kann man dann in den Kalendereinstellungen die **Kalendar ID** finden. Diese muss ebenfalls in der Urlaubsverwaltung gepflegt werden.
 
-##### Urlaubsverwaltung Weiterleitungs-URL
+###### Urlaubsverwaltung Weiterleitungs-URL
 
 Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es notwendig die Weiterleitungs-URL bei der Konfiguration der Webanwendung bei Google anzugeben. Diese ist abhängig von der Installation und wird in den Einstellungen des Google Kalenders angezeigt, z.B. `http://localhost:8080/web/google-api-handshake` für ein Testsystem. Sie ist nur für die initiale Freigabe des Kalenders nötig.
 
