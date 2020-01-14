@@ -29,7 +29,7 @@ public class FreeTimeAbsenceProviderTest {
 
     private FreeTimeAbsenceProvider freeTimeAbsenceProvider;
 
-    private HolidayAbsenceProvider holidayAbsenceProvider;
+    private PublicHolidayAbsenceProvider publicHolidayAbsenceProvider;
     private WorkingTimeService workingTimeService;
     private TimedAbsenceSpans emptyTimedAbsenceSpans;
     private Person testPerson;
@@ -37,13 +37,13 @@ public class FreeTimeAbsenceProviderTest {
     @Before
     public void setUp() {
 
-        holidayAbsenceProvider = mock(HolidayAbsenceProvider.class);
+        publicHolidayAbsenceProvider = mock(PublicHolidayAbsenceProvider.class);
         setupDefaultWorkingTimeService();
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = TestDataCreator.createPerson();
 
-        freeTimeAbsenceProvider = new FreeTimeAbsenceProvider(holidayAbsenceProvider, workingTimeService);
+        freeTimeAbsenceProvider = new FreeTimeAbsenceProvider(publicHolidayAbsenceProvider, workingTimeService);
     }
 
 
@@ -97,7 +97,7 @@ public class FreeTimeAbsenceProviderTest {
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, firstSundayIn2016);
 
-        Mockito.verifyNoMoreInteractions(holidayAbsenceProvider);
+        Mockito.verifyNoMoreInteractions(publicHolidayAbsenceProvider);
     }
 
 
@@ -108,7 +108,7 @@ public class FreeTimeAbsenceProviderTest {
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 
-        verify(holidayAbsenceProvider, times(1))
+        verify(publicHolidayAbsenceProvider, times(1))
             .checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
     }
 }
