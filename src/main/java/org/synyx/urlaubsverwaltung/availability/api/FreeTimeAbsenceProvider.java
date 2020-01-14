@@ -21,7 +21,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
     private final WorkingTimeService workingTimeService;
 
     @Autowired
-    FreeTimeAbsenceProvider(HolidayAbsenceProvider nextPriorityProvider, WorkingTimeService workingTimeService) {
+    FreeTimeAbsenceProvider(PublicHolidayAbsenceProvider nextPriorityProvider, WorkingTimeService workingTimeService) {
 
         super(nextPriorityProvider);
 
