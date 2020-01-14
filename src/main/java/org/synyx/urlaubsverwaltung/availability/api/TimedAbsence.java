@@ -16,7 +16,7 @@ class TimedAbsence {
         SICK_NOTE,
         WORK,
         FREETIME,
-        HOLIDAY
+        PUBLIC_HOLIDAY
     }
 
     private final Type type;
