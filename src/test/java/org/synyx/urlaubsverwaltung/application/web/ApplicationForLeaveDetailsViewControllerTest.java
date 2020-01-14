@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -99,7 +100,7 @@ public class ApplicationForLeaveDetailsViewControllerTest {
         when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson())));
 
         sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, accountService, applicationService,
-            applicationInteractionService, commentService, workDaysService, commentValidator, departmentService, workingTimeService);
+            applicationInteractionService, commentService, workDaysService, commentValidator, departmentService, workingTimeService, Clock.systemUTC());
     }
 
     @Test

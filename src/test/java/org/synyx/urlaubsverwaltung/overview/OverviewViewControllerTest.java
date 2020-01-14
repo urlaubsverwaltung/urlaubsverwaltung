@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -87,7 +88,7 @@ public class OverviewViewControllerTest {
     public void setUp() {
 
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService);
+            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService, Clock.systemUTC());
 
         person = new Person();
         person.setId(1);

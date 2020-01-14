@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
@@ -34,15 +34,17 @@ public class TurnOfTheYearAccountUpdaterService {
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final MailService mailService;
+    private final Clock clock;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                              AccountInteractionService accountInteractionService, MailService mailService) {
+                                              AccountInteractionService accountInteractionService, MailService mailService, Clock clock) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.mailService = mailService;
+        this.clock = clock;
     }
 
     void updateAccountsForNextPeriod() {
@@ -50,7 +52,7 @@ public class TurnOfTheYearAccountUpdaterService {
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
         // what's the new year?
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = ZonedDateTime.now(clock).getYear();
 
         // get all persons
         final List<Person> persons = personService.getActivePersons();
@@ -87,7 +89,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("accounts", updatedAccounts);
-        model.put("today", LocalDate.now(UTC));
+        model.put("today", LocalDate.now(clock));
 
         final String subjectMessageKey = "subject.account.updatedRemainingDays";
         final String templateName = "updated_accounts";

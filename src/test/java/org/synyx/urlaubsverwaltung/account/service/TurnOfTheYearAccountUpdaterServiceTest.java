@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
 
     @Before
     public void setUp() {
-        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService);
+        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService, Clock.systemUTC());
     }
 
     @Test
