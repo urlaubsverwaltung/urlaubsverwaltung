@@ -8,12 +8,12 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -28,16 +28,15 @@ import java.util.stream.Collectors;
 public class VacationDaysService {
 
     private final WorkDaysService calendarService;
-    private final NowService nowService;
     private final ApplicationService applicationService;
+    private final Clock clock;
 
     @Autowired
-    public VacationDaysService(WorkDaysService calendarService, NowService nowService,
-                               ApplicationService applicationService) {
+    public VacationDaysService(WorkDaysService calendarService, ApplicationService applicationService, Clock clock) {
 
         this.calendarService = calendarService;
-        this.nowService = nowService;
         this.applicationService = applicationService;
+        this.clock = clock;
     }
 
     /**
@@ -55,7 +54,8 @@ public class VacationDaysService {
         VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account, Optional.empty());
 
         // it's before April - the left remaining vacation days must be used
-        if (nowService.currentYear() == account.getYear() && DateUtil.isBeforeApril(nowService.now(), account.getYear())) {
+        final LocalDate now = LocalDate.now(clock);
+        if (now.getYear() == account.getYear() && DateUtil.isBeforeApril(now, account.getYear())) {
             return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDays());
         } else {
             // it's after April - only the left not expiring remaining vacation days must be used

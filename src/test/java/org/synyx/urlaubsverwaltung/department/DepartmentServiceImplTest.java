@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class DepartmentServiceImplTest {
         departmentRepository = mock(DepartmentRepository.class);
         applicationService = mock(ApplicationService.class);
 
-        sut = new DepartmentServiceImpl(departmentRepository, applicationService);
+        sut = new DepartmentServiceImpl(departmentRepository, applicationService, Clock.systemUTC());
     }
 
 

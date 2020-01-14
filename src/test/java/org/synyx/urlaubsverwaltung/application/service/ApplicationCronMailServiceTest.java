@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class ApplicationCronMailServiceTest {
 
     @Before
     public void setUp() {
-        sut = new ApplicationCronMailService(applicationService, settingsService, applicationMailService);
+        sut = new ApplicationCronMailService(applicationService, settingsService, applicationMailService, Clock.systemUTC());
     }
 
     @Test

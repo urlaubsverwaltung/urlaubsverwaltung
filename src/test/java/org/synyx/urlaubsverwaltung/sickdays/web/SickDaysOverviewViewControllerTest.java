@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -59,7 +60,7 @@ public class SickDaysOverviewViewControllerTest {
 
     @Before
     public void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personService, calendarService);
+        sut = new SickDaysOverviewViewController(sickNoteService, personService, calendarService, Clock.systemUTC());
     }
 
     @Test

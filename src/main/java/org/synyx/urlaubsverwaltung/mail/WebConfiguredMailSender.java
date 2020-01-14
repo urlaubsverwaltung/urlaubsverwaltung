@@ -15,7 +15,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
- *
  * This MailSender is configured via the settings page.
  *
  * @deprecated will be removed in the next major - configure mail settings via application.properties
@@ -79,7 +78,7 @@ public class WebConfiguredMailSender implements MailSender {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("To={}\n\nSubject={}\n\nText={}",
-                        Arrays.toString(message.getTo()), message.getSubject(), message.getText());
+                    Arrays.toString(message.getTo()), message.getSubject(), message.getText());
             }
         } catch (MailException ex) {
             for (String recipient : message.getTo()) {

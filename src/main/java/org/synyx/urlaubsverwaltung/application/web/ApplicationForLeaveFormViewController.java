@@ -32,6 +32,7 @@ import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -40,7 +41,6 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -61,16 +61,18 @@ public class ApplicationForLeaveFormViewController {
     private final ApplicationInteractionService applicationInteractionService;
     private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
-                                                 ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService) {
+                                                 ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
         this.applicationInteractionService = applicationInteractionService;
         this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -104,7 +106,7 @@ public class ApplicationForLeaveFormViewController {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to apply for leave for user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(UTC).getYear(), person);
+        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
             prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
         }
