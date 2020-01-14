@@ -14,7 +14,6 @@ class TimedAbsence {
 
         VACATION,
         SICK_NOTE,
-        WORK,
         FREETIME,
         PUBLIC_HOLIDAY
     }
