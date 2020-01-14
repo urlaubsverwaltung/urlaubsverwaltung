@@ -11,9 +11,8 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
-
-import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -24,10 +23,12 @@ import static java.time.ZoneOffset.UTC;
 public class SickNoteStatisticsViewController {
 
     private final SickNoteStatisticsService statisticsService;
+    private final Clock clock;
 
     @Autowired
-    public SickNoteStatisticsViewController(SickNoteStatisticsService statisticsService) {
+    public SickNoteStatisticsViewController(SickNoteStatisticsService statisticsService, Clock clock) {
         this.statisticsService = statisticsService;
+        this.clock = clock;
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
@@ -35,7 +36,7 @@ public class SickNoteStatisticsViewController {
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
                                       Model model) {
 
-        int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
+        int year = requestedYear == null ? ZonedDateTime.now(clock).getYear() : requestedYear;
         SickNoteStatistics statistics = statisticsService.createStatistics(year);
 
         model.addAttribute("statistics", statistics);

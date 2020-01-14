@@ -25,12 +25,11 @@ import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Optional;
-
-import static java.time.ZoneOffset.UTC;
 
 /**
  * Controller to manage {@link org.synyx.urlaubsverwaltung.account.domain.Account}s of {@link org.synyx.urlaubsverwaltung.person.Person}s.
@@ -43,13 +42,15 @@ public class AccountViewController {
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final AccountValidator validator;
+    private final Clock clock;
 
     @Autowired
-    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountValidator validator) {
+    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountValidator validator, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.validator = validator;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -67,7 +68,7 @@ public class AccountViewController {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
+        int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(clock).getYear();
         AccountForm accountForm = new AccountForm(yearOfHolidaysAccount, accountService.getHolidaysAccount(
             yearOfHolidaysAccount, person));
 

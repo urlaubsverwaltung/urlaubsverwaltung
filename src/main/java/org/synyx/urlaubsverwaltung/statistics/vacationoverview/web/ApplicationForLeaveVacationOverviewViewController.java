@@ -11,9 +11,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -31,11 +31,13 @@ public class ApplicationForLeaveVacationOverviewViewController {
 
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final Clock clock;
 
     @Autowired
-    public ApplicationForLeaveVacationOverviewViewController(PersonService personService, DepartmentService departmentService) {
+    public ApplicationForLeaveVacationOverviewViewController(PersonService personService, DepartmentService departmentService, Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
+        this.clock = clock;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -52,8 +54,9 @@ public class ApplicationForLeaveVacationOverviewViewController {
 
         prepareDepartments(signedInUser, model);
 
-        model.addAttribute("currentYear", ZonedDateTime.now(UTC).getYear());
-        model.addAttribute("currentMonth", ZonedDateTime.now(UTC).getMonthValue());
+        final ZonedDateTime now = ZonedDateTime.now(clock);
+        model.addAttribute("currentYear", now.getYear());
+        model.addAttribute("currentMonth", now.getMonthValue());
         return "application/vacation_overview";
     }
 

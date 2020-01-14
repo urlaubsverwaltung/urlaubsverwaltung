@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Clock;
+
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.mockito.Mockito.when;
@@ -39,7 +41,7 @@ public class ApplicationForLeaveVacationOverviewViewControllerTest {
 
     @Before
     public void setUp() {
-        sut = new ApplicationForLeaveVacationOverviewViewController(personService, departmentService);
+        sut = new ApplicationForLeaveVacationOverviewViewController(personService, departmentService, Clock.systemUTC());
     }
 
     @Test

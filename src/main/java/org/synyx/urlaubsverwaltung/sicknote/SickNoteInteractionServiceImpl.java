@@ -16,11 +16,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -39,11 +39,12 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     public SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
                                           ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-                                          AbsenceMappingService absenceMappingService, SettingsService settingsService) {
+                                          AbsenceMappingService absenceMappingService, SettingsService settingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
@@ -51,6 +52,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @Override
@@ -170,7 +172,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private void saveSickNote(SickNote sickNote) {
 
-        sickNote.setLastEdited(LocalDate.now(UTC));
+        sickNote.setLastEdited(LocalDate.now(clock));
 
         sickNoteService.save(sickNote);
     }

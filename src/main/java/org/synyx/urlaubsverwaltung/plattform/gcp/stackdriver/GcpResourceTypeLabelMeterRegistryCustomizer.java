@@ -104,7 +104,7 @@ public class GcpResourceTypeLabelMeterRegistryCustomizer {
 
         public List<Tag> toTags() {
 
-            if(!isValid()) {
+            if (!isValid()) {
                 return Collections.emptyList();
             }
 

@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
@@ -78,7 +79,7 @@ public class ApplicationInteractionServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService);
+            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, Clock.systemUTC());
     }
 
 

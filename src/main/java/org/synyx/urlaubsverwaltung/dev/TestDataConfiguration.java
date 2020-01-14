@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
+
 @Configuration
 @ConditionalOnProperty(value = "uv.development.testdata.create", havingValue = "true")
 @EnableConfigurationProperties(TestDataProperties.class)
@@ -25,8 +27,8 @@ class TestDataConfiguration {
     @Bean
     TestDataCreationService testDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                                     SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                                    DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
-        return new TestDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, overtimeRecordDataProvider, departmentDataProvider, testDataProperties);
+                                                    DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties, Clock clock) {
+        return new TestDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, overtimeRecordDataProvider, departmentDataProvider, testDataProperties, clock);
     }
 
     @Bean
@@ -35,8 +37,8 @@ class TestDataConfiguration {
     }
 
     @Bean
-    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder) {
-        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, passwordEncoder);
+    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder, Clock clock) {
+        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, passwordEncoder, clock);
     }
 
     @Bean
@@ -45,13 +47,13 @@ class TestDataConfiguration {
     }
 
     @Bean
-    DurationChecker durationChecker(WorkDaysService workDaysService) {
-        return new DurationChecker(workDaysService);
+    DurationChecker durationChecker(WorkDaysService workDaysService, Clock clock) {
+        return new DurationChecker(workDaysService, clock);
     }
 
     @Bean
-    DepartmentDataProvider departmentDataProvider(DepartmentService departmentService) {
-        return new DepartmentDataProvider(departmentService);
+    DepartmentDataProvider departmentDataProvider(DepartmentService departmentService, Clock clock) {
+        return new DepartmentDataProvider(departmentService, clock);
     }
 
     @Bean

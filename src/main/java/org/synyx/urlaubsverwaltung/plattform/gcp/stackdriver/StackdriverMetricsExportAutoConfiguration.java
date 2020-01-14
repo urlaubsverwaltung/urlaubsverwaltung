@@ -14,14 +14,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@AutoConfigureBefore({ CompositeMeterRegistryAutoConfiguration.class, SimpleMetricsExportAutoConfiguration.class })
+@AutoConfigureBefore({CompositeMeterRegistryAutoConfiguration.class, SimpleMetricsExportAutoConfiguration.class})
 @AutoConfigureAfter(MetricsAutoConfiguration.class)
 @ConditionalOnBean(Clock.class)
 @ConditionalOnClass(StackdriverMeterRegistry.class)
 @ConditionalOnProperty(prefix = "management.metrics.export.stackdriver", name = "enabled", havingValue = "true",
-        matchIfMissing = true
+    matchIfMissing = true
 )
 @EnableConfigurationProperties(StackdriverProperties.class)
 public class StackdriverMetricsExportAutoConfiguration {
@@ -44,7 +43,7 @@ public class StackdriverMetricsExportAutoConfiguration {
     @ConditionalOnMissingBean
     public StackdriverMeterRegistry StackdriverMeterRegistry(StackdriverConfig stackdriverConfig, Clock clock) {
         return StackdriverMeterRegistry.builder(stackdriverConfig)
-                .clock(clock)
-                .build();
+            .clock(clock)
+            .build();
     }
 }

@@ -12,31 +12,34 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WEEKEND;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
 
 @Component
 public class VacationOverviewService {
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
     private final PublicHolidaysService publicHolidayService;
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private final Clock clock;
 
     @Autowired
     public VacationOverviewService(DepartmentService departmentService,
                                    WorkingTimeService workingTimeService,
-                                   PublicHolidaysService publicHolidayService) {
+                                   PublicHolidaysService publicHolidayService, Clock clock) {
 
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.publicHolidayService = publicHolidayService;
+        this.clock = clock;
     }
 
     public List<VacationOverview> getVacationOverviews(String selectedDepartment,
@@ -50,7 +53,7 @@ public class VacationOverviewService {
 
             for (Person person : department.getMembers()) {
 
-                LocalDate date = LocalDate.now(UTC);
+                LocalDate date = LocalDate.now(clock);
                 int year = selectedYear != null ? selectedYear : date.getYear();
                 int month = selectedMonth != null ? selectedMonth : date.getMonthValue();
                 LocalDate lastDay = DateUtil.getLastDayOfMonth(year, month);
