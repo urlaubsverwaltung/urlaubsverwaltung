@@ -19,14 +19,14 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 
 @Service
-class HolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
+class PublicHolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
 
     @Autowired
-    HolidayAbsenceProvider(SickDayAbsenceProvider nextPriorityProvider, PublicHolidaysService publicHolidaysService,
-                           WorkingTimeService workingTimeService) {
+    PublicHolidayAbsenceProvider(SickDayAbsenceProvider nextPriorityProvider, PublicHolidaysService publicHolidaysService,
+                                 WorkingTimeService workingTimeService) {
 
         super(nextPriorityProvider);
 
