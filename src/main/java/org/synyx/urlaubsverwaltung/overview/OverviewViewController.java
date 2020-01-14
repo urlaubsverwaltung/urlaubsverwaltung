@@ -29,13 +29,13 @@ import org.synyx.urlaubsverwaltung.statistics.web.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -58,13 +58,14 @@ public class OverviewViewController {
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
     private final DepartmentService departmentService;
+    private final Clock clock;
 
     @Autowired
     public OverviewViewController(PersonService personService, AccountService accountService,
                                   VacationDaysService vacationDaysService,
                                   ApplicationService applicationService, WorkDaysCountService calendarService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
-                                  SettingsService settingsService, DepartmentService departmentService) {
+                                  SettingsService settingsService, DepartmentService departmentService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -74,6 +75,7 @@ public class OverviewViewController {
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
         this.departmentService = departmentService;
+        this.clock = clock;
     }
 
     @GetMapping
@@ -110,15 +112,17 @@ public class OverviewViewController {
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        int yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
+        final ZonedDateTime now = ZonedDateTime.now(clock);
+        int yearToShow = year == null ? now.getYear() : year;
+
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
 
-        model.addAttribute("year", ZonedDateTime.now(UTC).getYear());
-        model.addAttribute("currentYear", ZonedDateTime.now(UTC).getYear());
-        model.addAttribute("currentMonth", ZonedDateTime.now(UTC).getMonthValue());
+        model.addAttribute("year", now.getYear());
+        model.addAttribute("currentYear", now.getYear());
+        model.addAttribute("currentMonth", now.getMonthValue());
 
         return "person/overview";
     }
@@ -173,7 +177,7 @@ public class OverviewViewController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
+            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(clock), acc.getYear()));
         }
     }
 

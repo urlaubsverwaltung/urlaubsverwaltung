@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -36,7 +37,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -61,17 +61,19 @@ public class PersonViewController {
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     public PersonViewController(PersonService personService, AccountService accountService,
                                 VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                WorkingTimeService workingTimeService, SettingsService settingsService) {
+                                WorkingTimeService workingTimeService, SettingsService settingsService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @GetMapping("/person/{personId}")
@@ -86,7 +88,7 @@ public class PersonViewController {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to access data of user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
+        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(clock).getYear());
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
@@ -127,7 +129,7 @@ public class PersonViewController {
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              Model model) throws UnknownDepartmentException {
 
-        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
+        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(clock).getYear());
 
         final Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)
@@ -237,12 +239,14 @@ public class PersonViewController {
             }
         }
 
+        final LocalDate now = LocalDate.now(clock);
+
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
-        model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), year));
+        model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(now, year));
         model.addAttribute("year", year);
-        model.addAttribute("now", LocalDate.now(UTC));
+        model.addAttribute("now", now);
 
         final List<Department> departments = getRelevantDepartments(signedInUser);
         departments.sort(Comparator.comparing(Department::getName));

@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -82,7 +83,7 @@ class PersonViewControllerTest {
     void setUp() {
 
         sut = new PersonViewController(personService, accountService, vacationDaysService, departmentService,
-            workingTimeService, settingsService);
+            workingTimeService, settingsService, Clock.systemUTC());
 
         person = new Person();
         person.setId(1);

@@ -21,13 +21,13 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
@@ -44,12 +44,14 @@ public class SickDaysOverviewViewController {
     private final SickNoteService sickNoteService;
     private final PersonService personService;
     private final WorkDaysCountService calendarService;
+    private final Clock clock;
 
     @Autowired
-    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysCountService calendarService) {
+    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysCountService calendarService, Clock clock) {
         this.sickNoteService = sickNoteService;
         this.personService = personService;
         this.calendarService = calendarService;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -82,7 +84,7 @@ public class SickDaysOverviewViewController {
 
     private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period) {
 
-        model.addAttribute("today", LocalDate.now(UTC));
+        model.addAttribute("today", LocalDate.now(clock));
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
         model.addAttribute("period", period);

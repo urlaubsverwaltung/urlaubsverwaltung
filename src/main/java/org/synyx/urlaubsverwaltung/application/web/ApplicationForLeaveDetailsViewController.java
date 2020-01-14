@@ -34,6 +34,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +66,7 @@ public class ApplicationForLeaveDetailsViewController {
     private final ApplicationCommentValidator commentValidator;
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
+    private final Clock clock;
 
     @Autowired
     public ApplicationForLeaveDetailsViewController(VacationDaysService vacationDaysService, PersonService personService,
@@ -72,7 +74,7 @@ public class ApplicationForLeaveDetailsViewController {
                                                     ApplicationInteractionService applicationInteractionService,
                                                     ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
                                                     ApplicationCommentValidator commentValidator,
-                                                    DepartmentService departmentService, WorkingTimeService workingTimeService) {
+                                                    DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
         this.accountService = accountService;
@@ -83,6 +85,7 @@ public class ApplicationForLeaveDetailsViewController {
         this.commentValidator = commentValidator;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
+        this.clock = clock;
     }
 
     @GetMapping("/{applicationId}")
@@ -157,7 +160,7 @@ public class ApplicationForLeaveDetailsViewController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(UTC), acc.getYear()));
+            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(clock), acc.getYear()));
         }
 
         // UNSPECIFIC ATTRIBUTES

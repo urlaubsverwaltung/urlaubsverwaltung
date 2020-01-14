@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -58,7 +59,7 @@ class OvertimeViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService);
+        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService, Clock.systemUTC());
     }
 
     @Test

@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,7 @@ class SickNoteServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService);
+        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, Clock.systemUTC());
     }
 
     @Test

@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -74,7 +75,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService);
+        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService, Clock.systemUTC());
     }
 
     @Test

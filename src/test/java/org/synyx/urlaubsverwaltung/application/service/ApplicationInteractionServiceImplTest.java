@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
@@ -77,7 +78,7 @@ class ApplicationInteractionServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService);
+            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, Clock.systemUTC());
     }
 
     // APPLY FOR LEAVE -------------------------------------------------------------------------------------------------

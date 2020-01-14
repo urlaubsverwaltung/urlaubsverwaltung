@@ -21,12 +21,12 @@ import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 /**
@@ -40,14 +40,15 @@ public class AccountViewController {
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final AccountFormValidator validator;
+    private final Clock clock;
 
     @Autowired
-    public AccountViewController(PersonService personService, AccountService accountService,
-                                 AccountInteractionService accountInteractionService, AccountFormValidator validator) {
+    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountFormValidator validator, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.validator = validator;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -65,12 +66,11 @@ public class AccountViewController {
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
-        final int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
+        final int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(clock).getYear();
 
         final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
         final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
             .orElseGet(() -> new AccountForm(yearOfHolidaysAccount));
-
         model.addAttribute("person", person);
         model.addAttribute("account", accountForm);
         model.addAttribute("year", yearOfHolidaysAccount);

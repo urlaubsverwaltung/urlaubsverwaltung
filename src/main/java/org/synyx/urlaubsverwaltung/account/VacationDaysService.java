@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -27,16 +27,16 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 @Service
 public class VacationDaysService {
 
-    private final WorkDaysCountService calendarService;
-    private final NowService nowService;
+    private final WorkDaysCountService workDaysCountService;
     private final ApplicationService applicationService;
+    private final Clock clock;
 
     @Autowired
-    public VacationDaysService(WorkDaysCountService calendarService, NowService nowService,
-                               ApplicationService applicationService) {
-        this.calendarService = calendarService;
-        this.nowService = nowService;
+    public VacationDaysService(WorkDaysCountService workDaysCountService,
+                               ApplicationService applicationService, Clock clock) {
+        this.workDaysCountService = workDaysCountService;
         this.applicationService = applicationService;
+        this.clock = clock;
     }
 
     /**
@@ -54,7 +54,8 @@ public class VacationDaysService {
         final VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account, Optional.empty());
 
         // it's before April - the left remaining vacation days must be used
-        if (nowService.currentYear() == account.getYear() && DateUtil.isBeforeApril(nowService.now(), account.getYear())) {
+        final LocalDate now = LocalDate.now(clock);
+        if (now.getYear() == account.getYear() && DateUtil.isBeforeApril(now, account.getYear())) {
             return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDays());
         } else {
             // it's after April - only the left not expiring remaining vacation days must be used
@@ -155,7 +156,7 @@ public class VacationDaysService {
                 endDate = lastMilestone;
             }
 
-            usedDays = usedDays.add(calendarService.getWorkDaysCount(applicationForLeave.getDayLength(), startDate, endDate,
+            usedDays = usedDays.add(workDaysCountService.getWorkDaysCount(applicationForLeave.getDayLength(), startDate, endDate,
                 person));
         }
 

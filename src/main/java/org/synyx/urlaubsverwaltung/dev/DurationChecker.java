@@ -6,10 +6,9 @@ import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-
-import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -18,10 +17,12 @@ import static java.time.ZoneOffset.UTC;
 class DurationChecker {
 
     private final WorkDaysCountService workDaysCountService;
+    private final Clock clock;
 
-    DurationChecker(WorkDaysCountService workDaysCountService) {
+    DurationChecker(WorkDaysCountService workDaysCountService, Clock clock) {
 
         this.workDaysCountService = workDaysCountService;
+        this.clock = clock;
     }
 
     /**
@@ -33,7 +34,7 @@ class DurationChecker {
      */
     boolean startAndEndDatesAreInCurrentYear(LocalDate start, LocalDate end) {
 
-        int currentYear = ZonedDateTime.now(UTC).getYear();
+        int currentYear = ZonedDateTime.now(clock).getYear();
 
         return start.getYear() == currentYear && end.getYear() == currentYear;
     }

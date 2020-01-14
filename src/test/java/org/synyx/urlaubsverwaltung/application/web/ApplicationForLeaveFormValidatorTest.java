@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -72,7 +73,7 @@ class ApplicationForLeaveFormValidatorTest {
         overtimeService = mock(OvertimeService.class);
 
         validator = new ApplicationForLeaveFormValidator(workingTimeService, workDaysCountService, overlapService, calculationService,
-            settingsService, overtimeService);
+            settingsService, overtimeService, Clock.systemUTC());
         errors = mock(Errors.class);
 
         appForm = new ApplicationForLeaveForm();

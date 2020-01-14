@@ -6,15 +6,11 @@ import de.jollyday.ManagerParameters;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
-import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -25,7 +21,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +42,6 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.SEPTEMBER;
-import static java.time.ZoneOffset.UTC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -67,13 +65,12 @@ class VacationDaysServiceTest {
     private VacationDaysService vacationDaysService;
 
     private ApplicationService applicationService;
-    private NowService nowService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
 
         applicationService = mock(ApplicationService.class);
-        nowService = mock(NowService.class);
 
         WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
 
@@ -95,10 +92,10 @@ class VacationDaysServiceTest {
         ManagerParameter managerParameter = ManagerParameters.create(url);
         HolidayManager holidayManager = HolidayManager.getInstance(managerParameter);
 
-        WorkDaysCountService workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService, holidayManager),
+        workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService, holidayManager),
             workingTimeService, settingsService);
 
-        vacationDaysService = new VacationDaysService(workDaysCountService, nowService, applicationService);
+        vacationDaysService = new VacationDaysService(workDaysCountService, applicationService, Clock.systemUTC());
     }
 
 
@@ -350,7 +347,8 @@ class VacationDaysServiceTest {
     @Test
     void testGetTotalVacationDaysForPastYear() {
 
-        when(nowService.now()).thenReturn(LocalDate.of(2015, 4, 2));
+        final Clock fixedClock = Clock.fixed(Instant.parse("2015-04-02T00:00:00.00Z"), ZoneId.of("UTC"));
+        vacationDaysService = new VacationDaysService(workDaysCountService, applicationService, fixedClock);
 
         initCustomService("4", "1");
 
@@ -374,8 +372,8 @@ class VacationDaysServiceTest {
     @Test
     void testGetTotalVacationDaysForThisYearBeforeApril() {
 
-        when(nowService.now()).thenReturn(LocalDate.of(2015, 3, 2));
-        when(nowService.currentYear()).thenReturn(2015);
+        final Clock fixedClock = Clock.fixed(Instant.parse("2015-03-02T00:00:00.00Z"), ZoneId.of("UTC"));
+        vacationDaysService = new VacationDaysService(workDaysCountService, applicationService, fixedClock);
 
         initCustomService("4", "1");
 
@@ -398,8 +396,8 @@ class VacationDaysServiceTest {
     @Test
     void testGetTotalVacationDaysForThisYearAfterApril() {
 
-        when(nowService.now()).thenReturn(LocalDate.of(2015, 4, 2));
-        when(nowService.currentYear()).thenReturn(2015);
+        final Clock fixedClock = Clock.fixed(Instant.parse("2015-04-02T00:00:00.00Z"), ZoneId.of("UTC"));
+        vacationDaysService = new VacationDaysService(workDaysCountService, applicationService, fixedClock);
 
         initCustomService("4", "3");
 
@@ -431,15 +429,13 @@ class VacationDaysServiceTest {
         WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
-        VacationDaysService vacationDaysService = new VacationDaysService(
-            workDaysCountService,
-            nowService,
-            applicationService);
+        final Clock clock = Clock.systemUTC();
+        VacationDaysService vacationDaysService = new VacationDaysService(workDaysCountService, applicationService, clock);
 
         Account account = new Account();
         account.setPerson(person);
-        account.setValidFrom(LocalDate.now(UTC));
-        account.setValidTo(ZonedDateTime.now(UTC).plusDays(10).toLocalDate());
+        account.setValidFrom(LocalDate.now(clock));
+        account.setValidTo(ZonedDateTime.now(clock).plusDays(10).toLocalDate());
 
         BigDecimal usedDaysBeforeApril = vacationDaysService.getUsedDaysBeforeApril(account);
 
@@ -458,15 +454,13 @@ class VacationDaysServiceTest {
         WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
-        VacationDaysService vacationDaysService = new VacationDaysService(
-            workDaysCountService,
-            nowService,
-            applicationService);
+        final Clock clock = Clock.systemUTC();
+        VacationDaysService vacationDaysService = new VacationDaysService(workDaysCountService, applicationService, clock);
 
         Account account = new Account();
         account.setPerson(person);
-        account.setValidFrom(LocalDate.now(UTC));
-        account.setValidTo(ZonedDateTime.now(UTC).plusDays(10).toLocalDate());
+        account.setValidFrom(LocalDate.now(clock));
+        account.setValidTo(ZonedDateTime.now(clock).plusDays(10).toLocalDate());
 
         BigDecimal usedDaysAfterApril = vacationDaysService.getUsedDaysAfterApril(account);
 
@@ -487,8 +481,7 @@ class VacationDaysServiceTest {
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        vacationDaysService = new VacationDaysService(mock(WorkDaysCountService.class), nowService,
-            applicationService) {
+        vacationDaysService = new VacationDaysService(mock(WorkDaysCountService.class), applicationService, Clock.systemUTC()) {
 
             @Override
             protected BigDecimal getUsedDaysBeforeApril(Account account) {

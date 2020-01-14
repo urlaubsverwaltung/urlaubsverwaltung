@@ -7,12 +7,11 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -23,12 +22,13 @@ class SickNoteServiceImpl implements SickNoteService {
 
     private final SickNoteRepository sickNoteRepository;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
-    public SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SettingsService settingsService) {
-
+    public SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SettingsService settingsService, Clock clock) {
         this.sickNoteRepository = sickNoteRepository;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @Override
@@ -65,7 +65,7 @@ class SickNoteServiceImpl implements SickNoteService {
         Settings settings = settingsService.getSettings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        LocalDate endDate = ZonedDateTime.now(UTC)
+        LocalDate endDate = ZonedDateTime.now(clock)
             .plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification())
             .toLocalDate();
 
