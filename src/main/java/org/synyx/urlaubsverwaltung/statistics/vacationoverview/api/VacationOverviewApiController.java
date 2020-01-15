@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.util.List;
 
+@RestControllerAdviceMarker
 @Api("VacationOverview: Get Vacation-Overview Metadata")
 @RestController("restApiVacationOverview")
 @RequestMapping("/api")

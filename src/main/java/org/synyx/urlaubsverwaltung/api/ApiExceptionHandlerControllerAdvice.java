@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 /**
  * Handles exceptions and redirects to error page.
  */
-@RestControllerAdvice
+@RestControllerAdvice(annotations = RestControllerAdviceMarker.class)
 public class ApiExceptionHandlerControllerAdvice {
 
     @ResponseStatus(NO_CONTENT)
