@@ -41,6 +41,8 @@ jobs:
       - name: Run OWASP dependency check
         run: >
           ./mvnw --batch-mode clean
+          frontend:install-node-and-npm
+          frontend:npm@install-npm-dependencies
           org.owasp:dependency-check-maven:check
       - uses: actions/upload-artifact@v1
         with:
