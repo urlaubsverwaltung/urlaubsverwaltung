@@ -12,7 +12,6 @@
 * Upgrade google api dependencies [#933](https://github.com/synyx/urlaubsverwaltung/pull/933)
 * Remove distribution repository from pom [#936](https://github.com/synyx/urlaubsverwaltung/pull/936)
 * Remove sonatype snapshot repository [#937](https://github.com/synyx/urlaubsverwaltung/pull/937)
-* Upgrade spring boot parent to 2.1.12
 
 ### [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.1)
 * Fix ldap and ad sync can not be enabled [#914](https://github.com/synyx/urlaubsverwaltung/pull/914)
