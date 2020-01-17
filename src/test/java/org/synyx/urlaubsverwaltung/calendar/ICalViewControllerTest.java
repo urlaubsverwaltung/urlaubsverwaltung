@@ -91,6 +91,7 @@ public class ICalViewControllerTest {
             .andExpect(status().isNoContent());
     }
 
+
     @Test
     public void getCalendarForAll() throws Exception {
 
