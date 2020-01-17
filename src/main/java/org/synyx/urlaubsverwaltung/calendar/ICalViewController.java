@@ -1,13 +1,12 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +15,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 
-@Api("calendar")
 @Controller
 @RequestMapping("/web")
 public class ICalViewController {
@@ -31,6 +29,7 @@ public class ICalViewController {
 
     @GetMapping("/persons/{personId}/calendar")
     @PreAuthorize("@userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @ResponseBody
     public String getCalendarForPerson(HttpServletResponse response, @PathVariable Integer personId) {
 
         final String iCal;
@@ -48,6 +47,7 @@ public class ICalViewController {
     }
 
     @GetMapping("/departments/{departmentId}/calendar")
+    @ResponseBody
     public String getCalendarForDepartment(HttpServletResponse response, @PathVariable Integer departmentId) {
 
         final String iCal;
@@ -65,6 +65,7 @@ public class ICalViewController {
     }
 
     @GetMapping("/company/calendar")
+    @ResponseBody
     public String getCalendarForCompany(HttpServletResponse response) {
 
         final String iCal;
