@@ -24,17 +24,21 @@ public class ICalViewControllerTest {
     private ICalViewController sut;
 
     @Mock
-    private ICalService iCalService;
+    private PersonCalendarService personCalendarService;
+    @Mock
+    private DepartmentCalendarService departmentCalendarService;
+    @Mock
+    private CompanyCalendarService companyCalendarService;
 
     @Before
     public void setUp() {
-        sut = new ICalViewController(iCalService);
+        sut = new ICalViewController(personCalendarService, departmentCalendarService, companyCalendarService);
     }
 
     @Test
     public void getCalendarForPerson() throws Exception {
 
-        when(iCalService.getCalendarForPerson(1, "secret")).thenReturn("iCal string");
+        when(personCalendarService.getCalendarForPerson(1, "secret")).thenReturn("iCal string");
 
         perform(get("/web/persons/1/calendar")
             .param("secret", "secret"))
@@ -47,7 +51,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForPersonWithBadRequest() throws Exception {
 
-        when(iCalService.getCalendarForPerson(1, "secret")).thenThrow(new IllegalArgumentException());
+        when(personCalendarService.getCalendarForPerson(1, "secret")).thenThrow(new IllegalArgumentException());
 
         perform(get("/web/persons/1/calendar").param("secret", "secret"))
             .andExpect(status().isBadRequest());
@@ -56,7 +60,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForPersonWithNoContent() throws Exception {
 
-        when(iCalService.getCalendarForPerson(1, "secret")).thenThrow(CalendarException.class);
+        when(personCalendarService.getCalendarForPerson(1, "secret")).thenThrow(CalendarException.class);
 
         perform(get("/web/persons/1/calendar")
             .param("secret", "secret"))
@@ -66,7 +70,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForDepartment() throws Exception {
 
-        when(iCalService.getCalendarForDepartment(1, "secret")).thenReturn("calendar department");
+        when(departmentCalendarService.getCalendarForDepartment(1, "secret")).thenReturn("calendar department");
 
         perform(get("/web/departments/1/calendar")
             .param("secret", "secret"))
@@ -79,7 +83,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForDepartmentWithBadRequest() throws Exception {
 
-        when(iCalService.getCalendarForDepartment(1, "secret")).thenThrow(new IllegalArgumentException());
+        when(departmentCalendarService.getCalendarForDepartment(1, "secret")).thenThrow(new IllegalArgumentException());
 
         perform(get("/web/departments/1/calendar").param("secret", "secret"))
             .andExpect(status().isBadRequest());
@@ -88,7 +92,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForDepartmentWithNoContent() throws Exception {
 
-        when(iCalService.getCalendarForDepartment(1, "secret")).thenThrow(CalendarException.class);
+        when(departmentCalendarService.getCalendarForDepartment(1, "secret")).thenThrow(CalendarException.class);
 
         perform(get("/web/departments/1/calendar")
             .param("secret", "secret"))
@@ -99,7 +103,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForAll() throws Exception {
 
-        when(iCalService.getCalendarForAll("secret")).thenReturn("calendar all");
+        when(companyCalendarService.getCalendarForAll("secret")).thenReturn("calendar all");
 
         perform(get("/web/company/calendar")
             .param("secret", "secret"))
@@ -112,7 +116,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForAllWithNoContent() throws Exception {
 
-        when(iCalService.getCalendarForAll("secret")).thenThrow(CalendarException.class);
+        when(companyCalendarService.getCalendarForAll("secret")).thenThrow(CalendarException.class);
 
         perform(get("/web/company/calendar")
             .param("secret", "secret"))
