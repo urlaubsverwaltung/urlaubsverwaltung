@@ -19,16 +19,16 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class ICalApiControllerTest {
+public class ICalViewControllerTest {
 
-    private ICalApiController sut;
+    private ICalViewController sut;
 
     @Mock
     private ICalService iCalService;
 
     @Before
     public void setUp() {
-        sut = new ICalApiController(iCalService);
+        sut = new ICalViewController(iCalService);
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForPerson(1)).thenReturn("iCal string");
 
-        perform(get("/api/persons/1/calendar"))
+        perform(get("/web/persons/1/calendar"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
@@ -48,7 +48,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForPerson(1)).thenThrow(new IllegalArgumentException());
 
-        perform(get("/api/persons/1/calendar"))
+        perform(get("/web/persons/1/calendar"))
             .andExpect(status().isBadRequest());
     }
 
@@ -57,7 +57,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForPerson(1)).thenThrow(CalendarException.class);
 
-        perform(get("/api/persons/1/calendar"))
+        perform(get("/web/persons/1/calendar"))
             .andExpect(status().isNoContent());
     }
 
@@ -66,7 +66,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForDepartment(1)).thenReturn("calendar department");
 
-        perform(get("/api/departments/1/calendar"))
+        perform(get("/web/departments/1/calendar"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
@@ -78,7 +78,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForDepartment(1)).thenThrow(new IllegalArgumentException());
 
-        perform(get("/api/departments/1/calendar"))
+        perform(get("/web/departments/1/calendar"))
             .andExpect(status().isBadRequest());
     }
 
@@ -87,7 +87,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForDepartment(1)).thenThrow(CalendarException.class);
 
-        perform(get("/api/departments/1/calendar"))
+        perform(get("/web/departments/1/calendar"))
             .andExpect(status().isNoContent());
     }
 
@@ -96,7 +96,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForAll()).thenReturn("calendar all");
 
-        perform(get("/api/company/calendar"))
+        perform(get("/web/company/calendar"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
@@ -108,7 +108,7 @@ public class ICalApiControllerTest {
 
         when(iCalService.getCalendarForAll()).thenThrow(CalendarException.class);
 
-        perform(get("/api/company/calendar"))
+        perform(get("/web/company/calendar"))
             .andExpect(status().isNoContent());
     }
 
