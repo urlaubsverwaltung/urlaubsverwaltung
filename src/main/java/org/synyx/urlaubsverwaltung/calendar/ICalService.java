@@ -13,6 +13,7 @@ import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
@@ -37,16 +38,33 @@ class ICalService {
     private final AbsenceService absenceService;
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final PersonCalendarRepository personCalendarRepository;
+    private final DepartmentCalendarRepository departmentCalendarRepository;
+    private final CompanyCalendarRepository companyCalendarRepository;
 
     @Autowired
-    ICalService(AbsenceService absenceService, PersonService personService, DepartmentService departmentService) {
+    ICalService(AbsenceService absenceService, PersonService personService, DepartmentService departmentService,
+                PersonCalendarRepository personCalendarRepository, DepartmentCalendarRepository departmentCalendarRepository,
+                CompanyCalendarRepository companyCalendarRepository) {
 
         this.absenceService = absenceService;
         this.personService = personService;
         this.departmentService = departmentService;
+        this.personCalendarRepository = personCalendarRepository;
+        this.departmentCalendarRepository = departmentCalendarRepository;
+        this.companyCalendarRepository = companyCalendarRepository;
     }
 
-    String getCalendarForPerson(Integer personId) {
+    String getCalendarForPerson(Integer personId, String secret) {
+
+        if (Strings.isBlank(secret)) {
+            throw new IllegalArgumentException("secret must not be empty.");
+        }
+
+        final PersonCalendar calendar = personCalendarRepository.findBySecret(secret);
+        if (calendar == null) {
+            throw new IllegalArgumentException("No calendar found for secret=" + secret);
+        }
 
         final Optional<Person> optionalPerson = personService.getPersonByID(personId);
         if (optionalPerson.isEmpty()) {
@@ -54,13 +72,27 @@ class ICalService {
         }
 
         final Person person = optionalPerson.get();
+
+        if (!calendar.getPerson().equals(person)) {
+            throw new IllegalArgumentException(String.format("Secret=%s does not match the given personId=%s", secret, personId));
+        }
+
         final String title = "Abwesenheitskalender von " + person.getNiceName();
         final List<Absence> absences = absenceService.getOpenAbsences(List.of(person));
 
         return this.generateCalendar(title, absences).toString();
     }
 
-    String getCalendarForDepartment(Integer departmentId) {
+    String getCalendarForDepartment(Integer departmentId, String secret) {
+
+        if (Strings.isBlank(secret)) {
+            throw new IllegalArgumentException("secret must not be empty.");
+        }
+
+        final DepartmentCalendar calendar = departmentCalendarRepository.findBySecret(secret);
+        if (calendar == null) {
+            throw new IllegalArgumentException("No calendar found for secret=" + secret);
+        }
 
         final Optional<Department> optionalDepartment = departmentService.getDepartmentById(departmentId);
         if (optionalDepartment.isEmpty()) {
@@ -68,13 +100,27 @@ class ICalService {
         }
 
         final Department department = optionalDepartment.get();
+
+        if (!calendar.getDepartment().equals(department)) {
+            throw new IllegalArgumentException(String.format("Secret=%s does not match the given departmentId=%s", secret, departmentId));
+        }
+
         final String title = "Abwesenheitskalender der Abteilung " + department.getName();
         final List<Absence> absences = absenceService.getOpenAbsences(department.getMembers());
 
         return this.generateCalendar(title, absences).toString();
     }
 
-    String getCalendarForAll() {
+    String getCalendarForAll(String secret) {
+
+        if (Strings.isBlank(secret)) {
+            throw new IllegalArgumentException("secret must not be empty.");
+        }
+
+        final CompanyCalendar calendar = companyCalendarRepository.findBySecret(secret);
+        if (calendar == null) {
+            throw new IllegalArgumentException("No calendar found for secret=" + secret);
+        }
 
         final String title = "Abwesenheitskalender der Firma";
         final List<Absence> absences = absenceService.getOpenAbsences();

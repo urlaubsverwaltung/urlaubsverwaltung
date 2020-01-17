@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.validate.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,12 +41,18 @@ public class ICalServiceTest {
     private PersonService personService;
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private PersonCalendarRepository personCalendarRepository;
+    @Mock
+    private DepartmentCalendarRepository departmentCalendarRepository;
+    @Mock
+    private CompanyCalendarRepository companyCalendarRepository;
 
 
     @Before
     public void setUp() {
 
-        sut = new ICalService(absenceService, personService, departmentService);
+        sut = new ICalService(absenceService, personService, departmentService, personCalendarRepository, departmentCalendarRepository, companyCalendarRepository);
     }
 
     @Test(expected = CalendarException.class)
@@ -58,9 +62,13 @@ public class ICalServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(person);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of());
 
-        sut.getCalendarForPerson(1);
+        sut.getCalendarForPerson(1, "secret");
     }
 
     @Test
@@ -70,10 +78,14 @@ public class ICalServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(person);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+
         final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(fullDayAbsence));
 
-        final String iCal = sut.getCalendarForPerson(1);
+        final String iCal = sut.getCalendarForPerson(1, "secret");
 
         assertThat(iCal).contains("VERSION:2.0");
         assertThat(iCal).contains("CALSCALE:GREGORIAN");
@@ -91,10 +103,14 @@ public class ICalServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(person);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+
         final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(morningAbsence));
 
-        final String iCal = sut.getCalendarForPerson(1);
+        final String iCal = sut.getCalendarForPerson(1, "secret");
 
         assertThat(iCal).contains("VERSION:2.0");
         assertThat(iCal).contains("CALSCALE:GREGORIAN");
@@ -113,10 +129,14 @@ public class ICalServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(person);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+
         final Absence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(manyFullDayAbsence));
 
-        final String iCal = sut.getCalendarForPerson(1);
+        final String iCal = sut.getCalendarForPerson(1, "secret");
 
         assertThat(iCal).contains("VERSION:2.0");
         assertThat(iCal).contains("CALSCALE:GREGORIAN");
@@ -135,10 +155,14 @@ public class ICalServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(person);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(noonAbsence));
 
-        final String iCal = sut.getCalendarForPerson(1);
+        final String iCal = sut.getCalendarForPerson(1, "secret");
 
         assertThat(iCal).contains("VERSION:2.0");
         assertThat(iCal).contains("CALSCALE:GREGORIAN");
@@ -155,7 +179,53 @@ public class ICalServiceTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.ofNullable(null));
 
-        sut.getCalendarForPerson(1);
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(createPerson());
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+
+        sut.getCalendarForPerson(1, "secret");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForPersonButSecretIsNull() {
+
+        sut.getCalendarForPerson(1, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForPersonButSecretIsEmpty() {
+
+        sut.getCalendarForPerson(1, "");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForPersonButSecretIsEmptyWithWhitespace() {
+
+        sut.getCalendarForPerson(1, "  ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForPersonButSecretDoesNotExist() {
+
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(null);
+
+        sut.getCalendarForPerson(1, "secret");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForPersonButSecretDoesNotMatchTheGivenPerson() {
+
+        final Person person = createPerson();
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person notMatchingPerson = createPerson();
+        notMatchingPerson.setId(1337);
+        PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(notMatchingPerson);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+
+        sut.getCalendarForPerson(1, "secret");
     }
 
     @Test
@@ -165,13 +235,18 @@ public class ICalServiceTest {
         department.setId(1);
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
 
+        final DepartmentCalendar calendar = new DepartmentCalendar();
+        calendar.setId(1L);
+        calendar.setDepartment(department);
+        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(calendar);
+
         final Person person = createPerson();
         department.setMembers(List.of(person));
 
         final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(List.of(fullDayAbsence));
 
-        final String iCal = sut.getCalendarForDepartment(1);
+        final String iCal = sut.getCalendarForDepartment(1, "secret");
 
         assertThat(iCal).contains("VERSION:2.0");
         assertThat(iCal).contains("CALSCALE:GREGORIAN");
@@ -187,7 +262,51 @@ public class ICalServiceTest {
 
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.ofNullable(null));
 
-        sut.getCalendarForDepartment(1);
+        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(new DepartmentCalendar());
+
+        sut.getCalendarForDepartment(1, "secret");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForDepartmentSecretIsNull() {
+
+        sut.getCalendarForDepartment(1, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForDepartmentSecretIsEmpty() {
+
+        sut.getCalendarForDepartment(1, "");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForDepartmentSecretIsEmptyWithWhitespace() {
+
+        sut.getCalendarForDepartment(1, "  ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForDepartmentButSecretDoesNotExist() {
+
+        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(null);
+
+        sut.getCalendarForDepartment(1, "secret");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForDepartmentButSecretDoesNotMatchTheGivenPerson() {
+
+        final Department department = createDepartment();
+        department.setId(1);
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+
+        final Department notMatchingDepartment = createDepartment();
+        notMatchingDepartment.setId(1337);
+        DepartmentCalendar calendar = new DepartmentCalendar();
+        calendar.setDepartment(notMatchingDepartment);
+        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(calendar);
+
+        sut.getCalendarForDepartment(1, "secret");
     }
 
     @Test
@@ -197,7 +316,11 @@ public class ICalServiceTest {
         final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
         when(absenceService.getOpenAbsences()).thenReturn(List.of(fullDayAbsence));
 
-        final String iCal = sut.getCalendarForAll();
+        CompanyCalendar calendar = new CompanyCalendar();
+        calendar.setId(1L);
+        when(companyCalendarRepository.findBySecret("secret")).thenReturn(calendar);
+
+        final String iCal = sut.getCalendarForAll("secret");
 
         assertThat(iCal).contains("VERSION:2.0");
         assertThat(iCal).contains("CALSCALE:GREGORIAN");
@@ -206,6 +329,24 @@ public class ICalServiceTest {
 
         assertThat(iCal).contains("SUMMARY:Marlene Muster abwesend");
         assertThat(iCal).contains("DTSTART;VALUE=DATE:20190326");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForAllSecretIsNull() {
+
+        sut.getCalendarForAll(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForAllSecretIsEmpty() {
+
+        sut.getCalendarForAll("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCalendarForAllSecretIsEmptyWithWhitespace() {
+
+        sut.getCalendarForAll("  ");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

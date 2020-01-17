@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,11 +31,11 @@ public class ICalViewController {
     @GetMapping("/persons/{personId}/calendar")
     @PreAuthorize("@userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     @ResponseBody
-    public String getCalendarForPerson(HttpServletResponse response, @PathVariable Integer personId) {
+    public String getCalendarForPerson(HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = iCalService.getCalendarForPerson(personId);
+            iCal = iCalService.getCalendarForPerson(personId, secret);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
         } catch (CalendarException e) {
@@ -48,11 +49,11 @@ public class ICalViewController {
 
     @GetMapping("/departments/{departmentId}/calendar")
     @ResponseBody
-    public String getCalendarForDepartment(HttpServletResponse response, @PathVariable Integer departmentId) {
+    public String getCalendarForDepartment(HttpServletResponse response, @PathVariable Integer departmentId, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = iCalService.getCalendarForDepartment(departmentId);
+            iCal = iCalService.getCalendarForDepartment(departmentId, secret);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No department found for id = " + departmentId);
         } catch (CalendarException e) {
@@ -66,11 +67,11 @@ public class ICalViewController {
 
     @GetMapping("/company/calendar")
     @ResponseBody
-    public String getCalendarForCompany(HttpServletResponse response) {
+    public String getCalendarForCompany(HttpServletResponse response, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = iCalService.getCalendarForAll();
+            iCal = iCalService.getCalendarForAll(secret);
         } catch (CalendarException e) {
             throw new ResponseStatusException(NO_CONTENT);
         }
