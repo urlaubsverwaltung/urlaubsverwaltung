@@ -20,12 +20,17 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 @RequestMapping("/web")
 public class ICalViewController {
 
-    private final ICalService iCalService;
+    private final PersonCalendarService personCalendarService;
+    private final DepartmentCalendarService departmentCalendarService;
+    private final CompanyCalendarService companyCalendarService;
 
     @Autowired
-    public ICalViewController(ICalService iCalService) {
+    public ICalViewController(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService,
+                              CompanyCalendarService companyCalendarService) {
 
-        this.iCalService = iCalService;
+        this.personCalendarService = personCalendarService;
+        this.departmentCalendarService = departmentCalendarService;
+        this.companyCalendarService = companyCalendarService;
     }
 
     @GetMapping("/persons/{personId}/calendar")
@@ -35,7 +40,7 @@ public class ICalViewController {
 
         final String iCal;
         try {
-            iCal = iCalService.getCalendarForPerson(personId, secret);
+            iCal = personCalendarService.getCalendarForPerson(personId, secret);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
         } catch (CalendarException e) {
@@ -53,7 +58,7 @@ public class ICalViewController {
 
         final String iCal;
         try {
-            iCal = iCalService.getCalendarForDepartment(departmentId, secret);
+            iCal = departmentCalendarService.getCalendarForDepartment(departmentId, secret);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No department found for id = " + departmentId);
         } catch (CalendarException e) {
@@ -71,7 +76,7 @@ public class ICalViewController {
 
         final String iCal;
         try {
-            iCal = iCalService.getCalendarForAll(secret);
+            iCal = companyCalendarService.getCalendarForAll(secret);
         } catch (CalendarException e) {
             throw new ResponseStatusException(NO_CONTENT);
         }
