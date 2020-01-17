@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,14 +17,14 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 
 @Api("calendar")
-@RestController
-@RequestMapping("/api")
-public class ICalApiController {
+@Controller
+@RequestMapping("/web")
+public class ICalViewController {
 
     private final ICalService iCalService;
 
     @Autowired
-    public ICalApiController(ICalService iCalService) {
+    public ICalViewController(ICalService iCalService) {
 
         this.iCalService = iCalService;
     }
