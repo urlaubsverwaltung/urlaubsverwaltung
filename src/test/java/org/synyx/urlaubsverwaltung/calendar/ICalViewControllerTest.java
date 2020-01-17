@@ -34,9 +34,10 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForPerson() throws Exception {
 
-        when(iCalService.getCalendarForPerson(1)).thenReturn("iCal string");
+        when(iCalService.getCalendarForPerson(1, "secret")).thenReturn("iCal string");
 
-        perform(get("/web/persons/1/calendar"))
+        perform(get("/web/persons/1/calendar")
+            .param("secret", "secret"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
@@ -46,27 +47,29 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForPersonWithBadRequest() throws Exception {
 
-        when(iCalService.getCalendarForPerson(1)).thenThrow(new IllegalArgumentException());
+        when(iCalService.getCalendarForPerson(1, "secret")).thenThrow(new IllegalArgumentException());
 
-        perform(get("/web/persons/1/calendar"))
+        perform(get("/web/persons/1/calendar").param("secret", "secret"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     public void getCalendarForPersonWithNoContent() throws Exception {
 
-        when(iCalService.getCalendarForPerson(1)).thenThrow(CalendarException.class);
+        when(iCalService.getCalendarForPerson(1, "secret")).thenThrow(CalendarException.class);
 
-        perform(get("/web/persons/1/calendar"))
+        perform(get("/web/persons/1/calendar")
+            .param("secret", "secret"))
             .andExpect(status().isNoContent());
     }
 
     @Test
     public void getCalendarForDepartment() throws Exception {
 
-        when(iCalService.getCalendarForDepartment(1)).thenReturn("calendar department");
+        when(iCalService.getCalendarForDepartment(1, "secret")).thenReturn("calendar department");
 
-        perform(get("/web/departments/1/calendar"))
+        perform(get("/web/departments/1/calendar")
+            .param("secret", "secret"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
@@ -76,18 +79,19 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForDepartmentWithBadRequest() throws Exception {
 
-        when(iCalService.getCalendarForDepartment(1)).thenThrow(new IllegalArgumentException());
+        when(iCalService.getCalendarForDepartment(1, "secret")).thenThrow(new IllegalArgumentException());
 
-        perform(get("/web/departments/1/calendar"))
+        perform(get("/web/departments/1/calendar").param("secret", "secret"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     public void getCalendarForDepartmentWithNoContent() throws Exception {
 
-        when(iCalService.getCalendarForDepartment(1)).thenThrow(CalendarException.class);
+        when(iCalService.getCalendarForDepartment(1, "secret")).thenThrow(CalendarException.class);
 
-        perform(get("/web/departments/1/calendar"))
+        perform(get("/web/departments/1/calendar")
+            .param("secret", "secret"))
             .andExpect(status().isNoContent());
     }
 
@@ -95,9 +99,10 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForAll() throws Exception {
 
-        when(iCalService.getCalendarForAll()).thenReturn("calendar all");
+        when(iCalService.getCalendarForAll("secret")).thenReturn("calendar all");
 
-        perform(get("/web/company/calendar"))
+        perform(get("/web/company/calendar")
+            .param("secret", "secret"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
@@ -107,9 +112,10 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForAllWithNoContent() throws Exception {
 
-        when(iCalService.getCalendarForAll()).thenThrow(CalendarException.class);
+        when(iCalService.getCalendarForAll("secret")).thenThrow(CalendarException.class);
 
-        perform(get("/web/company/calendar"))
+        perform(get("/web/company/calendar")
+            .param("secret", "secret"))
             .andExpect(status().isNoContent());
     }
 

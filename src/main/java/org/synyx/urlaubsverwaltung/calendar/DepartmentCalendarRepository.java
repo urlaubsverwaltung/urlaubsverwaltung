@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 interface DepartmentCalendarRepository extends CrudRepository<DepartmentCalendar, Long> {
+
+    DepartmentCalendar findBySecret(String secret);
 }
