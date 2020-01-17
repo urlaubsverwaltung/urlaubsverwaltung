@@ -26,8 +26,7 @@
         </h1>
     </header>
     <main>
-        <form:form method="POST" action="${URL_PREFIX}/calendar/me/share" modelAttribute="privateCalendarShare">
-            <form:hidden path="personId" />
+        <form:form method="POST" action="${URL_PREFIX}/persons/${privateCalendarShare.personId}/calendar/share/me" modelAttribute="privateCalendarShare">
             <fieldset class="mb-4">
                 <legend class="text-xl">
                     <spring:message code="calendar.share.me.title" />

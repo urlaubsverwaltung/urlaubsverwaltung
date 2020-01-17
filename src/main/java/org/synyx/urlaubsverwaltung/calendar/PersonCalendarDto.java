@@ -1,15 +1,15 @@
-package org.synyx.urlaubsverwaltung.calendar.web;
+package org.synyx.urlaubsverwaltung.calendar;
 
-public class PrivateCalendarShareDto {
+public class PersonCalendarDto {
 
-    private Integer personId;
+    private int personId;
     private String calendarUrl;
 
-    public Integer getPersonId() {
+    public int getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Integer personId) {
+    public void setPersonId(int personId) {
         this.personId = personId;
     }
 

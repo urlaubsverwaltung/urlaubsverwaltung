@@ -30,6 +30,25 @@ class PersonCalendarService {
         this.iCalService = iCalService;
     }
 
+    PersonCalendar createCalendarForPerson(Integer personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        final PersonCalendar maybePersonCalendar = personCalendarRepository.findByPerson(person);
+        final PersonCalendar personCalendar = maybePersonCalendar == null ? new PersonCalendar() : maybePersonCalendar;
+        personCalendar.setPerson(person);
+        personCalendar.generateSecret();
+
+        return personCalendarRepository.save(personCalendar);
+    }
+
+    Optional<PersonCalendar> getPersonCalendar(Integer personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        return Optional.ofNullable(personCalendarRepository.findByPerson(person));
+    }
+
     String getCalendarForPerson(Integer personId, String secret) {
 
         if (Strings.isBlank(secret)) {
@@ -41,12 +60,7 @@ class PersonCalendarService {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
-        final Optional<Person> optionalPerson = personService.getPersonByID(personId);
-        if (optionalPerson.isEmpty()) {
-            throw new IllegalArgumentException("No person found for ID=" + personId);
-        }
-
-        final Person person = optionalPerson.get();
+        final Person person = getPersonOrThrow(personId);
 
         if (!calendar.getPerson().equals(person)) {
             throw new IllegalArgumentException(String.format("Secret=%s does not match the given personId=%s", secret, personId));
@@ -56,5 +70,22 @@ class PersonCalendarService {
         final List<Absence> absences = absenceService.getOpenAbsences(List.of(person));
 
         return iCalService.generateCalendar(title, absences);
+    }
+
+    private Person getPersonOrThrow(Integer personId) {
+
+        final Optional<Person> maybePerson = personService.getPersonByID(personId);
+        if (maybePerson.isEmpty()) {
+            throw new IllegalArgumentException("could not find person for given personId=" + personId);
+        }
+
+        return maybePerson.get();
+    }
+
+    public void deletePersonalCalendarForPerson(int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        personCalendarRepository.deleteByPerson(person);
     }
 }
