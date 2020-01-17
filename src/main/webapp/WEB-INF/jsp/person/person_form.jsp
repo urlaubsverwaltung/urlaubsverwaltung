@@ -184,7 +184,7 @@
 
                                 <div class="col-md-9">
 
-                                    <div class="checkbox pb-2 mb-4">
+                                    <div class="checkbox pb-2 mb-2">
                                         <strong class="mb-2 block">
                                             <spring:message code="person.form.permissions.roles.INACTIVE"/>
                                         </strong>
@@ -194,7 +194,7 @@
                                         </label>
                                     </div>
 
-                                    <div class="checkbox pb-2 mb-4">
+                                    <div class="checkbox pb-2 mb-2">
                                         <strong class="mb-2 block">
                                             <spring:message code="person.form.permissions.roles.USER"/>
                                         </strong>
@@ -206,7 +206,7 @@
                                         <form:hidden path="notifications" value="NOTIFICATION_USER"/>
                                     </div>
 
-                                    <div class="checkbox pb-2 mb-4">
+                                    <div class="checkbox pb-2 mb-2">
                                         <strong class="mb-2 block">
                                             <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
                                         </strong>
@@ -214,7 +214,7 @@
                                             <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message
                                             code="person.form.permissions.roles.DEPARTMENT_HEAD.description"/>
                                         </label>
-                                        <label class="ml-8 pb-2">
+                                        <label class="ml-5 pb-2">
                                             <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
                                             <spring:message code="person.form.notifications.DEPARTMENT_HEAD"/>
                                         </label>
@@ -236,7 +236,7 @@
                                         </label>
                                     </div>
 
-                                    <div class="checkbox pb-2 mb-4">
+                                    <div class="checkbox pb-2 mb-2">
                                         <strong class="mb-2 block">
                                             <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
                                         </strong>
@@ -245,7 +245,7 @@
                                                            value="SECOND_STAGE_AUTHORITY"/><spring:message
                                             code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
                                         </label>
-                                        <label class="ml-8 pb-2">
+                                        <label class="ml-5 pb-2">
                                             <form:checkbox path="notifications"
                                                            value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
                                             <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
@@ -269,7 +269,7 @@
                                         </label>
                                     </div>
 
-                                    <div class="checkbox pb-2 mb-4">
+                                    <div class="checkbox pb-2 mb-2">
                                         <strong class="mb-2 block">
                                             <spring:message code="person.form.permissions.roles.BOSS"/>
                                         </strong>
@@ -295,11 +295,11 @@
                                             <form:checkbox path="permissions" value="OFFICE"/><spring:message
                                             code="person.form.permissions.roles.OFFICE.description"/>
                                         </label>
-                                        <label class="ml-8 pb-2">
+                                        <label class="ml-5 pb-2">
                                             <form:checkbox path="notifications" value="NOTIFICATION_OFFICE"/>
                                             <spring:message code="person.form.notifications.OFFICE"/>
                                         </label>
-                                        <label class="ml-8 pb-2">
+                                        <label class="ml-5 pb-2">
                                             <form:checkbox path="notifications" value="OVERTIME_NOTIFICATION_OFFICE"/>
                                             <spring:message code="person.form.notifications.OFFICE.overtime"/>
                                         </label>
