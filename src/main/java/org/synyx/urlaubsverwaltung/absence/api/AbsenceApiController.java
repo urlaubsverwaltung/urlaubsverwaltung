@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 
-
+@RestControllerAdviceMarker
 @Api("Absences: Get all absences for a certain period")
 @RestController("restApiAbsenceController")
 @RequestMapping("/api")
