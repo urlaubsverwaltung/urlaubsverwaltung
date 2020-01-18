@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.Optional;
 
@@ -16,12 +15,10 @@ import java.util.Optional;
 @RequestMapping("/web/persons/{personId}/calendar/share")
 public class CalendarSharingViewController {
 
-    private final PersonService personService;
     private final PersonCalendarService personCalendarService;
 
     @Autowired
-    public CalendarSharingViewController(PersonService personService, PersonCalendarService personCalendarService) {
-        this.personService = personService;
+    public CalendarSharingViewController(PersonCalendarService personCalendarService) {
         this.personCalendarService = personCalendarService;
     }
 
