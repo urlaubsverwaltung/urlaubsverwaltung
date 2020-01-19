@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
@@ -51,7 +51,7 @@ class PersonCalendarService {
 
     String getCalendarForPerson(Integer personId, String secret) {
 
-        if (Strings.isBlank(secret)) {
+        if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
         }
 
