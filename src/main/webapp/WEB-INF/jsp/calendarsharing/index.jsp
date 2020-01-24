@@ -14,6 +14,7 @@
         <spring:message code="calendar.share.header.title"/>
     </title>
     <uv:custom-head/>
+    <script defer src="<asset:url value="copy_to_clipboard_input.js" />"></script>
 </head>
 <body>
 
@@ -50,15 +51,22 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="max-w-3xl">
+                        <div class="max-w-4xl">
                             <p class="mb-8 text-base">
                                 <spring:message code="calendar.share.me.isshared.paragraph.status"/>
                             </p>
                             <p class="mb-2 text-base">
                                 <spring:message code="calendar.share.me.isshared.paragraph.info"/>
                             </p>
-                            <input type="text" value="${privateCalendarShare.calendarUrl}"
-                                   class="mb-8 px-3 py-2 text-base w-full" readonly/>
+                            <div
+                                is="uv-copy-to-clipboard-input"
+                                class="flex flex-row mb-8 border border-gray-300 focus-within:shadow-outline"
+                                data-message-button-title="<spring:message code="calendar.share.me.button.clipboard.tooltip" />"
+                                data-message-copy-success-info="<spring:message code="calendar.share.me.button.clipboard.done" />"
+                            >
+                                <input type="text" value="${privateCalendarShare.calendarUrl}"
+                                       class="px-3 py-2 text-base flex-1 border-0 outline-none" readonly/>
+                            </div>
                             <p class="mb-8 text-base">
                                 <spring:message code="calendar.share.me.reset.paragraph"/>
                             </p>
