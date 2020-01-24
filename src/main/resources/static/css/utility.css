@@ -206,6 +206,16 @@
 .flex-row { flex-direction: row !important; }
 .flex-col { flex-direction: column !important; }
 
+.flex-1 { flex-grow: 1 !important; }
+
+.border { border-width: 1px !important; }
+.border-0 { border-width: 0 !important; }
+
+.border-gray-300 { border-color: #e2e8f0 !important; border-style: solid !important; }
+
+.outline-none { outline: 0 !important; }
+.focus-within\:shadow-outline:focus-within { box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5) !important;  }
+
 @media screen and (min-width: 640px) {
   .sm\:px-0 { padding-left: 0 !important; padding-right: 0 !important; }
   .sm\:px-4 { padding-left: 16px !important; padding-right: 16px !important; }
