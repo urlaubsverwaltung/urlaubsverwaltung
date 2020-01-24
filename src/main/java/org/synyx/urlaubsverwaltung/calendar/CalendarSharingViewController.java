@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+
+import static java.lang.String.format;
 
 
 @Controller
@@ -23,7 +26,7 @@ public class CalendarSharingViewController {
     }
 
     @GetMapping
-    public String index(@PathVariable int personId, Model model) {
+    public String index(@PathVariable int personId, Model model, HttpServletRequest request) {
 
         final PersonCalendarDto dto = new PersonCalendarDto();
         dto.setPersonId(personId);
@@ -31,7 +34,10 @@ public class CalendarSharingViewController {
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarService.getPersonCalendar(personId);
         if (maybePersonCalendar.isPresent()) {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
-            dto.setCalendarUrl("https://urlaubsverwaltung.cloud/calendar/" + personCalendar.getSecret());
+            final String url = format("%s://%s/web/persons/%d/calendar?secret=%s",
+                request.getScheme(), request.getHeader("host"), personId, personCalendar.getSecret());
+
+            dto.setCalendarUrl(url);
         }
 
         model.addAttribute("privateCalendarShare", dto);
@@ -44,14 +50,14 @@ public class CalendarSharingViewController {
 
         personCalendarService.createCalendarForPerson(personId);
 
-        return String.format("redirect:/web/persons/%d/calendar/share", personId);
+        return format("redirect:/web/persons/%d/calendar/share", personId);
     }
 
-    @PostMapping(value = "/me/{calendarId}", params = "unlink")
+    @PostMapping(value = "/me", params = "unlink")
     public String unlinkPrivateCalendar(@PathVariable int personId) {
 
         personCalendarService.deletePersonalCalendarForPerson(personId);
 
-        return String.format("redirect:/web/persons/%d/calendar/share", personId);
+        return format("redirect:/web/persons/%d/calendar/share", personId);
     }
 }

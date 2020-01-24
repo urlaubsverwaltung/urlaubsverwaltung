@@ -6,13 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import static javax.persistence.CascadeType.REMOVE;
-
 @Entity
 class PersonCalendar extends Calendar {
 
     @NotNull
-    @OneToOne(cascade = REMOVE)
+    @OneToOne
     private Person person;
 
     public PersonCalendar() {

@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -72,6 +73,14 @@ class PersonCalendarService {
         return iCalService.generateCalendar(title, absences);
     }
 
+    @Transactional
+    public void deletePersonalCalendarForPerson(int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        personCalendarRepository.deleteByPerson(person);
+    }
+
     private Person getPersonOrThrow(Integer personId) {
 
         final Optional<Person> maybePerson = personService.getPersonByID(personId);
@@ -80,12 +89,5 @@ class PersonCalendarService {
         }
 
         return maybePerson.get();
-    }
-
-    public void deletePersonalCalendarForPerson(int personId) {
-
-        final Person person = getPersonOrThrow(personId);
-
-        personCalendarRepository.deleteByPerson(person);
     }
 }
