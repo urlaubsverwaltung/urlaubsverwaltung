@@ -262,6 +262,18 @@ public class PersonCalendarServiceTest {
         verify(personCalendarRepository).save(any(PersonCalendar.class));
     }
 
+    @Test
+    public void deletePersonalCalendarForPerson(){
+
+        final Person person = createPerson();
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        sut.deletePersonalCalendarForPerson(1);
+
+        verify(personCalendarRepository).deleteByPerson(person);
+    }
+
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
