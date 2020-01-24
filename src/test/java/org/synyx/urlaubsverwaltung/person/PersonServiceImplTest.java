@@ -5,8 +5,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +28,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
@@ -52,10 +56,15 @@ public class PersonServiceImplTest {
     @Mock
     private SecurityContext securityContext;
 
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    private ArgumentCaptor<PersonUpdatedEvent> personUpdatedEventArgumentCaptor = ArgumentCaptor.forClass(PersonUpdatedEvent.class);
+
     @Before
     public void setUp() {
 
-        sut = new PersonServiceImpl(personDAO, accountInteractionService, workingTimeService);
+        sut = new PersonServiceImpl(personDAO, accountInteractionService, workingTimeService, applicationEventPublisher);
     }
 
     @After
@@ -438,5 +447,45 @@ public class PersonServiceImplTest {
         final Collection<Role> permissions = personWithOfficeRole.getPermissions();
         assertThat(permissions).hasSize(1);
         assertThat(permissions).containsOnly(USER);
+    }
+
+    @Test
+    public void ensurePersonUpdatedEventIsFiredAfterPersonSave() {
+
+        final Person personToSave = createPerson();
+        personToSave.setId(42);
+        personToSave.setLastName("lastname");
+
+        final Person personBeforeUpdate = createPerson();
+        personBeforeUpdate.setLastName("lastname");
+
+        final Person personAfterUpdate = createPerson();
+        personAfterUpdate.setLastName("lastname updated");
+
+        when(personDAO.getOne(42)).thenReturn(personBeforeUpdate);
+        when(personDAO.save(personToSave)).thenReturn(personAfterUpdate);
+
+        sut.save(personToSave);
+
+        verify(applicationEventPublisher).publishEvent(personUpdatedEventArgumentCaptor.capture());
+
+        final PersonUpdatedEvent actualPersonUpdatedEvent = personUpdatedEventArgumentCaptor.getValue();
+        assertThat(actualPersonUpdatedEvent.getPersonBeforeUpdate()).isNotEqualTo(personToSave);
+        assertThat(actualPersonUpdatedEvent.getPersonBeforeUpdate().getLastName()).isEqualTo("lastname");
+        assertThat(actualPersonUpdatedEvent.getPersonAfterUpdate().getLastName()).isEqualTo("lastname updated");
+    }
+
+    @Test
+    public void ensurePersonUpdatedEventIsNotFiredAfterPersonHasBeenCreatedTheFirstTime() {
+
+        final Person person = createPerson();
+        person.setId(null);
+
+        when(personDAO.save(person)).thenReturn(person);
+
+        sut.save(person);
+
+        verify(personDAO, never()).getOne(anyInt());
+        verifyZeroInteractions(applicationEventPublisher);
     }
 }

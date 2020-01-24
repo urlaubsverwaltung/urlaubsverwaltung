@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,13 +32,16 @@ class PersonServiceImpl implements PersonService {
     private final PersonDAO personDAO;
     private final AccountInteractionService accountInteractionService;
     private final WorkingTimeService workingTimeService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    PersonServiceImpl(PersonDAO personDAO, AccountInteractionService accountInteractionService, WorkingTimeService workingTimeService) {
+    PersonServiceImpl(PersonDAO personDAO, AccountInteractionService accountInteractionService,
+                      WorkingTimeService workingTimeService, ApplicationEventPublisher applicationEventPublisher) {
 
         this.personDAO = personDAO;
         this.accountInteractionService = accountInteractionService;
         this.workingTimeService = workingTimeService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -105,7 +109,20 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Person save(Person person) {
 
-        return personDAO.save(person);
+        Person personBeforePersist = null;
+        final Integer personId = person.getId();
+        if (personId != null) {
+            personBeforePersist = personDAO.getOne(personId);
+        }
+
+        final Person persistedPerson = personDAO.save(person);
+
+        if (personBeforePersist != null) {
+            final PersonUpdatedEvent event = new PersonUpdatedEvent(this, personBeforePersist, persistedPerson);
+            applicationEventPublisher.publishEvent(event);
+        }
+
+        return persistedPerson;
     }
 
     @Override
