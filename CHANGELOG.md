@@ -4,6 +4,7 @@
 * Frontend asset tooling [#921](https://github.com/synyx/urlaubsverwaltung/pull/921)
 * Improve user role edit form [#922](https://github.com/synyx/urlaubsverwaltung/pull/922)
 * Fix coverage in builds [#929](https://github.com/synyx/urlaubsverwaltung/pull/929)
+* Fix no application for leave information of people in the same department [#949](https://github.com/synyx/urlaubsverwaltung/pull/949)
 * Rename overtime validator to overtime form validator [#925](https://github.com/synyx/urlaubsverwaltung/pull/925)
 * Vacation overview does not show absences with role boss [#924](https://github.com/synyx/urlaubsverwaltung/issues/924) [#926](https://github.com/synyx/urlaubsverwaltung/pull/926)
 * Upgrade jollyday to 0.5.10 [#931](https://github.com/synyx/urlaubsverwaltung/pull/931)
