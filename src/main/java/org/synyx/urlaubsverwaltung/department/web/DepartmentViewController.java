@@ -31,6 +31,8 @@ public class DepartmentViewController {
 
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
+    private static final String DEPARTMENT = "department";
+    private static final String DEPARTMENT_DEPARTMENT_FORM = "department/department_form";
 
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -56,9 +58,9 @@ public class DepartmentViewController {
 
         List<Department> departments = departmentService.getAllDepartments();
 
-        model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE, departments);
+        model.addAttribute("departments", departments);
 
-        return DepartmentConstants.DEPARTMENT_JSP;
+        return "department/department_list";
     }
 
 
@@ -68,10 +70,10 @@ public class DepartmentViewController {
 
         List<Person> persons = getPersons();
 
-        model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, new Department());
+        model.addAttribute(DEPARTMENT, new Department());
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
-        return DepartmentConstants.DEPARTMENT_FORM_JSP;
+        return DEPARTMENT_DEPARTMENT_FORM;
     }
 
 
@@ -83,12 +85,12 @@ public class DepartmentViewController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/department")
-    public String newDepartment(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department,
+    public String newDepartment(@ModelAttribute(DEPARTMENT) Department department,
                                 Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
         validator.validate(department, errors);
 
-        if (returnModelErrorAttributes(department, errors, model)) return DepartmentConstants.DEPARTMENT_FORM_JSP;
+        if (returnModelErrorAttributes(department, errors, model)) return DEPARTMENT_DEPARTMENT_FORM;
 
         departmentService.create(department);
 
@@ -108,17 +110,17 @@ public class DepartmentViewController {
 
         List<Person> persons = getPersons();
 
-        model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
+        model.addAttribute(DEPARTMENT, department);
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
-        return DepartmentConstants.DEPARTMENT_FORM_JSP;
+        return DEPARTMENT_DEPARTMENT_FORM;
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
-                                   @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
+                                   @ModelAttribute(DEPARTMENT) Department department, Errors errors, Model model,
                                    RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
         Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
@@ -131,7 +133,7 @@ public class DepartmentViewController {
             model.addAttribute("errors", errors);
         }
 
-        if (returnModelErrorAttributes(department, errors, model)) return DepartmentConstants.DEPARTMENT_FORM_JSP;
+        if (returnModelErrorAttributes(department, errors, model)) return DEPARTMENT_DEPARTMENT_FORM;
 
         departmentService.update(department);
 
@@ -156,11 +158,11 @@ public class DepartmentViewController {
     }
 
 
-    private boolean returnModelErrorAttributes(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model) {
+    private boolean returnModelErrorAttributes(@ModelAttribute(DEPARTMENT) Department department, Errors errors, Model model) {
         if (errors.hasErrors()) {
             List<Person> persons = getPersons();
 
-            model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
+            model.addAttribute(DEPARTMENT, department);
             model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
             return true;

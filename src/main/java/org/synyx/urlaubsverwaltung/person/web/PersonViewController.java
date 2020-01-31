@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
@@ -93,7 +92,7 @@ public class PersonViewController {
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
+        model.addAttribute("departments",
             departmentService.getAssignedDepartmentsOfMember(person));
 
         Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
