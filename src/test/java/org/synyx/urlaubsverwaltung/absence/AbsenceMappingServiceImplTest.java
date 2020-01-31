@@ -1,7 +1,12 @@
-package org.synyx.urlaubsverwaltung.calendarintegration.absence;
+package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMappingDAO;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMappingServiceImpl;
+import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
