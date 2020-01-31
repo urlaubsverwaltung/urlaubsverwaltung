@@ -18,14 +18,12 @@ public interface AbsenceMappingService {
      */
     AbsenceMapping create(Integer id, AbsenceType absenceType, String eventId);
 
-
     /**
      * Deletes an absence mapping.
      *
      * @param absenceMapping to be deleted
      */
     void delete(AbsenceMapping absenceMapping);
-
 
     /**
      * Returns an absence mapping between application id or sick note id and event.
