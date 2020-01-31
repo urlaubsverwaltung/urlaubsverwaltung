@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.calendarintegration.absence;
+package org.synyx.urlaubsverwaltung.absence;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

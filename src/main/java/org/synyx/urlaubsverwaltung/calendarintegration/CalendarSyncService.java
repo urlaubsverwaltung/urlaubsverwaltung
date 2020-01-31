@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.Absence;
 
 import java.util.Optional;
 

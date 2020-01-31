@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence.api;
+package org.synyx.urlaubsverwaltung.absence;
 
 import java.util.List;
 

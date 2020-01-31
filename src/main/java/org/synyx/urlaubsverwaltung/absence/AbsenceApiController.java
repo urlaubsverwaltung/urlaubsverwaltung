@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence.api;
+package org.synyx.urlaubsverwaltung.absence;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
