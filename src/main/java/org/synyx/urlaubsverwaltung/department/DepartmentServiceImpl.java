@@ -1,13 +1,10 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,11 +14,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.ZoneOffset.UTC;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.slf4j.LoggerFactory.getLogger;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 
 /**
@@ -109,23 +109,23 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
-                                                                                   LocalDate startDate, LocalDate endDate) {
+            LocalDate startDate, LocalDate endDate) {
 
         List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
         List<Application> departmentApplications = new ArrayList<>();
 
         departmentMembers.stream()
-            .filter(departmentMember -> !departmentMember.equals(member))
-            .forEach(departmentMember ->
-                departmentApplications.addAll(
-                    applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate,
+        .filter(departmentMember -> !departmentMember.equals(member))
+        .forEach(departmentMember ->
+        departmentApplications.addAll(
+                applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate,
                         departmentMember)
-                        .stream()
-                        .filter(application ->
-                            application.hasStatus(ApplicationStatus.ALLOWED)
-                                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-                                || application.hasStatus(ApplicationStatus.WAITING))
-                        .collect(toList())));
+                .stream()
+                .filter(application ->
+                application.hasStatus(ApplicationStatus.ALLOWED)
+                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
+                || application.hasStatus(ApplicationStatus.WAITING))
+                .collect(toList())));
 
         return departmentApplications;
     }
@@ -152,10 +152,10 @@ public class DepartmentServiceImpl implements DepartmentService {
         List<Department> departments = getManagedDepartmentsOfDepartmentHead(departmentHead);
 
         departments.forEach(department -> relevantPersons.addAll(
-            department.getMembers().stream()
+                department.getMembers().stream()
                 .filter(isNotSecondStageIn(department))
                 .collect(toSet())
-        ));
+                ));
 
         return new ArrayList<>(relevantPersons);
     }
@@ -168,16 +168,12 @@ public class DepartmentServiceImpl implements DepartmentService {
         List<Department> departments = getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority);
 
         departments.forEach(department -> relevantPersons.addAll(
-            department.getMembers().stream()
+                department.getMembers().stream()
                 .filter(isNotSecondStageIn(department))
                 .collect(toSet())
-        ));
+                ));
 
         return new ArrayList<>(relevantPersons);
-    }
-    
-    private Predicate<Person> isNotDepartmentHeadIn(Department department) {
-        return person -> !department.getDepartmentHeads().contains(person);
     }
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
