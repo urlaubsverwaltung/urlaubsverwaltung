@@ -26,7 +26,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
@@ -74,7 +73,7 @@ public class SickDaysOverviewViewController {
     public String periodsSickNotes(@RequestParam(value = "from", required = false) String from,
                                    @RequestParam(value = "to", required = false) String to, Model model) {
 
-        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
+        FilterPeriod period = new FilterPeriod(from, to);
         List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
         fillModel(model, sickNoteList, period);
 
