@@ -16,10 +16,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
 import java.time.Clock;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
@@ -58,10 +58,12 @@ public class AccountViewControllerTest {
     @Mock
     private AccountValidator validator;
 
+    private Clock clock = Clock.systemUTC();
+
     @Before
     public void setUp() {
 
-        sut = new AccountViewController(personService, accountService, accountInteractionService, validator, Clock.systemUTC());
+        sut = new AccountViewController(personService, accountService, accountInteractionService, validator, clock);
     }
 
     @Test
@@ -104,7 +106,7 @@ public class AccountViewControllerTest {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
-        final int currentYear = ZonedDateTime.now(UTC).getYear();
+        final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(model().attribute("year", currentYear));
