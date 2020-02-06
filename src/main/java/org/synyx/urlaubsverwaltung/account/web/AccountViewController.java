@@ -27,7 +27,7 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -68,7 +68,7 @@ public class AccountViewController {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(clock).getYear();
+        int yearOfHolidaysAccount = year != null ? year : Year.now(clock).getValue();
         AccountForm accountForm = new AccountForm(yearOfHolidaysAccount, accountService.getHolidaysAccount(
             yearOfHolidaysAccount, person));
 
