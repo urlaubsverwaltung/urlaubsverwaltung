@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,8 +44,15 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private VacationTypeService vacationTypeService;
 
+    private FilterPeriod period;
+
     @Before
     public void setUp() {
+
+        final String startDate = "01.01.2019";
+        final String endDate = "01.08.2019";
+
+        period = new FilterPeriod(startDate, endDate);
 
         sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService, applicationForLeaveStatisticsCsvExportService, vacationTypeService);
     }
@@ -54,9 +60,8 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     public void applicationForLeaveStatisticsRedirectsToStatistics() throws Exception {
 
-        final FilterPeriod filterPeriod = new FilterPeriod();
-        final String expectedRedirect = "/web/application/statistics?from=" + filterPeriod.getStartDateAsString() +
-            "&to=" + filterPeriod.getEndDateAsString();
+        final String expectedRedirect = "/web/application/statistics?from=" + period.getStartDateAsString() +
+            "&to=" + period.getEndDateAsString();
 
         perform(post("/web/application/statistics"))
             .andExpect(status().isFound())
@@ -66,23 +71,15 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     public void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
 
-        final String startDate = "01.01.2000";
-        final String endDate = "01.01.2019";
-
         perform(get("/web/application/statistics")
-            .param("from", startDate)
-            .param("to", endDate))
+            .param("from", period.getEndDateAsString())
+            .param("to", period.getStartDateAsString()))
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
             .andExpect(view().name("application/app_statistics"));
     }
 
     @Test
     public void applicationForLeaveStatisticsSetsModelAndView() throws Exception {
-
-        final String startDate = "01.01.2019";
-        final String endDate = "01.08.2019";
-
-        final FilterPeriod period = new FilterPeriod(Optional.of(startDate), Optional.of(endDate));
 
         final List<ApplicationForLeaveStatistics> statistics = Collections.emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(statistics);
@@ -91,8 +88,8 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
         when(vacationTypeService.getVacationTypes()).thenReturn(vacationType);
 
         perform(get("/web/application/statistics")
-            .param("from", startDate)
-            .param("to", endDate))
+            .param("from", period.getStartDateAsString())
+            .param("to", period.getEndDateAsString()))
             .andExpect(model().attribute("from", period.getStartDate()))
             .andExpect(model().attribute("to", period.getEndDate()))
             .andExpect(model().attribute("statistics", statistics))
@@ -105,8 +102,8 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     public void downloadCSVAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
 
         perform(get("/web/application/statistics/download")
-            .param("from", "01.01.2000")
-            .param("to", "01.01.2019"))
+            .param("from", period.getEndDateAsString())
+            .param("to", period.getStartDateAsString()))
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
             .andExpect(view().name("application/app_statistics"));
     }
@@ -118,18 +115,13 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsCsvExportService.getFileName(any(FilterPeriod.class))).thenReturn(expectedFilename);
 
         perform(get("/web/application/statistics/download")
-            .param("from", "01.01.2019")
-            .param("to", "01.08.2019"))
+            .param("from", period.getStartDateAsString())
+            .param("to", period.getEndDateAsString()))
             .andExpect(header().string("Content-disposition", "attachment;filename=" + expectedFilename));
     }
 
     @Test
     public void downloadCSVWritesCSV() throws Exception {
-
-        final String startDate = "01.01.2019";
-        final String endDate = "01.08.2019";
-
-        final FilterPeriod period = new FilterPeriod(Optional.ofNullable(startDate), Optional.ofNullable(endDate));
 
         final List<ApplicationForLeaveStatistics> statistics = Collections.emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(statistics);
@@ -144,16 +136,11 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     public void downloadCSVSetsModelAndView() throws Exception {
 
-        final String startDate = "01.01.2019";
-        final String endDate = "01.08.2019";
-
-        final FilterPeriod period = new FilterPeriod(Optional.ofNullable(startDate), Optional.ofNullable(endDate));
-
         when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(Collections.emptyList());
 
         perform(get("/web/application/statistics/download")
-            .param("from", startDate)
-            .param("to", endDate))
+            .param("from", period.getStartDateAsString())
+            .param("to", period.getEndDateAsString()))
             .andExpect(model().attribute("period", samePropertyValuesAs(period)))
             .andExpect(view().name("application/app_statistics"));
     }

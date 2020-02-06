@@ -4,7 +4,9 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -21,41 +23,18 @@ public class FilterPeriod {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public FilterPeriod() {
-
-        int currentYear = ZonedDateTime.now(UTC).getYear();
-
-        this.startDate = DateUtil.getFirstDayOfYear(currentYear);
-        this.endDate = DateUtil.getLastDayOfYear(currentYear);
-    }
-
-
-    public FilterPeriod(LocalDate startDate, LocalDate endDate) {
-
-        Assert.notNull(startDate, "Start date must be given");
-        Assert.notNull(endDate, "End date must be given");
-        Assert.isTrue(endDate.isAfter(startDate) || endDate.isEqual(startDate), "Start date must be before end date");
-
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
-
-    public FilterPeriod(Optional<String> startDateAsString, Optional<String> endDateAsString) {
+    public FilterPeriod(String startDateAsString, String endDateAsString) {
 
         Assert.notNull(startDateAsString, "Start date must be given");
         Assert.notNull(endDateAsString, "End date must be given");
 
-        // Set default values for dates
-        int currentYear = ZonedDateTime.now(UTC).getYear();
-        this.startDate = DateUtil.getFirstDayOfYear(currentYear);
-        this.endDate = DateUtil.getLastDayOfYear(currentYear);
-
-        // Override default values with parsed dates
+        int currentYear = Year.now(Clock.systemUTC()).getValue();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
         try {
-            startDateAsString.ifPresent(startDateString -> this.startDate = LocalDate.parse(startDateString, formatter));
-            endDateAsString.ifPresent(endDateString -> this.endDate = LocalDate.parse(endDateString, formatter));
+            this.startDate = startDateAsString.isEmpty() ?
+                DateUtil.getFirstDayOfYear(currentYear) : LocalDate.parse(startDateAsString, formatter);
+            this.endDate = endDateAsString.isEmpty() ?
+                DateUtil.getLastDayOfYear(currentYear) : LocalDate.parse(endDateAsString, formatter);
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }

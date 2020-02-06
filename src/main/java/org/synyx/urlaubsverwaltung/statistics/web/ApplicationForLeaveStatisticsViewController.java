@@ -66,7 +66,7 @@ public class ApplicationForLeaveStatisticsViewController {
                                                 @RequestParam(value = "to", required = false) String to,
                                                 Model model) {
 
-        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
+        FilterPeriod period = new FilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -95,7 +95,7 @@ public class ApplicationForLeaveStatisticsViewController {
                               Model model)
         throws IOException {
 
-        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
+        FilterPeriod period = new FilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
