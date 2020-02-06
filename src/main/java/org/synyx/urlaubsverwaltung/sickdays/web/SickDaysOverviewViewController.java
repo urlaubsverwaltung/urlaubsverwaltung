@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sickdays.web;
 
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
@@ -71,10 +71,9 @@ public class SickDaysOverviewViewController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping("/sicknote")
-    public String periodsSickNotes(@RequestParam(value = "from", required = false) String from,
-                                   @RequestParam(value = "to", required = false) String to, Model model) {
+    public String periodsSickNotes(@RequestParam(value = "from") String from, @RequestParam(value = "to") String to, Model model) {
 
-        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
+        FilterPeriod period = new FilterPeriod(from, to);
         List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
         fillModel(model, sickNoteList, period);
 

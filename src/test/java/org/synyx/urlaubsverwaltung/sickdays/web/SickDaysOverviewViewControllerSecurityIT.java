@@ -30,7 +30,10 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "USER")
     void periodsSickNotesWithWrongRole() throws Exception {
-        final ResultActions resultActions = perform(get("/web/sicknote"));
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/web/sicknote")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isForbidden());
     }
 
