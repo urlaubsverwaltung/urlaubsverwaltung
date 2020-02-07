@@ -119,7 +119,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(savedApplication.getPerson(),
-            savedApplication.getPeriod(), timeConfiguration));
+            savedApplication.getPeriod(), timeConfiguration, clock));
 
         eventId.ifPresent(s -> absenceMappingService.create(savedApplication.getId(), AbsenceType.VACATION, s));
 

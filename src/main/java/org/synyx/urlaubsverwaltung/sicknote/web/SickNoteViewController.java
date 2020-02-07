@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -57,13 +58,14 @@ public class SickNoteViewController {
     private final WorkDaysService calendarService;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
+    private final Clock clock;
 
     @Autowired
     public SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                                   SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                                   VacationTypeService vacationTypeService, PersonService personService,
                                   WorkDaysService calendarService, SickNoteValidator sickNoteValidator,
-                                  SickNoteConvertFormValidator sickNoteConvertFormValidator) {
+                                  SickNoteConvertFormValidator sickNoteConvertFormValidator, Clock clock) {
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
@@ -73,6 +75,7 @@ public class SickNoteViewController {
         this.calendarService = calendarService;
         this.sickNoteValidator = sickNoteValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -241,7 +244,7 @@ public class SickNoteViewController {
             return "sicknote/sick_note_convert";
         }
 
-        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(), personService.getSignedInUser());
+        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(clock), personService.getSignedInUser());
 
         return REDIRECT_WEB_SICKNOTE + id;
     }

@@ -14,10 +14,9 @@ import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
-
-import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -45,12 +44,14 @@ public class SickNoteValidator implements Validator {
 
     private final OverlapService overlapService;
     private final WorkingTimeService workingTimeService;
+    private final Clock clock;
 
     @Autowired
-    public SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService) {
+    public SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService, Clock clock) {
 
         this.overlapService = overlapService;
         this.workingTimeService = workingTimeService;
+        this.clock = clock;
     }
 
     @Override
@@ -106,15 +107,15 @@ public class SickNoteValidator implements Validator {
 
             if (sickNoteStartDate != null && sickNoteEndDate != null) {
                 // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
-                final long start = sickNoteStartDate.atStartOfDay().toInstant(UTC).toEpochMilli();
-                final long end = sickNoteEndDate.plusDays(1).atStartOfDay().toInstant(UTC).toEpochMilli();
+                final long start = sickNoteStartDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli();
+                final long end = sickNoteEndDate.plusDays(1).atStartOfDay(clock.getZone()).toInstant().toEpochMilli();
                 final Interval sickNoteInterval = new Interval(start, end);
 
-                if (!sickNoteInterval.contains(aubStartDate.atStartOfDay().toInstant(UTC).toEpochMilli())) {
+                if (!sickNoteInterval.contains(aubStartDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli())) {
                     errors.rejectValue(ATTRIBUTE_AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
                 }
 
-                if (!sickNoteInterval.contains(aubEndDate.atStartOfDay().toInstant(UTC).toEpochMilli())) {
+                if (!sickNoteInterval.contains(aubEndDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli())) {
                     errors.rejectValue(ATTRIBUTE_AUB_END_DATE, ERROR_PERIOD_SICK_NOTE);
                 }
             }
