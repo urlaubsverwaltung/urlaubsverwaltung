@@ -91,6 +91,7 @@
                     <spring:message code="calendar.share.department.title"/>
                 </legend>
                 <div>
+                    <c:if test="${departmentCalendars.size() > 1}">
                     <ul class="nav nav-tabs">
                         <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
                             <li role="presentation" class="${departmentCal.active ? 'active' : ''}">
@@ -100,6 +101,7 @@
                             </li>
                         </c:forEach>
                     </ul>
+                    </c:if>
                     <div class="tab-content">
                         <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
                             <div role="tabpanel" class="tab-pane${departmentCal.active ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
