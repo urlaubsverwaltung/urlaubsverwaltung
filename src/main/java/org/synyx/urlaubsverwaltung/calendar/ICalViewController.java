@@ -50,13 +50,13 @@ public class ICalViewController {
         return iCal;
     }
 
-    @GetMapping("/departments/{departmentId}/calendar")
+    @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForDepartment(HttpServletResponse response, @PathVariable Integer departmentId, @RequestParam String secret) {
+    public String getCalendarForDepartment(HttpServletResponse response, @PathVariable Integer departmentId, @PathVariable Integer personId, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = departmentCalendarService.getCalendarForDepartment(departmentId, secret);
+            iCal = departmentCalendarService.getCalendarForDepartment(departmentId, personId, secret);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No department found for id = " + departmentId);
         } catch (CalendarException e) {

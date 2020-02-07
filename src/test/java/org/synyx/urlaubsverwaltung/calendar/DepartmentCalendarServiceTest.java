@@ -24,8 +24,6 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
@@ -40,6 +38,8 @@ public class DepartmentCalendarServiceTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
+    private PersonService personService;
+    @Mock
     private DepartmentCalendarRepository departmentCalendarRepository;
     @Mock
     private ICalService iCalService;
@@ -48,7 +48,7 @@ public class DepartmentCalendarServiceTest {
     @Before
     public void setUp() {
 
-        sut = new DepartmentCalendarService(absenceService, departmentService, departmentCalendarRepository, iCalService);
+        sut = new DepartmentCalendarService(absenceService, departmentService, personService, departmentCalendarRepository, iCalService);
     }
 
     @Test
@@ -58,20 +58,23 @@ public class DepartmentCalendarServiceTest {
         department.setId(1);
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
 
+        final Person person = createPerson();
+        person.setId(10);
+        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+
+        department.setMembers(List.of(person));
+
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
         departmentCalendar.setId(1L);
         departmentCalendar.setDepartment(department);
-        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(departmentCalendar);
-
-        final Person person = createPerson();
-        department.setMembers(List.of(person));
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(departmentCalendar);
 
         final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
 
         when(iCalService.generateCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn("calendar");
 
-        final String calendar = sut.getCalendarForDepartment(1, "secret");
+        final String calendar = sut.getCalendarForDepartment(1, 10, "secret");
         assertThat(calendar).isEqualTo("calendar");
     }
 
@@ -80,35 +83,41 @@ public class DepartmentCalendarServiceTest {
 
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.ofNullable(null));
 
-        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(new DepartmentCalendar());
+        final Person person = new Person();
+        person.setId(10);
+        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        sut.getCalendarForDepartment(1, "secret");
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(new DepartmentCalendar());
+
+        sut.getCalendarForDepartment(1, 10, "secret");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentSecretIsNull() {
 
-        sut.getCalendarForDepartment(1, null);
+        sut.getCalendarForDepartment(1, 10, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentSecretIsEmpty() {
 
-        sut.getCalendarForDepartment(1, "");
+        sut.getCalendarForDepartment(1, 10, "");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentSecretIsEmptyWithWhitespace() {
 
-        sut.getCalendarForDepartment(1, "  ");
+        sut.getCalendarForDepartment(1, 10, "  ");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentButSecretDoesNotExist() {
 
-        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(null);
+        final Person person = new Person();
+        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
 
-        sut.getCalendarForDepartment(1, "secret");
+        sut.getCalendarForDepartment(1, 10, "secret");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,13 +127,16 @@ public class DepartmentCalendarServiceTest {
         department.setId(1);
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
 
+        final Person person = new Person();
+        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+
         final Department notMatchingDepartment = createDepartment();
         notMatchingDepartment.setId(1337);
         DepartmentCalendar calendar = new DepartmentCalendar();
         calendar.setDepartment(notMatchingDepartment);
-        when(departmentCalendarRepository.findBySecret("secret")).thenReturn(calendar);
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(calendar);
 
-        sut.getCalendarForDepartment(1, "secret");
+        sut.getCalendarForDepartment(1, 10, "secret");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

@@ -70,9 +70,9 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForDepartment() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, "secret")).thenReturn("calendar department");
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret")).thenReturn("calendar department");
 
-        perform(get("/web/departments/1/calendar")
+        perform(get("/web/departments/1/persons/2/calendar")
             .param("secret", "secret"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
@@ -83,18 +83,18 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForDepartmentWithBadRequest() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, "secret")).thenThrow(new IllegalArgumentException());
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret")).thenThrow(new IllegalArgumentException());
 
-        perform(get("/web/departments/1/calendar").param("secret", "secret"))
+        perform(get("/web/departments/1/persons/2/calendar").param("secret", "secret"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     public void getCalendarForDepartmentWithNoContent() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, "secret")).thenThrow(CalendarException.class);
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret")).thenThrow(CalendarException.class);
 
-        perform(get("/web/departments/1/calendar")
+        perform(get("/web/departments/1/persons/2/calendar")
             .param("secret", "secret"))
             .andExpect(status().isNoContent());
     }
