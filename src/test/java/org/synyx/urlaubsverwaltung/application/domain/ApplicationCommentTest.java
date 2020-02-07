@@ -5,10 +5,9 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.function.Consumer;
-
-import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -21,7 +20,7 @@ public class ApplicationCommentTest {
 
         Consumer<ApplicationComment> assertDateIsSetToToday = (comment) -> {
             Assert.assertNotNull("Date should be set", comment.getDate());
-            Assert.assertEquals("Date should be set to today", LocalDate.now(UTC), comment.getDate());
+            Assert.assertEquals("Date should be set to today", LocalDate.now(Clock.systemUTC()), comment.getDate());
         };
 
         assertDateIsSetToToday.accept(new ApplicationComment());

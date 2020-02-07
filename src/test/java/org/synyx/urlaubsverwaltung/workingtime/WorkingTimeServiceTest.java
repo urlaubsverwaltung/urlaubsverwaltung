@@ -15,8 +15,8 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.config.WorkingTimeProperties;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +32,6 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WorkingTimeServiceTest {
-    private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 9, 13);
 
     @Mock
     private WorkingTimeProperties workingTimeProperties;
@@ -50,7 +49,8 @@ public class WorkingTimeServiceTest {
 
     @Before
     public void setUp() {
-        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+
+        Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), Clock.systemUTC().getZone());
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
 

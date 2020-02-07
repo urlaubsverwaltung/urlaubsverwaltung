@@ -3,13 +3,13 @@ package org.synyx.urlaubsverwaltung.web;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.function.Consumer;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
-import static java.time.ZoneOffset.UTC;
 
 
 public class FilterPeriodTest {
@@ -54,7 +54,7 @@ public class FilterPeriodTest {
     @Test
     public void ensureDefaultDatesForEmptyStrings() {
 
-        LocalDate now = LocalDate.now(UTC);
+        LocalDate now = LocalDate.now(Clock.systemUTC());
 
         FilterPeriod period = new FilterPeriod("", "");
 

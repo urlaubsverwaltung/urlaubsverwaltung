@@ -11,19 +11,21 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.function.Consumer;
 
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ApplicationForLeaveFormTest {
 
+    private final Clock clock = Clock.systemUTC();
+
     @Test
     public void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
 
-        LocalDate startDate = LocalDate.now(UTC);
+        LocalDate startDate = LocalDate.now(clock);
         LocalDate endDate = startDate.plusDays(3);
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
@@ -44,7 +46,7 @@ public class ApplicationForLeaveFormTest {
     @Test
     public void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
 
-        LocalDate now = LocalDate.now(UTC);
+        LocalDate now = LocalDate.now(clock);
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
