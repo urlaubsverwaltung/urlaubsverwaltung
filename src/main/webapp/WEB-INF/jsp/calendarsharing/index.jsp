@@ -93,7 +93,7 @@
                 <div>
                     <ul class="nav nav-tabs">
                         <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
-                            <li role="presentation" class="${loop.index == 0 ? 'active' : ''}">
+                            <li role="presentation" class="${departmentCal.active ? 'active' : ''}">
                                 <a href="#departmentcal-${departmentCal.departmentId}" aria-controls="departmentcal-${departmentCal.departmentId}" role="tab" data-toggle="tab">
                                     ${departmentCal.departmentName}
                                 </a>
@@ -102,7 +102,7 @@
                     </ul>
                     <div class="tab-content">
                         <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
-                            <div role="tabpanel" class="tab-pane${loop.index == 0 ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
+                            <div role="tabpanel" class="tab-pane${departmentCal.active ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
                                 <form:form method="POST" action="${URL_PREFIX}/persons/${privateCalendarShare.personId}/calendar/share/departments/${departmentCal.departmentId}" id="department-calendar-form-${loop.index}">
                                     <c:choose>
                                     <c:when test="${empty departmentCal.calendarUrl}">

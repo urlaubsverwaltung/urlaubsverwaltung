@@ -7,6 +7,12 @@ public class DepartmentCalendarDto {
     private String departmentName;
     private String calendarUrl;
 
+    /**
+     * Whether this calendar is currently active/visible in the view or not.
+     * Do not confuse this with app state like valid or invalid calendar.
+     */
+    private boolean active;
+
     public int getPersonId() {
         return personId;
     }
@@ -37,5 +43,13 @@ public class DepartmentCalendarDto {
 
     public void setCalendarUrl(String calendarUrl) {
         this.calendarUrl = calendarUrl;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

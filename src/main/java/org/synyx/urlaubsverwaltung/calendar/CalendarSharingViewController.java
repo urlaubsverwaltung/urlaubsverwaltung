@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -18,10 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 
@@ -56,6 +56,19 @@ public class CalendarSharingViewController {
         return "calendarsharing/index";
     }
 
+    @GetMapping("/departments/{activeDepartmentId}")
+    @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public String indexDepartment(@PathVariable int personId, @PathVariable int activeDepartmentId, Model model, HttpServletRequest request) {
+
+        final PersonCalendarDto dto = getPersonCalendarDto(personId, request);
+        model.addAttribute("privateCalendarShare", dto);
+
+        final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId, activeDepartmentId, request);
+        model.addAttribute("departmentCalendars", departmentCalendarDtos);
+
+        return "calendarsharing/index";
+    }
+
     @PostMapping(value = "/me")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String linkPrivateCalendar(@PathVariable int personId) {
@@ -80,7 +93,7 @@ public class CalendarSharingViewController {
 
         departmentCalendarService.createCalendarForDepartmentAndPerson(departmentId, personId);
 
-        return format("redirect:/web/persons/%d/calendar/share", personId);
+        return format("redirect:/web/persons/%d/calendar/share/departments/%d", personId, departmentId);
     }
 
     @PostMapping(value = "/departments/{departmentId}", params = "unlink")
@@ -89,7 +102,7 @@ public class CalendarSharingViewController {
 
         departmentCalendarService.deleteCalendarForDepartmentAndPerson(departmentId, personId);
 
-        return format("redirect:/web/persons/%d/calendar/share", personId);
+        return format("redirect:/web/persons/%d/calendar/share/departments/%d", personId, departmentId);
     }
 
     private PersonCalendarDto getPersonCalendarDto(@PathVariable int personId, HttpServletRequest request) {
@@ -110,9 +123,19 @@ public class CalendarSharingViewController {
 
     private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId, HttpServletRequest request) {
 
+        return getDepartmentCalendarDtos(personId, null, request);
+    }
+
+    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId, @Nullable Integer activeDepartmentId, HttpServletRequest request) {
+
         final Person person = getPersonOrThrow(personId);
         final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
         final List<DepartmentCalendarDto> departmentCalendarDtos = new ArrayList<>(departments.size());
+
+        if (activeDepartmentId != null && departments.stream().noneMatch(department -> department.getId().equals(activeDepartmentId))) {
+            throw new ResponseStatusException(BAD_REQUEST, String.format(
+                "person=%s is not a member of department=%s", personId, activeDepartmentId));
+        }
 
         for (Department department : departments) {
 
@@ -121,6 +144,7 @@ public class CalendarSharingViewController {
             departmentCalendarDto.setDepartmentId(departmentId);
             departmentCalendarDto.setPersonId(personId);
             departmentCalendarDto.setDepartmentName(department.getName());
+            departmentCalendarDto.setActive(departmentId.equals(activeDepartmentId));
 
             final var maybeCalendar = departmentCalendarService.getCalendarForDepartment(departmentId, personId);
             if (maybeCalendar.isPresent()) {
@@ -132,6 +156,10 @@ public class CalendarSharingViewController {
             }
 
             departmentCalendarDtos.add(departmentCalendarDto);
+        }
+
+        if (!departmentCalendarDtos.isEmpty() && departmentCalendarDtos.stream().noneMatch(DepartmentCalendarDto::isActive)) {
+            departmentCalendarDtos.get(0).setActive(true);
         }
 
         return departmentCalendarDtos;

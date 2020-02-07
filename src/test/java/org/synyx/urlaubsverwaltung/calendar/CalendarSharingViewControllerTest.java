@@ -89,6 +89,44 @@ public class CalendarSharingViewControllerTest {
     }
 
     @Test
+    public void indexWithActiveDepartment() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+
+        final Department sockentraeger = createDepartment("sockenträger");
+        sockentraeger.setId(42);
+
+        final Department barfuslaeufer = createDepartment("barfußläufer");
+        barfuslaeufer.setId(1337);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+
+        perform(get("/web/persons/1/calendar/share/departments/1337"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithActiveDepartmentThrowsWhenPersonIsNotAMemberOfTheDepartment() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+
+        final Department sockentraeger = createDepartment("sockenträger");
+        sockentraeger.setId(42);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+
+        perform(get("/web/persons/1/calendar/share/departments/1337"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void indexNoPersonCalendar() throws Exception {
 
         final Person person = createPerson();
