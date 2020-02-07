@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,25 +55,28 @@ public class SickNoteViewController {
     private final SickNoteTypeService sickNoteTypeService;
     private final VacationTypeService vacationTypeService;
     private final PersonService personService;
-    private final WorkDaysCountService calendarService;
+    private final WorkDaysCountService workDaysCountService;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
+    private final Clock clock;
 
     @Autowired
     public SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                                   SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                                   VacationTypeService vacationTypeService, PersonService personService,
-                                  WorkDaysCountService calendarService, SickNoteValidator sickNoteValidator,
-                                  SickNoteConvertFormValidator sickNoteConvertFormValidator) {
+                                  WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
+                                  SickNoteConvertFormValidator sickNoteConvertFormValidator, Clock clock) {
+
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
         this.sickNoteTypeService = sickNoteTypeService;
         this.vacationTypeService = vacationTypeService;
         this.personService = personService;
-        this.calendarService = calendarService;
+        this.workDaysCountService = workDaysCountService;
         this.sickNoteValidator = sickNoteValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -91,7 +95,7 @@ public class SickNoteViewController {
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
         if (signedInUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(signedInUser)) {
-            model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, calendarService));
+            model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("comment", new SickNoteComment());
 
             List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
@@ -214,7 +218,7 @@ public class SickNoteViewController {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
-        model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, calendarService));
+        model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
         model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
@@ -234,14 +238,14 @@ public class SickNoteViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
-            model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, calendarService));
+            model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
             return "sicknote/sick_note_convert";
         }
 
-        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(), personService.getSignedInUser());
+        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(clock), personService.getSignedInUser());
 
         return REDIRECT_WEB_SICKNOTE + id;
     }

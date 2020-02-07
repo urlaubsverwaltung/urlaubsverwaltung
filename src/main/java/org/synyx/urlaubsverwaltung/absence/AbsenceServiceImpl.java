@@ -32,13 +32,15 @@ public class AbsenceServiceImpl implements AbsenceService {
     private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
-    public AbsenceServiceImpl(ApplicationService applicationService, SickNoteService sickNoteService, SettingsService settingsService) {
+    public AbsenceServiceImpl(ApplicationService applicationService, SickNoteService sickNoteService, SettingsService settingsService, Clock clock) {
 
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @Override
@@ -66,14 +68,14 @@ public class AbsenceServiceImpl implements AbsenceService {
     private List<Absence> generateAbsencesFromApplication(List<Application> applications) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return applications.stream()
-            .map(application -> new Absence(application.getPerson(), application.getPeriod(), config, Clock.systemUTC()))
+            .map(application -> new Absence(application.getPerson(), application.getPeriod(), config, clock))
             .collect(toList());
     }
 
     private List<Absence> generateAbsencesFromSickNotes(List<SickNote> sickNotes) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return sickNotes.stream()
-            .map(sickNote -> new Absence(sickNote.getPerson(), sickNote.getPeriod(), config, Clock.systemUTC()))
+            .map(sickNote -> new Absence(sickNote.getPerson(), sickNote.getPeriod(), config, clock))
             .collect(toList());
     }
 

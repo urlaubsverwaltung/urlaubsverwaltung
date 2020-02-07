@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -80,7 +81,7 @@ class SickNoteViewControllerTest {
         sut = new SickNoteViewController(sickNoteServiceMock,
             sickNoteInteractionServiceMock, sickNoteCommentServiceMock, sickNoteTypeServiceMock,
             vacationTypeServiceMock, personServiceMock, workDaysCountService, validatorMock,
-            sickNoteConvertFormValidatorMock);
+            sickNoteConvertFormValidatorMock, Clock.systemUTC());
     }
 
     @Test

@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ class SickNoteValidatorTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteValidator(overlapService, workingTimeService);
+        sut = new SickNoteValidator(overlapService, workingTimeService, Clock.systemUTC());
     }
 
     @Test
