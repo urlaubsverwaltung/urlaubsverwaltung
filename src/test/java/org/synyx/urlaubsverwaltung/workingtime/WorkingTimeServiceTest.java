@@ -13,12 +13,13 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneId.from;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,29 +44,24 @@ class WorkingTimeServiceTest {
     private WorkingTimeRepository workingTimeRepositoryMock;
     @Mock
     private SettingsService settingsServiceMock;
-    @Mock
-    private Clock clock;
+
+    private Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), Clock.systemUTC().getZone());;
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeService(workingTimeProperties, workingTimeRepositoryMock, settingsServiceMock, clock);
+        sut = new WorkingTimeService(workingTimeProperties, workingTimeRepositoryMock, settingsServiceMock, fixedClock);
     }
 
     @Test
     void ensureDefaultWorkingTimeCreation() {
 
-        final Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        doReturn(fixedClock.instant()).when(clock).instant();
-        doReturn(fixedClock.getZone()).when(clock).getZone();
-
         when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
-
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final WorkingTime expectedWorkingTime = new WorkingTime();
         expectedWorkingTime.setWorkingDays(List.of(1, 2, 3, 4, 5), FULL);
         expectedWorkingTime.setPerson(person);
-        expectedWorkingTime.setValidFrom(LocalDate.now(clock));
+        expectedWorkingTime.setValidFrom(LocalDate.now(fixedClock));
 
         sut.createDefaultWorkingTime(person);
 

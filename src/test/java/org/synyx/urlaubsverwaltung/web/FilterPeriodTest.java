@@ -3,14 +3,15 @@ package org.synyx.urlaubsverwaltung.web;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.function.Consumer;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+
 
 
 class FilterPeriodTest {
@@ -51,7 +52,7 @@ class FilterPeriodTest {
     @Test
     void ensureDefaultDatesForEmptyStrings() {
 
-        LocalDate now = LocalDate.now(UTC);
+        LocalDate now = LocalDate.now(Clock.systemUTC());
 
         FilterPeriod period = new FilterPeriod("", "");
 
