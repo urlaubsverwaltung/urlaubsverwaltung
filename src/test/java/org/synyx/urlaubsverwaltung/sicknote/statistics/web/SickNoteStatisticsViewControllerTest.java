@@ -13,7 +13,9 @@ import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
+import java.time.Year;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -33,20 +35,21 @@ class SickNoteStatisticsViewControllerTest {
     @Mock
     private WorkDaysCountService workDaysCountService;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsViewController(statisticsService, Clock.systemUTC());
+        sut = new SickNoteStatisticsViewController(statisticsService, clock);
     }
 
     @Test
     void sickNoteStatistics() throws Exception {
 
-        final int year = 2017;
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, sickNoteService, workDaysCountService);
-        when(statisticsService.createStatistics(year)).thenReturn(sickNoteStatistics);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(clock, sickNoteService, workDaysCountService);
+        when(statisticsService.createStatistics(any(Clock.class))).thenReturn(sickNoteStatistics);
 
         final ResultActions resultActions = perform(get("/web/sicknote/statistics")
-            .param("year", "2017"));
+            .param("year", String.valueOf(Year.now(clock).getValue())));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("statistics", sickNoteStatistics));
         resultActions.andExpect(view().name("sicknote/sick_notes_statistics"));
