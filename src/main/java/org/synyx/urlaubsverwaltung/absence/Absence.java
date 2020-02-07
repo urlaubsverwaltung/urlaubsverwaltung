@@ -4,9 +4,8 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
-
-import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -20,7 +19,7 @@ public class Absence {
     private final boolean isAllDay;
 
     public Absence(Person person, Period period,
-                   AbsenceTimeConfiguration absenceTimeConfiguration) {
+                   AbsenceTimeConfiguration absenceTimeConfiguration, Clock clock) {
 
         Assert.notNull(person, "Person must be given");
         Assert.notNull(period, "Period must be given");
@@ -28,8 +27,8 @@ public class Absence {
 
         this.person = person;
 
-        ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(UTC);
-        ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(UTC);
+        ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(clock.getZone());
+        ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(clock.getZone());
 
         switch (period.getDayLength()) {
             case FULL:

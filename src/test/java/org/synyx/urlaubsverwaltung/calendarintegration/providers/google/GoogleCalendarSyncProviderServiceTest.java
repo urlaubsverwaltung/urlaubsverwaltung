@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Properties;
 
@@ -132,13 +133,13 @@ public class GoogleCalendarSyncProviderServiceTest {
         Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.MORNING);
 
         AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(CalendarSettings.class));
-        Absence absence = new Absence(person, period, config);
+        Absence absence = new Absence(person, period, config, Clock.systemUTC());
 
         int eventsBeforeAdd = getCalendarEventCount();
         String eventId = googleCalendarSyncProvider.add(absence, calendarSettings).get();
         int eventsAfterAdd = getCalendarEventCount();
 
-        Absence absenceUpdate = new Absence(person, period, config);
+        Absence absenceUpdate = new Absence(person, period, config, Clock.systemUTC());
         googleCalendarSyncProvider.update(absenceUpdate, eventId, calendarSettings);
         int eventsAfterUpdate = getCalendarEventCount();
 

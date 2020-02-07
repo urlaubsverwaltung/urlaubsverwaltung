@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class CalendarMailServiceTest {
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
         final Period period = new Period(startDate, endDate, FULL);
 
-        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration);
+        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration, Clock.systemUTC());
 
         Map<String, Object> model = new HashMap<>();
         model.put("calendar", calendarName);
@@ -72,7 +73,7 @@ public class CalendarMailServiceTest {
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
         final Period period = new Period(startDate, endDate, FULL);
 
-        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration);
+        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration, Clock.systemUTC());
 
         Map<String, Object> model = new HashMap<>();
         model.put("calendar", calendarName);
