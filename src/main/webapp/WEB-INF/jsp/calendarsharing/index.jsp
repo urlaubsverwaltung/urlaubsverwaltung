@@ -85,6 +85,7 @@
             </fieldset>
         </form:form>
 
+        <c:if test="${departmentCalendars.size() > 0}">
         <div>
             <fieldset class="mb-4">
                 <legend class="text-xl">
@@ -162,6 +163,7 @@
 
             </fieldset>
         </div>
+        </c:if>
     </main>
 </div>
 
