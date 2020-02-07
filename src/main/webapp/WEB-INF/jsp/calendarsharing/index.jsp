@@ -124,7 +124,7 @@
                                     <c:otherwise>
                                         <div class="max-w-4xl">
                                             <p class="mb-8 text-base">
-                                                <spring:message code="calendar.share.department.isshared.paragraph.status"/>
+                                                <spring:message code="calendar.share.department.isshared.paragraph.status" arguments="${departmentCal.departmentName}" />
                                             </p>
                                             <p class="mb-2 text-base">
                                                 <spring:message code="calendar.share.department.isshared.paragraph.info"/>
