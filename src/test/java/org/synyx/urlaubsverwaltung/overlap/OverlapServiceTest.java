@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ class OverlapServiceTest {
 
     @BeforeEach
     void setup() {
-        sut = new OverlapService(applicationRepository, sickNoteService);
+        sut = new OverlapService(applicationRepository, sickNoteService, Clock.systemUTC());
     }
 
     @Test
