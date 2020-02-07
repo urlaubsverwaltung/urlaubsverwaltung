@@ -30,9 +30,9 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class PersonCalendarSharingViewControllerTest {
+public class CalendarSharingViewControllerTest {
 
-    private PersonCalendarSharingViewController sut;
+    private CalendarSharingViewController sut;
 
     @Mock
     private PersonCalendarService personCalendarService;
@@ -48,7 +48,7 @@ public class PersonCalendarSharingViewControllerTest {
 
     @Before
     public void setUp() {
-        sut = new PersonCalendarSharingViewController(personCalendarService, departmentCalendarService, personService, departmentService);
+        sut = new CalendarSharingViewController(personCalendarService, departmentCalendarService, personService, departmentService);
     }
 
     @Test
