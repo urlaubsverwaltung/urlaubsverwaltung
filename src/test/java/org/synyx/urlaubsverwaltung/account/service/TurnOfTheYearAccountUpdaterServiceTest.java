@@ -12,10 +12,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -31,8 +30,9 @@ import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.create
 @RunWith(MockitoJUnitRunner.class)
 public class TurnOfTheYearAccountUpdaterServiceTest {
 
-    private static final int NEW_YEAR = ZonedDateTime.now(UTC).getYear();
-    private static final int LAST_YEAR = NEW_YEAR - 1;
+    private static final Clock clock = Clock.systemUTC();
+    private static final int CURRENT_YEAR = Year.now(clock.getZone()).getValue();
+    private static final int LAST_YEAR = CURRENT_YEAR - 1;
 
     private TurnOfTheYearAccountUpdaterService sut;
 
@@ -47,7 +47,8 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
 
     @Before
     public void setUp() {
-        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService, Clock.systemUTC());
+
+        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService, clock);
     }
 
     @Test

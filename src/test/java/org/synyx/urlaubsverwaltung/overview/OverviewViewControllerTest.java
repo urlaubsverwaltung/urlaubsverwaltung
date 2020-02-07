@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -83,12 +84,14 @@ public class OverviewViewControllerTest {
     private SettingsService settingsService;
 
     private Person person;
+    private Clock clock;
 
     @Before
     public void setUp() {
 
+        clock = Clock.systemUTC();
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService, Clock.systemUTC());
+            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService, clock);
 
         person = new Person();
         person.setId(1);
@@ -133,7 +136,7 @@ public class OverviewViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
 
-        final int currentYear = ZonedDateTime.now(UTC).getYear();
+        final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
 
