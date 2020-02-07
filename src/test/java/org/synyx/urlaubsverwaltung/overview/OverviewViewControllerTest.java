@@ -10,8 +10,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -29,7 +29,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -46,7 +46,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,10 +83,17 @@ class OverviewViewControllerTest {
     @Mock
     private SettingsService settingsService;
 
+    private Person person;
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService, Clock.systemUTC());
+            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService, clock);
+
+        person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
     }
 
     @Test
@@ -131,7 +137,7 @@ class OverviewViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
 
-        final int currentYear = ZonedDateTime.now(UTC).getYear();
+        final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
 

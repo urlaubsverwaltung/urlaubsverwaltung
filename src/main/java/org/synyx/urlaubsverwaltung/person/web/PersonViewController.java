@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
@@ -88,7 +89,8 @@ public class PersonViewController {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to access data of user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(clock).getYear());
+        final Integer year = requestedYear.orElseGet(() ->  Year.now(clock).getValue());
+
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
@@ -129,7 +131,7 @@ public class PersonViewController {
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              Model model) throws UnknownDepartmentException {
 
-        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(clock).getYear());
+        final Integer year = requestedYear.orElseGet(() -> Year.now(clock).getValue());
 
         final Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)

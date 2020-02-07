@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -17,18 +15,17 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.time.LocalDate.parse;
-import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -60,17 +57,18 @@ class SickDaysOverviewViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
+
     private WorkDaysCountService workDaysCountService;
+    private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personService, workDaysCountService, Clock.systemUTC());
+        sut = new SickDaysOverviewViewController(sickNoteService, personService, workDaysCountService, clock);
     }
 
     @Test
     void filterSickNotes() throws Exception {
-        final int year = ZonedDateTime.now(UTC).getYear();
-
+        final int year = Year.now(clock).getValue();
         FilterPeriod period = new FilterPeriod("01.01." + year, "31.12." + year);
 
         final ResultActions resultActions = perform(post("/web/sicknote/filter")
@@ -145,9 +143,9 @@ class SickDaysOverviewViewControllerTest {
     @Test
     void periodsSickNotesWithDateWithoutRange() throws Exception {
 
-        final int year = ZonedDateTime.now(UTC).getYear();
-        final LocalDate startDate = ZonedDateTime.now(UTC).withYear(year).with(firstDayOfYear()).toLocalDate();
-        final LocalDate endDate = ZonedDateTime.now(UTC).withYear(year).with(lastDayOfYear()).toLocalDate();
+        final int year = Year.now(clock).getValue();
+        final LocalDate startDate = ZonedDateTime.now(clock).withYear(year).with(firstDayOfYear()).toLocalDate();
+        final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
         final ResultActions resultActions = perform(get("/web/sicknote")
             .param("from", "01.01." + year)

@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -72,10 +73,11 @@ class ApplicationForLeaveFormViewControllerTest {
     private SettingsService settingsService;
 
     private static final int PERSON_ID = 1;
+    private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService, Clock.systemUTC());
+        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService, clock);
     }
 
     @Test
@@ -84,7 +86,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
@@ -109,7 +111,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();

@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +52,7 @@ public class TurnOfTheYearAccountUpdaterService {
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
         // what's the new year?
-        final int year = ZonedDateTime.now(clock).getYear();
+        final int year = Year.now(clock).getValue();
 
         // get all persons
         final List<Person> persons = personService.getActivePersons();

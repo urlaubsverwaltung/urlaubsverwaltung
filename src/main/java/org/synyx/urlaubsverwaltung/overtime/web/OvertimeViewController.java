@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Optional;
@@ -85,7 +86,7 @@ public class OvertimeViewController {
         @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
-        final int year = requestedYear == null ? ZonedDateTime.now(clock).getYear() : requestedYear;
+        final int year = requestedYear == null ? Year.now(clock).getValue() : requestedYear;
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 

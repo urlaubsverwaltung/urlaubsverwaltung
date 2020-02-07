@@ -10,20 +10,17 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
 import java.time.Clock;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,8 +31,9 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
 @ExtendWith(MockitoExtension.class)
 class TurnOfTheYearAccountUpdaterServiceTest {
 
-    private static final int NEW_YEAR = ZonedDateTime.now(UTC).getYear();
-    private static final int LAST_YEAR = NEW_YEAR - 1;
+    private static final Clock clock = Clock.systemUTC();
+    private static final int CURRENT_YEAR = Year.now(clock.getZone()).getValue();
+    private static final int LAST_YEAR = CURRENT_YEAR - 1;
 
     private TurnOfTheYearAccountUpdaterService sut;
 
@@ -50,7 +48,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService, Clock.systemUTC());
+        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService, clock);
     }
 
     @Test

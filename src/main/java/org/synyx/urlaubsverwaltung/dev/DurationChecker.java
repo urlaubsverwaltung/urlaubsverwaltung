@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 
 
@@ -34,7 +35,7 @@ class DurationChecker {
      */
     boolean startAndEndDatesAreInCurrentYear(LocalDate start, LocalDate end) {
 
-        int currentYear = ZonedDateTime.now(clock).getYear();
+        int currentYear = Year.now(clock).getValue();
 
         return start.getYear() == currentYear && end.getYear() == currentYear;
     }
