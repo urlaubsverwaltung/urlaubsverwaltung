@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class OverlapServiceTest {
 
         applicationDAO = mock(ApplicationDAO.class);
         sickNoteService = mock(SickNoteService.class);
-        service = new OverlapService(applicationDAO, sickNoteService);
+        service = new OverlapService(applicationDAO, sickNoteService, Clock.systemUTC());
     }
 
 
