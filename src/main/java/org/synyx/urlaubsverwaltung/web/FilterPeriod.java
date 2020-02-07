@@ -1,20 +1,17 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.springframework.util.StringUtils.isEmpty;
+
 
 
 /**
