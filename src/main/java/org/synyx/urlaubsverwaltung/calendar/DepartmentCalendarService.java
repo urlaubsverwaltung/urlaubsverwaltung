@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -34,6 +35,37 @@ class DepartmentCalendarService {
         this.iCalService = iCalService;
     }
 
+    @Transactional
+    public void deleteCalendarForDepartmentAndPerson(int departmentId, int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+        final Department department = getDepartmentOrThrow(departmentId);
+
+        departmentCalendarRepository.deleteByDepartmentAndPerson(department, person);
+    }
+
+    DepartmentCalendar createCalendarForDepartmentAndPerson(int departmentId, int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+        final Department department = getDepartmentOrThrow(departmentId);
+
+        final DepartmentCalendar maybeDepartmentCalendar = departmentCalendarRepository.findByDepartmentAndPerson(department, person);
+        final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar == null ? new DepartmentCalendar() : maybeDepartmentCalendar;
+        departmentCalendar.setDepartment(department);
+        departmentCalendar.setPerson(person);
+        departmentCalendar.generateSecret();
+
+        return departmentCalendarRepository.save(departmentCalendar);
+    }
+
+    Optional<DepartmentCalendar> getCalendarForDepartment(Integer departmentId, Integer personId) {
+
+        final Person person = getPersonOrThrow(personId);
+        final Department department = getDepartmentOrThrow(departmentId);
+
+        return Optional.ofNullable(departmentCalendarRepository.findByDepartmentAndPerson(department, person));
+    }
+
     String getCalendarForDepartment(Integer departmentId, Integer personId, String secret) {
 
         if (StringUtils.isBlank(secret)) {
@@ -46,12 +78,7 @@ class DepartmentCalendarService {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
-        final Optional<Department> optionalDepartment = departmentService.getDepartmentById(departmentId);
-        if (optionalDepartment.isEmpty()) {
-            throw new IllegalArgumentException("No department found for ID=" + departmentId);
-        }
-
-        final Department department = optionalDepartment.get();
+        final Department department = getDepartmentOrThrow(departmentId);
 
         if (!calendar.getDepartment().equals(department)) {
             throw new IllegalArgumentException(String.format("Secret=%s does not match the given departmentId=%s", secret, departmentId));
@@ -61,6 +88,16 @@ class DepartmentCalendarService {
         final List<Absence> absences = absenceService.getOpenAbsences(department.getMembers());
 
         return iCalService.generateCalendar(title, absences);
+    }
+
+    private Department getDepartmentOrThrow(Integer departmentId) {
+
+        final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);
+        if (maybeDepartment.isEmpty()) {
+            throw new IllegalArgumentException("No department found for ID=" + departmentId);
+        }
+
+        return maybeDepartment.get();
     }
 
     private Person getPersonOrThrow(Integer personId) {

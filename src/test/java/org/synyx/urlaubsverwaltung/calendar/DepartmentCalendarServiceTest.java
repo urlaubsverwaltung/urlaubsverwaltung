@@ -22,6 +22,9 @@ import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createDepartment;
@@ -137,6 +140,71 @@ public class DepartmentCalendarServiceTest {
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(calendar);
 
         sut.getCalendarForDepartment(1, 10, "secret");
+    }
+
+    @Test
+    public void createCalendarForDepartmentAndPerson() {
+
+        final Person person = createPerson();
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Department department = createDepartment();
+        department.setId(42);
+        when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(department));
+
+        DepartmentCalendar receivedDepartmentCalendar = new DepartmentCalendar();
+        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(receivedDepartmentCalendar);
+
+        when(departmentCalendarRepository.save(receivedDepartmentCalendar)).thenReturn(receivedDepartmentCalendar);
+
+        final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1);
+        assertThat(actualDepartmentCalendar.getDepartment()).isEqualTo(department);
+        assertThat(actualDepartmentCalendar.getPerson()).isEqualTo(person);
+        assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createCalendarForDepartmentAndPersonNoPersonFound() {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+
+        sut.createCalendarForDepartmentAndPerson(42, 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createCalendarForDepartmentAndPersonNoDepartmentFound() {
+
+        final Person person = createPerson();
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        when(departmentService.getDepartmentById(42)).thenReturn(Optional.empty());
+
+        sut.createCalendarForDepartmentAndPerson(42, 1);
+    }
+
+    @Test
+    public void createCalendarForDepartmentAndPersonNoCalendarFound() {
+
+        final Person person = createPerson();
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Department department = createDepartment();
+        department.setId(42);
+        when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(department));
+
+        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(null);
+
+        when(departmentCalendarRepository.save(any(DepartmentCalendar.class))).thenAnswer(returnsFirstArg());
+
+        final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1);
+        assertThat(actualDepartmentCalendar.getDepartment()).isEqualTo(department);
+        assertThat(actualDepartmentCalendar.getPerson()).isEqualTo(person);
+        assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
+
+        verify(departmentCalendarRepository).save(any(DepartmentCalendar.class));
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

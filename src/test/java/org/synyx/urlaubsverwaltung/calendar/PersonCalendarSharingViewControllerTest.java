@@ -7,10 +7,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -29,14 +37,50 @@ public class PersonCalendarSharingViewControllerTest {
     @Mock
     private PersonCalendarService personCalendarService;
 
+    @Mock
+    private DepartmentCalendarService departmentCalendarService;
+
+    @Mock
+    private PersonService personService;
+
+    @Mock
+    private DepartmentService departmentService;
+
     @Before
     public void setUp() {
-        sut = new PersonCalendarSharingViewController(personCalendarService);
+        sut = new PersonCalendarSharingViewController(personCalendarService, departmentCalendarService, personService, departmentService);
     }
 
     @Test
-    public void index() throws Exception {
+    public void indexWithoutDepartments() throws Exception {
 
+        final Person person = createPerson();
+        person.setId(1);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+
+        perform(get("/web/persons/1/calendar/share"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attributeExists("departmentCalendars"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithDepartments() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+
+        final Department sockentraeger = createDepartment("sockenträger");
+        sockentraeger.setId(42);
+
+        final Department barfuslaeufer = createDepartment("barfußläufer");
+        barfuslaeufer.setId(1337);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
 
         perform(get("/web/persons/1/calendar/share"))
@@ -46,6 +90,12 @@ public class PersonCalendarSharingViewControllerTest {
 
     @Test
     public void indexNoPersonCalendar() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
 
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 

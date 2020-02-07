@@ -34,6 +34,7 @@ module.exports = {
     account_form: './src/main/webapp/bundles/account-form.js',
     workingtime_form: './src/main/webapp/bundles/workingtime-form.js',
     copy_to_clipboard_input: './src/main/webapp/components/copy-to-clipboard-input/index.js',
+    tabs: './src/main/webapp/components/tabs/index.js',
   },
 
   output: {
