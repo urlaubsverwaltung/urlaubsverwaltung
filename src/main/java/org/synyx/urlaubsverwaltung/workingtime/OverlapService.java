@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -33,11 +34,13 @@ public class OverlapService {
 
     private final ApplicationDAO applicationDAO;
     private final SickNoteService sickNoteService;
+    private final Clock clock;
 
     @Autowired
-    public OverlapService(ApplicationDAO applicationDAO, SickNoteService sickNoteService) {
+    public OverlapService(ApplicationDAO applicationDAO, SickNoteService sickNoteService, Clock clock) {
         this.applicationDAO = applicationDAO;
         this.sickNoteService = sickNoteService;
+        this.clock = clock;
     }
 
     /**
@@ -201,19 +204,19 @@ public class OverlapService {
      */
     public List<Interval> getListOfOverlaps(LocalDate startDate, LocalDate endDate,
                                             List<Application> applicationsForLeave, List<SickNote> sickNotes) {
-        Interval interval = new Interval(startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-            endDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
+        Interval interval = new Interval(startDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli(),
+            endDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli());
 
         List<Interval> overlappingIntervals = new ArrayList<>();
 
         for (Application application : applicationsForLeave) {
-            overlappingIntervals.add(new Interval(application.getStartDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-                application.getEndDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
+            overlappingIntervals.add(new Interval(application.getStartDate().atStartOfDay(clock.getZone()).toInstant().toEpochMilli(),
+                application.getEndDate().atStartOfDay(clock.getZone()).toInstant().toEpochMilli()));
         }
 
         for (SickNote sickNote : sickNotes) {
-            overlappingIntervals.add(new Interval(sickNote.getStartDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-                sickNote.getEndDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
+            overlappingIntervals.add(new Interval(sickNote.getStartDate().atStartOfDay(clock.getZone()).toInstant().toEpochMilli(),
+                sickNote.getEndDate().atStartOfDay(clock.getZone()).toInstant().toEpochMilli()));
         }
 
         List<Interval> listOfOverlaps = new ArrayList<>();
@@ -260,17 +263,18 @@ public class OverlapService {
             return listOfGaps;
         }
 
-        OffsetDateTime firstOverlapStart = Instant.ofEpochMilli(listOfOverlaps.get(0).getStartMillis()).atOffset(ZoneOffset.UTC);
+        OffsetDateTime firstOverlapStart =
+            Instant.ofEpochMilli(listOfOverlaps.get(0).getStartMillis()).atOffset(ZoneOffset.of(clock.getZone().getId()));
         OffsetDateTime lastOverlapEnd =
-            Instant.ofEpochMilli(listOfOverlaps.get(listOfOverlaps.size() - 1).getEndMillis()).atOffset(ZoneOffset.UTC);
+            Instant.ofEpochMilli(listOfOverlaps.get(listOfOverlaps.size() - 1).getEndMillis()).atOffset(ZoneOffset.of(clock.getZone().getId()));
 
         if (startDate.isBefore(firstOverlapStart.toLocalDate())) {
-            Interval gapStart = new Interval(startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(), firstOverlapStart.toInstant().toEpochMilli());
+            Interval gapStart = new Interval(startDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli(), firstOverlapStart.toInstant().toEpochMilli());
             listOfGaps.add(gapStart);
         }
 
         if (endDate.isAfter(lastOverlapEnd.toLocalDate())) {
-            Interval gapEnd = new Interval(lastOverlapEnd.toInstant().toEpochMilli(), endDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
+            Interval gapEnd = new Interval(lastOverlapEnd.toInstant().toEpochMilli(), endDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli());
             listOfGaps.add(gapEnd);
         }
 
@@ -305,10 +309,11 @@ public class OverlapService {
      */
     private boolean intervalsHaveGap(Interval firstInterval, Interval secondInterval) {
 
-        // test if end of interval is equals resp. one day plus of start of other interval
-        LocalDate endOfFirstInterval = Instant.ofEpochMilli(firstInterval.getEndMillis()).atOffset(ZoneOffset.UTC).toLocalDate();
 
-        LocalDate startOfSecondInterval = Instant.ofEpochMilli(secondInterval.getStartMillis()).atOffset(ZoneOffset.UTC).toLocalDate();
+        // test if end of interval is equals resp. one day plus of start of other interval
+        LocalDate endOfFirstInterval = LocalDate.ofInstant(Instant.ofEpochMilli(firstInterval.getEndMillis()), clock.getZone());
+
+        LocalDate startOfSecondInterval = LocalDate.ofInstant(Instant.ofEpochMilli(secondInterval.getStartMillis()), clock.getZone());
 
         return !(endOfFirstInterval.equals(startOfSecondInterval)
             || endOfFirstInterval.plusDays(1).equals(startOfSecondInterval));
