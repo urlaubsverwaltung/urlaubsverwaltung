@@ -41,7 +41,7 @@ public class StackdriverMetricsExportAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public StackdriverMeterRegistry StackdriverMeterRegistry(StackdriverConfig stackdriverConfig, Clock clock) {
+    public StackdriverMeterRegistry stackdriverMeterRegistry(StackdriverConfig stackdriverConfig, Clock clock) {
         return StackdriverMeterRegistry.builder(stackdriverConfig)
                 .clock(clock)
                 .build();
