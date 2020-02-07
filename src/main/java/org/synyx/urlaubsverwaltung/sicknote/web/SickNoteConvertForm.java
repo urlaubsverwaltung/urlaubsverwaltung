@@ -6,9 +6,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 
 
@@ -108,7 +108,7 @@ public class SickNoteConvertForm {
     }
 
 
-    public Application generateApplicationForLeave() {
+    public Application generateApplicationForLeave(Clock clock) {
 
         final Application applicationForLeave = new Application();
 
@@ -120,8 +120,8 @@ public class SickNoteConvertForm {
         applicationForLeave.setReason(reason);
 
         applicationForLeave.setStatus(ALLOWED);
-        applicationForLeave.setApplicationDate(LocalDate.now(UTC));
-        applicationForLeave.setEditedDate(LocalDate.now(UTC));
+        applicationForLeave.setApplicationDate(LocalDate.now(clock));
+        applicationForLeave.setEditedDate(LocalDate.now(clock));
 
         return applicationForLeave;
     }
