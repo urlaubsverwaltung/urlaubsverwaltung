@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CalendarSharingViewControllerSecurityIT {
+public class PersonCalendarSharingViewControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;

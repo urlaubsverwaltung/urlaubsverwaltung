@@ -18,12 +18,12 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 
 @Controller
 @RequestMapping("/web/persons/{personId}/calendar/share")
-public class CalendarSharingViewController {
+public class PersonCalendarSharingViewController {
 
     private final PersonCalendarService personCalendarService;
 
     @Autowired
-    public CalendarSharingViewController(PersonCalendarService personCalendarService) {
+    public PersonCalendarSharingViewController(PersonCalendarService personCalendarService) {
         this.personCalendarService = personCalendarService;
     }
 

@@ -22,16 +22,16 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class CalendarSharingViewControllerTest {
+public class PersonCalendarSharingViewControllerTest {
 
-    private CalendarSharingViewController sut;
+    private PersonCalendarSharingViewController sut;
 
     @Mock
     private PersonCalendarService personCalendarService;
 
     @Before
     public void setUp() {
-        sut = new CalendarSharingViewController(personCalendarService);
+        sut = new PersonCalendarSharingViewController(personCalendarService);
     }
 
     @Test
