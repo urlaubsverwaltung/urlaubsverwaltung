@@ -19,10 +19,10 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,6 +40,8 @@ public class CalendarMailServiceIT {
     private SettingsService settingsService;
     @Autowired
     private SettingsDAO settingsDAO;
+    @Autowired
+    private Clock clock;
 
     @After
     public void tearDown() {
@@ -56,8 +58,8 @@ public class CalendarMailServiceIT {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
@@ -85,8 +87,8 @@ public class CalendarMailServiceIT {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
 
         sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 
