@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
+import java.time.Clock;
+
 
 /**
  * Service for creating {@link SickNoteStatistics}.
@@ -24,8 +26,8 @@ public class SickNoteStatisticsService {
         this.calendarService = calendarService;
     }
 
-    public SickNoteStatistics createStatistics(int year) {
+    public SickNoteStatistics createStatistics(Clock clock) {
 
-        return new SickNoteStatistics(year, sickNoteService, calendarService);
+        return new SickNoteStatistics(clock, sickNoteService, calendarService);
     }
 }

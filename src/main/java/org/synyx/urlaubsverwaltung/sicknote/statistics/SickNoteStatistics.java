@@ -6,10 +6,11 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
-import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
@@ -25,11 +26,11 @@ public class SickNoteStatistics {
     private final BigDecimal totalNumberOfSickDays;
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
-    public SickNoteStatistics(int year, SickNoteService sickNoteService, WorkDaysService calendarService) {
+    public SickNoteStatistics(Clock clock, SickNoteService sickNoteService, WorkDaysService calendarService) {
 
-        this.year = year;
+        this.year = Year.now(clock).getValue();
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteService.getNumberOfPersonsWithMinimumOneSickNote(year);
-        this.created = LocalDate.now(UTC);
+        this.created = LocalDate.now(clock);
 
         List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year);
 
