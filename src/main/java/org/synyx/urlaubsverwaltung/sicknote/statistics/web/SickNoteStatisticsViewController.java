@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 
 import java.time.Clock;
+import java.time.Year;
 import java.time.ZonedDateTime;
 
 
@@ -36,11 +37,15 @@ public class SickNoteStatisticsViewController {
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
                                       Model model) {
 
-        int year = requestedYear == null ? ZonedDateTime.now(clock).getYear() : requestedYear;
-        SickNoteStatistics statistics = statisticsService.createStatistics(year);
+        Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
+        SickNoteStatistics statistics = statisticsService.createStatistics(clockOfRequestedYear);
 
         model.addAttribute("statistics", statistics);
 
         return "sicknote/sick_notes_statistics";
+    }
+
+    private Clock getClockOfRequestedYear(@RequestParam(value = "year", required = false) Integer requestedYear) {
+        return Clock.fixed(ZonedDateTime.now(clock).withYear(requestedYear).toInstant(), clock.getZone());
     }
 }
