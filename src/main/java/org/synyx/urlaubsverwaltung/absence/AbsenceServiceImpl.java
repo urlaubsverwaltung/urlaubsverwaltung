@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 
+import java.time.Clock;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -65,14 +66,14 @@ public class AbsenceServiceImpl implements AbsenceService {
     private List<Absence> generateAbsencesFromApplication(List<Application> applications) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return applications.stream()
-            .map(application -> new Absence(application.getPerson(), application.getPeriod(), config))
+            .map(application -> new Absence(application.getPerson(), application.getPeriod(), config, Clock.systemUTC()))
             .collect(toList());
     }
 
     private List<Absence> generateAbsencesFromSickNotes(List<SickNote> sickNotes) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return sickNotes.stream()
-            .map(sickNote -> new Absence(sickNote.getPerson(), sickNote.getPeriod(), config))
+            .map(sickNote -> new Absence(sickNote.getPerson(), sickNote.getPeriod(), config, Clock.systemUTC()))
             .collect(toList());
     }
 

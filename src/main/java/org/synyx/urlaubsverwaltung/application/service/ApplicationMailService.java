@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.io.File;
+import java.time.Clock;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ class ApplicationMailService {
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
-        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), Clock.systemUTC());
         final File calendarFile = iCalService.getCalendar(application.getPerson().getNiceName(), List.of(absence));
 
         Map<String, Object> model = new HashMap<>();

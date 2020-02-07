@@ -117,7 +117,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
 
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                new AbsenceTimeConfiguration(calendarSettings)), eventId);
+                new AbsenceTimeConfiguration(calendarSettings), clock), eventId);
             absenceMappingService.delete(absenceMapping.get());
             absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId);
         }
@@ -156,7 +156,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
             AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
             calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
-                timeConfiguration), absenceMapping.get().getEventId());
+                timeConfiguration, clock), absenceMapping.get().getEventId());
         }
     }
 
@@ -166,7 +166,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote.getPerson(),
-            sickNote.getPeriod(), timeConfiguration));
+            sickNote.getPeriod(), timeConfiguration, clock));
 
         eventId.ifPresent(s -> absenceMappingService.create(sickNote.getId(), AbsenceType.SICKNOTE, s));
     }

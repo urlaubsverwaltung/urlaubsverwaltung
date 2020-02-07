@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -154,7 +155,7 @@ class ICalServiceTest {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
-        return new Absence(person, period, timeConfig);
+        return new Absence(person, period, timeConfig, Clock.systemUTC());
     }
 
     private String fileToString(File file) {
