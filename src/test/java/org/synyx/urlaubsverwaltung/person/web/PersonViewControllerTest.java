@@ -29,10 +29,9 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -62,6 +61,7 @@ public class PersonViewControllerTest {
 
     private static final String YEAR_ATTRIBUTE = "year";
     private static final String DEPARTMENT_ATTRIBUTE = "department";
+    private static Clock clock;
 
     private PersonViewController sut;
 
@@ -83,8 +83,9 @@ public class PersonViewControllerTest {
     @Before
     public void setUp() {
 
+        clock = Clock.systemUTC();
         sut = new PersonViewController(personService, accountService, vacationDaysService, departmentService,
-            workingTimeService, settingsService, new PersonConfigurationProperties(), Clock.systemUTC());
+            workingTimeService, settingsService, new PersonConfigurationProperties(), clock);
 
         person = new Person();
         person.setId(1);
@@ -142,7 +143,7 @@ public class PersonViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
 
-        final int currentYear = ZonedDateTime.now(UTC).getYear();
+        final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
@@ -340,7 +341,7 @@ public class PersonViewControllerTest {
     @Test
     public void showPersonWithActiveFlagUsesCurrentYearIfNoYearGiven() throws Exception {
 
-        final int currentYear = ZonedDateTime.now(UTC).getYear();
+        final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/").param("active", "true"))
             .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
@@ -365,7 +366,7 @@ public class PersonViewControllerTest {
 
     private static Account accountForPerson(Person person) {
 
-        return new Account(person, LocalDate.now(), LocalDate.now(),
+        return new Account(person, LocalDate.now(clock), LocalDate.now(clock),
             BigDecimal.ONE, BigDecimal.TEN, BigDecimal.TEN, "");
     }
 

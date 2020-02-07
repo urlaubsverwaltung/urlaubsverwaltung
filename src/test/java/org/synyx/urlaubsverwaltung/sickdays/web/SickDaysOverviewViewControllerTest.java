@@ -18,13 +18,13 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.time.LocalDate.parse;
-import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -57,15 +57,17 @@ public class SickDaysOverviewViewControllerTest {
     private PersonService personService;
     @Mock
     private WorkDaysService calendarService;
+    private Clock clock;
 
     @Before
     public void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personService, calendarService, Clock.systemUTC());
+        clock = Clock.systemUTC();
+        sut = new SickDaysOverviewViewController(sickNoteService, personService, calendarService, clock);
     }
 
     @Test
     public void filterSickNotes() throws Exception {
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
 
         final ResultActions resultActions = perform(post("/web/sicknote/filter"));
         resultActions.andExpect(status().is3xxRedirection());
@@ -137,9 +139,9 @@ public class SickDaysOverviewViewControllerTest {
     @Test
     public void periodsSickNotesWithDateWithoutRange() throws Exception {
 
-        final int year = ZonedDateTime.now(UTC).getYear();
-        final LocalDate startDate = ZonedDateTime.now(UTC).withYear(year).with(firstDayOfYear()).toLocalDate();
-        final LocalDate endDate = ZonedDateTime.now(UTC).withYear(year).with(lastDayOfYear()).toLocalDate();
+        final int year = Year.now(clock).getValue();
+        final LocalDate startDate = ZonedDateTime.now(clock).withYear(year).with(firstDayOfYear()).toLocalDate();
+        final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
         final ResultActions resultActions = perform(get("/web/sicknote"));
         resultActions.andExpect(status().isOk());

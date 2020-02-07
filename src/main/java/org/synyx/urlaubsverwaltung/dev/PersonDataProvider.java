@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +88,7 @@ class PersonDataProvider {
 
         final Person savedPerson = personService.save(person);
 
-        final int currentYear = ZonedDateTime.now(clock).getYear();
+        final int currentYear = Year.now(clock).getValue();
         workingTimeService.touch(
             asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
             Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);

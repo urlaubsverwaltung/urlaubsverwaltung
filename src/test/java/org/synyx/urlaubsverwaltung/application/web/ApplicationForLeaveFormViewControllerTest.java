@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -73,11 +74,13 @@ public class ApplicationForLeaveFormViewControllerTest {
     private Person person;
 
     private static final int PERSON_ID = 1;
+    private Clock clock;
 
     @Before
     public void setUp() {
+        clock = Clock.systemUTC();
         sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService,
-            applicationInteractionService, applicationForLeaveFormValidator, settingsService, Clock.systemUTC());
+            applicationInteractionService, applicationForLeaveFormValidator, settingsService, clock);
 
         person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
@@ -86,7 +89,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     @Test
     public void overtimeIsActivated() throws Exception {
 
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
@@ -108,7 +111,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     @Test
     public void overtimeIsDeactivated() throws Exception {
 
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();

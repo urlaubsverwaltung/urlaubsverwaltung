@@ -18,11 +18,12 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,8 @@ public class AbsenceApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private Clock clock;
 
     @MockBean
     private PersonService personService;
@@ -62,7 +65,7 @@ public class AbsenceApiControllerSecurityIT {
     @WithMockUser
     public void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -84,7 +87,7 @@ public class AbsenceApiControllerSecurityIT {
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -125,7 +128,7 @@ public class AbsenceApiControllerSecurityIT {
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     public void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -134,7 +137,7 @@ public class AbsenceApiControllerSecurityIT {
     @WithMockUser(authorities = "ADMIN")
     public void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -143,7 +146,7 @@ public class AbsenceApiControllerSecurityIT {
     @WithMockUser(authorities = "INACTIVE")
     public void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -182,7 +185,7 @@ public class AbsenceApiControllerSecurityIT {
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isOk());
     }
@@ -196,7 +199,7 @@ public class AbsenceApiControllerSecurityIT {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -217,7 +220,7 @@ public class AbsenceApiControllerSecurityIT {
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("year", Year.now(clock).toString())
             .param("person", "1"))
             .andExpect(status().isOk());
     }
