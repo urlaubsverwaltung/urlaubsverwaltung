@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +56,7 @@ class SickNoteConvertFormTest {
         sut.setReason("Some Reason");
         sut.setVacationType(vacationType);
 
-        final Application applicationForLeave = sut.generateApplicationForLeave();
+        final Application applicationForLeave = sut.generateApplicationForLeave(Clock.systemUTC());
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getVacationType()).isEqualTo(vacationType);
         assertThat(applicationForLeave.getDayLength()).isEqualTo(FULL);
