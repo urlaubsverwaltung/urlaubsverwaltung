@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -34,6 +35,8 @@ public class CalendarSharingViewControllerSecurityIT {
     private PersonService personService;
     @MockBean
     private PersonCalendarService personCalendarService;
+    @MockBean
+    private DepartmentService departmentService;
 
     @Test
     @WithMockUser(authorities = "USER")
@@ -102,7 +105,6 @@ public class CalendarSharingViewControllerSecurityIT {
             .andExpect(status().isOk());
     }
 
-
     @Test
     @WithMockUser(authorities = "BOSS")
     public void indexAsBossUserForOtherUserIsOk() throws Exception {
@@ -110,7 +112,6 @@ public class CalendarSharingViewControllerSecurityIT {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-
 
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
