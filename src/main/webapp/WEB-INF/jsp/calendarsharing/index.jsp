@@ -63,7 +63,6 @@
                                 is="uv-copy-to-clipboard-input"
                                 class="flex flex-row mb-8 border border-gray-300 focus-within:shadow-outline"
                                 data-message-button-title="<spring:message code="calendar.share.me.button.clipboard.tooltip" />"
-                                data-message-copy-success-info="<spring:message code="calendar.share.me.button.clipboard.done" />"
                             >
                                 <input type="text" value="${privateCalendarShare.calendarUrl}"
                                        class="px-3 py-2 text-base flex-1 border-0 outline-none" readonly/>
@@ -136,7 +135,6 @@
                                                 is="uv-copy-to-clipboard-input"
                                                 class="flex flex-row mb-8 border border-gray-300 focus-within:shadow-outline"
                                                 data-message-button-title="<spring:message code="calendar.share.department.button.clipboard.tooltip" />"
-                                                data-message-copy-success-info="<spring:message code="calendar.share.department.button.clipboard.done" />"
                                             >
                                                 <input type="text" value="${departmentCal.calendarUrl}"
                                                        class="px-3 py-2 text-base flex-1 border-0 outline-none" readonly/>
@@ -232,7 +230,6 @@
                                     is="uv-copy-to-clipboard-input"
                                     class="flex flex-row mb-8 border border-gray-300 focus-within:shadow-outline"
                                     data-message-button-title="<spring:message code="calendar.share.company.button.clipboard.tooltip" />"
-                                    data-message-copy-success-info="<spring:message code="calendar.share.company.button.clipboard.done" />"
                                 >
                                     <input type="text" value="${companyCalendarShare.calendarUrl}"
                                            class="px-3 py-2 text-base flex-1 border-0 outline-none" readonly/>

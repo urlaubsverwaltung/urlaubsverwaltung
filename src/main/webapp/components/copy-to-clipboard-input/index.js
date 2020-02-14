@@ -18,7 +18,6 @@ class CopyToClipboardInputElement extends HTMLDivElement {
       event.preventDefault();
       event.stopPropagation();
       await navigator.clipboard.writeText(input.value);
-      window.alert(this.dataset.messageCopySuccessInfo);
       button.blur();
     });
 
