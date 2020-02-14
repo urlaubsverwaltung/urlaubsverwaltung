@@ -13,7 +13,10 @@ import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.Year;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -32,18 +35,22 @@ public class SickNoteStatisticsViewControllerTest {
     private SickNoteService sickNoteService;
     @Mock
     private WorkDaysService calendarService;
+    private Clock clock;
 
     @Before
     public void setUp() {
-        sut = new SickNoteStatisticsViewController(statisticsService, Clock.systemUTC());
+
+        clock = Clock.systemUTC();
+        sut = new SickNoteStatisticsViewController(statisticsService, clock);
     }
 
     @Test
     public void sickNoteStatistics() throws Exception {
 
-        final int year = 2017;
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, sickNoteService, calendarService);
-        when(statisticsService.createStatistics(year)).thenReturn(sickNoteStatistics);
+        final Clock fixedClock = Clock.fixed(Instant.parse("2017-04-02T00:00:00.00Z"), clock.getZone());
+
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(fixedClock, sickNoteService, calendarService);
+        when(statisticsService.createStatistics(any(Clock.class))).thenReturn(sickNoteStatistics);
 
         final ResultActions resultActions = perform(get("/web/sicknote/statistics")
             .param("year", "2017"));

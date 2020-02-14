@@ -12,13 +12,21 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
+import java.time.ZoneId;
+import java.time.temporal.ChronoField;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
+import static java.time.temporal.ChronoField.YEAR;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +40,7 @@ public class SickNoteStatisticsTest {
     private WorkDaysService calendarService;
     private SickNoteService sickNoteDAO;
     private List<SickNote> sickNotes;
+    private Clock clock = Clock.systemUTC();
 
     @Before
     public void setUp() {
@@ -64,7 +73,8 @@ public class SickNoteStatisticsTest {
             LocalDate.of(2013, DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 
-        statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        final Clock fixedClock = Clock.fixed(Instant.parse("2013-04-02T00:00:00.00Z"), clock.getZone());
+        statistics = new SickNoteStatistics(fixedClock, sickNoteDAO, calendarService);
     }
 
 
@@ -87,8 +97,9 @@ public class SickNoteStatisticsTest {
 
         // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
         // 14 workdays / 7 persons = 2 workdays per person
+        final Clock fixedClock = Clock.fixed(Instant.parse("2013-04-02T00:00:00.00Z"), clock.getZone());
 
-        statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        statistics = new SickNoteStatistics(fixedClock, sickNoteDAO, calendarService);
 
         Assert.assertEquals(new BigDecimal("2").setScale(2, RoundingMode.HALF_UP),
             statistics.getAverageDurationOfDiseasePerPerson().setScale(2, RoundingMode.HALF_UP));
@@ -98,9 +109,11 @@ public class SickNoteStatisticsTest {
     @Test
     public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
 
+        final Clock fixedClock = Clock.fixed(Instant.parse("2013-04-02T00:00:00.00Z"), clock.getZone());
+
         when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
 
-        statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        statistics = new SickNoteStatistics(fixedClock, sickNoteDAO, calendarService);
 
         Assert.assertEquals(BigDecimal.ZERO, statistics.getAverageDurationOfDiseasePerPerson());
     }
@@ -109,9 +122,11 @@ public class SickNoteStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetTotalNumberOfSickDaysInvalidDateRange() {
 
+        final Clock fixedClock = Clock.fixed(Instant.parse("2015-04-02T00:00:00.00Z"), clock.getZone());
+
         when(sickNoteDAO.getAllActiveByYear(2015)).thenReturn(sickNotes);
 
-        statistics = new SickNoteStatistics(2015, sickNoteDAO, calendarService);
+        statistics = new SickNoteStatistics(fixedClock, sickNoteDAO, calendarService);
 
         statistics.getTotalNumberOfSickDays();
     }
