@@ -1,0 +1,22 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="schneider" id="add_calendar_accessible_table">
+
+    <createTable tableName="CalendarAccessible">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="DTYPE" type="varchar(31)">
+        <constraints nullable="false" />
+      </column>
+      <column name="isAccessible" defaultValue="false" type="bit(1)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+  </changeSet>
+
+</databaseChangeLog>
