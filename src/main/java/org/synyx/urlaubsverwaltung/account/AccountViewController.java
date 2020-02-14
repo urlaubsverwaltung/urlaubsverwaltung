@@ -71,8 +71,9 @@ public class AccountViewController {
         final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
         final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
             .orElseGet(() -> new AccountForm(yearOfHolidaysAccount));
-        model.addAttribute("person", person);
+
         model.addAttribute("account", accountForm);
+        model.addAttribute("person", person);
         model.addAttribute("year", yearOfHolidaysAccount);
 
         return "account/account_form";

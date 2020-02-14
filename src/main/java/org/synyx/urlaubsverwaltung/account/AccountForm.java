@@ -19,8 +19,7 @@ public class AccountForm {
     private BigDecimal remainingVacationDaysNotExpiring;
     private String comment;
 
-    AccountForm() {
-        this(ZonedDateTime.now(UTC).getYear());
+    private AccountForm() {
     }
 
     AccountForm(int year) {
