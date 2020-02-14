@@ -103,9 +103,9 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForAll() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll("secret")).thenReturn("calendar all");
+        when(companyCalendarService.getCalendarForAll(2,"secret")).thenReturn("calendar all");
 
-        perform(get("/web/company/calendar")
+        perform(get("/web/company/persons/2/calendar")
             .param("secret", "secret"))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
@@ -116,9 +116,9 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForAllWithNoContent() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll("secret")).thenThrow(CalendarException.class);
+        when(companyCalendarService.getCalendarForAll(2, "secret")).thenThrow(CalendarException.class);
 
-        perform(get("/web/company/calendar")
+        perform(get("/web/company/persons/2/calendar")
             .param("secret", "secret"))
             .andExpect(status().isNoContent());
     }

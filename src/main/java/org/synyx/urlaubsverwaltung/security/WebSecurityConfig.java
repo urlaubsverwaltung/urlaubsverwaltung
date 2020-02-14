@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/assets/**").permitAll()
             .antMatchers("/login*").permitAll()
             // WEB
-            .antMatchers(GET, "/web/company/calendar").permitAll()
+            .antMatchers(GET, "/web/company/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/persons/*/calendar").permitAll()
             .antMatchers("/web/overview").hasAuthority(USER)

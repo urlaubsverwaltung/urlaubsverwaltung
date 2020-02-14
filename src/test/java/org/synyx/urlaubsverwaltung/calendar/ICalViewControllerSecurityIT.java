@@ -55,9 +55,9 @@ public class ICalViewControllerSecurityIT {
     public void getCompanyCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(companyCalendarService.getCalendarForAll(secret)).thenReturn("calendar");
+        when(companyCalendarService.getCalendarForAll(1, secret)).thenReturn("calendar");
 
-        perform(get("/web/company/calendar").param("secret", secret))
+        perform(get("/web/company/persons/1/calendar").param("secret", secret))
             .andExpect(status().isOk());
     }
 

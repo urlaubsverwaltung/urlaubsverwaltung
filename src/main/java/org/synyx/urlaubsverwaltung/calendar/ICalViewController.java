@@ -68,13 +68,13 @@ public class ICalViewController {
         return iCal;
     }
 
-    @GetMapping("/company/calendar")
+    @GetMapping("/company/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForCompany(HttpServletResponse response, @RequestParam String secret) {
+    public String getCalendarForCompany(HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = companyCalendarService.getCalendarForAll(secret);
+            iCal = companyCalendarService.getCalendarForAll(personId, secret);
         } catch (CalendarException e) {
             throw new ResponseStatusException(NO_CONTENT);
         }
