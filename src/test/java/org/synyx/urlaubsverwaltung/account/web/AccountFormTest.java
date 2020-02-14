@@ -44,7 +44,7 @@ public class AccountFormTest {
         account.setRemainingVacationDays(BigDecimal.ONE);
         account.setRemainingVacationDaysNotExpiring(BigDecimal.ZERO);
 
-        final AccountForm form = new AccountForm(1987, Optional.of(account));
+        final AccountForm form = new AccountForm(account);
 
         assertThat(form.getHolidaysAccountYear()).isEqualTo(localDateFrom.getYear());
         assertThat(form.getHolidaysAccountValidFrom()).isEqualTo(localDateFrom);

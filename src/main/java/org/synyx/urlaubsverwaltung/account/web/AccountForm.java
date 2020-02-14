@@ -27,6 +27,9 @@ public class AccountForm {
 
     private String comment;
 
+    private AccountForm() {
+    }
+
     AccountForm(int year) {
 
         this.holidaysAccountYear = year;
@@ -34,24 +37,16 @@ public class AccountForm {
         this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
     }
 
-    AccountForm(int year, Optional<Account> holidaysAccountOptional) {
+    AccountForm(Account holidaysAccountOptional) {
 
-        if (holidaysAccountOptional.isPresent()) {
-            Account holidaysAccount = holidaysAccountOptional.get();
-
-            this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
-            this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
-            this.holidaysAccountValidTo = holidaysAccount.getValidTo();
-            this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
-            this.actualVacationDays = holidaysAccount.getVacationDays();
-            this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
-            this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
-            this.comment = holidaysAccount.getComment();
-        } else {
-            this.holidaysAccountYear = year;
-            this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
-            this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
-        }
+            this.holidaysAccountYear = holidaysAccountOptional.getValidFrom().getYear();
+            this.holidaysAccountValidFrom = holidaysAccountOptional.getValidFrom();
+            this.holidaysAccountValidTo = holidaysAccountOptional.getValidTo();
+            this.annualVacationDays = holidaysAccountOptional.getAnnualVacationDays();
+            this.actualVacationDays = holidaysAccountOptional.getVacationDays();
+            this.remainingVacationDays = holidaysAccountOptional.getRemainingVacationDays();
+            this.remainingVacationDaysNotExpiring = holidaysAccountOptional.getRemainingVacationDaysNotExpiring();
+            this.comment = holidaysAccountOptional.getComment();
     }
 
     public int getHolidaysAccountYear() {

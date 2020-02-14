@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -60,9 +62,11 @@ public class AccountViewControllerTest {
 
     private Clock clock = Clock.systemUTC();
 
+    AccountForm mockedAccountForm = mock(AccountForm.class);
+
     @Before
     public void setUp() {
-
+        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
         sut = new AccountViewController(personService, accountService, accountInteractionService, validator, clock);
     }
 
@@ -145,7 +149,9 @@ public class AccountViewControllerTest {
         Account account = someAccount();
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
 
-        perform(post("/web/person/" + SOME_PERSON_ID + "/account"));
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+            .flashAttr("account", mockedAccountForm));
+
         verify(accountInteractionService).editHolidaysAccount(eq(account), any(), any(), any(), any(), any(), any(), any());
     }
 
@@ -157,7 +163,12 @@ public class AccountViewControllerTest {
 
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.empty());
 
-        perform(post("/web/person/" + SOME_PERSON_ID + "/account"));
+        AccountForm mockedAccountForm = mock(AccountForm.class);
+        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+            .flashAttr("account", mockedAccountForm));
+
         verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), any(), any(), any(), any(), any());
     }
 
@@ -167,7 +178,11 @@ public class AccountViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(someAccount()));
 
-        perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
+        AccountForm mockedAccountForm = mock(AccountForm.class);
+        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+                .flashAttr("account", mockedAccountForm))
             .andExpect(flash().attribute("updateSuccess", true))
             .andExpect(status().isFound())
             .andExpect(header().string("Location", "/web/person/" + SOME_PERSON_ID));
