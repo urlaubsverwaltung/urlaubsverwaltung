@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -69,7 +70,8 @@ public class SickDaysOverviewViewControllerTest {
     public void filterSickNotes() throws Exception {
         final int year = Year.now(clock).getValue();
 
-        final ResultActions resultActions = perform(post("/web/sicknote/filter"));
+        final ResultActions resultActions = perform(post("/web/sicknote/filter")
+            .flashAttr("period", new FilterPeriod("01.01."+year, "31.12."+year)));
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/sicknote?from=01.01." + year + "&to=31.12." + year));
     }
@@ -143,7 +145,8 @@ public class SickDaysOverviewViewControllerTest {
         final LocalDate startDate = ZonedDateTime.now(clock).withYear(year).with(firstDayOfYear()).toLocalDate();
         final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
-        final ResultActions resultActions = perform(get("/web/sicknote"));
+        final ResultActions resultActions = perform(get("/web/sicknote")
+            .param("from", "01.01."+year).param("to", "31.12."+year));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("from", startDate));
         resultActions.andExpect(model().attribute("to", endDate));

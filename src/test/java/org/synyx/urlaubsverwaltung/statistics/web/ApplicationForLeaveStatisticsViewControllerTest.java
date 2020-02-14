@@ -63,7 +63,8 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
         final String expectedRedirect = "/web/application/statistics?from=" + period.getStartDateAsString() +
             "&to=" + period.getEndDateAsString();
 
-        perform(post("/web/application/statistics"))
+        perform(post("/web/application/statistics")
+            .flashAttr("period", period))
             .andExpect(status().isFound())
             .andExpect(header().string("Location", expectedRedirect));
     }
@@ -71,9 +72,14 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     public void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
 
+        final String startDate = "01.01.2019";
+        final String endDate = "01.08.2020";
+
+        FilterPeriod periodWithDifferentYear = new FilterPeriod(startDate, endDate);
+
         perform(get("/web/application/statistics")
-            .param("from", period.getEndDateAsString())
-            .param("to", period.getStartDateAsString()))
+            .param("from", periodWithDifferentYear.getStartDateAsString())
+            .param("to", periodWithDifferentYear.getEndDateAsString()))
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
             .andExpect(view().name("application/app_statistics"));
     }
@@ -101,9 +107,14 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     public void downloadCSVAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
 
+        final String startDate = "01.01.2019";
+        final String endDate = "01.08.2020";
+
+        FilterPeriod periodWithDifferentYear = new FilterPeriod(startDate, endDate);
+
         perform(get("/web/application/statistics/download")
-            .param("from", period.getEndDateAsString())
-            .param("to", period.getStartDateAsString()))
+            .param("from", periodWithDifferentYear.getStartDateAsString())
+            .param("to", periodWithDifferentYear.getEndDateAsString()))
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
             .andExpect(view().name("application/app_statistics"));
     }
