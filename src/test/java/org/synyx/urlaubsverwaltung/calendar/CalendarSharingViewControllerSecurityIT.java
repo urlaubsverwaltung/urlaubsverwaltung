@@ -36,12 +36,16 @@ public class CalendarSharingViewControllerSecurityIT {
     @MockBean
     private PersonCalendarService personCalendarService;
     @MockBean
+    private CompanyCalendarService companyCalendarService;
+    @MockBean
     private DepartmentService departmentService;
+    @MockBean
+    private CalendarAccessibleService calendarAccessibleService;
 
     @Test
     @WithMockUser(authorities = "USER")
     public void indexUnauthorized() throws Exception {
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -55,7 +59,7 @@ public class CalendarSharingViewControllerSecurityIT {
 
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -63,7 +67,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     public void getAbsencesAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -71,7 +75,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     public void getAbsencesAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -79,7 +83,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "ADMIN")
     public void getAbsencesAsAdminIsForbidden() throws Exception {
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -87,7 +91,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "INACTIVE")
     public void indexAsInactiveIsForbidden() throws Exception {
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -98,10 +102,11 @@ public class CalendarSharingViewControllerSecurityIT {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isOk());
     }
 
@@ -112,10 +117,11 @@ public class CalendarSharingViewControllerSecurityIT {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isOk());
     }
 
@@ -126,17 +132,18 @@ public class CalendarSharingViewControllerSecurityIT {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
-        perform(get("/web/persons/1/calendar/share"))
+        perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(authorities = "USER")
     public void linkPrivateCalendarUnauthorized() throws Exception {
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().isForbidden());
     }
 
@@ -148,7 +155,7 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().isForbidden());
     }
 
@@ -156,7 +163,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     public void linkPrivateCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().isForbidden());
     }
 
@@ -164,7 +171,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     public void linkPrivateCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().isForbidden());
     }
 
@@ -172,7 +179,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "ADMIN")
     public void linkPrivateCalendarAsAdminIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().isForbidden());
     }
 
@@ -180,7 +187,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "INACTIVE")
     public void linkPrivateCalendarAsInactiveIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().isForbidden());
     }
 
@@ -192,9 +199,9 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/persons/1/calendar/share"));
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
 
     @Test
@@ -205,9 +212,9 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/persons/1/calendar/share"));
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
 
     @Test
@@ -218,15 +225,15 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/persons/1/calendar/share"));
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
 
     @Test
     @WithMockUser(authorities = "USER")
     public void unlinkPrivateCalendarUnauthorized() throws Exception {
-        perform(post("/web/persons/1/calendar/share/me").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().isForbidden());
     }
 
@@ -238,7 +245,7 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me"))
+        perform(post("/web/calendars/share/persons/1/me"))
             .andExpect(status().isForbidden());
     }
 
@@ -246,7 +253,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     public void unlinkPrivateCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().isForbidden());
     }
 
@@ -254,7 +261,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     public void unlinkPrivateCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().isForbidden());
     }
 
@@ -262,7 +269,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "ADMIN")
     public void unlinkPrivateCalendarAsAdminIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().isForbidden());
     }
 
@@ -270,7 +277,7 @@ public class CalendarSharingViewControllerSecurityIT {
     @WithMockUser(authorities = "INACTIVE")
     public void unlinkPrivateCalendarAsInactiveIsForbidden() throws Exception {
 
-        perform(post("/web/persons/1/calendar/share/me").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().isForbidden());
     }
 
@@ -282,9 +289,9 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/persons/1/calendar/share"));
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
 
     @Test
@@ -295,9 +302,9 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/persons/1/calendar/share"));
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
 
     @Test
@@ -308,11 +315,245 @@ public class CalendarSharingViewControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/persons/1/calendar/share/me").param("unlink",  ""))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink",  ""))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/persons/1/calendar/share"));
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
 
+    // =========================================================================================================
+    // COMPANY CALENDAR
+    // =========================================================================================================
+    // company calendar => link
+
+    @Test
+    @WithMockUser(username = "user")
+    public void linkCompanyCalendarForUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void linkCompanyCalendarAsBossUserForOtherUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "OFFICE")
+    public void linkCompanyCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void linkCompanyCalendarAsAdminIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void linkCompanyCalendarAsInactiveIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void linkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void linkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "otheruser")
+    public void linkCompanyCalendarForOtherUserIsForbidden() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company"))
+            .andExpect(status().isForbidden());
+    }
+
+    // =========================================================================================================
+    // company calendar => unlink
+
+    @Test
+    @WithMockUser(username = "user")
+    public void unlinkCompanyCalendarForUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void unlinkCompanyCalendarAsBossUserForOtherUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "OFFICE")
+    public void unlinkCompanyCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void unlinkCompanyCalendarAsAdminIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void unlinkCompanyCalendarAsInactiveIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void unlinkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void unlinkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "otheruser")
+    public void unlinkCompanyCalendarForOtherUserIsForbidden() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+            .andExpect(status().isForbidden());
+    }
+
+    // =========================================================================================================
+    // COMPANY CALENDAR ACCESSIBLE FEATURE
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    public void enableCompanyCalendarFeatureAsBossIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company/accessible"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "OFFICE")
+    public void enableCompanyCalendarFeatureAsOfficeIsOk() throws Exception {
+
+        final Person person = new Person();
+        person.setUsername("user");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/calendars/share/persons/1/company/accessible"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void enableCompanyCalendarFeatureAsAdminIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company/accessible"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    public void enableCompanyCalendarFeatureAsInactiveIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company/accessible"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    public void enableCompanyCalendarFeatureAsDepartmentHeadIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company/accessible"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    public void enableCompanyCalendarFeatureAsSecondStageAuthorityIsForbidden() throws Exception {
+
+        perform(post("/web/calendars/share/persons/1/company/accessible"))
+            .andExpect(status().isForbidden());
+    }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return webAppContextSetup(context).apply(springSecurity()).build().perform(builder);

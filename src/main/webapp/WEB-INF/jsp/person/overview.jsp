@@ -104,7 +104,7 @@
             <div class="col-xs-12">
                 <legend id="vacation">
                     <spring:message code="overview.calendar.title"/>
-                    <a class="fa-action pull-right text-base flex justify-center" aria-hidden="true" href="${URL_PREFIX}/persons/${personId}/calendar/share">
+                    <a class="fa-action pull-right text-base flex justify-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
                         <i class="fa fa-calendar" aria-hidden="true"></i>
                         &nbsp;<spring:message code="overview.calendar.share.link.text" />
                     </a>

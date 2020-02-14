@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 
@@ -21,11 +21,14 @@ public class CalendarAccessibleServiceTest {
     private CalendarAccessibleService sut;
 
     @Mock
+    private CompanyCalendarService companyCalendarService;
+
+    @Mock
     private CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
 
     @Before
     public void setUp() {
-        sut = new CalendarAccessibleService(companyCalendarAccessibleRepository);
+        sut = new CalendarAccessibleService(companyCalendarService, companyCalendarAccessibleRepository);
     }
 
     @Test
@@ -65,7 +68,7 @@ public class CalendarAccessibleServiceTest {
         final ArgumentCaptor<CompanyCalendarAccessible> accessibleCaptor = forClass(CompanyCalendarAccessible.class);
         when(companyCalendarAccessibleRepository.findAll()).thenReturn(List.of());
 
-        sut.setCompanyCalendarAccessibility(true);
+        sut.enableCompanyCalendar();
 
         verify(companyCalendarAccessibleRepository).save(accessibleCaptor.capture());
         assertThat(accessibleCaptor.getValue().isAccessible()).isTrue();
@@ -80,9 +83,32 @@ public class CalendarAccessibleServiceTest {
         companyCalendarAccessible.setAccessible(false);
         when(companyCalendarAccessibleRepository.findAll()).thenReturn(List.of(companyCalendarAccessible));
 
-        sut.setCompanyCalendarAccessibility(true);
+        sut.enableCompanyCalendar();
 
         verify(companyCalendarAccessibleRepository).save(accessibleCaptor.capture());
         assertThat(accessibleCaptor.getValue().isAccessible()).isTrue();
+    }
+
+    @Test
+    public void ensureCalendarAccessibilityIsDisabled() {
+
+        final ArgumentCaptor<CompanyCalendarAccessible> accessibleCaptor = forClass(CompanyCalendarAccessible.class);
+
+        final CompanyCalendarAccessible companyCalendarAccessible = new CompanyCalendarAccessible();
+        companyCalendarAccessible.setAccessible(true);
+        when(companyCalendarAccessibleRepository.findAll()).thenReturn(List.of(companyCalendarAccessible));
+
+        sut.disableCompanyCalendar();
+
+        verify(companyCalendarAccessibleRepository).save(accessibleCaptor.capture());
+        assertThat(accessibleCaptor.getValue().isAccessible()).isFalse();
+    }
+
+    @Test
+    public void ensureCalendarDeletionWhenAccessibilityIsDisabled() {
+
+        sut.disableCompanyCalendar();
+
+        verify(companyCalendarService).deleteCalendarsForPersonsWithoutOneOfRole(Role.BOSS, Role.OFFICE);
     }
 }

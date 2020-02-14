@@ -167,6 +167,8 @@
 .mb-10 { margin-bottom: 40px !important; }
 .mb-11 { margin-bottom: 44px !important; }
 .mb-12 { margin-bottom: 48px !important; }
+.mb-16 { margin-bottom: 64px !important; }
+.mb-20 { margin-bottom: 80px !important; }
 
 .text-xs { font-size: 12px !important; }
 .text-sm { font-size: 14px !important; }

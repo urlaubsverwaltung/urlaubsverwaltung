@@ -3,11 +3,14 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +31,25 @@ class CompanyCalendarService {
         this.personService = personService;
     }
 
+    CompanyCalendar createCalendarForPerson(int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        final CompanyCalendar maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
+        final CompanyCalendar companyCalendar = maybeCompanyCalendar == null ? new CompanyCalendar() : maybeCompanyCalendar;
+        companyCalendar.setPerson(person);
+        companyCalendar.generateSecret();
+
+        return companyCalendarRepository.save(companyCalendar);
+    }
+
+    Optional<CompanyCalendar> getCompanyCalendar(int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        return Optional.ofNullable(companyCalendarRepository.findByPerson(person));
+    }
+
     String getCalendarForAll(Integer personId, String secret) {
 
         if (StringUtils.isBlank(secret)) {
@@ -44,6 +66,31 @@ class CompanyCalendarService {
         final List<Absence> absences = absenceService.getOpenAbsences();
 
         return iCalService.generateCalendar(title, absences);
+    }
+
+    @Transactional
+    public void deleteCalendarForPerson(int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        companyCalendarRepository.deleteByPerson(person);
+    }
+
+    /**
+     * Delete all {@link CompanyCalendar} for persons who don't have one of the given {@link Role}.
+     *
+     * @param roles
+     */
+    @Transactional
+    public void deleteCalendarsForPersonsWithoutOneOfRole(Role... roles) {
+
+        final List<Role> roleList = Arrays.asList(roles);
+
+        for (final Person person : personService.getActivePersons()) {
+            if (roleList.stream().noneMatch(person::hasRole)) {
+                companyCalendarRepository.deleteByPerson(person);
+            }
+        }
     }
 
     private Person getPersonOrThrow(Integer personId) {

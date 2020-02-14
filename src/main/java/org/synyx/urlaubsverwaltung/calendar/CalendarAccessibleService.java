@@ -2,20 +2,25 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 
 @Service
 class CalendarAccessibleService {
 
+    private final CompanyCalendarService companyCalendarService;
     private final CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
 
     @Autowired
-    CalendarAccessibleService(CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository) {
+    CalendarAccessibleService(CompanyCalendarService companyCalendarService,
+                              CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository) {
+
+        this.companyCalendarService = companyCalendarService;
         this.companyCalendarAccessibleRepository = companyCalendarAccessibleRepository;
     }
 
-    public boolean isCompanyCalendarAccessible() {
+    boolean isCompanyCalendarAccessible() {
         final List<CompanyCalendarAccessible> companyCalendarAccessibleList = companyCalendarAccessibleRepository.findAll();
 
         if (companyCalendarAccessibleList.isEmpty()) {
@@ -25,7 +30,16 @@ class CalendarAccessibleService {
         return companyCalendarAccessibleList.get(0).isAccessible();
     }
 
-    public void setCompanyCalendarAccessibility(boolean isCompanyCalendarAccessible) {
+    void enableCompanyCalendar() {
+        setCompanyCalendarAccessibility(true);
+    }
+
+    void disableCompanyCalendar() {
+        setCompanyCalendarAccessibility(false);
+        companyCalendarService.deleteCalendarsForPersonsWithoutOneOfRole(Role.BOSS, Role.OFFICE);
+    }
+
+    private void setCompanyCalendarAccessibility(boolean isCompanyCalendarAccessible) {
 
         final CompanyCalendarAccessible companyCalendarAccessible;
 

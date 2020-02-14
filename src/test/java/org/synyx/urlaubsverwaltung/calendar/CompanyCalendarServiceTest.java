@@ -20,6 +20,9 @@ import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
@@ -101,6 +104,82 @@ public class CompanyCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
         sut.getCalendarForAll(1, "secret");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureGetCompanyCalendarThrowsWhenGIvenPersonDoesNotExist() {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+
+        sut.getCompanyCalendar(1);
+    }
+
+    @Test
+    public void ensureGetCompanyCalendarReturnsCalendar() {
+
+        final CompanyCalendar expectedCalendar = mock(CompanyCalendar.class);
+
+        final Person person = createPerson();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(expectedCalendar);
+
+        final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
+
+        assertThat(actualCompanyCalendar).hasValue(expectedCalendar);
+    }
+
+    @Test
+    public void ensureGetCompanyCalendarReturnsEmptyOptional() {
+
+        final Person person = createPerson();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
+
+        final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
+
+        assertThat(actualCompanyCalendar).isEmpty();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureCreateCalendarForPersonThrowsWhenGivenPersonDoesNotExist() {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+
+        sut.createCalendarForPerson(1);
+    }
+
+    @Test
+    public void ensureCreateCalendarForPerson() {
+
+        final Person person = createPerson();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
+        when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
+
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+
+        assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
+        assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
+    }
+
+    @Test
+    public void ensureCreateCalendarForPersonUpdatesExistingCalendar() {
+
+        final Person person = createPerson();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final CompanyCalendar expectedCompanyCalendar = new CompanyCalendar();
+        final String secretBeforeUpdate = expectedCompanyCalendar.getSecret();
+
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(expectedCompanyCalendar);
+        when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
+
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+
+        assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
+        assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
+        assertThat(actualCalendarForPerson.getSecret()).isNotEqualTo(secretBeforeUpdate);
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
