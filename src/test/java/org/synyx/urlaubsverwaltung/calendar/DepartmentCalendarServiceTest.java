@@ -54,6 +54,41 @@ public class DepartmentCalendarServiceTest {
         sut = new DepartmentCalendarService(absenceService, departmentService, personService, departmentCalendarRepository, iCalService);
     }
 
+
+    @Test
+    public void deleteCalendarForDepartmentAndPerson() {
+
+        final Department department = createDepartment("DepartmentName");
+        department.setId(1);
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+
+        final Person person = createPerson();
+        person.setId(10);
+        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+
+        sut.deleteCalendarForDepartmentAndPerson(1,10);
+
+        verify(departmentCalendarRepository).deleteByDepartmentAndPerson(department, person);
+    }
+
+    @Test
+    public void getCalendarForDepartment() {
+
+        final Department department = createDepartment("DepartmentName");
+        department.setId(1);
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+
+        final Person person = createPerson();
+        person.setId(10);
+        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+
+        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
+        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(departmentCalendar);
+
+        final Optional<DepartmentCalendar> calendarForDepartment = sut.getCalendarForDepartment(1, 10);
+        assertThat(calendarForDepartment.get()).isEqualTo(departmentCalendar);
+    }
+
     @Test
     public void getCalendarForDepartmentForOneFullDay() {
 
@@ -84,7 +119,7 @@ public class DepartmentCalendarServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentButDepartmentNotFound() {
 
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.ofNullable(null));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.empty());
 
         final Person person = new Person();
         person.setId(10);
