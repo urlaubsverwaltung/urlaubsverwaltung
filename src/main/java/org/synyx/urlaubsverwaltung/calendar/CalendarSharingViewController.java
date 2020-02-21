@@ -30,6 +30,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 @RequestMapping("/web/calendars/share/persons/{personId}")
 public class CalendarSharingViewController {
 
+    private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D = "redirect:/web/calendars/share/persons/%d";
     private final PersonCalendarService personCalendarService;
     private final DepartmentCalendarService departmentCalendarService;
     private final CompanyCalendarService companyCalendarService;
@@ -97,7 +98,7 @@ public class CalendarSharingViewController {
 
         personCalendarService.createCalendarForPerson(personId);
 
-        return format("redirect:/web/calendars/share/persons/%d", personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
     @PostMapping(value = "/me", params = "unlink")
@@ -106,7 +107,7 @@ public class CalendarSharingViewController {
 
         personCalendarService.deletePersonalCalendarForPerson(personId);
 
-        return format("redirect:/web/calendars/share/persons/%d", personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
     @PostMapping(value = "/departments/{departmentId}")
@@ -133,7 +134,7 @@ public class CalendarSharingViewController {
 
         companyCalendarService.createCalendarForPerson(personId);
 
-        return format("redirect:/web/calendars/share/persons/%d", personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
     @PostMapping(value = "/company", params = "unlink")
@@ -142,7 +143,7 @@ public class CalendarSharingViewController {
 
         companyCalendarService.deleteCalendarForPerson(personId);
 
-        return format("redirect:/web/calendars/share/persons/%d", personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
     @PostMapping(value = "/company/accessible")
@@ -155,7 +156,7 @@ public class CalendarSharingViewController {
             calendarAccessibleService.disableCompanyCalendar();
         }
 
-        return format("redirect:/web/calendars/share/persons/%d", personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
     private PersonCalendarDto getPersonCalendarDto(@PathVariable int personId, HttpServletRequest request) {
