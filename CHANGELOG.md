@@ -1,3 +1,6 @@
+### master
+* Upgrade docker maven plugin to 0.33.0
+
 ### [urlaubsverwaltung-3.1.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.0)
 * Provide ical functionality [#583](https://github.com/synyx/urlaubsverwaltung/pull/583) 
 * Remove html5 validation of addition and reduction of overtime [#834](https://github.com/synyx/urlaubsverwaltung/pull/834) [#693](https://github.com/synyx/urlaubsverwaltung/issues/693)
