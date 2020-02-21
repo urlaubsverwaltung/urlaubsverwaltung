@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -34,11 +35,11 @@ public class ICalViewController {
 
     @GetMapping("/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForPerson(HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
+    public String getCalendarForPerson(Locale locale, HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = personCalendarService.getCalendarForPerson(personId, secret);
+            iCal = personCalendarService.getCalendarForPerson(personId, secret, locale);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
         } catch (CalendarException e) {
@@ -52,11 +53,11 @@ public class ICalViewController {
 
     @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForDepartment(HttpServletResponse response, @PathVariable Integer departmentId, @PathVariable Integer personId, @RequestParam String secret) {
+    public String getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Integer departmentId, @PathVariable Integer personId, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = departmentCalendarService.getCalendarForDepartment(departmentId, personId, secret);
+            iCal = departmentCalendarService.getCalendarForDepartment(departmentId, personId, secret, locale);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, "No department found for id = " + departmentId);
         } catch (CalendarException e) {
@@ -70,11 +71,11 @@ public class ICalViewController {
 
     @GetMapping("/company/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForCompany(HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
+    public String getCalendarForCompany(Locale locale, HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
 
         final String iCal;
         try {
-            iCal = companyCalendarService.getCalendarForAll(personId, secret);
+            iCal = companyCalendarService.getCalendarForAll(personId, secret, locale);
         } catch (CalendarException e) {
             throw new ResponseStatusException(NO_CONTENT);
         }

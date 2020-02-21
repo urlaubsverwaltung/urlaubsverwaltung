@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
@@ -21,9 +22,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -46,6 +49,8 @@ public class DepartmentCalendarServiceTest {
     private DepartmentCalendarRepository departmentCalendarRepository;
     @Mock
     private ICalService iCalService;
+    @Mock
+    private MessageSource messageSource;
 
     private static LocalDate toDateTime(String input) {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
@@ -54,7 +59,7 @@ public class DepartmentCalendarServiceTest {
     @Before
     public void setUp() {
 
-        sut = new DepartmentCalendarService(absenceService, departmentService, personService, departmentCalendarRepository, iCalService);
+        sut = new DepartmentCalendarService(absenceService, departmentService, personService, departmentCalendarRepository, iCalService, messageSource);
     }
 
     @Test
@@ -112,9 +117,10 @@ public class DepartmentCalendarServiceTest {
         final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
 
+        when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
         when(iCalService.generateCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn("calendar");
 
-        final String calendar = sut.getCalendarForDepartment(1, 10, "secret");
+        final String calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
         assertThat(calendar).isEqualTo("calendar");
     }
 
@@ -129,25 +135,25 @@ public class DepartmentCalendarServiceTest {
 
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(new DepartmentCalendar());
 
-        sut.getCalendarForDepartment(1, 10, "secret");
+        sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentSecretIsNull() {
 
-        sut.getCalendarForDepartment(1, 10, null);
+        sut.getCalendarForDepartment(1, 10, null, GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentSecretIsEmpty() {
 
-        sut.getCalendarForDepartment(1, 10, "");
+        sut.getCalendarForDepartment(1, 10, "", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForDepartmentSecretIsEmptyWithWhitespace() {
 
-        sut.getCalendarForDepartment(1, 10, "  ");
+        sut.getCalendarForDepartment(1, 10, "  ", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -157,7 +163,7 @@ public class DepartmentCalendarServiceTest {
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
 
-        sut.getCalendarForDepartment(1, 10, "secret");
+        sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -176,7 +182,7 @@ public class DepartmentCalendarServiceTest {
         calendar.setDepartment(notMatchingDepartment);
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(calendar);
 
-        sut.getCalendarForDepartment(1, 10, "secret");
+        sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
     }
 
     @Test

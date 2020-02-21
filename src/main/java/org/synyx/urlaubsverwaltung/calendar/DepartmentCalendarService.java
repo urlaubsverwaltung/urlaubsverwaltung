@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
@@ -12,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -23,16 +25,18 @@ class DepartmentCalendarService {
     private final PersonService personService;
     private final DepartmentCalendarRepository departmentCalendarRepository;
     private final ICalService iCalService;
+    private final MessageSource messageSource;
 
     @Autowired
     public DepartmentCalendarService(AbsenceService absenceService, DepartmentService departmentService,
-                                     PersonService personService, DepartmentCalendarRepository departmentCalendarRepository, ICalService iCalService) {
+                                     PersonService personService, DepartmentCalendarRepository departmentCalendarRepository, ICalService iCalService, MessageSource messageSource) {
 
         this.absenceService = absenceService;
         this.departmentService = departmentService;
         this.personService = personService;
         this.departmentCalendarRepository = departmentCalendarRepository;
         this.iCalService = iCalService;
+        this.messageSource = messageSource;
     }
 
     @Transactional
@@ -66,7 +70,7 @@ class DepartmentCalendarService {
         return Optional.ofNullable(departmentCalendarRepository.findByDepartmentAndPerson(department, person));
     }
 
-    String getCalendarForDepartment(Integer departmentId, Integer personId, String secret) {
+    String getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
@@ -84,7 +88,7 @@ class DepartmentCalendarService {
             throw new IllegalArgumentException(String.format("Secret=%s does not match the given departmentId=%s", secret, departmentId));
         }
 
-        final String title = "Abwesenheitskalender der Abteilung " + department.getName();
+        final String title = messageSource.getMessage("calendar.department.title", List.of(department.getName()).toArray(), locale);
         final List<Absence> absences = absenceService.getOpenAbsences(department.getMembers());
 
         return iCalService.generateCalendar(title, absences);

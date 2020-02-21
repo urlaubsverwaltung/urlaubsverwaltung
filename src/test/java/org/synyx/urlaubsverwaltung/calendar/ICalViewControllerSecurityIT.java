@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
 
+import static java.util.Locale.GERMAN;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,7 +36,7 @@ public class ICalViewControllerSecurityIT {
     public void getPersonCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(personCalendarService.getCalendarForPerson(1, secret)).thenReturn("calendar");
+        when(personCalendarService.getCalendarForPerson(1, secret, GERMAN)).thenReturn("calendar");
 
         perform(get("/web/persons/1/calendar").param("secret", secret))
             .andExpect(status().isOk());
@@ -45,7 +46,7 @@ public class ICalViewControllerSecurityIT {
     public void getDepartmentCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret)).thenReturn("calendar");
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn("calendar");
 
         perform(get("/web/departments/1/persons/2/calendar").param("secret", secret))
             .andExpect(status().isOk());
@@ -55,7 +56,7 @@ public class ICalViewControllerSecurityIT {
     public void getCompanyCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(companyCalendarService.getCalendarForAll(1, secret)).thenReturn("calendar");
+        when(companyCalendarService.getCalendarForAll(1, secret, GERMAN)).thenReturn("calendar");
 
         perform(get("/web/company/persons/1/calendar").param("secret", secret))
             .andExpect(status().isOk());

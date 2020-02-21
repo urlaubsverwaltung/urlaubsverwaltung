@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
@@ -19,9 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -43,6 +46,8 @@ public class PersonCalendarServiceTest {
     private PersonCalendarRepository personCalendarRepository;
     @Mock
     private ICalService iCalService;
+    @Mock
+    private MessageSource messageSource;
 
     private static LocalDate toDateTime(String input) {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
@@ -51,7 +56,7 @@ public class PersonCalendarServiceTest {
     @Before
     public void setUp() {
 
-        sut = new PersonCalendarService(absenceService, personService, personCalendarRepository, iCalService);
+        sut = new PersonCalendarService(absenceService, personService, personCalendarRepository, iCalService, messageSource);
     }
 
     @Test
@@ -68,9 +73,10 @@ public class PersonCalendarServiceTest {
         final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
 
+        when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         when(iCalService.generateCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences)).thenReturn("calendar");
 
-        final String calendar = sut.getCalendarForPerson(1, "secret");
+        final String calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(calendar).isEqualTo("calendar");
     }
 
@@ -88,9 +94,10 @@ public class PersonCalendarServiceTest {
         final List<Absence> morningAbsences = List.of(absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(morningAbsences);
 
+        when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         when(iCalService.generateCalendar("Abwesenheitskalender von Marlene Muster", morningAbsences)).thenReturn("calendar");
 
-        final String calendar = sut.getCalendarForPerson(1, "secret");
+        final String calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(calendar).isEqualTo("calendar");
     }
 
@@ -108,9 +115,10 @@ public class PersonCalendarServiceTest {
         final List<Absence> manyFullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(manyFullDayAbsences);
 
+        when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         when(iCalService.generateCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences)).thenReturn("calendar");
 
-        final String iCal = sut.getCalendarForPerson(1, "secret");
+        final String iCal = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(iCal).isEqualTo("calendar");
     }
 
@@ -128,9 +136,10 @@ public class PersonCalendarServiceTest {
         final List<Absence> noonAbsences = List.of(absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(noonAbsences);
 
+        when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         when(iCalService.generateCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences)).thenReturn("calendar");
 
-        final String calendar = sut.getCalendarForPerson(1, "secret");
+        final String calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(calendar).isEqualTo("calendar");
     }
 
@@ -143,25 +152,25 @@ public class PersonCalendarServiceTest {
         personCalendar.setPerson(createPerson());
         when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
 
-        sut.getCalendarForPerson(1, "secret");
+        sut.getCalendarForPerson(1, "secret", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForPersonButSecretIsNull() {
 
-        sut.getCalendarForPerson(1, null);
+        sut.getCalendarForPerson(1, null, GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForPersonButSecretIsEmpty() {
 
-        sut.getCalendarForPerson(1, "");
+        sut.getCalendarForPerson(1, "", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForPersonButSecretIsEmptyWithWhitespace() {
 
-        sut.getCalendarForPerson(1, "  ");
+        sut.getCalendarForPerson(1, "  ", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -169,7 +178,7 @@ public class PersonCalendarServiceTest {
 
         when(personCalendarRepository.findBySecret("secret")).thenReturn(null);
 
-        sut.getCalendarForPerson(1, "secret");
+        sut.getCalendarForPerson(1, "secret", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -185,7 +194,7 @@ public class PersonCalendarServiceTest {
         personCalendar.setPerson(notMatchingPerson);
         when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
 
-        sut.getCalendarForPerson(1, "secret");
+        sut.getCalendarForPerson(1, "secret", GERMAN);
     }
 
     @Test

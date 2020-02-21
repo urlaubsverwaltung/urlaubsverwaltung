@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
@@ -10,6 +11,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -20,15 +22,17 @@ class PersonCalendarService {
     private final PersonService personService;
     private final PersonCalendarRepository personCalendarRepository;
     private final ICalService iCalService;
+    private final MessageSource messageSource;
 
     @Autowired
     PersonCalendarService(AbsenceService absenceService, PersonService personService,
-                          PersonCalendarRepository personCalendarRepository, ICalService iCalService) {
+                          PersonCalendarRepository personCalendarRepository, ICalService iCalService, MessageSource messageSource) {
 
         this.absenceService = absenceService;
         this.personService = personService;
         this.personCalendarRepository = personCalendarRepository;
         this.iCalService = iCalService;
+        this.messageSource = messageSource;
     }
 
     PersonCalendar createCalendarForPerson(Integer personId) {
@@ -50,7 +54,7 @@ class PersonCalendarService {
         return Optional.ofNullable(personCalendarRepository.findByPerson(person));
     }
 
-    String getCalendarForPerson(Integer personId, String secret) {
+    String getCalendarForPerson(Integer personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
@@ -67,7 +71,7 @@ class PersonCalendarService {
             throw new IllegalArgumentException(String.format("Secret=%s does not match the given personId=%s", secret, personId));
         }
 
-        final String title = "Abwesenheitskalender von " + person.getNiceName();
+        final String title = messageSource.getMessage("calendar.person.title", List.of(person.getNiceName()).toArray(), locale);
         final List<Absence> absences = absenceService.getOpenAbsences(List.of(person));
 
         return iCalService.generateCalendar(title, absences);

@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
@@ -19,9 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -45,6 +48,8 @@ public class CompanyCalendarServiceTest {
     private ICalService iCalService;
     @Mock
     private PersonService personService;
+    @Mock
+    private MessageSource messageSource;
 
     private static LocalDate toDateTime(String input) {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
@@ -53,7 +58,7 @@ public class CompanyCalendarServiceTest {
     @Before
     public void setUp() {
 
-        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService);
+        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource);
     }
 
     @Test
@@ -70,9 +75,10 @@ public class CompanyCalendarServiceTest {
         companyCalendar.setId(1L);
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(companyCalendar);
 
+        when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
         when(iCalService.generateCalendar("Abwesenheitskalender der Firma", absences)).thenReturn("calendar");
 
-        final String calendar = sut.getCalendarForAll(10, "secret");
+        final String calendar = sut.getCalendarForAll(10, "secret", GERMAN);
         assertThat(calendar).isEqualTo("calendar");
     }
 
@@ -85,25 +91,25 @@ public class CompanyCalendarServiceTest {
 
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
 
-        sut.getCalendarForAll(10, "secret");
+        sut.getCalendarForAll(10, "secret", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForAllSecretIsNull() {
 
-        sut.getCalendarForAll(1, null);
+        sut.getCalendarForAll(1, null, GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForAllSecretIsEmpty() {
 
-        sut.getCalendarForAll(1, "");
+        sut.getCalendarForAll(1, "", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getCalendarForAllSecretIsEmptyWithWhitespace() {
 
-        sut.getCalendarForAll(1, "  ");
+        sut.getCalendarForAll(1, "  ", GERMAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -111,7 +117,7 @@ public class CompanyCalendarServiceTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
-        sut.getCalendarForAll(1, "secret");
+        sut.getCalendarForAll(1, "secret", GERMAN);
     }
 
     @Test
