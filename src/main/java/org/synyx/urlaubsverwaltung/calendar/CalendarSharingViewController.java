@@ -220,14 +220,13 @@ public class CalendarSharingViewController {
 
     private CompanyCalendarDto getCompanyCalendarDto(@PathVariable int personId, HttpServletRequest request) {
 
-
         final CompanyCalendarDto companyCalendarDto = new CompanyCalendarDto();
         companyCalendarDto.setPersonId(personId);
 
         final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarService.getCompanyCalendar(personId);
         if(maybeCompanyCalendar.isPresent()) {
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
-            final String url = getString(personId, request, companyCalendar);
+            final String url = buildCalendarUrl(personId, request, companyCalendar);
 
             companyCalendarDto.setCalendarUrl(url);
         }
@@ -235,7 +234,7 @@ public class CalendarSharingViewController {
         return companyCalendarDto;
     }
 
-    private String getString(@PathVariable int personId, HttpServletRequest request, CompanyCalendar companyCalendar) {
+    private String buildCalendarUrl(@PathVariable int personId, HttpServletRequest request, CompanyCalendar companyCalendar) {
         return format("%s://%s/web/persons/%d/calendar?secret=%s",
                     request.getScheme(), request.getHeader("host"), personId, companyCalendar.getSecret());
     }
