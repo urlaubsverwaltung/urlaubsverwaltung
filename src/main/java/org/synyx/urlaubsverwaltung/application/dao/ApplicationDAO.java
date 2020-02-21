@@ -20,6 +20,10 @@ public interface ApplicationDAO extends CrudRepository<Application, Integer> {
     @Query("select x from Application x where x.status = ?1")
     List<Application> getApplicationsForACertainState(ApplicationStatus status);
 
+    List<Application> findByStatusIn(List<ApplicationStatus> statuses);
+
+    List<Application> findByStatusInAndPersonIn(List<ApplicationStatus> statuses, List<Person> persons);
+
 
     @Query(
         "select x from Application x "
