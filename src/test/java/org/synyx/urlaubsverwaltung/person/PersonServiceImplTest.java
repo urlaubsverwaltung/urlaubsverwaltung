@@ -28,13 +28,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
@@ -59,7 +59,7 @@ public class PersonServiceImplTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
-    private ArgumentCaptor<PersonUpdatedEvent> personUpdatedEventArgumentCaptor = ArgumentCaptor.forClass(PersonUpdatedEvent.class);
+    private ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor = ArgumentCaptor.forClass(PersonDisabledEvent.class);
 
     @Before
     public void setUp() {
@@ -74,6 +74,8 @@ public class PersonServiceImplTest {
 
     @Test
     public void ensureDefaultAccountAndWorkingTimeCreation() {
+        when(personDAO.save(any(Person.class))).thenReturn(new Person());
+
         sut.create("rick", "Grimes", "Rick", "rick@grimes.de", emptyList(), emptyList());
         verify(accountInteractionService).createDefaultAccount(any(Person.class));
         verify(workingTimeService).createDefaultWorkingTime(any(Person.class));
@@ -111,10 +113,11 @@ public class PersonServiceImplTest {
     @Test
     public void ensureCreatedPersonIsPersisted() {
 
-        Person person = createPerson();
-        sut.create(person);
+        final Person person = createPerson();
+        when(personDAO.save(person)).thenReturn(person);
 
-        verify(personDAO).save(person);
+        final Person savedPerson = sut.create(person);
+        assertThat(savedPerson).isEqualTo(person);
     }
 
     @Test
@@ -147,8 +150,9 @@ public class PersonServiceImplTest {
     @Test
     public void ensureUpdatedPersonIsPersisted() {
 
-        Person person = createPerson();
+        final Person person = createPerson();
         person.setId(1);
+        when(personDAO.save(person)).thenReturn(person);
 
         sut.update(person);
 
@@ -169,9 +173,11 @@ public class PersonServiceImplTest {
     @Test
     public void ensureSaveCallsCorrectDaoMethod() {
 
-        Person personToSave = createPerson();
-        sut.save(personToSave);
-        verify(personDAO).save(personToSave);
+        final Person person = createPerson();
+        when(personDAO.save(person)).thenReturn(person);
+
+        final Person savedPerson = sut.save(person);
+        assertThat(savedPerson).isEqualTo(person);
     }
 
 
@@ -415,21 +421,21 @@ public class PersonServiceImplTest {
     }
 
     @Test
-   public void ensureCanAppointPersonAsOfficeUser() {
+    public void ensureCanAppointPersonAsOfficeUser() {
 
-       when(personDAO.findAll()).thenReturn(emptyList());
-       when(personDAO.save(any())).then(returnsFirstArg());
+        when(personDAO.findAll()).thenReturn(emptyList());
+        when(personDAO.save(any())).then(returnsFirstArg());
 
-       final Person person = createPerson();
-       person.setPermissions(singletonList(USER));
-       assertThat(person.getPermissions()).containsOnly(USER);
+        final Person person = createPerson();
+        person.setPermissions(singletonList(USER));
+        assertThat(person.getPermissions()).containsOnly(USER);
 
-       final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
+        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
 
-       final Collection<Role> permissions = personWithOfficeRole.getPermissions();
-       assertThat(permissions).hasSize(2);
-       assertThat(permissions).contains(USER, OFFICE);
-   }
+        final Collection<Role> permissions = personWithOfficeRole.getPermissions();
+        assertThat(permissions).hasSize(2);
+        assertThat(permissions).contains(USER, OFFICE);
+    }
 
     @Test
     public void ensureCanNotAppointPersonAsOfficeUser() {
@@ -450,42 +456,31 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    public void ensurePersonUpdatedEventIsFiredAfterPersonSave() {
+    public void ensurePersonDisabledEventIsFiredAfterPersonSave() {
 
-        final Person personToSave = createPerson();
-        personToSave.setId(42);
-        personToSave.setLastName("lastname");
+        final Person inactivePerson = createPerson("inactive person", INACTIVE);
+        inactivePerson.setId(1);
 
-        final Person personBeforeUpdate = createPerson();
-        personBeforeUpdate.setLastName("lastname");
+        when(personDAO.save(inactivePerson)).thenReturn(inactivePerson);
 
-        final Person personAfterUpdate = createPerson();
-        personAfterUpdate.setLastName("lastname updated");
+        final Person savedInactivePerson = sut.save(inactivePerson);
 
-        when(personDAO.getOne(42)).thenReturn(personBeforeUpdate);
-        when(personDAO.save(personToSave)).thenReturn(personAfterUpdate);
+        verify(applicationEventPublisher).publishEvent(personDisabledEventArgumentCaptor.capture());
 
-        sut.save(personToSave);
-
-        verify(applicationEventPublisher).publishEvent(personUpdatedEventArgumentCaptor.capture());
-
-        final PersonUpdatedEvent actualPersonUpdatedEvent = personUpdatedEventArgumentCaptor.getValue();
-        assertThat(actualPersonUpdatedEvent.getPersonBeforeUpdate()).isNotEqualTo(personToSave);
-        assertThat(actualPersonUpdatedEvent.getPersonBeforeUpdate().getLastName()).isEqualTo("lastname");
-        assertThat(actualPersonUpdatedEvent.getPersonAfterUpdate().getLastName()).isEqualTo("lastname updated");
+        final PersonDisabledEvent actualPersonDisabledEvent = personDisabledEventArgumentCaptor.getValue();
+        assertThat(actualPersonDisabledEvent.getPersonId()).isEqualTo(savedInactivePerson.getId());
     }
 
     @Test
-    public void ensurePersonUpdatedEventIsNotFiredAfterPersonHasBeenCreatedTheFirstTime() {
+    public void ensurePersonDisabledEventIsNotFiredAfterPersonSave() {
 
-        final Person person = createPerson();
-        person.setId(null);
+        final Person activePerson = createPerson("active person", USER);
+        activePerson.setId(1);
 
-        when(personDAO.save(person)).thenReturn(person);
+        when(personDAO.save(activePerson)).thenReturn(activePerson);
 
-        sut.save(person);
+        sut.save(activePerson);
 
-        verify(personDAO, never()).getOne(anyInt());
         verifyZeroInteractions(applicationEventPublisher);
     }
 }

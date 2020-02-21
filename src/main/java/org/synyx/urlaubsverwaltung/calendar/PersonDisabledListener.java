@@ -10,10 +10,14 @@ import org.synyx.urlaubsverwaltung.person.PersonDisabledEvent;
 class PersonDisabledListener {
 
     private final PersonCalendarService personCalendarService;
+    private final DepartmentCalendarService departmentCalendarService;
+    private final CompanyCalendarService companyCalendarService;
 
     @Autowired
-    PersonDisabledListener(PersonCalendarService personCalendarService) {
+    PersonDisabledListener(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService, CompanyCalendarService companyCalendarService) {
         this.personCalendarService = personCalendarService;
+        this.departmentCalendarService = departmentCalendarService;
+        this.companyCalendarService = companyCalendarService;
     }
 
     @Async
@@ -22,5 +26,7 @@ class PersonDisabledListener {
         final int personId = event.getPersonId();
 
         personCalendarService.deletePersonalCalendarForPerson(personId);
+        departmentCalendarService.deleteDepartmentsCalendarsForPerson(personId);
+        companyCalendarService.deleteCalendarForPerson(personId);
     }
 }

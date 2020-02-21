@@ -109,17 +109,11 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Person save(Person person) {
 
-        Person personBeforePersist = null;
-        final Integer personId = person.getId();
-        if (personId != null) {
-            personBeforePersist = personDAO.getOne(personId);
-        }
-
         final Person persistedPerson = personDAO.save(person);
 
-        if (personBeforePersist != null) {
-            final PersonUpdatedEvent event = new PersonUpdatedEvent(this, personBeforePersist, persistedPerson);
-            applicationEventPublisher.publishEvent(event);
+        final boolean isInactive = persistedPerson.getPermissions().contains(INACTIVE);
+        if (isInactive) {
+            applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, persistedPerson.getId()));
         }
 
         return persistedPerson;

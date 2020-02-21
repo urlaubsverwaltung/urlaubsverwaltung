@@ -250,6 +250,17 @@ public class DepartmentCalendarServiceTest {
         verify(departmentCalendarRepository).save(any(DepartmentCalendar.class));
     }
 
+    @Test
+    public void deleteDepartmentsCalendarsForPerson() {
+
+        final Person person = createPerson();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        sut.deleteDepartmentsCalendarsForPerson(1);
+
+        verify(departmentCalendarRepository).deleteByPerson(person);
+    }
+
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());

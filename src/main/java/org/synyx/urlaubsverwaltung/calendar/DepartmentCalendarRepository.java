@@ -15,4 +15,7 @@ interface DepartmentCalendarRepository extends CrudRepository<DepartmentCalendar
 
     @Modifying
     void deleteByDepartmentAndPerson(Department department, Person person);
+
+    @Modifying
+    void deleteByPerson(Person person);
 }

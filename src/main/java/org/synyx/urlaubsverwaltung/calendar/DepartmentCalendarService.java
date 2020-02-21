@@ -94,6 +94,14 @@ class DepartmentCalendarService {
         return iCalService.generateCalendar(title, absences);
     }
 
+    @Transactional
+    public void deleteDepartmentsCalendarsForPerson(int personId) {
+
+        final Person person = getPersonOrThrow(personId);
+
+        departmentCalendarRepository.deleteByPerson(person);
+    }
+
     private Department getDepartmentOrThrow(Integer departmentId) {
 
         final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);

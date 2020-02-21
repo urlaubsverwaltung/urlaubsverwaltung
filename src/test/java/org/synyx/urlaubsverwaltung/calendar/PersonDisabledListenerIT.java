@@ -18,7 +18,11 @@ import static org.mockito.Mockito.verify;
 public class PersonDisabledListenerIT {
 
     @MockBean
-    PersonCalendarService personCalendarService;
+    private PersonCalendarService personCalendarService;
+    @MockBean
+    private DepartmentCalendarService departmentCalendarService;
+    @MockBean
+    private CompanyCalendarService companyCalendarService;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -28,5 +32,7 @@ public class PersonDisabledListenerIT {
         applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, 42));
 
         verify(personCalendarService).deletePersonalCalendarForPerson(42);
+        verify(departmentCalendarService).deleteDepartmentsCalendarsForPerson(42);
+        verify(companyCalendarService).deleteCalendarForPerson(42);
     }
 }
