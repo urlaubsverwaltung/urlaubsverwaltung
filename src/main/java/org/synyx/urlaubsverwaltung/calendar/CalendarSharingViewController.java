@@ -199,9 +199,9 @@ public class CalendarSharingViewController {
             departmentCalendarDto.setDepartmentName(department.getName());
             departmentCalendarDto.setActive(departmentId.equals(activeDepartmentId));
 
-            final var maybeCalendar = departmentCalendarService.getCalendarForDepartment(departmentId, personId);
-            if (maybeCalendar.isPresent()) {
-                final var departmentCalendar = maybeCalendar.get();
+            final var maybeDepartmentCalendar = departmentCalendarService.getCalendarForDepartment(departmentId, personId);
+            if (maybeDepartmentCalendar.isPresent()) {
+                final var departmentCalendar = maybeDepartmentCalendar.get();
                 final var url = format("%s://%s/web/departments/%s/persons/%s/calendar?secret=%s",
                     request.getScheme(), request.getHeader("host"), departmentId, personId, departmentCalendar.getSecret());
 

@@ -23,8 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
@@ -41,6 +45,10 @@ public class CompanyCalendarServiceTest {
     private ICalService iCalService;
     @Mock
     private PersonService personService;
+
+    private static LocalDate toDateTime(String input) {
+        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
+    }
 
     @Before
     public void setUp() {
@@ -106,8 +114,33 @@ public class CompanyCalendarServiceTest {
         sut.getCalendarForAll(1, "secret");
     }
 
+    @Test
+    public void deleteCalendarForPerson() {
+
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        sut.deleteCalendarForPerson(1);
+
+        verify(companyCalendarRepository).deleteByPerson(person);
+    }
+
+    @Test
+    public void deleteCalendarsForPersonsWithoutOneOfRole() {
+
+        final Person office = createPerson("office", OFFICE);
+        final Person user = createPerson("user", USER);
+
+        when(personService.getActivePersons()).thenReturn(List.of(office, user));
+
+        sut.deleteCalendarsForPersonsWithoutOneOfRole(OFFICE);
+
+        verify(companyCalendarRepository).deleteByPerson(user);
+        verify(companyCalendarRepository, never()).deleteByPerson(office);
+    }
+
     @Test(expected = IllegalArgumentException.class)
-    public void ensureGetCompanyCalendarThrowsWhenGIvenPersonDoesNotExist() {
+    public void ensureGetCompanyCalendarThrowsWhenGivenPersonDoesNotExist() {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
@@ -187,9 +220,5 @@ public class CompanyCalendarServiceTest {
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
         return new Absence(person, period, timeConfig);
-    }
-
-    private static LocalDate toDateTime(String input) {
-        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
     }
 }

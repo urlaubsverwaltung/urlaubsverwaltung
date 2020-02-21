@@ -51,7 +51,7 @@ public class CalendarSharingViewControllerPersonCalendarSecurityIT {
 
     @Test
     @WithMockUser(username = "differentUser")
-    public void getAbsencesAsOfficeUserForDifferentUserIsForbidden() throws Exception {
+    public void indexForDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -65,7 +65,7 @@ public class CalendarSharingViewControllerPersonCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getAbsencesAsDepartmentHeadIsForbidden() throws Exception {
+    public void indexAsDepartmentHeadIsForbidden() throws Exception {
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
@@ -73,7 +73,7 @@ public class CalendarSharingViewControllerPersonCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getAbsencesAsSecondStageAuthorityIsForbidden() throws Exception {
+    public void indexAsSecondStageAuthorityIsForbidden() throws Exception {
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
@@ -81,7 +81,7 @@ public class CalendarSharingViewControllerPersonCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getAbsencesAsAdminIsForbidden() throws Exception {
+    public void indexAsAdminIsForbidden() throws Exception {
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
@@ -127,7 +127,7 @@ public class CalendarSharingViewControllerPersonCalendarSecurityIT {
 
     @Test
     @WithMockUser(username = "user")
-    public void getAbsencesAsOfficeUserForSameUserIsForbidden() throws Exception {
+    public void indexForSameUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -245,7 +245,7 @@ public class CalendarSharingViewControllerPersonCalendarSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/me"))
+        perform(post("/web/calendars/share/persons/1/me").param("unlink", ""))
             .andExpect(status().isForbidden());
     }
 

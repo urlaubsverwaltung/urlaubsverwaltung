@@ -27,6 +27,10 @@ public class ICalServiceTest {
 
     private ICalService sut;
 
+    private static LocalDate toDateTime(String input) {
+        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
+    }
+
     @Before
     public void setUp() {
 
@@ -110,9 +114,5 @@ public class ICalServiceTest {
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
         return new Absence(person, period, timeConfig);
-    }
-
-    private static LocalDate toDateTime(String input) {
-        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
     }
 }

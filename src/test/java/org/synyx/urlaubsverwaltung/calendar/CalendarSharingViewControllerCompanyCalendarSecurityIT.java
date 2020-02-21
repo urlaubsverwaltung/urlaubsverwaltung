@@ -41,6 +41,9 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
     @MockBean
     private CalendarAccessibleService calendarAccessibleService;
 
+    // =========================================================================================================
+    // company calendar => link
+
     @Test
     @WithMockUser(username = "user")
     public void linkCompanyCalendarForUserIsOk() throws Exception {
@@ -100,7 +103,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     public void linkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company"))
             .andExpect(status().isForbidden());
     }
 

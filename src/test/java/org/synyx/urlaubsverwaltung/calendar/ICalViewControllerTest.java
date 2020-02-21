@@ -103,7 +103,7 @@ public class ICalViewControllerTest {
     @Test
     public void getCalendarForAll() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll(2,"secret")).thenReturn("calendar all");
+        when(companyCalendarService.getCalendarForAll(2, "secret")).thenReturn("calendar all");
 
         perform(get("/web/company/persons/2/calendar")
             .param("secret", "secret"))

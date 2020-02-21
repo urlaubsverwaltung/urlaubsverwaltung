@@ -44,6 +44,10 @@ public class PersonCalendarServiceTest {
     @Mock
     private ICalService iCalService;
 
+    private static LocalDate toDateTime(String input) {
+        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
+    }
+
     @Before
     public void setUp() {
 
@@ -263,7 +267,7 @@ public class PersonCalendarServiceTest {
     }
 
     @Test
-    public void deletePersonalCalendarForPerson(){
+    public void deletePersonalCalendarForPerson() {
 
         final Person person = createPerson();
         person.setId(1);
@@ -279,9 +283,5 @@ public class PersonCalendarServiceTest {
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
         return new Absence(person, period, timeConfig);
-    }
-
-    private static LocalDate toDateTime(String input) {
-        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
     }
 }

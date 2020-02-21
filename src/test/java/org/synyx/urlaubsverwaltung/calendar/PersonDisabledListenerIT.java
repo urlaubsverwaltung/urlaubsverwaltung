@@ -14,14 +14,13 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = { PersonDisabledListener.class })
+@ContextConfiguration(classes = {PersonDisabledListener.class})
 public class PersonDisabledListenerIT {
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @MockBean
     PersonCalendarService personCalendarService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Test
     public void ensureDeletedPersonalCalendarOnPersonDisabledEvent() {

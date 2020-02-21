@@ -15,8 +15,10 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -32,13 +34,29 @@ public class PersonUpdatedListenerIT {
     private ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor = ArgumentCaptor.forClass(PersonDisabledEvent.class);
 
     @Test
-    public void ensurePersonDisabledEventIsFiredWhenPersonRoleToggledToInactive() {
+    public void ensurePersonDisabledEventIsNotFiredWhenPersonRoleToggledToInactive() {
 
-        final Person personBeforeUpdate = TestDataCreator.createPerson();
+        final Person personBeforeUpdate = createPerson();
         personBeforeUpdate.setId(1);
         personBeforeUpdate.setPermissions(List.of(Role.USER));
 
-        final Person personAfterUpdate = TestDataCreator.createPerson();
+        final Person personAfterUpdate = createPerson();
+        personAfterUpdate.setId(1);
+        personAfterUpdate.setPermissions(List.of(Role.USER));
+
+        applicationEventPublisher.publishEvent(new PersonUpdatedEvent(this, personBeforeUpdate, personAfterUpdate));
+
+        verifyZeroInteractions(personDisabledListenerDummy);
+    }
+
+    @Test
+    public void ensurePersonDisabledEventIsFiredWhenPersonRoleToggledToInactive() {
+
+        final Person personBeforeUpdate = createPerson();
+        personBeforeUpdate.setId(1);
+        personBeforeUpdate.setPermissions(List.of(Role.USER));
+
+        final Person personAfterUpdate = createPerson();
         personAfterUpdate.setId(1);
         personAfterUpdate.setPermissions(List.of(Role.INACTIVE));
 
@@ -53,11 +71,11 @@ public class PersonUpdatedListenerIT {
     @Test
     public void ensurePersonDisabledEventIsNotFiredWhenPersonRoleHasBeenInactiveAlready() {
 
-        final Person personBeforeUpdate = TestDataCreator.createPerson();
+        final Person personBeforeUpdate = createPerson();
         personBeforeUpdate.setId(1);
         personBeforeUpdate.setPermissions(List.of(Role.INACTIVE));
 
-        final Person personAfterUpdate = TestDataCreator.createPerson();
+        final Person personAfterUpdate = createPerson();
         personAfterUpdate.setId(1);
         personAfterUpdate.setPermissions(List.of(Role.INACTIVE));
 

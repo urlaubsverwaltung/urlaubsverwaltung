@@ -47,13 +47,15 @@ public class DepartmentCalendarServiceTest {
     @Mock
     private ICalService iCalService;
 
+    private static LocalDate toDateTime(String input) {
+        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
+    }
 
     @Before
     public void setUp() {
 
         sut = new DepartmentCalendarService(absenceService, departmentService, personService, departmentCalendarRepository, iCalService);
     }
-
 
     @Test
     public void deleteCalendarForDepartmentAndPerson() {
@@ -66,7 +68,7 @@ public class DepartmentCalendarServiceTest {
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        sut.deleteCalendarForDepartmentAndPerson(1,10);
+        sut.deleteCalendarForDepartmentAndPerson(1, 10);
 
         verify(departmentCalendarRepository).deleteByDepartmentAndPerson(department, person);
     }
@@ -247,9 +249,5 @@ public class DepartmentCalendarServiceTest {
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
         return new Absence(person, period, timeConfig);
-    }
-
-    private static LocalDate toDateTime(String input) {
-        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
     }
 }
