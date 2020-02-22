@@ -22,6 +22,7 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
 
 
 /**
@@ -97,7 +98,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
         // make sick note inactive
-        sickNote.setStatus(SickNoteStatus.CONVERTED_TO_VACATION);
+        sickNote.setStatus(CONVERTED_TO_VACATION);
         saveSickNote(sickNote);
 
         commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, converter);

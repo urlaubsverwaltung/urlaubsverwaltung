@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -10,6 +9,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 
 
 /**
@@ -25,10 +25,8 @@ public class SickNoteConvertForm {
     private String reason;
 
     public SickNoteConvertForm() {
-
         // needed for Spring magic
     }
-
 
     public SickNoteConvertForm(SickNote sickNote) {
 
@@ -112,17 +110,15 @@ public class SickNoteConvertForm {
 
     public Application generateApplicationForLeave() {
 
-        Application applicationForLeave = new Application();
+        final Application applicationForLeave = new Application();
 
         applicationForLeave.setPerson(person);
-
         applicationForLeave.setVacationType(vacationType);
-
         applicationForLeave.setDayLength(dayLength);
         applicationForLeave.setStartDate(startDate);
         applicationForLeave.setEndDate(endDate);
 
-        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        applicationForLeave.setStatus(ALLOWED);
         applicationForLeave.setApplicationDate(LocalDate.now(UTC));
         applicationForLeave.setEditedDate(LocalDate.now(UTC));
 
