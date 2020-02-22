@@ -117,6 +117,7 @@ public class SickNoteConvertForm {
         applicationForLeave.setDayLength(dayLength);
         applicationForLeave.setStartDate(startDate);
         applicationForLeave.setEndDate(endDate);
+        applicationForLeave.setReason(reason);
 
         applicationForLeave.setStatus(ALLOWED);
         applicationForLeave.setApplicationDate(LocalDate.now(UTC));

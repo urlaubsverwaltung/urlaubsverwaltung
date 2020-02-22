@@ -44,7 +44,7 @@ public class SickNoteConvertFormTest {
     }
 
     @Test
-    public void ensureGeneratesCorrectApplicationForLeave() {
+    public void ensureGeneratesBasicApplicationForLeave() {
 
         final Person person = createPerson();
         final LocalDate startDate = LocalDate.of(2014, 1, 1);
@@ -57,19 +57,14 @@ public class SickNoteConvertFormTest {
         sut.setVacationType(vacationType);
 
         final Application applicationForLeave = sut.generateApplicationForLeave();
-        assertThat(applicationForLeave.getPerson()).isNotNull();
-        assertThat(applicationForLeave.getStartDate()).isNotNull();
-        assertThat(applicationForLeave.getEndDate()).isNotNull();
-        assertThat(applicationForLeave.getVacationType()).isNotNull();
-        assertThat(applicationForLeave.getDayLength()).isNotNull();
-        assertThat(applicationForLeave.getApplicationDate()).isNotNull();
-        assertThat(applicationForLeave.getEditedDate()).isNotNull();
-
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
+        assertThat(applicationForLeave.getVacationType()).isEqualTo(vacationType);
+        assertThat(applicationForLeave.getDayLength()).isEqualTo(FULL);
         assertThat(applicationForLeave.getStartDate()).isEqualTo(startDate);
         assertThat(applicationForLeave.getEndDate()).isEqualTo(endDate);
-        assertThat(applicationForLeave.getDayLength()).isEqualTo(FULL);
-        assertThat(applicationForLeave.getVacationType()).isEqualTo(vacationType);
         assertThat(applicationForLeave.getStatus()).isEqualTo(ALLOWED);
+        assertThat(applicationForLeave.getReason()).isEqualTo("Some Reason");
+        assertThat(applicationForLeave.getApplicationDate()).isNotNull();
+        assertThat(applicationForLeave.getEditedDate()).isNotNull();
     }
 }
