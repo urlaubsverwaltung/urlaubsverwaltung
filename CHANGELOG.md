@@ -1,4 +1,5 @@
 ### master
+* Fix wrong company calendar url generation [#965](https://github.com/synyx/urlaubsverwaltung/pull/965) [#963](https://github.com/synyx/urlaubsverwaltung/issues/963)
 * Upgrade docker maven plugin to 0.33.0
 
 ### [urlaubsverwaltung-3.1.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.0)
