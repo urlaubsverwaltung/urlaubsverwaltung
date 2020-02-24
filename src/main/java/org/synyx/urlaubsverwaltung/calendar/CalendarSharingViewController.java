@@ -227,17 +227,13 @@ public class CalendarSharingViewController {
         final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarService.getCompanyCalendar(personId);
         if(maybeCompanyCalendar.isPresent()) {
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
-            final String url = buildCalendarUrl(personId, request, companyCalendar);
+            final String url = format("%s://%s/web/company/persons/%d/calendar?secret=%s",
+                request.getScheme(), request.getHeader("host"), personId, companyCalendar.getSecret());
 
             companyCalendarDto.setCalendarUrl(url);
         }
 
         return companyCalendarDto;
-    }
-
-    private String buildCalendarUrl(@PathVariable int personId, HttpServletRequest request, CompanyCalendar companyCalendar) {
-        return format("%s://%s/web/persons/%d/calendar?secret=%s",
-                    request.getScheme(), request.getHeader("host"), personId, companyCalendar.getSecret());
     }
 
     private Person getPersonOrThrow(Integer personId) {

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -117,7 +118,7 @@ public class CalendarSharingViewControllerTest {
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
-            .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", notNullValue())))
+            .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", containsString("/web/company/persons/1/calendar?secret="))))
             .andExpect(status().isOk());
     }
 
