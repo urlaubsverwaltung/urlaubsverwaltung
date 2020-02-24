@@ -225,7 +225,7 @@ public class CalendarSharingViewController {
         companyCalendarDto.setPersonId(personId);
 
         final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarService.getCompanyCalendar(personId);
-        if(maybeCompanyCalendar.isPresent()) {
+        if (maybeCompanyCalendar.isPresent()) {
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
             final String url = format("%s://%s/web/company/persons/%d/calendar?secret=%s",
                 request.getScheme(), request.getHeader("host"), personId, companyCalendar.getSecret());
