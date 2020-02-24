@@ -63,7 +63,7 @@ class ICalService {
             event = new VEvent(new Date(start.getTime()), absence.getEventSubject());
         } else if (absence.isAllDay() && !isSameDay(startDateTime, endDateTime)) {
             final DateTime end = new DateTime(from(endDateTime.minusDays(1).toInstant()), new TimeZone(utc));
-            event = new VEvent(start, end, absence.getEventSubject());
+            event = new VEvent(new Date(start), new Date(end), absence.getEventSubject());
         } else {
             final DateTime end = new DateTime(from(endDateTime.toInstant()), new TimeZone(utc));
             event = new VEvent(start, end, absence.getEventSubject());
