@@ -229,7 +229,7 @@ public class SickNoteViewController {
                                             @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
         throws UnknownSickNoteException {
 
-        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
         sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
@@ -242,8 +242,7 @@ public class SickNoteViewController {
             return "sicknote/sick_note_convert";
         }
 
-        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(),
-            personService.getSignedInUser());
+        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(), personService.getSignedInUser());
 
         return REDIRECT_WEB_SICKNOTE + id;
     }
