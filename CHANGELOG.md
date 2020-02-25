@@ -1,4 +1,5 @@
 ### master
+* Fix to use Date in VEvent instead of DateTime for multiple day events [#965](https://github.com/synyx/urlaubsverwaltung/pull/966)
 * Fix wrong company calendar url generation [#965](https://github.com/synyx/urlaubsverwaltung/pull/965) [#963](https://github.com/synyx/urlaubsverwaltung/issues/963)
 * Upgrade docker maven plugin to 0.33.0
 
