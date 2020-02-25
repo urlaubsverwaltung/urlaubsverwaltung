@@ -59,22 +59,7 @@ public class CalendarSharingViewController {
         final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId, request);
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
 
-        final Person signedInUser = personService.getSignedInUser();
-        final boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
-        final boolean companyCalendarAccessible = calendarAccessibleService.isCompanyCalendarAccessible();
-
-        if (isBossOrOffice) {
-            // feature: enable / disable companyCalendar
-            final CompanyCalendarAccessibleDto companyCalendarAccessibleDto = new CompanyCalendarAccessibleDto();
-            companyCalendarAccessibleDto.setAccessible(companyCalendarAccessible);
-            model.addAttribute("companyCalendarAccessible", companyCalendarAccessibleDto);
-        }
-
-        if (isBossOrOffice || companyCalendarAccessible) {
-            // feature: create / delete link for companyCalendar
-            final CompanyCalendarDto companyCalendarDto = getCompanyCalendarDto(personId, request);
-            model.addAttribute("companyCalendarShare", companyCalendarDto);
-        }
+        setCompanyCalendarViewModel(model, request, personId);
 
         return "calendarsharing/index";
     }
@@ -88,6 +73,8 @@ public class CalendarSharingViewController {
 
         final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId, activeDepartmentId, request);
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
+
+        setCompanyCalendarViewModel(model, request, personId);
 
         return "calendarsharing/index";
     }
@@ -157,6 +144,26 @@ public class CalendarSharingViewController {
         }
 
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
+    }
+
+    private void setCompanyCalendarViewModel(Model model, HttpServletRequest request, @PathVariable int personId) {
+
+        final Person signedInUser = personService.getSignedInUser();
+        final boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
+        final boolean companyCalendarAccessible = calendarAccessibleService.isCompanyCalendarAccessible();
+
+        if (isBossOrOffice) {
+            // feature: enable / disable companyCalendar
+            final CompanyCalendarAccessibleDto companyCalendarAccessibleDto = new CompanyCalendarAccessibleDto();
+            companyCalendarAccessibleDto.setAccessible(companyCalendarAccessible);
+            model.addAttribute("companyCalendarAccessible", companyCalendarAccessibleDto);
+        }
+
+        if (isBossOrOffice || companyCalendarAccessible) {
+            // feature: create / delete link for companyCalendar
+            final CompanyCalendarDto companyCalendarDto = getCompanyCalendarDto(personId, request);
+            model.addAttribute("companyCalendarShare", companyCalendarDto);
+        }
     }
 
     private PersonCalendarDto getPersonCalendarDto(@PathVariable int personId, HttpServletRequest request) {

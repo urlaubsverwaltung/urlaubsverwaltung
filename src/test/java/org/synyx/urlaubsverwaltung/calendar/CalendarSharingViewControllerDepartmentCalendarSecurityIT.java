@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -39,6 +43,8 @@ public class CalendarSharingViewControllerDepartmentCalendarSecurityIT {
     private PersonCalendarService personCalendarService;
     @MockBean
     private DepartmentCalendarService departmentCalendarService;
+    @MockBean
+    private CompanyCalendarService companyCalendarService;
     @MockBean
     private DepartmentService departmentService;
     @MockBean
@@ -109,6 +115,11 @@ public class CalendarSharingViewControllerDepartmentCalendarSecurityIT {
         department.setId(2);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
+        final Person boss = createPerson("boss", BOSS);
+        boss.setId(1337);
+        when(personService.getSignedInUser()).thenReturn(boss);
+        when(companyCalendarService.getCompanyCalendar(1337)).thenReturn(Optional.empty());
+
         perform(get("/web/calendars/share/persons/1/departments/2"))
             .andExpect(status().isOk());
     }
@@ -124,6 +135,11 @@ public class CalendarSharingViewControllerDepartmentCalendarSecurityIT {
         department.setId(2);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
+        final Person boss = createPerson("boss", BOSS);
+        boss.setId(1337);
+        when(personService.getSignedInUser()).thenReturn(boss);
+        when(companyCalendarService.getCompanyCalendar(1337)).thenReturn(Optional.empty());
+
         perform(get("/web/calendars/share/persons/1/departments/2"))
             .andExpect(status().isOk());
     }
@@ -135,6 +151,7 @@ public class CalendarSharingViewControllerDepartmentCalendarSecurityIT {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final Department department = new Department();
         department.setId(2);
