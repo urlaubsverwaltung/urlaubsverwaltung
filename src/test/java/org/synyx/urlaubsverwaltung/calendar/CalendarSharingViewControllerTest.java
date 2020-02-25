@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -117,7 +118,7 @@ public class CalendarSharingViewControllerTest {
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
-            .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", notNullValue())))
+            .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", containsString("/web/company/persons/1/calendar?secret="))))
             .andExpect(status().isOk());
     }
 
@@ -221,7 +222,7 @@ public class CalendarSharingViewControllerTest {
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
-            .andExpect(model().attributeExists("departmentCalendars"))
+            .andExpect(model().attribute("departmentCalendars", hasSize(0)))
             .andExpect(status().isOk());
     }
 
@@ -244,6 +245,7 @@ public class CalendarSharingViewControllerTest {
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attribute("departmentCalendars", hasSize(2)))
             .andExpect(status().isOk());
     }
 
@@ -288,7 +290,7 @@ public class CalendarSharingViewControllerTest {
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(view().name("calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(2)))
-            .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", notNullValue()))))
+            .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", containsString("web/departments/1337/persons/1/calendar?secret=")))))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", nullValue()))))
             .andExpect(status().isOk());
     }
@@ -324,7 +326,25 @@ public class CalendarSharingViewControllerTest {
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
-            .andExpect(model().attributeExists("privateCalendarShare"))
+            .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", nullValue())))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithPersonCalendar() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
+
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+
+        perform(get("/web/calendars/share/persons/1"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", containsString("/web/persons/1/calendar?secret="))))
             .andExpect(status().isOk());
     }
 
