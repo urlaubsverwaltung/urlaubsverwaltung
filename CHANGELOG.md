@@ -4,6 +4,7 @@
 * Fix wrong company calendar url generation [#965](https://github.com/synyx/urlaubsverwaltung/pull/965) [#963](https://github.com/synyx/urlaubsverwaltung/issues/963)
 * Fix comment from sick note conversion to vacation is missing [#689](https://github.com/synyx/urlaubsverwaltung/issues/689) [#962](https://github.com/synyx/urlaubsverwaltung/pull/962) 
 * Upgrade docker maven plugin to 0.33.0
+* Upgrade spring boot parent to 2.1.13
 
 ### [urlaubsverwaltung-3.1.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.0)
 * Provide ical functionality [#583](https://github.com/synyx/urlaubsverwaltung/pull/583) 
