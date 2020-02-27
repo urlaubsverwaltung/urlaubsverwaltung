@@ -22,7 +22,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -254,6 +253,7 @@ public class CalendarSharingViewControllerTest {
 
         final Person person = createPerson();
         person.setId(1);
+        person.setPermissions(List.of(USER));
 
         final Department sockentraeger = createDepartment("sockenträger");
         sockentraeger.setId(42);
@@ -262,6 +262,7 @@ public class CalendarSharingViewControllerTest {
         barfuslaeufer.setId(1337);
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
 
@@ -275,6 +276,7 @@ public class CalendarSharingViewControllerTest {
 
         final Person person = createPerson();
         person.setId(1);
+        person.setPermissions(List.of(USER));
 
         final Department sockentraeger = createDepartment("sockenträger");
         sockentraeger.setId(42);
@@ -283,6 +285,7 @@ public class CalendarSharingViewControllerTest {
         barfuslaeufer.setId(1337);
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
         when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(new DepartmentCalendar()));
@@ -292,6 +295,118 @@ public class CalendarSharingViewControllerTest {
             .andExpect(model().attribute("departmentCalendars", hasSize(2)))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", containsString("web/departments/1337/persons/1/calendar?secret=")))))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", nullValue()))))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithVisibleAndSharedDepartmentHasModelAttributePersonalCalendar() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Department department = createDepartment("awesome-department");
+        department.setId(42);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+
+        perform(get("/web/calendars/share/persons/1/departments/42"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attributeExists("privateCalendarShare"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithVisibleAndSharedDepartmentDoesNotHaveModelAttributeCompanyCalendarForRoleUser() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Department department = createDepartment("awesome-department");
+        department.setId(42);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+
+        perform(get("/web/calendars/share/persons/1/departments/42"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attributeDoesNotExist("companyCalendarAccessible"))
+            .andExpect(model().attributeDoesNotExist("companyCalendarShare"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleUser() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+        person.setPermissions(List.of(BOSS));
+
+        final Department department = createDepartment("awesome-department");
+        department.setId(42);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+
+        when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
+        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(new CompanyCalendar()));
+
+        perform(get("/web/calendars/share/persons/1/departments/42"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attributeExists("companyCalendarAccessible"))
+            .andExpect(model().attributeExists("companyCalendarShare"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleOffice() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+        person.setPermissions(List.of(OFFICE));
+
+        final Department department = createDepartment("awesome-department");
+        department.setId(42);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+
+        perform(get("/web/calendars/share/persons/1/departments/42"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attributeExists("companyCalendarAccessible"))
+            .andExpect(model().attributeExists("companyCalendarShare"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleBoss() throws Exception {
+
+        final Person person = createPerson();
+        person.setId(1);
+        person.setPermissions(List.of(BOSS));
+
+        final Department department = createDepartment("awesome-department");
+        department.setId(42);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+
+        perform(get("/web/calendars/share/persons/1/departments/42"))
+            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(model().attributeExists("companyCalendarAccessible"))
+            .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
     }
 
