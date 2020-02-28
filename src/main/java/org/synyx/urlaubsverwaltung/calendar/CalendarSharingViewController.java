@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,30 +51,30 @@ public class CalendarSharingViewController {
 
     @GetMapping
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String index(@PathVariable int personId, Model model, HttpServletRequest request) {
+    public String index(@PathVariable int personId, Model model) {
 
-        final PersonCalendarDto dto = getPersonCalendarDto(personId, request);
+        final PersonCalendarDto dto = getPersonCalendarDto(personId);
         model.addAttribute("privateCalendarShare", dto);
 
-        final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId, request);
+        final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId);
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
 
-        setCompanyCalendarViewModel(model, request, personId);
+        setCompanyCalendarViewModel(model, personId);
 
         return "calendarsharing/index";
     }
 
     @GetMapping("/departments/{activeDepartmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String indexDepartment(@PathVariable int personId, @PathVariable int activeDepartmentId, Model model, HttpServletRequest request) {
+    public String indexDepartment(@PathVariable int personId, @PathVariable int activeDepartmentId, Model model) {
 
-        final PersonCalendarDto dto = getPersonCalendarDto(personId, request);
+        final PersonCalendarDto dto = getPersonCalendarDto(personId);
         model.addAttribute("privateCalendarShare", dto);
 
-        final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId, activeDepartmentId, request);
+        final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId, activeDepartmentId);
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
 
-        setCompanyCalendarViewModel(model, request, personId);
+        setCompanyCalendarViewModel(model, personId);
 
         return "calendarsharing/index";
     }
@@ -146,7 +146,7 @@ public class CalendarSharingViewController {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
-    private void setCompanyCalendarViewModel(Model model, HttpServletRequest request, @PathVariable int personId) {
+    private void setCompanyCalendarViewModel(Model model, @PathVariable int personId) {
 
         final Person signedInUser = personService.getSignedInUser();
         final boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
@@ -161,20 +161,21 @@ public class CalendarSharingViewController {
 
         if (isBossOrOffice || companyCalendarAccessible) {
             // feature: create / delete link for companyCalendar
-            final CompanyCalendarDto companyCalendarDto = getCompanyCalendarDto(personId, request);
+            final CompanyCalendarDto companyCalendarDto = getCompanyCalendarDto(personId);
             model.addAttribute("companyCalendarShare", companyCalendarDto);
         }
     }
 
-    private PersonCalendarDto getPersonCalendarDto(@PathVariable int personId, HttpServletRequest request) {
+    private PersonCalendarDto getPersonCalendarDto(@PathVariable int personId) {
         final PersonCalendarDto dto = new PersonCalendarDto();
         dto.setPersonId(personId);
 
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarService.getPersonCalendar(personId);
         if (maybePersonCalendar.isPresent()) {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
-            final String url = format("%s://%s/web/persons/%d/calendar?secret=%s",
-                request.getScheme(), request.getHeader("host"), personId, personCalendar.getSecret());
+            final var path = format("web/persons/%d/calendar?secret=%s", personId, personCalendar.getSecret());
+            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .replacePath(path).build().toString();
 
             dto.setCalendarUrl(url);
         }
@@ -182,12 +183,12 @@ public class CalendarSharingViewController {
         return dto;
     }
 
-    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId, HttpServletRequest request) {
+    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId) {
 
-        return getDepartmentCalendarDtos(personId, null, request);
+        return getDepartmentCalendarDtos(personId, null);
     }
 
-    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId, @Nullable Integer activeDepartmentId, HttpServletRequest request) {
+    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId, @Nullable Integer activeDepartmentId) {
 
         final Person person = getPersonOrThrow(personId);
         final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
@@ -210,8 +211,9 @@ public class CalendarSharingViewController {
             final var maybeDepartmentCalendar = departmentCalendarService.getCalendarForDepartment(departmentId, personId);
             if (maybeDepartmentCalendar.isPresent()) {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
-                final var url = format("%s://%s/web/departments/%s/persons/%s/calendar?secret=%s",
-                    request.getScheme(), request.getHeader("host"), departmentId, personId, departmentCalendar.getSecret());
+                final var path = format("web/departments/%s/persons/%s/calendar?secret=%s", departmentId, personId, departmentCalendar.getSecret());
+                final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                    .replacePath(path).build().toString();
 
                 departmentCalendarDto.setCalendarUrl(url);
             }
@@ -226,16 +228,18 @@ public class CalendarSharingViewController {
         return departmentCalendarDtos;
     }
 
-    private CompanyCalendarDto getCompanyCalendarDto(@PathVariable int personId, HttpServletRequest request) {
+    private CompanyCalendarDto getCompanyCalendarDto(@PathVariable int personId) {
 
         final CompanyCalendarDto companyCalendarDto = new CompanyCalendarDto();
         companyCalendarDto.setPersonId(personId);
 
         final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarService.getCompanyCalendar(personId);
         if (maybeCompanyCalendar.isPresent()) {
+
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
-            final String url = format("%s://%s/web/company/persons/%d/calendar?secret=%s",
-                request.getScheme(), request.getHeader("host"), personId, companyCalendar.getSecret());
+            final var path = format("web/company/persons/%d/calendar?secret=%s", personId, companyCalendar.getSecret());
+            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .replacePath(path).build().toString();
 
             companyCalendarDto.setCalendarUrl(url);
         }
