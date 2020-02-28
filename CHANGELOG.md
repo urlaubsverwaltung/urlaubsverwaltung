@@ -1,4 +1,6 @@
 ### master
+
+### [urlaubsverwaltung-3.1.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.1)
 * Fix hidden company calendar section after interacting with department calendar [#968](https://github.com/synyx/urlaubsverwaltung/pull/968)
 * Fix to use Date in VEvent instead of DateTime for multiple day events [#966](https://github.com/synyx/urlaubsverwaltung/pull/966)
 * Fix wrong company calendar url generation [#965](https://github.com/synyx/urlaubsverwaltung/pull/965) [#963](https://github.com/synyx/urlaubsverwaltung/issues/963)
