@@ -16,10 +16,8 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +25,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserApiMethodSecurityTest {
@@ -45,47 +45,77 @@ public class UserApiMethodSecurityTest {
 
     @Test
     public void isInDepartmentOfAuthenticatedHeadPersonId() {
-        final String username = "Member";
-        Person member = new Person(username, "lastname", "firstName", "email");
+        final Person member = new Person("Member", "lastname", "firstName", "email");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(member));
-        final String usernameHead = "Head";
-        Authentication auth = setuppOidc(usernameHead);
-        Person head = new Person(usernameHead, "lastname", "firstName", "email");
-        head.setPermissions(Arrays.asList(Role.DEPARTMENT_HEAD));
-        when(personService.getPersonByUsername(usernameHead)).thenReturn(Optional.of(head));
-        Department d = new Department();
-        d.setMembers(Arrays.asList(member, head));
-        d.setDepartmentHeads(Arrays.asList(head));
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(head)).thenReturn(Arrays.asList(d));
-        assertThat(sut.isInDepartmentOfAuthenticatedHeadPersonId(auth, 1)).isTrue();
+
+        final String usernameDepartmentHead = "Head";
+        final Person departmentHead = new Person(usernameDepartmentHead, "lastname", "firstName", "email");
+        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        when(personService.getPersonByUsername(usernameDepartmentHead)).thenReturn(Optional.of(departmentHead));
+
+        final Department department = new Department();
+        department.setMembers(List.of(member, departmentHead));
+        department.setDepartmentHeads(List.of(departmentHead));
+        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(List.of(department));
+
+        final Authentication authentication = getAuthenticationToken(usernameDepartmentHead);
+        final boolean inDepartmentOfAuthenticatedHeadPersonId = sut.isInDepartmentOfDepartmentHead(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedHeadPersonId).isTrue();
     }
 
     @Test
     public void isNotInDepartmentOfAuthenticatedHeadPersonId() {
-        final String username = "Member";
-        Person member = new Person(username, "lastname", "firstName", "email");
+        final Person member = new Person("Member", "lastname", "firstName", "email");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(member));
-        final String usernameHead = "Head";
-        Authentication auth = setuppOidc(usernameHead);
-        Person head = new Person(usernameHead, "lastname", "firstName", "email");
-        head.setPermissions(Arrays.asList(Role.DEPARTMENT_HEAD));
-        when(personService.getPersonByUsername(usernameHead)).thenReturn(Optional.of(head));
-        Department d = new Department();
-        d.setMembers(Arrays.asList(member, head));
-        d.setDepartmentHeads(Arrays.asList(head));
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(head)).thenReturn(Arrays.asList());
-        assertThat(sut.isInDepartmentOfAuthenticatedHeadPersonId(auth, 1)).isFalse();
+
+        final String usernameDepartmentHead = "Head";
+        final Person departmentHead = new Person(usernameDepartmentHead, "lastname", "firstName", "email");
+        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        when(personService.getPersonByUsername(usernameDepartmentHead)).thenReturn(Optional.of(departmentHead));
+
+        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(List.of(new Department()));
+
+        final Authentication authentication = getAuthenticationToken(usernameDepartmentHead);
+        final boolean inDepartmentOfAuthenticatedHeadPersonId = sut.isInDepartmentOfDepartmentHead(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedHeadPersonId).isFalse();
     }
 
     @Test
-    public void isNotAuthenticatedHead() {
-        final String usernameHead = "Head";
-        Authentication auth = setuppOidc(usernameHead);
-        Person head = new Person(usernameHead, "lastname", "firstName", "email");
-        head.setPermissions(Arrays.asList(Role.USER));
-        when(personService.getPersonByUsername(usernameHead)).thenReturn(Optional.of(head));
+    public void isInDepartmentOfAuthenticatedHeadPersonIdButHasNoDepartmentHeadRole() {
+        final String usernameDepartmentHead = "DepartmentHead";
+        final Person departmentHead = new Person(usernameDepartmentHead, "lastname", "firstName", "email");
+        departmentHead.setPermissions(List.of(USER));
+        when(personService.getPersonByUsername(usernameDepartmentHead)).thenReturn(Optional.of(departmentHead));
 
-        assertThat(sut.isInDepartmentOfAuthenticatedHeadPersonId(auth, 1)).isFalse();
+        final Authentication authentication = getAuthenticationToken(usernameDepartmentHead);
+        final boolean inDepartmentOfAuthenticatedHeadPersonId = sut.isInDepartmentOfDepartmentHead(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedHeadPersonId).isFalse();
+    }
+
+    @Test
+    public void isInDepartmentOfAuthenticatedHeadPersonIdButNoPersonFound() {
+        final String usernameDepartmentHead = "DepartmentHead";
+        final Person departmentHead = new Person(usernameDepartmentHead, "lastname", "firstName", "email");
+        departmentHead.setPermissions(List.of(USER));
+        when(personService.getPersonByUsername(usernameDepartmentHead)).thenReturn(Optional.of(departmentHead));
+
+        final Authentication authentication = getAuthenticationToken(usernameDepartmentHead);
+        final boolean inDepartmentOfAuthenticatedHeadPersonId = sut.isInDepartmentOfDepartmentHead(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedHeadPersonId).isFalse();
+    }
+
+    @Test
+    public void isInDepartmentOfAuthenticatedHeadPersonIdButIsNotLoggedIn() {
+        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+
+        final String usernameDepartmentHead = "Head";
+        final Person departmentHead = new Person(usernameDepartmentHead, "lastname", "firstName", "email");
+        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        when(personService.getPersonByUsername(usernameDepartmentHead)).thenReturn(Optional.of(departmentHead));
+
+        final Authentication authentication = getAuthenticationToken(usernameDepartmentHead);
+        final boolean inDepartmentOfAuthenticatedHeadPersonId = sut.isInDepartmentOfDepartmentHead(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedHeadPersonId).isFalse();
     }
 
     @Test
@@ -97,20 +127,11 @@ public class UserApiMethodSecurityTest {
         assertThat(isSamePerson).isFalse();
     }
 
-    private TestingAuthenticationToken setuppOidc(final String username) {
-        final Instant now = Instant.now();
-        final OidcIdToken token = new OidcIdToken("token", now, now.plusSeconds(60),
-            Map.of(IdTokenClaimNames.SUB, username));
-        final DefaultOidcUser oidcUser = new DefaultOidcUser(List.of(new OidcUserAuthority(token)), token);
-        final TestingAuthenticationToken authentication = new TestingAuthenticationToken(oidcUser, List.of());
-        return authentication;
-    }
-
     @Test
     public void isSamePersonIdWithOidc() {
 
         final String username = "Hans";
-        final TestingAuthenticationToken authentication = setuppOidc(username);
+        final TestingAuthenticationToken authentication = getAuthenticationToken(username);
 
         when(personService.getPersonByID(1))
             .thenReturn(Optional.of(new Person(username, "lastname", "firstName", "email")));
@@ -122,9 +143,8 @@ public class UserApiMethodSecurityTest {
     @Test
     public void isNotSamePersonIdWithOidc() {
         final String username = "Hans";
-        Authentication authentication = setuppOidc(username);
-        when(personService.getPersonByID(1))
-            .thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
+        final Authentication authentication = getAuthenticationToken(username);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
 
         final boolean isSamePerson = sut.isSamePersonId(authentication, 1);
         assertThat(isSamePerson).isFalse();
@@ -137,8 +157,7 @@ public class UserApiMethodSecurityTest {
         final User user = new User(username, "password", List.of());
         final TestingAuthenticationToken authentication = new TestingAuthenticationToken(user, List.of());
 
-        when(personService.getPersonByID(1))
-            .thenReturn(Optional.of(new Person(username, "lastname", "firstName", "email")));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person(username, "lastname", "firstName", "email")));
 
         final boolean isSamePerson = sut.isSamePersonId(authentication, 1);
         assertThat(isSamePerson).isTrue();
@@ -150,8 +169,7 @@ public class UserApiMethodSecurityTest {
         final User user = new User("username", "password", List.of());
         final TestingAuthenticationToken authentication = new TestingAuthenticationToken(user, List.of());
 
-        when(personService.getPersonByID(1))
-            .thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
 
         final boolean isSamePerson = sut.isSamePersonId(authentication, 1);
         assertThat(isSamePerson).isFalse();
@@ -161,13 +179,11 @@ public class UserApiMethodSecurityTest {
     public void isSamePersonIdWithLdap() {
 
         final String username = "Hans";
-        final org.springframework.security.ldap.userdetails.Person ldapUser = mock(
-            org.springframework.security.ldap.userdetails.Person.class);
+        final org.springframework.security.ldap.userdetails.Person ldapUser = mock(org.springframework.security.ldap.userdetails.Person.class);
         final TestingAuthenticationToken authentication = new TestingAuthenticationToken(ldapUser, List.of());
 
         when(ldapUser.getUsername()).thenReturn(username);
-        when(personService.getPersonByID(1))
-            .thenReturn(Optional.of(new Person(username, "lastname", "firstName", "email")));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person(username, "lastname", "firstName", "email")));
 
         final boolean isSamePerson = sut.isSamePersonId(authentication, 1);
         assertThat(isSamePerson).isTrue();
@@ -176,15 +192,20 @@ public class UserApiMethodSecurityTest {
     @Test
     public void isDifferentPersonIdWithLdap() {
 
-        final org.springframework.security.ldap.userdetails.Person ldapUser = mock(
-            org.springframework.security.ldap.userdetails.Person.class);
+        final org.springframework.security.ldap.userdetails.Person ldapUser = mock(org.springframework.security.ldap.userdetails.Person.class);
         final TestingAuthenticationToken authentication = new TestingAuthenticationToken(ldapUser, List.of());
 
         when(ldapUser.getUsername()).thenReturn("username");
-        when(personService.getPersonByID(1))
-            .thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
 
         final boolean isSamePerson = sut.isSamePersonId(authentication, 1);
         assertThat(isSamePerson).isFalse();
+    }
+
+    private TestingAuthenticationToken getAuthenticationToken(final String username) {
+        final Instant now = Instant.now();
+        final OidcIdToken token = new OidcIdToken("token", now, now.plusSeconds(60), Map.of(IdTokenClaimNames.SUB, username));
+        final DefaultOidcUser oidcUser = new DefaultOidcUser(List.of(new OidcUserAuthority(token)), token);
+        return new TestingAuthenticationToken(oidcUser, List.of());
     }
 }
