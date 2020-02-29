@@ -31,6 +31,7 @@
         <form:form method="POST" action="${URL_PREFIX}/settings" modelAttribute="settings" class="form-horizontal"
                    role="form">
             <form:hidden path="id"/>
+            <button type="submit" hidden></button>
 
             <div class="row">
                 <div class="col-xs-12 feedback">
