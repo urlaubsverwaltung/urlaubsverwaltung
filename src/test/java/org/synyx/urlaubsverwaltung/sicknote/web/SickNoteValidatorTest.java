@@ -229,7 +229,21 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriod() {
+    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDays() {
+        final SickNote sickNote = createSickNote(createPerson(),
+            LocalDate.of(2013, NOVEMBER, 1),
+            LocalDate.of(2013, NOVEMBER, 30),
+            FULL);
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStart() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 30),
@@ -240,6 +254,91 @@ public class SickNoteValidatorTest {
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEnd() {
+        final SickNote sickNote = createSickNote(createPerson(),
+            LocalDate.of(2013, NOVEMBER, 1),
+            LocalDate.of(2013, NOVEMBER, 30),
+            FULL);
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStartOverlapping() {
+        final SickNote sickNote = createSickNote(createPerson(),
+            LocalDate.of(2013, NOVEMBER, 20),
+            LocalDate.of(2013, NOVEMBER, 30),
+            FULL);
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 20));
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("aubStartDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
+    }
+
+    @Test
+    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEndOverlapping() {
+        final SickNote sickNote = createSickNote(createPerson(),
+            LocalDate.of(2013, NOVEMBER, 1),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
+    }
+
+    @Test
+    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysNoneOverlapping() {
+        final SickNote sickNote = createSickNote(createPerson(),
+            LocalDate.of(2013, NOVEMBER, 10),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 9));
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("aubStartDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
+        assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
+    }
+
+    @Test
+    public void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
+        final SickNote sickNote = createSickNote(createPerson(),
+            LocalDate.of(2013, NOVEMBER, 1),
+            LocalDate.of(2013, NOVEMBER, 1),
+            FULL);
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 1));
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    public void ensureAUPeriodMustBeWithinSickNotePeriodButIsNotForOneDay() {
+        final SickNote sickNote = createSickNote(createPerson(),
+            LocalDate.of(2013, NOVEMBER, 1),
+            LocalDate.of(2013, NOVEMBER, 1),
+            FULL);
+        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 2));
+        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 2));
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("aubStartDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
     }
 
     @Test

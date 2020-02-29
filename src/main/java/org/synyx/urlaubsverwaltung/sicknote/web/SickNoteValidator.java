@@ -65,7 +65,7 @@ public class SickNoteValidator implements Validator {
         final SickNote sickNote = (SickNote) target;
         validateSickNotePeriod(sickNote, errors);
 
-        if (sickNote.isAubPresent()) {
+        if (!errors.hasErrors() && sickNote.isAubPresent()) {
             validateAUPeriod(sickNote, errors);
         }
     }
@@ -104,7 +104,7 @@ public class SickNoteValidator implements Validator {
             final LocalDate sickNoteStartDate = sickNote.getStartDate();
             final LocalDate sickNoteEndDate = sickNote.getEndDate();
 
-            if (sickNoteStartDate != null && sickNoteEndDate != null && sickNoteEndDate.isAfter(sickNoteStartDate)) {
+            if (sickNoteStartDate != null && sickNoteEndDate != null) {
                 // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
                 final long start = sickNoteStartDate.atStartOfDay().toInstant(UTC).toEpochMilli();
                 final long end = sickNoteEndDate.plusDays(1).atStartOfDay().toInstant(UTC).toEpochMilli();
