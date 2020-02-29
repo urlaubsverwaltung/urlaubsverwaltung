@@ -45,8 +45,6 @@ public class SickNoteValidatorTest {
     private OverlapService overlapService;
     @Mock
     private WorkingTimeService workingTimeService;
-    @Mock
-    private Errors errors;
 
     @Before
     public void setUp() {
@@ -349,9 +347,9 @@ public class SickNoteValidatorTest {
             FULL);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(FULLY_OVERLAPPING);
 
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-
-        verify(errors).reject("application.error.overlap");
+        assertThat(errors.getGlobalErrors().get(0).getCode()).isEqualTo("application.error.overlap");
     }
 
     @Test
@@ -365,10 +363,10 @@ public class SickNoteValidatorTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.empty());
 
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-
+        assertThat(errors.getGlobalErrors().get(0).getCode()).isEqualTo("sicknote.error.noValidWorkingTime");
         verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(sickNote.getPerson(), startDate);
-        verify(errors).reject("sicknote.error.noValidWorkingTime");
     }
 
     @Test
