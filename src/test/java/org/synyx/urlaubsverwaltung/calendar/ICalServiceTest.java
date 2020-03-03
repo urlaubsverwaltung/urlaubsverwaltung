@@ -90,7 +90,7 @@ public class ICalServiceTest {
 
         assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
         assertThat(calendar).contains("DTSTART;VALUE=DATE:20190326");
-        assertThat(calendar).contains("DTEND;VALUE=DATE:20190401");
+        assertThat(calendar).contains("DTEND;VALUE=DATE:20190402");
     }
 
     @Test
