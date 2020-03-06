@@ -5,7 +5,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="person" tagdir="/WEB-INF/tags/person" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -91,7 +91,7 @@
                         <c:if test="${not isMailServerFromApplicationProperties}">
                             <li role="presentation" class="${MAIL_ERROR_CSS_CLASS}">
                                 <a href="#mail" aria-controls="mail" role="tab" data-toggle="tab"><spring:message
-                                        code="settings.tabs.mail"/></a>
+                                    code="settings.tabs.mail"/></a>
                             </li>
                         </c:if>
                         <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
@@ -392,12 +392,14 @@
                                         </label>
                                         <div class="col-md-8 radio">
                                             <label class="halves">
-                                                <form:radiobutton id="mailSettings.active.true" path="mailSettings.active"
+                                                <form:radiobutton id="mailSettings.active.true"
+                                                                  path="mailSettings.active"
                                                                   value="true"/>
                                                 <spring:message code="settings.mail.active.true"/>
                                             </label>
                                             <label class="halves">
-                                                <form:radiobutton id="mailSettings.active.false" path="mailSettings.active"
+                                                <form:radiobutton id="mailSettings.active.false"
+                                                                  path="mailSettings.active"
                                                                   value="false"/>
                                                 <spring:message code="settings.mail.active.false"/>
                                             </label>
@@ -408,7 +410,8 @@
                                             <spring:message code='settings.mail.from'/>:
                                         </label>
                                         <div class="col-md-8">
-                                            <form:input id="mailSettings.from" path="mailSettings.from" class="form-control"
+                                            <form:input id="mailSettings.from" path="mailSettings.from"
+                                                        class="form-control"
                                                         cssErrorClass="form-control error" type="email"/>
                                             <span class="help-inline"><form:errors path="mailSettings.from"
                                                                                    cssClass="error"/></span>
@@ -419,7 +422,8 @@
                                             <spring:message code='settings.mail.administrator'/>:
                                         </label>
                                         <div class="col-md-8">
-                                            <form:input id="mailSettings.administrator" path="mailSettings.administrator"
+                                            <form:input id="mailSettings.administrator"
+                                                        path="mailSettings.administrator"
                                                         class="form-control" cssErrorClass="form-control error"
                                                         type="email"/>
                                             <span class="help-inline"><form:errors path="mailSettings.administrator"
@@ -443,7 +447,8 @@
                                             <spring:message code='settings.mail.host'/>:
                                         </label>
                                         <div class="col-md-8">
-                                            <form:input id="mailSettings.host" path="mailSettings.host" class="form-control"
+                                            <form:input id="mailSettings.host" path="mailSettings.host"
+                                                        class="form-control"
                                                         cssErrorClass="form-control error"/>
                                             <span class="help-inline"><form:errors path="mailSettings.host"
                                                                                    cssClass="error"/></span>
@@ -454,7 +459,8 @@
                                             <spring:message code='settings.mail.port'/>:
                                         </label>
                                         <div class="col-md-8">
-                                            <form:input id="mailSettings.port" path="mailSettings.port" class="form-control"
+                                            <form:input id="mailSettings.port" path="mailSettings.port"
+                                                        class="form-control"
                                                         cssErrorClass="form-control error"/>
                                             <span class="help-inline"><form:errors path="mailSettings.port"
                                                                                    cssClass="error"/></span>
@@ -509,7 +515,7 @@
                                         <form:input id="calendarSettings.workDayBeginHour"
                                                     path="calendarSettings.workDayBeginHour" class="form-control"
                                                     cssErrorClass="form-control error"
-                                                    type="number" step="1" />
+                                                    type="number" step="1"/>
                                         <span class="help-inline"><form:errors path="calendarSettings.workDayBeginHour"
                                                                                cssClass="error"/></span>
                                     </div>
