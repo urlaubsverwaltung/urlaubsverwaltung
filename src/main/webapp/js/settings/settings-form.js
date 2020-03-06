@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import 'chosen-js';
+import 'chosen-js/chosen.css';
 
 (function() {
 
