@@ -58,15 +58,14 @@ class ICalService {
 
         final TimeZone timeZone = new TimeZone(utc);
         final DateTime start = new DateTime(from(startDateTime.toInstant()), timeZone);
+        final DateTime end = new DateTime(from(endDateTime.toInstant()), timeZone);
 
         final VEvent event;
         if (absence.isAllDay() && isSameDay(startDateTime, endDateTime)) {
             event = new VEvent(new Date(start.getTime()), absence.getEventSubject());
         } else if (absence.isAllDay() && !isSameDay(startDateTime, endDateTime)) {
-            final DateTime end = new DateTime(from(endDateTime.minusDays(1).toInstant()), timeZone);
             event = new VEvent(new Date(start), new Date(end), absence.getEventSubject());
         } else {
-            final DateTime end = new DateTime(from(endDateTime.toInstant()), timeZone);
             event = new VEvent(start, end, absence.getEventSubject());
         }
 
