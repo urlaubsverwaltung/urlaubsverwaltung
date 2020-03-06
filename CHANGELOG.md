@@ -1,6 +1,7 @@
 ### master
 * Fix to use default form action instead of google handshake in settings [#975](https://github.com/synyx/urlaubsverwaltung/pull/975)
 * Fix to add au for one day not in sick note period [#976](https://github.com/synyx/urlaubsverwaltung/pull/976)
+* Fix to allow vacation overview for department head [#974](https://github.com/synyx/urlaubsverwaltung/pull/974)
 
 ### [urlaubsverwaltung-3.1.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.1)
 * Fix hidden company calendar section after interacting with department calendar [#968](https://github.com/synyx/urlaubsverwaltung/pull/968)
