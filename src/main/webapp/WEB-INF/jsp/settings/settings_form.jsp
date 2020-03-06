@@ -15,6 +15,7 @@
         <spring:message code="settings.header.title"/>
     </title>
     <uv:custom-head/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.chosen-js.css' />"/>
     <script defer src="<asset:url value='npm.chosen-js.js' />"></script>
     <script defer src="<asset:url value='settings_form.js' />"></script>
 </head>
