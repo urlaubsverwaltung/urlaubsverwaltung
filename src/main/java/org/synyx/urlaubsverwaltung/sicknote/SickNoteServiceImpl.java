@@ -83,4 +83,16 @@ class SickNoteServiceImpl implements SickNoteService {
 
         return sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
     }
+
+    @Override
+    public List<SickNote> getForStates(List<SickNoteStatus> sickNoteStatuses) {
+
+        return sickNoteDAO.findByStatusIn(sickNoteStatuses);
+    }
+
+    @Override
+    public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons) {
+
+        return sickNoteDAO.findByStatusInAndPersonIn(sickNoteStatuses, persons);
+    }
 }

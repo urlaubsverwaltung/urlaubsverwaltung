@@ -1,3 +1,6 @@
+### master
+*  Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
+
 ### [urlaubsverwaltung-3.1.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.2)
 * Fix that a multiple day event ends one day to early [#980](https://github.com/synyx/urlaubsverwaltung/pull/980)
 * Fix to add au for one day not in sick note period [#976](https://github.com/synyx/urlaubsverwaltung/pull/976)
