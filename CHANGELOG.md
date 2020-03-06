@@ -1,5 +1,5 @@
 ### master
-*  Reduce possibility to redirect to google on enter in settings [#975](https://github.com/synyx/urlaubsverwaltung/pull/975)
+*  Fix to use default form action instead of google handshake in settings [#975](https://github.com/synyx/urlaubsverwaltung/pull/975)
 
 ### [urlaubsverwaltung-3.1.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.1)
 * Fix hidden company calendar section after interacting with department calendar [#968](https://github.com/synyx/urlaubsverwaltung/pull/968)
