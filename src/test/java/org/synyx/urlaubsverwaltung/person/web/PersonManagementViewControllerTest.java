@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.department.web.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -170,8 +169,8 @@ public class PersonManagementViewControllerTest {
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(any())).thenReturn(secondStageDepartments);
 
         perform(get("/web/person/" + PERSON_ID + "/edit"))
-            .andExpect(model().attribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE, departments))
-            .andExpect(model().attribute(DepartmentConstants.SECOND_STAGE_DEPARTMENTS_ATTRIBUTE, secondStageDepartments));
+            .andExpect(model().attribute("departments", departments))
+            .andExpect(model().attribute("secondStageDepartments", secondStageDepartments));
     }
 
     @Test

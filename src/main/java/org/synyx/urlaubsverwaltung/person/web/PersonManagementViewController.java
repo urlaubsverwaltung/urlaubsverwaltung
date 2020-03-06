@@ -25,8 +25,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Locale;
 
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentConstants.DEPARTMENTS_ATTRIBUTE;
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentConstants.SECOND_STAGE_DEPARTMENTS_ATTRIBUTE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 
@@ -101,8 +99,8 @@ public class PersonManagementViewController {
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute(DEPARTMENTS_ATTRIBUTE, departmentService.getManagedDepartmentsOfDepartmentHead(person));
-        model.addAttribute(SECOND_STAGE_DEPARTMENTS_ATTRIBUTE, departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
+        model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
+        model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
         model.addAttribute("userCanBeManipulated", personConfigurationProperties.isCanBeManipulated());
 
         return PERSON_FORM_JSP;

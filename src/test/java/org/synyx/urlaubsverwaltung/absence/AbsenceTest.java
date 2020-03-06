@@ -1,8 +1,10 @@
-package org.synyx.urlaubsverwaltung.calendarintegration.absence;
+package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;

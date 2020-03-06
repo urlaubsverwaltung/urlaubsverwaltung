@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentConstants.DEPARTMENTS_ATTRIBUTE;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DepartmentViewControllerTest {
@@ -68,7 +67,7 @@ public class DepartmentViewControllerTest {
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
         perform(get("/web/department"))
-            .andExpect(model().attribute(DEPARTMENTS_ATTRIBUTE, departments));
+            .andExpect(model().attribute("departments", departments));
     }
 
     @Test
