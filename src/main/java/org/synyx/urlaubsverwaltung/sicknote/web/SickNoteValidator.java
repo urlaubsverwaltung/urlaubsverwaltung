@@ -15,8 +15,9 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -61,20 +62,19 @@ public class SickNoteValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
 
-        SickNote sickNote = (SickNote) target;
-
+        final SickNote sickNote = (SickNote) target;
         validateSickNotePeriod(sickNote, errors);
 
-        if (sickNote.isAubPresent()) {
+        if (!errors.hasErrors() && sickNote.isAubPresent()) {
             validateAUPeriod(sickNote, errors);
         }
     }
 
     private void validateSickNotePeriod(SickNote sickNote, Errors errors) {
 
-        DayLength dayLength = sickNote.getDayLength();
-        LocalDate startDate = sickNote.getStartDate();
-        LocalDate endDate = sickNote.getEndDate();
+        final DayLength dayLength = sickNote.getDayLength();
+        final LocalDate startDate = sickNote.getStartDate();
+        final LocalDate endDate = sickNote.getEndDate();
 
         validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
@@ -91,9 +91,9 @@ public class SickNoteValidator implements Validator {
 
     private void validateAUPeriod(SickNote sickNote, Errors errors) {
 
-        DayLength dayLength = sickNote.getDayLength();
-        LocalDate aubStartDate = sickNote.getAubStartDate();
-        LocalDate aubEndDate = sickNote.getAubEndDate();
+        final DayLength dayLength = sickNote.getDayLength();
+        final LocalDate aubStartDate = sickNote.getAubStartDate();
+        final LocalDate aubEndDate = sickNote.getAubEndDate();
 
         validateNotNull(aubStartDate, ATTRIBUTE_AUB_START_DATE, errors);
         validateNotNull(aubEndDate, ATTRIBUTE_AUB_END_DATE, errors);
@@ -101,19 +101,20 @@ public class SickNoteValidator implements Validator {
         if (aubStartDate != null && aubEndDate != null) {
             validatePeriod(aubStartDate, aubEndDate, dayLength, ATTRIBUTE_AUB_END_DATE, errors);
 
-            LocalDate startDate = sickNote.getStartDate();
-            LocalDate endDate = sickNote.getEndDate();
+            final LocalDate sickNoteStartDate = sickNote.getStartDate();
+            final LocalDate sickNoteEndDate = sickNote.getEndDate();
 
-            if (startDate != null && endDate != null && endDate.isAfter(startDate)) {
+            if (sickNoteStartDate != null && sickNoteEndDate != null) {
                 // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
-                Interval interval = new Interval(startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-                    endDate.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
+                final long start = sickNoteStartDate.atStartOfDay().toInstant(UTC).toEpochMilli();
+                final long end = sickNoteEndDate.plusDays(1).atStartOfDay().toInstant(UTC).toEpochMilli();
+                final Interval sickNoteInterval = new Interval(start, end);
 
-                if (!interval.contains(aubStartDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli())) {
+                if (!sickNoteInterval.contains(aubStartDate.atStartOfDay().toInstant(UTC).toEpochMilli())) {
                     errors.rejectValue(ATTRIBUTE_AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
                 }
 
-                if (!interval.contains(aubEndDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli())) {
+                if (!sickNoteInterval.contains(aubEndDate.atStartOfDay().toInstant(UTC).toEpochMilli())) {
                     errors.rejectValue(ATTRIBUTE_AUB_END_DATE, ERROR_PERIOD_SICK_NOTE);
                 }
             }
@@ -131,13 +132,12 @@ public class SickNoteValidator implements Validator {
     /**
      * Validate that the given start date is not after the given end date.
      */
-    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, String field,
-                                Errors errors) {
+    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, String field, Errors errors) {
 
         if (startDate.isAfter(endDate)) {
             errors.rejectValue(field, ERROR_PERIOD);
         } else {
-            boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
+            final boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
 
             if (isHalfDay && !startDate.isEqual(endDate)) {
                 errors.rejectValue(field, ERROR_HALF_DAY_PERIOD_SICK_NOTE);
@@ -150,7 +150,7 @@ public class SickNoteValidator implements Validator {
         /*
          * Ensure the person has a working time for the period of the sick note
          */
-        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+        final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             sickNote.getPerson(), sickNote.getStartDate());
 
         if (workingTime.isEmpty()) {
@@ -162,9 +162,8 @@ public class SickNoteValidator implements Validator {
         /*
          * Ensure that there is no application for leave and no sick note in the same period
          */
-        OverlapCase overlap = overlapService.checkOverlap(sickNote);
-
-        boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
+        final OverlapCase overlap = overlapService.checkOverlap(sickNote);
+        final boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
 
         if (isOverlapping) {
             errors.reject(ERROR_OVERLAP);
@@ -173,7 +172,7 @@ public class SickNoteValidator implements Validator {
 
     public void validateComment(SickNoteComment comment, Errors errors) {
 
-        String text = comment.getText();
+        final String text = comment.getText();
 
         if (StringUtils.hasText(text)) {
             if (text.length() > MAX_CHARS) {
