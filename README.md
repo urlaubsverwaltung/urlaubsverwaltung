@@ -3,24 +3,6 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 
-## Version 3.x
-
-| Version 2.x wird nur noch bis zum **31.12.2019** mit Bug- und Sicherheitsupdates unterstützt.|
-| --- |
-
-Aufgrund von umfangreicheren Neuerungen haben wir
-uns dafür entschieden, auf dem **master** Branch mit Version **3.x** durchzustarten.
-
-**Version 2.x**
-
-Du bist auf der Suche nach Version 2.x? Diese findest du [hier](https://github.com/synyx/urlaubsverwaltung/tree/v2.x).
-
-Du möchtest wissen, was alles zu tun ist, um von 2.x auf 3.x umzusteigen?
-Dann wirf einen Blick in den [Migration Guide](https://github.com/synyx/urlaubsverwaltung/wiki/Urlaubsverwaltung-3.0-Migration-Guide).
-
-Bitte beachte, dass die Version 2.x nur noch bis zum **31.12.2019** mit Bug- und Sicherheitsupdates unterstützt wird.
-Danach wird ausschließlich an 3.x weiterentwickelt werden.
-
 # Urlaubsverwaltung
                              
  * [Übersicht](#übersicht)
