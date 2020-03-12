@@ -1,7 +1,19 @@
 ### master
 * Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
+* Add vacation days to overtime calender  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)
 * Move absences to absence package and some minor cleanups [#977](https://github.com/synyx/urlaubsverwaltung/pull/977)
+* Refactor Dockerfile, changing base image, rename jvm configuration en... [#1006](https://github.com/synyx/urlaubsverwaltung/pull/1006)
+* Add enforce plugin to check for java 11 and maven 3.3.9 [#1001](https://github.com/synyx/urlaubsverwaltung/pull/1001)
+* Minor typo and comma fixes for calendar share feature [#988](https://github.com/synyx/urlaubsverwaltung/pull/988)
 * Upgrade terser-webpack-plugin to 2.3.5
+* Upgrade owasp dependency check plugin to 5.3.1
+* Upgrade editorconfig maven plugin to 0.0.11
+* Upgrade pitest maven plugin to 1.5.0
+* Upgrade frontend maven plugin to 1.9.1
+* Upgrade httpclient to 4.5.12
+* Upgrade httpcore to 4.4.13
+* Upgrade micrometer to 1.3.5
+* Upgrade google api client and services calendar to 1.30.9
 
 ### [urlaubsverwaltung-3.1.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.2)
 * Fix that a multiple day event ends one day to early [#980](https://github.com/synyx/urlaubsverwaltung/pull/980)
