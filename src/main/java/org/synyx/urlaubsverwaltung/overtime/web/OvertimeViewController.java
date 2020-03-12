@@ -146,6 +146,7 @@ public class OvertimeViewController {
         }
 
         model.addAttribute(OVERTIME, new OvertimeForm(person));
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         return OVERTIME_OVERTIME_FORM;
     }
@@ -194,6 +195,7 @@ public class OvertimeViewController {
         }
 
         model.addAttribute(OVERTIME, new OvertimeForm(overtime));
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         return OVERTIME_OVERTIME_FORM;
     }
