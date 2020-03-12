@@ -1,4 +1,4 @@
-### master
+### [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0)
 * Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
 * Add vacation days to overtime calender  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)
 * Move absences to absence package and some minor cleanups [#977](https://github.com/synyx/urlaubsverwaltung/pull/977)
