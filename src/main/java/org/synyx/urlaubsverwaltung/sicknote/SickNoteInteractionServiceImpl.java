@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.calendarintegration.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
 
 
 /**
@@ -97,7 +98,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
         // make sick note inactive
-        sickNote.setStatus(SickNoteStatus.CONVERTED_TO_VACATION);
+        sickNote.setStatus(CONVERTED_TO_VACATION);
         saveSickNote(sickNote);
 
         commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, converter);

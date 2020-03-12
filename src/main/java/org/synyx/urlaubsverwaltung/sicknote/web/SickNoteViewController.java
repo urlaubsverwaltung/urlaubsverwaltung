@@ -55,14 +55,14 @@ public class SickNoteViewController {
     private final VacationTypeService vacationTypeService;
     private final PersonService personService;
     private final WorkDaysService calendarService;
-    private final SickNoteValidator validator;
+    private final SickNoteValidator sickNoteValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
 
     @Autowired
     public SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                                   SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                                   VacationTypeService vacationTypeService, PersonService personService,
-                                  WorkDaysService calendarService, SickNoteValidator validator,
+                                  WorkDaysService calendarService, SickNoteValidator sickNoteValidator,
                                   SickNoteConvertFormValidator sickNoteConvertFormValidator) {
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
@@ -71,7 +71,7 @@ public class SickNoteViewController {
         this.vacationTypeService = vacationTypeService;
         this.personService = personService;
         this.calendarService = calendarService;
-        this.validator = validator;
+        this.sickNoteValidator = sickNoteValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
     }
 
@@ -122,10 +122,9 @@ public class SickNoteViewController {
     @PostMapping("/sicknote")
     public String newSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
-        SickNote sickNote = sickNoteForm.generateSickNote();
+        final SickNote sickNote = sickNoteForm.generateSickNote();
 
-        validator.validate(sickNote, errors);
-
+        sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, sickNoteForm);
@@ -168,7 +167,7 @@ public class SickNoteViewController {
 
         SickNote sickNote = sickNoteForm.generateSickNote();
 
-        validator.validate(sickNote, errors);
+        sickNoteValidator.validate(sickNote, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
@@ -192,7 +191,7 @@ public class SickNoteViewController {
 
         SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        validator.validateComment(comment, errors);
+        sickNoteValidator.validateComment(comment, errors);
 
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
@@ -229,7 +228,7 @@ public class SickNoteViewController {
                                             @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
         throws UnknownSickNoteException {
 
-        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
         sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
@@ -242,8 +241,7 @@ public class SickNoteViewController {
             return "sicknote/sick_note_convert";
         }
 
-        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(),
-            personService.getSignedInUser());
+        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(), personService.getSignedInUser());
 
         return REDIRECT_WEB_SICKNOTE + id;
     }

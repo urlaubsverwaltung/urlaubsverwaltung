@@ -1,4 +1,55 @@
-### master
+### [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0)
+* Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
+* Add vacation days to overtime calender  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)
+* Move absences to absence package and some minor cleanups [#977](https://github.com/synyx/urlaubsverwaltung/pull/977)
+* Refactor Dockerfile, changing base image, rename jvm configuration en... [#1006](https://github.com/synyx/urlaubsverwaltung/pull/1006)
+* Add enforce plugin to check for java 11 and maven 3.3.9 [#1001](https://github.com/synyx/urlaubsverwaltung/pull/1001)
+* Minor typo and comma fixes for calendar share feature [#988](https://github.com/synyx/urlaubsverwaltung/pull/988)
+* Upgrade terser-webpack-plugin to 2.3.5
+* Upgrade owasp dependency check plugin to 5.3.1
+* Upgrade editorconfig maven plugin to 0.0.11
+* Upgrade pitest maven plugin to 1.5.0
+* Upgrade frontend maven plugin to 1.9.1
+* Upgrade httpclient to 4.5.12
+* Upgrade httpcore to 4.4.13
+* Upgrade micrometer to 1.3.5
+* Upgrade google api client and services calendar to 1.30.9
+
+### [urlaubsverwaltung-3.1.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.2)
+* Fix that a multiple day event ends one day to early [#980](https://github.com/synyx/urlaubsverwaltung/pull/980)
+* Fix to add au for one day not in sick note period [#976](https://github.com/synyx/urlaubsverwaltung/pull/976)
+* Fix to use default form action instead of google handshake in settings [#975](https://github.com/synyx/urlaubsverwaltung/pull/975)
+* Fix to allow vacation overview for department head [#974](https://github.com/synyx/urlaubsverwaltung/pull/974)
+* Fix timezone selection for exchange calendar [#985](https://github.com/synyx/urlaubsverwaltung/pull/985)
+* Reorder the css loading to fix wrong color of past months for sick notes [#981](https://github.com/synyx/urlaubsverwaltung/pull/981)
+* Reorder the css loading to fix wrong color of past months for overtime [#982](https://github.com/synyx/urlaubsverwaltung/pull/982)
+
+### [urlaubsverwaltung-3.1.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.1)
+* Fix hidden company calendar section after interacting with department calendar [#968](https://github.com/synyx/urlaubsverwaltung/pull/968)
+* Fix to use Date in VEvent instead of DateTime for multiple day events [#966](https://github.com/synyx/urlaubsverwaltung/pull/966)
+* Fix wrong company calendar url generation [#965](https://github.com/synyx/urlaubsverwaltung/pull/965) [#963](https://github.com/synyx/urlaubsverwaltung/issues/963)
+* Fix comment from sick note conversion to vacation is missing [#689](https://github.com/synyx/urlaubsverwaltung/issues/689) [#962](https://github.com/synyx/urlaubsverwaltung/pull/962) 
+* Fix wrong shared calendar url behind proxy [#970](https://github.com/synyx/urlaubsverwaltung/issues/970) [#973](https://github.com/synyx/urlaubsverwaltung/pull/973) 
+* Upgrade docker maven plugin to 0.33.0
+* Upgrade spring boot parent to 2.1.13
+
+### [urlaubsverwaltung-3.1.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.0)
+* Provide ical functionality [#583](https://github.com/synyx/urlaubsverwaltung/pull/583) 
+* Remove html5 validation of addition and reduction of overtime [#834](https://github.com/synyx/urlaubsverwaltung/pull/834) [#693](https://github.com/synyx/urlaubsverwaltung/issues/693)
+* Add micrometer export for [Stackdriver](https://micrometer.io/docs/registry/stackdriver)
+* Frontend asset tooling [#921](https://github.com/synyx/urlaubsverwaltung/pull/921)
+* Improve user role edit form [#922](https://github.com/synyx/urlaubsverwaltung/pull/922)
+* Fix coverage in builds [#929](https://github.com/synyx/urlaubsverwaltung/pull/929)
+* Fix no application for leave information of people in the same department [#949](https://github.com/synyx/urlaubsverwaltung/pull/949)
+* Rename overtime validator to overtime form validator [#925](https://github.com/synyx/urlaubsverwaltung/pull/925)
+* Vacation overview does not show absences with role boss [#924](https://github.com/synyx/urlaubsverwaltung/issues/924) [#926](https://github.com/synyx/urlaubsverwaltung/pull/926)
+* Upgrade jollyday to 0.5.10 [#931](https://github.com/synyx/urlaubsverwaltung/pull/931)
+* Upgrade docker maven plugin to 0.32.0 [#932](https://github.com/synyx/urlaubsverwaltung/pull/932)
+* Upgrade httpcore to 4.4.12 [#934](https://github.com/synyx/urlaubsverwaltung/pull/934)
+* Upgrade google api dependencies [#933](https://github.com/synyx/urlaubsverwaltung/pull/933)
+* Remove distribution repository from pom [#936](https://github.com/synyx/urlaubsverwaltung/pull/936)
+* Remove sonatype snapshot repository [#937](https://github.com/synyx/urlaubsverwaltung/pull/937)
+* Upgrade spring boot parent to 2.1.12
 
 ### [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.1)
 * Fix ldap and ad sync can not be enabled [#914](https://github.com/synyx/urlaubsverwaltung/pull/914)

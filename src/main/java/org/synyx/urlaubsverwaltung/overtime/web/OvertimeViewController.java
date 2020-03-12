@@ -48,12 +48,12 @@ public class OvertimeViewController {
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
-    private final OvertimeValidator validator;
+    private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
-                                  OvertimeValidator validator, DepartmentService departmentService) {
+                                  OvertimeFormValidator validator, DepartmentService departmentService) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.validator = validator;
@@ -146,6 +146,7 @@ public class OvertimeViewController {
         }
 
         model.addAttribute(OVERTIME, new OvertimeForm(person));
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         return OVERTIME_OVERTIME_FORM;
     }
@@ -194,6 +195,7 @@ public class OvertimeViewController {
         }
 
         model.addAttribute(OVERTIME, new OvertimeForm(overtime));
+        model.addAttribute(PERSON_ATTRIBUTE, person);
 
         return OVERTIME_OVERTIME_FORM;
     }

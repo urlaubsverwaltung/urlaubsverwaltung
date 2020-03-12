@@ -48,4 +48,8 @@ interface SickNoteDAO extends CrudRepository<SickNote, Integer> {
         "AND x.status = 'ACTIVE'"
     )
     List<SickNote> findSickNotesByMinimumLengthAndEndDate(int limit, LocalDate endDate);
+
+    List<SickNote> findByStatusIn(List<SickNoteStatus> openSickNoteStatuses);
+
+    List<SickNote> findByStatusInAndPersonIn(List<SickNoteStatus> openSickNoteStatuses, List<Person> persons);
 }

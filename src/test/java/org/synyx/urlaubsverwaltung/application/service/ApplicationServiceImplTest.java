@@ -9,11 +9,15 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
 
 /**
@@ -85,7 +89,33 @@ public class ApplicationServiceImplTest {
         verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
+        assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
+    }
+
+    @Test
+    public void getForStates() {
+
+        final Application application = new Application();
+        final List<Application> applications = List.of(application);
+
+        when(applicationDAO.findByStatusIn(List.of(WAITING))).thenReturn(applications);
+
+        final List<Application> result = applicationService.getForStates(List.of(WAITING));
+        assertEquals(applications, result);
+    }
+
+    @Test
+    public void getForStatesAndPerson() {
+
+        final Application application = new Application();
+        final List<Application> applications = List.of(application);
+
+        final Person person = TestDataCreator.createPerson();
+
+        when(applicationDAO.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
+
+        final List<Application> result = applicationService.getForStatesAndPerson(List.of(WAITING), List.of(person));
+        assertEquals(applications, result);
     }
 
 
@@ -101,6 +131,6 @@ public class ApplicationServiceImplTest {
         verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);
+        assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
+import static org.springframework.http.HttpMethod.GET;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -45,6 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/assets/**").permitAll()
             .antMatchers("/login*").permitAll()
             // WEB
+            .antMatchers(GET, "/web/company/persons/*/calendar").permitAll()
+            .antMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
+            .antMatchers(GET, "/web/persons/*/calendar").permitAll()
             .antMatchers("/web/overview").hasAuthority(USER)
             .antMatchers("/web/application/**").hasAuthority(USER)
             .antMatchers("/web/sicknote/**").hasAuthority(USER)

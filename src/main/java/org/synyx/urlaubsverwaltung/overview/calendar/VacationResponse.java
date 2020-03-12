@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 
 
-public class VacationResponse {
+class VacationResponse {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
     private String from;
@@ -20,7 +20,7 @@ public class VacationResponse {
     private String type;
     private String status;
 
-    public VacationResponse(Application application) {
+    VacationResponse(Application application) {
 
         this.from = application.getStartDate().format(formatter);
         this.to = application.getEndDate().format(formatter);

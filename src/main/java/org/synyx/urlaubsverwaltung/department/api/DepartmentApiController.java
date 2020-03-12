@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-
+@RestControllerAdviceMarker
 @Api("Departments: Get information about the departments of the application")
 @RestController("restApiDepartmentController")
 @RequestMapping("/api")

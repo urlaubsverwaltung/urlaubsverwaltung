@@ -1,25 +1,8 @@
 import $ from 'jquery'
 import 'chosen-js';
-import 'bootstrap/js/tab'
+import 'chosen-js/chosen.css';
 
 (function() {
-
-  /**
-   * when a anchor is defined in the url (#)
-   * then it will be opened.
-   */
-  function activateTabFromAnchorLink() {
-    const url = window.location.href;
-    const tabName = url.split('#')[1];
-    if (tabName) {
-      activeTab(tabName);
-    }
-  }
-
-  function activeTab(tab) {
-    $('.nav-tabs a[href="#' + tab + '"]').tab('show');
-  }
-
 
   /**
    * updates config section 'calendar sync'
@@ -52,8 +35,6 @@ import 'bootstrap/js/tab'
   }
 
   $(document).ready(function () {
-    activateTabFromAnchorLink();
-
     // initial run to update view
     updateVisibilityCalendar();
 

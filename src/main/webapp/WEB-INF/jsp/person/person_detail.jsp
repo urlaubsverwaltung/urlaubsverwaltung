@@ -56,7 +56,7 @@
                         <ul>
                             <c:forEach items="${person.permissions}" var="role">
                                 <li>
-                                    <p><spring:message code="person.form.permissions.roles.${role}"/></p>
+                                    <p><spring:message code="person.form.permissions.roles.${role}.description"/></p>
                                 </li>
                             </c:forEach>
                         </ul>

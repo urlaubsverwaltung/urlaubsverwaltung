@@ -50,7 +50,7 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           env:
-            - name: JAVA_OPTIONS
+            - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.environment.javaOptions | quote }}
             - name: SERVER_PORT
               value: {{ .Values.environment.serverPort| quote }}

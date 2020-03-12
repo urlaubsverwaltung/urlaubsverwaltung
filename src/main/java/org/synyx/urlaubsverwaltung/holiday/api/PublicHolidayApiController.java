@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -30,7 +31,7 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
-
+@RestControllerAdviceMarker
 @Api("Public Holidays: Get information about public holidays")
 @RestController("restApiCalendarController")
 @RequestMapping("/api")

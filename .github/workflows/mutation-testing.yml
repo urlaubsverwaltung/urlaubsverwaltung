@@ -1,0 +1,28 @@
+name: Mutation Testing
+
+on:
+  schedule:
+    - cron: "1 3 * * FRI"
+
+jobs:
+  build:
+    name: PiTesT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Mutation Testing
+        run: ./mvnw --batch-mode clean test org.pitest:pitest-maven:mutationCoverage
+      - uses: actions/upload-artifact@v1
+        with:
+          name: pi-report
+          path: target/pit-reports/

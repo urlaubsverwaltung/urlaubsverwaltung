@@ -24,9 +24,9 @@
         window.uv.personId = '<c:out value="${person.id}" />';
         window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />" />
     <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />" />
     <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />" />
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='date-fns-localized.js' />"></script>
     <script defer src="<asset:url value='npm.jquery-ui.js' />"></script>
@@ -125,9 +125,8 @@
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <uv:input-number id="numberOfHours" path="numberOfHours" cssClass="form-control"
-                                                 cssErrorClass="form-control error" step="0.25"
-                                                 value="${overtime.numberOfHours}"/>
+                                <form:input path="numberOfHours" cssClass="form-control"
+                                            cssErrorClass="form-control error"/>
                                 <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
                             </div>
                         </div>

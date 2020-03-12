@@ -5,9 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SickNoteServiceImplTest {
@@ -94,5 +97,32 @@ public class SickNoteServiceImplTest {
 
         final List<SickNote> sickNotesReachingEndOfSickPay = sut.getSickNotesReachingEndOfSickPay();
         assertThat(sickNotesReachingEndOfSickPay).contains(sickNote);
+    }
+
+    @Test
+    public void getForStates() {
+        final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
+
+        final SickNote sickNote = new SickNote();
+        when(sickNoteDAO.findByStatusIn(openSickNoteStatuses)).thenReturn(List.of(sickNote));
+
+        final List<SickNote> sickNotes = sut.getForStates(openSickNoteStatuses);
+        assertThat(sickNotes).hasSize(1);
+        assertThat(sickNotes).contains(sickNote);
+    }
+
+
+    @Test
+    public void getForStatesAndPerson() {
+        final Person person = new Person();
+        final List<Person> persons = List.of(person);
+        final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
+
+        final SickNote sickNote = new SickNote();
+        when(sickNoteDAO.findByStatusInAndPersonIn(openSickNoteStatuses, persons)).thenReturn(List.of(sickNote));
+
+        final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
+        assertThat(sickNotes).hasSize(1);
+        assertThat(sickNotes).contains(sickNote);
     }
 }

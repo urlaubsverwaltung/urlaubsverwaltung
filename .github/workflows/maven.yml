@@ -1,6 +1,10 @@
 name: Urlaubsverwaltung CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   build:
@@ -8,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11', '12', '13' ]
+        java: [ '11', '13' ]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -28,7 +32,7 @@ jobs:
     name: analyse with owasp dependency check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
           java-version: 11
@@ -41,6 +45,8 @@ jobs:
       - name: Run OWASP dependency check
         run: >
           ./mvnw --batch-mode clean
+          frontend:install-node-and-npm
+          frontend:npm@install-npm-dependencies
           org.owasp:dependency-check-maven:check
       - uses: actions/upload-artifact@v1
         with:
@@ -51,7 +57,7 @@ jobs:
     name: analyse with sonarqube
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
           java-version: 11
@@ -67,12 +73,13 @@ jobs:
       - name: Run SonarCloud analyse
         run: >
           ./mvnw --batch-mode
-          org.jacoco:jacoco-maven-plugin:prepare-agent
+          -Pcoverage
           verify
-          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=synyx
           -Dsonar.projectKey=org.synyx:urlaubsverwaltung
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml
           -Dsonar.javascript.lcov.reportPaths=target/js-coverage/lcov.info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
