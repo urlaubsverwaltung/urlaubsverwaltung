@@ -57,9 +57,6 @@ jobs:
           -Ddocker.push.registry=docker.pkg.github.com
           -Ddocker.push.username=${{ github.actor }}
           -Ddocker.push.password=${{ secrets.GITHUB_TOKEN }}
-          -Ddocker.pull.registry=registry.hub.docker.com
-          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
-          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}
 
   dependency-check:
     name: analyse with owasp dependency check
