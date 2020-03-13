@@ -8,7 +8,7 @@ on:
 
 jobs:
   compile:
-    name: build with jdk ${{ matrix.java }}
+    name: compile with jdk ${{ matrix.java }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
