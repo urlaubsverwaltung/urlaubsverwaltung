@@ -44,11 +44,9 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build with Maven
         run: ./mvnw --batch-mode clean verify
-      - uses: azure/docker-login@v1
+      - name: Docker Hub Login
         if: github.ref == 'refs/heads/master'
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+        run: docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
       - name: Build docker image and push
         if: github.ref == 'refs/heads/master'
         run: >
