@@ -33,7 +33,7 @@ jobs:
           body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
           draft: false
           prerelease: false
-      - name: Publiish docker image to Docker Hub
+      - name: Publish docker image to Docker Hub
         run: >
           ./mvnw --batch-mode
           docker:build
