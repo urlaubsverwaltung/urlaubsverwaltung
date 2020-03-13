@@ -26,7 +26,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build with Maven
-        run: ./mvnw --batch-mode clean verify
+        run: >
+          ./mvnw --batch-mode clean verify
+      - uses: azure/docker-login@v1
+        if: github.ref == 'refs/heads/master'
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build docker image and push
+        if: github.ref == 'refs/heads/master'
+        run: >
+          ./mvnw --batch-mode
+          docker:build
+          docker:push
+          -Ddocker.push.registry=docker.pkg.github.com -Ddocker.name=synyx/urlaubsverwaltung/urlaubsverwaltung
+          -Ddocker.username=${{ github.actor }} -Ddocker.password=${{ secrets.GITHUB_TOKEN }}
 
   dependency-check:
     name: analyse with owasp dependency check

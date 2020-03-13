@@ -447,7 +447,7 @@
         <configuration>
           <images>
             <image>
-              <name>registry.hub.docker.com/synyx/urlaubsverwaltung</name>
+              <name>synyx/urlaubsverwaltung</name>
               <external>
                 <type>properties</type>
                 <prefix>docker</prefix>
