@@ -18,6 +18,7 @@ import {
   subMonths,
 } from 'date-fns';
 import format from '../../lib/date-fns/format'
+import { subscribeToLocaleChanged } from '../../lib/date-fns/locale-resolver'
 import startOfWeek from '../../lib/date-fns/start-of-week'
 import tooltip from '../tooltip';
 import './calendar.css';
@@ -921,7 +922,9 @@ $(function() {
             },
 
             reRender: function() {
-                view.display(date);
+                if (view) {
+                    view.display(date);
+                }
             }
         }
     })();
@@ -933,5 +936,9 @@ $(function() {
         Calendar      : Calendar,
         HolidayService: HolidayService
     };
+
+    subscribeToLocaleChanged(function rerenderCalendar() {
+      Calendar.reRender();
+    })
 
 });
