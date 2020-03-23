@@ -2,8 +2,8 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -24,9 +24,10 @@
         window.uv.personId = '<c:out value="${person.id}" />';
         window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />" />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />" />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />"/>
+    <link rel="stylesheet" type="text/css"
+          href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />"/>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='date-fns-localized.js' />"></script>
     <script defer src="<asset:url value='npm.jquery-ui.js' />"></script>
