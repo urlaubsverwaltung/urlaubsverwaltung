@@ -1,3 +1,6 @@
+### master
+* Add navigate dependency to overtime overview [#1014](https://github.com/synyx/urlaubsverwaltung/pull/1014)
+
 ### [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0)
 * Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
 * Add vacation days to overtime calender  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)
