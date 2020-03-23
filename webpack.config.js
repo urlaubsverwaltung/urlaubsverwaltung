@@ -112,6 +112,12 @@ module.exports = {
 
   optimization: {
     runtimeChunk: 'single',
+    // always create named chunkIds to have deterministic builds.
+    // default would be 'natural' which uses numeric ids in order of (import) usage.
+    //    changing the first import usage results in changing ALL chunk ids independently of the actual chunk content
+    //    which reverses the content hash usage in the filename for long-term-caching. (the content hash changes when
+    //    the chunkId changes)
+    chunkIds: 'named',
     splitChunks: {
       chunks: 'all',
       maxInitialRequests: Infinity,
