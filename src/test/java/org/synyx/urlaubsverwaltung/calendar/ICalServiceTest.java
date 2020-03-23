@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -113,6 +114,6 @@ public class ICalServiceTest {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
-        return new Absence(person, period, timeConfig);
+        return new Absence(person, period, timeConfig, Clock.systemUTC());
     }
 }
