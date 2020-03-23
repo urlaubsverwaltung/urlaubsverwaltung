@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -11,6 +12,7 @@
         <spring:message code="overtime.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
+    <script defer src="<asset:url value='overtime_overview.js' />"></script>
 </head>
 <body>
 
