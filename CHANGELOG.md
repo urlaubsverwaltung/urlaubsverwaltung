@@ -1,5 +1,6 @@
-### master
+### [urlaubsverwaltung-3.2.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.1)
 * Add navigate dependency to overtime overview [#1014](https://github.com/synyx/urlaubsverwaltung/pull/1014)
+* Long term caching [#1013](https://github.com/synyx/urlaubsverwaltung/pull/1013)
 
 ### [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0)
 * Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
