@@ -20,6 +20,7 @@ import {
 import format from '../../lib/date-fns/format'
 import startOfWeek from '../../lib/date-fns/start-of-week'
 import tooltip from '../tooltip';
+import { getJSON } from '../../js/fetch';
 import './calendar.css';
 
 function paramize(p) {
@@ -181,16 +182,12 @@ $(function() {
          *
          * @param {string} endpoint
          * @param {{}} parameters
-         * @returns {$.ajax}
+         * @returns {Promise}
          */
         function fetch(endpoint, parameters) {
 
-            var query = endpoint + paramize(parameters);
-
-            return $.ajax({
-                url: apiPrefix + query,
-                dataType: 'json'
-            });
+            const url = apiPrefix + endpoint + paramize(parameters);
+            return getJSON(url);
         }
 
         function cacheAbsences(type, year) {
@@ -412,19 +409,17 @@ $(function() {
             /**
              *
              * @param {number} year
-             * @returns {$.ajax}
+             * @returns {Promise}
              */
             fetchPublic: function(year) {
-
-                var deferred = $.Deferred();
 
                 _CACHE['publicHoliday'] = _CACHE['publicHoliday'] || {};
 
                 if (_CACHE['publicHoliday'][year]) {
-                    return deferred.resolve( _CACHE[year] );
-                } else {
-                    return fetch('/holidays', {year: year, person: personId}).done( cachePublicHoliday(year) );
+                    return Promise.resolve(_CACHE[year])
                 }
+
+                return fetch('/holidays', {year: year, person: personId}).then( cachePublicHoliday(year) );
             },
 
             /**
@@ -432,30 +427,28 @@ $(function() {
              * @param {number} personId
              * @param {number} year
              * @param {number} [month]
-             * @returns {$.ajax}
+             * @returns {Promise}
              */
             fetchPersonal: function(year) {
-                var deferred = $.Deferred();
 
                 _CACHE['holiday'] = _CACHE['holiday'] || {};
 
                 if (_CACHE['holiday'][year]) {
-                    return deferred.resolve( _CACHE[year] );
-                } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).done( cacheAbsences('holiday', year) );
+                    return Promise.resolve(_CACHE[year]);
                 }
+
+                return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).then( cacheAbsences('holiday', year) );
             },
 
             fetchSickDays: function(year) {
-                var deferred = $.Deferred();
 
                 _CACHE['sick'] = _CACHE['sick'] || {};
 
                 if (_CACHE['sick'][year]) {
-                    return deferred.resolve( _CACHE[year] );
-                } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).done( cacheAbsences('sick', year) );
+                    return Promise.resolve(_CACHE[year]);
                 }
+
+                return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).then( cacheAbsences('sick', year) );
             }
         };
 
@@ -786,11 +779,12 @@ $(function() {
                 // to load data for the new (invisible) prev month
                 var date = addMonths(new Date(y, m, 1), 1);
 
-                $.when(
-                    holidayService.fetchPublic   ( getYear(date) ),
-                    holidayService.fetchPersonal ( getYear(date) ),
-                    holidayService.fetchSickDays ( getYear(date) )
-                ).then(view.displayNext);
+                Promise.all([
+                  holidayService.fetchPublic   ( getYear(date) ),
+                  holidayService.fetchPersonal ( getYear(date) ),
+                  holidayService.fetchSickDays ( getYear(date) )
+                ])
+                  .then(view.displayNext);
             },
 
             clickPrevious: function() {
@@ -804,11 +798,11 @@ $(function() {
                 // to load data for the new (invisible) prev month
                 var date = subMonths(new Date(y, m, 1), 1);
 
-                $.when(
-                    holidayService.fetchPublic   ( getYear(date) ),
-                    holidayService.fetchPersonal ( getYear(date) ),
-                    holidayService.fetchSickDays ( getYear(date) )
-                ).then(view.displayPrevious);
+                Promise.all([
+                  holidayService.fetchPublic   ( getYear(date) ),
+                  holidayService.fetchPersonal ( getYear(date) ),
+                  holidayService.fetchSickDays ( getYear(date) )
+                ]).then(view.displayPrevious);
             }
         };
 
