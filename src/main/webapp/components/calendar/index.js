@@ -588,16 +588,17 @@ $(function() {
                 // NOTE: Order is important here!
 
                 const isPersonalHoliday = assert.isPersonalHolidayFull(date);
+                const isPersonalHolidayApproved = assert.isPersonalHolidayFullApproved(date);
                 const isSickDay = assert.isSickDayFull(date);
 
-                if(isPersonalHoliday || isSickDay) {
+                if (isPersonalHoliday || isPersonalHolidayApproved || isSickDay) {
                   return true;
                 }
 
                 const isPast = assert.isPast(date);
                 const isWeekend = assert.isWeekend(date);
 
-                if(isPast || isWeekend) {
+                if (isPast || isWeekend) {
                     return false;
                 }
 
