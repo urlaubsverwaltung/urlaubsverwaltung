@@ -1,4 +1,5 @@
 import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from '../../../../test/javascript/test-setup-helper';
+import fetchMock from 'fetch-mock';
 
 describe ('calendar', () => {
     const RealDate = Date;
@@ -27,20 +28,100 @@ describe ('calendar', () => {
       };
     }
 
+    beforeEach(setup);
+    afterEach(cleanup);
+
     afterEach(() => {
+      fetchMock.restore();
       window.Date = RealDate;
     });
 
-    beforeEach (calendarTestSetup);
-    afterEach (cleanup);
+    it ('renders', async () => {
+        // 01.12.2017
+        mockDate(1512130448379);
+        await calendarTestSetup();
 
-    it ('renders', () => {
         renderCalendar(createHolidayService());
         expect(document.body).toMatchSnapshot();
     });
 
-    function createHolidayService () {
-        return window.Urlaubsverwaltung.HolidayService.create();
+    describe.each([
+      ['ALLOWED'],
+      ['WAITING'],
+    ])('ensure vacation of status=%s is clickable', (givenStatus) => {
+      test('in the future', async () => {
+        // today is 2017-12-01
+        mockDate(1512130448379);
+
+        // personId -> createHolidayService (param)
+        // year -> holidayService.fetchPersonal (param)
+        // type -> holidayService.fetchPersonal (implementation detail)
+        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
+            "response": {
+              "absences": [
+                {
+                  date: "2017-12-05",
+                  dayLength: 1,
+                  absencePeriodName: "FULL",
+                  type: 'VACATION',
+                  status: givenStatus,
+                }
+              ]
+            }
+          }
+        );
+
+        await calendarTestSetup();
+
+        const holidayService = createHolidayService({ personId: 42 });
+        // fetch personal holiday data and cache the (mocked) response
+        // the response is used when the calendar renders
+        await holidayService.fetchPersonal(2017);
+
+        renderCalendar(holidayService);
+
+        const $ = document.querySelector.bind(document);
+        expect($('[data-datepicker-date="2017-12-05"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]')).toBeTruthy();
+      });
+
+      test('today', async () => {
+        // today is 2017-12-01
+        mockDate(1512130448379);
+
+        // personId -> createHolidayService (param)
+        // year -> holidayService.fetchPersonal (param)
+        // type -> holidayService.fetchPersonal (implementation detail)
+        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
+            "response": {
+              "absences": [
+                {
+                  date: "2017-12-01",
+                  dayLength: 1,
+                  absencePeriodName: "FULL",
+                  type: 'VACATION',
+                  status: givenStatus,
+                }
+              ]
+            }
+          }
+        );
+
+        await calendarTestSetup();
+
+        const holidayService = createHolidayService({ personId: 42 });
+        // fetch personal holiday data and cache the (mocked) response
+        // the response is used when the calendar renders
+        await holidayService.fetchPersonal(2017);
+
+        renderCalendar(holidayService);
+
+        const $ = document.querySelector.bind(document);
+        expect($('[data-datepicker-date="2017-12-01"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]')).toBeTruthy();
+      });
+    });
+
+    function createHolidayService ({ webPrefix = '', apiPrefix = '', personId = 1 } = {}) {
+        return window.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
     }
 
     function renderCalendar (holidayService) {
@@ -50,14 +131,9 @@ describe ('calendar', () => {
     }
 
     async function calendarTestSetup () {
-        await setup();
-
         window.uv = {};
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
-
-        // 01.12.2017
-        mockDate(1512130448379);
 
         document.body.innerHTML = `<div id="datepicker"></div>`;
 

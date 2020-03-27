@@ -275,18 +275,11 @@ $(function() {
               var year = getYear(date);
               var formattedDate = format(date, 'yyyy-MM-dd');
 
-              if (!_CACHE['publicHoliday']) {
-                  return '';
-              }
-
-              if(_CACHE['publicHoliday'][year]) {
-
+              if (_CACHE['publicHoliday'] && _CACHE['publicHoliday'][year]) {
                 var publicHoliday = findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
-
-                if(publicHoliday) {
+                if (publicHoliday) {
                   return publicHoliday.description;
                 }
-
               }
 
               return '';
@@ -297,18 +290,11 @@ $(function() {
               var year = getYear(date);
               var formattedDate = format(date, 'yyyy-MM-dd');
 
-              if (!_CACHE['holiday']) {
-                  return null;
-              }
-
-              if(_CACHE['holiday'][year]) {
-
+              if (_CACHE['holiday'] && _CACHE['holiday'][year]) {
                 var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
-
-                if(holiday) {
+                if (holiday) {
                   return holiday.status;
                 }
-
               }
 
               return null;
@@ -319,28 +305,18 @@ $(function() {
               var year = getYear(date);
               var formattedDate = format(date, 'yyyy-MM-dd');
 
-              if (!_CACHE['holiday']) {
-                  return '-1';
-              }
-
-              if(_CACHE['holiday'][year]) {
-
+              if (_CACHE['holiday'] && _CACHE['holiday'][year]) {
                 var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
-
-                if(holiday) {
+                if (holiday) {
                   return holiday.href;
                 }
-
               }
 
-              if(_CACHE['sick'][year]) {
-
+              if (_CACHE['sick'] && _CACHE['sick'][year]) {
                   var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
-
-                  if(sickDay) {
+                  if (sickDay) {
                       return sickDay.href;
                   }
-
               }
 
               return '-1';
@@ -351,28 +327,18 @@ $(function() {
                 var year = getYear(date);
                 var formattedDate = format(date, 'yyyy-MM-dd');
 
-                if (!_CACHE['holiday']) {
-                    return '';
-                }
-
-                if(_CACHE['holiday'][year]) {
-
+                if (_CACHE['holiday'] && _CACHE['holiday'][year]) {
                     var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
-
-                    if(holiday) {
+                    if (holiday) {
                         return holiday.type;
                     }
-
                 }
 
-                if(_CACHE['sick'][year]) {
-
+                if (_CACHE['sick'] && _CACHE['sick'][year]) {
                     var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
-
-                    if(sickDay) {
+                    if (sickDay) {
                         return sickDay.type;
                     }
-
                 }
 
                 return '';
