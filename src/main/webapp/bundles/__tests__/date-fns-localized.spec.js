@@ -1,8 +1,8 @@
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import localeDE from 'date-fns/locale/de';
-import { setLocale } from "../lib/date-fns/locale-resolver";
+import { setLocale } from "../../lib/date-fns/locale-resolver";
 
-jest.mock('../lib/date-fns/locale-resolver');
+jest.mock('../../lib/date-fns/locale-resolver');
 
 describe('date-fns-localized', () => {
   let navigatorLanguage = '';
@@ -26,7 +26,7 @@ describe('date-fns-localized', () => {
   ])('loads date-fn german locale for window.navigator.language=%s', async (givenLanguage) => {
     navigatorLanguage = givenLanguage;
 
-    require('./date-fns-localized');
+    require('../date-fns-localized');
 
     // wait for resolved promise in implementation
     // which then calls `setLocale`
