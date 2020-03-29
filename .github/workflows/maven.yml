@@ -71,13 +71,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Maven clean
-        run: ./mvnw clean
       - name: Run SonarCloud analyse
         run: >
           ./mvnw --batch-mode
           -Pcoverage
-          verify
+          clean verify
           sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=synyx
