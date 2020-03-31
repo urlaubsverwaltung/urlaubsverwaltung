@@ -33,7 +33,7 @@
     "jquery": "3.4.1",
     "jquery-ui": "1.12.1",
     "jquery-ui-themes": "1.12.0",
-    "list.js": "1.3.0",
+    "list.js": "1.5.0",
     "tablesorter": "2.31.3",
     "timepicker": "1.11.14",
     "underscore": "1.10.2"
