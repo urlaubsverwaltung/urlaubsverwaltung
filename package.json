@@ -35,7 +35,7 @@
     "jquery-ui-themes": "1.12.0",
     "list.js": "1.5.0",
     "tablesorter": "2.31.3",
-    "timepicker": "1.11.14",
+    "timepicker": "1.12.0",
     "underscore": "1.10.2"
   },
   "devDependencies": {
