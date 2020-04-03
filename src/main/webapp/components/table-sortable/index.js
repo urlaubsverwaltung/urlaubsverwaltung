@@ -11,7 +11,7 @@ $(document).ready(function () {
     format: function (s) {
       var d;
       if (s.length > 10) {
-        d = s.substring(0, 10);
+        d = s.slice(0, 10);
       } else if (s.length == 10) {
         d = s;
       } else {

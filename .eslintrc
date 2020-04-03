@@ -13,6 +13,9 @@
   "globals": {
     "Urlaubsverwaltung": true
   },
+  "rules": {
+    "unicorn/prefer-reflect-apply": "off"
+  },
   "overrides": [
     {
       "files": "src/main/webapp/lib/date-fns/**",
