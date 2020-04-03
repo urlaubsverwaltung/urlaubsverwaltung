@@ -5,6 +5,16 @@ import '../../components/timepicker';
 import sendGetDaysRequest from '../send-get-days-request';
 import sendGetDepartmentVacationsRequest from '../send-get-department-vacations-request';
 
+function valueToDate(dateString) {
+  var match = dateString.match(/\d+/g);
+
+  var y = match[0];
+  var m = match[1] - 1;
+  var d = match[2];
+
+  return new Date(y, m, d);
+}
+
 $(document).ready(async function () {
 
   var datepickerLocale = window.navigator.language;
@@ -41,16 +51,6 @@ $(document).ready(async function () {
   await createDatepickerInstances(selectors, datepickerLocale, urlPrefix, getPersonId, onSelect);
 
   // CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY
-  function valueToDate(dateString) {
-    var match = dateString.match(/\d+/g);
-
-    var y = match[0];
-    var m = match[1] - 1;
-    var d = match[2];
-
-    return new Date(y, m, d);
-  }
-
   const { from, to } = parseQueryString(window.location.search);
   if (from) {
     var startDate = valueToDate(from);

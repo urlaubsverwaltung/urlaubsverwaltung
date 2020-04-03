@@ -22,6 +22,16 @@ import startOfWeek from '../../lib/date-fns/start-of-week'
 import tooltip from '../tooltip';
 import './calendar.css';
 
+function paramize(p) {
+  var result = '?';
+  for (var v in p) {
+    if (p[v]) {
+      result += v + '=' + p[v] + '&';
+    }
+  }
+  return result.replace(/[&?]$/, '');
+}
+
 $(function() {
 
     var $datepicker = $('#datepicker');
@@ -71,6 +81,10 @@ $(function() {
         selectTo   : 'datepickerSelectTo',
         selectable : 'datepickerSelectable'
     };
+
+    function getDateFromElement(element) {
+      return parseISO($(element).data(DATA.date));
+    }
 
     var Assertion = (function() {
         var holidayService;
@@ -163,25 +177,15 @@ $(function() {
         var apiPrefix;
         var personId;
 
-        function paramize(p) {
-            var result = '?';
-            for (var v in p) {
-                if (p[v]) {
-                    result += v + '=' + p[v] + '&';
-                }
-            }
-            return result.replace(/[?&]$/, '');
-        }
-
         /**
          *
          * @param {string} endpoint
-         * @param {{}} params
+         * @param {{}} parameters
          * @returns {$.ajax}
          */
-        function fetch(endpoint, params) {
+        function fetch(endpoint, parameters) {
 
-            var query = endpoint + paramize(params);
+            var query = endpoint + paramize(parameters);
 
             return $.ajax({
                 url: apiPrefix + query,
@@ -384,13 +388,13 @@ $(function() {
              * @param {Date} [to]
              */
             bookHoliday: function(from, to) {
-                var params = {
+                var parameters = {
                     personId: personId,
                     from: format(from, 'yyyy-MM-dd'),
                     to: to ? format(to, 'yyyy-MM-dd') : undefined
                 };
 
-                document.location.href = webPrefix + '/application/new' + paramize( params );
+                document.location.href = webPrefix + '/application/new' + paramize( parameters );
             },
 
             navigateToApplicationForLeave: function(applicationId) {
@@ -490,6 +494,7 @@ $(function() {
             day: '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
         };
 
+      // eslint-disable-next-line unicorn/consistent-function-scoping
         function render(tmpl, data) {
             return tmpl.replace(/{{(\w+)}}/g, function(_, type) {
 
@@ -807,10 +812,6 @@ $(function() {
             }
         };
 
-        function getDateFromElement(element) {
-            return parseISO($(element).data(DATA.date));
-        }
-
         function selectionFrom(date) {
             if (!date) {
                 const d = $datepicker.data(DATA.selectFrom);
@@ -853,6 +854,7 @@ $(function() {
             });
         }
 
+        // eslint-disable-next-line unicorn/consistent-function-scoping
         function select(element, select) {
 
             var element_ = $(element);
