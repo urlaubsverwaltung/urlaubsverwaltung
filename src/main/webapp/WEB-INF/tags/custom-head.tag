@@ -35,6 +35,7 @@
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/utility.css' />"/>
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
+<script defer src="<asset:url value='npm.core-js.js' />"></script>
 <script defer src="<asset:url value='npm.babel.js' />"></script>
 <script defer src="<asset:url value='npm.jquery.js' />"></script>
 <script defer src="<asset:url value='npm.bootstrap.js' />"></script>
