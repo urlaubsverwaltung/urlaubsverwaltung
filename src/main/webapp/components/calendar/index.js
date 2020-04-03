@@ -176,12 +176,12 @@ $(function() {
         /**
          *
          * @param {string} endpoint
-         * @param {{}} params
+         * @param {{}} parameters
          * @returns {$.ajax}
          */
-        function fetch(endpoint, params) {
+        function fetch(endpoint, parameters) {
 
-            var query = endpoint + paramize(params);
+            var query = endpoint + paramize(parameters);
 
             return $.ajax({
                 url: apiPrefix + query,
@@ -384,13 +384,13 @@ $(function() {
              * @param {Date} [to]
              */
             bookHoliday: function(from, to) {
-                var params = {
+                var parameters = {
                     personId: personId,
                     from: format(from, 'yyyy-MM-dd'),
                     to: to ? format(to, 'yyyy-MM-dd') : undefined
                 };
 
-                document.location.href = webPrefix + '/application/new' + paramize( params );
+                document.location.href = webPrefix + '/application/new' + paramize( parameters );
             },
 
             navigateToApplicationForLeave: function(applicationId) {
