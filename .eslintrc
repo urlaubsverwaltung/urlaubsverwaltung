@@ -18,6 +18,12 @@
   },
   "overrides": [
     {
+      "files": ["**/*.spec.js", "**/*.test.js"],
+      "rules": {
+        "unicorn/consistent-function-scoping": "off"
+      }
+    },
+    {
       "files": "src/main/webapp/lib/date-fns/**",
       "rules": {
         "@urlaubsverwaltung/no-date-fns": "off"

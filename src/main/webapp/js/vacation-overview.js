@@ -3,6 +3,15 @@ import 'tablesorter'
 import html from '../js/html-literal'
 import '../css/vacation-overview.css'
 
+function compare(currentDay, currentValue, status, type, absencePeriodName) {
+  if (currentDay.dayText === currentValue.date
+    && currentValue.status === status
+    && currentValue.type === type
+    && currentValue.absencePeriodName === absencePeriodName) {
+    return true;
+  }
+}
+
 $(function () {
 
     function selectedItemChange() {
@@ -12,15 +21,6 @@ $(function () {
       const selectedDepartmentValue = selectedDepartment.options[selectedDepartment.selectedIndex].text;
       const selectedYearValue = selectedYear.options[selectedYear.selectedIndex].text;
       const selectedMonthValue = selectedMonth.options[selectedMonth.selectedIndex].value;
-
-      function compare(currentDay, currentValue, status, type, absencePeriodName) {
-        if (currentDay.dayText === currentValue.date
-          && currentValue.status === status
-          && currentValue.type === type
-          && currentValue.absencePeriodName === absencePeriodName) {
-          return true;
-        }
-      }
 
       if (selectedYearValue != null && selectedMonthValue != null && selectedDepartmentValue != null) {
         const url = location.protocol + "//" + location.host
