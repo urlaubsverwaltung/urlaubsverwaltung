@@ -170,7 +170,7 @@ $(function() {
                     result += v + '=' + p[v] + '&';
                 }
             }
-            return result.replace(/[?&]$/, '');
+            return result.replace(/[&?]$/, '');
         }
 
         /**

@@ -19,7 +19,7 @@ $(document).ready(function () {
       }
 
       var a = d.split('.');
-      a[1] = a[1].replace(/^[0]+/g, "");
+      a[1] = a[1].replace(/^0+/g, "");
       return new Date(a.reverse().join("/")).getTime();
     },
     type: 'numeric'
