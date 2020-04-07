@@ -1,4 +1,8 @@
-### master
+### [urlaubsverwaltung-3.3.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.3.0)
+* Enable calendar interaction for past days [#1017](https://github.com/synyx/urlaubsverwaltung/pull/1017)
+* Improve height of datepicker months container to show last row [#1054](https://github.com/synyx/urlaubsverwaltung/pull/1054)
+* Consider 'de-XX' locales for date-fns translations additionally to 'de' [#1018](https://github.com/synyx/urlaubsverwaltung/pull/1018) 
+* Lot of dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/67?closed=1)
 
 ### [urlaubsverwaltung-3.2.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.1)
 * Add navigate dependency to overtime overview [#1014](https://github.com/synyx/urlaubsverwaltung/pull/1014)
