@@ -20,6 +20,7 @@ import {
 import format from '../../lib/date-fns/format'
 import startOfWeek from '../../lib/date-fns/start-of-week'
 import tooltip from '../tooltip';
+import { getJSON } from '../../js/fetch';
 import './calendar.css';
 
 function paramize(p) {
@@ -181,16 +182,12 @@ $(function() {
          *
          * @param {string} endpoint
          * @param {{}} parameters
-         * @returns {$.ajax}
+         * @returns {Promise}
          */
         function fetch(endpoint, parameters) {
 
-            var query = endpoint + paramize(parameters);
-
-            return $.ajax({
-                url: apiPrefix + query,
-                dataType: 'json'
-            });
+            const url = apiPrefix + endpoint + paramize(parameters);
+            return getJSON(url);
         }
 
         function cacheAbsences(type, year) {
@@ -278,18 +275,11 @@ $(function() {
               var year = getYear(date);
               var formattedDate = format(date, 'yyyy-MM-dd');
 
-              if (!_CACHE['publicHoliday']) {
-                  return '';
-              }
-
-              if(_CACHE['publicHoliday'][year]) {
-
+              if (_CACHE['publicHoliday'] && _CACHE['publicHoliday'][year]) {
                 var publicHoliday = findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
-
-                if(publicHoliday) {
+                if (publicHoliday) {
                   return publicHoliday.description;
                 }
-
               }
 
               return '';
@@ -300,18 +290,11 @@ $(function() {
               var year = getYear(date);
               var formattedDate = format(date, 'yyyy-MM-dd');
 
-              if (!_CACHE['holiday']) {
-                  return null;
-              }
-
-              if(_CACHE['holiday'][year]) {
-
+              if (_CACHE['holiday'] && _CACHE['holiday'][year]) {
                 var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
-
-                if(holiday) {
+                if (holiday) {
                   return holiday.status;
                 }
-
               }
 
               return null;
@@ -322,28 +305,18 @@ $(function() {
               var year = getYear(date);
               var formattedDate = format(date, 'yyyy-MM-dd');
 
-              if (!_CACHE['holiday']) {
-                  return '-1';
-              }
-
-              if(_CACHE['holiday'][year]) {
-
+              if (_CACHE['holiday'] && _CACHE['holiday'][year]) {
                 var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
-
-                if(holiday) {
+                if (holiday) {
                   return holiday.href;
                 }
-
               }
 
-              if(_CACHE['sick'][year]) {
-
+              if (_CACHE['sick'] && _CACHE['sick'][year]) {
                   var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
-
-                  if(sickDay) {
+                  if (sickDay) {
                       return sickDay.href;
                   }
-
               }
 
               return '-1';
@@ -354,28 +327,18 @@ $(function() {
                 var year = getYear(date);
                 var formattedDate = format(date, 'yyyy-MM-dd');
 
-                if (!_CACHE['holiday']) {
-                    return '';
-                }
-
-                if(_CACHE['holiday'][year]) {
-
+                if (_CACHE['holiday'] && _CACHE['holiday'][year]) {
                     var holiday = findWhere(_CACHE['holiday'][year], {date: formattedDate});
-
-                    if(holiday) {
+                    if (holiday) {
                         return holiday.type;
                     }
-
                 }
 
-                if(_CACHE['sick'][year]) {
-
+                if (_CACHE['sick'] && _CACHE['sick'][year]) {
                     var sickDay = findWhere(_CACHE['sick'][year], {date: formattedDate});
-
-                    if(sickDay) {
+                    if (sickDay) {
                         return sickDay.type;
                     }
-
                 }
 
                 return '';
@@ -412,19 +375,17 @@ $(function() {
             /**
              *
              * @param {number} year
-             * @returns {$.ajax}
+             * @returns {Promise}
              */
             fetchPublic: function(year) {
-
-                var deferred = $.Deferred();
 
                 _CACHE['publicHoliday'] = _CACHE['publicHoliday'] || {};
 
                 if (_CACHE['publicHoliday'][year]) {
-                    return deferred.resolve( _CACHE[year] );
-                } else {
-                    return fetch('/holidays', {year: year, person: personId}).done( cachePublicHoliday(year) );
+                    return Promise.resolve(_CACHE[year])
                 }
+
+                return fetch('/holidays', {year: year, person: personId}).then( cachePublicHoliday(year) );
             },
 
             /**
@@ -432,30 +393,28 @@ $(function() {
              * @param {number} personId
              * @param {number} year
              * @param {number} [month]
-             * @returns {$.ajax}
+             * @returns {Promise}
              */
             fetchPersonal: function(year) {
-                var deferred = $.Deferred();
 
                 _CACHE['holiday'] = _CACHE['holiday'] || {};
 
                 if (_CACHE['holiday'][year]) {
-                    return deferred.resolve( _CACHE[year] );
-                } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).done( cacheAbsences('holiday', year) );
+                    return Promise.resolve(_CACHE[year]);
                 }
+
+                return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).then( cacheAbsences('holiday', year) );
             },
 
             fetchSickDays: function(year) {
-                var deferred = $.Deferred();
 
                 _CACHE['sick'] = _CACHE['sick'] || {};
 
                 if (_CACHE['sick'][year]) {
-                    return deferred.resolve( _CACHE[year] );
-                } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).done( cacheAbsences('sick', year) );
+                    return Promise.resolve(_CACHE[year]);
                 }
+
+                return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).then( cacheAbsences('sick', year) );
             }
         };
 
@@ -629,16 +588,17 @@ $(function() {
                 // NOTE: Order is important here!
 
                 const isPersonalHoliday = assert.isPersonalHolidayFull(date);
+                const isPersonalHolidayApproved = assert.isPersonalHolidayFullApproved(date);
                 const isSickDay = assert.isSickDayFull(date);
 
-                if(isPersonalHoliday || isSickDay) {
+                if (isPersonalHoliday || isPersonalHolidayApproved || isSickDay) {
                   return true;
                 }
 
                 const isPast = assert.isPast(date);
                 const isWeekend = assert.isWeekend(date);
 
-                if(isPast || isWeekend) {
+                if (isPast || isWeekend) {
                     return false;
                 }
 
@@ -786,11 +746,12 @@ $(function() {
                 // to load data for the new (invisible) prev month
                 var date = addMonths(new Date(y, m, 1), 1);
 
-                $.when(
-                    holidayService.fetchPublic   ( getYear(date) ),
-                    holidayService.fetchPersonal ( getYear(date) ),
-                    holidayService.fetchSickDays ( getYear(date) )
-                ).then(view.displayNext);
+                Promise.all([
+                  holidayService.fetchPublic   ( getYear(date) ),
+                  holidayService.fetchPersonal ( getYear(date) ),
+                  holidayService.fetchSickDays ( getYear(date) )
+                ])
+                  .then(view.displayNext);
             },
 
             clickPrevious: function() {
@@ -804,11 +765,11 @@ $(function() {
                 // to load data for the new (invisible) prev month
                 var date = subMonths(new Date(y, m, 1), 1);
 
-                $.when(
-                    holidayService.fetchPublic   ( getYear(date) ),
-                    holidayService.fetchPersonal ( getYear(date) ),
-                    holidayService.fetchSickDays ( getYear(date) )
-                ).then(view.displayPrevious);
+                Promise.all([
+                  holidayService.fetchPublic   ( getYear(date) ),
+                  holidayService.fetchPersonal ( getYear(date) ),
+                  holidayService.fetchSickDays ( getYear(date) )
+                ]).then(view.displayPrevious);
             }
         };
 
