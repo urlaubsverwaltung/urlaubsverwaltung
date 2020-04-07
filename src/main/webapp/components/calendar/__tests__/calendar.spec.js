@@ -1,4 +1,4 @@
-import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from '../../../../test/javascript/test-setup-helper';
+import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from '../../../../../test/javascript/test-setup-helper';
 import fetchMock from 'fetch-mock';
 
 describe ('calendar', () => {
@@ -174,7 +174,7 @@ describe ('calendar', () => {
 
         // loading calendar.js registers a jQuery ready callback
         // which will be executed asynchronously
-        await import('./index.js');
+        await import('./../index.js');
 
         // therefore we have to wait till ready callbacks are invoked
         return waitForFinishedJQueryReadyCallbacks();

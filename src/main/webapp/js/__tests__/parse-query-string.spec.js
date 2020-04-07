@@ -1,4 +1,4 @@
-import parseQueryString from './parse-query-string';
+import parseQueryString from './../parse-query-string';
 
 describe('parseQueryString', () => {
   it('returns object of window.location.search', () => {
