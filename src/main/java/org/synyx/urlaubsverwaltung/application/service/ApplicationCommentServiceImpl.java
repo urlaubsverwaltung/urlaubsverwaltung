@@ -33,10 +33,8 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
                                      Person author) {
 
         final ApplicationComment comment = new ApplicationComment(author);
-
         comment.setAction(action);
         comment.setApplication(application);
-
         text.ifPresent(comment::setText);
 
         return commentDAO.save(comment);
