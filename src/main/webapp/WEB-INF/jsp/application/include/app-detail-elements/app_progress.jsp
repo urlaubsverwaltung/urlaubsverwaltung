@@ -35,6 +35,9 @@
                         <c:when test="${comment.action == 'CANCELLED' || comment.action == 'REVOKED'}">
                             <uv:date date="${application.cancelDate}"/>
                         </c:when>
+                        <c:when test="${comment.action == 'REFERRED'}">
+                            <uv:date date="${comment.date}"/>
+                        </c:when>
                     </c:choose>
 
                     <c:if test="${comment.text != null && not empty comment.text}">

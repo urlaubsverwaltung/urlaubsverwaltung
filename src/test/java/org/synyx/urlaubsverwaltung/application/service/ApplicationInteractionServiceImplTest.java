@@ -43,6 +43,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REFERRED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -1027,5 +1028,17 @@ public class ApplicationInteractionServiceImplTest {
         sut.refer(applicationForLeave, recipient, sender);
 
         verify(applicationMailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
+    }
+
+    @Test
+    public void ensureReferCommentWasAdded() {
+
+        final Person recipient = createPerson("recipient");
+        final Person sender = createPerson("sender");
+
+        final Application applicationForLeave = mock(Application.class);
+        sut.refer(applicationForLeave, recipient, sender);
+
+        verify(commentService).create(applicationForLeave, REFERRED, Optional.of(recipient.getNiceName()), sender);
     }
 }
