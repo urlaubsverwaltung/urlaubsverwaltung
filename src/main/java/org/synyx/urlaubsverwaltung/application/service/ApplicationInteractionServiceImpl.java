@@ -32,6 +32,8 @@ import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -164,8 +166,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private Application allowTemporary(Application applicationForLeave, Person privilegedUser,
                                        Optional<String> comment) {
 
-        boolean alreadyAllowed = applicationForLeave.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-            || applicationForLeave.hasStatus(ApplicationStatus.ALLOWED);
+        boolean alreadyAllowed = applicationForLeave.hasStatus(TEMPORARY_ALLOWED)
+            || applicationForLeave.hasStatus(ALLOWED);
 
         if (alreadyAllowed) {
             // Early return - do nothing if expected status already set
@@ -174,7 +176,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             return applicationForLeave;
         }
 
-        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(LocalDate.now(UTC));
         final Application savedApplication = applicationService.save(applicationForLeave);
@@ -192,7 +194,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     private Application allowFinally(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
 
-        if (applicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
+        if (applicationForLeave.hasStatus(ALLOWED)) {
             // Early return - do nothing if expected status already set
 
             LOG.info("Application for leave is already in an allowed status, do nothing: {}",
@@ -201,7 +203,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             return applicationForLeave;
         }
 
-        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        applicationForLeave.setStatus(ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(LocalDate.now(UTC));
         final Application savedApplication = applicationService.save(applicationForLeave);
@@ -251,13 +253,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application cancel(Application application, Person canceller, Optional<String> comment) {
 
-        Person person = application.getPerson();
+        final Person person = application.getPerson();
 
         application.setCanceller(canceller);
         application.setCancelDate(LocalDate.now(UTC));
 
-        if (application.hasStatus(ApplicationStatus.ALLOWED) ||
-            application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+        if (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED)) {
             cancelApplication(application, canceller, comment);
         } else {
             revokeApplication(application, canceller, comment);
@@ -294,11 +295,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     private void cancelApplication(Application application, Person canceller, Optional<String> comment) {
 
-        /*
-         * Only Office can cancel allowed applications for leave directly,
-         * users have to request cancellation
-         */
         if (canceller.hasRole(OFFICE)) {
+            /*
+             * Only Office can cancel allowed applications for leave directly,
+             * users have to request cancellation
+             */
+
             application.setStatus(ApplicationStatus.CANCELLED);
             final Application savedApplication = applicationService.save(application);
 
@@ -312,9 +314,9 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             }
         } else {
             /*
-             * Users cannot cancel already allowed applications
-             * directly. Their commentStatus will be CANCEL_REQUESTED
-             * and the application.status will remain ALLOWED until
+             * Users cannot cancel already allowed applications directly.
+             * Their comment status will be CANCEL_REQUESTED
+             * and the application status will remain ALLOWED until
              * the office or a boss approves the request.
              */
 
@@ -333,7 +335,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         // create an application for leave that is allowed directly
         application.setApplier(creator);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        application.setStatus(ALLOWED);
 
         final Application savedApplication = applicationService.save(application);
 
