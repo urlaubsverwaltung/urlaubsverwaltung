@@ -290,7 +290,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         final ApplicationComment savedComment = commentService.create(savedApplication, REVOKED, comment, canceller);
 
-        if (canceller.hasRole(OFFICE) && !canceller.equals(application.getPerson())) {
+        if (canceller.hasRole(OFFICE)) {
             applicationMailService.sendCancelledByOfficeNotification(application, savedComment);
         }
     }
