@@ -72,4 +72,9 @@ public class OidcSecurityConfiguration {
     public SecurityContextLogoutHandler oidcLogoutHandler() {
         return new OidcLogoutHandler(properties);
     }
+
+    @Bean
+    public OidcLoginLogger oidcLoginLogger(PersonService personService) {
+        return new OidcLoginLogger(personService);
+    }
 }
