@@ -1,5 +1,6 @@
 ### master
 * Add application forwards into comments [#1065](https://github.com/synyx/urlaubsverwaltung/pull/1065)
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/68?closed=1)
 
 ### [urlaubsverwaltung-3.3.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.3.0)
 * Enable calendar interaction for past days [#1017](https://github.com/synyx/urlaubsverwaltung/pull/1017)
