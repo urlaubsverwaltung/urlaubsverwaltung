@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
-import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Optional;
