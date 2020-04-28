@@ -29,13 +29,13 @@
                             <uv:date date="${application.applicationDate}"/>
                         </c:when>
                         <c:when
-                            test="${comment.action == 'ALLOWED' || comment.action == 'TEMPORARY_ALLOWED' || comment.action == 'REJECTED' || comment.action == 'CONVERTED' || comment.action == 'CANCEL_REQUESTED'}">
+                            test="${comment.action == 'ALLOWED' || comment.action == 'TEMPORARY_ALLOWED' || comment.action == 'REJECTED' || comment.action == 'CONVERTED'}">
                             <uv:date date="${application.editedDate}"/>
                         </c:when>
                         <c:when test="${comment.action == 'CANCELLED' || comment.action == 'REVOKED'}">
                             <uv:date date="${application.cancelDate}"/>
                         </c:when>
-                        <c:when test="${comment.action == 'REFERRED'}">
+                        <c:when test="${comment.action == 'REFERRED' || comment.action == 'CANCEL_REQUESTED'}">
                             <uv:date date="${comment.date}"/>
                         </c:when>
                     </c:choose>
