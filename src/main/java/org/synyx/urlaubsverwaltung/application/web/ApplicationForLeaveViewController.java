@@ -61,7 +61,7 @@ public class ApplicationForLeaveViewController {
     @GetMapping("/application")
     public String showWaiting(Model model) {
 
-        List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
+        final List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
         model.addAttribute("applications", applicationsForLeave);
 
         return "application/app_list";
@@ -70,24 +70,24 @@ public class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
-        Person user = personService.getSignedInUser();
+        final Person user = personService.getSignedInUser();
 
-        boolean isHeadOf = user.hasRole(DEPARTMENT_HEAD);
-        boolean isSecondStage = user.hasRole(SECOND_STAGE_AUTHORITY);
-        boolean isBoss = user.hasRole(BOSS);
-        boolean isOffice = user.hasRole(OFFICE);
-
+        final boolean isBoss = user.hasRole(BOSS);
+        final boolean isOffice = user.hasRole(OFFICE);
         if (isBoss || isOffice) {
             // Boss and Office can see all waiting and temporary allowed applications leave
             return getApplicationsForLeaveForBossOrOffice();
         }
 
-        List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
+        final List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
+
+        final boolean isSecondStage = user.hasRole(SECOND_STAGE_AUTHORITY);
         if (isSecondStage) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));
         }
 
+        final boolean isHeadOf = user.hasRole(DEPARTMENT_HEAD);
         if (isHeadOf) {
             // Department head can see only waiting applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(user));
@@ -115,8 +115,8 @@ public class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
 
-        List<Application> waitingApplications = getApplicationsByStates(WAITING);
-        List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
+        final List<Application> waitingApplications = getApplicationsByStates(WAITING);
+        final List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
 
         return waitingApplications.stream()
             .filter(includeApplicationsOf(members))
@@ -129,8 +129,8 @@ public class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
 
-        List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
-        List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
+        final List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
+        final List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
 
         return applications.stream()
             .filter(includeApplicationsOf(members))

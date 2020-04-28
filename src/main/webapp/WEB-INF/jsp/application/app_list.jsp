@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <sec:authorize access="hasAuthority('USER')">
     <c:set var="IS_USER" value="${true}"/>
@@ -47,15 +47,12 @@
 <uv:menu/>
 
 <div class="content">
-
     <div class="container">
 
         <div class="row">
-
             <div class="col-xs-12">
 
                 <legend>
-
                     <spring:message code="applications.waiting"/>
 
                     <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
@@ -72,7 +69,6 @@
                             <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
                         </a>
                     </sec:authorize>
-
                 </legend>
 
                 <div class="feedback">
@@ -96,11 +92,8 @@
                 </div>
 
                 <c:choose>
-
                     <c:when test="${empty applications}">
-
                         <spring:message code="applications.none"/>
-
                     </c:when>
 
                     <c:otherwise>
@@ -212,11 +205,9 @@
                 </c:choose>
 
             </div>
-
         </div>
+
     </div>
 </div>
-
 </body>
-
 </html>
