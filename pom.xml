@@ -40,7 +40,7 @@
     <swagger-annotations.version>1.6.1</swagger-annotations.version>
     <jaxws-api.version>2.3.1</jaxws-api.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
-    <jaxb-impl.version>2.3.2</jaxb-impl.version>
+    <jaxb-impl.version>2.3.3</jaxb-impl.version>
     <jaxb-core.version>2.3.0.1</jaxb-core.version>
     <freemarker-java8.version>2.0.0</freemarker-java8.version>
     <micrometer.version>1.4.2</micrometer.version>
