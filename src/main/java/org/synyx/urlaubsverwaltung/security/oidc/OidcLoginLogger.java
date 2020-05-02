@@ -35,7 +35,7 @@ class OidcLoginLogger {
         final Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
         optionalPerson.ifPresentOrElse(
             person -> LOG.info("User '{}' has signed in", person.getId()),
-            () -> LOG.error("Could not find signed in user with unique id {}", userUniqueID)
+            () -> LOG.error("Could not find signed-in user with id '{}'", userUniqueID)
         );
     }
 }
