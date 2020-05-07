@@ -43,7 +43,7 @@
     <jaxb-impl.version>2.3.3</jaxb-impl.version>
     <jaxb-core.version>2.3.0.1</jaxb-core.version>
     <freemarker-java8.version>2.0.0</freemarker-java8.version>
-    <micrometer.version>1.4.2</micrometer.version>
+    <micrometer.version>1.5.0</micrometer.version>
   </properties>
 
   <scm>
