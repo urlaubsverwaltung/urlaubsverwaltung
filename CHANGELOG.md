@@ -1,5 +1,6 @@
 ### next release
 * Use comment date for application cancel requested state of application [#1089](https://github.com/synyx/urlaubsverwaltung/pull/1089)
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/69?closed=1)
 
 ### [urlaubsverwaltung-3.4.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.0)
 * Add application forwards into comments [#1065](https://github.com/synyx/urlaubsverwaltung/pull/1065)
