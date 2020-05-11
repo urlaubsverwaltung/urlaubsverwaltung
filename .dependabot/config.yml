@@ -21,7 +21,7 @@ update_configs:
 
   - package_manager: "javascript"
     directory: "/"
-    update_schedule: "weekly"
+    update_schedule: "monthly"
     default_labels:
       - "dependencies"
       - "javascript"
