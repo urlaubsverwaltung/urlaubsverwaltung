@@ -143,7 +143,7 @@ module.exports = {
               // build separate bundles for dateFn locales
               // which can be included on demand in the view templates
               // or used as dynamic import and handled by webpack
-              const dateFnLocaleMatch = module.context.match(/node_modules\/date-fns\/locale\/((?!en)(?!_)\w\w)/);
+              const dateFnLocaleMatch = module.context.match(/node_modules\/date-fns\/esm\/locale\/((?!en)(?!_)\w\w)/);
               if (dateFnLocaleMatch) {
                 const locale = dateFnLocaleMatch[1];
                 return `npm.${packageName}.${locale}`;
