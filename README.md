@@ -118,6 +118,39 @@ Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/ur
 downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
 da die WAR-Datei einen Tomcat bundled.
 
+### Vorbereitung
+
+* Legen Sie in der MariaDB/MySQL-Datenbank eine Datenbank `urlaubsverwaltung` an und einen Benutzer `urlaubsverwaltung` mit Zugriffsrechten für diese Datenbank. Stellen Sie sicher, dass MariaDB/MySQL die Systemvoraussetzungen erfüllt.
+* Legen Sie ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopieren Sie die WAR-Datei (s. Download) dorthin.
+* Erstellen Sie in dem Verzeichnis eine Datei `application.properties`, welche die Konfiguration für die Urlaubsverwaltung erlaubt. Die vollständigen Konfigurationsoptionen für `application.properties` finden Sie im Repository: [application.properties](src/main/resources/application.properties)
+* Tragen Sie in der Konfigurationsdatei zunächst die Zugangsdaten für die Datenbank ein:
+
+```
+# DATABASE -------------------------------------------------------------------------------------------------------------
+spring.datasource.url=jdbc:mariadb://localhost:3306/urlaubsverwaltung
+spring.datasource.username=urlaubsverwaltung
+spring.datasource.password=PASSWORT
+```
+
+* Wenn Sie die Urlaubsverwaltung das erste Mal starten, werden automatisch alle Datenbank-Tabellen konfiguriert. Sie können die WAR-Datei direkt wie folgt starten:
+
+```
+java -jar Urlaubsverwaltung.WAR
+``` 
+
+* Wenn die Initialisierung abgeschlossen ist, kann die Oberfläche auf Port 8080 im Browser aufgerufen werden: https://127.0.0.1:8080
+* Damit der Login funktioniert, ist eine Anbindung an Active Directory oder LDAP erforderlich. Diese wird weiter unten beschrieben.
+* Sollten beim Starten oder bei der Konfiguration Probleme auftreten, lässt sich in der Konfigurationsdatei eine ausführliche Debug-Ausgabe konfigurieren:
+
+```
+# LOGGING --------------------------------------------------------------------------------------------------------------
+logging.level.org.synyx.urlaubsverwaltung=TRACE
+logging.level.org.springframework.security=TRACE
+logging.file=logs/urlaubsverwaltung.log
+```
+
+* Das Programm wird in dem Arbeitsverzeichnis ein Verzeichnis `logs` mit Logfiles anlegen.
+
 ## Betrieb
 
 ### Konfiguration
@@ -135,15 +168,17 @@ Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsda
 [hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
 nachgelesen werden.
 
-Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung
+Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung mit ihren Standartwerten.
 
 ```
 # account
 uv.account.default-vacation-days = 20
-uv.account.update.cron = 0 0 5 1 1 * (on 1st January at 05:00 am)
+# (on 1st January at 05:00 am)
+uv.account.update.cron = 0 0 5 1 1 *
 
 # application
-uv.application.reminder-notification.cron = 0 0 7 * * * (every day at 07:00 am)
+# (every day at 07:00 am)
+uv.application.reminder-notification.cron = 0 0 7 * * *
 
 # development
 uv.development.testdata.create
@@ -194,17 +229,17 @@ uv.security.oidc.logout-path
 uv.person.can-be-manipulated = false
 
 # sick-note
-uv.sick-note.end-of-pay-notification.cron = 0 0 6 * * * (every day at 06:00 am)
+# (every day at 06:00 am)
+uv.sick-note.end-of-pay-notification.cron = 0 0 6 * * *
 
 # workingtime
-uv.workingtime.default-working-days[0] = 1 (monday till friday)
+# (monday till friday)
+uv.workingtime.default-working-days[0] = 1
 uv.workingtime.default-working-days[1] = 2
 uv.workingtime.default-working-days[2] = 3
 uv.workingtime.default-working-days[3] = 4
 uv.workingtime.default-working-days[4] = 5
 ```
-
-mit ihren Standartwerten.
 
 
 ### Testbetrieb
