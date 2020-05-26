@@ -7,7 +7,7 @@ We will support the following version with security fixes.
 | Version | Supported          | End of Life (EOL) |
 | ------- | ------------------ | ----------------- |
 | 3.x     | :white_check_mark: | -                 |
-| 2.x     | :white_check_mark: | 31.12.2019        |
+| 2.x     | :x:                | 31.12.2019        |
 | < 1.0   | :x:                | 15.08.2015        |
 
 
