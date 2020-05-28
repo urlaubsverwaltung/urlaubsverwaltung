@@ -144,15 +144,21 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "something");
         model.put("comment", applicationComment);
 
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(person));
+
         sut.sendRejectedNotification(application, applicationComment);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.rejected");
-        assertThat(mail.getTemplateName()).isEqualTo("rejected");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.rejected");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("rejected");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.rejected_information");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("rejected_information");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
     }
 
     @Test

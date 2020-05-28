@@ -99,6 +99,7 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
+        // send reject information to the applicant
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.rejected")
@@ -106,6 +107,16 @@ class ApplicationMailService {
             .build();
 
         mailService.send(mailToApplicant);
+
+        // send reject information to all other relevant
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        final Mail mailToRelevantRecipients = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.rejected_information")
+            .withTemplate("rejected_information", model)
+            .build();
+        mailService.send(mailToRelevantRecipients);
+
     }
 
     /**
