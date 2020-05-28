@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
@@ -28,6 +27,7 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
@@ -119,7 +119,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(savedApplication.getPerson(),
             savedApplication.getPeriod(), timeConfiguration));
 
-        eventId.ifPresent(s -> absenceMappingService.create(savedApplication.getId(), AbsenceType.VACATION, s));
+        eventId.ifPresent(s -> absenceMappingService.create(savedApplication.getId(), VACATION, s));
 
         return savedApplication;
     }
@@ -236,9 +236,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationMailService.sendRejectedNotification(savedApplication, createdComment);
 
-        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedApplication.getId(),
-            AbsenceType.VACATION);
-
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedApplication.getId(), VACATION);
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
@@ -265,7 +263,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
-            AbsenceType.VACATION);
+            VACATION);
 
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());

@@ -130,7 +130,7 @@ public class ApplicationMailServiceIT {
     }
 
     @Test
-    public void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
+    public void ensureNotificationAboutRejectedApplicationIsSentToApplierAndRelevantPersons() throws MessagingException, IOException {
 
         activateMailSettings();
 
@@ -145,9 +145,12 @@ public class ApplicationMailServiceIT {
         final Application application = createApplication(person);
         application.setBoss(boss);
 
+        final Person departmentHead = createPerson("departmentHead", "Department", "Head", "dh@firma.test");
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(boss, departmentHead));
+
         sut.sendRejectedNotification(application, comment);
 
-        // was email sent?
+        // was email sent to applicant?
         List<Message> inbox = Mailbox.get(person.getEmail());
         assertThat(inbox.size()).isOne();
 
@@ -163,6 +166,34 @@ public class ApplicationMailServiceIT {
         assertThat(content).contains("/web/application/1234");
         assertThat(content).contains(comment.getText());
         assertThat(content).contains(comment.getPerson().getNiceName());
+
+        // was email sent to boss
+        List<Message> inboxBoss = Mailbox.get(boss.getEmail());
+        assertThat(inboxBoss.size()).isOne();
+
+        Message msgBoss = inboxBoss.get(0);
+        assertThat(msgBoss.getSubject()).isEqualTo("Ein Urlaubsantrag wurde abgelehnt");
+
+        String contentBoss = (String) msgBoss.getContent();
+        assertThat(contentBoss).contains("Hallo Hugo Boss");
+        assertThat(contentBoss).contains("der von Lieschen Müller am");
+        assertThat(contentBoss).contains("gestellte Antrag wurde von Hugo Boss abgelehnt");
+        assertThat(contentBoss).contains(comment.getText());
+        assertThat(contentBoss).contains(comment.getPerson().getNiceName());
+
+        // was email sent to departmentHead
+        List<Message> inboxDepartmentHead = Mailbox.get(departmentHead.getEmail());
+        assertThat(inboxDepartmentHead.size()).isOne();
+
+        Message msgDepartmentHead = inboxDepartmentHead.get(0);
+        assertThat(msgDepartmentHead.getSubject()).isEqualTo("Ein Urlaubsantrag wurde abgelehnt");
+
+        String contentDepartmentHead = (String) msgDepartmentHead.getContent();
+        assertThat(contentDepartmentHead).contains("Hallo Department Head");
+        assertThat(contentDepartmentHead).contains("der von Lieschen Müller am");
+        assertThat(contentDepartmentHead).contains("gestellte Antrag wurde von Hugo Boss abgelehnt");
+        assertThat(contentDepartmentHead).contains(comment.getText());
+        assertThat(contentDepartmentHead).contains(comment.getPerson().getNiceName());
     }
 
     @Test
