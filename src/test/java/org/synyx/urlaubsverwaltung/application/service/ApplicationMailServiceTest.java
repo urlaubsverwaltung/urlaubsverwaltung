@@ -229,21 +229,30 @@ class ApplicationMailServiceTest {
     void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
         final Application application = new Application();
-        final ApplicationComment applicationComment = new ApplicationComment(new Person(), clock);
+        final Person person = new Person();
+        application.setPerson(person);
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("comment", applicationComment);
 
+        final List<Person> relevantPersons = List.of(new Person());
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(relevantPersons);
+
         sut.sendCancellationRequest(application, applicationComment);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest");
-        assertThat(mail.getTemplateName()).isEqualTo("application_cancellation_request");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest.applicant");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancellation_request_applicant");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(relevantPersons);
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_request");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
     }
 
     @Test

@@ -179,12 +179,21 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, createdComment);
 
+        // send mail to applicant
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.cancellationRequest.applicant")
+            .withTemplate("application_cancellation_request_applicant", model)
+            .build();
+        mailService.send(mailToApplicant);
+
+        // send reject information to all other relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
         final Mail mailToOffice = Mail.builder()
-            .withRecipient(NOTIFICATION_OFFICE)
+            .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest")
             .withTemplate("application_cancellation_request", model)
             .build();
-
         mailService.send(mailToOffice);
     }
 

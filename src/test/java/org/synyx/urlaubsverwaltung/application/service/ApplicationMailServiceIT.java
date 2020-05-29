@@ -216,7 +216,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
 
     @Test
-    void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
+    void ensureApplicantAndOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
@@ -229,19 +229,38 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Bitte stornieren!");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2020, 5, 29));
+        application.setEndDate(LocalDate.of(2020, 5, 29));
+
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(relevantPerson));
 
         sut.sendCancellationRequest(application, comment);
 
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        // send mail to applicant?
+        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxPerson.length).isOne();
+
+        Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).contains("Anfrage zur Stornierung wurde eingereicht");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
+
+        String contentPerson = (String) msgPerson.getContent();
+        assertThat(contentPerson).contains("Hallo Lieschen Müller");
+        assertThat(contentPerson).contains("deine Anfrage zum Stornieren deines bereits genehmigten Antrags ");
+        assertThat(contentPerson).contains("29.05.2020 bis 29.05.2020 wurde eingereicht.");
+        assertThat(contentPerson).contains("/web/application/1234");
+
+        // send mail to all relevant persons?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
-        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // check content of email
         String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Marlene Muster");
+        assertThat(content).contains("Hallo Relevant Person");
         assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
         assertThat(content).contains("/web/application/1234");
     }
