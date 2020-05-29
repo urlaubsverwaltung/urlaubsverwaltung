@@ -278,14 +278,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         application.setStatus(ApplicationStatus.REVOKED);
         final Application savedApplication = applicationService.save(application);
-
         LOG.info("Revoked application for leave: {}", savedApplication);
 
         final ApplicationComment savedComment = commentService.create(savedApplication, REVOKED, comment, canceller);
-
-        if (canceller.hasRole(OFFICE)) {
-            applicationMailService.sendCancelledByOfficeNotification(application, savedComment);
-        }
+        applicationMailService.sendRevokedNotifications(application, savedComment);
     }
 
 

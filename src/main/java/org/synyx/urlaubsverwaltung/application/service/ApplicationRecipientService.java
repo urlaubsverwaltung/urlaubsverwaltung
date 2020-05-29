@@ -92,10 +92,10 @@ class ApplicationRecipientService {
      * <p>
      * If the person is in a department than return
      * - the persons with the role department head
-     * - and the applier of the application
+     * - and the boss of the application
      * else return
      * - all persons with the notification type {@code NOTIFICATION_OFFICE}
-     * - and the applier of the application
+     * - and the boss of the application
      *
      * @param application that has been rejected
      * @return all relevant recipients to inform
