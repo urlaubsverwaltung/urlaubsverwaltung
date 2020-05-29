@@ -42,7 +42,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.anyAbsenceMapping;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
@@ -743,6 +742,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        when(commentService.create(applicationForLeave, CANCELLED, comment, person)).thenReturn(applicationComment);
+
         sut.cancel(applicationForLeave, person, comment);
 
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.CANCELLED);
@@ -751,9 +753,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
         assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
-        verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(CANCELLED), eq(comment), eq(person));
-        verifyNoInteractions(applicationMailService);
+        verify(applicationMailService).sendCancelledByOfficeNotification(applicationForLeave, applicationComment);
     }
 
     @Test

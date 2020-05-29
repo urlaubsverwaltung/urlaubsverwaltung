@@ -388,15 +388,21 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("comment", comment);
 
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(person));
+
         sut.sendCancelledByOfficeNotification(application, comment);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
-        assertThat(mail.getTemplateName()).isEqualTo("cancelled_by_office");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("cancelled_by_office");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.management");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("cancelled_by_office_management");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
     }
 
 

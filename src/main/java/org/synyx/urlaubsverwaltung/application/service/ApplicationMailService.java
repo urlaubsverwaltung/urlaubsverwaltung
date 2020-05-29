@@ -332,6 +332,7 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, comment);
 
+        // send cancelled by office information to the applicant
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancelled.user")
@@ -339,6 +340,16 @@ class ApplicationMailService {
             .build();
 
         mailService.send(mailToApplicant);
+
+        // send cancelled by office information to all other relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        final Mail mailToRelevantPersons = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.cancelled.management")
+            .withTemplate("cancelled_by_office_management", model)
+            .build();
+
+        mailService.send(mailToRelevantPersons);
     }
 
 
