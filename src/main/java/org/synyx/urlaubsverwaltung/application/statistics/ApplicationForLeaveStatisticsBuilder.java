@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
@@ -54,14 +55,12 @@ public class ApplicationForLeaveStatisticsBuilder {
     }
 
     public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to) {
-
         Assert.notNull(person, "Person must be given");
         Assert.notNull(from, "From must be given");
         Assert.notNull(to, "To must be given");
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
         final Optional<Account> account = accountService.getHolidaysAccount(from.getYear(), person);
         if (account.isPresent()) {
             final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account.get());
@@ -72,13 +71,12 @@ public class ApplicationForLeaveStatisticsBuilder {
         for (Application application : applications) {
             if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
                 statistics.addWaitingVacationDays(application.getVacationType(), getVacationDays(application, from.getYear()));
-            } else if (application.hasStatus(ALLOWED)) {
+            } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
                 statistics.addAllowedVacationDays(application.getVacationType(), getVacationDays(application, from.getYear()));
             }
         }
 
         statistics.setLeftOvertime(overtimeService.getLeftOvertimeForPerson(person));
-
         return statistics;
     }
 
@@ -91,8 +89,8 @@ public class ApplicationForLeaveStatisticsBuilder {
         final Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {
-            LocalDate startDate = getStartDateForCalculation(application, relevantYear);
-            LocalDate endDate = getEndDateForCalculation(application, relevantYear);
+            final LocalDate startDate = getStartDateForCalculation(application, relevantYear);
+            final LocalDate endDate = getEndDateForCalculation(application, relevantYear);
 
             return calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
         }
@@ -101,7 +99,6 @@ public class ApplicationForLeaveStatisticsBuilder {
     }
 
     private LocalDate getStartDateForCalculation(Application application, int relevantYear) {
-
         if (application.getStartDate().getYear() != relevantYear) {
             return getFirstDayOfYear(application.getEndDate().getYear());
         }
@@ -110,7 +107,6 @@ public class ApplicationForLeaveStatisticsBuilder {
     }
 
     private LocalDate getEndDateForCalculation(Application application, int relevantYear) {
-
         if (application.getEndDate().getYear() != relevantYear) {
             return getLastDayOfYear(application.getStartDate().getYear());
         }

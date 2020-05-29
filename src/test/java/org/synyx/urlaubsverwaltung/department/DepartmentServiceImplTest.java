@@ -31,8 +31,11 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceImplTest {
@@ -229,7 +232,6 @@ class DepartmentServiceImplTest {
         assertThat(isDepartmentHead).isFalse();
     }
 
-
     @Test
     void ensureReturnsFalseIfIsInTheSameDepartmentButHasNotDepartmentHeadRole() {
 
@@ -246,7 +248,6 @@ class DepartmentServiceImplTest {
         assertThat(isDepartmentHead).isFalse();
     }
 
-
     @Test
     void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
@@ -261,7 +262,6 @@ class DepartmentServiceImplTest {
         verify(departmentRepository).getAssignedDepartments(person);
         verifyNoInteractions(applicationService);
     }
-
 
     @Test
     void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
@@ -283,8 +283,7 @@ class DepartmentServiceImplTest {
         marketing.setMembers(asList(marketing1, marketing2, marketing3, person));
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
@@ -294,64 +293,63 @@ class DepartmentServiceImplTest {
         verify(departmentRepository).getAssignedDepartments(person);
 
         // Ensure fetches applications for leave for every department member
-        verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin1));
-        verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin2));
-        verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing1));
-        verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing2));
-        verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing3));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin1));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin2));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing1));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing2));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing3));
 
         // Ensure does not fetch applications for leave for the given person
-        verify(applicationService, never())
-            .getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(person));
+        verify(applicationService, never()).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(person));
     }
 
 
     @Test
-    void ensureReturnsOnlyWaitingAndAllowedDepartmentApplicationsForLeave() {
+    void ensureReturnsOnlyWaitingAndAllowedAndCancellatioNRequestDepartmentApplicationsForLeave() {
 
-        Person person = mock(Person.class);
-        LocalDate date = LocalDate.now(UTC);
+        final Person person = mock(Person.class);
+        final LocalDate date = LocalDate.now(UTC);
 
-        Person admin1 = new Person("shane", "shane", "shane", "shane@example.org");
-        Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
+        final Person admin1 = new Person("shane", "shane", "shane", "shane@example.org");
+        final Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
 
-        Department admins = createDepartment("admins");
+        final Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, person));
 
-        Department marketing = createDepartment("marketing");
+        final Department marketing = createDepartment("marketing");
         marketing.setMembers(asList(marketing1, person));
 
-        Application waitingApplication = mock(Application.class);
+        final Application waitingApplication = mock(Application.class);
         when(waitingApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(true);
         when(waitingApplication.hasStatus(ALLOWED)).thenReturn(false);
 
-        Application allowedApplication = mock(Application.class);
+        final Application allowedApplication = mock(Application.class);
         when(allowedApplication.hasStatus(ALLOWED)).thenReturn(true);
 
-        Application otherApplication = mock(Application.class);
+        final Application cancellationRequestApplication = mock(Application.class);
+        when(cancellationRequestApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(false);
+        when(cancellationRequestApplication.hasStatus(WAITING)).thenReturn(false);
+        when(cancellationRequestApplication.hasStatus(ALLOWED)).thenReturn(false);
+        when(cancellationRequestApplication.hasStatus(ALLOWED_CANCELLATION_REQUESTED)).thenReturn(true);
+
+        final Application otherApplication = mock(Application.class);
         when(otherApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(false);
         when(otherApplication.hasStatus(WAITING)).thenReturn(false);
         when(otherApplication.hasStatus(ALLOWED)).thenReturn(false);
+        when(otherApplication.hasStatus(ALLOWED_CANCELLATION_REQUESTED)).thenReturn(false);
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), eq(admin1)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(admin1)))
             .thenReturn(asList(waitingApplication, otherApplication));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), eq(marketing1)))
-            .thenReturn(singletonList(allowedApplication));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(marketing1)))
+            .thenReturn(List.of(allowedApplication, cancellationRequestApplication));
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
         assertThat(applications)
-            .hasSize(2)
-            .contains(waitingApplication, allowedApplication)
+            .hasSize(3)
+            .contains(waitingApplication, allowedApplication, cancellationRequestApplication)
             .doesNotContain(otherApplication);
     }
 
@@ -360,11 +358,11 @@ class DepartmentServiceImplTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
-        person.setPermissions(singletonList(Role.USER));
+        person.setPermissions(singletonList(USER));
 
         Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setId(2);
-        office.setPermissions(asList(Role.USER, Role.OFFICE));
+        office.setPermissions(asList(USER, OFFICE));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(office, person);
         assertThat(isAllowed).isTrue();
@@ -375,11 +373,11 @@ class DepartmentServiceImplTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
-        person.setPermissions(singletonList(Role.USER));
+        person.setPermissions(singletonList(USER));
 
         Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setId(2);
-        boss.setPermissions(asList(Role.USER, Role.BOSS));
+        boss.setPermissions(asList(USER, Role.BOSS));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
         assertThat(isAllowed).isTrue();
@@ -390,17 +388,16 @@ class DepartmentServiceImplTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
-        person.setPermissions(singletonList(Role.USER));
+        person.setPermissions(singletonList(USER));
 
         Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
         dep.setMembers(asList(person, departmentHead));
 
-        when(departmentRepository.getManagedDepartments(departmentHead))
-            .thenReturn(singletonList(dep));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
         assertThat(isAllowed).isTrue();
@@ -411,17 +408,16 @@ class DepartmentServiceImplTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
-        person.setPermissions(singletonList(Role.USER));
+        person.setPermissions(singletonList(USER));
 
         Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
         dep.setMembers(singletonList(departmentHead));
 
-        when(departmentRepository.getManagedDepartments(departmentHead))
-            .thenReturn(singletonList(dep));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
         assertThat(isAllowed).isFalse();
@@ -432,18 +428,17 @@ class DepartmentServiceImplTest {
 
         Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setId(1);
-        secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+        secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY));
 
         Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
         dep.setMembers(asList(secondStageAuthority, departmentHead));
         dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
 
-        when(departmentRepository.getManagedDepartments(departmentHead))
-            .thenReturn(singletonList(dep));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
         assertThat(isAllowed).isFalse();
@@ -454,11 +449,11 @@ class DepartmentServiceImplTest {
 
         Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setId(1);
-        secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
+        secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
 
         Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
+        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
         Department dep = createDepartment("dep");
         dep.setMembers(asList(secondStageAuthority, departmentHead));
@@ -476,11 +471,11 @@ class DepartmentServiceImplTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
-        person.setPermissions(singletonList(Role.USER));
+        person.setPermissions(singletonList(USER));
 
         Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setId(2);
-        user.setPermissions(singletonList(Role.USER));
+        user.setPermissions(singletonList(USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, person);
         assertThat(isAllowed).isFalse();
@@ -491,7 +486,7 @@ class DepartmentServiceImplTest {
 
         Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setId(1);
-        user.setPermissions(singletonList(Role.USER));
+        user.setPermissions(singletonList(USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, user);
         assertThat(isAllowed).isTrue();
@@ -500,68 +495,60 @@ class DepartmentServiceImplTest {
     @Test
     void ensureBossHasAccessToAllDepartments() {
         Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        boss.setPermissions(asList(Role.USER, Role.BOSS));
+        boss.setPermissions(asList(USER, Role.BOSS));
 
         Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.findAll()).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(boss);
-
         assertThat(allowedDepartments).containsExactly(dep);
     }
 
     @Test
     void ensureOfficeHasAccessToAllDepartments() {
         Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        office.setPermissions(asList(Role.USER, Role.OFFICE));
+        office.setPermissions(asList(USER, OFFICE));
 
         Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.findAll()).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(office);
-
         assertThat(allowedDepartments).containsExactly(dep);
     }
 
     @Test
     void ensureSecondStageAuthorityHasAccessToAllowedDepartments() {
         Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+        secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority))
-            .thenReturn(singletonList(dep));
+        when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority)).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(secondStageAuthority);
-
         assertThat(allowedDepartments).containsExactly(dep);
     }
 
     @Test
     void ensureDepartmentHeadHasAccessToAllowedDepartments() {
         Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        when(departmentRepository.getManagedDepartments(departmentHead))
-            .thenReturn(singletonList(dep));
+        when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(departmentHead);
-
         assertThat(allowedDepartments).containsExactly(dep);
     }
 
     @Test
     void ensurePersonHasAccessToAssignedDepartments() {
         Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(singletonList(Role.USER));
+        user.setPermissions(singletonList(USER));
 
         Department dep = TestDataCreator.createDepartment("dep");
-        when(departmentRepository.getAssignedDepartments(user))
-            .thenReturn(singletonList(dep));
+        when(departmentRepository.getAssignedDepartments(user)).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(user);
-
         assertThat(allowedDepartments).containsExactly(dep);
     }
 }

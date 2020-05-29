@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -91,11 +92,23 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForStatesAndPerson(List.of(WAITING), members))
             .thenReturn(List.of(application, applicationOfHead, applicationOfSecondStage));
 
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setPerson(headPerson);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(headPerson)))
+            .thenReturn(List.of(applicationCancellationRequest));
+
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(headPerson)))
             .andExpect(model().attribute("applications", hasSize(1)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("Atticus"))))))
+            .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
 
@@ -133,10 +146,22 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
             .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setPerson(bossPerson);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(bossPerson)))
+            .thenReturn(List.of(applicationCancellationRequest));
+
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
 
@@ -174,10 +199,23 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
             .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setPerson(person);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(applicationService.getForStates(List.of(ALLOWED_CANCELLATION_REQUESTED)))
+            .thenReturn(List.of(applicationCancellationRequest));
+
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
+            .andExpect(model().attribute("applications_cancellation_request", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
     }
 
@@ -220,12 +258,24 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members))
             .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setPerson(secondStagePerson);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(secondStagePerson)))
+            .thenReturn(List.of(applicationCancellationRequest));
+
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
             .andExpect(model().attribute("applications", hasSize(2)))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("office"))))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
 
@@ -265,6 +315,17 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), membersSecondStage)).thenReturn(List.of(applicationOfUserB));
         when(applicationService.getForStatesAndPerson(List.of(WAITING), membersDepartment)).thenReturn(List.of(applicationOfUserA));
 
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setPerson(departmentHeadAndSecondStageAuth);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(departmentHeadAndSecondStageAuth)))
+            .thenReturn(List.of(applicationCancellationRequest));
+
         perform(get("/web/application"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
@@ -272,6 +333,7 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentA"))))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentB"))))))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
 
@@ -337,11 +399,23 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(userPerson)))
             .thenReturn(List.of(applicationOfUser));
 
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setPerson(userPerson);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(userPerson)))
+            .thenReturn(List.of(applicationCancellationRequest));
+
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(userPerson)))
             .andExpect(model().attribute("applications", hasSize(1)))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
 

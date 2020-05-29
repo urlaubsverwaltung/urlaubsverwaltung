@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -115,7 +116,10 @@ public class DepartmentServiceImpl implements DepartmentService {
                 departmentApplications.addAll(
                     applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember)
                         .stream()
-                        .filter(application -> application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(WAITING))
+                        .filter(application -> application.hasStatus(ALLOWED)
+                            || application.hasStatus(TEMPORARY_ALLOWED)
+                            || application.hasStatus(WAITING)
+                            || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
                         .collect(toList())));
 
         return departmentApplications;
@@ -162,7 +166,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean isDepartmentHeadOfPerson(Person departmentHead, Person person) {
-
         if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
             return getManagedMembersOfDepartmentHead(departmentHead).contains(person);
         }
@@ -172,7 +175,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person) {
-
         if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
             return getManagedMembersForSecondStageAuthority(secondStageAuthority).contains(person);
         }
@@ -183,12 +185,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person) {
 
-        boolean isOwnData = person.getId().equals(signedInUser.getId());
-        boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHeadOfPerson = isDepartmentHeadOfPerson(signedInUser, person);
-        boolean isSecondStageAuthorityOfPerson = isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isOwnData = person.getId().equals(signedInUser.getId());
+        final boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
+        final boolean isDepartmentHeadOfPerson = isDepartmentHeadOfPerson(signedInUser, person);
+        final boolean isSecondStageAuthorityOfPerson = isSecondStageAuthorityOfPerson(signedInUser, person);
 
-        boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
+        final boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
 
         return isOwnData || isPrivilegedUser;
     }

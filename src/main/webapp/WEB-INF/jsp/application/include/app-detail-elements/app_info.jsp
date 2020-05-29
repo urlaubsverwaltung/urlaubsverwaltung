@@ -35,6 +35,11 @@
                     <c:when test="${application.status == 'ALLOWED'}">
                         <icon:check className="tw-w-5 tw-h-5" />
                     </c:when>
+                    <c:when test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
+                        <icon:check className="tw-w-5 tw-h-5" />
+                        <icon:arrow-narrow-right className="tw-w-5 tw-h-5" />
+                        <icon:trash className="tw-w-5 tw-h-5" />
+                    </c:when>
                     <c:when test="${application.status == 'REJECTED'}">
                         <icon:ban className="tw-w-5 tw-h-5" />
                     </c:when>

@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
@@ -18,20 +19,22 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED_DECLINED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -91,7 +94,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             .filter(Department::isTwoStageApproval)
             .forEach(department -> application.setTwoStageApproval(true));
 
-        application.setStatus(ApplicationStatus.WAITING);
+        application.setStatus(WAITING);
         application.setApplier(applier);
         application.setApplicationDate(LocalDate.now(clock));
 
@@ -167,12 +170,9 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
 
-    private Application allowTemporary(Application applicationForLeave, Person privilegedUser,
-                                       Optional<String> comment) {
+    private Application allowTemporary(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
 
-        boolean alreadyAllowed = applicationForLeave.hasStatus(TEMPORARY_ALLOWED)
-            || applicationForLeave.hasStatus(ALLOWED);
-
+        boolean alreadyAllowed = applicationForLeave.hasStatus(TEMPORARY_ALLOWED) || applicationForLeave.hasStatus(ALLOWED);
         if (alreadyAllowed) {
             // Early return - do nothing if expected status already set
             LOG.info("Application for leave is already in an allowed status, do nothing: {}", applicationForLeave);
@@ -200,10 +200,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         if (applicationForLeave.hasStatus(ALLOWED)) {
             // Early return - do nothing if expected status already set
-
-            LOG.info("Application for leave is already in an allowed status, do nothing: {}",
-                applicationForLeave);
-
+            LOG.info("Application for leave is already in an allowed status, do nothing: {}", applicationForLeave);
             return applicationForLeave;
         }
 
@@ -260,7 +257,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setCanceller(canceller);
         application.setCancelDate(LocalDate.now(clock));
 
-        if (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED)) {
+        if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED) || application.hasStatus(TEMPORARY_ALLOWED)) {
             cancelApplication(application, canceller, comment);
         } else if (application.hasStatus(WAITING)) {
             revokeApplication(application, canceller, comment);
@@ -310,10 +307,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             /*
              * Users cannot cancel already allowed applications directly.
              * Their comment status will be CANCEL_REQUESTED
-             * and the application status will remain ALLOWED until
+             * and the application status will be ALLOWED_CANCELLATION_REQUESTED until
              * the office or a boss approves the request.
              */
-
+            application.setStatus(ALLOWED_CANCELLATION_REQUESTED);
             final Application savedApplication = applicationService.save(application);
 
             LOG.info("Request cancellation of application for leave: {}", savedApplication);
@@ -323,6 +320,25 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         }
     }
 
+    @Override
+    public Application declineCancellationRequest(Application applicationForLeave, Person person, Optional<String> comment){
+
+        if (applicationForLeave.getStatus().compareTo(ALLOWED_CANCELLATION_REQUESTED) != 0) {
+            throw new DeclineCancellationRequestedApplicationForLeaveNotAllowedException(format("Cannot cancel the cancellation " +
+                "request of the application for leave with id %d because the status is %s and not " +
+                "allowed_cancellation_requested.", applicationForLeave.getId(), applicationForLeave.getStatus()));
+        }
+
+        applicationForLeave.setStatus(ALLOWED);
+        applicationForLeave.setEditedDate(LocalDate.now(clock));
+        final Application savedApplication = applicationService.save(applicationForLeave);
+
+        final ApplicationComment applicationComment = commentService.create(savedApplication, CANCEL_REQUESTED_DECLINED, comment, person);
+
+        applicationMailService.sendDeclinedCancellationRequestApplicationNotification(savedApplication, applicationComment);
+
+        return savedApplication;
+    }
 
     @Override
     public Application createFromConvertedSickNote(Application application, Person creator) {
@@ -383,11 +399,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     public Application edit(Application applicationForLeave, Person person, Optional<String> comment) {
 
         if (applicationForLeave.getStatus().compareTo(WAITING) != 0) {
-            throw new EditApplicationForLeaveNotAllowedException(String.format("Cannot edit application for leave " +
+            throw new EditApplicationForLeaveNotAllowedException(format("Cannot edit application for leave " +
                 "with id %d because the status is %s and not waiting.", applicationForLeave.getId(), applicationForLeave.getStatus()));
         }
 
-        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setStatus(WAITING);
         applicationForLeave.setEditedDate(LocalDate.now(clock));
         final Application savedApplication = applicationService.save(applicationForLeave);
 

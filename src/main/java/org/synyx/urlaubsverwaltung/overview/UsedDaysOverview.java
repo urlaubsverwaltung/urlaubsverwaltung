@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
@@ -34,19 +35,18 @@ public class UsedDaysOverview {
     UsedDaysOverview(List<Application> applications, int year, WorkDaysCountService calendarService) {
 
         this.year = year;
-        this.holidayDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED);
-        this.otherDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED);
+        this.holidayDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.otherDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
         for (Application application : applications) {
-            if (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED)) {
-
-                final BigDecimal days = getVacationDays(application, calendarService);
+            if (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
+                final BigDecimal vacationDays = getVacationDays(application, calendarService);
                 final ApplicationStatus status = application.getStatus();
 
                 if (application.getVacationType().isOfCategory(HOLIDAY)) {
-                    this.holidayDays.addDays(status, days);
+                    this.holidayDays.addDays(status, vacationDays);
                 } else {
-                    this.otherDays.addDays(status, days);
+                    this.otherDays.addDays(status, vacationDays);
                 }
             }
         }
@@ -82,7 +82,6 @@ public class UsedDaysOverview {
     }
 
     private LocalDate getStartDateForCalculation(Application application) {
-
         if (application.getStartDate().getYear() != this.year) {
             return getFirstDayOfYear(application.getEndDate().getYear());
         }
@@ -91,7 +90,6 @@ public class UsedDaysOverview {
     }
 
     private LocalDate getEndDateForCalculation(Application application) {
-
         if (application.getEndDate().getYear() != this.year) {
             return getLastDayOfYear(application.getStartDate().getYear());
         }

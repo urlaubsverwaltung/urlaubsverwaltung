@@ -21,6 +21,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -62,7 +63,27 @@ public class ApplicationForLeaveViewController {
         final List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave(signedInUser);
         model.addAttribute("applications", applicationsForLeave);
 
+        final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests();
+        model.addAttribute("applications_cancellation_request", applicationsForLeaveCancellationRequests);
+
         return "application/app_list";
+    }
+
+    private List<ApplicationForLeave> getAllRelevantApplicationsForLeaveCancellationRequests() {
+
+        final Person signedInUser = personService.getSignedInUser();
+
+        List<Application> cancellationRequests;
+        if (signedInUser.hasRole(OFFICE)) {
+            cancellationRequests = applicationService.getForStates(List.of(ALLOWED_CANCELLATION_REQUESTED));
+        } else {
+            cancellationRequests = applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(signedInUser));
+        }
+
+        return cancellationRequests.stream()
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(byStartDate())
+            .collect(toList());
     }
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave(Person signedInUser) {
@@ -92,12 +113,6 @@ public class ApplicationForLeaveViewController {
         return applicationsForLeave.stream()
             .filter(distinctByKey(ApplicationForLeave::getId))
             .collect(toList());
-    }
-
-    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-
-        final Map<Object, Boolean> seen = new ConcurrentHashMap<>();
-        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
@@ -143,5 +158,10 @@ public class ApplicationForLeaveViewController {
 
     private Comparator<ApplicationForLeave> byStartDate() {
         return Comparator.comparing(Application::getStartDate);
+    }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        final Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }

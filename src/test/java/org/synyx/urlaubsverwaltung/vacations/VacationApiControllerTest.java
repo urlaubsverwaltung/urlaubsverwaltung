@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -32,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
@@ -56,12 +58,17 @@ class VacationApiControllerTest {
     void getVacations() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application vacationAllowed = createApplication(person,
-            of(2016, 5, 19), of(2016, 5, 20), FULL);
-        vacationAllowed.setStatus(ALLOWED);
+        final Application vacation1 = createApplication(person,
+            LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
+        vacation1.setStatus(ALLOWED);
+        final Application vacation2 = createApplication(person,
+            LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), DayLength.FULL);
+        vacation2.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndState(any(LocalDate.class), any(LocalDate.class), eq(person), eq(ALLOWED)))
-            .thenReturn(List.of(vacationAllowed));
+            .thenReturn(List.of(vacation1));
+        when(applicationService.getApplicationsForACertainPeriodAndPersonAndState(any(LocalDate.class), any(LocalDate.class), eq(person), eq(ALLOWED_CANCELLATION_REQUESTED)))
+            .thenReturn(List.of(vacation2));
 
         when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
 
@@ -70,10 +77,13 @@ class VacationApiControllerTest {
             .param("to", "2016-12-31"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;"))
-            .andExpect(jsonPath("$.vacations", hasSize(1)))
+            .andExpect(jsonPath("$.vacations", hasSize(2)))
             .andExpect(jsonPath("$.vacations.[0].from", is("2016-05-19")))
             .andExpect(jsonPath("$.vacations.[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$.vacations.[0].person.firstName", is("Marlene")));
+            .andExpect(jsonPath("$.vacations.[0].person.firstName", is("Marlene")))
+            .andExpect(jsonPath("$.vacations.[1].from", is("2016-04-05")))
+            .andExpect(jsonPath("$.vacations.[1].to", is("2016-04-10")))
+            .andExpect(jsonPath("$.vacations.[1].person.firstName", is("Marlene")));
     }
 
     @Test
@@ -183,11 +193,14 @@ class VacationApiControllerTest {
         final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             of(2016, 5, 19), of(2016, 5, 20), FULL);
         vacationAllowed.setStatus(ALLOWED);
-        final Application vacationWaiting = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
-            of(2016, 5, 19), of(2016, 5, 20), FULL);
-        vacationAllowed.setStatus(WAITING);
         when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class), any(LocalDate.class), eq(ALLOWED)))
-            .thenReturn(List.of(vacationAllowed, vacationWaiting));
+            .thenReturn(List.of(vacationAllowed));
+
+        final Application vacationAllowedCancelRequested = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
+            of(2016, 5, 19), of(2016, 5, 20), FULL);
+        vacationAllowed.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class), any(LocalDate.class), eq(ALLOWED_CANCELLATION_REQUESTED)))
+            .thenReturn(List.of(vacationAllowedCancelRequested));
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")

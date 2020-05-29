@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
+
 /**
  * Implementation of interface {@link ApplicationService}.
  */
@@ -37,6 +39,7 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person) {
         return applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
     }
@@ -45,7 +48,6 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status) {
         return applicationRepository.getApplicationsForACertainTimeAndState(startDate, endDate, status);
     }
-
 
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status) {
@@ -64,10 +66,9 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public BigDecimal getTotalOvertimeReductionOfPerson(Person person) {
-
         Assert.notNull(person, "Person to get overtime reduction for must be given.");
 
-        return Optional.ofNullable(applicationRepository.calculateTotalOvertimeOfPerson(person))
-            .orElse(BigDecimal.ZERO);
+        final BigDecimal overtime = applicationRepository.calculateTotalOvertimeOfPerson(person);
+        return Optional.ofNullable(overtime).orElse(ZERO);
     }
 }

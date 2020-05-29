@@ -2,7 +2,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<sec:authorize access="hasAuthority('OFFICE')">
+    <c:set var="IS_OFFICE" value="${true}"/>
+</sec:authorize>
 
 <c:if test="${action == 'cancel'}">
 <script type="text/javascript">
@@ -18,7 +22,16 @@
            action="${URL_PREFIX}/application/${application.id}/cancel" modelAttribute="comment">
 
     <div class="form-group">
-        <strong class="tw-font-medium"><spring:message code='action.delete.confirm'/></strong>
+        <strong class="tw-font-medium">
+            <c:choose>
+                <c:when test="${IS_OFFICE}">
+                    <spring:message code='action.delete.confirm'/>
+                </c:when>
+                <c:otherwise>
+                    <spring:message code='action.delete.request.confirm'/>
+                </c:otherwise>
+            </c:choose>
+        </strong>
     </div>
 
     <div class="form-group">
@@ -26,7 +39,7 @@
             <c:choose>
                 <%-- comment is obligat if it's not the own application or if the application is in status allowed --%>
                 <c:when
-                    test="${application.person.id != signedInUser.id || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED'}">
+                    test="${application.person.id != signedInUser.id || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
                     <spring:message code="action.comment.mandatory"/>
                 </c:when>
                 <%-- otherwise comment is not obligat --%>
@@ -43,7 +56,14 @@
 
     <div class="form-group is-sticky row">
         <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
-            <spring:message code='action.delete'/>
+            <c:choose>
+                <c:when test="${IS_OFFICE}">
+                    <spring:message code='action.delete'/>
+                </c:when>
+                <c:otherwise>
+                    <spring:message code='action.delete.request'/>
+                </c:otherwise>
+            </c:choose>
         </button>
         <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#cancel').hide();">
             <spring:message code="action.cancel"/>

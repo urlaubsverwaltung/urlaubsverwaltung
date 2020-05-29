@@ -5,20 +5,26 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfMonth;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfMonth;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 
 
 /**
@@ -32,8 +38,7 @@ public class VacationDaysService {
     private final Clock clock;
 
     @Autowired
-    public VacationDaysService(WorkDaysCountService workDaysCountService,
-                               ApplicationService applicationService, Clock clock) {
+    public VacationDaysService(WorkDaysCountService workDaysCountService, ApplicationService applicationService, Clock clock) {
         this.workDaysCountService = workDaysCountService;
         this.applicationService = applicationService;
         this.clock = clock;
@@ -55,7 +60,7 @@ public class VacationDaysService {
 
         // it's before April - the left remaining vacation days must be used
         final LocalDate now = LocalDate.now(clock);
-        if (now.getYear() == account.getYear() && DateUtil.isBeforeApril(now, account.getYear())) {
+        if (now.getYear() == account.getYear() && isBeforeApril(now, account.getYear())) {
             return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDays());
         } else {
             // it's after April - only the left not expiring remaining vacation days must be used
@@ -118,32 +123,29 @@ public class VacationDaysService {
     }
 
     BigDecimal getUsedDaysBeforeApril(Account account) {
-        final LocalDate firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), Month.JANUARY.getValue());
-        final LocalDate lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), Month.MARCH.getValue());
+        final LocalDate firstOfJanuary = getFirstDayOfMonth(account.getYear(), JANUARY.getValue());
+        final LocalDate lastOfMarch = getLastDayOfMonth(account.getYear(), MARCH.getValue());
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
     }
 
     BigDecimal getUsedDaysAfterApril(Account account) {
-        final LocalDate firstOfApril = DateUtil.getFirstDayOfMonth(account.getYear(), Month.APRIL.getValue());
-        final LocalDate lastOfDecember = DateUtil.getLastDayOfMonth(account.getYear(), Month.DECEMBER.getValue());
+        final LocalDate firstOfApril = getFirstDayOfMonth(account.getYear(), APRIL.getValue());
+        final LocalDate lastOfDecember = getLastDayOfMonth(account.getYear(), DECEMBER.getValue());
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
     }
 
     BigDecimal getUsedDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
 
-        // get all applications for leave
-        final List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(
-            firstMilestone, lastMilestone, person);
+        // get all applications for leave for a person
+        final List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(firstMilestone, lastMilestone, person);
 
-        // filter them since only waiting and allowed applications for leave of type holiday are relevant
+        // filter them since only WAITING, ALLOWED and ALLOWED_CANCELLATION_REQUESTED applications for leave of type holiday are relevant
         final List<Application> applicationsForLeave = allApplicationsForLeave.stream()
-            .filter(application ->
-                HOLIDAY.equals(application.getVacationType().getCategory()) &&
-                    (application.hasStatus(WAITING) || application.hasStatus(ALLOWED)))
+            .filter(application -> HOLIDAY.equals(application.getVacationType().getCategory()) &&
+                (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)))
             .collect(toList());
 
         BigDecimal usedDays = BigDecimal.ZERO;
-
         for (Application applicationForLeave : applicationsForLeave) {
             LocalDate startDate = applicationForLeave.getStartDate();
             LocalDate endDate = applicationForLeave.getEndDate();
@@ -156,8 +158,7 @@ public class VacationDaysService {
                 endDate = lastMilestone;
             }
 
-            usedDays = usedDays.add(workDaysCountService.getWorkDaysCount(applicationForLeave.getDayLength(), startDate, endDate,
-                person));
+            usedDays = usedDays.add(workDaysCountService.getWorkDaysCount(applicationForLeave.getDayLength(), startDate, endDate, person));
         }
 
         return usedDays;

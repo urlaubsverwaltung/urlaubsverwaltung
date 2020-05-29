@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -215,6 +216,79 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("/web/application/1234");
     }
 
+    @Test
+    void sendDeclinedCancellationRequestApplicationNotification() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
+        office.setPermissions(singletonList(OFFICE));
+        office.setNotifications(singletonList(NOTIFICATION_OFFICE));
+        personService.save(office);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+        comment.setPerson(office);
+        comment.setText("Stornierung abgelehnt!");
+
+        final Application application = createApplication(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
+        application.setStartDate(LocalDate.of(2020, 5, 29));
+        application.setEndDate(LocalDate.of(2020, 5, 29));
+
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        final List<Person> relevantPersons = new ArrayList<>();
+        relevantPersons.add(relevantPerson);
+
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
+
+        sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
+
+        // send mail to applicant?
+        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxPerson.length).isOne();
+
+        Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).contains("Stornierungsantrag abgelehnt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
+
+        String contentPerson = (String) msgPerson.getContent();
+        assertThat(contentPerson).contains("Hallo Lieschen Müller");
+        assertThat(contentPerson).contains("dein Stornierungsantrag des genehmigten Urlaub");
+        assertThat(contentPerson).contains("29.05.2020 bis 29.05.2020 wurde abgelehnt.");
+        assertThat(contentPerson).contains("Kommentar von Marlene Muster zur Ablehnung deines Stornierungsantrags: Stornierung abgelehnt!");
+        assertThat(contentPerson).contains("/web/application/1234");
+
+        // send mail to office
+        MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        assertThat(inboxOffice.length).isOne();
+
+        Message msg = inboxOffice[0];
+        assertThat(msg.getSubject()).contains("Stornierungsantrag abgelehnt");
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        String contentOffice = (String) msg.getContent();
+        assertThat(contentOffice).contains("Hallo Marlene Muster");
+        assertThat(contentOffice).contains("der Stornierungsantrag von Lieschen Müller des genehmigten Urlaub vom");
+        assertThat(contentOffice).contains("29.05.2020 bis 29.05.2020 wurde abgelehnt.");
+        assertThat(contentPerson).contains("Kommentar von Marlene Muster zur Ablehnung deines Stornierungsantrags: Stornierung abgelehnt!");
+        assertThat(contentOffice).contains("/web/application/1234");
+
+        // was email sent to relevant person
+        MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.length).isOne();
+
+        Message msgRelevantPerson = inboxRelevantPerson[0];
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Stornierungsantrag abgelehnt");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+
+        String contentRelevantPerson = (String) msgRelevantPerson.getContent();
+        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
+        assertThat(contentRelevantPerson).contains("der Stornierungsantrag von Lieschen Müller des genehmigten Urlaub vom");
+        assertThat(contentRelevantPerson).contains("29.05.2020 bis 29.05.2020 wurde abgelehnt.");
+        assertThat(contentRelevantPerson).contains("Kommentar von Marlene Muster zur Ablehnung des Stornierungsantrags: Stornierung abgelehnt!");
+        assertThat(contentRelevantPerson).contains("/web/application/1234");
+    }
 
     @Test
     void ensureApplicantAndOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
@@ -242,14 +316,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxPerson.length).isOne();
 
         Message msgPerson = inboxPerson[0];
-        assertThat(msgPerson.getSubject()).contains("Anfrage zur Stornierung wurde eingereicht");
+        assertThat(msgPerson.getSubject()).contains("Stornierung wurde beantragt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
 
         String contentPerson = (String) msgPerson.getContent();
         assertThat(contentPerson).contains("Hallo Lieschen Müller");
-        assertThat(contentPerson).contains("deine Anfrage zum Stornieren deines bereits genehmigten Antrags ");
+        assertThat(contentPerson).contains("dein Antrag zum Stornieren deines bereits genehmigten Antrags ");
         assertThat(contentPerson).contains("29.05.2020 bis 29.05.2020 wurde eingereicht.");
         assertThat(contentPerson).contains("/web/application/1234");
+        assertThat(contentPerson).contains("Überblick deiner offenen Stornierungsanträge findest du unter ");
+        assertThat(contentPerson).contains("/web/application#cancellation-requests");
 
         // send mail to all relevant persons?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -259,10 +335,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Marlene Muster");
-        assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
-        assertThat(content).contains("/web/application/1234");
+        String contentOffice = (String) msg.getContent();
+        assertThat(contentOffice).contains("Hallo Marlene Muster");
+        assertThat(contentOffice).contains("hat beantragt den bereits genehmigten Urlaub");
+        assertThat(contentOffice).contains("/web/application/1234");
+        assertThat(contentOffice).contains("Überblick aller offenen Stornierungsanträge findest du unter");
+        assertThat(contentOffice).contains("/web/application#cancellation-requests");
     }
 
     @Test

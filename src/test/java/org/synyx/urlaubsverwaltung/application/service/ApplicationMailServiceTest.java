@@ -227,6 +227,45 @@ class ApplicationMailServiceTest {
     }
 
     @Test
+    void sendDeclinedCancellationRequestApplicationNotification() {
+
+        final Application application = new Application();
+        final Person person = new Person();
+        application.setPerson(person);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", comment);
+
+        final Person office = new Person();
+        office.setId(1);
+        final List<Person> officeWorkers = List.of(office);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(officeWorkers);
+
+        final Person relevantPerson = new Person();
+        relevantPerson.setId(2);
+        final List<Person> relevantPersons = new ArrayList<>();
+        relevantPersons.add(relevantPerson);
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
+
+        sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest.declined.applicant");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancellation_request_declined_applicant");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson, office));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest.declined.management");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_request_declined_management");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
     void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
         final Application application = new Application();
