@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -29,9 +28,14 @@ import java.util.Optional;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCEL_RE;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfMonth;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfMonth;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 @RestControllerAdviceMarker
 @Api("Absences: Get all absences for a certain period")
@@ -104,13 +108,13 @@ public class AbsenceApiController {
     }
 
     private static LocalDate getStartDate(String year, Optional<String> optionalMonth) {
-        return optionalMonth.map(s -> DateUtil.getFirstDayOfMonth(parseInt(year), parseInt(s)))
-            .orElseGet(() -> DateUtil.getFirstDayOfYear(parseInt(year)));
+        return optionalMonth.map(s -> getFirstDayOfMonth(parseInt(year), parseInt(s)))
+            .orElseGet(() -> getFirstDayOfYear(parseInt(year)));
     }
 
     private static LocalDate getEndDate(String year, Optional<String> optionalMonth) {
-        return optionalMonth.map(s -> DateUtil.getLastDayOfMonth(parseInt(year), parseInt(s)))
-            .orElseGet(() -> DateUtil.getLastDayOfYear(parseInt(year)));
+        return optionalMonth.map(s -> getLastDayOfMonth(parseInt(year), parseInt(s)))
+            .orElseGet(() -> getLastDayOfYear(parseInt(year)));
     }
 
     private List<DayAbsence> getVacations(LocalDate start, LocalDate end, Person person) {
@@ -123,7 +127,8 @@ public class AbsenceApiController {
             .filter(application ->
                 application.hasStatus(WAITING)
                     || application.hasStatus(TEMPORARY_ALLOWED)
-                    || application.hasStatus(ALLOWED))
+                    || application.hasStatus(ALLOWED)
+                    || application.hasStatus(ALLOWED_CANCEL_RE))
             .collect(toList());
 
         for (Application application : applications) {

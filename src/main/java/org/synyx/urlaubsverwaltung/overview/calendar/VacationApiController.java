@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCEL_RE;
 
 @RestControllerAdviceMarker
 @Api("Vacations: Get all vacations for a certain period")
@@ -89,7 +90,8 @@ public class VacationApiController {
         List<Application> applications = new ArrayList<>();
 
         if (personId == null && departmentMembers == null) {
-            applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED);
+            applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED));
+            applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED_CANCEL_RE));
         }
 
         if (personId != null) {
@@ -97,11 +99,10 @@ public class VacationApiController {
 
             if (person.isPresent()) {
                 if (departmentMembers == null || !departmentMembers) {
-                    applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate,
-                        endDate, person.get(), ALLOWED);
+                    applications.addAll(applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person.get(), ALLOWED));
+                    applications.addAll(applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person.get(), ALLOWED_CANCEL_RE));
                 } else {
-                    applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(),
-                        startDate, endDate);
+                    applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(), startDate, endDate);
                 }
             }
         }

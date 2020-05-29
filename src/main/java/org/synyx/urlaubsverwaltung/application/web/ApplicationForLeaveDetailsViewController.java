@@ -39,6 +39,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCEL_RE;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -266,6 +267,7 @@ public class ApplicationForLeaveDetailsViewController {
 
         final boolean isWaiting = application.hasStatus(WAITING);
         final boolean isAllowed = application.hasStatus(ALLOWED);
+        final boolean isAllowedCancellationRequest = application.hasStatus(ALLOWED_CANCEL_RE);
         final boolean isTemporaryAllowed = application.hasStatus(TEMPORARY_ALLOWED);
 
         // security check: only two cases where cancelling is possible
@@ -275,7 +277,7 @@ public class ApplicationForLeaveDetailsViewController {
         if (signedInUser.equals(application.getPerson())) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
+        } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed || isAllowedCancellationRequest)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {

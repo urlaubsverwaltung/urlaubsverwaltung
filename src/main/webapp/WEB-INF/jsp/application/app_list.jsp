@@ -204,6 +204,41 @@
                     </c:otherwise>
                 </c:choose>
 
+                <legend>
+                    <spring:message code="applications.cancellation_request"/>
+                </legend>
+                <c:choose>
+                    <c:when test="${empty applications}">
+                        <spring:message code="applications.none"/>
+                    </c:when>
+
+                    <c:otherwise>
+                        <table class="list-table selectable-table">
+                            <tbody>
+                            <c:forEach items="${applications_cancellation_request}" var="application_la">
+                                <tr class="active"
+                                    onclick="navigate('${URL_PREFIX}/application/${application_la.id}');">
+                                    <td class="hidden-print is-centered">
+                                        <div class="gravatar img-circle"
+                                             data-gravatar="<c:out value='${application_la.person.gravatarURL}?d=mm&s=60'/>"></div>
+                                    </td>
+                                    <td class="hidden-xs">
+                                        <h5><c:out value="${application_la.person.niceName}"/></h5>
+                                        <p><spring:message code="application.applier.cancellation_request"/></p>
+                                    </td>
+                                    <td class="hidden-xs hidden-sm text-right">
+                                        <a class="fa-action positive"
+                                           href="${URL_PREFIX}/application/${application_la.id}?action=cancel&shortcut=true"
+                                           data-title="<spring:message code='action.delete'/>">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
 

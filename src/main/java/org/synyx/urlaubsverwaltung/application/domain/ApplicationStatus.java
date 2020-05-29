@@ -24,6 +24,12 @@ public enum ApplicationStatus {
     ALLOWED,
 
     /**
+     * Status after the application for leave was allowed but the applicant wants to cancel the own application.
+     * The application for leave is at this point not cancelled.
+     */
+    ALLOWED_CANCEL_RE,
+
+    /**
      * Status after a boss has rejected application for leave.
      */
     REJECTED,

@@ -20,8 +20,10 @@ import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCEL_RE;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 /**
@@ -48,12 +50,11 @@ public class OverlapService {
      */
     public OverlapCase checkOverlap(final Application application) {
 
-        Person person = application.getPerson();
-        LocalDate startDate = application.getStartDate();
-        LocalDate endDate = application.getEndDate();
+        final Person person = application.getPerson();
+        final LocalDate startDate = application.getStartDate();
+        final LocalDate endDate = application.getEndDate();
 
-        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
-            application.getDayLength());
+        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate, application.getDayLength());
 
         if (!application.isNew()) {
             applications = applications.stream()
@@ -61,7 +62,7 @@ public class OverlapService {
                 .collect(toList());
         }
 
-        List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
+        final List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
 
         return getOverlapCase(startDate, endDate, applications, sickNotes);
     }
@@ -75,15 +76,14 @@ public class OverlapService {
      */
     public OverlapCase checkOverlap(final SickNote sickNote) {
 
-        Person person = sickNote.getPerson();
-        LocalDate startDate = sickNote.getStartDate();
-        LocalDate endDate = sickNote.getEndDate();
+        final Person person = sickNote.getPerson();
+        final LocalDate startDate = sickNote.getStartDate();
+        final LocalDate endDate = sickNote.getEndDate();
 
-        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
+        final List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
             sickNote.getDayLength());
 
         List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
-
         if (!sickNote.isNew()) {
             sickNotes = sickNotes.stream()
                 .filter(input -> input.getId() != null && !input.getId().equals(sickNote.getId()))
@@ -92,7 +92,6 @@ public class OverlapService {
 
         return getOverlapCase(startDate, endDate, applications, sickNotes);
     }
-
 
     /**
      * Determine the case of overlap for the given period and overlapping applications for leave and sick notes.
@@ -103,8 +102,7 @@ public class OverlapService {
      * @param sickNotes    that are overlapping in the given period
      * @return {@link OverlapCase} - none, partly, fully
      */
-    OverlapCase getOverlapCase(LocalDate startDate, LocalDate endDate, List<Application> applications,
-                               List<SickNote> sickNotes) {
+    OverlapCase getOverlapCase(LocalDate startDate, LocalDate endDate, List<Application> applications, List<SickNote> sickNotes) {
 
         // case (1): no overlap at all
         if (applications.isEmpty() && sickNotes.isEmpty()) {
@@ -137,7 +135,6 @@ public class OverlapService {
         }
     }
 
-
     /**
      * Get all active applications for leave of the given person that are in the given period.
      *
@@ -147,11 +144,10 @@ public class OverlapService {
      * @param dayLength defines the time of day of the period
      * @return {@link List} of {@link Application}s overlapping with the period
      */
-    private List<Application> getRelevantApplicationsForLeave(Person person, LocalDate startDate,
-                                                              LocalDate endDate, DayLength dayLength) {
+    private List<Application> getRelevantApplicationsForLeave(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
         // get all applications for leave
-        List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+        final List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
 
         // remove the non-relevant ones
         return applicationsForLeave.stream()
@@ -160,15 +156,11 @@ public class OverlapService {
     }
 
     private Predicate<Application> withOverlappingDayLength(DayLength dayLength) {
-        return application ->
-            application.getDayLength().equals(DayLength.FULL) ||
-                dayLength.equals(DayLength.FULL) ||
-                application.getDayLength().equals(dayLength);
-
+        return application -> application.getDayLength().equals(FULL) || dayLength.equals(FULL) || application.getDayLength().equals(dayLength);
     }
 
     private Predicate<Application> withConflictingStatus() {
-        return application -> application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED);
+        return application -> application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCEL_RE) || application.hasStatus(TEMPORARY_ALLOWED);
     }
 
 

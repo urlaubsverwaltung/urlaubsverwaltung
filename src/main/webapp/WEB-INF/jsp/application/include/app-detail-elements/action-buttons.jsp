@@ -46,7 +46,7 @@
 
 <%-- CANCEL ACTION --%>
 <c:if
-    test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED'}">
+    test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED' || application.status == 'ALLOWED_CANCEL_RE'}">
     <c:if test="${(IS_USER && IS_OWN) || IS_OFFICE}">
         <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
            onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">

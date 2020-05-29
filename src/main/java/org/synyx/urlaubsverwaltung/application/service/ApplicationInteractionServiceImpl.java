@@ -32,6 +32,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.C
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCEL_RE;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -162,12 +163,9 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
 
-    private Application allowTemporary(Application applicationForLeave, Person privilegedUser,
-                                       Optional<String> comment) {
+    private Application allowTemporary(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
 
-        boolean alreadyAllowed = applicationForLeave.hasStatus(TEMPORARY_ALLOWED)
-            || applicationForLeave.hasStatus(ALLOWED);
-
+        boolean alreadyAllowed = applicationForLeave.hasStatus(TEMPORARY_ALLOWED) || applicationForLeave.hasStatus(ALLOWED);
         if (alreadyAllowed) {
             // Early return - do nothing if expected status already set
             LOG.info("Application for leave is already in an allowed status, do nothing: {}", applicationForLeave);
@@ -195,10 +193,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         if (applicationForLeave.hasStatus(ALLOWED)) {
             // Early return - do nothing if expected status already set
-
-            LOG.info("Application for leave is already in an allowed status, do nothing: {}",
-                applicationForLeave);
-
+            LOG.info("Application for leave is already in an allowed status, do nothing: {}", applicationForLeave);
             return applicationForLeave;
         }
 
@@ -255,7 +250,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setCanceller(canceller);
         application.setCancelDate(LocalDate.now(UTC));
 
-        if (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED)) {
+        // ALLOWED_CANCELLATION_REQUESTED
+        if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCEL_RE) || application.hasStatus(TEMPORARY_ALLOWED)) {
             cancelApplication(application, canceller, comment);
         } else {
             revokeApplication(application, canceller, comment);
@@ -305,10 +301,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             /*
              * Users cannot cancel already allowed applications directly.
              * Their comment status will be CANCEL_REQUESTED
-             * and the application status will remain ALLOWED until
+             * and the application status will be ALLOWED_CANCELLATION_REQUESTED until
              * the office or a boss approves the request.
              */
-
+            application.setStatus(ApplicationStatus.ALLOWED_CANCEL_RE);
             final Application savedApplication = applicationService.save(application);
 
             LOG.info("Request cancellation of application for leave: {}", savedApplication);

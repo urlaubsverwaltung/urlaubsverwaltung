@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCEL_RE;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
@@ -48,19 +49,17 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     @Override
     boolean isLastPriorityProvider() {
-
         return true;
     }
 
     private List<Optional<TimedAbsence>> checkForVacation(LocalDate date, Person person) {
 
-        final
-
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date,
-            person)
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(date, date, person)
             .stream()
-            .filter(application -> application.hasStatus(WAITING) ||
-                application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED))
+            .filter(application -> application.hasStatus(WAITING)
+                || application.hasStatus(TEMPORARY_ALLOWED)
+                || application.hasStatus(ALLOWED)
+                || application.hasStatus(ALLOWED_CANCEL_RE))
             .collect(toList());
 
         if (applications.isEmpty()) {

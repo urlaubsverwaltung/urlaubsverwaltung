@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -22,6 +21,12 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCEL_RE;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 
 /**
@@ -108,24 +113,23 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
-    public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
-                                                                                   LocalDate startDate, LocalDate endDate) {
+    public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate) {
 
-        List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
-        List<Application> departmentApplications = new ArrayList<>();
+        final List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
+        final List<Application> departmentApplications = new ArrayList<>();
 
         departmentMembers.stream()
             .filter(departmentMember -> !departmentMember.equals(member))
             .forEach(departmentMember ->
                 departmentApplications.addAll(
-                    applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate,
-                        departmentMember)
-                        .stream()
-                        .filter(application ->
-                            application.hasStatus(ApplicationStatus.ALLOWED)
-                                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
-                                || application.hasStatus(ApplicationStatus.WAITING))
-                        .collect(toList())));
+                    applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember).stream()
+                        .filter(application -> application.hasStatus(ALLOWED)
+                            || application.hasStatus(ALLOWED_CANCEL_RE)
+                            || application.hasStatus(TEMPORARY_ALLOWED)
+                            || application.hasStatus(WAITING))
+                        .collect(toList())
+                )
+            );
 
         return departmentApplications;
     }
@@ -133,8 +137,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private List<Person> getMembersOfAssignedDepartments(Person member) {
 
-        Set<Person> relevantPersons = new HashSet<>();
-        List<Department> departments = getAssignedDepartmentsOfMember(member);
+        final Set<Person> relevantPersons = new HashSet<>();
+        final List<Department> departments = getAssignedDepartmentsOfMember(member);
 
         for (Department department : departments) {
             List<Person> members = department.getMembers();
@@ -148,8 +152,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
 
-        Set<Person> relevantPersons = new HashSet<>();
-        List<Department> departments = getManagedDepartmentsOfDepartmentHead(departmentHead);
+        final Set<Person> relevantPersons = new HashSet<>();
+        final List<Department> departments = getManagedDepartmentsOfDepartmentHead(departmentHead);
 
         departments.forEach(department -> relevantPersons.addAll(
             department.getMembers().stream()
@@ -164,8 +168,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
 
-        Set<Person> relevantPersons = new HashSet<>();
-        List<Department> departments = getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority);
+        final Set<Person> relevantPersons = new HashSet<>();
+        final List<Department> departments = getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority);
 
         departments.forEach(department -> relevantPersons.addAll(
             department.getMembers().stream()
@@ -184,11 +188,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean isDepartmentHeadOfPerson(Person departmentHead, Person person) {
-
-        if (departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = getManagedMembersOfDepartmentHead(departmentHead);
-
-            return members.contains(person);
+        if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
+            return getManagedMembersOfDepartmentHead(departmentHead).contains(person);
         }
 
         return false;
@@ -197,11 +198,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person) {
-
-        if (secondStageAuthority.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            List<Person> members = getManagedMembersForSecondStageAuthority(secondStageAuthority);
-
-            return members.contains(person);
+        if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
+            return getManagedMembersForSecondStageAuthority(secondStageAuthority).contains(person);
         }
 
         return false;
@@ -210,12 +208,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person) {
 
-        boolean isOwnData = person.getId().equals(signedInUser.getId());
-        boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHeadOfPerson = isDepartmentHeadOfPerson(signedInUser, person);
-        boolean isSecondStageAuthorityOfPerson = isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isOwnData = person.getId().equals(signedInUser.getId());
+        final boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
+        final boolean isDepartmentHeadOfPerson = isDepartmentHeadOfPerson(signedInUser, person);
+        final boolean isSecondStageAuthorityOfPerson = isSecondStageAuthorityOfPerson(signedInUser, person);
 
-        boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
+        final boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
 
         return isOwnData || isPrivilegedUser;
     }
