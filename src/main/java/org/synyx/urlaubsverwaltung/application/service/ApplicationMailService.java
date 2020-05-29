@@ -218,8 +218,14 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, comment);
 
+        // send cancelled by office information to the applicant
         final Person recipient = application.getPerson();
         mailService.sendMailTo(recipient, "subject.application.cancelled.user", "cancelled_by_office", model);
+
+        // send cancelled by office information to all other relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        mailService.sendMailToEach(relevantRecipientsToInform, "subject.application.cancelled.management",
+            "cancelled_by_office_management", model);
     }
 
 

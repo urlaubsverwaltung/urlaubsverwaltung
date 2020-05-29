@@ -530,9 +530,12 @@ public class ApplicationMailServiceIT {
         final ApplicationComment comment = new ApplicationComment(person);
         comment.setText("Geht leider nicht");
 
+        final Person relevantPerson = createPerson("relevant", "Relevant", "Person", "relevantperson@firma.test");
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(relevantPerson));
+
         sut.sendCancelledByOfficeNotification(application, comment);
 
-        // was email sent?
+        // was email sent to applicant?
         List<Message> inboxApplicant = Mailbox.get(person.getEmail());
         assertThat(inboxApplicant.size()).isOne();
 
@@ -540,13 +543,27 @@ public class ApplicationMailServiceIT {
         assertThat(msg.getSubject()).isEqualTo("Dein Antrag wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("Marlene Muster hat einen deiner Urlaubsanträge storniert.");
         assertThat(content).contains(comment.getText());
         assertThat(content).contains(comment.getPerson().getNiceName());
         assertThat(content).contains("/web/application/1234");
+
+        // was email sent to relevant person?
+        List<Message> inboxRelevantPerson = Mailbox.get(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.size()).isOne();
+
+        Message msgRelevantPerson = inboxRelevantPerson.get(0);
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein Antrag wurde vom Office storniert");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+
+        String contentRelevantPerson = (String) msgRelevantPerson.getContent();
+        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
+        assertThat(contentRelevantPerson).contains("Marlene Muster hat den Urlaubsantrag von Lieschen Müller vom 29.05.2020 storniert.");
+        assertThat(contentRelevantPerson).contains(comment.getText());
+        assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
+        assertThat(contentRelevantPerson).contains("/web/application/1234");
     }
 
 

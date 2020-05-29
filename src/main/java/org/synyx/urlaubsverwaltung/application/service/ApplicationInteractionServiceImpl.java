@@ -28,6 +28,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
@@ -298,12 +299,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             LOG.info("Cancelled application for leave: {}", savedApplication);
 
-            final ApplicationComment savedComment = commentService.create(savedApplication, ApplicationAction.CANCELLED, comment,
-                canceller);
-
-            if (!canceller.equals(savedApplication.getPerson())) {
-                applicationMailService.sendCancelledByOfficeNotification(savedApplication, savedComment);
-            }
+            final ApplicationComment savedComment = commentService.create(savedApplication, CANCELLED, comment, canceller);
+            applicationMailService.sendCancelledByOfficeNotification(savedApplication, savedComment);
         } else {
             /*
              * Users cannot cancel already allowed applications directly.

@@ -826,6 +826,9 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(person);
+        when(commentService.create(applicationForLeave, CANCELLED, comment, person)).thenReturn(applicationComment);
+
         sut.cancel(applicationForLeave, person, comment);
 
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.CANCELLED);
@@ -834,9 +837,7 @@ public class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
         assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
-        verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(CANCELLED), eq(comment), eq(person));
-        verifyZeroInteractions(applicationMailService);
+        verify(applicationMailService).sendCancelledByOfficeNotification(applicationForLeave, applicationComment);
     }
 
 
