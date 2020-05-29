@@ -278,6 +278,49 @@ class ApplicationMailService {
     }
 
     /**
+     * Send emails to the applicant and to all relevant persons if an application for leave got revoked.
+     *
+     * @param application the application which got cancelled
+     * @param comment     describes the reason of the cancellation
+     */
+    void sendRevokedNotifications(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(COMMENT, comment);
+
+        if (application.getPerson().equals(application.getCanceller())) {
+
+            final Mail mailToApplicant = Mail.builder()
+                .withRecipient(application.getPerson())
+                .withSubject("subject.application.revoked.applicant")
+                .withTemplate("revoked_applicant", model)
+                .build();
+
+            mailService.send(mailToApplicant);
+        } else {
+
+            final Mail mailToNotApplicant = Mail.builder()
+                .withRecipient(application.getPerson())
+                .withSubject("subject.application.revoked.notApplicant")
+                .withTemplate("revoked_not_applicant", model)
+                .build();
+
+            mailService.send(mailToNotApplicant);
+        }
+
+        // send reject information to all other relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        final Mail mailToRelevantPersons = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.revoked.management")
+            .withTemplate("revoked_management", model)
+            .build();
+
+        mailService.send(mailToRelevantPersons);
+    }
+
+    /**
      * Send an email to the applicant if an application for leave got cancelled by office.
      *
      * @param application the application which got cancelled

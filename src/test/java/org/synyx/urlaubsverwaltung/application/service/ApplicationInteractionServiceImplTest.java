@@ -53,6 +53,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.C
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CONVERTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REFERRED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
@@ -668,7 +669,7 @@ class ApplicationInteractionServiceImplTest {
 
     // CANCEL APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
     @Test
-    void ensureCancellingNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesButSendsNoEmail() {
+    void ensureCancelledNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesAndSendsEmail() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
@@ -677,17 +678,17 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        sut.cancel(applicationForLeave, person, comment);
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        when(commentService.create(applicationForLeave, REVOKED, comment, person)).thenReturn(applicationComment);
 
+        sut.cancel(applicationForLeave, person, comment);
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.REVOKED);
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getCanceller()).isEqualTo(person);
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
-        verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(person));
-        verifyNoInteractions(applicationMailService);
+        verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -810,7 +811,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
-        verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendRevokedNotifications(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
     @Test
@@ -825,8 +826,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
         when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
-            .thenReturn(new ApplicationComment(person, clock));
+            .thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, canceller, comment);
 
@@ -838,7 +840,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
-        verifyNoInteractions(applicationMailService);
+        verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
     }
 
     @Test
