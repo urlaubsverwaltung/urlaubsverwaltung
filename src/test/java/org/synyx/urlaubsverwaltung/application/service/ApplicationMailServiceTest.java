@@ -146,15 +146,21 @@ public class ApplicationMailServiceTest {
     public void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
         final Application application = new Application();
-        final ApplicationComment applicationComment = new ApplicationComment(new Person());
+        final Person person = new Person();
+        application.setPerson(person);
+        final ApplicationComment applicationComment = new ApplicationComment(person);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("comment", applicationComment);
 
+        final List<Person> relevantPersons = List.of(new Person());
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(relevantPersons);
+
         sut.sendCancellationRequest(application, applicationComment);
 
-        verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.application.cancellationRequest", "application_cancellation_request", model);
+        verify(mailService).sendMailTo(application.getPerson(), "subject.application.cancellationRequest.applicant", "application_cancellation_request_applicant", model);
+        verify(mailService).sendMailToEach(relevantPersons, "subject.application.cancellationRequest", "application_cancellation_request", model);
     }
 
     @Test

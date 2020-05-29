@@ -226,7 +226,7 @@ public class ApplicationMailServiceIT {
 
 
     @Test
-    public void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
+    public void ensureApplicantAndOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
         activateMailSettings();
 
@@ -242,18 +242,35 @@ public class ApplicationMailServiceIT {
 
         final Application application = createApplication(person);
 
+        final Person relevantPerson = createPerson("relevant", "Relevant", "Person", "relevantperson@firma.test");
+        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(relevantPerson));
+
         sut.sendCancellationRequest(application, comment);
 
-        List<Message> inbox = Mailbox.get(office.getEmail());
+        // send mail to applicant?
+        List<Message> inboxPerson = Mailbox.get(person.getEmail());
+        assertThat(inboxPerson.size()).isOne();
+
+        Message msgPerson = inboxPerson.get(0);
+        assertThat(msgPerson.getSubject()).contains("Anfrage zur Stornierung wurde eingereicht");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
+
+        String contentPerson = (String) msgPerson.getContent();
+        assertThat(contentPerson).contains("Hallo Lieschen Müller");
+        assertThat(contentPerson).contains("deine Anfrage zum Stornieren deines bereits genehmigten Antrags ");
+        assertThat(contentPerson).contains("29.05.2020 bis 29.05.2020 wurde eingereicht.");
+        assertThat(contentPerson).contains("/web/application/1234");
+
+        // send mail to all relevant persons?
+        List<Message> inbox = Mailbox.get(relevantPerson.getEmail());
         assertThat(inbox.size()).isOne();
 
         Message msg = inbox.get(0);
         assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
-        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // check content of email
         String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Office");
+        assertThat(content).contains("Hallo Relevant Person");
         assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
         assertThat(content).contains("/web/application/1234");
     }

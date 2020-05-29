@@ -112,7 +112,13 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, createdComment);
 
-        mailService.sendMailTo(NOTIFICATION_OFFICE, "subject.application.cancellationRequest", "application_cancellation_request", model);
+        // send mail to applicant
+        mailService.sendMailTo(application.getPerson(), "subject.application.cancellationRequest.applicant", "application_cancellation_request_applicant", model);
+
+        // send reject information to all other relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        mailService.sendMailToEach(relevantRecipientsToInform, "subject.application.cancellationRequest",
+            "application_cancellation_request", model);
     }
 
     /**

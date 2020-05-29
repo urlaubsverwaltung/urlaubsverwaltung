@@ -1,7 +1,7 @@
-Hallo ${recipient.niceName},
+Hallo ${application.person.niceName},
 
-${application.person.niceName} hat beantragt den bereits genehmigten Urlaub vom
-${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")} zu stornieren.
+deine Anfrage zum Stornieren deines bereits genehmigten Antrags vom
+${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")} wurde eingereicht.
 
 <#if (comment.text)?has_content>
 Kommentar zur Stornierung von ${comment.person.niceName} zum Antrag: ${comment.text}
