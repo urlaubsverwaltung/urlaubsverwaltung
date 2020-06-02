@@ -33,6 +33,16 @@ jobs:
           body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
           draft: false
           prerelease: false
+      - name: Upload Release Asset
+          id: upload-release-asset
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: target/${{ github.ref }}.war
+            asset_name: ${{ github.ref }}.war
+            asset_content_type: application/zip
       - name: Publish docker image to Docker Hub
         run: >
           ./mvnw --batch-mode
