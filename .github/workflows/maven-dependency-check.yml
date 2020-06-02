@@ -25,7 +25,7 @@ jobs:
           frontend:install-node-and-npm
           frontend:npm@install-npm-dependencies
           org.owasp:dependency-check-maven:check
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: dependency-check-report
           path: target/dependency-check-report.html
