@@ -1,7 +1,7 @@
 {
   "account_form.js": "/assets/account_form.e2542a7250b0835126a5.min.js",
   "app_detail.js": "/assets/app_detail.6aaec92d0aa4a79213e7.min.js",
-  "app_detail~app_form~person_overview.js": "/assets/app_detail~app_form~person_overview.8ba5fb9488e8d2ecf5d8.min.js",
+  "app_detail~app_form~person_overview.js": "/assets/app_detail~app_form~person_overview.19b19c24a52d612111f2.min.js",
   "app_form.js": "/assets/app_form.dca6b45fe69db2717ecd.min.js",
   "app_form~overtime_form~person_overview~sick_note_form.css": "/assets/app_form~overtime_form~person_overview~sick_note_form.22b5114bc2e954327921.css",
   "app_form~overtime_form~person_overview~sick_note_form.js": "/assets/app_form~overtime_form~person_overview~sick_note_form.09097c2eba8fe8d90355.min.js",
@@ -11,7 +11,7 @@
   "app_statistics.js": "/assets/app_statistics.76518418a4055ce55a20.min.js",
   "common.css": "/assets/common.b6646766a9417c8af89a.css",
   "common.js": "/assets/common.3d8c556f12e267c67cde.min.js",
-  "copy_to_clipboard_input.js": "/assets/copy_to_clipboard_input.cd77e05968ae9305a902.min.js",
+  "copy_to_clipboard_input.js": "/assets/copy_to_clipboard_input.0cb122e1d750e0f0b819.min.js",
   "date-fns-localized.js": "/assets/date-fns-localized.a0c7b695f00925d8df69.min.js",
   "department_form.js": "/assets/department_form.d0bd5b4dd09e8be39c82.min.js",
   "department_list.js": "/assets/department_list.88b5bf532c0675922c8b.min.js",
