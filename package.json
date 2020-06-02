@@ -50,7 +50,7 @@
     "date-fns": "2.13.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.11.0",
-    "eslint-plugin-unicorn": "18.0.1",
+    "eslint-plugin-unicorn": "19.0.1",
     "fetch-mock": "9.10.1",
     "file-loader": "6.0.0",
     "imports-loader": "0.8.0",
