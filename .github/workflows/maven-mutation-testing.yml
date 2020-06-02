@@ -22,7 +22,7 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Mutation Testing
         run: ./mvnw --batch-mode clean test org.pitest:pitest-maven:mutationCoverage
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: pi-report
           path: target/pit-reports/
