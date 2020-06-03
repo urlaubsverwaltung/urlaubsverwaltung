@@ -1,79 +1,34 @@
-[![Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Urlaubsverwaltung%20CI/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Urlaubsverwaltung+CI%22)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung)
-[![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung)
-[![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+# Urlaubsverwaltung [![Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Urlaubsverwaltung%20CI/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Urlaubsverwaltung+CI%22) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung) [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 
-# Urlaubsverwaltung
-                             
- * [Übersicht](#übersicht)
-   * [Demo System](#demo-system)
- * [FAQ](#faq)
- * [Changelog](CHANGELOG.md) 
- * [Berechtigungen](#berechtigungen)
- * [REST-Schnittstelle](#rest-schnittstelle)
- * [Installation](#installation)
-   * [Systemvoraussetzungen](#systemvoraussetzungen)
-   * [Download](#download)
- * [Betrieb](#betrieb)
-   * [Konfiguration](#konfiguration)
-   * [Testbetrieb](#testbetrieb)
-     * [Starten der Anwendung](#starten-der-anwendung)
-     * [Aufrufen der Anwendung](#aufrufen-der-anwendung)
-   * [Produktivbetrieb](#produktivbetrieb)
-     * [Anwendung als Service](#anwendung-als-service)
-     * [Konfiguration](#konfiguration)
-     * [Datenbank](#datenbank)
-     * [Starten der Anwendung](#starten-der-anwendung)
-     * [Authentifizierung](#authentifizierung)
-     * [Synchronisation der User-Datenbank](#synchronisation-der-user-datenbank)
-     * [Synchronisation mit Kalender](#synchronisation-mit-kalender)
-      * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
-      * [Konfiguration Google Calendar](#konfiguration-google-calendar)
- * [Entwicklung](#entwicklung)
- * [Lizenz](#lizenz)
+Die Urlaubsverwaltung ist eine Web-Anwendung, um *Abwesenheiten* elektronisch verwalten zu können.
 
----
+Anhand von **Urlaubsanträgen** kann ein Mitarbeiter eine Anfrage stellen, die von den jeweils berechtigten Personen genehmigt,
+abgelehnt oder storniert werden kann. Jeder Mitarbeiter kann seine **Überstunden** pflegen, um immer den Überblick
+zu behalten und falls doch mal eine Person ausfallen sollte, so kann die **Krankmeldung** direkt gepflegt werden.
 
-## Übersicht
+Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann schaue auf unserer [Landingpage] vorbei.
 
-Die Urlaubsverwaltung ist eine Web-Anwendung, um Urlaubsanträge elektronisch
-verwalten zu können.
+* [Demo-System](#demo-system)
+* [FAQ](#faq)
+* [Berechtigungen](#berechtigungen)
+* [Betrieb](#betrieb)
+  * [Konfiguration](#konfiguration)
+* [Demodaten Modus](#demodaten-modus)
+* [Entwicklung](#entwicklung)
 
-Mitarbeiter stellen Urlaubsanträge, die von den jeweils Berechtigten genehmigt oder abgelehnt werden können.
-Die Anwendung bietet einen komfortablen Überblick über offene Urlaubsanträge und
-den (verbleibenden) Urlaubsanspruch von Mitarbeitern.
 
-Außerdem können auch Krankmeldungen und Überstunden erfasst und überblickt werden.
+## Demo-System
 
-![Screenshot Urlaubsverwaltung](docs/uv-01.png)
+Möchtest du die Urlaubsverwaltung **ohne** eine langwierige **Registrierung** ausprobieren?  
+Dann steige über unsere [Landingpage] direkt in das [Demo-System](https://urlaubsverwaltung.cloud/demo) ein.
 
-### Demo System
-
-Zum Ausprobieren der Anwendung gibt es ein [Demo System mit dem 'Office' Benutzer](https://urlaubsverwaltung-demo.synyx.de/login?username=office&password=secret)
-zum Testen. Die Rollen findest du im Abschnitt [Testbenutzer](#testbenutzer).
-
-### Geschichte
-
-Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung findest du im
-[synyx Blog](https://www.synyx.de/blog/):
-
-* [Stand November 2011](https://www.synyx.de/blog/elektronische-urlaubsverwaltung-made-by-youngsters/)
-* [Stand November 2012](https://www.synyx.de/blog/urlaubsverwaltung-was-hat-sich-getan/)
-* [Stand Oktober 2014](https://www.synyx.de/blog/urlaubsverwaltung-goes-mobile/)
-* [Stand April 2017](https://synyx.de/blog/urlaubsverwaltung-die-geschichte-eines-open-source-projekts/)
-
----
 
 ## FAQ
 
-Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein
-[FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ).
+Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ).  
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
 vom Typ "Question" erstellen.
 
-## Changelog
-
-Alle Änderungen an der Anwendung werden im [Changelog](CHANGELOG.md) gepflegt.
 
 ## Berechtigungen
 
@@ -89,95 +44,70 @@ beantragen/stornieren und Krankmeldungen pflegen
 * **Admin**: Keine fachliche Rolle sondern nur für den Zugriff von Management Schnittstellen ([Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html)).
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
-
-## REST-Schnittstelle
-
-Die Urlaubsverwaltung besitzt eine sich selbst beschreibende REST-Schnittstelle.
-Diese kann über `/api/` aufgerufen werden.
-
+  
 ---
+  
+## Betrieb
 
-## Installation
+### Voraussetzungen
 
-Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte die folgende Anleitung befolgen.
-
-Zusätzlich wird die Urlaubsverwaltung auch als Docker Image [synyx/urlaubsverwaltung](https://hub.docker.com/r/synyx/urlaubsverwaltung) bereitgestellt.
-Beispiele zu diesem Deployment gibt es [hier](.examples/README.md).
-
-### Systemvoraussetzungen
-
-* JDK 11
-* MariaDB Datenbank (v10.4)
-* Docker 17.12.0+ & Docker Compose
+* [JDK 11](https://openjdk.java.net/install/)
+* [MariaDB Datenbank (v10.4)](https://mariadb.org/)
+* [Security Provider](#security-provider-konfigurieren)
 
 ### Download
 
-Die Anwendung steht auf Github als deploybare WAR-Datei zum Download zur Verfügung.
-Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest)
-downloaden. Auch wenn der Download eine WAR-Datei ist, kann sie wie die bisherige JAR-Datei verwendet werden,
-da die WAR-Datei einen Tomcat bundled.
+Die Anwendung steht als
+* [Web Application Archive (.war)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+* [Docker Image](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 
-### Vorbereitung
+zur Verfügung.
 
-* Legen Sie in der MariaDB/MySQL-Datenbank eine Datenbank `urlaubsverwaltung` an und einen Benutzer `urlaubsverwaltung` mit Zugriffsrechten für diese Datenbank. Stellen Sie sicher, dass MariaDB/MySQL die Systemvoraussetzungen erfüllt.
-* Legen Sie ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopieren Sie die WAR-Datei (s. Download) dorthin.
-* Erstellen Sie in dem Verzeichnis eine Datei `application.properties`, welche die Konfiguration für die Urlaubsverwaltung erlaubt. Die vollständigen Konfigurationsoptionen für `application.properties` finden Sie im Repository: [application.properties](src/main/resources/application.properties)
-* Tragen Sie in der Konfigurationsdatei zunächst die Zugangsdaten für die Datenbank ein:
 
-```
-# DATABASE -------------------------------------------------------------------------------------------------------------
-spring.datasource.url=jdbc:mariadb://localhost:3306/urlaubsverwaltung
-spring.datasource.username=urlaubsverwaltung
-spring.datasource.password=PASSWORT
-```
+#### Installation .war Variante
 
-* Wenn Sie die Urlaubsverwaltung das erste Mal starten, werden automatisch alle Datenbank-Tabellen konfiguriert. Sie können die WAR-Datei direkt wie folgt starten:
+* [Konfiguration Datenbank](#datenbank-konfigurieren)
+* [Konfiguration Security Provider](#security-provider-konfigurieren)
+* Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .war-Datei dorthin.
+* Erstelle in dem Verzeichnis eine Konfigurationsdatei names `application.properties`, welche die Konfiguration für
+die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
+ Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
+  
+Nach der [Konfiguration](#konfiguration) lässt sich die Urlaubsverwaltung starten.
 
-```
-java -jar Urlaubsverwaltung.WAR
+```bash
+java -jar urlaubsverwaltung.war
 ``` 
 
-* Wenn die Initialisierung abgeschlossen ist, kann die Oberfläche auf Port 8080 im Browser aufgerufen werden: https://127.0.0.1:8080
-* Damit der Login funktioniert, ist eine Anbindung an Active Directory oder LDAP erforderlich. Diese wird weiter unten beschrieben.
-* Sollten beim Starten oder bei der Konfiguration Probleme auftreten, lässt sich in der Konfigurationsdatei eine ausführliche Debug-Ausgabe konfigurieren:
+Falls es Probleme beim Starten der Anwendung gibt, ist es hilfreich das [Logging der Anwendung](#logging-konfigurieren)
+zu konfigurieren, damit erhält man mehr Informationen über den Fehlerzustand.
 
-```
-# LOGGING --------------------------------------------------------------------------------------------------------------
-logging.level.org.synyx.urlaubsverwaltung=TRACE
-logging.level.org.springframework.security=TRACE
-logging.file=logs/urlaubsverwaltung.log
-```
 
-* Das Programm wird in dem Arbeitsverzeichnis ein Verzeichnis `logs` mit Logfiles anlegen.
+#### Docker Variante
 
-## Betrieb
+Alle Informationen zum Betrieb mit unserem Docker Image sind im Ordner [.example](.examples) zu finden.
+
 
 ### Konfiguration
 
-Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
+Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application.properties).
 Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
-Anwendung allerdings noch nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
-eigene Properties-Datei hinterlegt werden.
+Anwendung allerdings nicht aus. Spezifische Konfigurationen wie z.B. die [Datenbank Einstellungen](#datenbank-konfigurieren)
+und [Security Provider](#security-provider-konfigurieren) müssen in einer eigenen Konfigurationsdatei hinterlegt werden.
 
-**Einfachste Möglichkeit**:
-Man kann in dem Verzeichnis, in dem man die Anwendung startet eine Datei namens `application.properties` mit eigener
-Konfiguration hinterlegen. Die dort konfigurierten Properties überschreiben dann die Standardwerte.
-
-Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann
-[hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
+Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann in der
+['External Config' Reference](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
 nachgelesen werden.
 
 Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung mit ihren Standartwerten.
 
-```
+```properties
 # account
-uv.account.default-vacation-days = 20
-# (on 1st January at 05:00 am)
-uv.account.update.cron = 0 0 5 1 1 *
+uv.account.default-vacation-days=20
+uv.account.update.cron=0 0 5 1 1 *
 
 # application
-# (every day at 07:00 am)
-uv.application.reminder-notification.cron = 0 0 7 * * *
+uv.application.reminder-notification.cron=0 0 7 * * *
 
 # development
 uv.development.testdata.create
@@ -188,35 +118,35 @@ uv.mail.application-url
 uv.mail.sender
 
 # security
-uv.security.auth =  default
+uv.security.auth=default
 
 uv.security.directory-service.identifier
 uv.security.directory-service.last-name
 uv.security.directory-service.first-name
 uv.security.directory-service.mail-address
-uv.security.directory-service.sync.cron = 0 0 1 * * ? (every night at 01:00 am)
+uv.security.directory-service.sync.cron=0 0 1 * * ?
 uv.security.directory-service.filter.member-of
-uv.security.directory-service.filter.object-class = person
+uv.security.directory-service.filter.object-class=person
 
 ## active directory
-uv.security.directory-service.active-directory.url = ldap://ad.example.org/
-uv.security.directory-service.active-directory.domain = example.org
-uv.security.directory-service.active-directory.sync.enabled = false
-uv.security.directory-service.active-directory.sync.password = password
-uv.security.directory-service.active-directory.sync.user-dn = cn=Administrator,cn=users,dc=example,dc=org
-uv.security.directory-service.active-directory.sync.user-search-base = dc=example,dc=org
+uv.security.directory-service.active-directory.url=ldap://ad.example.org/
+uv.security.directory-service.active-directory.domain=example.org
+uv.security.directory-service.active-directory.sync.enabled=false
+uv.security.directory-service.active-directory.sync.password=password
+uv.security.directory-service.active-directory.sync.user-dn=cn=Administrator,cn=users,dc=example,dc=org
+uv.security.directory-service.active-directory.sync.user-search-base=dc=example,dc=org
 
 ## ldap
-uv.security.directory-service.ldap.url = ldap://ldap.example.org/
-uv.security.directory-service.ldap.base = dc=example,dc=org
+uv.security.directory-service.ldap.url=ldap://ldap.example.org/
+uv.security.directory-service.ldap.base=dc=example,dc=org
 uv.security.directory-service.ldap.manager-dn
 uv.security.directory-service.ldap.manager-password
-uv.security.directory-service.ldap.user-search-filter = (uid={0})
-uv.security.directory-service.ldap.user-search-base = ou=accounts
-uv.security.directory-service.ldap.sync.enabled = false
-uv.security.directory-service.ldap.sync.password = password
-uv.security.directory-service.ldap.sync.user-dn = uid=username,ou=other,ou=accounts,dc=example,dc=org
-uv.security.directory-service.ldap.sync.user-search-base = ou=people,ou=accounts
+uv.security.directory-service.ldap.user-search-filter=(uid={0})
+uv.security.directory-service.ldap.user-search-base=ou=accounts
+uv.security.directory-service.ldap.sync.enabled=false
+uv.security.directory-service.ldap.sync.password=password
+uv.security.directory-service.ldap.sync.user-dn=uid=username,ou=other,ou=accounts,dc=example,dc=org
+uv.security.directory-service.ldap.sync.user-search-base=ou=people,ou=accounts
 
 # oidc (openid connect)
 uv.security.oidc.client-id
@@ -225,28 +155,132 @@ uv.security.oidc.issuer-uri
 uv.security.oidc.logout-path
 
 # person
-uv.person.can-be-manipulated = false
+uv.person.can-be-manipulated=false
 
 # sick-note
-# (every day at 06:00 am)
-uv.sick-note.end-of-pay-notification.cron = 0 0 6 * * *
+uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
 # workingtime
 # (monday till friday)
-uv.workingtime.default-working-days[0] = 1
-uv.workingtime.default-working-days[1] = 2
-uv.workingtime.default-working-days[2] = 3
-uv.workingtime.default-working-days[3] = 4
-uv.workingtime.default-working-days[4] = 5
+uv.workingtime.default-working-days[0]=1
+uv.workingtime.default-working-days[1]=2
+uv.workingtime.default-working-days[2]=3
+uv.workingtime.default-working-days[3]=4
+uv.workingtime.default-working-days[4]=5
 ```
 
 
-### Testbetrieb
+#### Security Provider konfigurieren
 
-#### Starten der Anwendung
+Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkeiten:
 
-Um die Anwendung möglichst schnell ausprobieren zu können, bietet es sich an die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/)
-zu starten:
+* `default`
+    * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
+* `ldap`
+    * Authentifizierung via LDAP
+    * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns
+      konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
+    * Wenn ldaps verwendet werden soll, dann muss die url
+      `uv.security.directory-service.ldap.url=ldaps://oc.example.org`
+      angepasst und am LDAP Server der entsprechende Port freigegeben werden.
+* `activedirectory`
+    * Authentifizierung via Active Directory
+    * Es müssen die Active Directory Domain und LDAP URL konfiguriert
+      sein, damit eine Authentifizierung via Active Directory möglich ist.
+* `oidc`
+    * Authentifizierung via OpenID Connect (OIDC)
+    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
+      Ausserdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
+      die 'Allowed Callback URLs' und ggfs weitere Einstellungen vorgenommen werden.
+
+Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
+Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
+
+Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der eigenen Konfigurationsdatei gesetzt werden.
+
+
+#### Datenbank konfigurieren
+
+Die Anwendung verwendet zur Speicherung der Daten ein MariaDB-Datenbankmanagementsystem. 
+Erstelle in deinem MariaDB-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`
+sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
+
+```properties
+spring.datasource.url=jdbc:mariadb://$HOST:$PORT/$NAME_DER_DATENBANK
+spring.datasource.username=$BENUTZER
+spring.datasource.password=$PASSWORT
+```
+Wenn Sie die Urlaubsverwaltung das erste Mal starten, werden automatisch alle Datenbanktabellen angelegt.
+
+
+#### E-Mail-Server konfigurieren
+
+Um den E-Mail-Server zu konfigurieren müssen folgende Konfigurationen vorgenommen werden.
+
+```properties
+uv.mail.sender=absender@example.org         # Absender der E-Mails
+uv.mail.administrator=admin@example.org     # E-Mail-Adresse des Administrators
+uv.mail.application-url=https://example.org # Diese URL wird in den E-Mails zur Link generierung verwendet
+
+spring.mail.host=$HOST
+spring.mail.port=$PORT
+spring.mail.username=$USERNAME
+spring.mail.password=$PASSWORT
+```
+
+Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/2.1.x/reference/html/boot-features-email.html)
+eingesehen werden.
+
+#### Benutzer-Synchronisation konfigurieren
+
+Seit der Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert,
+sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
+Man kann die automatische Synchronisation aller Benutzer aktivieren, indem der Konfigurationsparameter
+`uv.security.directory-service.ldap.sync.enabled` bzw. `uv.security.directory-service.active-directory.sync.enabled`
+ auf `true` gesetzt wird.
+
+
+#### Logging konfigurieren
+
+Sollten beim Starten der Anwendung Probleme auftreten, lässt sich in der Konfigurationsdatei eine
+ausführliche Debug-Ausgabe konfigurieren, indem das `logging.level.*` pro Paket konfiguriert 
+
+```properties
+logging.level.org.synyx.urlaubsverwaltung=TRACE
+logging.level.org.springframework.security=TRACE
+```
+
+werden kann sowie eine Logdatei
+
+```properties
+logging.file=logs/urlaubsverwaltung.log
+```
+
+geschrieben wird.
+
+
+### Anwendung als Service
+
+Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
+funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation entnommen werden:
+
+* [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
+* [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
+
+
+### Schnittstellen-Dokumentation
+
+Die Urlaubsverwaltung besitzt eine sich selbst beschreibende REST-Schnittstelle.
+Diese kann über `/api/` aufgerufen werden.
+  
+---
+  
+## Demodaten-Modus
+
+### Starten der Anwendung im Demodaten-Modus
+
+Um die Anwendung möglichst schnell lokal ausprobieren zu können, bietet es sich an
+die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/) zu starten:
 
 ```bash
 docker-compose up
@@ -258,10 +292,9 @@ und die Anwendung mit dem Profil `testdata` zu starten:
 java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
 ```
 
-Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbank gestartet und Testdaten generiert.
-Die Testdaten enthalten folgende Nutzer:
+Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbankmanagementsystem gestartet und Demodaten generiert.
 
-#### Testbenutzer
+Die Demodaten enthalten folgende **Benutzer**:
 
 | Rolle                            | Benutzername           | Passwort |
 | -------------------------        | -------------          | -------- |
@@ -272,132 +305,46 @@ Die Testdaten enthalten folgende Nutzer:
 | User & Chef & Office             | office                 | secret   |
 | User & Admin                     | admin                  | secret   |
 
-#### Aufrufen der Anwendung
 
-Folgende systeme sind erreichbar
+Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, muss die Konfiguration
+
+`uv.development.testdata.create`
+
+in den [application-testdata.properties](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application-testdata.properties)
+auf `false` gesetzt werden.
+
+
+### Aufrufen der Anwendung
+
+Folgende Systeme sind erreichbar unter `localhost`
 
 | Service                   | Port    |
 | ------------------------- | ------- |
-| Urlaubsverwaltung         | 8080    |
-| Mailhog                   | 8025    |
+| [Urlaubsverwaltung](http://localhost:8080)         | 8080    |
+| [Mailhog](http://localhost:8025)                   | 8025    |
 | Mailhog SMTP              | 1025    |
-
-
-### Produktivbetrieb
-
-#### Anwendung als Service
-
-Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
-funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation entnommen werden:
-
-* [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
-* [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
-
-#### Datenbank
-
-Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
-
-####  Starten der Anwendung
-
-Im Produktivbetrieb mit der Produktivdatenbank darf die Anwendung natürlich **nicht** mehr mit Testdaten
-gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=testdata` gestartet werden:
-
-```bash
-java -jar urlaubsverwaltung.war
-```
-
-#### Authentifizierung
-
-Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkeiten:
-
-* `default`
-    * für lokalen Entwicklungsmodus
-* `ldap`
-    * Authentifizierung via LDAP
-    * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns
-      konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
-* `activedirectory`
-    * Authentifizierung via Active Directory
-    * Es müssen die Active Directory Domain und LDAP URL konfiguriert
-      sein, damit eine Authentifizierung via Active Directory möglich ist.
-* `oidc`
-    * Authentifizierung via OpenID Connect (OIDC)
-    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
-      Ausserdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggfs weitere Einstellungen vorgenommen werden.
-
-Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
-Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
-
-Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der eigenen Konfigurationsdatei gesetzt werden:
-
-<pre>uv.security.auth=ldap</pre>
-
-bzw.
-
-<pre>uv.security.auth=activedirectory</pre>
-
-#### Synchronisation der User-Datenbank
-
-Ab Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert, sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
-Man kann die automatische Synchronisation aller Benutzer aktivieren indem man in der Konfiguration das Property `uv.security.directory-service.ldap.sync.enabled` bzw. `uv.security.directory-service.active-directory.sync.enabled` auf `true` gesetzt wird:
-
-<pre>uv.security.directory-service.ldap.sync.enabled=true</pre> bzw. <pre>uv.security.directory-service.active-directory.sync.enabled=true</pre>
-
-#### Synchronisation mit Kalender
-
-Die Urlaubsverwaltung bietet die Möglichkeit alle Urlaube und Krankheitstage mit einem Kalender zu synchronisieren. Dafür werden Microsoft Exchange bzw. Office 356 und Google Calendar unterstützt.
-
-##### Konfiguration Microsoft Exchange
-
-![Einstellungsdialog für Microsoft Exchange als Kalenderanbindung](docs/exchange-calendar-settings.png)
-
-Anhand der zu konfigurierenden E-Mail-Adresse wird per Autodiscovery die dazugehörige Exchange Server Adresse ermittelt,
-welche für die Synchronisation verwendet wird. Wichtig ist, dass der gewünschte Kalender bereits zuvor angelegt wurde.
-
-##### Konfiguration Google Calendar
-![Einstellungsdialog für Google Calendar als Kalenderanbindung](docs/google-calendar-settings.png)
-
-Die Anbindung von Google Calendar basiert auf einem OAuth 2.0 Handshake.
-Sobald alle Konfigurationsfelder wie unten beschrieben für die Synchronisation mit Google Calendar befüllt sind, kann mit dem Button "Zugriff erlauben..." der OAuth 2.0 Handshake durchgeführt werden. Sofern dieser Schritt erfolgreich war und die Synchronisation eingerichtet ist, steht neben dem Button "Verbindung zum Google-Kalender ist hergestellt."
-
-###### Client anlegen
-
-![Anlage eines OAuth 2.0 Clients](docs/google-create-oauth-client.png)
-
-Um einen solchen OAuth 2.0 Handshake durchführen zu können, ist es zunächst notwendig die Urlaubsverwaltung als Anwendung bei Google bekannt zu machen.
-Dies geschieht über [APIs und Services](https://console.developers.google.com). Hier muss zunächst ein [Projekt angelegt](https://console.developers.google.com/projectcreate) werden. Sobald das geschehen ist, kann die [Calendar API](https://console.developers.google.com/apis/library/calendar-json.googleapis.com/) aktiviert werden. Nach der Aktivierung müssen außerdem [OAuth 2.0 Client Zugangsdaten](https://console.developers.google.com/apis/credentials/oauthclient) erzeugt werden. Es müssen außerdem die autorisierte Weiterleitungs-URIs mit dem Wert gefüllt werden, der in den Einstellungen unter Weiterleitungs-URL angezeigt wird. Direkt nach der Erstellung werden **Client Id** und **Client Secret** angezeigt. Diese müssen dann in den Einstellungen der Urlaubsverwaltung entsprechend hinterlegt werden.
-
-###### Kalender anlegen/konfigurieren
-
-Eine weitere notwendige Information ist die **Kalender ID**, welche später zur Synchronisation verwendet wird. Es kann dafür entweder ein bestehender Kalender verwendet oder ein [neuer Kalender angelegt](https://calendar.google.com/calendar/r/settings/createcalendar) werden. In Google Calendar kann man dann in den Kalendereinstellungen die **Kalendar ID** finden. Diese muss ebenfalls in der Urlaubsverwaltung gepflegt werden.
-
-###### Urlaubsverwaltung Weiterleitungs-URL
-
-Damit der OAuth 2.0 Handshake durchgeführt werden kann, ist es notwendig die Weiterleitungs-URL bei der Konfiguration der Webanwendung bei Google anzugeben. Diese ist abhängig von der Installation und wird in den Einstellungen des Google Kalenders angezeigt, z.B. `http://localhost:8080/web/google-api-handshake` für ein Testsystem. Sie ist nur für die initiale Freigabe des Kalenders nötig.
-
+  
 ---
-
+  
 ## Entwicklung
 
-Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der Urlaubsverwaltung entwickeln möchte.
+Wenn du uns bei der **Entwicklung** der Urlaubsverwaltung **unterstützen** möchtest,
+dann schau dir die [Contributing to Urlaubsverwaltung](./CONTRIBUTING.md) Referenz und die folgenden
+Abschnitte an. Bei Fragen kannst du gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
+vom Typ "Question" erstellen.
+
+
+### Voraussetzungen
+
+* [JDK 11](https://openjdk.java.net/install/)
+* [Docker 17.12.0+](https://docs.docker.com/get-docker/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+
 
 ### Repository clonen
 
 ```bash
 git clone git@github.com:synyx/urlaubsverwaltung.git
-```
-
-### Release
-
-Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
-Zum sorgenfreien Erstellen eines Release kann folgendes Skript verwendet werden.
-
-```bash
-export RELEASE_VERSION=0.10.0
-export NEW_VERSION=0.11.0-SNAPSHOT
-./release.sh
-git fetch
 ```
 
 ### Anwendung starten
@@ -407,7 +354,7 @@ Da die Urlaubsverwaltung abhängig von einer MariaDB-Datenbank ist, kann diese �
 ```bash
 docker-compose up
 ```
-gestartet werden. ([Wie installiere ich Docker Compose?](https://docs.docker.com/compose/install/))
+gestartet werden.
 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
 Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `testdata` zu starten, um Testdaten generieren
@@ -426,13 +373,15 @@ bzw. für Windows Benutzer über:
 Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run.profiles` gesetzt, statt via
 `spring.profiles.active`. (vgl. https://github.com/spring-projects/spring-boot/issues/10926)
 
+
 ### Anwendung nutzen
 
-Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
+Im Browser lässt sich die Anwendung dann über [http://localhost:8080/](http://localhost:8080/) ansteuern.
 
-Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Testdaten angelegt,
+Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Demodaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
-[Testbenutzern](#testbenutzer) anmelden.
+[Demodaten-Benutzer](#demodaten-benutzer) anmelden.
+
 
 ### Frontend Entwicklung
 
@@ -455,6 +404,7 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 * `npm run build:watch`
   * baut automatisch nach dem Editieren von JavaScript / CSS Dateien neue Assets
 
+
 #### Long term caching von Assets
 
 Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `asstes-mannifest.json` angelegt.
@@ -468,63 +418,22 @@ Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert 
 <script defer src="<asset:url value='npm.jquery.js' />"></script>
 ```
 
-### Anlegen von Testdaten deaktivieren
-
-Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `uv.development.testdata.create`
-in den `application-testdata.properties` auf `false` setzen.
 
 ### API
 
-Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/api` erreichbar ist.
-
-### Authentifizierung
-
-Siehe [Authentifizierung](#authentifizierung)
-
-Die Anwendung mit **OpenID Connect (OIDC)** starten:
-
-```bash
-./mvnw clean spring-boot:run -Duv.security.auth=oidc
-```
-
-Oder in den `application.properties` konfigurieren:
-
-<pre>uv.security.auth=oidc</pre>
+Die Urlaubsverwaltung verfügt über eine API, die unter [http://localhost:8080/api](http://localhost:8080/api) erreichbar ist.
 
 
-Die Anwendung mit **LDAP** starten:
+### Release
+
+Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
+Zum sorgenfreien Erstellen eines Release kann folgendes Skript verwendet werden.
 
 ```bash
-./mvnw clean spring-boot:run -Duv.security.auth=ldap
+export RELEASE_VERSION=0.10.0
+export NEW_VERSION=0.11.0-SNAPSHOT
+./release.sh
+git fetch
 ```
 
-Oder in den `application.properties` konfigurieren:
-
-<pre>uv.security.auth=ldap</pre>
-
-
-Die Anwendung mit **Active Directory (AD)** starten:
-
-```bash
-./mvnw clean spring-boot:run -Duv.security.auth=activedirectory
-```
-
-Oder in den `application.properties` konfigurieren:
-
-<pre>uv.security.auth=activedirectory</pre>
-
-
-### Externe Systeme mit Docker virtualisieren
-
-Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die externen
-Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gezeigt, wie man das mit Docker
-tun kann.](docs/UV_WITH_DOCKER.md)
-
----
-
----
-
-## Lizenz
-
-[synyx/urlaubsverwaltung](http://github.com/synyx/urlaubsverwaltung) is licensed under the
-[Apache License 2.0](LICENSE.txt)
+[Landingpage]: https://urlaubsverwaltung.cloud
