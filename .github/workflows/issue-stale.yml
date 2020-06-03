@@ -18,4 +18,4 @@ jobs:
           days-before-stale: 60
           days-before-close: 14
           stale-issue-label: 'status: stale'
-          exempt-issue-label: 'status: planned'
+          exempt-issue-labels: 'status: planned'
