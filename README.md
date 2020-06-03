@@ -30,7 +30,6 @@
       * [Konfiguration Microsoft Exchange](#konfiguration-microsoft-exchange)
       * [Konfiguration Google Calendar](#konfiguration-google-calendar)
  * [Entwicklung](#entwicklung)
- * [Technologien](#technologien)
  * [Lizenz](#lizenz)
 
 ---
@@ -522,20 +521,6 @@ Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gez
 tun kann.](docs/UV_WITH_DOCKER.md)
 
 ---
-
-## Technologien
-
-* Die Anwendung basiert auf dem [Spring](https://spring.io/projects/spring-boot) Boot Framework.
-* Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt.
-* Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
-[jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
-* Für die Darstellung der Benutzer Avatare wird [Gravatar](http://de.gravatar.com/) benutzt.
-* Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Kalender wird die
-[EWS JAVA API](https://github.com/OfficeDev/ews-java-api) genutzt.
-* Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Google Calendar wird der
-[Google API Client](https://github.com/google/google-api-java-client) verwendet.
-* Zur Synchronisation mit Exchange wird die [EWS Java API](https://github.com/OfficeDev/ews-java-api) verwendet
-* Initialisierung und Migration der Datenbank wird mit [Liquibase](https://www.liquibase.org/) durchgeführt
 
 ---
 
