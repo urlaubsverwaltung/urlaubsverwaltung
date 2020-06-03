@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -33,5 +33,33 @@ jobs:
           body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
           draft: false
           prerelease: false
-      - name: Create docker image
-        run: ./mvnw --batch-mode docker:build docker:push -Ddocker.username=${{ secrets.DOCKER_USERNAME }} -Ddocker.password=${{ secrets.DOCKER_PASSWORD }}
+      - name: Upload Release Asset
+          id: upload-release-asset
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: target/${{ github.ref }}.war
+            asset_name: ${{ github.ref }}.war
+            asset_content_type: application/zip
+      - name: Publish docker image to Docker Hub
+        run: >
+          ./mvnw --batch-mode
+          docker:build
+          docker:push
+          -Ddocker.name=synyx/urlaubsverwaltung
+          -Ddocker.push.registry=registry.hub.docker.com
+          -Ddocker.push.username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker.push.password=${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish docker image to GitHub Packages
+        run: >
+          ./mvnw --batch-mode
+          docker:build
+          docker:push
+          -Ddocker.name=synyx/urlaubsverwaltung/urlaubsverwaltung
+          -Ddocker.push.registry=docker.pkg.github.com
+          -Ddocker.push.username=${{ github.actor }}
+          -Ddocker.push.password=${{ secrets.GITHUB_TOKEN }}
+          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}

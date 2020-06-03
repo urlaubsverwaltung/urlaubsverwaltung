@@ -3,6 +3,9 @@
 The Urlaubsverwaltung is released under the Apache 2.0 license. If you would like to contribute
 something, or simply want to hack on the code this document should help you get started.
 
+## Ideal for contribution
+
+We would be more than pleased if the community would help us build a awesome piece of software for all. To find issues and pull requests that are good for contributions you can use the ['ideal for contribution'](https://github.com/synyx/urlaubsverwaltung/issues?q=is%3Aissue+is%3Aopen+label%3A%22status%3A+ideal-for-contribution%22) label.
 
 ## Using GitHub Issues
 

@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -22,7 +22,7 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Mutation Testing
         run: ./mvnw --batch-mode clean test org.pitest:pitest-maven:mutationCoverage
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: pi-report
           path: target/pit-reports/

@@ -1,7 +1,41 @@
-### master
+### next release version
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/70?closed=1)
+
+### [urlaubsverwaltung-3.4.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.1)
+* Use comment date for application cancel requested state of application [#1089](https://github.com/synyx/urlaubsverwaltung/pull/1089)
+* Log login attempts/errors for oidc provider [#1076](https://github.com/synyx/urlaubsverwaltung/pull/1076) 
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/69?closed=1)
+
+### [urlaubsverwaltung-3.4.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.0)
+* Add application forwards into comments [#1065](https://github.com/synyx/urlaubsverwaltung/pull/1065)
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/68?closed=1)
+
+### [urlaubsverwaltung-3.3.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.3.0)
+* Enable calendar interaction for past days [#1017](https://github.com/synyx/urlaubsverwaltung/pull/1017)
+* Improve height of datepicker months container to show last row [#1054](https://github.com/synyx/urlaubsverwaltung/pull/1054)
+* Consider 'de-XX' locales for date-fns translations additionally to 'de' [#1018](https://github.com/synyx/urlaubsverwaltung/pull/1018) 
+* Lot of dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/67?closed=1)
+
+### [urlaubsverwaltung-3.2.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.1)
+* Add navigate dependency to overtime overview [#1014](https://github.com/synyx/urlaubsverwaltung/pull/1014)
+* Long term caching [#1013](https://github.com/synyx/urlaubsverwaltung/pull/1013)
+
+### [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0)
 * Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
+* Add vacation days to overtime calender  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)
 * Move absences to absence package and some minor cleanups [#977](https://github.com/synyx/urlaubsverwaltung/pull/977)
+* Refactor Dockerfile, changing base image, rename jvm configuration en... [#1006](https://github.com/synyx/urlaubsverwaltung/pull/1006)
+* Add enforce plugin to check for java 11 and maven 3.3.9 [#1001](https://github.com/synyx/urlaubsverwaltung/pull/1001)
+* Minor typo and comma fixes for calendar share feature [#988](https://github.com/synyx/urlaubsverwaltung/pull/988)
 * Upgrade terser-webpack-plugin to 2.3.5
+* Upgrade owasp dependency check plugin to 5.3.1
+* Upgrade editorconfig maven plugin to 0.0.11
+* Upgrade pitest maven plugin to 1.5.0
+* Upgrade frontend maven plugin to 1.9.1
+* Upgrade httpclient to 4.5.12
+* Upgrade httpcore to 4.4.13
+* Upgrade micrometer to 1.3.5
+* Upgrade google api client and services calendar to 1.30.9
 
 ### [urlaubsverwaltung-3.1.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.2)
 * Fix that a multiple day event ends one day to early [#980](https://github.com/synyx/urlaubsverwaltung/pull/980)

@@ -259,6 +259,7 @@ public class OvertimeViewControllerTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_form"));
         resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
+        resultActions.andExpect(model().attribute("person", is(person)));
     }
 
     @Test
@@ -317,6 +318,7 @@ public class OvertimeViewControllerTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_form"));
         resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
+        resultActions.andExpect(model().attribute("person", is(overtimePerson)));
     }
 
     @Test(expected = NestedServletException.class)

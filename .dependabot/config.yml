@@ -1,0 +1,36 @@
+version: 1
+update_configs:
+  - package_manager: "java:maven"
+    directory: "/"
+    update_schedule: "weekly"
+    default_labels:
+      - "dependencies"
+      - "java"
+    allowed_updates:
+      - match:
+          update_type: all
+          dependency_type: direct
+      - match:
+          update_type: security
+          dependency_type: indirect
+    ignored_updates:
+      - match:
+          dependency_name: org.springframework.boot:spring-boot-starter-parent
+          version_requirement: ">= 2.2.a, < 2.3"
+    target_branch: master
+
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "monthly"
+    default_labels:
+      - "dependencies"
+      - "javascript"
+    allowed_updates:
+      - match:
+          update_type: all
+          dependency_type: direct
+      - match:
+          update_type: security
+          dependency_type: indirect
+    target_branch: master
+    version_requirement_updates: auto

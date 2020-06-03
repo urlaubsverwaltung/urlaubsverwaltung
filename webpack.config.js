@@ -29,6 +29,7 @@ module.exports = {
     vacation_overview: './src/main/webapp/bundles/vacation-overview.js',
     department_form: './src/main/webapp/bundles/department-form.js',
     department_list: './src/main/webapp/bundles/department-list.js',
+    overtime_overview: './src/main/webapp/bundles/overtime-overview.js',
     overtime_form: './src/main/webapp/bundles/overtime-form.js',
     settings_form: './src/main/webapp/bundles/settings-form.js',
     account_form: './src/main/webapp/bundles/account-form.js',
@@ -112,6 +113,12 @@ module.exports = {
 
   optimization: {
     runtimeChunk: 'single',
+    // always create named chunkIds to have deterministic builds.
+    // default would be 'natural' which uses numeric ids in order of (import) usage.
+    //    changing the first import usage results in changing ALL chunk ids independently of the actual chunk content
+    //    which reverses the content hash usage in the filename for long-term-caching. (the content hash changes when
+    //    the chunkId changes)
+    chunkIds: 'named',
     splitChunks: {
       chunks: 'all',
       maxInitialRequests: Infinity,
@@ -136,7 +143,7 @@ module.exports = {
               // build separate bundles for dateFn locales
               // which can be included on demand in the view templates
               // or used as dynamic import and handled by webpack
-              const dateFnLocaleMatch = module.context.match(/node_modules\/date-fns\/locale\/((?!en)(?!_)\w\w)/);
+              const dateFnLocaleMatch = module.context.match(/node_modules\/date-fns\/esm\/locale\/((?!en)(?!_)\w\w)/);
               if (dateFnLocaleMatch) {
                 const locale = dateFnLocaleMatch[1];
                 return `npm.${packageName}.${locale}`;

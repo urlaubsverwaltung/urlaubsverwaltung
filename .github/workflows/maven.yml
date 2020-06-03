@@ -7,19 +7,36 @@ on:
   pull_request:
 
 jobs:
-  build:
-    name: build with jdk ${{ matrix.java }}
+  compile:
+    name: compile with jdk ${{ matrix.java }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11', '13' ]
+        java: [ '11', '14' ]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Compile
+        run: ./mvnw --batch-mode clean compile
+  build:
+    name: build with jdk 11
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -27,31 +44,18 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build with Maven
         run: ./mvnw --batch-mode clean verify
-
-  dependency-check:
-    name: analyse with owasp dependency check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Run OWASP dependency check
+      - name: Build docker image and push
+        if: github.ref == 'refs/heads/master'
         run: >
-          ./mvnw --batch-mode clean
-          frontend:install-node-and-npm
-          frontend:npm@install-npm-dependencies
-          org.owasp:dependency-check-maven:check
-      - uses: actions/upload-artifact@v1
-        with:
-          name: dependency-check-report
-          path: target/dependency-check-report.html
+          ./mvnw --batch-mode
+          docker:build
+          docker:push
+          -Ddocker.name=synyx/urlaubsverwaltung/urlaubsverwaltung
+          -Ddocker.push.registry=docker.pkg.github.com
+          -Ddocker.push.username=${{ github.actor }}
+          -Ddocker.push.password=${{ secrets.GITHUB_TOKEN }}
+          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}
 
   sonar:
     name: analyse with sonarqube
@@ -61,20 +65,17 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-sonarqube
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-sonarqube
             ${{ runner.os }}-maven-
-      - name: Maven clean
-        run: ./mvnw clean
       - name: Run SonarCloud analyse
         run: >
           ./mvnw --batch-mode
           -Pcoverage
-          verify
+          clean verify
           sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=synyx

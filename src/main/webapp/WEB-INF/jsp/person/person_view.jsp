@@ -19,6 +19,7 @@
     <uv:custom-head/>
     <c:if test="${not empty persons}">
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
+    <script defer src="<asset:url value='npm.string-natural-compare.js' />"></script>
     <script defer src="<asset:url value='npm.list.js.js' />"></script>
     <script defer src="<asset:url value='person_view.js' />"></script>
     </c:if>

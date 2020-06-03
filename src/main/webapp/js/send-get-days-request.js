@@ -30,7 +30,7 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
 
   let text;
 
-  if(isNaN(workDays)) {
+  if(Number.isNaN(workDays)) {
     text = window.uv.i18n['application.applier.invalidPeriod']
   } else if (workDays === "1.0") {
     text = formatNumber(workDays) + " " + window.uv.i18n['application.applier.day'];

@@ -8,7 +8,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v1
+      - uses: actions/stale@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           stale-issue-message: >
@@ -18,4 +18,4 @@ jobs:
           days-before-stale: 60
           days-before-close: 14
           stale-issue-label: 'status: stale'
-          exempt-issue-label: 'status: planned'
+          exempt-issue-labels: 'status: planned'
