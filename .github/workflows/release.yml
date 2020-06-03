@@ -34,15 +34,15 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset
-          id: upload_release_asset
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: target/${{ github.ref }}.war
-            asset_name: ${{ github.ref }}.war
-            asset_content_type: application/zip
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/${{ github.ref }}.war
+          asset_name: ${{ github.ref }}.war
+          asset_content_type: application/zip
       - name: Publish docker image to Docker Hub
         run: >
           ./mvnw --batch-mode
