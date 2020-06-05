@@ -31,7 +31,7 @@ learn how to disclose them responsibly.
 
 New pull requests will be labeled with status of process as shown below:
 
-![Pull request workflow](docs/workflow-pullrequests.svg)
+![Pull request workflow](.docs/workflow-pullrequests.svg)
 
 
 ## Code Conventions and Housekeeping
