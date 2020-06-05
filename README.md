@@ -268,11 +268,6 @@ funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation ent
 * [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
 
 
-### Schnittstellen-Dokumentation
-
-Die Urlaubsverwaltung besitzt eine sich selbst beschreibende REST-Schnittstelle.
-Diese kann über `/api/` aufgerufen werden.
-  
 ---
   
 ## Demodaten-Modus
