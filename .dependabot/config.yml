@@ -16,7 +16,7 @@ update_configs:
     ignored_updates:
       - match:
           dependency_name: org.springframework.boot:spring-boot-starter-parent
-          version_requirement: ">= 2.2.a, < 2.3"
+          version_requirement: ">= 2.2.a, < 2.4"
     target_branch: master
 
   - package_manager: "javascript"
