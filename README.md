@@ -69,7 +69,7 @@ zur Verfügung.
 * [Konfiguration Datenbank](#datenbank-konfigurieren)
 * [Konfiguration Security Provider](#security-provider-konfigurieren)
 * Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .war-Datei dorthin.
-* Erstelle in dem Verzeichnis eine Konfigurationsdatei names `application.properties`, welche die Konfiguration für
+* Erstelle in dem Verzeichnis eine Konfigurationsdatei namens `application.properties`, welche die Konfiguration für
 die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
  Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
   
@@ -190,8 +190,8 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
 * `oidc`
     * Authentifizierung via OpenID Connect (OIDC)
     * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
-      Ausserdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggfs weitere Einstellungen vorgenommen werden.
+      Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
+      die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
 
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
@@ -220,7 +220,7 @@ Um den E-Mail-Server zu konfigurieren müssen folgende Konfigurationen vorgenomm
 ```properties
 uv.mail.sender=absender@example.org         # Absender der E-Mails
 uv.mail.administrator=admin@example.org     # E-Mail-Adresse des Administrators
-uv.mail.application-url=https://example.org # Diese URL wird in den E-Mails zur Link generierung verwendet
+uv.mail.application-url=https://example.org # Diese URL wird in den E-Mails zur Link-Generierung verwendet
 
 spring.mail.host=$HOST
 spring.mail.port=$PORT
