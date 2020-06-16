@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
@@ -21,15 +22,12 @@ public class FilterPeriod {
 
     public FilterPeriod(String startDateAsString, String endDateAsString) {
 
-        Assert.notNull(startDateAsString, "Start date must be given");
-        Assert.notNull(endDateAsString, "End date must be given");
-
-        int currentYear = Year.now(Clock.systemUTC()).getValue();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
+        int currentYear = Year.now(Clock.systemUTC()).getValue();
         try {
-            this.startDate = startDateAsString.isEmpty() ?
+            this.startDate = StringUtils.isEmpty(startDateAsString) ?
                 DateUtil.getFirstDayOfYear(currentYear) : LocalDate.parse(startDateAsString, formatter);
-            this.endDate = endDateAsString.isEmpty() ?
+            this.endDate = StringUtils.isEmpty(endDateAsString) ?
                 DateUtil.getLastDayOfYear(currentYear) : LocalDate.parse(endDateAsString, formatter);
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());

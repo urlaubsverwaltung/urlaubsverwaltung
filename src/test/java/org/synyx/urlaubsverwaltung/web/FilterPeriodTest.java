@@ -5,26 +5,32 @@ import org.junit.Test;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.function.Consumer;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class FilterPeriodTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullStartDateString() {
+    @Test
+    public void returnFirstDayOfYearWithNullStartDateString() {
+        int currentYear = Year.now(Clock.systemUTC()).getValue();
 
-        new FilterPeriod(null, "19.05.2015");
+        FilterPeriod filterPeriod = new FilterPeriod(null, "19.05." + currentYear);
+        assertThat(filterPeriod.getStartDateAsString()).isEqualTo("01.01." + currentYear);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullEndDateString() {
+    @Test
+    public void returnLastDayOfYearWithNullEndDateString() {
+        int currentYear = Year.now(Clock.systemUTC()).getValue();
 
-        new FilterPeriod("19.05.2015", null);
+        FilterPeriod filterPeriod = new FilterPeriod("19.05." + currentYear, null);
+        assertThat(filterPeriod.getEndDateAsString()).isEqualTo("31.12." + currentYear);
     }
 
 
