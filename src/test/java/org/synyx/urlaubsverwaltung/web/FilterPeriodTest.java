@@ -13,7 +13,6 @@ import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
-
 class FilterPeriodTest {
 
     @Test

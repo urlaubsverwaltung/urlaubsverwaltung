@@ -84,7 +84,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsSetsModelAndView() throws Exception {
 
         final List<ApplicationForLeaveStatistics> statistics = Collections.emptyList();
-        when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(statistics);
+        when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(statistics);
 
         final List<VacationType> vacationType = Collections.singletonList(new VacationType());
         when(vacationTypeService.getVacationTypes()).thenReturn(vacationType);
@@ -126,7 +126,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void downloadCSVWritesCSV() throws Exception {
 
         final List<ApplicationForLeaveStatistics> statistics = Collections.emptyList();
-        when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(statistics);
+        when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(statistics);
 
         perform(get("/web/application/statistics/download")
             .param("from", period.getStartDateAsString())
@@ -138,7 +138,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void downloadCSVSetsModelAndView() throws Exception {
 
-        when(applicationForLeaveStatisticsService.getStatistics(refEq(period))).thenReturn(Collections.emptyList());
+        when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(Collections.emptyList());
 
         perform(get("/web/application/statistics/download")
             .param("from", period.getStartDateAsString())
