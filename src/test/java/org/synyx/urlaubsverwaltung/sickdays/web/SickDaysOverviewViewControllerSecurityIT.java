@@ -13,6 +13,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.util.DateFormat;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -29,6 +36,8 @@ public class SickDaysOverviewViewControllerSecurityIT {
     @MockBean
     private PersonService personService;
 
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
+
     @Test
     @WithMockUser(authorities = "USER")
     public void periodsSickNotesWithWrongRole() throws Exception {
@@ -42,7 +51,11 @@ public class SickDaysOverviewViewControllerSecurityIT {
 
         when(personService.getSignedInUser()).thenReturn(new Person());
 
-        final ResultActions resultActions = perform(get("/web/sicknote"));
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+        .param("from", dtf.format(now))
+        .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isOk());
     }
 
