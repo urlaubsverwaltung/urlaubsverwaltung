@@ -4,10 +4,7 @@ import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
-import java.time.Clock;
 import java.time.LocalDate;
-import java.time.Year;
-import java.util.Optional;
 
 public class AccountForm {
 
@@ -39,14 +36,14 @@ public class AccountForm {
 
     AccountForm(Account holidaysAccountOptional) {
 
-            this.holidaysAccountYear = holidaysAccountOptional.getValidFrom().getYear();
-            this.holidaysAccountValidFrom = holidaysAccountOptional.getValidFrom();
-            this.holidaysAccountValidTo = holidaysAccountOptional.getValidTo();
-            this.annualVacationDays = holidaysAccountOptional.getAnnualVacationDays();
-            this.actualVacationDays = holidaysAccountOptional.getVacationDays();
-            this.remainingVacationDays = holidaysAccountOptional.getRemainingVacationDays();
-            this.remainingVacationDaysNotExpiring = holidaysAccountOptional.getRemainingVacationDaysNotExpiring();
-            this.comment = holidaysAccountOptional.getComment();
+        this.holidaysAccountYear = holidaysAccountOptional.getValidFrom().getYear();
+        this.holidaysAccountValidFrom = holidaysAccountOptional.getValidFrom();
+        this.holidaysAccountValidTo = holidaysAccountOptional.getValidTo();
+        this.annualVacationDays = holidaysAccountOptional.getAnnualVacationDays();
+        this.actualVacationDays = holidaysAccountOptional.getVacationDays();
+        this.remainingVacationDays = holidaysAccountOptional.getRemainingVacationDays();
+        this.remainingVacationDaysNotExpiring = holidaysAccountOptional.getRemainingVacationDaysNotExpiring();
+        this.comment = holidaysAccountOptional.getComment();
     }
 
     public int getHolidaysAccountYear() {

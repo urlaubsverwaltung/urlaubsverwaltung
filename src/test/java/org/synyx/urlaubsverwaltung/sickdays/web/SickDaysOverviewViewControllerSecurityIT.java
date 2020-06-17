@@ -15,11 +15,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -54,8 +51,8 @@ public class SickDaysOverviewViewControllerSecurityIT {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(
             get("/web/sicknote")
-        .param("from", dtf.format(now))
-        .param("to", dtf.format(now.plusDays(1))));
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isOk());
     }
 

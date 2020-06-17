@@ -19,9 +19,9 @@ import microsoft.exchange.webservices.data.search.FolderView;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarNotCreatedException;
-import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
@@ -104,7 +104,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         return Optional.empty();
     }
 
-
     private void connectToExchange(ExchangeCalendarSettings settings) {
 
         String email = settings.getEmail();
@@ -158,7 +157,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         }
     }
 
-
     private CalendarFolder findOrCreateCalendar(String calendarName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         Optional<CalendarFolder> calendarOptional = findCalendar(calendarName);
@@ -171,7 +169,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             return createCalendar(calendarName);
         }
     }
-
 
     private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
@@ -186,7 +183,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
         return Optional.empty();
     }
-
 
     private CalendarFolder createCalendar(String calendarName) {
 
@@ -206,7 +202,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         }
     }
 
-
     private void fillAppointment(Absence absence, Appointment appointment, String exchangeTimeZoneId) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         Person person = absence.getPerson();
@@ -224,7 +219,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         appointment.getRequiredAttendees().add(person.getEmail());
         appointment.setIsReminderSet(false);
     }
-
 
     @Override
     public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
@@ -253,7 +247,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         }
     }
 
-
     @Override
     public void delete(String eventId, CalendarSettings calendarSettings) {
 
@@ -278,7 +271,6 @@ public class ExchangeCalendarProvider implements CalendarProvider {
             calendarMailService.sendCalendarDeleteErrorNotification(calendarName, eventId, getStackTrace(ex));
         }
     }
-
 
     @Override
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
