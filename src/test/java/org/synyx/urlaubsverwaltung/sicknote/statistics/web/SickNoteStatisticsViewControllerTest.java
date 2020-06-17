@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.time.Year;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;

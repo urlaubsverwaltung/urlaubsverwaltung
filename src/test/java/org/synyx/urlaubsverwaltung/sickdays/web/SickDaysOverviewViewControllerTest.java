@@ -71,7 +71,7 @@ public class SickDaysOverviewViewControllerTest {
         final int year = Year.now(clock).getValue();
 
         final ResultActions resultActions = perform(post("/web/sicknote/filter")
-            .flashAttr("period", new FilterPeriod("01.01."+year, "31.12."+year)));
+            .flashAttr("period", new FilterPeriod("01.01." + year, "31.12." + year)));
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/sicknote?from=01.01." + year + "&to=31.12." + year));
     }
@@ -146,7 +146,7 @@ public class SickDaysOverviewViewControllerTest {
         final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
         final ResultActions resultActions = perform(get("/web/sicknote")
-            .param("from", "01.01."+year).param("to", "31.12."+year));
+            .param("from", "01.01." + year).param("to", "31.12." + year));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("from", startDate));
         resultActions.andExpect(model().attribute("to", endDate));

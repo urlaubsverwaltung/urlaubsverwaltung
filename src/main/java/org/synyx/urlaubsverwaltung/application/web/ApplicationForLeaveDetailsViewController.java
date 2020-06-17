@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 

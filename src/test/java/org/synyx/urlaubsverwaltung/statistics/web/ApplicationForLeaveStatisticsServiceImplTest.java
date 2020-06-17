@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;

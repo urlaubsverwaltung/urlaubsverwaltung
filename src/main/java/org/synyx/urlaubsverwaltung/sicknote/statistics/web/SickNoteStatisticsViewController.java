@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 
 import java.time.Clock;
-import java.time.Year;
 import java.time.ZonedDateTime;
 
 

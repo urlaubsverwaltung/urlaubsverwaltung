@@ -26,11 +26,9 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.hasItems;

@@ -31,7 +31,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -89,7 +88,7 @@ public class PersonViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        Integer year = requestedYear.orElseGet(() ->  Year.now(clock).getValue());
+        Integer year = requestedYear.orElseGet(() -> Year.now(clock).getValue());
 
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);

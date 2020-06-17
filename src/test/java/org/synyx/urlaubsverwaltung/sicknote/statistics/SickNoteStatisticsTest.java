@@ -15,18 +15,12 @@ import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Year;
-import java.time.ZoneId;
-import java.time.temporal.ChronoField;
-import java.time.temporal.IsoFields;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
-import static java.time.temporal.ChronoField.YEAR;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
