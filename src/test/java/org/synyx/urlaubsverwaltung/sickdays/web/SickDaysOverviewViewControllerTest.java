@@ -69,11 +69,9 @@ class SickDaysOverviewViewControllerTest {
     @Test
     void filterSickNotes() throws Exception {
         final int year = Year.now(clock).getValue();
-        FilterPeriod period = new FilterPeriod("01.01." + year, "31.12." + year);
 
         final ResultActions resultActions = perform(post("/web/sicknote/filter")
-            .flashAttr("period", period));
-
+            .flashAttr("period", new FilterPeriod("01.01." + year, "31.12." + year)));
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/sicknote?from=01.01." + year + "&to=31.12." + year));
     }

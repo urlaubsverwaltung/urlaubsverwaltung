@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Locale.GERMAN;

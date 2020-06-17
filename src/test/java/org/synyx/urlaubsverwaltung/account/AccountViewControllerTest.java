@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -172,7 +171,7 @@ class AccountViewControllerTest {
         when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
-                .flashAttr("account", mockedAccountForm))
+            .flashAttr("account", mockedAccountForm))
             .andExpect(flash().attribute("updateSuccess", true))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/person/" + SOME_PERSON_ID));
