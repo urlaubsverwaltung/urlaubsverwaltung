@@ -15,10 +15,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 
-public class SpringBootConfiguredMailSenderTest {
+public class CustomMailSenderTest {
 
     private JavaMailSender javaMailSender = mock(JavaMailSender.class);
-    private SpringBootConfiguredMailSender sut = new SpringBootConfiguredMailSender(javaMailSender);
+    private CustomMailSender sut = new CustomMailSender(javaMailSender);
 
     @Test
     public void sendEmail() {

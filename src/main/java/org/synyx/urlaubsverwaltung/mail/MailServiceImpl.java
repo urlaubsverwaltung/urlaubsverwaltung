@@ -24,16 +24,16 @@ class MailServiceImpl implements MailService {
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
     private final MailSender mailSender;
-    private final MailOptionProvider mailOptionProvider;
+    private final MailProperties mailProperties;
     private final RecipientService recipientService;
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
-                    MailOptionProvider mailOptionProvider, RecipientService recipientService) {
+                    MailProperties mailProperties, RecipientService recipientService) {
 
         this.messageSource = messageSource;
         this.mailBuilder = mailBuilder;
-        this.mailOptionProvider = mailOptionProvider;
+        this.mailProperties = mailProperties;
         this.mailSender = mailSender;
         this.recipientService = recipientService;
     }
@@ -64,7 +64,7 @@ class MailServiceImpl implements MailService {
 
     @Override
     public void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model) {
-        sendMailToRecipients(singletonList(mailOptionProvider.getAdministrator()), subjectMessageKey, templateName, model);
+        sendMailToRecipients(singletonList(mailProperties.getAdministrator()), subjectMessageKey, templateName, model);
     }
 
     private void sendMailToPersons(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
@@ -75,12 +75,19 @@ class MailServiceImpl implements MailService {
 
     private void sendMailToRecipients(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {
 
-        model.put("baseLinkURL", mailOptionProvider.getApplicationUrl());
+        model.put("baseLinkURL", getApplicationUrl());
 
         final String subject = getTranslation(subjectMessageKey, args);
         final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
 
-        mailSender.sendEmail(mailOptionProvider.getSender(), recipients, subject, text);
+        mailSender.sendEmail(mailProperties.getSender(), recipients, subject, text);
+    }
+
+    private String getApplicationUrl() {
+
+        // TODO use same url generation like in calender
+        final String applicationUrl = mailProperties.getApplicationUrl();
+        return applicationUrl.endsWith("/") ? applicationUrl : applicationUrl + "/";
     }
 
     private String getTranslation(String key, Object... args) {

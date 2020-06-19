@@ -10,10 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -38,11 +34,7 @@ public class OvertimeMailServiceIT {
     private OvertimeMailService sut;
 
     @Autowired
-    private SettingsService settingsService;
-    @Autowired
     private PersonService personService;
-    @Autowired
-    private SettingsDAO settingsDAO;
 
     @After
     public void tearDown() {
@@ -51,8 +43,6 @@ public class OvertimeMailServiceIT {
 
     @Test
     public void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen12@firma.test");
         final Overtime overtimeRecord = createOvertimeRecord(person);
@@ -79,13 +69,5 @@ public class OvertimeMailServiceIT {
         assertThat(text).contains("Hallo Office");
         assertThat(text).contains("es wurden Überstunden erfasst");
         assertThat(text).contains("/web/overtime/1234");
-    }
-
-    private void activateMailSettings() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        mailSettings.setActive(true);
-        settings.setMailSettings(mailSettings);
-        settingsDAO.save(settings);
     }
 }

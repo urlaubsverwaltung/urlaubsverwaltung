@@ -10,11 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -37,9 +34,7 @@ public class CalendarMailServiceIT {
     private CalendarMailService sut;
 
     @Autowired
-    private SettingsService settingsService;
-    @Autowired
-    private SettingsDAO settingsDAO;
+    private MailProperties mailProperties;
 
     @After
     public void tearDown() {
@@ -50,8 +45,6 @@ public class CalendarMailServiceIT {
     public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         Absence absence = mock(Absence.class);
@@ -61,7 +54,7 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
-        List<Message> inbox = Mailbox.get(getAdminMail());
+        List<Message> inbox = Mailbox.get(mailProperties.getAdministrator());
         assertThat(inbox.size()).isOne();
 
         Message msg = inbox.get(0);
@@ -78,8 +71,6 @@ public class CalendarMailServiceIT {
     public void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
         final Person person = new Person();
         person.setFirstName("Henry");
 
@@ -90,7 +81,7 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 
-        List<Message> inbox = Mailbox.get(getAdminMail());
+        List<Message> inbox = Mailbox.get(mailProperties.getAdministrator());
         assertThat(inbox.size()).isOne();
 
         Message msg = inbox.get(0);
@@ -108,11 +99,9 @@ public class CalendarMailServiceIT {
     public void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
         sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
 
-        List<Message> inbox = Mailbox.get(getAdminMail());
+        List<Message> inbox = Mailbox.get(mailProperties.getAdministrator());
         assertThat(inbox.size()).isOne();
 
         Message msg = inbox.get(0);
@@ -123,19 +112,5 @@ public class CalendarMailServiceIT {
         assertThat(content).contains("Kalendername");
         assertThat(content).contains("ID-123456");
         assertThat(content).contains("event delete failed");
-    }
-
-    private String getAdminMail() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        return mailSettings.getAdministrator();
-    }
-
-    private void activateMailSettings() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        mailSettings.setActive(true);
-        settings.setMailSettings(mailSettings);
-        settingsDAO.save(settings);
     }
 }
