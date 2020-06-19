@@ -1,4 +1,5 @@
-### next release version
+### [urlaubsverwaltung-3.4.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.2)
+* Documentation adjustments
 * Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/70?closed=1)
 
 ### [urlaubsverwaltung-3.4.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.1)
