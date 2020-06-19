@@ -33,6 +33,9 @@ jobs:
           body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
           draft: false
           prerelease: false
+      - name: Extract release tag
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Upload Release Asset
         id: upload_release_asset
         uses: actions/upload-release-asset@v1
@@ -40,8 +43,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/${{ github.ref }}.war
-          asset_name: ${{ github.ref }}.war
+          asset_path: target/${{ steps.vars.outputs.tag }}.war
+          asset_name: ${{ steps.vars.outputs.tag }}.war
           asset_content_type: application/zip
       - name: Publish docker image to Docker Hub
         run: >
