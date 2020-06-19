@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -26,11 +25,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,13 +56,11 @@ public class SettingsViewControllerTest {
     @Mock
     private SettingsService settingsService;
     @Mock
-    private MailService mailService;
-    @Mock
     private SettingsValidator settingsValidator;
 
     @Before
     public void setUp() {
-        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator, "unknown");
+        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, settingsValidator);
     }
 
     @Test
@@ -194,24 +188,6 @@ public class SettingsViewControllerTest {
 
         perform(post("/web/settings"));
         verify(settingsService).save(any(Settings.class));
-    }
-
-    @Test
-    public void ensureSettingsSavedSendsTechnicalMailIfValidationSuccessfullyAndMailSettingsWebConfigured() throws Exception {
-
-        when(settingsService.getSettings()).thenReturn(someSettings());
-
-        perform(post("/web/settings"));
-        verify(mailService).sendTechnicalMail(anyString(), anyString(), anyMap());
-    }
-
-    @Test
-    public void ensureSettingsSavedSendsNoTechnicalMailIfValidationSuccessfullyAndMailSettingsFromApplicationProperties() throws Exception {
-        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator, "my.smtp.server");
-        when(settingsService.getSettings()).thenReturn(someSettings());
-
-        perform(post("/web/settings"));
-        verifyZeroInteractions(mailService);
     }
 
     @Test

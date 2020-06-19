@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.mail.config;
+package org.synyx.urlaubsverwaltung.mail;
 
 import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Validated
 @ConfigurationProperties(prefix = "uv.mail")
-public class MailConfigurationProperties {
+public class MailProperties {
 
     @Email
     @NotEmpty
