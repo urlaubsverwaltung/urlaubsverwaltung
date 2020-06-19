@@ -12,12 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import javax.mail.Address;
@@ -52,11 +49,9 @@ public class ApplicationMailServiceIT {
     private ApplicationMailService sut;
 
     @Autowired
-    private SettingsService settingsService;
-    @Autowired
     private PersonService personService;
     @Autowired
-    private SettingsDAO settingsDAO;
+    private MailProperties mailProperties;
 
     @MockBean
     private ApplicationRecipientService applicationRecipientService;
@@ -71,8 +66,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -132,8 +125,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
@@ -168,8 +159,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureCorrectReferMail() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person recipient = createPerson("recipient", "Max", "Muster", "mustermann@test.de");
         final Person sender = createPerson("sender", "Rick", "Grimes", "rick@grimes.com");
 
@@ -196,8 +185,6 @@ public class ApplicationMailServiceIT {
 
     @Test
     public void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -230,8 +217,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -266,8 +251,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Person holidayReplacement = createPerson("replacement", "Mar", "Teria", "replacement@firma.test");
@@ -294,8 +277,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureCorrectFrom() throws MessagingException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Application application = createApplication(person);
@@ -309,14 +290,12 @@ public class ApplicationMailServiceIT {
         Address[] from = msg.getFrom();
         assertThat(from).isNotNull();
         assertThat(from.length).isOne();
-        assertThat(from[0]).hasToString("absender@urlaubsverwaltung.test");
+        assertThat(from[0]).hasToString(mailProperties.getSender());
     }
 
     @Test
     public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -348,8 +327,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -385,8 +362,6 @@ public class ApplicationMailServiceIT {
     public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
@@ -420,8 +395,6 @@ public class ApplicationMailServiceIT {
 
     @Test
     public void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -463,8 +436,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
@@ -501,8 +472,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority()
         throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -543,8 +512,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
         throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -602,8 +569,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
@@ -642,8 +607,6 @@ public class ApplicationMailServiceIT {
 
     @Test
     public void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
-
-        activateMailSettings();
 
         // PERSONs
         final Person personDepartmentA = createPerson("personDepartmentA");
@@ -728,13 +691,5 @@ public class ApplicationMailServiceIT {
         application.setApplier(person);
 
         return application;
-    }
-
-    private void activateMailSettings() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        mailSettings.setActive(true);
-        settings.setMailSettings(mailSettings);
-        settingsDAO.save(settings);
     }
 }

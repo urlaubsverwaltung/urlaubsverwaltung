@@ -62,4 +62,5 @@
   <include file="dbchangelogs/changelog-3.0.0-rename-login-to-username.xml"/>
   <include file="dbchangelogs/changelog-3.1.0-add-calendar-table.xml"/>
   <include file="dbchangelogs/changelog-3.1.0-add-calendar-accessible-table.xml"/>
+  <include file="dbchangelogs/changelog-4.0.0.M1-remove-gui-mail-settings.xml"/>
 </databaseChangeLog>
