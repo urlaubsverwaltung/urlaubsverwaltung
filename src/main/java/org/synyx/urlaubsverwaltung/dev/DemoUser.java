@@ -4,9 +4,9 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 
 /**
- * Test users that can be used to sign in with when test data is created.
+ * Demo users that can be used to sign in with when demo data is created.
  */
-enum TestUser {
+enum DemoUser {
 
     USER("user", "secret", Role.USER),
     DEPARTMENT_HEAD("departmentHead", "secret", Role.USER, Role.DEPARTMENT_HEAD),
@@ -19,7 +19,7 @@ enum TestUser {
     private final String password;
     private final Role[] roles;
 
-    TestUser(String username, String password, Role... roles) {
+    DemoUser(String username, String password, Role... roles) {
 
         this.username = username;
         this.password = password;

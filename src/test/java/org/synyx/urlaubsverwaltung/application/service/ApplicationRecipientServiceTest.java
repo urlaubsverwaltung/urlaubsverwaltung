@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationRecipientServiceTest {
@@ -241,7 +241,7 @@ public class ApplicationRecipientServiceTest {
     }
 
     private Application getHolidayApplication(Person normalUser) {
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
-        return TestDataCreator.createApplication(normalUser, vacationType);
+        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
+        return DemoDataCreator.createApplication(normalUser, vacationType);
     }
 }

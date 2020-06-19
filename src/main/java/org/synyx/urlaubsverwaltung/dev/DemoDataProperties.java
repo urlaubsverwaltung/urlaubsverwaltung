@@ -2,11 +2,11 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("uv.development.testdata")
-public class TestDataProperties {
+@ConfigurationProperties("uv.development.demodata")
+public class DemoDataProperties {
 
     /**
-     * Enables the creation of test data
+     * Enables the creation of demo data
      */
     private boolean create = true;
 

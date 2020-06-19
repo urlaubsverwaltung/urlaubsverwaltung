@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
@@ -104,7 +104,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetDaysBeforeApril() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
         LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
@@ -160,7 +160,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetDaysAfterApril() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
@@ -207,7 +207,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetDaysBetweenMilestonesWithInactiveApplicationsForLeaveAndOfOtherVacationTypeThanHoliday() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
@@ -422,7 +422,7 @@ public class VacationDaysServiceTest {
     public void testGetUsedDaysBeforeApril() {
 
         String expectedUsedDays = "4";
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
@@ -449,7 +449,7 @@ public class VacationDaysServiceTest {
     public void testGetUsedDaysAfterApril() {
 
         String expectedUsedDays = "4";
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
@@ -507,6 +507,6 @@ public class VacationDaysServiceTest {
 
     private VacationType getVacationType(VacationCategory category) {
 
-        return TestDataCreator.createVacationType(category);
+        return DemoDataCreator.createVacationType(category);
     }
 }

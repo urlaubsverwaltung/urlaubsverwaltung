@@ -3,13 +3,11 @@ package org.synyx.urlaubsverwaltung.absence;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +31,7 @@ public class AbsenceTest {
     @Before
     public void setUp() {
 
-        person = TestDataCreator.createPerson();
+        person = DemoDataCreator.createPerson();
 
         CalendarSettings calendarSettings = new CalendarSettings();
         calendarSettings.setWorkDayBeginHour(8);

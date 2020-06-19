@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,7 +33,7 @@ public class OvertimeDAOIT {
     @Test
     public void ensureCanPersistOvertime() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = DemoDataCreator.createPerson();
         final Person savedPerson = personService.save(person);
 
         final LocalDate now = LocalDate.now(UTC);
@@ -49,10 +49,10 @@ public class OvertimeDAOIT {
     @Test
     public void ensureCountsTotalHoursCorrectly() {
 
-        final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
+        final Person person = DemoDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
         final Person savedPerson = personService.save(person);
 
-        final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
+        final Person otherPerson = DemoDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
         final Person savedOtherPerson = personService.save(otherPerson);
 
         LocalDate now = LocalDate.now(UTC);
@@ -76,7 +76,7 @@ public class OvertimeDAOIT {
     @Test
     public void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         personService.save(person);
 
         BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
@@ -88,7 +88,7 @@ public class OvertimeDAOIT {
     @Test
     public void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = DemoDataCreator.createPerson();
         final Person savedPerson = personService.save(person);
 
         // records for 2015
