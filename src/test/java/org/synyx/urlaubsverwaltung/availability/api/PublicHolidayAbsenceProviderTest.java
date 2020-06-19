@@ -23,9 +23,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class HolidayAbsenceProviderTest {
+public class PublicHolidayAbsenceProviderTest {
 
-    private HolidayAbsenceProvider holidayAbsenceProvider;
+    private PublicHolidayAbsenceProvider publicHolidayAbsenceProvider;
 
     private SickDayAbsenceProvider sickDayAbsenceProvider;
     private WorkingTimeService workingTimeService;
@@ -48,7 +48,7 @@ public class HolidayAbsenceProviderTest {
         setupWorkingTimeServiceMock();
         setupHolidayServiceMock();
 
-        holidayAbsenceProvider = new HolidayAbsenceProvider(sickDayAbsenceProvider, publicHolidaysService,
+        publicHolidayAbsenceProvider = new PublicHolidayAbsenceProvider(sickDayAbsenceProvider, publicHolidaysService,
             workingTimeService);
     }
 
@@ -78,13 +78,13 @@ public class HolidayAbsenceProviderTest {
     @Test
     public void ensurePersonIsNotAvailableOnHoliDays() {
 
-        TimedAbsenceSpans updatedTimedAbsenceSpans = holidayAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
+        TimedAbsenceSpans updatedTimedAbsenceSpans = publicHolidayAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
             testPerson, newYearsDay);
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
 
         Assert.assertEquals("wrong number of absences in list", 1, absencesList.size());
-        Assert.assertEquals("wrong absence type", TimedAbsence.Type.HOLIDAY, absencesList.get(0).getType());
+        Assert.assertEquals("wrong absence type", TimedAbsence.Type.PUBLIC_HOLIDAY, absencesList.get(0).getType());
         Assert.assertEquals("wrong part of day set on absence", DayLength.FULL.name(),
             absencesList.get(0).getPartOfDay());
         Assert.assertTrue("wrong absence ratio", BigDecimal.ONE.compareTo(absencesList.get(0).getRatio()) == 0);
@@ -94,7 +94,7 @@ public class HolidayAbsenceProviderTest {
     @Test
     public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
-        holidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, newYearsDay);
+        publicHolidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, newYearsDay);
 
         Mockito.verifyNoMoreInteractions(sickDayAbsenceProvider);
     }
@@ -103,7 +103,7 @@ public class HolidayAbsenceProviderTest {
     @Test
     public void ensureCallsSickDayAbsenceProviderIfNotAbsentForHoliday() {
 
-        holidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
+        publicHolidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 
         verify(sickDayAbsenceProvider, times(1))
             .checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
