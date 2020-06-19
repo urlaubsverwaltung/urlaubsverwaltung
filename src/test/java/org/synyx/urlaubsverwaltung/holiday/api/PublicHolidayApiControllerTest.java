@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -80,7 +80,7 @@ public class PublicHolidayApiControllerTest {
     @Test
     public void ensureReturnsCorrectPublicHolidaysForYearAndPersonWithOverriddenFederalState() throws Exception {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
             any(LocalDate.class)))
@@ -100,7 +100,7 @@ public class PublicHolidayApiControllerTest {
     public void ensureReturnsCorrectPublicHolidaysForYearAndMonthAndPersonWithOverriddenFederalState()
         throws Exception {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
             any(LocalDate.class)))

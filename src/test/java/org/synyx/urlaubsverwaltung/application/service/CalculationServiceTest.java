@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
@@ -139,7 +139,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationSameYearAndEnoughDaysLeft() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -170,7 +170,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationSameYearAndNotEnoughDaysLeft() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -198,7 +198,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationSameYearAndExactEnoughDaysLeft() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -227,7 +227,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationOneDayIsToMuch() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -242,7 +242,7 @@ public class CalculationServiceTest {
 
     @Test
     public void testPersonWithoutHolidayAccount() {
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -255,7 +255,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationOneDayIsOkay() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -271,7 +271,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationLastYear() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -301,7 +301,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationOneDayIsOkayOverAYear() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
@@ -316,7 +316,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationOneDayIsNotOkayOverAYear() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
@@ -334,7 +334,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplicationNextYearUsingRemainingAlready() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = DemoDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         // nine days

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 
@@ -33,7 +33,7 @@ public class AccountDAOIT {
     @Test(expected = DataIntegrityViolationException.class)
     public void ensureUniqueConstraintOfPersonAndValidFrom() {
 
-        final Person person = TestDataCreator.createPerson("test user");
+        final Person person = DemoDataCreator.createPerson("test user");
         final Person savedPerson = personService.save(person);
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);

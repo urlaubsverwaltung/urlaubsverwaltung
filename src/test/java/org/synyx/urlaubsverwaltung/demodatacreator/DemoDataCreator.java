@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.testdatacreator;
+package org.synyx.urlaubsverwaltung.demodatacreator;
 
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -41,9 +41,9 @@ import static java.time.ZoneOffset.UTC;
 /**
  * Util class to create data for tests.
  */
-public final class TestDataCreator {
+public final class DemoDataCreator {
 
-    private TestDataCreator() {
+    private DemoDataCreator() {
 
         // Hide constructor for util class
     }
@@ -53,7 +53,7 @@ public final class TestDataCreator {
     // Person ----------------------------------------------------------------------------------------------------------
     public static Person createPerson(Integer id, String username) throws IllegalAccessException {
 
-        Person person = TestDataCreator.createPerson(username);
+        Person person = DemoDataCreator.createPerson(username);
 
         Field dateField = ReflectionUtils.findField(Person.class, "id");
         dateField.setAccessible(true);
@@ -66,14 +66,14 @@ public final class TestDataCreator {
 
         String name = StringUtils.capitalize(username);
 
-        return TestDataCreator.createPerson(username, name, name, username + "@test.de");
+        return DemoDataCreator.createPerson(username, name, name, username + "@test.de");
     }
 
     public static Person createPerson(String username, Role... roles) {
 
         String name = StringUtils.capitalize(username);
 
-        Person person = TestDataCreator.createPerson(username, name, name, username + "@test.de");
+        Person person = DemoDataCreator.createPerson(username, name, name, username + "@test.de");
 
         person.setPermissions(Arrays.asList(roles));
 
@@ -82,7 +82,7 @@ public final class TestDataCreator {
 
     public static Person createPerson() {
 
-        return TestDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
+        return DemoDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
     }
 
     public static Person createPerson(String username, String firstName, String lastName, String email) {
@@ -124,7 +124,7 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
+        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 
         Application application = new Application();
         application.setPerson(person);

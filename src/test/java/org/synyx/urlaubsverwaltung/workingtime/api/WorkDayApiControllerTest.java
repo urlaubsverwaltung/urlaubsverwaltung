@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
@@ -50,7 +50,7 @@ public class WorkDayApiControllerTest {
     @Test
     public void ensureReturnsWorkDays() throws Exception {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
@@ -73,7 +73,7 @@ public class WorkDayApiControllerTest {
     @Test
     public void ensureReturnsNoContentForMissingWorkingDay() throws Exception {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenThrow(NoValidWorkingTimeException.class);
@@ -185,7 +185,7 @@ public class WorkDayApiControllerTest {
     @Test
     public void ensureBadRequestForInvalidLengthParameter() throws Exception {
 
-        Person person = TestDataCreator.createPerson("muster");
+        Person person = DemoDataCreator.createPerson("muster");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/workdays")

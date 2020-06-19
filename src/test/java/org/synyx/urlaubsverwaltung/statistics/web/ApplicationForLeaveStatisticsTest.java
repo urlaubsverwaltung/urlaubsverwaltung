@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,7 +32,7 @@ public class ApplicationForLeaveStatisticsTest {
     public void setUp() {
 
         vacationTypeService = mock(VacationTypeService.class);
-        vacationTypes = TestDataCreator.createVacationTypes();
+        vacationTypes = DemoDataCreator.createVacationTypes();
         when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
     }
 
@@ -73,12 +73,12 @@ public class ApplicationForLeaveStatisticsTest {
         Assert.assertEquals("Left overtime should have default value", BigDecimal.ZERO, statistics.getLeftOvertime());
 
         // Per vacation type
-        Assert.assertEquals("Wrong number of elements", TestDataCreator.createVacationTypes().size(),
+        Assert.assertEquals("Wrong number of elements", DemoDataCreator.createVacationTypes().size(),
             statistics.getWaitingVacationDays().size());
-        Assert.assertEquals("Wrong number of elements", TestDataCreator.createVacationTypes().size(),
+        Assert.assertEquals("Wrong number of elements", DemoDataCreator.createVacationTypes().size(),
             statistics.getAllowedVacationDays().size());
 
-        for (VacationType type : TestDataCreator.createVacationTypes()) {
+        for (VacationType type : DemoDataCreator.createVacationTypes()) {
             Assert.assertEquals("Waiting vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,
                 statistics.getWaitingVacationDays().get(type));
             Assert.assertEquals("Allowed vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,
@@ -133,7 +133,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addWaitingVacationDays(TestDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
+        statistics.addWaitingVacationDays(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
     }
 
 
@@ -155,7 +155,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addAllowedVacationDays(TestDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
+        statistics.addAllowedVacationDays(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
     }
 
 

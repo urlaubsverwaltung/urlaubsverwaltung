@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -41,7 +41,7 @@ public class FreeTimeAbsenceProviderTest {
         setupDefaultWorkingTimeService();
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
-        testPerson = TestDataCreator.createPerson();
+        testPerson = DemoDataCreator.createPerson();
 
         freeTimeAbsenceProvider = new FreeTimeAbsenceProvider(publicHolidayAbsenceProvider, workingTimeService);
     }
@@ -49,7 +49,7 @@ public class FreeTimeAbsenceProviderTest {
 
     private void setupDefaultWorkingTimeService() {
 
-        WorkingTime testWorkingTime = TestDataCreator.createWorkingTime();
+        WorkingTime testWorkingTime = DemoDataCreator.createWorkingTime();
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
             any(LocalDate.class)))

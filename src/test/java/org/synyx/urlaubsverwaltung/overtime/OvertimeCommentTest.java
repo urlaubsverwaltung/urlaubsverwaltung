@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 
@@ -15,29 +15,29 @@ public class OvertimeCommentTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullPerson() {
 
-        new OvertimeComment(null, TestDataCreator.createOvertimeRecord(), OvertimeAction.CREATED);
+        new OvertimeComment(null, DemoDataCreator.createOvertimeRecord(), OvertimeAction.CREATED);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullOvertime() {
 
-        new OvertimeComment(TestDataCreator.createPerson(), null, OvertimeAction.CREATED);
+        new OvertimeComment(DemoDataCreator.createPerson(), null, OvertimeAction.CREATED);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullAction() {
 
-        new OvertimeComment(TestDataCreator.createPerson(), TestDataCreator.createOvertimeRecord(), null);
+        new OvertimeComment(DemoDataCreator.createPerson(), DemoDataCreator.createOvertimeRecord(), null);
     }
 
 
     @Test
     public void ensureCorrectPropertiesAfterInitialization() {
 
-        Person author = TestDataCreator.createPerson();
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
+        Person author = DemoDataCreator.createPerson();
+        Overtime overtime = DemoDataCreator.createOvertimeRecord();
 
         OvertimeComment comment = new OvertimeComment(author, overtime, OvertimeAction.CREATED);
 
