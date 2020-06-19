@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
@@ -26,7 +25,7 @@ public class SettingsValidatorTest {
     @Before
     public void setUp() {
 
-        settingsValidator = new SettingsValidator("unknown");
+        settingsValidator = new SettingsValidator();
     }
 
 
@@ -259,103 +258,6 @@ public class SettingsValidatorTest {
         verify(mockError)
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
-    }
-
-
-    // Mail settings ---------------------------------------------------------------------------------------------------
-
-    @Test
-    public void ensureMailSettingsAreNotMandatoryIfDeactivated() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(false);
-        mailSettings.setHost(null);
-        mailSettings.setPort(null);
-        mailSettings.setAdministrator(null);
-        mailSettings.setFrom(null);
-        mailSettings.setBaseLinkURL(null);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        verifyZeroInteractions(mockError);
-    }
-
-
-    @Test
-    public void ensureMandatoryMailSettingsAreMandatoryIfActivated() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setHost(null);
-        mailSettings.setPort(null);
-        mailSettings.setAdministrator(null);
-        mailSettings.setFrom(null);
-        mailSettings.setBaseLinkURL(null);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.host", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.port", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.from", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.baseLinkURL", "error.entry.mandatory");
-    }
-
-
-    @Test
-    public void ensureFromAndAdministratorMailAddressesMustBeValid() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setAdministrator("foo");
-        mailSettings.setFrom("bar");
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mail");
-        verify(mockError).rejectValue("mailSettings.from", "error.entry.mail");
-    }
-
-
-    @Test
-    public void ensureMailPortMustBeNotNegative() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setPort(-1);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
-    }
-
-
-    @Test
-    public void ensureMailPortMustBeGreaterThanZero() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setPort(0);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
     }
 
 

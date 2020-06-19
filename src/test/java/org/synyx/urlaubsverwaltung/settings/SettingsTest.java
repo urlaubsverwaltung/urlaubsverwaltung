@@ -16,7 +16,6 @@ public class SettingsTest {
 
         Assert.assertNotNull("Should not be null", settings.getAbsenceSettings());
         Assert.assertNotNull("Should not be null", settings.getWorkingTimeSettings());
-        Assert.assertNotNull("Should not be null", settings.getMailSettings());
         Assert.assertNotNull("Should not be null", settings.getCalendarSettings());
     }
 }

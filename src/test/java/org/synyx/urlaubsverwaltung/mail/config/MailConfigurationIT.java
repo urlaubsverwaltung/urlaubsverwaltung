@@ -18,14 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
     "uv.mail.administrator=admin@example.org",
     "uv.mail.application-url=http://localhost:8080"
 })
-public class SpringBootConfiguredMailConfigIT {
+public class MailConfigurationIT {
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Test
     public void hasSpringBootConfiguredMailConfig() {
-        assertThat(applicationContext.containsBean("springBootConfiguredMailConfig")).isTrue();
+        assertThat(applicationContext.containsBean("mailConfiguration")).isTrue();
         assertThat(applicationContext.containsBean("webConfiguredMailConfig")).isFalse();
     }
 }

@@ -1,0 +1,31 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="Tobias Schneider" id="remove-gui-mai-settings">
+
+    <preConditions>
+      <tableExists tableName="Settings"/>
+      <columnExists tableName="Settings" columnName="mail_active"/>
+      <columnExists tableName="Settings" columnName="mail_host"/>
+      <columnExists tableName="Settings" columnName="mail_port"/>
+      <columnExists tableName="Settings" columnName="mail_username"/>
+      <columnExists tableName="Settings" columnName="mail_password"/>
+      <columnExists tableName="Settings" columnName="mail_from"/>
+      <columnExists tableName="Settings" columnName="mail_administrator"/>
+      <columnExists tableName="Settings" columnName="mail_base_link_url"/>
+    </preConditions>
+
+    <dropColumn tableName="Settings" columnName="mail_active"/>
+    <dropColumn tableName="Settings" columnName="mail_host"/>
+    <dropColumn tableName="Settings" columnName="mail_port"/>
+    <dropColumn tableName="Settings" columnName="mail_username"/>
+    <dropColumn tableName="Settings" columnName="mail_password"/>
+    <dropColumn tableName="Settings" columnName="mail_from"/>
+    <dropColumn tableName="Settings" columnName="mail_administrator"/>
+    <dropColumn tableName="Settings" columnName="mail_base_link_url"/>
+
+  </changeSet>
+
+</databaseChangeLog>

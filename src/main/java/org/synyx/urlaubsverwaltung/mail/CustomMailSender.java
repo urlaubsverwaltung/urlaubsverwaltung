@@ -11,13 +11,13 @@ import java.util.List;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class SpringBootConfiguredMailSender implements MailSender {
+class CustomMailSender implements MailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final JavaMailSender javaMailSender;
 
-    public SpringBootConfiguredMailSender(JavaMailSender javaMailSender) {
+    CustomMailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
