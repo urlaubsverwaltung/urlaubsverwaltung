@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -69,7 +69,7 @@ public class VacationApiControllerTest {
     @Test
     public void ensureReturnsAllowedVacationsOfPersonIfPersonProvided() throws Exception {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = DemoDataCreator.createPerson();
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/vacations")
@@ -87,11 +87,11 @@ public class VacationApiControllerTest {
     @Test
     public void ensureCorrectConversionOfVacations() throws Exception {
 
-        final Application vacation1 = TestDataCreator.createApplication(TestDataCreator.createPerson("foo"),
+        final Application vacation1 = DemoDataCreator.createApplication(DemoDataCreator.createPerson("foo"),
             LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
         vacation1.setStatus(ALLOWED);
 
-        final Application vacation2 = TestDataCreator.createApplication(TestDataCreator.createPerson("bar"),
+        final Application vacation2 = DemoDataCreator.createApplication(DemoDataCreator.createPerson("bar"),
             LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), DayLength.FULL);
 
         when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class),

@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OV
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
 
 
 @RunWith(SpringRunner.class)
@@ -49,7 +49,7 @@ public class ApplicationDAOIT {
     @Test
     public void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = DemoDataCreator.createPerson();
         final Person savedPerson = personService.save(person);
 
         BigDecimal totalHours = applicationDAO.calculateTotalOvertimeOfPerson(savedPerson);
@@ -60,10 +60,10 @@ public class ApplicationDAOIT {
     @Test
     public void ensureCountsTotalOvertimeReductionCorrectly() {
 
-        final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
+        final Person person = DemoDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
         final Person savedPerson = personService.save(person);
 
-        final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
+        final Person otherPerson = DemoDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
         final Person savedOtherPerson = personService.save(otherPerson);
 
         final LocalDate now = LocalDate.now(UTC);

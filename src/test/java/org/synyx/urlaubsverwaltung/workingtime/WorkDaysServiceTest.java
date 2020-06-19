@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -61,11 +61,11 @@ public class WorkDaysServiceTest {
 
         instance = new WorkDaysService(publicHolidaysService, workingTimeService, settingsService);
 
-        person = TestDataCreator.createPerson();
-        application = TestDataCreator.createApplication(person,
-            TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        person = DemoDataCreator.createPerson();
+        application = DemoDataCreator.createApplication(person,
+            DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
-        workingTime = TestDataCreator.createWorkingTime();
+        workingTime = DemoDataCreator.createWorkingTime();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
             any(LocalDate.class)))

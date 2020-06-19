@@ -110,7 +110,7 @@ uv.account.update.cron=0 0 5 1 1 *
 uv.application.reminder-notification.cron=0 0 7 * * *
 
 # development
-uv.development.testdata.create
+uv.development.demodata.create
 
 # mail
 uv.mail.administrator
@@ -281,10 +281,10 @@ die Datenbank via [Docker Compose](https://docs.docker.com/compose/overview/) zu
 docker-compose up
 ```
 
-und die Anwendung mit dem Profil `testdata` zu starten:
+und die Anwendung mit dem Profil `demodata` zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=testdata urlaubsverwaltung.war
+java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.war
 ```
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbankmanagementsystem gestartet und Demodaten generiert.
@@ -303,9 +303,9 @@ Die Demodaten enthalten folgende **Benutzer**:
 
 Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, muss die Konfiguration
 
-`uv.development.testdata.create`
+`uv.development.demodata.create`
 
-in den [application-testdata.properties](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application-testdata.properties)
+in den [application-demodata.properties](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application-demodata.properties)
 auf `false` gesetzt werden.
 
 
@@ -352,17 +352,17 @@ docker-compose up
 gestartet werden.
 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
-Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `testdata` zu starten, um Testdaten generieren
+Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `demodata` zu starten, um Testdaten generieren
 zu lassen:
 
 ```bash
-./mvnw clean spring-boot:run -Dspring-boot.run.profiles=testdata
+./mvnw clean spring-boot:run -Dspring-boot.run.profiles=demodata
 ```
 
 bzw. für Windows Benutzer über:
 
 ```bash
-./mvnw.cmd clean spring-boot:run -Dspring-boot.run.profiles=testdata
+./mvnw.cmd clean spring-boot:run -Dspring-boot.run.profiles=demodata
 ```
 
 Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run.profiles` gesetzt, statt via
@@ -373,7 +373,7 @@ Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run
 
 Im Browser lässt sich die Anwendung dann über [http://localhost:8080/](http://localhost:8080/) ansteuern.
 
-Mit dem `testdata` Profil wird eine MariaDB-Datenbank verwendet und es werden Demodaten angelegt,
+Mit dem `demodata` Profil wird eine MariaDB-Datenbank verwendet und es werden Demodaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
 [Demodaten-Benutzer](#demodaten-benutzer) anmelden.
 

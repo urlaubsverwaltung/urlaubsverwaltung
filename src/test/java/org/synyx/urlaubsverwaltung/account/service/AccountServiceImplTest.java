@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.account.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.util.Optional;
 
@@ -37,8 +37,8 @@ public class AccountServiceImplTest {
     @Test
     public void ensureReturnsOptionalWithHolidaysAccountIfExists() {
 
-        Person person = TestDataCreator.createPerson();
-        Account account = TestDataCreator.createHolidaysAccount(person, 2012);
+        Person person = DemoDataCreator.createPerson();
+        Account account = DemoDataCreator.createHolidaysAccount(person, 2012);
         when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, person);

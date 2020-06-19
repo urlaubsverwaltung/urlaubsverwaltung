@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -27,7 +27,7 @@ public class OvertimeFormTest {
     @Test
     public void ensureCanBeInitializedWithPerson() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
 
@@ -46,7 +46,7 @@ public class OvertimeFormTest {
     @Test
     public void ensureCanConstructAnOvertimeObject() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
@@ -70,7 +70,7 @@ public class OvertimeFormTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfGeneratingOvertimeWithoutCheckingFormAttributes() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         new OvertimeForm(person).generateOvertime();
     }
@@ -87,7 +87,7 @@ public class OvertimeFormTest {
     public void ensureCanBeInitializedWithExistentOvertime() throws IllegalAccessException {
 
         // Simulate existing overtime record
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
+        Overtime overtime = DemoDataCreator.createOvertimeRecord();
         Field idField = ReflectionUtils.findField(Overtime.class, "id");
         idField.setAccessible(true);
         idField.set(overtime, 42);
@@ -108,7 +108,7 @@ public class OvertimeFormTest {
     @Test
     public void ensureCanUpdateOvertime() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
@@ -116,7 +116,7 @@ public class OvertimeFormTest {
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
+        Overtime overtime = DemoDataCreator.createOvertimeRecord();
 
         overtimeForm.updateOvertime(overtime);
 

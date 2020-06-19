@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -33,9 +33,9 @@ public class ApplicationForLeaveTest {
     @Test
     public void ensureCreatesCorrectApplicationForLeave() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
+        Application application = DemoDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
@@ -63,9 +63,9 @@ public class ApplicationForLeaveTest {
     @Test
     public void ensureApplicationForLeaveHasInformationAboutDayOfWeek() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
+        Application application = DemoDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),

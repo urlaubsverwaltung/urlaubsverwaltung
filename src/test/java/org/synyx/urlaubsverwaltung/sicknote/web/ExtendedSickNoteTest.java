@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -33,9 +33,9 @@ public class ExtendedSickNoteTest {
     @Test
     public void ensureCreatesCorrectExtendedSickNote() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2015, 3, 3),
+        SickNote sickNote = DemoDataCreator.createSickNote(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.MORNING);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
@@ -65,9 +65,9 @@ public class ExtendedSickNoteTest {
     @Test
     public void ensureExtendedSickNoteHasInformationAboutDayOfWeek() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 3, 1),
+        SickNote sickNote = DemoDataCreator.createSickNote(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
