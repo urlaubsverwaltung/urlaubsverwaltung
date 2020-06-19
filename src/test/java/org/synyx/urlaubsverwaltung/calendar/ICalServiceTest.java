@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 
 public class ICalServiceTest {

@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -40,7 +40,7 @@ public class PublicHolidayAbsenceProviderTest {
     public void setUp() {
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
-        testPerson = TestDataCreator.createPerson();
+        testPerson = DemoDataCreator.createPerson();
         newYearsDay = LocalDate.of(2016, 1, 1);
         standardWorkingDay = LocalDate.of(2016, 1, 4);
 

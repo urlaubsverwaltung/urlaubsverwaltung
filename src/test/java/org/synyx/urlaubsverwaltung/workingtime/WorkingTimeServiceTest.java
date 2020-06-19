@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.config.WorkingTimeProperties;
 
 import java.time.Clock;
@@ -63,7 +63,7 @@ public class WorkingTimeServiceTest {
     public void ensureDefaultWorkingTimeCreation() {
         ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         WorkingTime expectedWorkingTime = new WorkingTime();
         expectedWorkingTime.setWorkingDays(List.of(1, 2, 3, 4, 5), FULL);
         expectedWorkingTime.setPerson(person);
@@ -84,7 +84,7 @@ public class WorkingTimeServiceTest {
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(FederalState.BAYERN);
 
@@ -109,7 +109,7 @@ public class WorkingTimeServiceTest {
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(null);
 
@@ -131,7 +131,7 @@ public class WorkingTimeServiceTest {
     public void ensureReturnsSystemFederalStateIfPersonHasNoMatchingWorkingTime() {
 
         LocalDate now = LocalDate.now(UTC);
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
@@ -155,7 +155,7 @@ public class WorkingTimeServiceTest {
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), LocalDate.now(UTC), person);
 
@@ -172,7 +172,7 @@ public class WorkingTimeServiceTest {
     @Test
     public void ensureRemovesFederalStateOverrideIfNull() {
 
-        WorkingTime existentWorkingTime = TestDataCreator.createWorkingTime();
+        WorkingTime existentWorkingTime = DemoDataCreator.createWorkingTime();
         existentWorkingTime.setFederalStateOverride(FederalState.BAYERN);
 
         when(workingTimeDAOMock.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
@@ -180,7 +180,7 @@ public class WorkingTimeServiceTest {
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 

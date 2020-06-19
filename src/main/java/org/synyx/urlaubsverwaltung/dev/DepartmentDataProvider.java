@@ -11,7 +11,7 @@ import static java.time.ZoneOffset.UTC;
 
 
 /**
- * Provides department test data.
+ * Provides department demo data.
  */
 class DepartmentDataProvider {
 

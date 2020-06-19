@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -44,7 +44,7 @@ public class AvailabilityServiceTest {
 
         availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
 
-        testPerson = TestDataCreator.createPerson();
+        testPerson = DemoDataCreator.createPerson();
         testDateRangeStart = LocalDate.of(2016, 1, 1);
         testDateRangeEnd = LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE);
     }

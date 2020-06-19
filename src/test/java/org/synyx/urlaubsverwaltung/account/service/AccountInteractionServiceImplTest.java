@@ -11,7 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -66,7 +66,7 @@ public class AccountInteractionServiceImplTest {
 
         sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, clock);
 
-        person = TestDataCreator.createPerson("horscht");
+        person = DemoDataCreator.createPerson("horscht");
     }
 
     @Test

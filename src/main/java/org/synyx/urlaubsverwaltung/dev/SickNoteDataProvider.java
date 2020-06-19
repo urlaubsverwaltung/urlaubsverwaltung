@@ -15,7 +15,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
 
 /**
- * Provides sick note test data.
+ * Provides sick note demo data.
  */
 class SickNoteDataProvider {
 

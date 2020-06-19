@@ -36,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
- * Provides person test data.
+ * Provides person demo data.
  */
 class PersonDataProvider {
 
@@ -60,11 +60,11 @@ class PersonDataProvider {
         return personByUsername.isPresent();
     }
 
-    Person createTestPerson(TestUser testUser, String firstName, String lastName, String email) {
+    Person createTestPerson(DemoUser demoUser, String firstName, String lastName, String email) {
 
-        final String username = testUser.getUsername();
-        final String password = testUser.getPassword();
-        final Role[] roles = testUser.getRoles();
+        final String username = demoUser.getUsername();
+        final String password = demoUser.getPassword();
+        final Role[] roles = demoUser.getRoles();
 
         return createTestPerson(username, password, firstName, lastName, email, roles);
     }

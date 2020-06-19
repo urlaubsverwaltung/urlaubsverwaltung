@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.junit.Before;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,8 +35,8 @@ public class SickNoteCommentServiceImplTest {
     @Test
     public void ensureCreatesACommentAndPersistsIt() {
 
-        final Person author = TestDataCreator.createPerson("author");
-        final SickNote sickNote = TestDataCreator.createSickNote(author);
+        final Person author = DemoDataCreator.createPerson("author");
+        final SickNote sickNote = DemoDataCreator.createSickNote(author);
 
         SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.EDITED, author);
 
@@ -58,8 +58,8 @@ public class SickNoteCommentServiceImplTest {
     public void ensureCreationOfCommentWithTextWorks() {
 
         final String givenComment = "Foo";
-        final Person givenAuthor = TestDataCreator.createPerson("author");
-        final SickNote givenSickNote = TestDataCreator.createSickNote(givenAuthor);
+        final Person givenAuthor = DemoDataCreator.createPerson("author");
+        final SickNote givenSickNote = DemoDataCreator.createSickNote(givenAuthor);
 
         SickNoteComment sickNoteComment = sickNoteCommentService.create(givenSickNote, SickNoteAction.CONVERTED_TO_VACATION,
             givenAuthor, givenComment);

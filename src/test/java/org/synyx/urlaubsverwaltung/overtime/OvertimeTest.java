@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -31,7 +31,7 @@ public class OvertimeTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullStartDate() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         new Overtime(person, null, now, BigDecimal.ONE);
@@ -41,7 +41,7 @@ public class OvertimeTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullEndDate() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         new Overtime(person, now, null, BigDecimal.ONE);
@@ -51,7 +51,7 @@ public class OvertimeTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsOnNullNumberOfHours() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         new Overtime(person, now, now, null);
@@ -61,7 +61,7 @@ public class OvertimeTest {
     @Test
     public void ensureReturnsCorrectStartDate() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
@@ -74,7 +74,7 @@ public class OvertimeTest {
     @Test
     public void ensureReturnsCorrectEndDate() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -87,7 +87,7 @@ public class OvertimeTest {
     @Test
     public void ensureSetLastModificationDateOnInitialization() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), BigDecimal.ONE);
@@ -100,7 +100,7 @@ public class OvertimeTest {
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIfGettingStartDateOnACorruptedOvertime() throws IllegalAccessException {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -116,7 +116,7 @@ public class OvertimeTest {
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIfGettingEndDateOnACorruptedOvertime() throws IllegalAccessException {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -132,7 +132,7 @@ public class OvertimeTest {
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIfGettingLastModificationDateOnACorruptedOvertime() throws IllegalAccessException {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -148,7 +148,7 @@ public class OvertimeTest {
     @Test
     public void ensureCallingOnUpdateChangesLastModificationDate() throws IllegalAccessException {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);

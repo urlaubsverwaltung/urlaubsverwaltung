@@ -7,7 +7,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -39,9 +39,9 @@ public class PersonApiControllerTest {
     @Test
     public void ensureReturnsAllActivePersons() throws Exception {
 
-        Person person1 = TestDataCreator.createPerson("foo");
+        Person person1 = DemoDataCreator.createPerson("foo");
         person1.setId(1);
-        Person person2 = TestDataCreator.createPerson("bar");
+        Person person2 = DemoDataCreator.createPerson("bar");
         person2.setId(2);
 
         when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(person1, person2));
@@ -64,7 +64,7 @@ public class PersonApiControllerTest {
     @Test
     public void ensureReturnSpecificPerson() throws Exception {
 
-        Person person1 = TestDataCreator.createPerson("foo");
+        Person person1 = DemoDataCreator.createPerson("foo");
         person1.setId(42);
 
         when(personServiceMock.getPersonByID(person1.getId())).thenReturn(Optional.of(person1));

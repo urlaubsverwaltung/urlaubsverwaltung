@@ -10,8 +10,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
-import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -44,7 +43,7 @@ public class AvailabilityApiControllerTest {
     public void setUp() {
         sut = new AvailabilityApiController(availabilityService, personService);
 
-        testPerson = TestDataCreator.createPerson("testPerson");
+        testPerson = DemoDataCreator.createPerson("testPerson");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
     }
 

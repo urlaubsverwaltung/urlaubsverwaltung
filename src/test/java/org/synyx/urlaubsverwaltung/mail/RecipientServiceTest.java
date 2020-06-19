@@ -15,7 +15,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecipientServiceTest {

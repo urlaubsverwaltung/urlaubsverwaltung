@@ -24,8 +24,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createHolidaysAccount;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createHolidaysAccount;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TurnOfTheYearAccountUpdaterServiceTest {

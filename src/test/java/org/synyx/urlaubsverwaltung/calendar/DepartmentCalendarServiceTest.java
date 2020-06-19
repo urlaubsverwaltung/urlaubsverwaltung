@@ -31,8 +31,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createDepartment;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 
 @RunWith(MockitoJUnitRunner.class)

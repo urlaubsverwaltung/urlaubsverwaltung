@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapCase;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
@@ -77,17 +77,17 @@ public class ApplicationForLeaveFormValidatorTest {
 
         appForm = new ApplicationForLeaveForm();
 
-        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(2).toLocalDate());
-        appForm.setPerson(TestDataCreator.createPerson());
+        appForm.setPerson(DemoDataCreator.createPerson());
 
         // Default: everything is alright, override for negative cases
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
-            .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
+            .thenReturn(Optional.of(DemoDataCreator.createWorkingTime()));
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
@@ -340,7 +340,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForHoliday() {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY);
+        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -355,7 +355,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForUnpaidLeave() {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
+        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -370,7 +370,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForOvertime() {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
+        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.OVERTIME);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -385,7 +385,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureReasonIsMandatoryForSpecialLeave() {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
+        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -437,7 +437,7 @@ public class ApplicationForLeaveFormValidatorTest {
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(LocalDate.now(UTC));
-        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -460,7 +460,7 @@ public class ApplicationForLeaveFormValidatorTest {
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(LocalDate.now(UTC));
-        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -503,7 +503,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureHoursIsMandatoryForOvertime() {
 
-        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
+        appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
 
         validator.validate(appForm, errors);
@@ -524,9 +524,9 @@ public class ApplicationForLeaveFormValidatorTest {
             verify(errors, never()).rejectValue(eq("hours"), anyString());
         };
 
-        VacationType holiday = TestDataCreator.createVacationType(VacationCategory.HOLIDAY);
-        VacationType specialLeave = TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
-        VacationType unpaidLeave = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
+        VacationType holiday = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY);
+        VacationType specialLeave = DemoDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
+        VacationType unpaidLeave = DemoDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
         assertHoursNotMandatory.accept(holiday);
         assertHoursNotMandatory.accept(specialLeave);
@@ -539,7 +539,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
         settings.getWorkingTimeSettings().setOvertimeActive(false);
 
-        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
+        appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
 
         validator.validate(appForm, errors);
@@ -573,7 +573,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureDecimalHoursAreValid() {
 
-        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
+        appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(new BigDecimal("0.5"));
 
         validator.validate(appForm, errors);
@@ -587,7 +587,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
         settings.getWorkingTimeSettings().setOvertimeActive(true);
 
-        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
+        appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
 
         when(errors.hasFieldErrors("hours")).thenReturn(true);
@@ -887,13 +887,13 @@ public class ApplicationForLeaveFormValidatorTest {
 
     private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
         return new ApplicationForLeaveForm.Builder()
-            .person(TestDataCreator.createPerson())
-            .vacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+            .person(DemoDataCreator.createPerson())
+            .vacationType(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
     }
 
     private void overtimeMinimumTest(BigDecimal hours) {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
+        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.OVERTIME);
 
         appForm.setHours(hours);
         appForm.setVacationType(vacationType);
