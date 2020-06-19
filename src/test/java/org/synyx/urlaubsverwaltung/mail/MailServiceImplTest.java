@@ -33,7 +33,7 @@ public class MailServiceImplTest {
     @Mock
     private MailSender mailSender;
     @Mock
-    private MailOptionProvider mailOptionProvider;
+    private MailProperties mailProperties;
     @Mock
     private RecipientService recipientService;
 
@@ -42,9 +42,10 @@ public class MailServiceImplTest {
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
         when(mailBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
-        when(mailOptionProvider.getSender()).thenReturn("no-reply@firma.test");
+        when(mailProperties.getSender()).thenReturn("no-reply@firma.test");
+        when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
 
-        sut = new MailServiceImpl(messageSource, mailBuilder, mailSender, mailOptionProvider, recipientService);
+        sut = new MailServiceImpl(messageSource, mailBuilder, mailSender, mailProperties, recipientService);
     }
 
     @Test
@@ -116,7 +117,7 @@ public class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
         String to = "admin@firma.test";
-        when(mailOptionProvider.getAdministrator()).thenReturn(to);
+        when(mailProperties.getAdministrator()).thenReturn(to);
 
         sut.sendTechnicalMail(subjectMessageKey, templateName, new HashMap<>());
 
