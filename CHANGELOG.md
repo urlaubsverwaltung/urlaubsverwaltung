@@ -1,3 +1,6 @@
+### [urlaubsverwaltung-3.4.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.3)
+* Downgrade spring boot parent to 2.1.14, because of mapping problems in the controller layer.
+
 ### [urlaubsverwaltung-3.4.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.2)
 * Documentation adjustments
 * Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/71?closed=1)
