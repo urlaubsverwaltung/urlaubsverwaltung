@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +52,7 @@ public class SimpleAuthenticationProviderTest {
         String rawPassword = "secret";
         String encodedPassword = "2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec";
 
-        Person user = TestDataCreator.createPerson(username, Role.USER, Role.OFFICE);
+        Person user = DemoDataCreator.createPerson(username, Role.USER, Role.OFFICE);
         user.setPassword(encodedPassword);
 
         when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
@@ -85,7 +85,7 @@ public class SimpleAuthenticationProviderTest {
         String rawPassword = "secret";
         String encodedPassword = "2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec";
 
-        Person user = TestDataCreator.createPerson(username, Role.INACTIVE);
+        Person user = DemoDataCreator.createPerson(username, Role.INACTIVE);
         user.setPassword(encodedPassword);
 
         when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
@@ -101,7 +101,7 @@ public class SimpleAuthenticationProviderTest {
         String username = "user";
         String encodedPassword = "2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec";
 
-        Person user = TestDataCreator.createPerson(username, Role.USER, Role.OFFICE);
+        Person user = DemoDataCreator.createPerson(username, Role.USER, Role.OFFICE);
         user.setPassword(encodedPassword);
 
         when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));

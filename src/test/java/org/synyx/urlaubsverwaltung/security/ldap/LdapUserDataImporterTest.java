@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.util.Optional;
 
@@ -59,7 +59,7 @@ public class LdapUserDataImporterTest {
     @Test
     public void ensureUpdatesPersonIfLdapUserExists() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = DemoDataCreator.createPerson();
 
         when(personServiceMock.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(ldapUserServiceMock.getLdapUsers())

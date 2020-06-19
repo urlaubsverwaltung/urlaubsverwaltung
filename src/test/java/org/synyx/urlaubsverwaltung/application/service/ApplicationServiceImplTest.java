@@ -6,13 +6,12 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -80,7 +79,7 @@ public class ApplicationServiceImplTest {
     @Test
     public void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
 
@@ -110,7 +109,7 @@ public class ApplicationServiceImplTest {
         final Application application = new Application();
         final List<Application> applications = List.of(application);
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = DemoDataCreator.createPerson();
 
         when(applicationDAO.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
 
@@ -122,7 +121,7 @@ public class ApplicationServiceImplTest {
     @Test
     public void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
 

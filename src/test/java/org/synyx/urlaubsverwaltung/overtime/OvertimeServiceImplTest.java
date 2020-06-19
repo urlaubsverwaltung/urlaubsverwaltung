@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -161,7 +161,7 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureGetForPersonCallsCorrectDAOMethod() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         sut.getOvertimeRecordsForPerson(person);
 
@@ -218,7 +218,7 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureGetRecordsByPersonAndYearCallsCorrectDAOMethod() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         sut.getOvertimeRecordsForPersonAndYear(person, 2015);
 
@@ -261,21 +261,21 @@ public class OvertimeServiceImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTryingToGetYearOvertimeForNegativeYear() {
 
-        sut.getTotalOvertimeForPersonAndYear(TestDataCreator.createPerson(), -1);
+        sut.getTotalOvertimeForPersonAndYear(DemoDataCreator.createPerson(), -1);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTryingToGetYearOvertimeForZeroYear() {
 
-        sut.getTotalOvertimeForPersonAndYear(TestDataCreator.createPerson(), 0);
+        sut.getTotalOvertimeForPersonAndYear(DemoDataCreator.createPerson(), 0);
     }
 
 
     @Test
     public void ensureReturnsZeroIfPersonHasNoOvertimeRecordsYetForTheGivenYear() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.emptyList());
@@ -295,12 +295,12 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureReturnsCorrectYearOvertimeForPerson() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
+        Overtime overtimeRecord = DemoDataCreator.createOvertimeRecord(person);
         overtimeRecord.setHours(BigDecimal.ONE);
 
-        Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
+        Overtime otherOvertimeRecord = DemoDataCreator.createOvertimeRecord(person);
         otherOvertimeRecord.setHours(BigDecimal.TEN);
 
         when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
@@ -330,7 +330,7 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureReturnsZeroAsLeftOvertimeIfPersonHasNoOvertimeRecordsYet() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
@@ -348,7 +348,7 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureTheLeftOvertimeIsTheDifferenceBetweenTotalOvertimeAndOvertimeReduction() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
@@ -366,7 +366,7 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureTheLeftOvertimeIsZeroIfPersonHasNeitherOvertimeRecordsNorOvertimeReduction() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
         when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);

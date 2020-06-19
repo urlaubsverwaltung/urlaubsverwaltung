@@ -25,7 +25,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -48,7 +48,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationInteractionServiceImplTest {
@@ -287,7 +287,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
+        AbsenceMapping absenceMapping = DemoDataCreator.anyAbsenceMapping();
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person));
 
         sut.allow(applicationForLeave, boss, comment);
@@ -712,7 +712,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
+        AbsenceMapping absenceMapping = DemoDataCreator.anyAbsenceMapping();
         final Optional<AbsenceMapping> absenceByIdAndType = absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION));
         when(absenceByIdAndType).thenReturn(of(absenceMapping));
 
@@ -783,7 +783,7 @@ public class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
+        AbsenceMapping absenceMapping = DemoDataCreator.anyAbsenceMapping();
         when(absenceMappingService.getAbsenceByIdAndType(null, AbsenceType.VACATION)).thenReturn(of(absenceMapping));
 
         sut.cancel(applicationForLeave, canceller, comment);
@@ -1001,8 +1001,8 @@ public class ApplicationInteractionServiceImplTest {
         ImpatientAboutApplicationForLeaveProcessException {
 
         Person person = createPerson();
-        Application applicationForLeave = TestDataCreator.createApplication(person,
-            TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        Application applicationForLeave = DemoDataCreator.createApplication(person,
+            DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
         applicationForLeave.setApplicationDate(LocalDate.now(UTC).minusDays(3));
         applicationForLeave.setRemindDate(LocalDate.now(UTC).minusDays(1));
 

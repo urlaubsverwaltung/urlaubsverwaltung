@@ -12,7 +12,7 @@ import java.util.Optional;
 
 
 /**
- * Provides overtime record test data.
+ * Provides overtime record demo data.
  */
 class OvertimeRecordDataProvider {
 

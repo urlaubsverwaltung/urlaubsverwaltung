@@ -18,15 +18,15 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 @Configuration
-@ConditionalOnProperty(value = "uv.development.testdata.create", havingValue = "true")
-@EnableConfigurationProperties(TestDataProperties.class)
-class TestDataConfiguration {
+@ConditionalOnProperty(value = "uv.development.demodata.create", havingValue = "true")
+@EnableConfigurationProperties(DemoDataProperties.class)
+class DemoDataConfiguration {
 
     @Bean
-    TestDataCreationService testDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
+    DemoDataCreationService demoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                                     SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                                    DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
-        return new TestDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, overtimeRecordDataProvider, departmentDataProvider, testDataProperties);
+                                                    DepartmentDataProvider departmentDataProvider, DemoDataProperties demoDataProperties) {
+        return new DemoDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, overtimeRecordDataProvider, departmentDataProvider, demoDataProperties);
     }
 
     @Bean

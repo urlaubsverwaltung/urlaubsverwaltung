@@ -8,7 +8,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.synyx.urlaubsverwaltung.absence.AbsenceApiController;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -33,9 +32,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 
 
 @RunWith(MockitoJUnitRunner.class)

@@ -20,7 +20,7 @@ services:
     ports:
       - '8080:8080'
     environment:
-      SPRING_PROFILES_ACTIVE: 'testdata'
+      SPRING_PROFILES_ACTIVE: 'demodata'
     env_file:
       - db.env
     volumes:

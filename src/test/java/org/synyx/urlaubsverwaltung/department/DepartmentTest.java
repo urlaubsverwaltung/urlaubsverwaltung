@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.department;
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -50,13 +50,13 @@ public class DepartmentTest {
     public void ensureMembersListIsUnmodifiable() {
 
         List<Person> modifiableList = new ArrayList<>();
-        modifiableList.add(TestDataCreator.createPerson());
+        modifiableList.add(DemoDataCreator.createPerson());
 
         Department department = new Department();
         department.setMembers(modifiableList);
 
         try {
-            department.getMembers().add(TestDataCreator.createPerson());
+            department.getMembers().add(DemoDataCreator.createPerson());
             Assert.fail("Members list should be unmodifiable!");
         } catch (UnsupportedOperationException ex) {
             // Expected
@@ -68,13 +68,13 @@ public class DepartmentTest {
     public void ensureDepartmentHeadsListIsUnmodifiable() {
 
         List<Person> modifiableList = new ArrayList<>();
-        modifiableList.add(TestDataCreator.createPerson());
+        modifiableList.add(DemoDataCreator.createPerson());
 
         Department department = new Department();
         department.setDepartmentHeads(modifiableList);
 
         try {
-            department.getDepartmentHeads().add(TestDataCreator.createPerson());
+            department.getDepartmentHeads().add(DemoDataCreator.createPerson());
             Assert.fail("Department head list should be unmodifiable!");
         } catch (UnsupportedOperationException ex) {
             // Expected

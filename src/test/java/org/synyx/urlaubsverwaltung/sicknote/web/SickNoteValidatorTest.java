@@ -26,9 +26,9 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createWorkingTime;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.workingtime.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.workingtime.OverlapCase.NO_OVERLAPPING;
 
