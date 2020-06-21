@@ -1,10 +1,11 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
 
-import org.junit.After;
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -15,9 +16,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,21 +26,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
-@SpringBootTest
+@SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @RunWith(SpringRunner.class)
 @Transactional
 public class CalendarMailServiceIT {
+
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private CalendarMailService sut;
 
     @Autowired
     private MailProperties mailProperties;
-
-    @After
-    public void tearDown() {
-        Mailbox.clearAll();
-    }
 
     @Test
     public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
@@ -54,10 +53,10 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
-        List<Message> inbox = Mailbox.get(mailProperties.getAdministrator());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Synchronisieren des Kalenders");
 
@@ -81,10 +80,10 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 
-        List<Message> inbox = Mailbox.get(mailProperties.getAdministrator());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Aktualisieren eines Kalendereintrags");
 
@@ -101,10 +100,10 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
 
-        List<Message> inbox = Mailbox.get(mailProperties.getAdministrator());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Löschen eines Kalendereintrags");
 
