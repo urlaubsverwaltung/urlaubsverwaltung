@@ -121,13 +121,8 @@
 
     <!-- MAIL -->
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>${mail.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
     <dependency>
       <groupId>org.freemarker</groupId>
@@ -139,21 +134,10 @@
       <version>${freemarker-java8.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jvnet.mock-javamail</groupId>
-      <artifactId>mock-javamail</artifactId>
-      <version>${mock-javamail.version}</version>
+      <groupId>com.icegreen</groupId>
+      <artifactId>greenmail</artifactId>
+      <version>1.5.13</version>
       <scope>test</scope>
-      <exclusions>
-        <!-- Exclusions are included in the project already in the correct version -->
-        <exclusion>
-          <artifactId>mail</artifactId>
-          <groupId>javax.mail</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>junit</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- PUBLIC HOLIDAYS INFORMATION -->
