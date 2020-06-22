@@ -11,6 +11,6 @@ public class MailConfiguration {
 
     @Bean
     public MailSender springBootConfiguredMailSender(JavaMailSender javaMailSender) {
-        return new CustomMailSender(javaMailSender);
+        return new MailSenderImpl(javaMailSender);
     }
 }
