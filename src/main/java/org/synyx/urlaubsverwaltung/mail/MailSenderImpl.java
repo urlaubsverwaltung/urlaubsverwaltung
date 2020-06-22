@@ -11,13 +11,13 @@ import java.util.List;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-class CustomMailSender implements MailSender {
+class MailSenderImpl implements MailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final JavaMailSender javaMailSender;
 
-    CustomMailSender(JavaMailSender javaMailSender) {
+    MailSenderImpl(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
@@ -28,7 +28,7 @@ class CustomMailSender implements MailSender {
             return;
         }
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        final SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(from);
         mailMessage.setTo(recipients.toArray(new String[0]));
         mailMessage.setSubject(subject);
@@ -42,11 +42,10 @@ class CustomMailSender implements MailSender {
 
             this.javaMailSender.send(message);
 
-            for (String recipient : message.getTo()) {
-                LOG.debug("Sent email to {}", recipient);
-            }
-
             if (LOG.isDebugEnabled()) {
+                for (String recipient : message.getTo()) {
+                    LOG.debug("Sent email to {}", recipient);
+                }
                 LOG.debug("To={}\n\nSubject={}\n\nText={}",
                     Arrays.toString(message.getTo()), message.getSubject(), message.getText());
             }
