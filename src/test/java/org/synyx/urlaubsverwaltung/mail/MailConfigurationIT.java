@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.mail.config;
+package org.synyx.urlaubsverwaltung.mail;
 
 
 import org.junit.Test;
