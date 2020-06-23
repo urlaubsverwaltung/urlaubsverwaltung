@@ -9,6 +9,7 @@ import java.util.Optional;
 /**
  * Syncs vacations and sick notes with calendar providers like Exchange or Google Calendar.
  */
+@Deprecated(since = "4.0.0", forRemoval = true)
 public interface CalendarProvider {
 
     /**

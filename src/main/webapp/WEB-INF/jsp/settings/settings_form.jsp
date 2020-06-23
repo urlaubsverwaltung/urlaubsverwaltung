@@ -361,6 +361,12 @@
                     </div>
 
                     <div class="tab-pane" id="calendar">
+
+                        <div class="alert alert-danger" role="alert">
+                            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+                            <spring:message code="settings.calendar.deprecated"/>
+                        </div>
+
                         <div class="form-section">
                             <div class="col-xs-12">
                                 <legend><spring:message code="settings.calendar.title"/></legend>

@@ -11,6 +11,7 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class NoopCalendarSyncProvider implements CalendarProvider {
 

@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 /**
  * Settings to sync absences with a calendar provider.
  */
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Embeddable
 public class CalendarSettings {
 

@@ -8,6 +8,7 @@ import java.util.Base64;
 /**
  * Settings to sync absences with a Microsoft Exchange calendar.
  */
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Embeddable
 public class ExchangeCalendarSettings {
 

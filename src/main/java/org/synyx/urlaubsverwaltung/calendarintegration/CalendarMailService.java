@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class CalendarMailService {
 
