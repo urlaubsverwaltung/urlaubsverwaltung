@@ -37,6 +37,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class GoogleCalendarSyncProvider implements CalendarProvider {
 

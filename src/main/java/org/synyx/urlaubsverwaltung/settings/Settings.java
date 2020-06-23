@@ -13,6 +13,8 @@ public class Settings extends AbstractPersistable<Integer> {
 
     private AbsenceSettings absenceSettings;
     private WorkingTimeSettings workingTimeSettings;
+
+    @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
 
     public AbsenceSettings getAbsenceSettings() {
@@ -57,6 +59,7 @@ public class Settings extends AbstractPersistable<Integer> {
     }
 
 
+    @Deprecated(since = "4.0.0", forRemoval = true)
     public void setCalendarSettings(CalendarSettings calendarSettings) {
 
         this.calendarSettings = calendarSettings;

@@ -42,6 +42,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Provides sync of absences with exchange server calendar.
  */
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class ExchangeCalendarProvider implements CalendarProvider {
 
