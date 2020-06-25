@@ -50,12 +50,15 @@ public class ICalServiceTest {
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
 
-        assertThat(calendar).contains("VERSION:2.0")
+        assertThat(calendar)
+            .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
 
             .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
             .contains("DTSTART;VALUE=DATE:20190326");
     }
 
@@ -70,6 +73,7 @@ public class ICalServiceTest {
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
 
             .contains("SUMMARY:Marlene Muster abwesend")
@@ -84,12 +88,15 @@ public class ICalServiceTest {
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
 
-        assertThat(calendar).contains("VERSION:2.0")
+        assertThat(calendar)
+            .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
 
             .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
             .contains("DTSTART;VALUE=DATE:20190326")
             .contains("DTEND;VALUE=DATE:20190402");
     }
@@ -100,9 +107,11 @@ public class ICalServiceTest {
         final Absence noonAbsence = absence(createPerson(), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(noonAbsence));
-        assertThat(calendar).contains("VERSION:2.0")
+        assertThat(calendar)
+            .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
 
             .contains("SUMMARY:Marlene Muster abwesend")
