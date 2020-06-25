@@ -77,8 +77,8 @@ public class ICalServiceTest {
             .contains("X-WR-CALNAME:Abwesenheitskalender")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART;TZID=Etc/UTC:20190426T080000")
-            .contains("DTEND;TZID=Etc/UTC:20190426T120000");
+            .contains("DTSTART:20190426T080000Z")
+            .contains("DTEND:20190426T120000Z");
     }
 
     @Test
@@ -115,8 +115,8 @@ public class ICalServiceTest {
             .contains("X-WR-CALNAME:Abwesenheitskalender")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART;TZID=Etc/UTC:20190526T120000")
-            .contains("DTEND;TZID=Etc/UTC:20190526T160000");
+            .contains("DTSTART:20190526T120000Z")
+            .contains("DTEND:20190526T160000Z");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
