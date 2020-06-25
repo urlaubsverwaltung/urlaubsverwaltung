@@ -57,6 +57,7 @@ public class ICalServiceTest {
 
         assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
         assertThat(calendar).contains("DTSTART;VALUE=DATE:20190326");
+        assertThat(calendar).contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE");
     }
 
     @Test
@@ -69,6 +70,7 @@ public class ICalServiceTest {
         assertThat(calendar).contains("VERSION:2.0");
         assertThat(calendar).contains("CALSCALE:GREGORIAN");
         assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
+        assertThat(calendar).contains("X-MICROSOFT-CALSCALE:GREGORIAN");
         assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
 
         assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
@@ -86,11 +88,13 @@ public class ICalServiceTest {
         assertThat(calendar).contains("VERSION:2.0");
         assertThat(calendar).contains("CALSCALE:GREGORIAN");
         assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
+        assertThat(calendar).contains("X-MICROSOFT-CALSCALE:GREGORIAN");
         assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
 
         assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
         assertThat(calendar).contains("DTSTART;VALUE=DATE:20190326");
         assertThat(calendar).contains("DTEND;VALUE=DATE:20190402");
+        assertThat(calendar).contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE");
     }
 
     @Test
@@ -102,6 +106,7 @@ public class ICalServiceTest {
         assertThat(calendar).contains("VERSION:2.0");
         assertThat(calendar).contains("CALSCALE:GREGORIAN");
         assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
+        assertThat(calendar).contains("X-MICROSOFT-CALSCALE:GREGORIAN");
         assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
 
         assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
