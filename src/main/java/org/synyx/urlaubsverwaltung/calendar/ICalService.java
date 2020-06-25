@@ -21,6 +21,7 @@ import java.util.List;
 
 import static java.util.Date.from;
 import static java.util.stream.Collectors.toList;
+import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 
 
@@ -32,8 +33,9 @@ class ICalService {
         final Calendar calendar = new Calendar();
         calendar.getProperties().add(VERSION_2_0);
         calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
-        calendar.getProperties().add(CalScale.GREGORIAN);
+        calendar.getProperties().add(GREGORIAN);
         calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
+        calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
 
         final List<VEvent> absencesVEvents = absences.stream().map(this::toVEvent).collect(toList());
         calendar.getComponents().addAll(absencesVEvents);
@@ -61,10 +63,14 @@ class ICalService {
         final DateTime end = new DateTime(from(endDateTime.toInstant()), timeZone);
 
         final VEvent event;
-        if (absence.isAllDay() && isSameDay(startDateTime, endDateTime)) {
-            event = new VEvent(new Date(start.getTime()), absence.getEventSubject());
-        } else if (absence.isAllDay() && !isSameDay(startDateTime, endDateTime)) {
-            event = new VEvent(new Date(start), new Date(end), absence.getEventSubject());
+        if (absence.isAllDay()) {
+            if (isSameDay(startDateTime, endDateTime)) {
+                event = new VEvent(new Date(start.getTime()), absence.getEventSubject());
+            } else {
+                event = new VEvent(new Date(start), new Date(end), absence.getEventSubject());
+            }
+
+            event.getProperties().add(new XProperty("X-MICROSOFT-CDO-ALLDAYEVENT", "TRUE"));
         } else {
             event = new VEvent(start, end, absence.getEventSubject());
         }
