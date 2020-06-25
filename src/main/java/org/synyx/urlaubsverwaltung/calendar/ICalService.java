@@ -3,11 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
@@ -52,15 +48,14 @@ class ICalService {
 
     private VEvent toVEvent(Absence absence) {
 
-        final VTimeZone utc = TimeZoneRegistryFactory.getInstance().createRegistry()
-            .getTimeZone("Etc/UTC").getVTimeZone();
 
         final ZonedDateTime startDateTime = absence.getStartDate();
         final ZonedDateTime endDateTime = absence.getEndDate();
 
-        final TimeZone timeZone = new TimeZone(utc);
-        final DateTime start = new DateTime(from(startDateTime.toInstant()), timeZone);
-        final DateTime end = new DateTime(from(endDateTime.toInstant()), timeZone);
+        final DateTime start = new DateTime(from(startDateTime.toInstant()));
+        start.setUtc(true);
+        final DateTime end = new DateTime(from(endDateTime.toInstant()));
+        end.setUtc(true);
 
         final VEvent event;
         if (absence.isAllDay()) {

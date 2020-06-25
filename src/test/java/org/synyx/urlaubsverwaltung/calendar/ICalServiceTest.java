@@ -74,8 +74,8 @@ public class ICalServiceTest {
         assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
 
         assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;TZID=Etc/UTC:20190426T080000");
-        assertThat(calendar).contains("DTEND;TZID=Etc/UTC:20190426T120000");
+        assertThat(calendar).contains("DTSTART:20190426T080000Z");
+        assertThat(calendar).contains("DTEND:20190426T120000Z");
     }
 
     @Test
@@ -110,8 +110,8 @@ public class ICalServiceTest {
         assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
 
         assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;TZID=Etc/UTC:20190526T120000");
-        assertThat(calendar).contains("DTEND;TZID=Etc/UTC:20190526T160000");
+        assertThat(calendar).contains("DTSTART:20190526T120000Z");
+        assertThat(calendar).contains("DTEND:20190526T160000Z");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
