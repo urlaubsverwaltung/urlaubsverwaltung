@@ -72,7 +72,6 @@ class FreeTimeAbsenceProviderTest {
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
 
         Assert.assertEquals("wrong number of absences in list", 1, absencesList.size());
-        Assert.assertEquals("wrong absence type", TimedAbsence.Type.FREETIME, absencesList.get(0).getType());
         Assert.assertEquals("wrong part of day set on absence", DayLength.FULL.name(),
             absencesList.get(0).getPartOfDay());
         Assert.assertTrue("wrong absence ratio", BigDecimal.ONE.compareTo(absencesList.get(0).getRatio()) == 0);

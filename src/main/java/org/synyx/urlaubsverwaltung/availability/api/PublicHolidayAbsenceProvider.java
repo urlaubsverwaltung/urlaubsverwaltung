@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
@@ -66,9 +65,9 @@ class PublicHolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
         TimedAbsence absence = null;
 
         if (fullDayPublicHoliday) {
-            absence = new TimedAbsence(FULL, PUBLIC_HOLIDAY);
+            absence = new TimedAbsence(FULL);
         } else if (halfDayPublicHoliday) {
-            absence = new TimedAbsence(NOON, PUBLIC_HOLIDAY);
+            absence = new TimedAbsence(NOON);
         }
 
         return Optional.ofNullable(absence);

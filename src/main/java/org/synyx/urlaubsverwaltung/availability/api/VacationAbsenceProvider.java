@@ -15,7 +15,6 @@ import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
 
 
 @Service
@@ -69,7 +68,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
         final List<Optional<TimedAbsence>> vacationTimeAbsence = new ArrayList<>();
         for (Application application : applications) {
-            vacationTimeAbsence.add(Optional.of(new TimedAbsence(application.getDayLength(), VACATION)));
+            vacationTimeAbsence.add(Optional.of(new TimedAbsence(application.getDayLength())));
         }
 
         return vacationTimeAbsence;
