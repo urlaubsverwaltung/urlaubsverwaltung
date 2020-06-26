@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.availability.api;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static java.math.BigDecimal.ZERO;
 
 
 /**
@@ -14,19 +17,12 @@ class TimedAbsenceSpans {
     private final List<TimedAbsence> absencesList;
 
     TimedAbsenceSpans(List<TimedAbsence> absencesList) {
-
-        if (absencesList == null) {
-            this.absencesList = new ArrayList<>();
-        } else {
-            this.absencesList = absencesList;
-        }
+        this.absencesList = Objects.requireNonNullElseGet(absencesList, ArrayList::new);
     }
 
     public List<TimedAbsence> getAbsencesList() {
-
         return absencesList;
     }
-
 
     BigDecimal calculatePresenceRatio() {
 
@@ -36,10 +32,9 @@ class TimedAbsenceSpans {
             presenceRatio = presenceRatio.subtract(absenceSpan.getRatio());
         }
 
-        boolean negativePresenceRatio = presenceRatio.compareTo(BigDecimal.ZERO) < 0;
-
+        final boolean negativePresenceRatio = presenceRatio.compareTo(ZERO) < 0;
         if (negativePresenceRatio) {
-            presenceRatio = BigDecimal.ZERO;
+            presenceRatio = ZERO;
         }
 
         return presenceRatio;
