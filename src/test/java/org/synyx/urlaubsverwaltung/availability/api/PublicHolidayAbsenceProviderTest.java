@@ -1,13 +1,11 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
-import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.junit.jupitser.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -16,95 +14,77 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 
-
+@ExtendWith(MockitoExtension.class)
 class PublicHolidayAbsenceProviderTest {
 
-    private PublicHolidayAbsenceProvider publicHolidayAbsenceProvider;
+    private PublicHolidayAbsenceProvider sut;
 
+    @Mock
     private SickDayAbsenceProvider sickDayAbsenceProvider;
+    @Mock
     private WorkingTimeService workingTimeService;
+    @Mock
     private PublicHolidaysService publicHolidaysService;
-
-    private TimedAbsenceSpans emptyTimedAbsenceSpans;
-    private Person testPerson;
-    private LocalDate newYearsDay;
-    private LocalDate standardWorkingDay;
 
     @BeforeEach
     void setUp() {
-
-        emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
-        testPerson = DemoDataCreator.createPerson();
-        newYearsDay = LocalDate.of(2016, 1, 1);
-        standardWorkingDay = LocalDate.of(2016, 1, 4);
-
-        sickDayAbsenceProvider = mock(SickDayAbsenceProvider.class);
-        setupWorkingTimeServiceMock();
-        setupHolidayServiceMock();
-
-        publicHolidayAbsenceProvider = new PublicHolidayAbsenceProvider(sickDayAbsenceProvider, publicHolidaysService,
-            workingTimeService);
+        sut = new PublicHolidayAbsenceProvider(sickDayAbsenceProvider, publicHolidaysService, workingTimeService);
     }
-
-
-    private void setupWorkingTimeServiceMock() {
-
-        workingTimeService = mock(WorkingTimeService.class);
-        when(workingTimeService.getFederalStateForPerson(any(Person.class),
-            any(LocalDate.class)))
-            .thenReturn(FederalState.BADEN_WUERTTEMBERG);
-    }
-
-
-    private void setupHolidayServiceMock() {
-
-        publicHolidaysService = mock(PublicHolidaysService.class);
-
-        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, FederalState.BADEN_WUERTTEMBERG))
-            .thenReturn(new BigDecimal(0));
-
-        when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay,
-            FederalState.BADEN_WUERTTEMBERG))
-            .thenReturn(new BigDecimal(1));
-    }
-
 
     @Test
-    void ensurePersonIsNotAvailableOnHoliDays() {
+    void ensurePersonIsNotAvailableOnHolidays() {
 
-        TimedAbsenceSpans updatedTimedAbsenceSpans = publicHolidayAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
-            testPerson, newYearsDay);
+        final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
+        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
 
-        List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
+        final Person person = createPerson();
+        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
 
-        Assert.assertEquals("wrong number of absences in list", 1, absencesList.size());
-        Assert.assertEquals("wrong part of day set on absence", DayLength.FULL.name(),
-            absencesList.get(0).getPartOfDay());
-        Assert.assertTrue("wrong absence ratio", BigDecimal.ONE.compareTo(absencesList.get(0).getRatio()) == 0);
+        final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
+
+        final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.addAbsence(emptyTimedAbsenceSpans, person, newYearsDay);
+        final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
+        assertThat(absencesList).hasSize(1);
+        assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(FULL.name());
+        assertThat(absencesList.get(0).getRatio()).isEqualByComparingTo(BigDecimal.ONE);
     }
-
 
     @Test
     void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
-        publicHolidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, newYearsDay);
+        final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
+        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
 
-        Mockito.verifyNoMoreInteractions(sickDayAbsenceProvider);
+        final Person person = createPerson();
+        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
+
+        final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
+
+        sut.checkForAbsence(emptyTimedAbsenceSpans, person, newYearsDay);
+        verifyNoMoreInteractions(sickDayAbsenceProvider);
     }
-
 
     @Test
     void ensureCallsSickDayAbsenceProviderIfNotAbsentForHoliday() {
 
-        publicHolidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
+        final LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
+        when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(1));
 
-        verify(sickDayAbsenceProvider, times(1))
-            .checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
+        final Person person = createPerson();
+        when(workingTimeService.getFederalStateForPerson(person, standardWorkingDay)).thenReturn(BADEN_WUERTTEMBERG);
+
+        final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
+
+        sut.checkForAbsence(emptyTimedAbsenceSpans, person, standardWorkingDay);
+        verify(sickDayAbsenceProvider, times(1)).checkForAbsence(emptyTimedAbsenceSpans, person, standardWorkingDay);
     }
 }

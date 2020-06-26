@@ -1,86 +1,68 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.math.BigDecimal.ONE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 
-class AvailabilityServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class AvailabilityServiceTest {
 
     private static final int DAYS_IN_TEST_DATE_RANGE = 8;
 
-    private AvailabilityService availabilityService;
+    private AvailabilityService sut;
 
+    @Mock
     private FreeTimeAbsenceProvider freeTimeAbsenceProvider;
-
-    private Person testPerson;
-    private LocalDate testDateRangeStart;
-    private LocalDate testDateRangeEnd;
-    private TimedAbsenceSpans timedAbsenceSpansMock;
+    @Mock
+    private TimedAbsenceSpans timedAbsenceSpans;
 
     @BeforeEach
     void setUp() {
-
-        freeTimeAbsenceProvider = mock(FreeTimeAbsenceProvider.class);
-        timedAbsenceSpansMock = mock(TimedAbsenceSpans.class);
-
-        when(freeTimeAbsenceProvider.checkForAbsence(
-            any(Person.class),
-            any(LocalDate.class)))
-            .thenReturn(timedAbsenceSpansMock);
-
-        availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
-
-        testPerson = DemoDataCreator.createPerson();
-        testDateRangeStart = LocalDate.of(2016, 1, 1);
-        testDateRangeEnd = LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE);
+        sut = new AvailabilityService(freeTimeAbsenceProvider);
     }
-
 
     @Test
     void ensureFetchesAvailabilityListForEachDayInDateRange() {
 
-        availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
+        when(freeTimeAbsenceProvider.checkForAbsence(any(Person.class), any(LocalDate.class))).thenReturn(timedAbsenceSpans);
 
-        verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE))
-            .checkForAbsence(eq(testPerson), any(LocalDate.class));
+        final LocalDate startDate = LocalDate.of(2016, 1, 1);
+        final LocalDate endDate = LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE);
+        final Person person = createPerson();
+        sut.getPersonsAvailabilities(startDate, endDate, person);
+
+        verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE)).checkForAbsence(eq(person), any(LocalDate.class));
     }
-
 
     @Test
     void ensureReturnsDayAvailabilityWithCalculatedPresenceRatio() {
 
-        LocalDate dayToTest = testDateRangeStart;
+        when(freeTimeAbsenceProvider.checkForAbsence(any(Person.class), any(LocalDate.class))).thenReturn(timedAbsenceSpans);
+        when(timedAbsenceSpans.calculatePresenceRatio()).thenReturn(ONE);
 
-        BigDecimal expectedAvailabilityRatio = BigDecimal.ONE;
+        final LocalDate dayToTest = LocalDate.of(2016, 1, 1);
+        final AvailabilityListDto personsAvailabilities = sut.getPersonsAvailabilities(dayToTest, dayToTest, createPerson());
 
-        when(timedAbsenceSpansMock.calculatePresenceRatio()).thenReturn(expectedAvailabilityRatio);
-
-        AvailabilityListDto personsAvailabilities = availabilityService.getPersonsAvailabilities(dayToTest, dayToTest,
-            testPerson);
-
-        verify(timedAbsenceSpansMock, times(1)).calculatePresenceRatio();
-
-        List<DayAvailability> availabilityList = personsAvailabilities.getAvailabilities();
-        Assert.assertEquals("Wrong number of Availabilities returned", 1, availabilityList.size());
-
-        DayAvailability availabilityOnDayToTest = availabilityList.get(0);
-        Assert.assertEquals("Wrong TimedAbsenceSpans set on return object", timedAbsenceSpansMock,
-            availabilityOnDayToTest.getTimedAbsenceSpans());
-        Assert.assertEquals("Wrong availability ratio set on return object", expectedAvailabilityRatio,
-            availabilityOnDayToTest.getAvailabilityRatio());
+        verify(timedAbsenceSpans, times(1)).calculatePresenceRatio();
+        final List<DayAvailability> availabilityList = personsAvailabilities.getAvailabilities();
+        assertThat(availabilityList).hasSize(1);
+        assertThat(availabilityList.get(0).getTimedAbsenceSpans()).isEqualTo(timedAbsenceSpans);
+        assertThat(availabilityList.get(0).getAvailabilityRatio()).isEqualTo(ONE);
     }
 }
