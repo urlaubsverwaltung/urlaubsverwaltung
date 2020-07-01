@@ -37,7 +37,7 @@ public class UsedDaysOverviewTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfOneOfTheGivenApplicationsDoesNotMatchTheGivenYear() {
 
-        Application application = new Application();
+        final Application application = new Application();
         application.setVacationType(createVacationType(HOLIDAY));
         application.setStartDate(LocalDate.of(2014, 10, 13));
         application.setEndDate(LocalDate.of(2014, 10, 13));
@@ -50,55 +50,55 @@ public class UsedDaysOverviewTest {
     @Test
     public void ensureGeneratesCorrectUsedDaysOverview() {
 
-        Application holiday = TestDataCreator.anyApplication();
+        final Application holiday = TestDataCreator.anyApplication();
         holiday.setVacationType(createVacationType(HOLIDAY));
         holiday.setStartDate(LocalDate.of(2014, 10, 13));
         holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
-        Application holidayAllowed = TestDataCreator.anyApplication();
+        final Application holidayAllowed = TestDataCreator.anyApplication();
         holidayAllowed.setVacationType(createVacationType(HOLIDAY));
         holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        Application specialLeave = TestDataCreator.anyApplication();
+        final Application specialLeave = TestDataCreator.anyApplication();
         specialLeave.setVacationType(createVacationType(VacationCategory.SPECIALLEAVE));
         specialLeave.setStartDate(LocalDate.of(2014, 10, 15));
         specialLeave.setEndDate(LocalDate.of(2014, 10, 15));
         specialLeave.setStatus(ApplicationStatus.WAITING);
 
-        Application specialLeaveAllowed = TestDataCreator.anyApplication();
+        final Application specialLeaveAllowed = TestDataCreator.anyApplication();
         specialLeaveAllowed.setVacationType(createVacationType(VacationCategory.SPECIALLEAVE));
         specialLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 16));
         specialLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 16));
         specialLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        Application unpaidLeave = TestDataCreator.anyApplication();
+        final Application unpaidLeave = TestDataCreator.anyApplication();
         unpaidLeave.setVacationType(createVacationType(VacationCategory.UNPAIDLEAVE));
         unpaidLeave.setStartDate(LocalDate.of(2014, 10, 17));
         unpaidLeave.setEndDate(LocalDate.of(2014, 10, 17));
         unpaidLeave.setStatus(ApplicationStatus.WAITING);
 
-        Application unpaidLeaveAllowed = TestDataCreator.anyApplication();
+        final Application unpaidLeaveAllowed = TestDataCreator.anyApplication();
         unpaidLeaveAllowed.setVacationType(createVacationType(VacationCategory.UNPAIDLEAVE));
         unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 20));
         unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 20));
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        Application overtimeLeave = TestDataCreator.anyApplication();
+        final Application overtimeLeave = TestDataCreator.anyApplication();
         overtimeLeave.setVacationType(createVacationType(VacationCategory.OVERTIME));
         overtimeLeave.setStartDate(LocalDate.of(2014, 10, 21));
         overtimeLeave.setEndDate(LocalDate.of(2014, 10, 21));
         overtimeLeave.setStatus(ApplicationStatus.WAITING);
 
-        Application overtimeLeaveAllowed = TestDataCreator.anyApplication();
+        final Application overtimeLeaveAllowed = TestDataCreator.anyApplication();
         overtimeLeaveAllowed.setVacationType(createVacationType(VacationCategory.OVERTIME));
         overtimeLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        List<Application> applications = Arrays.asList(holiday, holidayAllowed, specialLeave, specialLeaveAllowed,
+        final List<Application> applications = Arrays.asList(holiday, holidayAllowed, specialLeave, specialLeaveAllowed,
             unpaidLeave, unpaidLeaveAllowed, overtimeLeave, overtimeLeaveAllowed);
 
         // just return 1 day for each application for leave
@@ -106,17 +106,18 @@ public class UsedDaysOverviewTest {
             any(LocalDate.class), any(Person.class)))
             .thenReturn(ONE);
 
-        UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
+        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
 
-        UsedDays holidayDays = usedDaysOverview.getHolidayDays();
-        assertThat(holidayDays.getDays().get("WAITING")).isEqualTo(ONE);
-        assertThat(holidayDays.getDays().get("ALLOWED")).isEqualTo(ONE);
+        final UsedDays holidayDays = usedDaysOverview.getHolidayDays();
+        assertThat(holidayDays.getDays())
+            .containsEntry("WAITING", ONE)
+            .containsEntry("ALLOWED", ONE);
 
-        UsedDays otherDays = usedDaysOverview.getOtherDays();
-        assertThat(otherDays.getDays().get("WAITING")).isEqualTo(BigDecimal.valueOf(3));
-        assertThat(otherDays.getDays().get("ALLOWED")).isEqualTo(BigDecimal.valueOf(3));
+        final UsedDays otherDays = usedDaysOverview.getOtherDays();
+        assertThat(otherDays.getDays())
+            .containsEntry("WAITING", BigDecimal.valueOf(3))
+            .containsEntry("ALLOWED", BigDecimal.valueOf(3));
     }
-
 
     @Test
     public void ensureCalculatesDaysForGivenYearForApplicationsSpanningTwoYears() {
@@ -131,34 +132,35 @@ public class UsedDaysOverviewTest {
         when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
 
-        UsedDaysOverview usedDaysOverview = new UsedDaysOverview(singletonList(holiday), 2014, calendarService);
+        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(singletonList(holiday), 2014, calendarService);
 
-        UsedDays holidayDays = usedDaysOverview.getHolidayDays();
-        assertThat(holidayDays.getDays().get("WAITING")).isEqualTo(BigDecimal.valueOf(2));
-        assertThat(holidayDays.getDays().get("ALLOWED")).isEqualTo(ZERO);
+        final UsedDays holidayDays = usedDaysOverview.getHolidayDays();
+        assertThat(holidayDays.getDays())
+            .containsEntry("WAITING", BigDecimal.valueOf(2))
+            .containsEntry("ALLOWED", ZERO);
 
-        UsedDays otherDays = usedDaysOverview.getOtherDays();
-        assertThat(otherDays.getDays().get("WAITING")).isEqualTo(ZERO);
-        assertThat(otherDays.getDays().get("ALLOWED")).isEqualTo(ZERO);
+        final UsedDays otherDays = usedDaysOverview.getOtherDays();
+        assertThat(otherDays.getDays())
+            .containsEntry("WAITING", ZERO)
+            .containsEntry("ALLOWED", ZERO);
     }
-
 
     @Test
     public void ensureGeneratesCorrectUsedDaysOverviewConsideringTemporaryAllowedApplicationsForLeave() {
 
-        Application holiday = TestDataCreator.anyApplication();
+        final Application holiday = TestDataCreator.anyApplication();
         holiday.setVacationType(createVacationType(HOLIDAY));
         holiday.setStartDate(LocalDate.of(2014, 10, 13));
         holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
-        Application holidayAllowed = TestDataCreator.anyApplication();
+        final Application holidayAllowed = TestDataCreator.anyApplication();
         holidayAllowed.setVacationType(createVacationType(HOLIDAY));
         holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        Application holidayTemporaryAllowed = TestDataCreator.anyApplication();
+        final Application holidayTemporaryAllowed = TestDataCreator.anyApplication();
         holidayTemporaryAllowed.setVacationType(createVacationType(HOLIDAY));
         holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, 10, 15));
         holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, 10, 15));
@@ -170,9 +172,10 @@ public class UsedDaysOverviewTest {
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
-        UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
-        assertThat(usedDaysOverview.getHolidayDays().getDays().get("WAITING")).isEqualTo(ONE);
-        assertThat(usedDaysOverview.getHolidayDays().getDays().get("TEMPORARY_ALLOWED")).isEqualTo(ONE);
-        assertThat(usedDaysOverview.getHolidayDays().getDays().get("ALLOWED")).isEqualTo(ONE);
+        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
+        assertThat(usedDaysOverview.getHolidayDays().getDays())
+            .containsEntry("WAITING", ONE)
+            .containsEntry("TEMPORARY_ALLOWED", ONE)
+            .containsEntry("ALLOWED", ONE);
     }
 }
