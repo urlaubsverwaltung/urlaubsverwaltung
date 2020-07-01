@@ -237,8 +237,4 @@ public class SickNote extends AbstractPersistable<Integer> {
             ", status=" + status +
             '}';
     }
-
-    private Object formatNullable(LocalDate date) {
-        return date != null ? date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) : null;
-    }
 }
