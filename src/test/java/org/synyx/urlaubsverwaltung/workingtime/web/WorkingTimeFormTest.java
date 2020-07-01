@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -64,7 +63,7 @@ public class WorkingTimeFormTest {
         form2.setFederalState(FEDERAL_STATE);
 
         // same hashCode if same attributes
-        assertThat(form1.hashCode()).isEqualTo(form2.hashCode());
+        assertThat(form1).hasSameHashCodeAs(form2);
 
         // not same hashCode if differ in attribute validFrom
         form2.setValidFrom(VALID_FROM.minusDays(50));

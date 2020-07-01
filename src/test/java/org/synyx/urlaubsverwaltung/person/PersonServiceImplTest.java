@@ -429,8 +429,9 @@ public class PersonServiceImplTest {
         final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
 
         final Collection<Role> permissions = personWithOfficeRole.getPermissions();
-        assertThat(permissions).hasSize(2);
-        assertThat(permissions).contains(USER, OFFICE);
+        assertThat(permissions)
+            .hasSize(2)
+            .contains(USER, OFFICE);
     }
 
     @Test
@@ -447,8 +448,9 @@ public class PersonServiceImplTest {
         final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
 
         final Collection<Role> permissions = personWithOfficeRole.getPermissions();
-        assertThat(permissions).hasSize(1);
-        assertThat(permissions).containsOnly(USER);
+        assertThat(permissions)
+            .hasSize(1)
+            .containsOnly(USER);
     }
 
     @Test
