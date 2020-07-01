@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -107,8 +106,9 @@ public class SickNoteServiceImplTest {
         when(sickNoteDAO.findByStatusIn(openSickNoteStatuses)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStates(openSickNoteStatuses);
-        assertThat(sickNotes).hasSize(1);
-        assertThat(sickNotes).contains(sickNote);
+        assertThat(sickNotes)
+            .hasSize(1)
+            .contains(sickNote);
     }
 
 
