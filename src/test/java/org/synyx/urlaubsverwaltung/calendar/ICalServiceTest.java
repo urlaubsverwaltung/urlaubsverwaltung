@@ -50,13 +50,13 @@ public class ICalServiceTest {
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
 
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
+        assertThat(calendar).contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
 
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;VALUE=DATE:20190326");
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("DTSTART;VALUE=DATE:20190326");
     }
 
     @Test
@@ -66,14 +66,15 @@ public class ICalServiceTest {
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(morningAbsence));
 
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
+        assertThat(calendar)
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
 
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;TZID=Etc/UTC:20190426T080000");
-        assertThat(calendar).contains("DTEND;TZID=Etc/UTC:20190426T120000");
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("DTSTART;TZID=Etc/UTC:20190426T080000")
+            .contains("DTEND;TZID=Etc/UTC:20190426T120000");
     }
 
     @Test
@@ -83,14 +84,14 @@ public class ICalServiceTest {
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
 
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
+        assertThat(calendar).contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
 
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;VALUE=DATE:20190326");
-        assertThat(calendar).contains("DTEND;VALUE=DATE:20190402");
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("DTSTART;VALUE=DATE:20190326")
+            .contains("DTEND;VALUE=DATE:20190402");
     }
 
     @Test
@@ -99,14 +100,14 @@ public class ICalServiceTest {
         final Absence noonAbsence = absence(createPerson(), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(noonAbsence));
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
+        assertThat(calendar).contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
 
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;TZID=Etc/UTC:20190526T120000");
-        assertThat(calendar).contains("DTEND;TZID=Etc/UTC:20190526T160000");
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T120000")
+            .contains("DTEND;TZID=Etc/UTC:20190526T160000");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

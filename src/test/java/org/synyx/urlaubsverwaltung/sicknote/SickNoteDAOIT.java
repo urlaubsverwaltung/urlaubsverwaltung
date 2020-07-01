@@ -34,8 +34,9 @@ public class SickNoteDAOIT {
         sickNoteDAO.save(sickNoteCancelled);
 
         final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(2, endDate);
-        assertThat(sickNotesByMinimumLengthAndEndDate).hasSize(0);
-        assertThat(sickNotesByMinimumLengthAndEndDate).doesNotContain(sickNote, sickNoteCancelled);
+        assertThat(sickNotesByMinimumLengthAndEndDate)
+            .hasSize(0)
+            .doesNotContain(sickNote, sickNoteCancelled);
     }
 
     @Test
@@ -51,9 +52,10 @@ public class SickNoteDAOIT {
         sickNoteDAO.save(sickNoteCancelled);
 
         final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(1, endDate);
-        assertThat(sickNotesByMinimumLengthAndEndDate).hasSize(1);
-        assertThat(sickNotesByMinimumLengthAndEndDate).contains(sickNote);
-        assertThat(sickNotesByMinimumLengthAndEndDate).doesNotContain(sickNoteCancelled);
+        assertThat(sickNotesByMinimumLengthAndEndDate)
+            .hasSize(1)
+            .contains(sickNote)
+            .doesNotContain(sickNoteCancelled);
     }
 
     @Test
@@ -69,9 +71,10 @@ public class SickNoteDAOIT {
         sickNoteDAO.save(sickNoteCancelled);
 
         final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(1, endDate);
-        assertThat(sickNotesByMinimumLengthAndEndDate).hasSize(1);
-        assertThat(sickNotesByMinimumLengthAndEndDate).contains(sickNote);
-        assertThat(sickNotesByMinimumLengthAndEndDate).doesNotContain(sickNoteCancelled);
+        assertThat(sickNotesByMinimumLengthAndEndDate)
+            .hasSize(1)
+            .contains(sickNote)
+            .doesNotContain(sickNoteCancelled);
     }
 
     private SickNote createSickNote(LocalDate startDate, LocalDate endDate, SickNoteStatus active) {

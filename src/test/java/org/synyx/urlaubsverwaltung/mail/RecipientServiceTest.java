@@ -55,8 +55,8 @@ public class RecipientServiceTest {
 
         List<String> recipients = sut.getMailAddresses(person, anotherPerson, personWithoutMailAddress);
 
-        assertThat(recipients.size()).isEqualTo(2);
-        assertThat(recipients).contains("max@firma.test");
-        assertThat(recipients).contains("marlene@firma.test");
+        assertThat(recipients)
+            .hasSize(2)
+            .contains("max@firma.test", "marlene@firma.test");
     }
 }

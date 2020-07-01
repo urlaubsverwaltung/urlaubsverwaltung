@@ -208,7 +208,7 @@ public class PersonCalendarServiceTest {
         when(personCalendarRepository.findByPerson(person)).thenReturn(receivedPersonCalendar);
 
         final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1);
-        assertThat(personCalendar.get()).isEqualTo(receivedPersonCalendar);
+        assertThat(personCalendar).contains(receivedPersonCalendar);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -229,7 +229,7 @@ public class PersonCalendarServiceTest {
         when(personCalendarRepository.findByPerson(person)).thenReturn(null);
 
         final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1);
-        assertThat(personCalendar.isEmpty()).isTrue();
+        assertThat(personCalendar).isEmpty();
     }
 
     @Test

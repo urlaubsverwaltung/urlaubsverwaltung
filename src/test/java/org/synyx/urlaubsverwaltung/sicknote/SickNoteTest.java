@@ -155,7 +155,7 @@ public class SickNoteTest {
     public void nullsafeToString() {
         final SickNote sickNote = new SickNote();
         sickNote.setLastEdited(null);
-        assertThat(sickNote.toString()).isEqualTo("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null, status=null}");
+        assertThat(sickNote).hasToString("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null, status=null}");
     }
 
     @Test
@@ -179,8 +179,7 @@ public class SickNoteTest {
         sickNote.setLastEdited(LocalDate.EPOCH);
         sickNote.setPerson(person);
 
-        final String sickNoteToString = sickNote.toString();
-        assertThat(sickNoteToString).isEqualTo("SickNote{id=1, person=Person{id='1'}, " +
+        assertThat(sickNote).hasToString("SickNote{id=1, person=Person{id='1'}, " +
             "sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=-999999999-01-01, " +
             "endDate=+999999999-12-31, dayLength=FULL, aubStartDate=-999999999-01-01, aubEndDate=+999999999-12-31," +
             " lastEdited=1970-01-01, status=ACTIVE}");

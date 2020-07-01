@@ -158,7 +158,8 @@ public class PersonTest {
         person.setNotifications(List.of(NOTIFICATION_USER));
 
         final String personToString = person.toString();
-        assertThat(personToString).isEqualTo("Person{id='10'}");
-        assertThat(personToString).doesNotContain("Theo", "USER", "NOTIFICATION_USER");
+        assertThat(personToString)
+            .isEqualTo("Person{id='10'}")
+            .doesNotContain("Theo", "USER", "NOTIFICATION_USER");
     }
 }

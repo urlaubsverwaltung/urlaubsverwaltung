@@ -72,7 +72,7 @@ public class SickNoteFormTest {
         SickNote sickNote = sut.generateSickNote();
         SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
 
-        assertThat(sickNoteForm.toString()).isEqualTo("SickNoteForm{id=1, person=Person{id='null'}, " +
+        assertThat(sickNoteForm).hasToString("SickNoteForm{id=1, person=Person{id='null'}, " +
             "sickNoteType=SickNoteType{category=null, messageKey='null'}, " +
             "startDate=2019-04-16, endDate=2019-04-16, dayLength=FULL, aubStartDate=2019-04-16, aubEndDate=2019-04-16'}");
     }

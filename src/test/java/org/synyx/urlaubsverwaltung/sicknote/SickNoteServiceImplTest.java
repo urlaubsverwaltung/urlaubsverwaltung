@@ -122,7 +122,8 @@ public class SickNoteServiceImplTest {
         when(sickNoteDAO.findByStatusInAndPersonIn(openSickNoteStatuses, persons)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
-        assertThat(sickNotes).hasSize(1);
-        assertThat(sickNotes).contains(sickNote);
+        assertThat(sickNotes)
+            .hasSize(1)
+            .contains(sickNote);
     }
 }
