@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ErrorControllerTest {
 
     private ErrorController sut;
@@ -34,6 +31,6 @@ public class ErrorControllerTest {
 
         final ModelAndView modelAndView = sut.errorHtml(request, response);
         assertThat(modelAndView.getViewName()).isEqualTo("errors");
-        assertThat(modelAndView.getModel().get("statusCode")).isEqualTo(403);
+        assertThat(modelAndView.getModel()).containsEntry("statusCode", 403);
     }
 }
