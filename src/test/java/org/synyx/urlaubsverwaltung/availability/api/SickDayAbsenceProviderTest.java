@@ -103,7 +103,7 @@ public class SickDayAbsenceProviderTest {
 
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
         final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
-        assertThat(absencesList).hasSize(0);
+        assertThat(absencesList).isEmpty();
     }
 
     @Test
@@ -123,7 +123,7 @@ public class SickDayAbsenceProviderTest {
 
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
         final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
-        assertThat(absencesList).hasSize(0);
+        assertThat(absencesList).isEmpty();
     }
 
     @Test

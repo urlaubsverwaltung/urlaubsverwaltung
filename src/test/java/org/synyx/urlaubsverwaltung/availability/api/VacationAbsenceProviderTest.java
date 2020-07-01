@@ -118,7 +118,7 @@ public class VacationAbsenceProviderTest {
             person, fullDayVacationDate);
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
-        assertThat(absencesList).hasSize(0);
+        assertThat(absencesList).isEmpty();
     }
 
     @Test
@@ -136,7 +136,7 @@ public class VacationAbsenceProviderTest {
             person, fullDayVacationDate);
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
-        assertThat(absencesList).hasSize(0);
+        assertThat(absencesList).isEmpty();
     }
 
     @Test
@@ -154,7 +154,7 @@ public class VacationAbsenceProviderTest {
             person, fullDayVacationDate);
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
-        assertThat(absencesList).hasSize(0);
+        assertThat(absencesList).isEmpty();
     }
 
     @Test

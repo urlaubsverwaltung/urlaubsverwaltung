@@ -34,9 +34,7 @@ public class SickNoteDAOIT {
         sickNoteDAO.save(sickNoteCancelled);
 
         final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(2, endDate);
-        assertThat(sickNotesByMinimumLengthAndEndDate)
-            .hasSize(0)
-            .doesNotContain(sickNote, sickNoteCancelled);
+        assertThat(sickNotesByMinimumLengthAndEndDate).isEmpty();
     }
 
     @Test

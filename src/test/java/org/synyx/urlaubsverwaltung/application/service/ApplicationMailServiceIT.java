@@ -309,7 +309,7 @@ public class ApplicationMailServiceIT {
         Address[] from = msg.getFrom();
         assertThat(from).isNotNull();
         assertThat(from.length).isOne();
-        assertThat(from[0].toString()).isEqualTo("absender@urlaubsverwaltung.test");
+        assertThat(from[0]).hasToString("absender@urlaubsverwaltung.test");
     }
 
     @Test
