@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.LocalDate.parse;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,10 +52,6 @@ public class DepartmentCalendarServiceTest {
     private ICalService iCalService;
     @Mock
     private MessageSource messageSource;
-
-    private static LocalDate toDateTime(String input) {
-        return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
-    }
 
     @Before
     public void setUp() {
@@ -93,7 +90,7 @@ public class DepartmentCalendarServiceTest {
         when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(departmentCalendar);
 
         final Optional<DepartmentCalendar> calendarForDepartment = sut.getCalendarForDepartment(1, 10);
-        assertThat(calendarForDepartment.get()).isEqualTo(departmentCalendar);
+        assertThat(calendarForDepartment).contains(departmentCalendar);
     }
 
     @Test
@@ -114,7 +111,7 @@ public class DepartmentCalendarServiceTest {
         departmentCalendar.setDepartment(department);
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(departmentCalendar);
 
-        final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
+        final List<Absence> fullDayAbsences = List.of(absence(person, parse("2019-03-26", ofPattern("yyyy-MM-dd")), parse("2019-03-26", ofPattern("yyyy-MM-dd")), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
