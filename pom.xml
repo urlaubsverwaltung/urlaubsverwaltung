@@ -359,8 +359,8 @@
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.10.0</version>
         <configuration>
-          <nodeVersion>v12.16.1</nodeVersion>
-          <npmVersion>6.13.4</npmVersion>
+          <nodeVersion>v12.18.2</nodeVersion>
+          <npmVersion>6.14.5</npmVersion>
         </configuration>
         <executions>
           <!-- Install node/npm binary to run npm/node scripts-->
