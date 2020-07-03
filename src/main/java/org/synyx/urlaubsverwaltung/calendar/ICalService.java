@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
@@ -12,6 +13,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -36,13 +39,15 @@ class ICalService {
         final List<VEvent> absencesVEvents = absences.stream().map(this::toVEvent).collect(toList());
         calendar.getComponents().addAll(absencesVEvents);
 
+        final StringWriter calenderWriter = new StringWriter();
+        final CalendarOutputter calendarOutputter = new CalendarOutputter();
         try {
-            calendar.validate();
-        } catch (ValidationException e) {
-            throw new CalendarException("Validation does not pass", e);
+            calendarOutputter.output(calendar, calenderWriter);
+        } catch (ValidationException | IOException e) {
+            throw new CalendarException("iCal calender could not be generated", e);
         }
 
-        return calendar.toString();
+        return calenderWriter.toString();
     }
 
 
