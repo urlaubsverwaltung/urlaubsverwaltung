@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,11 +69,11 @@ public class AbsenceServiceImplTest {
         final List<Absence> openAbsences = sut.getOpenAbsences(List.of(person));
         assertThat(openAbsences).hasSize(2);
         assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(0).getStartDate()).isEqualTo("2019-12-10T00:00Z");
-        assertThat(openAbsences.get(0).getEndDate()).isEqualTo("2019-12-24T00:00Z");
+        assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-12-10T00:00Z"));
+        assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-12-24T00:00Z"));
         assertThat(openAbsences.get(1).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(1).getStartDate()).isEqualTo("2019-10-10T00:00Z");
-        assertThat(openAbsences.get(1).getEndDate()).isEqualTo("2019-10-24T00:00Z");
+        assertThat(openAbsences.get(1).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-10-10T00:00Z"));
+        assertThat(openAbsences.get(1).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-10-24T00:00Z"));
     }
 
     @Test
@@ -97,10 +98,10 @@ public class AbsenceServiceImplTest {
         final List<Absence> openAbsences = sut.getOpenAbsences();
         assertThat(openAbsences).hasSize(2);
         assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(0).getStartDate()).isEqualTo("2019-11-10T00:00Z");
-        assertThat(openAbsences.get(0).getEndDate()).isEqualTo("2019-11-24T00:00Z");
+        assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-11-10T00:00Z"));
+        assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-11-24T00:00Z"));
         assertThat(openAbsences.get(1).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(1).getStartDate()).isEqualTo("2019-10-10T00:00Z");
-        assertThat(openAbsences.get(1).getEndDate()).isEqualTo("2019-10-24T00:00Z");
+        assertThat(openAbsences.get(1).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-10-10T00:00Z"));
+        assertThat(openAbsences.get(1).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-10-24T00:00Z"));
     }
 }
