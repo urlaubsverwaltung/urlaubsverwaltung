@@ -103,7 +103,6 @@ class LdapPersonContextMapperTest {
         verify(personService).create("murygina", "Murygina", "Aljona", "murygina@synyx.de", List.of(NOTIFICATION_USER), List.of(USER));
     }
 
-
     @Test
     void ensureSyncsPersonDataUsingLDAPAttributes() throws UnsupportedMemberAffiliationException {
 
@@ -126,7 +125,6 @@ class LdapPersonContextMapperTest {
         assertThat(person.getLastName()).isEqualTo("Murygina");
         verify(personService).save(eq(person));
     }
-
 
     @Test
     void ensureUsernameIsBasedOnLdapUsername() throws UnsupportedMemberAffiliationException {

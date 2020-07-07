@@ -116,7 +116,6 @@ class LdapUserMapperTest {
         verify(ctx, never()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
     }
 
-
     @Test
     void ensureCreatesLdapUserFromContext() throws UnsupportedMemberAffiliationException {
 
@@ -148,7 +147,6 @@ class LdapUserMapperTest {
             .isInstanceOf(UnsupportedMemberAffiliationException.class);
     }
 
-
     @Test
     void ensureNoMemberOfCheckIfMemberOfFilterIsNull() {
 
@@ -176,7 +174,6 @@ class LdapUserMapperTest {
 
         verify(ctx, never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);
     }
-
 
     @Test
     void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() {
