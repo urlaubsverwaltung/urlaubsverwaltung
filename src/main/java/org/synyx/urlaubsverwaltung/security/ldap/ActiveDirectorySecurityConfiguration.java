@@ -63,17 +63,6 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapContextSource ldapContextSourceSync() {
-            final LdapContextSource ldapContextSource = new LdapContextSource();
-            ldapContextSource.setUrl(adProperties.getUrl());
-            ldapContextSource.setBase(adProperties.getSync().getUserSearchBase());
-            ldapContextSource.setUserDn(adProperties.getSync().getUserDn());
-            ldapContextSource.setPassword(adProperties.getSync().getPassword());
-
-            return ldapContextSource;
-        }
-
-        @Bean
         public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter) {
             return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter);
         }
@@ -95,6 +84,16 @@ public class ActiveDirectorySecurityConfiguration {
             ldapTemplate.setIgnoreNameNotFoundException(true);
 
             return ldapTemplate;
+        }
+
+        private LdapContextSource ldapContextSourceSync() {
+            final LdapContextSource ldapContextSource = new LdapContextSource();
+            ldapContextSource.setUrl(adProperties.getUrl());
+            ldapContextSource.setBase(adProperties.getSync().getUserSearchBase());
+            ldapContextSource.setUserDn(adProperties.getSync().getUserDn());
+            ldapContextSource.setPassword(adProperties.getSync().getPassword());
+
+            return ldapContextSource;
         }
     }
 }
