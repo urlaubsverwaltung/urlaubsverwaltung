@@ -86,7 +86,6 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         /*
          * NOTE: If the system has no office user yet, grant office permissions to successfully signed in user
          */
-
         final Essence user = new Essence(ctx);
         user.setUsername(ldapUsername);
         user.setAuthorities(getGrantedAuthorities(person));

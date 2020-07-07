@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -214,6 +215,11 @@ class LdapPersonContextMapperTest {
 
         sut.mapUserFromContext(context, "username", null);
         verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(any(Person.class));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void mapUserToContext() {
+        sut.mapUserToContext(mock(UserDetails.class), mock(DirContextAdapter.class));
     }
 
     private boolean authorityForRoleExists(Collection<? extends GrantedAuthority> authorities, final Role role) {
