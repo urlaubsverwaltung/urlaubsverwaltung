@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,14 +12,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import javax.naming.Name;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -39,7 +38,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_U
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.security.ldap.SecurityTestUtil.authorityForRoleExists;
 
 
 /**
@@ -79,17 +77,13 @@ class LdapPersonContextMapperTest {
     void ensureReturnsCorrectListOfAuthoritiesUsingTheRolesOfTheGivenPerson() {
 
         final Person person = createPerson();
-        person.setPermissions(Arrays.asList(USER, BOSS));
+        person.setPermissions(List.of(USER, BOSS));
 
         final Collection<GrantedAuthority> authorities = sut.getGrantedAuthorities(person);
-
-        Assert.assertEquals("Wrong number of authorities", 2, authorities.size());
-        Assert.assertTrue("No authority for user role found",
-            authorityForRoleExists(authorities, USER));
-        Assert.assertTrue("No authority for boss role found",
-            authorityForRoleExists(authorities, BOSS));
+        assertThat(authorities).hasSize(2);
+        assertThat(authorityForRoleExists(authorities, USER)).isTrue();
+        assertThat(authorityForRoleExists(authorities, BOSS)).isTrue();
     }
-
 
     @Test
     void ensureCreatesPersonIfPersonDoesNotExist() throws UnsupportedMemberAffiliationException {
@@ -98,9 +92,7 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
-        when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de")));
+        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
         when(personService.create(anyString(), anyString(), anyString(), anyString(), anyList(), anyList())).thenReturn(createPerson());
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
@@ -108,8 +100,7 @@ class LdapPersonContextMapperTest {
         sut.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
-        verify(personService).create("murygina", "Murygina", "Aljona", "murygina@synyx.de",
-            singletonList(NOTIFICATION_USER), singletonList(USER));
+        verify(personService).create("murygina", "Murygina", "Aljona", "murygina@synyx.de", List.of(NOTIFICATION_USER), List.of(USER));
     }
 
 
@@ -121,11 +112,9 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         final Person person = createPerson();
-        person.setPermissions(singletonList(USER));
+        person.setPermissions(List.of(USER));
 
-        when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de")));
+        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(personService.save(any(Person.class))).thenReturn(person);
 
@@ -149,11 +138,11 @@ class LdapPersonContextMapperTest {
         final String userIdentifier = "mgroehning";
         final String userNameSignedInWith = "mgroehning@simpsons.com";
 
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser(userIdentifier, empty(), empty(), empty()));
+        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser(userIdentifier, null, null, null, List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
 
         final Person person = createPerson(userIdentifier);
-        when(personService.create("mgroehning", null, null, null, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
+        when(personService.create("mgroehning", null, null, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
         final UserDetails userDetails = sut.mapUserFromContext(context, userNameSignedInWith, emptyList());
@@ -164,15 +153,12 @@ class LdapPersonContextMapperTest {
     void ensureLoginIsNotPossibleIfUserIsDeactivated() throws UnsupportedMemberAffiliationException {
 
         final Person person = createPerson();
-        person.setPermissions(singletonList(INACTIVE));
+        person.setPermissions(List.of(INACTIVE));
 
         final String username = person.getUsername();
 
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
-        when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser(username, Optional.of(person.getFirstName()),
-                Optional.of(person.getLastName()), Optional.of(person.getEmail())));
-
+        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser(username, person.getFirstName(), person.getLastName(), person.getEmail(), List.of()));
         assertThatThrownBy(() -> sut.mapUserFromContext(context, username, null))
             .isInstanceOf(DisabledException.class);
     }
@@ -181,14 +167,16 @@ class LdapPersonContextMapperTest {
     void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier() throws UnsupportedMemberAffiliationException {
         when(ldapUserMapper.mapFromContext(eq(context))).thenThrow(new InvalidSecurityConfigurationException("Bad!"));
 
-        assertThatThrownBy(() -> sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
+        assertThatThrownBy(() ->
+            sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
     void ensureLoginIsNotPossibleIfLdapUserHasNotSupportedMemberOfAttribute() throws UnsupportedMemberAffiliationException {
         when(ldapUserMapper.mapFromContext(eq(context))).thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
 
-        assertThatThrownBy(() -> sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
+        assertThatThrownBy(() ->
+            sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
@@ -199,19 +187,16 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         final Person person = createPerson("username");
-        person.setPermissions(Arrays.asList(USER, BOSS));
+        person.setPermissions(List.of(USER, BOSS));
 
-        when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser("username", empty(), empty(), empty()));
+        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(personService.save(any(Person.class))).thenReturn(person);
 
         final UserDetails userDetails = sut.mapUserFromContext(context, "username", null);
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-
-        Assert.assertEquals("Wrong number of authorities", 2, authorities.size());
-        Assert.assertTrue("Missing authority for user role", authorityForRoleExists(authorities, USER));
-        Assert.assertTrue("Missing authority for boss role", authorityForRoleExists(authorities, BOSS));
+        assertThat(userDetails.getAuthorities()).hasSize(2);
+        assertThat(authorityForRoleExists(userDetails.getAuthorities(), USER)).isTrue();
+        assertThat(authorityForRoleExists(userDetails.getAuthorities(), BOSS)).isTrue();
     }
 
     @Test
@@ -222,15 +207,18 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         final Person person = createPerson("username");
-        person.setPermissions(singletonList(USER));
+        person.setPermissions(List.of(USER));
 
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", empty(), empty(), empty()));
+        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername("username")).thenReturn(Optional.empty());
-        when(personService.create("username", null, null, null,
-            singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(person);
+        when(personService.create("username", null, null, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(person)).thenReturn(person);
 
         sut.mapUserFromContext(context, "username", null);
         verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(any(Person.class));
+    }
+
+    private boolean authorityForRoleExists(Collection<? extends GrantedAuthority> authorities, final Role role) {
+        return authorities.stream().anyMatch(authority -> authority.getAuthority().equals(role.name()));
     }
 }

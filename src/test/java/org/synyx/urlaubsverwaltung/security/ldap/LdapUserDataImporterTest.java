@@ -5,18 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -26,13 +24,13 @@ class LdapUserDataImporterTest {
     private LdapUserDataImporter sut;
 
     @Mock
-    private LdapUserService ldapUserServiceMock;
+    private LdapUserService ldapUserService;
     @Mock
-    private PersonService personServiceMock;
+    private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new LdapUserDataImporter(ldapUserServiceMock, personServiceMock);
+        sut = new LdapUserDataImporter(ldapUserService, personService);
     }
 
     @Test
@@ -40,37 +38,34 @@ class LdapUserDataImporterTest {
 
         sut.sync();
 
-        verify(ldapUserServiceMock).getLdapUsers();
+        verify(ldapUserService).getLdapUsers();
     }
 
     @Test
     void ensureCreatesPersonIfLdapUserNotYetExists() {
 
-        when(personServiceMock.getPersonByUsername(anyString())).thenReturn(Optional.empty());
-        when(ldapUserServiceMock.getLdapUsers()).thenReturn(singletonList(new LdapUser("muster", Optional.empty(), Optional.empty(), Optional.empty())));
+        final LdapUser ldapUser = new LdapUser("muster", null, null, null, List.of());
+        when(personService.getPersonByUsername(ldapUser.getUsername())).thenReturn(Optional.empty());
+        when(ldapUserService.getLdapUsers()).thenReturn(List.of(ldapUser));
 
         sut.sync();
 
-        verify(personServiceMock, times(1)).getPersonByUsername("muster");
-        verify(personServiceMock)
-            .create("muster", null, null, null, singletonList(NOTIFICATION_USER), singletonList(USER));
+        verify(personService).create("muster", null, null, null, List.of(NOTIFICATION_USER), List.of(USER));
     }
 
     @Test
     void ensureUpdatesPersonIfLdapUserExists() {
 
-        final Person person = DemoDataCreator.createPerson();
-
-        when(personServiceMock.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
-        when(ldapUserServiceMock.getLdapUsers())
-            .thenReturn(singletonList(new LdapUser(person.getUsername(), Optional.of("Vorname"), Optional.of("Nachname"), Optional.of("Email"))));
+        final Person person = createPerson();
+        final LdapUser ldapUser = new LdapUser(person.getUsername(), "Vorname", "Nachname", "Email", List.of());
+        when(personService.getPersonByUsername(ldapUser.getUsername())).thenReturn(Optional.of(person));
+        when(ldapUserService.getLdapUsers()).thenReturn(List.of(ldapUser));
 
         sut.sync();
 
-        verify(personServiceMock, times(1)).getPersonByUsername(person.getUsername());
         assertThat(person.getEmail()).isEqualTo("Email");
         assertThat(person.getFirstName()).isEqualTo("Vorname");
         assertThat(person.getLastName()).isEqualTo("Nachname");
-        verify(personServiceMock).save(person);
+        verify(personService).save(person);
     }
 }
