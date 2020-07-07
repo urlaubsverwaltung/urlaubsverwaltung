@@ -8,7 +8,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
  */
 public class LdapContextSourceSync extends LdapContextSource {
 
-    LdapContextSourceSync(LdapSecurityConfigurationProperties ldapProperties) {
+    LdapContextSourceSync(LdapSecurityProperties ldapProperties) {
 
         super();
 

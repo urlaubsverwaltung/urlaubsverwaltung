@@ -18,10 +18,10 @@ public class ActiveDirectorySecurityConfiguration {
     public static class ActiveDirectoryAuthConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final ActiveDirectorySecurityConfigurationProperties configurationProperties;
+        private final ActiveDirectorySecurityProperties configurationProperties;
 
         @Autowired
-        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties configurationProperties) {
+        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityProperties configurationProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.configurationProperties = configurationProperties;
         }
@@ -55,10 +55,10 @@ public class ActiveDirectorySecurityConfiguration {
     static class LdapAuthSyncConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final ActiveDirectorySecurityConfigurationProperties adProperties;
+        private final ActiveDirectorySecurityProperties adProperties;
 
         @Autowired
-        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties adProperties) {
+        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityProperties adProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.adProperties = adProperties;
         }

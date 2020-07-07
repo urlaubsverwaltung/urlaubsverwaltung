@@ -24,10 +24,10 @@ public class LdapSecurityConfiguration {
     static class LdapAuthConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final LdapSecurityConfigurationProperties ldapProperties;
+        private final LdapSecurityProperties ldapProperties;
 
         @Autowired
-        public LdapAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityConfigurationProperties ldapProperties) {
+        public LdapAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityProperties ldapProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.ldapProperties = ldapProperties;
         }
@@ -90,10 +90,10 @@ public class LdapSecurityConfiguration {
     public static class LdapAuthSyncConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final LdapSecurityConfigurationProperties ldapProperties;
+        private final LdapSecurityProperties ldapProperties;
 
         @Autowired
-        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityConfigurationProperties ldapProperties) {
+        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityProperties ldapProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.ldapProperties = ldapProperties;
         }

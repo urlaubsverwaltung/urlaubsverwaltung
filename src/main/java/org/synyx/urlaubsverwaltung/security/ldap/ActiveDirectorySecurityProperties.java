@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties("uv.security.directory-service.active-directory")
-public class ActiveDirectorySecurityConfigurationProperties {
+public class ActiveDirectorySecurityProperties {
 
     private String domain;
     private String url;
