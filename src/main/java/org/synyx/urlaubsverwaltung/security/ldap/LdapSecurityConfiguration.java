@@ -99,8 +99,15 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapContextSourceSync ldapContextSourceSync() {
-            return new LdapContextSourceSync(ldapProperties);
+        public LdapContextSource ldapContextSourceSync() {
+
+            final LdapContextSource ldapContextSource = new LdapContextSource();
+            ldapContextSource.setUrl(ldapProperties.getUrl());
+            ldapContextSource.setBase(ldapProperties.getSync().getUserSearchBase() + "," + ldapProperties.getBase());
+            ldapContextSource.setUserDn(ldapProperties.getSync().getUserDn());
+            ldapContextSource.setPassword(ldapProperties.getSync().getPassword());
+
+            return ldapContextSource;
         }
 
         @Bean
@@ -120,7 +127,11 @@ public class LdapSecurityConfiguration {
 
         @Bean
         public LdapTemplate ldapTemplate() {
-            return new UVLdapTemplate(ldapContextSourceSync());
+            final LdapTemplate ldapTemplate = new LdapTemplate(ldapContextSourceSync());
+            ldapTemplate.setIgnorePartialResultException(true);
+            ldapTemplate.setIgnoreNameNotFoundException(true);
+
+            return ldapTemplate;
         }
     }
 }

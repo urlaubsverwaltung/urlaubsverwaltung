@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -28,9 +29,8 @@ public class ActiveDirectorySecurityConfiguration {
 
         @Bean
         public AuthenticationProvider activeDirectoryAuthenticationProvider(LdapPersonContextMapper ldapPersonContextMapper) {
-
-            String domain = configurationProperties.getDomain();
-            String url = configurationProperties.getUrl();
+            final String domain = configurationProperties.getDomain();
+            final String url = configurationProperties.getUrl();
 
             final ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(domain, url);
             authenticationProvider.setUserDetailsContextMapper(ldapPersonContextMapper);
@@ -40,7 +40,6 @@ public class ActiveDirectorySecurityConfiguration {
 
         @Bean
         public LdapUserMapper ldapUserMapper() {
-
             return new LdapUserMapper(directoryServiceSecurityProperties);
         }
 
@@ -64,8 +63,14 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public ActiveDirectoryContextSourceSync ldapContextSourceSync() {
-            return new ActiveDirectoryContextSourceSync(adProperties);
+        public LdapContextSource ldapContextSourceSync() {
+            final LdapContextSource ldapContextSource = new LdapContextSource();
+            ldapContextSource.setUrl(adProperties.getUrl());
+            ldapContextSource.setBase(adProperties.getSync().getUserSearchBase());
+            ldapContextSource.setUserDn(adProperties.getSync().getUserDn());
+            ldapContextSource.setPassword(adProperties.getSync().getPassword());
+
+            return ldapContextSource;
         }
 
         @Bean
@@ -85,7 +90,11 @@ public class ActiveDirectorySecurityConfiguration {
 
         @Bean
         public LdapTemplate ldapTemplate() {
-            return new UVLdapTemplate(ldapContextSourceSync());
+            final LdapTemplate ldapTemplate = new LdapTemplate(ldapContextSourceSync());
+            ldapTemplate.setIgnorePartialResultException(true);
+            ldapTemplate.setIgnoreNameNotFoundException(true);
+
+            return ldapTemplate;
         }
     }
 }
