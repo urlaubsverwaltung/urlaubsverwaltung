@@ -92,7 +92,8 @@ public class ActiveDirectorySecurityConfiguration {
             return ldapTemplate;
         }
 
-        private LdapContextSource ldapContextSourceSync() {
+        @Bean
+        public LdapContextSource ldapContextSourceSync() {
             final LdapContextSource ldapContextSource = new LdapContextSource();
             ldapContextSource.setUrl(adProperties.getUrl());
             ldapContextSource.setBase(adProperties.getSync().getUserSearchBase());

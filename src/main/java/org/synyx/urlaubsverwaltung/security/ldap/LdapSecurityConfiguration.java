@@ -71,7 +71,8 @@ public class LdapSecurityConfiguration {
             return new LdapPersonContextMapper(personService, ldapUserMapper);
         }
 
-        private LdapContextSource ldapContextSource() {
+        @Bean
+        public LdapContextSource ldapContextSource() {
             final LdapContextSource ldapContextSource = new LdapContextSource();
             ldapContextSource.setUserDn(ldapProperties.getManagerDn());
             ldapContextSource.setPassword(ldapProperties.getManagerPassword());
@@ -119,7 +120,8 @@ public class LdapSecurityConfiguration {
             return ldapTemplate;
         }
 
-        private LdapContextSource ldapContextSourceSync() {
+        @Bean
+        public LdapContextSource ldapContextSourceSync() {
 
             final LdapContextSource ldapContextSource = new LdapContextSource();
             ldapContextSource.setUrl(ldapProperties.getUrl());
