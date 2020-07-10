@@ -26,17 +26,17 @@ class OvertimeServiceImpl implements OvertimeService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final OvertimeDAO overtimeDAO;
-    private final OvertimeCommentDAO commentDAO;
+    private final OvertimeRepository overtimeRepository;
+    private final OvertimeCommentRepository overtimeCommentRepository;
     private final ApplicationService applicationService;
     private final OvertimeMailService overtimeMailService;
 
     @Autowired
-    public OvertimeServiceImpl(OvertimeDAO overtimeDAO, OvertimeCommentDAO commentDAO,
+    public OvertimeServiceImpl(OvertimeRepository overtimeRepository, OvertimeCommentRepository overtimeCommentRepository,
                                ApplicationService applicationService, OvertimeMailService overtimeMailService) {
 
-        this.overtimeDAO = overtimeDAO;
-        this.commentDAO = commentDAO;
+        this.overtimeRepository = overtimeRepository;
+        this.overtimeCommentRepository = overtimeCommentRepository;
         this.applicationService = applicationService;
         this.overtimeMailService = overtimeMailService;
     }
@@ -46,7 +46,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         Assert.notNull(person, "Person to get overtime records for must be given.");
 
-        return overtimeDAO.findByPerson(person);
+        return overtimeRepository.findByPerson(person);
     }
 
 
@@ -55,7 +55,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         Assert.notNull(person, "Person to get overtime records for must be given.");
 
-        return overtimeDAO.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
+        return overtimeRepository.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
     }
 
 
@@ -66,14 +66,14 @@ class OvertimeServiceImpl implements OvertimeService {
 
         // save overtime record
         overtime.onUpdate();
-        overtimeDAO.save(overtime);
+        overtimeRepository.save(overtime);
 
         // save comment
         OvertimeAction action = isNewOvertime ? OvertimeAction.CREATED : OvertimeAction.EDITED;
         OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action);
         comment.ifPresent(overtimeComment::setText);
 
-        commentDAO.save(overtimeComment);
+        overtimeCommentRepository.save(overtimeComment);
 
         overtimeMailService.sendOvertimeNotification(overtime, overtimeComment);
 
@@ -88,7 +88,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         Assert.notNull(id, "ID must be given.");
 
-        return overtimeDAO.findById(id);
+        return overtimeRepository.findById(id);
     }
 
 
@@ -97,7 +97,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         Assert.notNull(overtime, "Overtime record to get comments for must be given.");
 
-        return commentDAO.findByOvertime(overtime);
+        return overtimeCommentRepository.findByOvertime(overtime);
     }
 
 
@@ -133,7 +133,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
     private BigDecimal getTotalOvertimeForPerson(Person person) {
 
-        Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeDAO.calculateTotalHoursForPerson(person));
+        Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person));
 
         return totalOvertime.orElse(BigDecimal.ZERO);
 

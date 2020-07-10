@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.account.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.account.dao.AccountDAO;
+import org.synyx.urlaubsverwaltung.account.dao.AccountRepository;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -15,24 +15,24 @@ import java.util.Optional;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-    private final AccountDAO accountDAO;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public AccountServiceImpl(AccountDAO accountDAO) {
+    public AccountServiceImpl(AccountRepository accountRepository) {
 
-        this.accountDAO = accountDAO;
+        this.accountRepository = accountRepository;
     }
 
     @Override
     public Optional<Account> getHolidaysAccount(int year, Person person) {
 
-        return Optional.ofNullable(accountDAO.getHolidaysAccountByYearAndPerson(year, person));
+        return Optional.ofNullable(accountRepository.getHolidaysAccountByYearAndPerson(year, person));
     }
 
 
     @Override
     public Account save(Account account) {
 
-        return accountDAO.save(account);
+        return accountRepository.save(account);
     }
 }

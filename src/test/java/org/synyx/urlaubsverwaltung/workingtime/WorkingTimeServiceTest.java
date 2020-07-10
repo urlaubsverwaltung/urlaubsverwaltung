@@ -38,7 +38,7 @@ public class WorkingTimeServiceTest {
     private WorkingTimeProperties workingTimeProperties;
 
     @Mock
-    private WorkingTimeDAO workingTimeDAOMock;
+    private WorkingTimeRepository workingTimeRepositoryMock;
 
     @Mock
     private SettingsService settingsServiceMock;
@@ -56,7 +56,7 @@ public class WorkingTimeServiceTest {
 
         when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
 
-        workingTimeService = new WorkingTimeService(workingTimeProperties, workingTimeDAOMock, settingsServiceMock, clock);
+        workingTimeService = new WorkingTimeService(workingTimeProperties, workingTimeRepositoryMock, settingsServiceMock, clock);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class WorkingTimeServiceTest {
         workingTimeService.createDefaultWorkingTime(person);
 
         verify(workingTimeProperties).getDefaultWorkingDays();
-        verify(workingTimeDAOMock).save(argument.capture());
+        verify(workingTimeRepositoryMock).save(argument.capture());
         assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedWorkingTime);
     }
 
@@ -88,13 +88,13 @@ public class WorkingTimeServiceTest {
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(FederalState.BAYERN);
 
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
         verifyZeroInteractions(settingsServiceMock);
-        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
+        verify(workingTimeRepositoryMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BAYERN, federalState);
@@ -114,13 +114,13 @@ public class WorkingTimeServiceTest {
         workingTime.setFederalStateOverride(null);
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
         verify(settingsServiceMock).getSettings();
-        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
+        verify(workingTimeRepositoryMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal statecheckCalendarSyncSettingsNoExceptionForEmptyEmail", FederalState.BADEN_WUERTTEMBERG, federalState);
@@ -137,13 +137,13 @@ public class WorkingTimeServiceTest {
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(null);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
         verify(settingsServiceMock).getSettings();
-        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
+        verify(workingTimeRepositoryMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BADEN_WUERTTEMBERG, federalState);
@@ -159,7 +159,7 @@ public class WorkingTimeServiceTest {
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), LocalDate.now(UTC), person);
 
-        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeRepositoryMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 
@@ -175,7 +175,7 @@ public class WorkingTimeServiceTest {
         WorkingTime existentWorkingTime = DemoDataCreator.createWorkingTime();
         existentWorkingTime.setFederalStateOverride(FederalState.BAYERN);
 
-        when(workingTimeDAOMock.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepositoryMock.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(existentWorkingTime);
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
@@ -184,7 +184,7 @@ public class WorkingTimeServiceTest {
 
         workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 
-        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeRepositoryMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 

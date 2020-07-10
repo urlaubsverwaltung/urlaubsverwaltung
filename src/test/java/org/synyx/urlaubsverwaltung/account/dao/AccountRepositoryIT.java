@@ -22,10 +22,10 @@ import static java.time.Month.JANUARY;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class AccountDAOIT {
+public class AccountRepositoryIT {
 
     @Autowired
-    private AccountDAO sut;
+    private AccountRepository sut;
 
     @Autowired
     private PersonService personService;
