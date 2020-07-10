@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
@@ -91,7 +91,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureValidNameHasNoValidationError() {
         sut.validateName("Hans-Peter", "nameField", errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureValidEmailHasNoValidationError() {
         sut.validateEmail("müller@verwaltung.com.de", errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class PersonValidatorTest {
         person.setPermissions(singletonList(INACTIVE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class PersonValidatorTest {
         person.setPermissions(asList(USER, BOSS));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -233,7 +233,7 @@ public class PersonValidatorTest {
         person.setPermissions(asList(USER, OFFICE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -241,7 +241,7 @@ public class PersonValidatorTest {
         person.setPermissions(asList(USER, BOSS, OFFICE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -249,7 +249,7 @@ public class PersonValidatorTest {
         person.setPermissions(asList(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -294,7 +294,7 @@ public class PersonValidatorTest {
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -303,7 +303,7 @@ public class PersonValidatorTest {
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -312,7 +312,7 @@ public class PersonValidatorTest {
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -321,6 +321,6 @@ public class PersonValidatorTest {
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_OFFICE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 }

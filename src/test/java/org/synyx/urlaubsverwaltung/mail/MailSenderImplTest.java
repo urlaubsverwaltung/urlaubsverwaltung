@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,6 +55,6 @@ public class MailSenderImplTest {
 
         sut.sendEmail("from@example.org", List.of(), "subject", "text");
 
-        verifyZeroInteractions(javaMailSender);
+        verifyNoInteractions(javaMailSender);
     }
 }

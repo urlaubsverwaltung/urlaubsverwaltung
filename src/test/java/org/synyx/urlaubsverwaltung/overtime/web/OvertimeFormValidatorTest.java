@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -79,7 +79,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
 
@@ -117,7 +117,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
 
@@ -180,7 +180,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
 
@@ -191,7 +191,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
 
@@ -202,7 +202,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
 
@@ -246,7 +246,7 @@ public class OvertimeFormValidatorTest {
         verify(errors).reject("overtime.record.error.deactivated");
 
         verify(settingsService).getSettings();
-        verifyZeroInteractions(overtimeService);
+        verifyNoInteractions(overtimeService);
     }
 
 
@@ -261,7 +261,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
 
         verify(settingsService).getSettings();
         verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
@@ -331,7 +331,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
 
         verify(overtimeService).getOvertimeById(overtimeForm.getId());
         verify(settingsService).getSettings();
@@ -358,7 +358,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
 
         verify(overtimeService).getOvertimeById(overtimeForm.getId());
         verify(settingsService).getSettings();
@@ -385,7 +385,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
 
         verify(overtimeService).getOvertimeById(overtimeForm.getId());
         verify(settingsService).getSettings();
@@ -404,7 +404,7 @@ public class OvertimeFormValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -415,7 +415,7 @@ public class OvertimeFormValidatorTest {
 
             validator.validate(overtimeForm, errors);
 
-            verifyZeroInteractions(errors);
+            verifyNoInteractions(errors);
         };
 
         assertMayBeEmpty.accept(null);

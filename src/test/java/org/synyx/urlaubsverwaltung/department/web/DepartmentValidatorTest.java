@@ -16,7 +16,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createDepartment;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,7 +64,7 @@ public class DepartmentValidatorTest {
     public void ensureValidNameHasNoValidationError() {
         Department department = createDepartment("Foobar Department");
         sut.validate(department, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class DepartmentValidatorTest {
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut");
 
         sut.validate(department, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class DepartmentValidatorTest {
         department.setDepartmentHeads(null);
 
         sut.validate(department, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test

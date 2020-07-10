@@ -9,7 +9,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class SickNoteMailConfigurationTest {
 
@@ -29,7 +29,7 @@ public class SickNoteMailConfigurationTest {
         final CronTask cronTask = cronTaskList.get(0);
         assertThat(cronTask.getExpression()).isEqualTo("0 0 6 * * *");
 
-        verifyZeroInteractions(sickNoteMailService);
+        verifyNoInteractions(sickNoteMailService);
 
         cronTask.getRunnable().run();
         verify(sickNoteMailService).sendEndOfSickPayNotification();

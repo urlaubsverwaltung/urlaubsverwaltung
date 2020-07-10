@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
@@ -479,6 +479,6 @@ public class PersonServiceImplTest {
 
         sut.save(activePerson);
 
-        verifyZeroInteractions(applicationEventPublisher);
+        verifyNoInteractions(applicationEventPublisher);
     }
 }
