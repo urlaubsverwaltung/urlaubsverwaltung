@@ -22,13 +22,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class OvertimeDAOIT {
+public class OvertimeRepositoryIT {
 
     @Autowired
     private PersonService personService;
 
     @Autowired
-    private OvertimeDAO overtimeDAO;
+    private OvertimeRepository overtimeRepository;
 
     @Test
     public void ensureCanPersistOvertime() {
@@ -40,7 +40,7 @@ public class OvertimeDAOIT {
         final Overtime overtime = new Overtime(savedPerson, now, now.plusDays(2), BigDecimal.ONE);
         assertThat(overtime.getId()).isNull();
 
-        overtimeDAO.save(overtime);
+        overtimeRepository.save(overtime);
 
         assertThat(overtime.getId()).isNotNull();
     }
@@ -58,14 +58,14 @@ public class OvertimeDAOIT {
         LocalDate now = LocalDate.now(UTC);
 
         // Overtime for person
-        overtimeDAO.save(new Overtime(savedPerson, now, now.plusDays(2), new BigDecimal("3")));
-        overtimeDAO.save(new Overtime(savedPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("0.5")));
-        overtimeDAO.save(new Overtime(savedPerson, now.minusDays(8), now.minusDays(4), new BigDecimal("-1")));
+        overtimeRepository.save(new Overtime(savedPerson, now, now.plusDays(2), new BigDecimal("3")));
+        overtimeRepository.save(new Overtime(savedPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("0.5")));
+        overtimeRepository.save(new Overtime(savedPerson, now.minusDays(8), now.minusDays(4), new BigDecimal("-1")));
 
         // Overtime for other person
-        overtimeDAO.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("5")));
+        overtimeRepository.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("5")));
 
-        BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
+        BigDecimal totalHours = overtimeRepository.calculateTotalHoursForPerson(person);
 
         assertThat(totalHours).isNotNull();
         assertThat(totalHours.setScale(1, UNNECESSARY)).isEqualTo(new BigDecimal("2.5").setScale(1,
@@ -79,7 +79,7 @@ public class OvertimeDAOIT {
         Person person = DemoDataCreator.createPerson();
         personService.save(person);
 
-        BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
+        BigDecimal totalHours = overtimeRepository.calculateTotalHoursForPerson(person);
 
         assertThat(totalHours).isNull();
     }
@@ -92,18 +92,18 @@ public class OvertimeDAOIT {
         final Person savedPerson = personService.save(person);
 
         // records for 2015
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
+        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
             new BigDecimal("1")));
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
+        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
             new BigDecimal("2")));
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
+        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
             new BigDecimal("3")));
 
         // record for 2014
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
+        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
             new BigDecimal("4")));
 
-        List<Overtime> records = overtimeDAO.findByPersonAndPeriod(savedPerson,
+        List<Overtime> records = overtimeRepository.findByPersonAndPeriod(savedPerson,
             LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31));
 
         assertThat(records).isNotNull();

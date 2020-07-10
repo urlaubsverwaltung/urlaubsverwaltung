@@ -16,18 +16,18 @@ public class SettingsServiceImpl implements SettingsService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final SettingsDAO settingsDAO;
+    private final SettingsRepository settingsRepository;
 
     @Autowired
-    public SettingsServiceImpl(SettingsDAO settingsDAO) {
+    public SettingsServiceImpl(SettingsRepository settingsRepository) {
 
-        this.settingsDAO = settingsDAO;
+        this.settingsRepository = settingsRepository;
     }
 
     @Override
     public void save(Settings settings) {
 
-        settingsDAO.save(settings);
+        settingsRepository.save(settings);
 
         LOG.info("Updated settings: {}", settings);
     }
@@ -37,7 +37,7 @@ public class SettingsServiceImpl implements SettingsService {
     public Settings getSettings() {
 
         // TODO: Maybe fixed in future for different settings (based on date,...)
-        return settingsDAO.findById(1)
+        return settingsRepository.findById(1)
             .orElseThrow(() -> new IllegalStateException("No settings in database found."));
     }
 }

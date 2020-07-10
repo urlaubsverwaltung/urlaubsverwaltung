@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationCommentDAO;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationCommentRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
@@ -20,12 +20,12 @@ import java.util.Optional;
 @Transactional
 class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
-    private final ApplicationCommentDAO commentDAO;
+    private final ApplicationCommentRepository commentRepository;
 
     @Autowired
-    ApplicationCommentServiceImpl(ApplicationCommentDAO commentDAO) {
+    ApplicationCommentServiceImpl(ApplicationCommentRepository commentRepository) {
 
-        this.commentDAO = commentDAO;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -37,13 +37,13 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
         comment.setApplication(application);
         text.ifPresent(comment::setText);
 
-        return commentDAO.save(comment);
+        return commentRepository.save(comment);
     }
 
 
     @Override
     public List<ApplicationComment> getCommentsByApplication(Application application) {
 
-        return commentDAO.getCommentsByApplication(application);
+        return commentRepository.getCommentsByApplication(application);
     }
 }

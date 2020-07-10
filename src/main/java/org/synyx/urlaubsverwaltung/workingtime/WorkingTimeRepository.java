@@ -11,22 +11,19 @@ import java.util.List;
 /**
  * Repository for accessing {@link WorkingTime} entities.
  */
-interface WorkingTimeDAO extends CrudRepository<WorkingTime, Integer> {
+interface WorkingTimeRepository extends CrudRepository<WorkingTime, Integer> {
 
     @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 ORDER BY x.validFrom")
     List<WorkingTime> findByPerson(Person person);
 
-
     @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = ?2")
     WorkingTime findByPersonAndValidityDate(Person person, LocalDate date);
-
 
     @Query(
         "SELECT x FROM WorkingTime x WHERE x.person = ?1 "
             + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
     )
     WorkingTime findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
-
 
     @Query(
         "SELECT x FROM WorkingTime x WHERE x.person = ?1 "

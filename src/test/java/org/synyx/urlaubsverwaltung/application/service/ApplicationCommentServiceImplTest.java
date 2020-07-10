@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationCommentDAO;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationCommentRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -36,7 +36,7 @@ public class ApplicationCommentServiceImplTest {
     private ApplicationCommentService commentService;
 
     @Mock
-    private ApplicationCommentDAO commentDAO;
+    private ApplicationCommentRepository commentDAO;
 
     @Before
     public void setUp() {

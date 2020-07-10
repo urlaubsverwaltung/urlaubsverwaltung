@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Repository for {@link Application} entities.
  */
-public interface ApplicationDAO extends CrudRepository<Application, Integer> {
+public interface ApplicationRepository extends CrudRepository<Application, Integer> {
 
     @Query("select x from Application x where x.status = ?1")
     List<Application> getApplicationsForACertainState(ApplicationStatus status);

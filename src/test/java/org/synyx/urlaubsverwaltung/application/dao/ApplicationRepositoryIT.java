@@ -37,14 +37,14 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class ApplicationDAOIT {
+public class ApplicationRepositoryIT {
 
     @Autowired
     private PersonService personService;
     @Autowired
-    private ApplicationDAO applicationDAO;
+    private ApplicationRepository applicationRepository;
     @Autowired
-    private VacationTypeDAO vacationTypeDAO;
+    private VacationTypeRepository vacationTypeRepository;
 
     @Test
     public void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
@@ -52,7 +52,7 @@ public class ApplicationDAOIT {
         final Person person = DemoDataCreator.createPerson();
         final Person savedPerson = personService.save(person);
 
-        BigDecimal totalHours = applicationDAO.calculateTotalOvertimeOfPerson(savedPerson);
+        BigDecimal totalHours = applicationRepository.calculateTotalOvertimeOfPerson(savedPerson);
         assertThat(totalHours).isNull();
     }
 
@@ -72,31 +72,31 @@ public class ApplicationDAOIT {
         Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         fullDayOvertimeReduction.setHours(new BigDecimal("8"));
         fullDayOvertimeReduction.setStatus(ALLOWED);
-        applicationDAO.save(fullDayOvertimeReduction);
+        applicationRepository.save(fullDayOvertimeReduction);
 
         // Waiting overtime reduction (2.5 hours) ----------------------------------------------------------------------
         final Application halfDayOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), MORNING);
         halfDayOvertimeReduction.setHours(new BigDecimal("2.5"));
         halfDayOvertimeReduction.setStatus(WAITING);
-        applicationDAO.save(halfDayOvertimeReduction);
+        applicationRepository.save(halfDayOvertimeReduction);
 
         // Cancelled overtime reduction (1 hour) ----------------------------------------------------------------------
         final Application cancelledOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         cancelledOvertimeReduction.setHours(ONE);
         cancelledOvertimeReduction.setStatus(CANCELLED);
-        applicationDAO.save(cancelledOvertimeReduction);
+        applicationRepository.save(cancelledOvertimeReduction);
 
         // Rejected overtime reduction (1 hour) -----------------------------------------------------------------------
         final Application rejectedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         rejectedOvertimeReduction.setHours(ONE);
         rejectedOvertimeReduction.setStatus(REJECTED);
-        applicationDAO.save(rejectedOvertimeReduction);
+        applicationRepository.save(rejectedOvertimeReduction);
 
         // Revoked overtime reduction (1 hour) ------------------------------------------------------------------------
         final Application revokedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         revokedOvertimeReduction.setHours(ONE);
         revokedOvertimeReduction.setStatus(REVOKED);
-        applicationDAO.save(revokedOvertimeReduction);
+        applicationRepository.save(revokedOvertimeReduction);
 
         // Holiday with hours set accidentally (1 hour) ---------------------------------------------------------------
         final Application holiday = createApplication(person, getVacationType(HOLIDAY), now.minusDays(8), now.minusDays(4), FULL);
@@ -104,23 +104,23 @@ public class ApplicationDAOIT {
         // NOTE: Holiday should not have hours set, but who knows....
         // More than once heard: "this should never happen" ;)
         holiday.setHours(ONE);
-        applicationDAO.save(holiday);
+        applicationRepository.save(holiday);
 
         // Overtime reduction for other person -------------------------------------------------------------------------
         final Application overtimeReduction = createApplication(savedOtherPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), NOON);
         overtimeReduction.setHours(new BigDecimal("2.5"));
-        applicationDAO.save(overtimeReduction);
+        applicationRepository.save(overtimeReduction);
 
         // Let's calculate! --------------------------------------------------------------------------------------------
 
-        BigDecimal totalHours = applicationDAO.calculateTotalOvertimeOfPerson(person);
+        BigDecimal totalHours = applicationRepository.calculateTotalOvertimeOfPerson(person);
         assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.50).setScale(2, UNNECESSARY));
     }
 
 
     private VacationType getVacationType(VacationCategory category) {
 
-        List<VacationType> vacationTypes = vacationTypeDAO.findAll();
+        List<VacationType> vacationTypes = vacationTypeRepository.findAll();
 
         for (VacationType vacationType : vacationTypes) {
             if (vacationType.isOfCategory(category)) {
