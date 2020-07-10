@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @since 2.11.0
  */
-interface OvertimeCommentDAO extends CrudRepository<OvertimeComment, Integer> {
+interface OvertimeCommentRepository extends CrudRepository<OvertimeComment, Integer> {
 
     List<OvertimeComment> findByOvertime(Overtime overtime);
 }

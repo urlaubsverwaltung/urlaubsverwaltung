@@ -31,15 +31,15 @@ public class WorkingTimeService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final WorkingTimeProperties workingTimeProperties;
-    private final WorkingTimeDAO workingTimeDAO;
+    private final WorkingTimeRepository workingTimeRepository;
     private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
-    public WorkingTimeService(WorkingTimeProperties workingTimeProperties, WorkingTimeDAO workingTimeDAO, SettingsService settingsService, Clock clock) {
+    public WorkingTimeService(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository, SettingsService settingsService, Clock clock) {
 
         this.workingTimeProperties = workingTimeProperties;
-        this.workingTimeDAO = workingTimeDAO;
+        this.workingTimeRepository = workingTimeRepository;
         this.settingsService = settingsService;
         this.clock = clock;
     }
@@ -47,7 +47,7 @@ public class WorkingTimeService {
     public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom,
                       Person person) {
 
-        WorkingTime workingTime = workingTimeDAO.findByPersonAndValidityDate(person, validFrom);
+        WorkingTime workingTime = workingTimeRepository.findByPersonAndValidityDate(person, validFrom);
 
         /*
          * create a new WorkingTime object if no one existent for the given person and date
@@ -70,26 +70,26 @@ public class WorkingTimeService {
             workingTime.setFederalStateOverride(null);
         }
 
-        workingTimeDAO.save(workingTime);
+        workingTimeRepository.save(workingTime);
         LOG.info("Successfully created working time for person {}", person);
     }
 
 
     public List<WorkingTime> getByPerson(Person person) {
 
-        return workingTimeDAO.findByPerson(person);
+        return workingTimeRepository.findByPerson(person);
     }
 
 
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
 
-        return Optional.ofNullable(workingTimeDAO.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
+        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
     }
 
 
     public Optional<WorkingTime> getCurrentOne(Person person) {
 
-        return Optional.ofNullable(workingTimeDAO.findLastOneByPerson(person));
+        return Optional.ofNullable(workingTimeRepository.findLastOneByPerson(person));
     }
 
 

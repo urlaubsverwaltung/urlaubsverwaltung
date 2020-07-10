@@ -17,10 +17,10 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class SickNoteDAOIT {
+public class SickNoteRepositoryIT {
 
     @Autowired
-    private SickNoteDAO sickNoteDAO;
+    private SickNoteRepository sickNoteRepository;
 
     @Test
     public void findSickNotesByMinimumLengthAndEndDateLessThanLimitAndWrongStatus() {
@@ -28,12 +28,12 @@ public class SickNoteDAOIT {
         final LocalDate endDate = LocalDate.of(2019, 5, 20);
 
         final SickNote sickNote = createSickNote(LocalDate.of(2019, 5, 19), endDate, ACTIVE);
-        sickNoteDAO.save(sickNote);
+        sickNoteRepository.save(sickNote);
 
         final SickNote sickNoteCancelled = createSickNote(LocalDate.of(2019, 5, 10), endDate, CANCELLED);
-        sickNoteDAO.save(sickNoteCancelled);
+        sickNoteRepository.save(sickNoteCancelled);
 
-        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(2, endDate);
+        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(2, endDate);
         assertThat(sickNotesByMinimumLengthAndEndDate).isEmpty();
     }
 
@@ -44,12 +44,12 @@ public class SickNoteDAOIT {
         final LocalDate endDate = LocalDate.of(2019, 5, 20);
 
         final SickNote sickNote = createSickNote(startDate, endDate, ACTIVE);
-        sickNoteDAO.save(sickNote);
+        sickNoteRepository.save(sickNote);
 
         final SickNote sickNoteCancelled = createSickNote(startDate, endDate, CANCELLED);
-        sickNoteDAO.save(sickNoteCancelled);
+        sickNoteRepository.save(sickNoteCancelled);
 
-        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(1, endDate);
+        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(1, endDate);
         assertThat(sickNotesByMinimumLengthAndEndDate)
             .hasSize(1)
             .contains(sickNote)
@@ -63,12 +63,12 @@ public class SickNoteDAOIT {
         final LocalDate endDate = LocalDate.of(2019, 5, 25);
 
         final SickNote sickNote = createSickNote(startDate, endDate, ACTIVE);
-        sickNoteDAO.save(sickNote);
+        sickNoteRepository.save(sickNote);
 
         final SickNote sickNoteCancelled = createSickNote(startDate, endDate, CANCELLED);
-        sickNoteDAO.save(sickNoteCancelled);
+        sickNoteRepository.save(sickNoteCancelled);
 
-        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(1, endDate);
+        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(1, endDate);
         assertThat(sickNotesByMinimumLengthAndEndDate)
             .hasSize(1)
             .contains(sickNote)

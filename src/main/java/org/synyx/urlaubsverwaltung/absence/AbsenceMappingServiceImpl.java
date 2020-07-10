@@ -9,28 +9,28 @@ import java.util.Optional;
 @Service
 public class AbsenceMappingServiceImpl implements AbsenceMappingService {
 
-    private final AbsenceMappingDAO absenceMappingDAO;
+    private final AbsenceMappingRepository absenceMappingRepository;
 
     @Autowired
-    public AbsenceMappingServiceImpl(AbsenceMappingDAO absenceMappingDAO) {
-        this.absenceMappingDAO = absenceMappingDAO;
+    public AbsenceMappingServiceImpl(AbsenceMappingRepository absenceMappingRepository) {
+        this.absenceMappingRepository = absenceMappingRepository;
     }
 
     @Override
     public AbsenceMapping create(Integer id, AbsenceType absenceType, String eventId) {
         final AbsenceMapping absenceMapping = new AbsenceMapping(id, absenceType, eventId);
-        absenceMappingDAO.save(absenceMapping);
+        absenceMappingRepository.save(absenceMapping);
 
         return absenceMapping;
     }
 
     @Override
     public void delete(AbsenceMapping absenceMapping) {
-        absenceMappingDAO.delete(absenceMapping);
+        absenceMappingRepository.delete(absenceMapping);
     }
 
     @Override
     public Optional<AbsenceMapping> getAbsenceByIdAndType(Integer id, AbsenceType absenceType) {
-        return Optional.ofNullable(absenceMappingDAO.findAbsenceMappingByAbsenceIdAndAbsenceType(id, absenceType));
+        return Optional.ofNullable(absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceType(id, absenceType));
     }
 }

@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.account.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.account.dao.AccountDAO;
+import org.synyx.urlaubsverwaltung.account.dao.AccountRepository;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
@@ -23,14 +23,14 @@ public class AccountServiceImplTest {
 
     private AccountService accountService;
 
-    private AccountDAO accountDAO;
+    private AccountRepository accountRepository;
 
     @Before
     public void setUp() {
 
-        accountDAO = mock(AccountDAO.class);
+        accountRepository = mock(AccountRepository.class);
 
-        accountService = new AccountServiceImpl(accountDAO);
+        accountService = new AccountServiceImpl(accountRepository);
     }
 
 
@@ -39,7 +39,7 @@ public class AccountServiceImplTest {
 
         Person person = DemoDataCreator.createPerson();
         Account account = DemoDataCreator.createHolidaysAccount(person, 2012);
-        when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
+        when(accountRepository.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, person);
 
@@ -52,7 +52,7 @@ public class AccountServiceImplTest {
     @Test
     public void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
 
-        when(accountDAO.getHolidaysAccountByYearAndPerson(anyInt(), any(Person.class)))
+        when(accountRepository.getHolidaysAccountByYearAndPerson(anyInt(), any(Person.class)))
             .thenReturn(null);
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, mock(Person.class));
