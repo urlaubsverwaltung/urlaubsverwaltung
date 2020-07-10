@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +38,6 @@ class FreeTimeAbsenceProviderTest {
 
     @BeforeEach
     void setUp() {
-
         sut = new FreeTimeAbsenceProvider(publicHolidayAbsenceProvider, workingTimeService);
     }
 
@@ -47,7 +45,6 @@ class FreeTimeAbsenceProviderTest {
     void ensurePersonIsNotAvailableOnFreeDays() {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BADEN_WUERTTEMBERG);
 
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -61,9 +58,6 @@ class FreeTimeAbsenceProviderTest {
     @Test
     void ensureExceptionWhenPersonWorkingTimeIsNotAvailable() {
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BADEN_WUERTTEMBERG);
-
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final Person person = createPerson();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), eq(firstSundayIn2016))).thenReturn(Optional.empty());
@@ -76,7 +70,6 @@ class FreeTimeAbsenceProviderTest {
     void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BADEN_WUERTTEMBERG);
 
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -89,7 +82,6 @@ class FreeTimeAbsenceProviderTest {
     void ensureCallsHolidayAbsenceProviderIfNotAbsentForFreeTime() {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BADEN_WUERTTEMBERG);
 
         final LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
