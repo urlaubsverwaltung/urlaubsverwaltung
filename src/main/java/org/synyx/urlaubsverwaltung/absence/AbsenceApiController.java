@@ -44,9 +44,7 @@ public class AbsenceApiController {
     private final SickNoteService sickNoteService;
 
     @Autowired
-    public AbsenceApiController(PersonService personService, ApplicationService applicationService,
-                                SickNoteService sickNoteService) {
-
+    public AbsenceApiController(PersonService personService, ApplicationService applicationService, SickNoteService sickNoteService) {
         this.personService = personService;
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;

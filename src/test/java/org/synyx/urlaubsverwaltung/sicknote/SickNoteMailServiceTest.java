@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
@@ -79,7 +79,7 @@ public class SickNoteMailServiceTest {
         prepareSettingsWithRemindForWaitingApplications(isInactive);
 
         sut.sendEndOfSickPayNotification();
-        verifyZeroInteractions(mailService);
+        verifyNoInteractions(mailService);
     }
 
 

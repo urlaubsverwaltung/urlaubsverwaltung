@@ -356,18 +356,14 @@ Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `demoda
 zu lassen:
 
 ```bash
-./mvnw clean spring-boot:run -Dspring-boot.run.profiles=demodata
+./mvnw clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=demodata"
 ```
 
 bzw. für Windows Benutzer über:
 
 ```bash
-./mvnw.cmd clean spring-boot:run -Dspring-boot.run.profiles=demodata
+./mvnw.cmd clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=demodata"
 ```
-
-Hinweis: Aufgrund der Spring Boot Dev Tools wird das Profil via `spring-boot.run.profiles` gesetzt, statt via
-`spring.profiles.active`. (vgl. https://github.com/spring-projects/spring-boot/issues/10926)
-
 
 ### Anwendung nutzen
 

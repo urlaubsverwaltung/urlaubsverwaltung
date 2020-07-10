@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 
 public class SettingsValidatorTest {
@@ -110,7 +110,7 @@ public class SettingsValidatorTest {
 
         settingsValidator.validate(settings, mockError);
 
-        verifyZeroInteractions(mockError);
+        verifyNoInteractions(mockError);
     }
 
 
@@ -371,7 +371,7 @@ public class SettingsValidatorTest {
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        verifyZeroInteractions(mockError);
+        verifyNoInteractions(mockError);
     }
 
 
@@ -391,7 +391,7 @@ public class SettingsValidatorTest {
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        verifyZeroInteractions(mockError);
+        verifyNoInteractions(mockError);
     }
 
 

@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -57,7 +57,7 @@ public class SickNoteApiControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteService).getByPeriod(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
-        verifyZeroInteractions(personService);
+        verifyNoInteractions(personService);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class SickNoteApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "2016-12-31"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.response").exists())
             .andExpect(jsonPath("$.response.sickNotes").exists())
             .andExpect(jsonPath("$.response.sickNotes", hasSize(3)))

@@ -41,7 +41,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REFERRED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -239,8 +239,8 @@ public class ApplicationInteractionServiceImplTest {
 
     private void assertNoCalendarSyncIsExecuted() {
 
-        verifyZeroInteractions(calendarSyncService);
-        verifyZeroInteractions(absenceMappingService);
+        verifyNoInteractions(calendarSyncService);
+        verifyNoInteractions(absenceMappingService);
     }
 
 
@@ -313,11 +313,11 @@ public class ApplicationInteractionServiceImplTest {
 
         Assert.assertEquals("Status should not be changed", ApplicationStatus.ALLOWED, applicationForLeave.getStatus());
 
-        verifyZeroInteractions(applicationService);
-        verifyZeroInteractions(commentService);
-        verifyZeroInteractions(applicationMailService);
-        verifyZeroInteractions(calendarSyncService);
-        verifyZeroInteractions(absenceMappingService);
+        verifyNoInteractions(applicationService);
+        verifyNoInteractions(commentService);
+        verifyNoInteractions(applicationMailService);
+        verifyNoInteractions(calendarSyncService);
+        verifyNoInteractions(absenceMappingService);
     }
 
 
@@ -392,8 +392,8 @@ public class ApplicationInteractionServiceImplTest {
 
     private void assertNoCalendarSyncOccurs() {
 
-        verifyZeroInteractions(calendarSyncService);
-        verifyZeroInteractions(absenceMappingService);
+        verifyNoInteractions(calendarSyncService);
+        verifyNoInteractions(absenceMappingService);
     }
 
 
@@ -422,11 +422,11 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Status should not be changed", ApplicationStatus.TEMPORARY_ALLOWED,
             applicationForLeave.getStatus());
 
-        verifyZeroInteractions(applicationService);
-        verifyZeroInteractions(commentService);
-        verifyZeroInteractions(applicationMailService);
-        verifyZeroInteractions(calendarSyncService);
-        verifyZeroInteractions(absenceMappingService);
+        verifyNoInteractions(applicationService);
+        verifyNoInteractions(commentService);
+        verifyNoInteractions(applicationMailService);
+        verifyNoInteractions(calendarSyncService);
+        verifyNoInteractions(absenceMappingService);
     }
 
 
@@ -533,7 +533,7 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
             secondStage);
         assertAllowedNotificationIsSent(applicationForLeave);
-        verifyZeroInteractions(calendarSyncService);
+        verifyNoInteractions(calendarSyncService);
     }
 
     @Test
@@ -559,7 +559,7 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, departmentHead, secondStageAuthority);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStageAuthority);
         assertAllowedNotificationIsSent(applicationForLeave);
-        verifyZeroInteractions(calendarSyncService);
+        verifyNoInteractions(calendarSyncService);
     }
 
 
@@ -768,7 +768,7 @@ public class ApplicationInteractionServiceImplTest {
         verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(person));
 
-        verifyZeroInteractions(applicationMailService);
+        verifyNoInteractions(applicationMailService);
     }
 
 
@@ -842,7 +842,7 @@ public class ApplicationInteractionServiceImplTest {
         verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
 
-        verifyZeroInteractions(applicationMailService);
+        verifyNoInteractions(applicationMailService);
     }
 
 
@@ -975,8 +975,8 @@ public class ApplicationInteractionServiceImplTest {
         sut.remind(applicationForLeave);
 
         verify(applicationForLeave, never()).setRemindDate(any(LocalDate.class));
-        verifyZeroInteractions(applicationService);
-        verifyZeroInteractions(applicationMailService);
+        verifyNoInteractions(applicationService);
+        verifyNoInteractions(applicationMailService);
     }
 
 
@@ -991,8 +991,8 @@ public class ApplicationInteractionServiceImplTest {
         sut.remind(applicationForLeave);
 
         verify(applicationForLeave, never()).setRemindDate(any(LocalDate.class));
-        verifyZeroInteractions(applicationService);
-        verifyZeroInteractions(applicationMailService);
+        verifyNoInteractions(applicationService);
+        verifyNoInteractions(applicationMailService);
     }
 
 

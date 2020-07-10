@@ -15,7 +15,8 @@ import java.math.BigDecimal;
 import static java.time.LocalDate.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -81,7 +82,7 @@ public class AccountValidatorTest {
         form.setAnnualVacationDays(new BigDecimal("28"));
 
         sut.validateAnnualVacation(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -109,7 +110,7 @@ public class AccountValidatorTest {
         form.setActualVacationDays(new BigDecimal("28"));
 
         sut.validateActualVacation(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -137,7 +138,7 @@ public class AccountValidatorTest {
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5"));
 
         sut.validateRemainingVacationDays(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -214,7 +215,7 @@ public class AccountValidatorTest {
         form.setHolidaysAccountValidTo(of(2013, 5, 5));
 
         sut.validatePeriod(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -223,7 +224,7 @@ public class AccountValidatorTest {
         form.setComment("blabla");
 
         sut.validateComment(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test

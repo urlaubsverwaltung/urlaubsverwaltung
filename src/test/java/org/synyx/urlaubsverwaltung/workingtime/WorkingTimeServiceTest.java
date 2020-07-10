@@ -26,7 +26,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
@@ -93,7 +93,7 @@ public class WorkingTimeServiceTest {
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
 
-        verifyZeroInteractions(settingsServiceMock);
+        verifyNoInteractions(settingsServiceMock);
         verify(workingTimeRepositoryMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
 
         Assert.assertNotNull("Missing federal state", federalState);

@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class ApplicationCronMailConfigurationTest {
 
@@ -30,7 +30,7 @@ public class ApplicationCronMailConfigurationTest {
         final CronTask cronTask = cronTaskList.get(0);
         Assertions.assertThat(cronTask.getExpression()).isEqualTo("0 0 7 * * *");
 
-        verifyZeroInteractions(service);
+        verifyNoInteractions(service);
 
         cronTask.getRunnable().run();
         verify(service).sendWaitingApplicationsReminderNotification();

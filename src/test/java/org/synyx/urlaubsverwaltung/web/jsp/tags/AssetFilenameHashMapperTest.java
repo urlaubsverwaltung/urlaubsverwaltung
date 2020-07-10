@@ -67,7 +67,7 @@ public class AssetFilenameHashMapperTest {
     }
 
     @Test
-    public void getHashedAsseeFilenameThrowsWhenManifestFileDoesNotExist() throws Exception {
+    public void getHashedAssetFilenameThrowsWhenManifestFileDoesNotExist() throws Exception {
 
         final Resource missingManifest = mock(Resource.class);
         when(missingManifest.getInputStream()).thenThrow(IOException.class);

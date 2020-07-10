@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -426,8 +426,8 @@ public class ApplicationForLeaveFormValidatorTest {
 
         verify(errors).reject("application.error.zeroDays");
 
-        verifyZeroInteractions(overlapService);
-        verifyZeroInteractions(calculationService);
+        verifyNoInteractions(overlapService);
+        verifyNoInteractions(calculationService);
     }
 
 
@@ -494,7 +494,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
         verify(errors).reject("application.error.overlap");
 
-        verifyZeroInteractions(calculationService);
+        verifyNoInteractions(calculationService);
     }
 
 
@@ -615,9 +615,9 @@ public class ApplicationForLeaveFormValidatorTest {
 
         verify(workingTimeService)
             .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDate());
-        verifyZeroInteractions(calendarService);
-        verifyZeroInteractions(overlapService);
-        verifyZeroInteractions(calculationService);
+        verifyNoInteractions(calendarService);
+        verifyNoInteractions(overlapService);
+        verifyNoInteractions(calculationService);
     }
 
 
@@ -644,9 +644,9 @@ public class ApplicationForLeaveFormValidatorTest {
 
         verify(workingTimeService)
             .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDate());
-        verifyZeroInteractions(calendarService);
-        verifyZeroInteractions(overlapService);
-        verifyZeroInteractions(calculationService);
+        verifyNoInteractions(calendarService);
+        verifyNoInteractions(overlapService);
+        verifyNoInteractions(calculationService);
     }
 
     // Validate maximal overtime reduction -----------------------------------------------------------------------------
