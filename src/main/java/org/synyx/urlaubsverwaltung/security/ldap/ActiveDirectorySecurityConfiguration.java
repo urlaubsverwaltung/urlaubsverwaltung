@@ -21,19 +21,19 @@ public class ActiveDirectorySecurityConfiguration {
     public static class ActiveDirectoryAuthConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final ActiveDirectorySecurityProperties configurationProperties;
+        private final ActiveDirectorySecurityProperties adProperties;
 
         @Autowired
-        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityProperties configurationProperties) {
+        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityProperties adProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
-            this.configurationProperties = configurationProperties;
+            this.adProperties = adProperties;
         }
 
         @Bean
         public AuthenticationProvider activeDirectoryAuthenticationProvider(LdapPersonContextMapper ldapPersonContextMapper) {
-            final String domain = configurationProperties.getDomain();
-            final String url = configurationProperties.getUrl();
-            final String searchFilter = configurationProperties.getSearchFilter();
+            final String domain = adProperties.getDomain();
+            final String url = adProperties.getUrl();
+            final String searchFilter = adProperties.getSearchFilter();
 
             final ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(domain, url);
             authenticationProvider.setUserDetailsContextMapper(ldapPersonContextMapper);
