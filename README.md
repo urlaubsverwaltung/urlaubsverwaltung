@@ -253,7 +253,7 @@ logging.level.org.springframework.security=TRACE
 werden kann sowie eine Logdatei
 
 ```properties
-logging.file=logs/urlaubsverwaltung.log
+logging.file.name=logs/urlaubsverwaltung.log
 ```
 
 geschrieben wird.
