@@ -131,6 +131,7 @@ uv.security.directory-service.filter.object-class=person
 ## active directory
 uv.security.directory-service.active-directory.url=ldap://ad.example.org/
 uv.security.directory-service.active-directory.domain=example.org
+uv.security.directory-service.active-directory.searchFilter=
 uv.security.directory-service.active-directory.sync.enabled=false
 uv.security.directory-service.active-directory.sync.password=password
 uv.security.directory-service.active-directory.sync.user-dn=cn=Administrator,cn=users,dc=example,dc=org

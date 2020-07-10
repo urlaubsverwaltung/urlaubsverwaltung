@@ -9,6 +9,7 @@ public class ActiveDirectorySecurityProperties {
 
     private String domain;
     private String url;
+    private String searchFilter;
 
     private SecurityActiveDirectorySync sync = new SecurityActiveDirectorySync();
 
@@ -26,6 +27,14 @@ public class ActiveDirectorySecurityProperties {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        this.searchFilter = searchFilter;
     }
 
     public SecurityActiveDirectorySync getSync() {

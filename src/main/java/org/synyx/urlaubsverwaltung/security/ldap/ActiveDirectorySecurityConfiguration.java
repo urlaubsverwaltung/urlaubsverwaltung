@@ -11,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Configuration
 public class ActiveDirectorySecurityConfiguration {
 
@@ -31,9 +33,13 @@ public class ActiveDirectorySecurityConfiguration {
         public AuthenticationProvider activeDirectoryAuthenticationProvider(LdapPersonContextMapper ldapPersonContextMapper) {
             final String domain = configurationProperties.getDomain();
             final String url = configurationProperties.getUrl();
+            final String searchFilter = configurationProperties.getSearchFilter();
 
             final ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(domain, url);
             authenticationProvider.setUserDetailsContextMapper(ldapPersonContextMapper);
+            if (hasText(searchFilter)) {
+                authenticationProvider.setSearchFilter(searchFilter);
+            }
 
             return authenticationProvider;
         }
