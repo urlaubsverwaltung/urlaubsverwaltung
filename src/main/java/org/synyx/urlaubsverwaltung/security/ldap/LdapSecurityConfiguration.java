@@ -106,7 +106,7 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapUserServiceImpl ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
+        public LdapUserService ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
             return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, directoryServiceSecurityProperties);
         }
 
