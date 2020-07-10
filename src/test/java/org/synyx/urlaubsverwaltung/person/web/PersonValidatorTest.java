@@ -9,7 +9,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -49,7 +49,7 @@ public class PersonValidatorTest {
 
     @Before
     public void setUp() {
-        person = TestDataCreator.createPerson();
+        person = DemoDataCreator.createPerson();
         sut = new PersonValidator(personService);
     }
 
@@ -144,7 +144,7 @@ public class PersonValidatorTest {
 
     @Test
     public void ensureUsernameMustBeUnique() {
-        when(personService.getPersonByUsername("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
+        when(personService.getPersonByUsername("foo")).thenReturn(Optional.of(DemoDataCreator.createPerson()));
         sut.validateUsername("foo", errors);
         verify(errors).rejectValue("username", "person.form.data.login.error");
     }

@@ -19,10 +19,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.dev.TestUser.BOSS;
-import static org.synyx.urlaubsverwaltung.dev.TestUser.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.dev.TestUser.OFFICE;
-import static org.synyx.urlaubsverwaltung.dev.TestUser.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.dev.DemoUser.BOSS;
+import static org.synyx.urlaubsverwaltung.dev.DemoUser.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.dev.DemoUser.OFFICE;
+import static org.synyx.urlaubsverwaltung.dev.DemoUser.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -32,7 +32,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 
-public class TestDataCreationService {
+public class DemoDataCreationService {
 
     private static final String NO_PASSWORD = "";
 
@@ -43,37 +43,37 @@ public class TestDataCreationService {
     private final SickNoteDataProvider sickNoteDataProvider;
     private final OvertimeRecordDataProvider overtimeRecordDataProvider;
     private final DepartmentDataProvider departmentDataProvider;
-    private final TestDataProperties testDataProperties;
+    private final DemoDataProperties demoDataProperties;
 
-    public TestDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
+    public DemoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                    SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                   DepartmentDataProvider departmentDataProvider, TestDataProperties testDataProperties) {
+                                   DepartmentDataProvider departmentDataProvider, DemoDataProperties demoDataProperties) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;
         this.overtimeRecordDataProvider = overtimeRecordDataProvider;
         this.departmentDataProvider = departmentDataProvider;
-        this.testDataProperties = testDataProperties;
+        this.demoDataProperties = demoDataProperties;
     }
 
     @PostConstruct
-    public void createTestData() {
+    public void createDemoData() {
 
-        LOG.info(">> TestData Creation (uv.development.testdata.create={})", testDataProperties.isCreate());
+        LOG.info(">> Demo data creation (uv.development.demodata.create={})", demoDataProperties.isCreate());
 
-        if (personDataProvider.isPersonAlreadyCreated(TestUser.USER.getUsername())) {
-            LOG.info("-> Test data was already created. Abort.");
+        if (personDataProvider.isPersonAlreadyCreated(DemoUser.USER.getUsername())) {
+            LOG.info("-> Demo data was already created. Abort.");
             return;
         }
 
-        LOG.info("-> Starting test data creation...");
+        LOG.info("-> Starting demo data creation...");
         // Users to be able to SIGN-IN with
-        final Person user = personDataProvider.createTestPerson(TestUser.USER, "Klaus", "Müller", "user@firma.test");
+        final Person user = personDataProvider.createTestPerson(DemoUser.USER, "Klaus", "Müller", "user@firma.test");
         final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@firma.test");
         final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@firma.test");
         final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@firma.test");
         final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@firma.test");
-        personDataProvider.createTestPerson(TestUser.ADMIN, "Senor", "Operation", "admin@firma.test");
+        personDataProvider.createTestPerson(DemoUser.ADMIN, "Senor", "Operation", "admin@firma.test");
 
         // Users
         final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test", USER);
@@ -100,18 +100,18 @@ public class TestDataCreationService {
         departmentDataProvider.createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen", bossMembers, emptyList(), emptyList());
 
         // Applications for leave and sick notes
-        createTestData(user, boss, office);
-        createTestData(boss, boss, office);
-        createTestData(office, boss, office);
-        createTestData(hans, boss, office);
-        createTestData(niko, boss, office);
-        createTestData(secondStageAuthority, boss, office);
+        createDemoData(user, boss, office);
+        createDemoData(boss, boss, office);
+        createDemoData(office, boss, office);
+        createDemoData(hans, boss, office);
+        createDemoData(niko, boss, office);
+        createDemoData(secondStageAuthority, boss, office);
 
-        LOG.info("-> Test data was created");
+        LOG.info("-> Demo data was created");
     }
 
 
-    private void createTestData(Person person, Person boss, Person office) {
+    private void createDemoData(Person person, Person boss, Person office) {
 
         createApplicationsForLeave(person, boss, office);
         createSickNotes(person, office);

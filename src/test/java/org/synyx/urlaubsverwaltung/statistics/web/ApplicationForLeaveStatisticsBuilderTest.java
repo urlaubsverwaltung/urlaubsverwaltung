@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -61,7 +61,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     @Before
     public void setUp() {
 
-        vacationTypes = TestDataCreator.createVacationTypes();
+        vacationTypes = DemoDataCreator.createVacationTypes();
         when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
         sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
@@ -111,43 +111,43 @@ public class ApplicationForLeaveStatisticsBuilderTest {
             .thenReturn(BigDecimal.TEN);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
 
-        Application holidayWaiting = TestDataCreator.anyFullDayApplication(person);
+        Application holidayWaiting = DemoDataCreator.anyFullDayApplication(person);
         holidayWaiting.setVacationType(vacationTypes.get(0));
         holidayWaiting.setStartDate(LocalDate.of(2014, 10, 13));
         holidayWaiting.setEndDate(LocalDate.of(2014, 10, 13));
         holidayWaiting.setStatus(WAITING);
 
-        Application holidayTemporaryAllowed = TestDataCreator.anyFullDayApplication(person);
+        Application holidayTemporaryAllowed = DemoDataCreator.anyFullDayApplication(person);
         holidayTemporaryAllowed.setVacationType(vacationTypes.get(0));
         holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, 10, 12));
         holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, 10, 12));
         holidayTemporaryAllowed.setStatus(TEMPORARY_ALLOWED);
 
-        Application holidayAllowed = TestDataCreator.anyFullDayApplication(person);
+        Application holidayAllowed = DemoDataCreator.anyFullDayApplication(person);
         holidayAllowed.setVacationType(vacationTypes.get(0));
         holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ALLOWED);
 
-        Application holidayRejected = TestDataCreator.anyFullDayApplication(person);
+        Application holidayRejected = DemoDataCreator.anyFullDayApplication(person);
         holidayRejected.setVacationType(vacationTypes.get(0));
         holidayRejected.setStartDate(LocalDate.of(2014, 11, 6));
         holidayRejected.setEndDate(LocalDate.of(2014, 11, 6));
         holidayRejected.setStatus(REJECTED);
 
-        Application specialLeaveWaiting = TestDataCreator.anyFullDayApplication(person);
+        Application specialLeaveWaiting = DemoDataCreator.anyFullDayApplication(person);
         specialLeaveWaiting.setVacationType(vacationTypes.get(1));
         specialLeaveWaiting.setStartDate(LocalDate.of(2014, 10, 15));
         specialLeaveWaiting.setEndDate(LocalDate.of(2014, 10, 15));
         specialLeaveWaiting.setStatus(WAITING);
 
-        Application unpaidLeaveAllowed = TestDataCreator.anyFullDayApplication(person);
+        Application unpaidLeaveAllowed = DemoDataCreator.anyFullDayApplication(person);
         unpaidLeaveAllowed.setVacationType(vacationTypes.get(2));
         unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 16));
         unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 16));
         unpaidLeaveAllowed.setStatus(ALLOWED);
 
-        Application overTimeWaiting = TestDataCreator.anyFullDayApplication(person);
+        Application overTimeWaiting = DemoDataCreator.anyFullDayApplication(person);
         overTimeWaiting.setVacationType(vacationTypes.get(3));
         overTimeWaiting.setStartDate(LocalDate.of(2014, 11, 3));
         overTimeWaiting.setEndDate(LocalDate.of(2014, 11, 3));
@@ -189,13 +189,13 @@ public class ApplicationForLeaveStatisticsBuilderTest {
             .thenReturn(BigDecimal.TEN);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
 
-        Application holidayAllowed = TestDataCreator.anyFullDayApplication(person);
+        Application holidayAllowed = DemoDataCreator.anyFullDayApplication(person);
         holidayAllowed.setVacationType(vacationTypes.get(0));
         holidayAllowed.setStartDate(LocalDate.of(2014, 12, 29));
         holidayAllowed.setEndDate(LocalDate.of(2015, 1, 9));
         holidayAllowed.setStatus(ALLOWED);
 
-        Application holidayWaiting = TestDataCreator.anyFullDayApplication(person);
+        Application holidayWaiting = DemoDataCreator.anyFullDayApplication(person);
         holidayWaiting.setVacationType(vacationTypes.get(0));
         holidayWaiting.setStartDate(LocalDate.of(2015, 12, 21));
         holidayWaiting.setEndDate(LocalDate.of(2016, 1, 4));

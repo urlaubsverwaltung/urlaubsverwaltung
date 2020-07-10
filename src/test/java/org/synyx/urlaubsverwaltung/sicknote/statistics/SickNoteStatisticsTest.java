@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -40,13 +40,13 @@ public class SickNoteStatisticsTest {
         sickNoteDAO = mock(SickNoteService.class);
         sickNotes = new ArrayList<>();
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        SickNote sickNote1 = TestDataCreator.createSickNote(person,
+        SickNote sickNote1 = DemoDataCreator.createSickNote(person,
             LocalDate.of(2013, OCTOBER, 7),
             LocalDate.of(2013, OCTOBER, 11), DayLength.FULL);
 
-        SickNote sickNote2 = TestDataCreator.createSickNote(person,
+        SickNote sickNote2 = DemoDataCreator.createSickNote(person,
             LocalDate.of(2013, DECEMBER, 18),
             LocalDate.of(2014, JANUARY, 3), DayLength.FULL);
 

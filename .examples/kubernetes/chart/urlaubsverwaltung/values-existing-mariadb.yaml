@@ -4,7 +4,7 @@ image:
 applicationProperties: |-
   # AUTHENTICATION
   uv.security.auth=default
-  uv.development.testdata.create=true
+  uv.development.demodata.create=true
 
 environment:
   springDatasourceUrl: jdbc:mysql://mariadb:3306/urlaubsverwaltung

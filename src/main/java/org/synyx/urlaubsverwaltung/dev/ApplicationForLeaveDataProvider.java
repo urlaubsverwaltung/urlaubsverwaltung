@@ -18,7 +18,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 /**
- * Provides sick note test data.
+ * Provides sick note demo data.
  */
 class ApplicationForLeaveDataProvider {
 

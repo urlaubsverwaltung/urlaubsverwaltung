@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -74,9 +74,9 @@ public class SickNoteInteractionServiceImplTest {
         sickNote.setStartDate(LocalDate.now(UTC));
         sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setPerson(TestDataCreator.createPerson());
+        sickNote.setPerson(DemoDataCreator.createPerson());
 
-        person = TestDataCreator.createPerson();
+        person = DemoDataCreator.createPerson();
     }
 
 
@@ -182,7 +182,7 @@ public class SickNoteInteractionServiceImplTest {
         applicationForLeave.setEndDate(LocalDate.now(UTC));
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
-        applicationForLeave.setPerson(TestDataCreator.createPerson());
+        applicationForLeave.setPerson(DemoDataCreator.createPerson());
 
         SickNote convertedSickNote = sickNoteInteractionService.convert(sickNote, applicationForLeave, person);
 

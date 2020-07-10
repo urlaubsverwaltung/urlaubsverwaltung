@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,7 +47,7 @@ public class OvertimeFormValidatorTest {
 
         validator = new OvertimeFormValidator(overtimeService, settingsService);
 
-        final Overtime overtimeRecord = TestDataCreator.createOvertimeRecord();
+        final Overtime overtimeRecord = DemoDataCreator.createOvertimeRecord();
         overtimeForm = new OvertimeForm(overtimeRecord);
 
         settings = new Settings();
@@ -323,7 +323,7 @@ public class OvertimeFormValidatorTest {
         overtimeForm.setNumberOfHours(new BigDecimal("2"));
         overtimeForm.setId(42);
 
-        Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
+        Overtime originalOvertimeRecord = DemoDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("3"));
 
         when(overtimeService.getOvertimeById(anyInt()))
@@ -350,7 +350,7 @@ public class OvertimeFormValidatorTest {
         overtimeForm.setNumberOfHours(new BigDecimal("3"));
         overtimeForm.setId(42);
 
-        Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
+        Overtime originalOvertimeRecord = DemoDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("2.5"));
 
         when(overtimeService.getOvertimeById(anyInt()))
@@ -378,7 +378,7 @@ public class OvertimeFormValidatorTest {
 
         overtimeForm.setId(42);
 
-        Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
+        Overtime originalOvertimeRecord = DemoDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
 
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
