@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Repository for {@link Person} entities.
  */
-interface PersonDAO extends JpaRepository<Person, Integer> {
+interface PersonRepository extends JpaRepository<Person, Integer> {
 
     Person findByUsername(String username);
 }

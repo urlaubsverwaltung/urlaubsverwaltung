@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
@@ -25,13 +25,13 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 public class ApplicationServiceImplTest {
 
     private ApplicationService applicationService;
-    private ApplicationDAO applicationDAO;
+    private ApplicationRepository applicationRepository;
 
     @Before
     public void setUp() {
 
-        applicationDAO = mock(ApplicationDAO.class);
-        applicationService = new ApplicationServiceImpl(applicationDAO);
+        applicationRepository = mock(ApplicationRepository.class);
+        applicationService = new ApplicationServiceImpl(applicationRepository);
     }
 
 
@@ -41,7 +41,7 @@ public class ApplicationServiceImplTest {
     public void ensureGetApplicationByIdCallsCorrectDaoMethod() {
 
         applicationService.getApplicationById(1234);
-        verify(applicationDAO).findById(1234);
+        verify(applicationRepository).findById(1234);
     }
 
 
@@ -63,7 +63,7 @@ public class ApplicationServiceImplTest {
         Application application = new Application();
 
         applicationService.save(application);
-        verify(applicationDAO).save(application);
+        verify(applicationRepository).save(application);
     }
 
 
@@ -81,11 +81,11 @@ public class ApplicationServiceImplTest {
 
         Person person = DemoDataCreator.createPerson();
 
-        when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
+        when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
 
         BigDecimal totalHours = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-        verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
+        verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
         assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
@@ -97,7 +97,7 @@ public class ApplicationServiceImplTest {
         final Application application = new Application();
         final List<Application> applications = List.of(application);
 
-        when(applicationDAO.findByStatusIn(List.of(WAITING))).thenReturn(applications);
+        when(applicationRepository.findByStatusIn(List.of(WAITING))).thenReturn(applications);
 
         final List<Application> result = applicationService.getForStates(List.of(WAITING));
         assertEquals(applications, result);
@@ -111,7 +111,7 @@ public class ApplicationServiceImplTest {
 
         final Person person = DemoDataCreator.createPerson();
 
-        when(applicationDAO.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
+        when(applicationRepository.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
 
         final List<Application> result = applicationService.getForStatesAndPerson(List.of(WAITING), List.of(person));
         assertEquals(applications, result);
@@ -123,11 +123,11 @@ public class ApplicationServiceImplTest {
 
         Person person = DemoDataCreator.createPerson();
 
-        when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
+        when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         BigDecimal totalHours = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-        verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
+        verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
         assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);

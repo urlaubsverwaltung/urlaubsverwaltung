@@ -27,7 +27,7 @@ public class SickNoteCommentServiceImplTest {
     private SickNoteCommentService sut;
 
     @Mock
-    private SickNoteCommentDAO commentDAO;
+    private SickNoteCommentRepository commentDAO;
 
     @Before
     public void setUp() {

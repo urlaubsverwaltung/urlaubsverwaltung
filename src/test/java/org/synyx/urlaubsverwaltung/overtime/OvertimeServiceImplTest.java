@@ -26,8 +26,8 @@ public class OvertimeServiceImplTest {
 
     private OvertimeService sut;
 
-    private OvertimeDAO overtimeDAO;
-    private OvertimeCommentDAO commentDAO;
+    private OvertimeRepository overtimeRepository;
+    private OvertimeCommentRepository commentDAO;
     private ApplicationService applicationService;
     private OvertimeMailService overtimeMailService;
 
@@ -37,12 +37,12 @@ public class OvertimeServiceImplTest {
     @Before
     public void setUp() {
 
-        commentDAO = mock(OvertimeCommentDAO.class);
-        overtimeDAO = mock(OvertimeDAO.class);
+        commentDAO = mock(OvertimeCommentRepository.class);
+        overtimeRepository = mock(OvertimeRepository.class);
         applicationService = mock(ApplicationService.class);
         overtimeMailService = mock(OvertimeMailService.class);
 
-        sut = new OvertimeServiceImpl(overtimeDAO, commentDAO, applicationService, overtimeMailService);
+        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService);
 
         overtimeMock = mock(Overtime.class);
         authorMock = mock(Person.class);
@@ -56,7 +56,7 @@ public class OvertimeServiceImplTest {
 
         sut.record(overtimeMock, Optional.of("Foo Bar"), authorMock);
 
-        verify(overtimeDAO).save(overtimeMock);
+        verify(overtimeRepository).save(overtimeMock);
         verify(commentDAO).save(any(OvertimeComment.class));
     }
 
@@ -165,7 +165,7 @@ public class OvertimeServiceImplTest {
 
         sut.getOvertimeRecordsForPerson(person);
 
-        verify(overtimeDAO).findByPerson(person);
+        verify(overtimeRepository).findByPerson(person);
     }
 
 
@@ -183,7 +183,7 @@ public class OvertimeServiceImplTest {
 
         sut.getOvertimeById(42);
 
-        verify(overtimeDAO).findById(42);
+        verify(overtimeRepository).findById(42);
     }
 
 
@@ -197,7 +197,7 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensureReturnsEmptyOptionalIfNoOvertimeFoundForID() {
 
-        when(overtimeDAO.findById(anyInt())).thenReturn(Optional.empty());
+        when(overtimeRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         Optional<Overtime> overtimeOptional = sut.getOvertimeById(42);
 
@@ -225,7 +225,7 @@ public class OvertimeServiceImplTest {
         LocalDate firstDay = LocalDate.of(2015, 1, 1);
         LocalDate lastDay = LocalDate.of(2015, 12, 31);
 
-        verify(overtimeDAO).findByPersonAndPeriod(person, firstDay, lastDay);
+        verify(overtimeRepository).findByPersonAndPeriod(person, firstDay, lastDay);
     }
 
 
@@ -277,7 +277,7 @@ public class OvertimeServiceImplTest {
 
         Person person = DemoDataCreator.createPerson();
 
-        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
+        when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.emptyList());
 
         BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
@@ -285,7 +285,7 @@ public class OvertimeServiceImplTest {
         LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
         LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
 
-        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
+        verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", BigDecimal.ZERO, totalHours);
@@ -303,7 +303,7 @@ public class OvertimeServiceImplTest {
         Overtime otherOvertimeRecord = DemoDataCreator.createOvertimeRecord(person);
         otherOvertimeRecord.setHours(BigDecimal.TEN);
 
-        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
+        when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Arrays.asList(overtimeRecord, otherOvertimeRecord));
 
         BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
@@ -311,7 +311,7 @@ public class OvertimeServiceImplTest {
         LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
         LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
 
-        verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
+        verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", new BigDecimal("11"), totalHours);
@@ -332,12 +332,12 @@ public class OvertimeServiceImplTest {
 
         Person person = DemoDataCreator.createPerson();
 
-        when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
+        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
         BigDecimal totalHours = sut.getLeftOvertimeForPerson(person);
 
-        verify(overtimeDAO).calculateTotalHoursForPerson(person);
+        verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
@@ -350,12 +350,12 @@ public class OvertimeServiceImplTest {
 
         Person person = DemoDataCreator.createPerson();
 
-        when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
+        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
 
-        verify(overtimeDAO).calculateTotalHoursForPerson(person);
+        verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
 
         Assert.assertNotNull("Should not be null", leftOvertime);
@@ -368,7 +368,7 @@ public class OvertimeServiceImplTest {
 
         Person person = DemoDataCreator.createPerson();
 
-        when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
+        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
         BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);

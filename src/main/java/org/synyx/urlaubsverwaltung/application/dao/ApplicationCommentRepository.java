@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Repository for {@link ApplicationComment} entities.
  */
-public interface ApplicationCommentDAO extends CrudRepository<ApplicationComment, Integer> {
+public interface ApplicationCommentRepository extends CrudRepository<ApplicationComment, Integer> {
 
     @Query("select x from ApplicationComment x where x.application = ?1")
     List<ApplicationComment> getCommentsByApplication(Application a);

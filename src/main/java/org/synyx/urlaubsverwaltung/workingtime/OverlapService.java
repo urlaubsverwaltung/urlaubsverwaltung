@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -31,12 +31,12 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 @Service
 public class OverlapService {
 
-    private final ApplicationDAO applicationDAO;
+    private final ApplicationRepository applicationRepository;
     private final SickNoteService sickNoteService;
 
     @Autowired
-    public OverlapService(ApplicationDAO applicationDAO, SickNoteService sickNoteService) {
-        this.applicationDAO = applicationDAO;
+    public OverlapService(ApplicationRepository applicationRepository, SickNoteService sickNoteService) {
+        this.applicationRepository = applicationRepository;
         this.sickNoteService = sickNoteService;
     }
 
@@ -151,7 +151,7 @@ public class OverlapService {
                                                               LocalDate endDate, DayLength dayLength) {
 
         // get all applications for leave
-        List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+        List<Application> applicationsForLeave = applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
 
         // remove the non-relevant ones
         return applicationsForLeave.stream()

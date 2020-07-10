@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -31,15 +31,15 @@ import static org.mockito.Mockito.when;
 public class OverlapServiceTest {
 
     private OverlapService service;
-    private ApplicationDAO applicationDAO;
+    private ApplicationRepository applicationRepository;
     private SickNoteService sickNoteService;
 
     @Before
     public void setup() {
 
-        applicationDAO = mock(ApplicationDAO.class);
+        applicationRepository = mock(ApplicationRepository.class);
         sickNoteService = mock(SickNoteService.class);
-        service = new OverlapService(applicationDAO, sickNoteService);
+        service = new OverlapService(applicationRepository, sickNoteService);
     }
 
 
@@ -61,7 +61,7 @@ public class OverlapServiceTest {
         rejectedApplication.setEndDate(endDate);
         rejectedApplication.setStatus(ApplicationStatus.REJECTED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(Arrays.asList(cancelledApplication, rejectedApplication));
 
@@ -80,7 +80,7 @@ public class OverlapServiceTest {
     @Test
     public void ensureNoOverlappingIfNoActiveApplicationsForLeaveInThePeriod() {
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(new ArrayList<>());
 
@@ -117,7 +117,7 @@ public class OverlapServiceTest {
         allowedApplication.setEndDate(LocalDate.of(2012, JANUARY, 20));
         allowedApplication.setStatus(ApplicationStatus.ALLOWED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(Arrays.asList(waitingApplication, allowedApplication));
 
@@ -144,7 +144,7 @@ public class OverlapServiceTest {
         waitingApplication.setEndDate(LocalDate.of(2012, JANUARY, 18));
         waitingApplication.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(waitingApplication));
 
@@ -171,7 +171,7 @@ public class OverlapServiceTest {
         allowedApplication.setEndDate(LocalDate.of(2012, JANUARY, 18));
         allowedApplication.setStatus(ApplicationStatus.ALLOWED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(allowedApplication));
 
@@ -329,7 +329,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         Application noonVacation = new Application();
@@ -355,7 +355,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         Application otherMorningVacation = DemoDataCreator.anyApplication();
@@ -381,7 +381,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         Application fullDayVacation = DemoDataCreator.anyApplication();
@@ -406,7 +406,7 @@ public class OverlapServiceTest {
         fullDayVacation.setEndDate(vacationDate);
         fullDayVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(fullDayVacation));
 
         Application morningVacation = DemoDataCreator.anyApplication();
@@ -432,7 +432,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.ALLOWED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         SickNote sickNote = DemoDataCreator.anySickNote();
@@ -458,7 +458,7 @@ public class OverlapServiceTest {
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
 
-        when(applicationDAO.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(morningVacation));
 
         SickNote sickNote = DemoDataCreator.anySickNote();

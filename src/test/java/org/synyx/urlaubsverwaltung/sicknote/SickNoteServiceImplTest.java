@@ -28,26 +28,26 @@ public class SickNoteServiceImplTest {
     private SickNoteServiceImpl sut;
 
     @Mock
-    private SickNoteDAO sickNoteDAO;
+    private SickNoteRepository sickNoteRepository;
     @Mock
     private SettingsService settingsService;
 
     @Before
     public void setUp() {
-        sut = new SickNoteServiceImpl(sickNoteDAO, settingsService);
+        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService);
     }
 
     @Test
     public void save() {
         final SickNote sickNote = new SickNote();
         sut.save(sickNote);
-        verify(sickNoteDAO).save(sickNote);
+        verify(sickNoteRepository).save(sickNote);
     }
 
     @Test
     public void getById() {
         final Optional<SickNote> sickNote = Optional.of(new SickNote());
-        when(sickNoteDAO.findById(1)).thenReturn(sickNote);
+        when(sickNoteRepository.findById(1)).thenReturn(sickNote);
 
         final Optional<SickNote> actualSickNote = sut.getById(1);
         assertThat(actualSickNote).isEqualTo(sickNote);
@@ -58,7 +58,7 @@ public class SickNoteServiceImplTest {
         final LocalDate from = LocalDate.of(2015, 1, 1);
         final LocalDate to = LocalDate.of(2016, 1, 1);
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findByPeriod(from, to)).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findByPeriod(from, to)).thenReturn(singletonList(sickNote));
 
         final List<SickNote> sickNotes = sut.getByPeriod(from, to);
         assertThat(sickNotes).contains(sickNote);
@@ -67,7 +67,7 @@ public class SickNoteServiceImplTest {
     @Test
     public void getAllActiveByYear() {
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findAllActiveByYear(2017)).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findAllActiveByYear(2017)).thenReturn(singletonList(sickNote));
 
         final List<SickNote> sickNotes = sut.getAllActiveByYear(2017);
         assertThat(sickNotes).contains(sickNote);
@@ -75,7 +75,7 @@ public class SickNoteServiceImplTest {
 
     @Test
     public void getNumberOfPersonsWithMinimumOneSickNote() {
-        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2017)).thenReturn(5L);
+        when(sickNoteRepository.findNumberOfPersonsWithMinimumOneSickNote(2017)).thenReturn(5L);
 
         final Long numberOfPersonsWithMinimumOneSickNote = sut.getNumberOfPersonsWithMinimumOneSickNote(2017);
         assertThat(numberOfPersonsWithMinimumOneSickNote).isSameAs(5L);
@@ -92,7 +92,7 @@ public class SickNoteServiceImplTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(eq(5), any(LocalDate.class))).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(eq(5), any(LocalDate.class))).thenReturn(singletonList(sickNote));
 
         final List<SickNote> sickNotesReachingEndOfSickPay = sut.getSickNotesReachingEndOfSickPay();
         assertThat(sickNotesReachingEndOfSickPay).contains(sickNote);
@@ -103,7 +103,7 @@ public class SickNoteServiceImplTest {
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findByStatusIn(openSickNoteStatuses)).thenReturn(List.of(sickNote));
+        when(sickNoteRepository.findByStatusIn(openSickNoteStatuses)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStates(openSickNoteStatuses);
         assertThat(sickNotes)
@@ -119,7 +119,7 @@ public class SickNoteServiceImplTest {
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findByStatusInAndPersonIn(openSickNoteStatuses, persons)).thenReturn(List.of(sickNote));
+        when(sickNoteRepository.findByStatusInAndPersonIn(openSickNoteStatuses, persons)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
         assertThat(sickNotes)

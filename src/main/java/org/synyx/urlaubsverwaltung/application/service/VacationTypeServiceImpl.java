@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.application.dao.VacationTypeDAO;
+import org.synyx.urlaubsverwaltung.application.dao.VacationTypeRepository;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 
@@ -14,18 +14,18 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class VacationTypeServiceImpl implements VacationTypeService {
 
-    private final VacationTypeDAO vacationTypeDAO;
+    private final VacationTypeRepository vacationTypeRepository;
 
     @Autowired
-    public VacationTypeServiceImpl(VacationTypeDAO vacationTypeDAO) {
+    public VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository) {
 
-        this.vacationTypeDAO = vacationTypeDAO;
+        this.vacationTypeRepository = vacationTypeRepository;
     }
 
     @Override
     public List<VacationType> getVacationTypes() {
 
-        return vacationTypeDAO.findAll();
+        return vacationTypeRepository.findAll();
     }
 
     @Override

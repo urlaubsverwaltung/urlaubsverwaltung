@@ -45,7 +45,7 @@ public class PersonServiceImplTest {
     private PersonService sut;
 
     @Mock
-    private PersonDAO personDAO;
+    private PersonRepository personRepository;
     @Mock
     private AccountInteractionService accountInteractionService;
     @Mock
@@ -60,7 +60,7 @@ public class PersonServiceImplTest {
     @Before
     public void setUp() {
 
-        sut = new PersonServiceImpl(personDAO, accountInteractionService, workingTimeService, applicationEventPublisher);
+        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeService, applicationEventPublisher);
     }
 
     @After
@@ -70,7 +70,7 @@ public class PersonServiceImplTest {
 
     @Test
     public void ensureDefaultAccountAndWorkingTimeCreation() {
-        when(personDAO.save(any(Person.class))).thenReturn(new Person());
+        when(personRepository.save(any(Person.class))).thenReturn(new Person());
 
         sut.create("rick", "Grimes", "Rick", "rick@grimes.de", emptyList(), emptyList());
         verify(accountInteractionService).createDefaultAccount(any(Person.class));
@@ -84,7 +84,7 @@ public class PersonServiceImplTest {
         person.setPermissions(asList(USER, BOSS));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
-        when(personDAO.save(person)).thenReturn(person);
+        when(personRepository.save(person)).thenReturn(person);
 
         final Person createdPerson = sut.create(person);
 
@@ -110,7 +110,7 @@ public class PersonServiceImplTest {
     public void ensureCreatedPersonIsPersisted() {
 
         final Person person = createPerson();
-        when(personDAO.save(person)).thenReturn(person);
+        when(personRepository.save(person)).thenReturn(person);
 
         final Person savedPerson = sut.create(person);
         assertThat(savedPerson).isEqualTo(person);
@@ -120,8 +120,8 @@ public class PersonServiceImplTest {
     public void ensureUpdatedPersonHasCorrectAttributes() {
 
         Person person = createPerson();
-        when(personDAO.findById(anyInt())).thenReturn(Optional.of(person));
-        when(personDAO.save(person)).thenReturn(person);
+        when(personRepository.findById(anyInt())).thenReturn(Optional.of(person));
+        when(personRepository.save(person)).thenReturn(person);
 
         Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
             asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL),
@@ -148,11 +148,11 @@ public class PersonServiceImplTest {
 
         final Person person = createPerson();
         person.setId(1);
-        when(personDAO.save(person)).thenReturn(person);
+        when(personRepository.save(person)).thenReturn(person);
 
         sut.update(person);
 
-        verify(personDAO).save(person);
+        verify(personRepository).save(person);
     }
 
 
@@ -170,7 +170,7 @@ public class PersonServiceImplTest {
     public void ensureSaveCallsCorrectDaoMethod() {
 
         final Person person = createPerson();
-        when(personDAO.save(person)).thenReturn(person);
+        when(personRepository.save(person)).thenReturn(person);
 
         final Person savedPerson = sut.save(person);
         assertThat(savedPerson).isEqualTo(person);
@@ -181,7 +181,7 @@ public class PersonServiceImplTest {
     public void ensureGetPersonByIDCallsCorrectDaoMethod() {
 
         sut.getPersonByID(123);
-        verify(personDAO).findById(123);
+        verify(personRepository).findById(123);
     }
 
 
@@ -190,7 +190,7 @@ public class PersonServiceImplTest {
         String username = "foo";
         sut.getPersonByUsername(username);
 
-        verify(personDAO).findByUsername(username);
+        verify(personRepository).findByUsername(username);
     }
 
 
@@ -211,7 +211,7 @@ public class PersonServiceImplTest {
 
         List<Person> allPersons = asList(inactive, user, boss, office);
 
-        when(personDAO.findAll()).thenReturn(allPersons);
+        when(personRepository.findAll()).thenReturn(allPersons);
 
         List<Person> activePersons = sut.getActivePersons();
 
@@ -240,7 +240,7 @@ public class PersonServiceImplTest {
 
         List<Person> allPersons = asList(inactive, user, boss, office);
 
-        when(personDAO.findAll()).thenReturn(allPersons);
+        when(personRepository.findAll()).thenReturn(allPersons);
 
         List<Person> inactivePersons = sut.getInactivePersons();
 
@@ -264,7 +264,7 @@ public class PersonServiceImplTest {
 
         List<Person> allPersons = asList(user, boss, office);
 
-        when(personDAO.findAll()).thenReturn(allPersons);
+        when(personRepository.findAll()).thenReturn(allPersons);
 
         List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
 
@@ -293,7 +293,7 @@ public class PersonServiceImplTest {
 
         List<Person> allPersons = asList(user, boss, office);
 
-        when(personDAO.findAll()).thenReturn(allPersons);
+        when(personRepository.findAll()).thenReturn(allPersons);
 
         List<Person> filteredList = sut.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
 
@@ -313,7 +313,7 @@ public class PersonServiceImplTest {
 
         List<Person> unsortedPersons = asList(shane, carl, rick);
 
-        when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personRepository.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getActivePersons();
 
@@ -334,7 +334,7 @@ public class PersonServiceImplTest {
         List<Person> unsortedPersons = asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setPermissions(singletonList(Role.INACTIVE)));
 
-        when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personRepository.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getInactivePersons();
 
@@ -355,7 +355,7 @@ public class PersonServiceImplTest {
         List<Person> unsortedPersons = asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setPermissions(singletonList(USER)));
 
-        when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personRepository.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getActivePersonsByRole(USER);
 
@@ -376,7 +376,7 @@ public class PersonServiceImplTest {
         List<Person> unsortedPersons = asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setNotifications(singletonList(NOTIFICATION_USER)));
 
-        when(personDAO.findAll()).thenReturn(unsortedPersons);
+        when(personRepository.findAll()).thenReturn(unsortedPersons);
 
         List<Person> sortedList = sut.getPersonsWithNotificationType(NOTIFICATION_USER);
 
@@ -403,7 +403,7 @@ public class PersonServiceImplTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        when(personDAO.findByUsername(anyString())).thenReturn(person);
+        when(personRepository.findByUsername(anyString())).thenReturn(person);
 
         Person signedInUser = sut.getSignedInUser();
 
@@ -419,8 +419,8 @@ public class PersonServiceImplTest {
     @Test
     public void ensureCanAppointPersonAsOfficeUser() {
 
-        when(personDAO.findAll()).thenReturn(emptyList());
-        when(personDAO.save(any())).then(returnsFirstArg());
+        when(personRepository.findAll()).thenReturn(emptyList());
+        when(personRepository.save(any())).then(returnsFirstArg());
 
         final Person person = createPerson();
         person.setPermissions(singletonList(USER));
@@ -439,7 +439,7 @@ public class PersonServiceImplTest {
 
         Person officePerson = new Person();
         officePerson.setPermissions(singletonList(OFFICE));
-        when(personDAO.findAll()).thenReturn(singletonList(officePerson));
+        when(personRepository.findAll()).thenReturn(singletonList(officePerson));
 
         final Person person = createPerson();
         person.setPermissions(singletonList(USER));
@@ -459,7 +459,7 @@ public class PersonServiceImplTest {
         final Person inactivePerson = createPerson("inactive person", INACTIVE);
         inactivePerson.setId(1);
 
-        when(personDAO.save(inactivePerson)).thenReturn(inactivePerson);
+        when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
         final Person savedInactivePerson = sut.save(inactivePerson);
 
@@ -475,7 +475,7 @@ public class PersonServiceImplTest {
         final Person activePerson = createPerson("active person", USER);
         activePerson.setId(1);
 
-        when(personDAO.save(activePerson)).thenReturn(activePerson);
+        when(personRepository.save(activePerson)).thenReturn(activePerson);
 
         sut.save(activePerson);
 
