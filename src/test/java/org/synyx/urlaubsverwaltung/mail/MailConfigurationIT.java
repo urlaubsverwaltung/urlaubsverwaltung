@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
