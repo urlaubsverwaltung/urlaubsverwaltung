@@ -24,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
+
 @RestControllerAdviceMarker
 @Api("Work Days: Get information about work day in a certain period")
 @RestController("restApiWorkDayController")
@@ -56,10 +58,10 @@ public class WorkDayApiController {
     @GetMapping("/workdays")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public ResponseWrapper<WorkDayResponse> workDays(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-01")
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
             String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_YEAR + "-01-08")
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-08")
         @RequestParam("to")
             String to,
         @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")
