@@ -25,8 +25,6 @@
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>11</java.version>
-    <mail.version>1.4.7</mail.version>
-    <mock-javamail.version>1.9</mock-javamail.version>
     <jollyday.version>0.5.10</jollyday.version>
     <ews-java-api.version>2.0</ews-java-api.version>
     <httpcore.version>4.4.13</httpcore.version>
