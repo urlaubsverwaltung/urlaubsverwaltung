@@ -1,17 +1,17 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,14 +28,14 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link OverlapService}.
  */
-public class OverlapServiceTest {
+class OverlapServiceTest {
 
     private OverlapService service;
     private ApplicationRepository applicationRepository;
     private SickNoteService sickNoteService;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
 
         applicationRepository = mock(ApplicationRepository.class);
         sickNoteService = mock(SickNoteService.class);
@@ -44,7 +44,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureNoOverlappingIfOnlyInactiveApplicationsForLeaveInThePeriod() {
+    void ensureNoOverlappingIfOnlyInactiveApplicationsForLeaveInThePeriod() {
 
         LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
         LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
@@ -78,7 +78,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureNoOverlappingIfNoActiveApplicationsForLeaveInThePeriod() {
+    void ensureNoOverlappingIfNoActiveApplicationsForLeaveInThePeriod() {
 
         when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
@@ -101,7 +101,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureFullyOverlappingIfTheApplicationForLeaveToCheckIsFullyInThePeriodOfOtherApplicationsForLeave() {
+    void ensureFullyOverlappingIfTheApplicationForLeaveToCheckIsFullyInThePeriodOfOtherApplicationsForLeave() {
 
         // first application for leave: 16.01. - 18.01.
         Application waitingApplication = new Application();
@@ -135,7 +135,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyStartOfPeriodOfOtherApplicationsForLeave() {
+    void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyStartOfPeriodOfOtherApplicationsForLeave() {
 
         // application for leave: 16.01. - 18.01.
         Application waitingApplication = new Application();
@@ -162,7 +162,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyEndOfPeriodOfOtherApplicationsForLeave() {
+    void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyEndOfPeriodOfOtherApplicationsForLeave() {
 
         // application for leave: 16.01. - 18.01.
         Application allowedApplication = new Application();
@@ -189,7 +189,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureNoOverlappingIfOnlyInactiveSickNotesInThePeriod() {
+    void ensureNoOverlappingIfOnlyInactiveSickNotesInThePeriod() {
 
         LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
         LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
@@ -218,7 +218,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureNoOverlappingIfNoActiveSickNotesInThePeriod() {
+    void ensureNoOverlappingIfNoActiveSickNotesInThePeriod() {
 
         when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(new ArrayList<>());
@@ -237,7 +237,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureFullyOverlappingIfTheApplicationForLeaveToCheckIsFullyInThePeriodOfASickNote() {
+    void ensureFullyOverlappingIfTheApplicationForLeaveToCheckIsFullyInThePeriodOfASickNote() {
 
         // sick note: 16.01. - 19.01.
         SickNote sickNote = new SickNote();
@@ -263,7 +263,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyStartOfPeriodOfASickNote() {
+    void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyStartOfPeriodOfASickNote() {
 
         // sick note: 16.01. - 18.01.
         SickNote sickNote = new SickNote();
@@ -289,7 +289,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureSickNoteCanBeEditedAndNoOverlappingErrorOccurs() {
+    void ensureSickNoteCanBeEditedAndNoOverlappingErrorOccurs() {
 
         // sick note: 16.03. - 16.03.
         SickNote existentSickNote = new SickNote();
@@ -319,7 +319,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureNoOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayButWithDifferentTimeOfDay() {
+    void ensureNoOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayButWithDifferentTimeOfDay() {
 
         LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
@@ -345,7 +345,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureFullyOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayAndTimeOfDay() {
+    void ensureFullyOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayAndTimeOfDay() {
 
         LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
@@ -371,7 +371,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureFullyOverlappingIfApplyingForFullDayAlthoughThereIsAlreadyAHalfDayVacation() {
+    void ensureFullyOverlappingIfApplyingForFullDayAlthoughThereIsAlreadyAHalfDayVacation() {
 
         LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
@@ -396,7 +396,7 @@ public class OverlapServiceTest {
     }
 
     @Test
-    public void ensureFullyOverlappingIfApplyingForHalfDayAlthoughThereIsAlreadyAFullDayVacation() {
+    void ensureFullyOverlappingIfApplyingForHalfDayAlthoughThereIsAlreadyAFullDayVacation() {
 
         LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
@@ -422,7 +422,7 @@ public class OverlapServiceTest {
 
 
     @Test
-    public void ensureFullyOverlappingIfCreatingSickNoteOnADayWithHalfDayVacation() {
+    void ensureFullyOverlappingIfCreatingSickNoteOnADayWithHalfDayVacation() {
 
         LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
@@ -448,7 +448,7 @@ public class OverlapServiceTest {
     }
 
     @Test
-    public void ensureOverlappingForTEMPORARY_ALLOWEDApplications() {
+    void ensureOverlappingForTEMPORARY_ALLOWEDApplications() {
 
         LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 

@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
 import liquibase.util.csv.CSVWriter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -24,14 +24,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
+class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
     private ApplicationForLeaveStatisticsCsvExportServiceImpl sut;
 
     private MessageSource messageSource;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         messageSource = mock(MessageSource.class);
         VacationTypeService vacationTypeService = mock(VacationTypeService.class);
 
@@ -39,7 +39,7 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
     }
 
     @Test
-    public void writeStatisticsForOnePersonFor2018() {
+    void writeStatisticsForOnePersonFor2018() {
         FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
 
         List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
@@ -80,7 +80,7 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
     }
 
     @Test
-    public void writeStatisticsForTwoPersonsFor2019() {
+    void writeStatisticsForTwoPersonsFor2019() {
         FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
 
         List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
@@ -128,7 +128,7 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
     }
 
     @Test
-    public void getFileNameForComplete2018() {
+    void getFileNameForComplete2018() {
         FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
 
         when(messageSource.getMessage("applications.statistics", new String[]{"Statistik"}, GERMAN)).thenReturn("test");
@@ -138,7 +138,7 @@ public class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
     }
 
     @Test
-    public void getFileNameForComplete2019() {
+    void getFileNameForComplete2019() {
         FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
 
         when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");

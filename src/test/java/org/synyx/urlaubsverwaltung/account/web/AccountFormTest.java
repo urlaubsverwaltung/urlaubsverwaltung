@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.account.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 
 import java.math.BigDecimal;
@@ -10,10 +10,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AccountFormTest {
+class AccountFormTest {
 
     @Test
-    public void ensureHasDefaultValuesForHolidaysAccountPeriod() {
+    void ensureHasDefaultValuesForHolidaysAccountPeriod() {
 
         AccountForm accountForm = new AccountForm(2014);
 
@@ -29,7 +29,7 @@ public class AccountFormTest {
     }
 
     @Test
-    public void ensureUsesValuesOfGivenHolidaysAccount() {
+    void ensureUsesValuesOfGivenHolidaysAccount() {
 
         Account account = new Account();
 

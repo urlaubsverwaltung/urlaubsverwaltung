@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,10 +9,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
-public class LdapUserTest {
+class LdapUserTest {
 
     @Test
-    public void ensureCanBeInitializedWithEmptyAttributes() {
+    void ensureCanBeInitializedWithEmptyAttributes() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.empty(), Optional.empty(),
             Optional.empty());
@@ -25,7 +25,7 @@ public class LdapUserTest {
 
 
     @Test
-    public void ensureCanBeInitializedWithAttributes() {
+    void ensureCanBeInitializedWithAttributes() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
             Optional.of("max@firma.test"));
@@ -44,7 +44,7 @@ public class LdapUserTest {
 
 
     @Test
-    public void ensureMemberOfInformationIsOptional() {
+    void ensureMemberOfInformationIsOptional() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
             Optional.of("max@firma.test"));
@@ -57,7 +57,7 @@ public class LdapUserTest {
 
 
     @Test
-    public void ensureCanBeInitializedWithAttributesAndMemberOfInformation() {
+    void ensureCanBeInitializedWithAttributesAndMemberOfInformation() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
             Optional.of("max@firma.test"), "GroupA", "GroupB");
@@ -72,7 +72,7 @@ public class LdapUserTest {
 
 
     @Test
-    public void ensureMemberOfListIsUnmodifiable() {
+    void ensureMemberOfListIsUnmodifiable() {
 
         LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
             Optional.of("max@firma.test"), "GroupA", "GroupB");
@@ -91,7 +91,7 @@ public class LdapUserTest {
 
 
     @Test
-    public void ensureThrowsIfInitializedWithEmptyUsername() {
+    void ensureThrowsIfInitializedWithEmptyUsername() {
 
         Consumer<String> assertThrowsOnEmptyUsername = (username) -> {
             try {

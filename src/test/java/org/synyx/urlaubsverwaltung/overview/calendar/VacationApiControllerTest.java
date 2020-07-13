@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.overview.calendar;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -12,11 +12,11 @@ import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -36,8 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class VacationApiControllerTest {
+@ExtendWith(MockitoExtension.class)
+class VacationApiControllerTest {
 
     private VacationApiController sut;
 
@@ -48,13 +48,13 @@ public class VacationApiControllerTest {
     @Mock
     private DepartmentService departmentService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new VacationApiController(personService, applicationService, departmentService);
     }
 
     @Test
-    public void ensureReturnsAllAllowedVacationsIfNoPersonProvided() throws Exception {
+    void ensureReturnsAllAllowedVacationsIfNoPersonProvided() throws Exception {
 
         perform(get("/api/vacations")
             .param("from", "2016-01-01")
@@ -67,7 +67,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureReturnsAllowedVacationsOfPersonIfPersonProvided() throws Exception {
+    void ensureReturnsAllowedVacationsOfPersonIfPersonProvided() throws Exception {
 
         final Person person = DemoDataCreator.createPerson();
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -85,7 +85,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureCorrectConversionOfVacations() throws Exception {
+    void ensureCorrectConversionOfVacations() throws Exception {
 
         final Application vacation1 = DemoDataCreator.createApplication(DemoDataCreator.createPerson("foo"),
             LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
@@ -110,7 +110,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingFromParameter() throws Exception {
+    void ensureBadRequestForMissingFromParameter() throws Exception {
 
         perform(get("/api/vacations")
             .param("to", "2016-12-31"))
@@ -118,7 +118,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidFromParameter() throws Exception {
+    void ensureBadRequestForInvalidFromParameter() throws Exception {
 
         perform(get("/api/vacations")
             .param("from", "foo")
@@ -127,7 +127,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingToParameter() throws Exception {
+    void ensureBadRequestForMissingToParameter() throws Exception {
 
         perform(get("/api/vacations")
             .param("from", "2016-01-01"))
@@ -135,7 +135,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidToParameter() throws Exception {
+    void ensureBadRequestForInvalidToParameter() throws Exception {
 
         perform(get("/api/vacations")
             .param("from", "2016-01-01")
@@ -144,7 +144,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidPeriod() throws Exception {
+    void ensureBadRequestForInvalidPeriod() throws Exception {
 
         perform(get("/api/vacations")
             .param("from", "2016-01-01")
@@ -153,7 +153,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidPersonParameter() throws Exception {
+    void ensureBadRequestForInvalidPersonParameter() throws Exception {
 
         perform(get("/api/vacations")
             .param("from", "2016-01-01")
@@ -163,7 +163,7 @@ public class VacationApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
+    void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
         perform(get("/api/vacations")
             .param("from", "2016-01-01")
             .param("to", "foo")

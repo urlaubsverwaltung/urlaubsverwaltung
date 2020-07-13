@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
@@ -23,9 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
+class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -46,7 +46,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(username = "user")
-    public void linkCompanyCalendarForUserIsOk() throws Exception {
+    void linkCompanyCalendarForUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -59,7 +59,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void linkCompanyCalendarAsBossUserForOtherUserIsOk() throws Exception {
+    void linkCompanyCalendarAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -72,7 +72,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void linkCompanyCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
+    void linkCompanyCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -85,7 +85,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void linkCompanyCalendarAsAdminIsForbidden() throws Exception {
+    void linkCompanyCalendarAsAdminIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company"))
             .andExpect(status().isForbidden());
@@ -93,7 +93,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void linkCompanyCalendarAsInactiveIsForbidden() throws Exception {
+    void linkCompanyCalendarAsInactiveIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company"))
             .andExpect(status().isForbidden());
@@ -101,7 +101,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void linkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
+    void linkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company"))
             .andExpect(status().isForbidden());
@@ -109,7 +109,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void linkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
+    void linkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company"))
             .andExpect(status().isForbidden());
@@ -117,7 +117,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(username = "otheruser")
-    public void linkCompanyCalendarForOtherUserIsForbidden() throws Exception {
+    void linkCompanyCalendarForOtherUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -132,7 +132,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(username = "user")
-    public void unlinkCompanyCalendarForUserIsOk() throws Exception {
+    void unlinkCompanyCalendarForUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -145,7 +145,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void unlinkCompanyCalendarAsBossUserForOtherUserIsOk() throws Exception {
+    void unlinkCompanyCalendarAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -158,7 +158,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void unlinkCompanyCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
+    void unlinkCompanyCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -171,7 +171,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void unlinkCompanyCalendarAsAdminIsForbidden() throws Exception {
+    void unlinkCompanyCalendarAsAdminIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
             .andExpect(status().isForbidden());
@@ -179,7 +179,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void unlinkCompanyCalendarAsInactiveIsForbidden() throws Exception {
+    void unlinkCompanyCalendarAsInactiveIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
             .andExpect(status().isForbidden());
@@ -187,7 +187,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void unlinkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
+    void unlinkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
             .andExpect(status().isForbidden());
@@ -195,7 +195,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void unlinkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
+    void unlinkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
             .andExpect(status().isForbidden());
@@ -203,7 +203,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(username = "otheruser")
-    public void unlinkCompanyCalendarForOtherUserIsForbidden() throws Exception {
+    void unlinkCompanyCalendarForOtherUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -218,7 +218,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void enableCompanyCalendarFeatureAsBossIsOk() throws Exception {
+    void enableCompanyCalendarFeatureAsBossIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -231,7 +231,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void enableCompanyCalendarFeatureAsOfficeIsOk() throws Exception {
+    void enableCompanyCalendarFeatureAsOfficeIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -244,7 +244,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void enableCompanyCalendarFeatureAsAdminIsForbidden() throws Exception {
+    void enableCompanyCalendarFeatureAsAdminIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company/accessible"))
             .andExpect(status().isForbidden());
@@ -252,7 +252,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void enableCompanyCalendarFeatureAsInactiveIsForbidden() throws Exception {
+    void enableCompanyCalendarFeatureAsInactiveIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company/accessible"))
             .andExpect(status().isForbidden());
@@ -260,7 +260,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void enableCompanyCalendarFeatureAsDepartmentHeadIsForbidden() throws Exception {
+    void enableCompanyCalendarFeatureAsDepartmentHeadIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company/accessible"))
             .andExpect(status().isForbidden());
@@ -268,7 +268,7 @@ public class CalendarSharingViewControllerCompanyCalendarSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void enableCompanyCalendarFeatureAsSecondStageAuthorityIsForbidden() throws Exception {
+    void enableCompanyCalendarFeatureAsSecondStageAuthorityIsForbidden() throws Exception {
 
         perform(post("/web/calendars/share/persons/1/company/accessible"))
             .andExpect(status().isForbidden());

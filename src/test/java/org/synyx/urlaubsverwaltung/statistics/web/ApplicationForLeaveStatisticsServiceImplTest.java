@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -21,8 +21,8 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationForLeaveStatisticsServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationForLeaveStatisticsServiceImplTest {
 
     private ApplicationForLeaveStatisticsServiceImpl sut;
 
@@ -33,13 +33,13 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
     @Mock
     private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new ApplicationForLeaveStatisticsServiceImpl(personService, departmentService, applicationForLeaveStatisticsBuilder);
     }
 
     @Test
-    public void getStatisticsForDepartmentHead() {
+    void getStatisticsForDepartmentHead() {
 
         FilterPeriod filterPeriod = new FilterPeriod(ofNullable("01.01.2018"), ofNullable("31.12.2018"));
 
@@ -55,7 +55,7 @@ public class ApplicationForLeaveStatisticsServiceImplTest {
     }
 
     @Test
-    public void getStatisticsForOtherThanDepartmentHead() {
+    void getStatisticsForOtherThanDepartmentHead() {
 
         FilterPeriod filterPeriod = new FilterPeriod(ofNullable("01.01.2018"), ofNullable("31.12.2018"));
 

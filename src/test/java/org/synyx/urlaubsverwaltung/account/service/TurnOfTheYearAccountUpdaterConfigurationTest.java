@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
@@ -12,10 +12,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-public class TurnOfTheYearAccountUpdaterConfigurationTest {
+class TurnOfTheYearAccountUpdaterConfigurationTest {
 
     @Test
-    public void updatesAccountsWithGivenCronJobInterval() {
+    void updatesAccountsWithGivenCronJobInterval() {
 
         final AccountProperties properties = new AccountProperties();
         final TurnOfTheYearAccountUpdaterService service = mock(TurnOfTheYearAccountUpdaterService.class);

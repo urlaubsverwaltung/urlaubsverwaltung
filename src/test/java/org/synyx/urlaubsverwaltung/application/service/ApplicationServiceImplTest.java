@@ -1,17 +1,18 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -22,13 +23,13 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 /**
  * Unit test for {@link ApplicationServiceImpl}.
  */
-public class ApplicationServiceImplTest {
+class ApplicationServiceImplTest {
 
     private ApplicationService applicationService;
     private ApplicationRepository applicationRepository;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         applicationRepository = mock(ApplicationRepository.class);
         applicationService = new ApplicationServiceImpl(applicationRepository);
@@ -38,7 +39,7 @@ public class ApplicationServiceImplTest {
     // Get application by ID -------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureGetApplicationByIdCallsCorrectDaoMethod() {
+    void ensureGetApplicationByIdCallsCorrectDaoMethod() {
 
         applicationService.getApplicationById(1234);
         verify(applicationRepository).findById(1234);
@@ -46,7 +47,7 @@ public class ApplicationServiceImplTest {
 
 
     @Test
-    public void ensureGetApplicationByIdReturnsAbsentOptionalIfNoOneExists() {
+    void ensureGetApplicationByIdReturnsAbsentOptionalIfNoOneExists() {
 
         Optional<Application> optional = applicationService.getApplicationById(1234);
 
@@ -58,7 +59,7 @@ public class ApplicationServiceImplTest {
     // Save application ------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureSaveCallsCorrectDaoMethod() {
+    void ensureSaveCallsCorrectDaoMethod() {
 
         Application application = new Application();
 
@@ -69,15 +70,15 @@ public class ApplicationServiceImplTest {
 
     // Get total overtime reduction ------------------------------------------------------------------------------------
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetTotalOvertimeReductionForNullPerson() {
+    @Test
+    void ensureThrowsIfTryingToGetTotalOvertimeReductionForNullPerson() {
 
-        applicationService.getTotalOvertimeReductionOfPerson(null);
+        assertThatIllegalArgumentException().isThrownBy(() -> applicationService.getTotalOvertimeReductionOfPerson(null));
     }
 
 
     @Test
-    public void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
+    void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
 
         Person person = DemoDataCreator.createPerson();
 
@@ -92,7 +93,7 @@ public class ApplicationServiceImplTest {
     }
 
     @Test
-    public void getForStates() {
+    void getForStates() {
 
         final Application application = new Application();
         final List<Application> applications = List.of(application);
@@ -104,7 +105,7 @@ public class ApplicationServiceImplTest {
     }
 
     @Test
-    public void getForStatesAndPerson() {
+    void getForStatesAndPerson() {
 
         final Application application = new Application();
         final List<Application> applications = List.of(application);
@@ -119,7 +120,7 @@ public class ApplicationServiceImplTest {
 
 
     @Test
-    public void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
+    void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
 
         Person person = DemoDataCreator.createPerson();
 

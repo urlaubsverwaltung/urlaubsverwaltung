@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -23,6 +23,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -31,16 +33,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PersonServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class PersonServiceImplTest {
 
     private PersonService sut;
 
@@ -57,19 +59,18 @@ public class PersonServiceImplTest {
 
     private final ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor = ArgumentCaptor.forClass(PersonDisabledEvent.class);
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeService, applicationEventPublisher);
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         SecurityContextHolder.clearContext();
     }
 
     @Test
-    public void ensureDefaultAccountAndWorkingTimeCreation() {
+    void ensureDefaultAccountAndWorkingTimeCreation() {
         when(personRepository.save(any(Person.class))).thenReturn(new Person());
 
         sut.create("rick", "Grimes", "Rick", "rick@grimes.de", emptyList(), emptyList());
@@ -78,7 +79,7 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    public void ensureCreatedPersonHasCorrectAttributes() {
+    void ensureCreatedPersonHasCorrectAttributes() {
 
         final Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");
         person.setPermissions(asList(USER, BOSS));
@@ -107,7 +108,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureCreatedPersonIsPersisted() {
+    void ensureCreatedPersonIsPersisted() {
 
         final Person person = createPerson();
         when(personRepository.save(person)).thenReturn(person);
@@ -117,7 +118,7 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    public void ensureUpdatedPersonHasCorrectAttributes() {
+    void ensureUpdatedPersonHasCorrectAttributes() {
 
         Person person = createPerson();
         when(personRepository.findById(anyInt())).thenReturn(Optional.of(person));
@@ -144,7 +145,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureUpdatedPersonIsPersisted() {
+    void ensureUpdatedPersonIsPersisted() {
 
         final Person person = createPerson();
         person.setId(1);
@@ -156,18 +157,18 @@ public class PersonServiceImplTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfPersonToBeUpdatedHasNoID() {
+    @Test
+    void ensureThrowsIfPersonToBeUpdatedHasNoID() {
 
         Person person = createPerson();
         person.setId(null);
 
-        sut.update(person);
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.update(person));
     }
 
 
     @Test
-    public void ensureSaveCallsCorrectDaoMethod() {
+    void ensureSaveCallsCorrectDaoMethod() {
 
         final Person person = createPerson();
         when(personRepository.save(person)).thenReturn(person);
@@ -178,7 +179,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetPersonByIDCallsCorrectDaoMethod() {
+    void ensureGetPersonByIDCallsCorrectDaoMethod() {
 
         sut.getPersonByID(123);
         verify(personRepository).findById(123);
@@ -186,7 +187,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetPersonByLoginCallsCorrectDaoMethod() {
+    void ensureGetPersonByLoginCallsCorrectDaoMethod() {
         String username = "foo";
         sut.getPersonByUsername(username);
 
@@ -195,7 +196,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
+    void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
         Person inactive = createPerson("inactive");
         inactive.setPermissions(singletonList(Role.INACTIVE));
@@ -224,7 +225,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
+    void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
 
         Person inactive = createPerson("inactive");
         inactive.setPermissions(singletonList(Role.INACTIVE));
@@ -251,7 +252,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
+    void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
         Person user = createPerson("user");
         user.setPermissions(singletonList(USER));
@@ -276,7 +277,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
+    void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
 
         Person user = createPerson("user");
         user.setPermissions(singletonList(USER));
@@ -305,7 +306,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetActivePersonsReturnSortedList() {
+    void ensureGetActivePersonsReturnSortedList() {
 
         Person shane = createPerson("shane");
         Person carl = createPerson("carl");
@@ -325,7 +326,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetInactivePersonsReturnSortedList() {
+    void ensureGetInactivePersonsReturnSortedList() {
 
         Person shane = createPerson("shane");
         Person carl = createPerson("carl");
@@ -346,7 +347,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetPersonsByRoleReturnSortedList() {
+    void ensureGetPersonsByRoleReturnSortedList() {
 
         Person shane = createPerson("shane");
         Person carl = createPerson("carl");
@@ -367,7 +368,7 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void ensureGetPersonsByNotificationTypeReturnSortedList() {
+    void ensureGetPersonsByNotificationTypeReturnSortedList() {
 
         Person shane = createPerson("shane");
         Person carl = createPerson("carl");
@@ -386,15 +387,13 @@ public class PersonServiceImplTest {
         Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIfNoPersonCanBeFoundForTheCurrentlySignedInUser() {
-
-        sut.getSignedInUser();
+    @Test
+    void ensureThrowsIfNoPersonCanBeFoundForTheCurrentlySignedInUser() {
+        assertThatIllegalStateException().isThrownBy(() -> sut.getSignedInUser());
     }
 
-
     @Test
-    public void ensureReturnsPersonForCurrentlySignedInUser() {
+    void ensureReturnsPersonForCurrentlySignedInUser() {
 
         Person person = createPerson();
 
@@ -410,14 +409,13 @@ public class PersonServiceImplTest {
         Assert.assertEquals("Wrong person", person, signedInUser);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIllegalOnNullAuthentication() {
-
-        sut.getSignedInUser();
+    @Test
+    void ensureThrowsIllegalOnNullAuthentication() {
+        assertThatIllegalStateException().isThrownBy(() -> sut.getSignedInUser());
     }
 
     @Test
-    public void ensureCanAppointPersonAsOfficeUser() {
+    void ensureCanAppointPersonAsOfficeUser() {
 
         when(personRepository.findAll()).thenReturn(emptyList());
         when(personRepository.save(any())).then(returnsFirstArg());
@@ -435,7 +433,7 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    public void ensureCanNotAppointPersonAsOfficeUser() {
+    void ensureCanNotAppointPersonAsOfficeUser() {
 
         Person officePerson = new Person();
         officePerson.setPermissions(singletonList(OFFICE));
@@ -454,7 +452,7 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    public void ensurePersonDisabledEventIsFiredAfterPersonSave() {
+    void ensurePersonDisabledEventIsFiredAfterPersonSave() {
 
         final Person inactivePerson = createPerson("inactive person", INACTIVE);
         inactivePerson.setId(1);
@@ -470,7 +468,7 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    public void ensurePersonDisabledEventIsNotFiredAfterPersonSave() {
+    void ensurePersonDisabledEventIsNotFiredAfterPersonSave() {
 
         final Person activePerson = createPerson("active person", USER);
         activePerson.setId(1);

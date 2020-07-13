@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.workingtime.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BERLIN;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WorkingTimeViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class WorkingTimeViewControllerTest {
 
     private WorkingTimeViewController sut;
 
@@ -47,36 +47,28 @@ public class WorkingTimeViewControllerTest {
 
     @Mock
     private PersonService personService;
-
     @Mock
     private WorkingTimeService workingTimeService;
-
     @Mock
     private SettingsService settingsService;
-
     @Mock
     private WorkingTimeValidator validator;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new WorkingTimeViewController(personService, workingTimeService, settingsService, validator);
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
     @Test
-    public void editGetWorkingTimeForUnknownPersonIdThrowsUnknownPersonException() {
-
+    void editGetWorkingTimeForUnknownPersonIdThrowsUnknownPersonException() {
         assertThatThrownBy(() ->
-
             perform(get("/web/person/" + UNKNOWN_PERSON_ID + "/workingtime"))
-
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     @Test
-    public void editWorkingTimePresetsFormWithExistingWorkingTimeForPerson() throws Exception {
+    void editWorkingTimePresetsFormWithExistingWorkingTimeForPerson() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = somePerson();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
@@ -89,11 +81,12 @@ public class WorkingTimeViewControllerTest {
     }
 
     @Test
-    public void editGetWorkingTimeCreatesEmptyFormIfNoExistingWorkingTimeForPerson() throws Exception {
+    void editGetWorkingTimeCreatesEmptyFormIfNoExistingWorkingTimeForPerson() throws Exception {
 
         final Person person = somePerson();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         when(workingTimeService.getCurrentOne(person)).thenReturn(Optional.empty());
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
@@ -101,8 +94,9 @@ public class WorkingTimeViewControllerTest {
     }
 
     @Test
-    public void editGetWorkingTimeUsesCorrectView() throws Exception {
+    void editGetWorkingTimeUsesCorrectView() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
@@ -110,26 +104,22 @@ public class WorkingTimeViewControllerTest {
     }
 
     @Test
-    public void updatePostWorkingTimeForUnknownPersonIdThrowsUnknownPersonException() {
-
+    void updatePostWorkingTimeForUnknownPersonIdThrowsUnknownPersonException() {
         assertThatThrownBy(() ->
-
             perform(post("/web/person/" + UNKNOWN_PERSON_ID + "/workingtime"))
-
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     @Test
-    public void updatePostWorkingTimeShowsFormIfValidationFails() throws Exception {
+    void updatePostWorkingTimeShowsFormIfValidationFails() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
         doAnswer(invocation -> {
-
             Errors errors = invocation.getArgument(1);
             errors.rejectValue("validFrom", "errors");
             return null;
-
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
@@ -139,7 +129,7 @@ public class WorkingTimeViewControllerTest {
     }
 
     @Test
-    public void updatePostWorkingTimeTouchPersonIfValidationSuccessful() throws Exception {
+    void updatePostWorkingTimeTouchPersonIfValidationSuccessful() throws Exception {
 
         final Person person = somePerson();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
@@ -150,7 +140,7 @@ public class WorkingTimeViewControllerTest {
     }
 
     @Test
-    public void updatePostWorkingTimeAddsFlashAttributeAndRedirectsToPerson() throws Exception {
+    void updatePostWorkingTimeAddsFlashAttributeAndRedirectsToPerson() throws Exception {
 
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
@@ -161,7 +151,6 @@ public class WorkingTimeViewControllerTest {
     }
 
     private Person somePerson() {
-
         return new Person();
     }
 
@@ -176,8 +165,6 @@ public class WorkingTimeViewControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
-
 }

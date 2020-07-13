@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
@@ -16,21 +16,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VacationOverviewApiControllerTest {
+@ExtendWith(MockitoExtension.class)
+class VacationOverviewApiControllerTest {
 
     private VacationOverviewApiController sut;
 
     @Mock
     private VacationOverviewService vacationOverviewService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new VacationOverviewApiController(vacationOverviewService);
     }
 
     @Test
-    public void getHolidayOverview() throws Exception {
+    void getHolidayOverview() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
             .thenReturn(List.of(new VacationOverview()));

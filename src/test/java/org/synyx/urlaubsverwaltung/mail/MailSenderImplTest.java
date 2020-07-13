@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -18,21 +18,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class MailSenderImplTest {
+@ExtendWith(MockitoExtension.class)
+class MailSenderImplTest {
 
     private MailSenderImpl sut;
 
     @Mock
     private JavaMailSender javaMailSender;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new MailSenderImpl(javaMailSender);
     }
 
     @Test
-    public void sendEmail() {
+    void sendEmail() {
         final ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = forClass(SimpleMailMessage.class);
 
         final String[] recipients = {"hans@dampf.com"};
@@ -51,7 +51,7 @@ public class MailSenderImplTest {
     }
 
     @Test
-    public void doesNotSendMailForZeroRecipients() {
+    void doesNotSendMailForZeroRecipients() {
 
         sut.sendEmail("from@example.org", List.of(), "subject", "text");
 

@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
@@ -11,10 +11,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-public class SickNoteMailConfigurationTest {
+class SickNoteMailConfigurationTest {
 
     @Test
-    public void sendsEMailWithGivenCronJobInterval() {
+    void sendsEMailWithGivenCronJobInterval() {
 
         final SickNoteProperties properties = new SickNoteProperties();
         final SickNoteMailService sickNoteMailService = mock(SickNoteMailService.class);

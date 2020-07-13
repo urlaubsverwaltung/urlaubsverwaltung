@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
@@ -25,14 +25,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PersonApiControllerTest {
+@ExtendWith(MockitoExtension.class)
+class PersonApiControllerTest {
 
     @Mock
     private PersonService personService;
 
     @Test
-    public void ensureReturnsAllActivePersons() throws Exception {
+    void ensureReturnsAllActivePersons() throws Exception {
 
         final Person person1 = createPerson("foo");
         person1.setId(1);
@@ -56,7 +56,7 @@ public class PersonApiControllerTest {
     }
 
     @Test
-    public void ensureReturnSpecificPerson() throws Exception {
+    void ensureReturnSpecificPerson() throws Exception {
 
         final Person person1 = createPerson("foo");
         person1.setId(42);

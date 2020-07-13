@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.jsp.tags;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -10,17 +8,15 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AssetFilenameHashMapperTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+class AssetFilenameHashMapperTest {
 
     @Test
-    public void getHashedAssetFilename() {
+    void getHashedAssetFilename() {
 
         final ResourceLoader resourceLoader = mock(ResourceLoader.class);
         final ClassPathResource manifest = new ClassPathResource("asset-filename-hash-mapper-manifest-file.json");
@@ -36,7 +32,7 @@ public class AssetFilenameHashMapperTest {
     }
 
     @Test
-    public void getHashedAssetFilenameThrowsWhenGivenNameDoesNotExistInManifestFile() {
+    void getHashedAssetFilenameThrowsWhenGivenNameDoesNotExistInManifestFile() {
 
         final ResourceLoader resourceLoader = mock(ResourceLoader.class);
         final ClassPathResource manifest = new ClassPathResource("asset-filename-hash-mapper-manifest-file-empty.json");
@@ -44,14 +40,13 @@ public class AssetFilenameHashMapperTest {
 
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("could not resolve given asset name=non-existent-filename");
-
-        sut.getHashedAssetFilename("non-existent-filename");
+        assertThatIllegalStateException()
+            .isThrownBy(() -> sut.getHashedAssetFilename("non-existent-filename"))
+            .withMessage("could not resolve given asset name=non-existent-filename");
     }
 
     @Test
-    public void getHashedAssetFilenameThrowsWhenManifestFileCannotBeParsed() {
+    void getHashedAssetFilenameThrowsWhenManifestFileCannotBeParsed() {
 
         final ResourceLoader resourceLoader = mock(ResourceLoader.class);
         final ClassPathResource manifest = new ClassPathResource("asset-filename-hash-mapper-manifest-file-invalid.json");
@@ -60,14 +55,13 @@ public class AssetFilenameHashMapperTest {
 
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("could not parse manifest json file");
-
-        sut.getHashedAssetFilename("filename");
+        assertThatIllegalStateException()
+            .isThrownBy(() -> sut.getHashedAssetFilename("filename"))
+            .withMessage("could not parse manifest json file");
     }
 
     @Test
-    public void getHashedAssetFilenameThrowsWhenManifestFileDoesNotExist() throws Exception {
+    void getHashedAssetFilenameThrowsWhenManifestFileDoesNotExist() throws Exception {
 
         final Resource missingManifest = mock(Resource.class);
         when(missingManifest.getInputStream()).thenThrow(IOException.class);
@@ -77,9 +71,8 @@ public class AssetFilenameHashMapperTest {
 
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("could not read WEB-INF/assets-manifest.json");
-
-        sut.getHashedAssetFilename("filename");
+        assertThatIllegalStateException()
+            .isThrownBy(() -> sut.getHashedAssetFilename("filename"))
+            .withMessage("could not read WEB-INF/assets-manifest.json");
     }
 }

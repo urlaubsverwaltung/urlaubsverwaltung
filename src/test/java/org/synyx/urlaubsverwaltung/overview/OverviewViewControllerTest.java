@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -55,8 +55,8 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OverviewViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class OverviewViewControllerTest {
 
     private OverviewViewController sut;
 
@@ -81,23 +81,14 @@ public class OverviewViewControllerTest {
     @Mock
     private SettingsService settingsService;
 
-    private Person person;
-
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService);
-
-        person = new Person();
-        person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
-        when(personService.getSignedInUser()).thenReturn(person);
     }
 
     @Test
-    public void showOverviewForUnknownPersonIdThrowsUnknownPersonException() {
-
+    void showOverviewForUnknownPersonIdThrowsUnknownPersonException() {
         final int unknownPersonId = 437;
 
         assertThatThrownBy(() ->
@@ -106,8 +97,7 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewForPersonTheSignedInUserIsNotAllowedForThrowsAccessDeniedException() {
-
+    void showOverviewForPersonTheSignedInUserIsNotAllowedForThrowsAccessDeniedException() {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -122,8 +112,7 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewUsesCurrentYearIfNoYearGiven() throws Exception {
-
+    void showOverviewUsesCurrentYearIfNoYearGiven() throws Exception {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -140,8 +129,7 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewUsesYearParamIfYearGiven() throws Exception {
-
+    void showOverviewUsesYearParamIfYearGiven() throws Exception {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -159,7 +147,11 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
+    void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
@@ -176,11 +168,14 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewDoesNotAddApplicationsToModelIfThereAreNoApplications() throws Exception {
+    void showOverviewDoesNotAddApplicationsToModelIfThereAreNoApplications() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
@@ -188,25 +183,35 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverview() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/web/overview?year=2017");
+    void showOverview() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(get("/web/overview?year=2017"));
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/person/1/overview?year=2017"));
     }
 
     @Test
-    public void showOverviewWithoutYear() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/web/overview");
+    void showOverviewWithoutYear() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(get("/web/overview"));
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/person/1/overview"));
     }
 
     @Test
-    public void showPersonalOverview() throws Exception {
+    void showPersonalOverview() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(person);
+
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(calendarService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(ONE);
@@ -251,12 +256,10 @@ public class OverviewViewControllerTest {
     }
 
     private Person somePerson() {
-
         return new Person();
     }
 
     private Account someAccount() {
-
         Account account = new Account();
         account.setPerson(somePerson());
         account.setValidFrom(LocalDate.now().minusDays(10));

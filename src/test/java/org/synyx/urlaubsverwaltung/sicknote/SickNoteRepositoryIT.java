@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -14,16 +14,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-public class SickNoteRepositoryIT {
+class SickNoteRepositoryIT {
 
     @Autowired
     private SickNoteRepository sickNoteRepository;
 
     @Test
-    public void findSickNotesByMinimumLengthAndEndDateLessThanLimitAndWrongStatus() {
+    void findSickNotesByMinimumLengthAndEndDateLessThanLimitAndWrongStatus() {
 
         final LocalDate endDate = LocalDate.of(2019, 5, 20);
 
@@ -38,7 +38,7 @@ public class SickNoteRepositoryIT {
     }
 
     @Test
-    public void findSickNotesByMinimumLengthAndEndDateExactlyOnLimitAndWrongStatus() {
+    void findSickNotesByMinimumLengthAndEndDateExactlyOnLimitAndWrongStatus() {
 
         final LocalDate startDate = LocalDate.of(2019, 5, 19);
         final LocalDate endDate = LocalDate.of(2019, 5, 20);
@@ -57,7 +57,7 @@ public class SickNoteRepositoryIT {
     }
 
     @Test
-    public void findSickNotesByMinimumLengthAndEndDateMoreThanLimitAndWrongStatus() {
+    void findSickNotesByMinimumLengthAndEndDateMoreThanLimitAndWrongStatus() {
 
         final LocalDate startDate = LocalDate.of(2019, 5, 19);
         final LocalDate endDate = LocalDate.of(2019, 5, 25);

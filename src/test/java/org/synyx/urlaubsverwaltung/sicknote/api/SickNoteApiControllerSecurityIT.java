@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.sicknote.api;
 
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,9 +28,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class SickNoteApiControllerSecurityIT {
+class SickNoteApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -43,14 +43,14 @@ public class SickNoteApiControllerSecurityIT {
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
-    public void getSickNotesWithoutBasicAuthIsUnauthorized() throws Exception {
+    void getSickNotesWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/sicknotes"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getSickNotesWithBasicAuthIsOk() throws Exception {
+    void getSickNotesWithBasicAuthIsOk() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
@@ -61,7 +61,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser
-    public void getSicknotesWithNotPrivilegedUserIsForbidden() throws Exception {
+    void getSicknotesWithNotPrivilegedUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
@@ -71,7 +71,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getSicknotesWithBossUserIsForbidden() throws Exception {
+    void getSicknotesWithBossUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
@@ -81,7 +81,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getSicknotesWithDepartmentHeadUserIsForbidden() throws Exception {
+    void getSicknotesWithDepartmentHeadUserIsForbidden() throws Exception {
 
         final LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
@@ -92,7 +92,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getSicknotesWithSecondStageUserIsForbidden() throws Exception {
+    void getSicknotesWithSecondStageUserIsForbidden() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
@@ -102,7 +102,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "USER")
-    public void getSicknotesWithUserIsForbidden() throws Exception {
+    void getSicknotesWithUserIsForbidden() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
@@ -112,7 +112,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getSicknotesWithInactiveIsForbidden() throws Exception {
+    void getSicknotesWithInactiveIsForbidden() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
@@ -122,7 +122,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getSicknotesWithAdminIsForbidden() throws Exception {
+    void getSicknotesWithAdminIsForbidden() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         perform(get("/api/sicknotes")
             .param("from", dtf.format(now))
@@ -132,7 +132,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(username = "user")
-    public void getSickNotesWithSameUserIsOk() throws Exception {
+    void getSickNotesWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -152,7 +152,7 @@ public class SickNoteApiControllerSecurityIT {
 
     @Test
     @WithMockUser(username = "differentUser")
-    public void getSickNotesWithDifferentUserIsForbidden() throws Exception {
+    void getSickNotesWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");

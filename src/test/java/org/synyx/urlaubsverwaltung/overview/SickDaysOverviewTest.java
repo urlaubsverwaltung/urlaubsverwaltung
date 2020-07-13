@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
@@ -10,7 +11,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -23,19 +23,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-public class SickDaysOverviewTest {
+class SickDaysOverviewTest {
 
     private WorkDaysService calendarService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         calendarService = mock(WorkDaysService.class);
     }
 
 
     @Test
-    public void ensureGeneratesCorrectSickDaysOverview() {
+    void ensureGeneratesCorrectSickDaysOverview() {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);

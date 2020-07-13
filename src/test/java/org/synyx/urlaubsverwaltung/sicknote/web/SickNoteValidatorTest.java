@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -23,12 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createWorkingTime;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.workingtime.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.workingtime.OverlapCase.NO_OVERLAPPING;
 
@@ -36,8 +36,8 @@ import static org.synyx.urlaubsverwaltung.workingtime.OverlapCase.NO_OVERLAPPING
 /**
  * Unit test for {@link SickNoteValidator}.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteValidatorTest {
 
     private SickNoteValidator sut;
 
@@ -46,18 +46,17 @@ public class SickNoteValidatorTest {
     @Mock
     private WorkingTimeService workingTimeService;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteValidator(overlapService, workingTimeService);
+    }
+
+    @Test
+    void ensureValidDatesHaveNoErrors() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-    }
-
-    @Test
-    public void ensureValidDatesHaveNoErrors() {
 
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 19),
@@ -70,7 +69,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureDayLengthMayNotBeNull() {
+    void ensureDayLengthMayNotBeNull() {
 
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 19),
@@ -83,7 +82,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureStartDateMayNotBeNull() {
+    void ensureStartDateMayNotBeNull() {
         final SickNote sickNote = createSickNote(createPerson(),
             null,
             LocalDate.of(2013, NOVEMBER, 20),
@@ -95,7 +94,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureEndDateMayNotBeNull() {
+    void ensureEndDateMayNotBeNull() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 19),
             null,
@@ -107,7 +106,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriod() {
+    void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriod() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, DECEMBER, 10),
             LocalDate.of(2013, DECEMBER, 1),
@@ -119,7 +118,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthNoon() {
+    void ensureStartAndEndDateMustBeEqualsDatesForDayLengthNoon() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 19),
             LocalDate.of(2013, NOVEMBER, 21),
@@ -131,7 +130,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthMorning() {
+    void ensureStartAndEndDateMustBeEqualsDatesForDayLengthMorning() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 19),
             LocalDate.of(2013, NOVEMBER, 21),
@@ -143,7 +142,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthMorning() {
+    void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthMorning() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 21),
             LocalDate.of(2013, NOVEMBER, 19),
@@ -155,7 +154,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthNoon() {
+    void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthNoon() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 21),
             LocalDate.of(2013, NOVEMBER, 19),
@@ -167,7 +166,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureCommentMayNotBeNull() {
+    void ensureCommentMayNotBeNull() {
         final SickNoteComment sickNoteComment = new SickNoteComment();
 
         final Errors errors = new BeanPropertyBindingResult(sickNoteComment, "sickNote");
@@ -176,7 +175,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureTooLongCommentIsNotValid() {
+    void ensureTooLongCommentIsNotValid() {
 
         final SickNoteComment sickNoteComment = new SickNoteComment();
         sickNoteComment.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
@@ -189,7 +188,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureValidCommentHasNoErrors() {
+    void ensureValidCommentHasNoErrors() {
         final SickNoteComment sickNoteComment = new SickNoteComment();
         sickNoteComment.setText("I am a fluffy little comment");
 
@@ -199,7 +198,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
+    void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 30),
@@ -213,7 +217,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureValidAUPeriodHasNoErrors() {
+    void ensureValidAUPeriodHasNoErrors() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 30),
@@ -227,7 +236,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDays() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDays() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 30),
@@ -241,7 +255,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStart() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStart() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 30),
@@ -255,7 +274,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEnd() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEnd() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 30),
@@ -269,7 +293,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStartOverlapping() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStartOverlapping() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 20),
             LocalDate.of(2013, NOVEMBER, 30),
@@ -283,7 +312,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEndOverlapping() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEndOverlapping() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 20),
@@ -297,7 +331,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysNoneOverlapping() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysNoneOverlapping() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 10),
             LocalDate.of(2013, NOVEMBER, 20),
@@ -312,7 +351,11 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 1),
@@ -326,7 +369,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureAUPeriodMustBeWithinSickNotePeriodButIsNotForOneDay() {
+    void ensureAUPeriodMustBeWithinSickNotePeriodButIsNotForOneDay() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 1),
@@ -340,7 +388,11 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureSickNoteMustNotHaveAnyOverlapping() {
+    void ensureSickNoteMustNotHaveAnyOverlapping() {
+
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, MARCH, 1),
             LocalDate.of(2013, MARCH, 10),
@@ -353,7 +405,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
+    void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
         final LocalDate startDate = LocalDate.of(2015, MARCH, 1);
         final SickNote sickNote = createSickNote(createPerson(),
             startDate,
@@ -370,7 +422,7 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureInvalidPeriodWithValidAUBPeriodIsNotValid() {
+    void ensureInvalidPeriodWithValidAUBPeriodIsNotValid() {
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 10),
             LocalDate.of(2013, NOVEMBER, 4),
@@ -384,7 +436,12 @@ public class SickNoteValidatorTest {
     }
 
     @Test
-    public void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
+    void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
         final SickNote sickNote = createSickNote(createPerson(),
             LocalDate.of(2013, NOVEMBER, 1),
             LocalDate.of(2013, NOVEMBER, 4),

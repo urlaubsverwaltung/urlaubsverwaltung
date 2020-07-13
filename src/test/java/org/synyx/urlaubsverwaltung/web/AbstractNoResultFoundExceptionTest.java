@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class AbstractNoResultFoundExceptionTest {
+class AbstractNoResultFoundExceptionTest {
 
     @Test
-    public void ensureCorrectExceptionMessage() {
+    void ensureCorrectExceptionMessage() {
 
         TestException exception = new TestException(42, "person");
 
@@ -16,7 +16,7 @@ public class AbstractNoResultFoundExceptionTest {
 
 
     @Test
-    public void ensureCorrectAlternateExceptionMessage() {
+    void ensureCorrectAlternateExceptionMessage() {
 
         TestException exception = new TestException("username", "person");
 

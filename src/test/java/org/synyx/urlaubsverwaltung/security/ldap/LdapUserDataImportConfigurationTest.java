@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
@@ -11,10 +11,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-public class LdapUserDataImportConfigurationTest {
+class LdapUserDataImportConfigurationTest {
 
     @Test
-    public void importsLdapUserDataWithGivenCronJobInterval() {
+    void importsLdapUserDataWithGivenCronJobInterval() {
 
         final DirectoryServiceSecurityProperties properties = new DirectoryServiceSecurityProperties();
         final LdapUserDataImporter importer = mock(LdapUserDataImporter.class);

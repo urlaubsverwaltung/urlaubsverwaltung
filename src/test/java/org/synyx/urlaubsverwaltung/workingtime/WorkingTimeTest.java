@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.util.Arrays;
@@ -18,10 +18,10 @@ import static java.time.DayOfWeek.WEDNESDAY;
 /**
  * Unit test for {@link WorkingTime}.
  */
-public class WorkingTimeTest {
+class WorkingTimeTest {
 
     @Test
-    public void testDefaultValues() {
+    void testDefaultValues() {
 
         WorkingTime workingTime = new WorkingTime();
 
@@ -39,7 +39,7 @@ public class WorkingTimeTest {
 
 
     @Test
-    public void testHasWorkingDaysIdentical() {
+    void testHasWorkingDaysIdentical() {
 
         List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
             WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
@@ -57,7 +57,7 @@ public class WorkingTimeTest {
 
 
     @Test
-    public void testHasWorkingDaysDifferent() {
+    void testHasWorkingDaysDifferent() {
 
         List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
             WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());

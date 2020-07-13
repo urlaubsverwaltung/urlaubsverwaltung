@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationCommentRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
@@ -30,22 +30,22 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.application.service.ApplicationCommentServiceImpl}.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationCommentServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationCommentServiceImplTest {
 
     private ApplicationCommentService commentService;
 
     @Mock
     private ApplicationCommentRepository commentDAO;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         commentService = new ApplicationCommentServiceImpl(commentDAO);
     }
 
 
     @Test
-    public void ensureCreatesACommentAndPersistsIt() {
+    void ensureCreatesACommentAndPersistsIt() {
 
         final Person person = createPerson("person");
         final VacationType vacationType = createVacationType(HOLIDAY);
@@ -73,7 +73,7 @@ public class ApplicationCommentServiceImplTest {
 
 
     @Test
-    public void ensureCreationOfCommentWithTextWorks() {
+    void ensureCreationOfCommentWithTextWorks() {
 
         final Person person = createPerson("person");
         final VacationType vacationType = createVacationType(HOLIDAY);

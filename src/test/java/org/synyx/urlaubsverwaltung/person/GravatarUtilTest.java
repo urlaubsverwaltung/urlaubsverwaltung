@@ -1,15 +1,15 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class GravatarUtilTest {
+class GravatarUtilTest {
 
     @Test
-    public void testCreateImgURL() {
+    void testCreateImgURL() {
 
         String email = "FraU.LyOner@NeT.de";
         String url = GravatarUtil.createImgURL(email);

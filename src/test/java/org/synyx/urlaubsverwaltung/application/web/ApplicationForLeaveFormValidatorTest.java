@@ -1,18 +1,18 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapCase;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link ApplicationForLeaveFormValidator}.
  */
-public class ApplicationForLeaveFormValidatorTest {
+class ApplicationForLeaveFormValidatorTest {
 
     private ApplicationForLeaveFormValidator validator;
 
@@ -57,8 +57,8 @@ public class ApplicationForLeaveFormValidatorTest {
     private Settings settings;
     private OvertimeService overtimeService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         settingsService = mock(SettingsService.class);
         settings = new Settings();
@@ -98,21 +98,21 @@ public class ApplicationForLeaveFormValidatorTest {
     // Supports --------------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureSupportsAppFormClass() {
+    void ensureSupportsAppFormClass() {
 
         assertTrue(validator.supports(ApplicationForLeaveForm.class));
     }
 
 
     @Test
-    public void ensureDoesNotSupportNull() {
+    void ensureDoesNotSupportNull() {
 
         assertFalse(validator.supports(null));
     }
 
 
     @Test
-    public void ensureDoesNotSupportOtherClass() {
+    void ensureDoesNotSupportOtherClass() {
 
         assertFalse(validator.supports(Person.class));
     }
@@ -121,7 +121,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate period (date) ------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureStartDateIsMandatory() {
+    void ensureStartDateIsMandatory() {
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(null);
@@ -133,7 +133,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureEndDateIsMandatory() {
+    void ensureEndDateIsMandatory() {
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setEndDate(null);
@@ -147,7 +147,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureStartDateMustBeBeforeEndDate() {
+    void ensureStartDateMustBeBeforeEndDate() {
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(LocalDate.of(2012, 1, 17));
@@ -160,7 +160,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureVeryPastDateIsNotValid() {
+    void ensureVeryPastDateIsNotValid() {
 
         LocalDate pastDate = ZonedDateTime.now(UTC).minusYears(10).toLocalDate();
 
@@ -175,7 +175,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureVeryFutureDateIsNotValid() {
+    void ensureVeryFutureDateIsNotValid() {
 
         LocalDate futureDate = ZonedDateTime.now(UTC).plusYears(10).toLocalDate();
 
@@ -192,7 +192,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureMorningApplicationForLeaveMustBeOnSameDate() {
+    void ensureMorningApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDate(LocalDate.now(UTC));
@@ -205,7 +205,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureNoonApplicationForLeaveMustBeOnSameDate() {
+    void ensureNoonApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDate(LocalDate.now(UTC));
@@ -218,7 +218,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
+    void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
 
         LocalDate date = LocalDate.now(UTC);
 
@@ -233,7 +233,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
+    void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
 
         LocalDate date = LocalDate.now(UTC);
 
@@ -248,7 +248,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
+    void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
 
         LocalDate date = LocalDate.now(UTC);
 
@@ -265,7 +265,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate period (time) ------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureTimeIsNotMandatory() {
+    void ensureTimeIsNotMandatory() {
 
         appForm.setStartTime(null);
         appForm.setEndTime(null);
@@ -277,7 +277,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureProvidingStartTimeWithoutEndTimeIsInvalid() {
+    void ensureProvidingStartTimeWithoutEndTimeIsInvalid() {
 
         appForm.setStartTime(Time.valueOf("09:15:00"));
         appForm.setEndTime(null);
@@ -289,7 +289,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureProvidingEndTimeWithoutStartTimeIsInvalid() {
+    void ensureProvidingEndTimeWithoutStartTimeIsInvalid() {
 
         appForm.setStartTime(null);
         appForm.setEndTime(Time.valueOf("09:15:00"));
@@ -301,7 +301,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureStartTimeMustBeBeforeEndTime() {
+    void ensureStartTimeMustBeBeforeEndTime() {
 
         LocalDate date = LocalDate.now(UTC);
 
@@ -318,7 +318,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureStartTimeAndEndTimeMustNotBeEquals() {
+    void ensureStartTimeAndEndTimeMustNotBeEquals() {
 
         LocalDate date = LocalDate.now(UTC);
         Time time = Time.valueOf("13:30:00");
@@ -338,7 +338,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate reason -------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureReasonIsNotMandatoryForHoliday() {
+    void ensureReasonIsNotMandatoryForHoliday() {
 
         VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY);
 
@@ -353,7 +353,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureReasonIsNotMandatoryForUnpaidLeave() {
+    void ensureReasonIsNotMandatoryForUnpaidLeave() {
 
         VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
@@ -368,7 +368,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureReasonIsNotMandatoryForOvertime() {
+    void ensureReasonIsNotMandatoryForOvertime() {
 
         VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.OVERTIME);
 
@@ -383,7 +383,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureReasonIsMandatoryForSpecialLeave() {
+    void ensureReasonIsMandatoryForSpecialLeave() {
 
         VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
 
@@ -399,7 +399,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate address ------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureThereIsAMaximumCharLength() {
+    void ensureThereIsAMaximumCharLength() {
 
         appForm.setAddress(
             "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
@@ -415,7 +415,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate vacation days ------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureApplicationForLeaveWithZeroVacationDaysIsNotValid() {
+    void ensureApplicationForLeaveWithZeroVacationDaysIsNotValid() {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -432,7 +432,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureApplyingForLeaveWithNotEnoughVacationDaysIsNotValid() {
+    void ensureApplyingForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(LocalDate.now(UTC));
@@ -455,7 +455,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
+    void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDate(LocalDate.now(UTC));
@@ -481,7 +481,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate overlapping --------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureOverlappingApplicationForLeaveIsNotValid() {
+    void ensureOverlappingApplicationForLeaveIsNotValid() {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -501,7 +501,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate hours --------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureHoursIsMandatoryForOvertime() {
+    void ensureHoursIsMandatoryForOvertime() {
 
         appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
@@ -513,7 +513,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureHoursIsNotMandatoryForOtherTypesOfVacation() {
+    void ensureHoursIsNotMandatoryForOtherTypesOfVacation() {
 
         Consumer<VacationType> assertHoursNotMandatory = (type) -> {
             appForm.setVacationType(type);
@@ -535,7 +535,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureHoursIsNotMandatoryForOvertimeIfOvertimeFunctionIsDeactivated() {
+    void ensureHoursIsNotMandatoryForOvertimeIfOvertimeFunctionIsDeactivated() {
 
         settings.getWorkingTimeSettings().setOvertimeActive(false);
 
@@ -549,7 +549,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureHoursCanNotBeZero() {
+    void ensureHoursCanNotBeZero() {
 
         appForm.setHours(BigDecimal.ZERO);
 
@@ -560,7 +560,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureHoursCanNotBeNegative() {
+    void ensureHoursCanNotBeNegative() {
 
         appForm.setHours(BigDecimal.ONE.negate());
 
@@ -571,7 +571,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureDecimalHoursAreValid() {
+    void ensureDecimalHoursAreValid() {
 
         appForm.setVacationType(DemoDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(new BigDecimal("0.5"));
@@ -583,7 +583,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
+    void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
 
         settings.getWorkingTimeSettings().setOvertimeActive(true);
 
@@ -602,7 +602,7 @@ public class ApplicationForLeaveFormValidatorTest {
     // Validate working time exists ------------------------------------------------------------------------------------
 
     @Test
-    public void ensureWorkingTimeConfigurationMustExistForPeriodOfApplicationForLeave() {
+    void ensureWorkingTimeConfigurationMustExistForPeriodOfApplicationForLeave() {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -622,7 +622,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
 
     @Test
-    public void ensureWorkingTimeConfigurationMustExistForHalfDayApplicationForLeave() {
+    void ensureWorkingTimeConfigurationMustExistForHalfDayApplicationForLeave() {
 
         // Yes, this can really happen...
         appForm.setStartDate(null);
@@ -659,7 +659,7 @@ public class ApplicationForLeaveFormValidatorTest {
      * <p>0h overtime - 6h (application) < -5h overtime minimum</p>
      */
     @Test
-    public void ensureErrorDueToMinimumOvertimeReached() {
+    void ensureErrorDueToMinimumOvertimeReached() {
 
         BigDecimal overtimeReductionHours = new BigDecimal("6");
         overtimeMinimumTest(overtimeReductionHours);
@@ -675,7 +675,7 @@ public class ApplicationForLeaveFormValidatorTest {
      * <p>0h overtime - 5h (application) == -5h overtime minimum</p>
      */
     @Test
-    public void ensureNoErrorDueToExactMinimumOvertimeReached() {
+    void ensureNoErrorDueToExactMinimumOvertimeReached() {
 
         BigDecimal overtimeReductionHours = new BigDecimal("5");
         overtimeMinimumTest(overtimeReductionHours);
@@ -684,7 +684,7 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnChristmasEveMorning() {
+    void ensureAlreadyAbsentOnChristmasEveMorning() {
 
         when(settingsService.getSettings())
             .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.MORNING));
@@ -704,7 +704,7 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnChristmasEveMorningIsNotTriggered() {
+    void ensureAlreadyAbsentOnChristmasEveMorningIsNotTriggered() {
 
         when(settingsService.getSettings())
             .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.ZERO));
@@ -724,7 +724,7 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnChristmasEveNoon() {
+    void ensureAlreadyAbsentOnChristmasEveNoon() {
 
         when(settingsService.getSettings())
             .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.NOON));
@@ -744,17 +744,17 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnChristmasEveFullForDayLengthFullRequest() {
+    void ensureAlreadyAbsentOnChristmasEveFullForDayLengthFullRequest() {
         ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(DayLength.FULL);
     }
 
     @Test
-    public void ensureAlreadyAbsentOnChristmasEveFullForDayLengthMorningRequest() {
+    void ensureAlreadyAbsentOnChristmasEveFullForDayLengthMorningRequest() {
         ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(DayLength.MORNING);
     }
 
     @Test
-    public void ensureAlreadyAbsentOnChristmasEveFullForDayLengthNoonRequest() {
+    void ensureAlreadyAbsentOnChristmasEveFullForDayLengthNoonRequest() {
         ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(DayLength.NOON);
     }
 
@@ -779,7 +779,7 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnNewYearsEveMorning() {
+    void ensureAlreadyAbsentOnNewYearsEveMorning() {
 
         when(settingsService.getSettings())
             .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.MORNING));
@@ -799,7 +799,7 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnNewYearsEveMorningIsNotTriggered() {
+    void ensureAlreadyAbsentOnNewYearsEveMorningIsNotTriggered() {
 
         when(settingsService.getSettings())
             .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.ZERO));
@@ -819,7 +819,7 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnNewYearsEveNoon() {
+    void ensureAlreadyAbsentOnNewYearsEveNoon() {
 
         when(settingsService.getSettings())
             .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.NOON));
@@ -839,17 +839,17 @@ public class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    public void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthFullRequest() {
+    void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthFullRequest() {
         ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(DayLength.FULL);
     }
 
     @Test
-    public void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthMorningRequest() {
+    void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthMorningRequest() {
         ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(DayLength.MORNING);
     }
 
     @Test
-    public void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthNoonRequest() {
+    void ensureAlreadyAbsentOnNewYearsEveFullForDayLengthNoonRequest() {
         ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(DayLength.NOON);
     }
 

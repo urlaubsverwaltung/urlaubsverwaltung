@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SickNoteFormTest {
+class SickNoteFormTest {
 
     private final LocalDate day2019_04_16 = LocalDate.of(2019, 4, 16);
     private final Integer id = 1;
@@ -20,8 +20,8 @@ public class SickNoteFormTest {
 
     private SickNoteForm sut;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteForm();
 
         sut.setId(id);
@@ -36,7 +36,7 @@ public class SickNoteFormTest {
     }
 
     @Test
-    public void checkGeneratedSickNote() {
+    void checkGeneratedSickNote() {
 
         SickNote sickNote = sut.generateSickNote();
 
@@ -52,7 +52,7 @@ public class SickNoteFormTest {
     }
 
     @Test
-    public void checkCopyConstructur() {
+    void checkCopyConstructur() {
         SickNote sickNote = sut.generateSickNote();
 
         SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
@@ -68,7 +68,7 @@ public class SickNoteFormTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         SickNote sickNote = sut.generateSickNote();
         SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
 

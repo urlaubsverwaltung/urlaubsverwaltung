@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link CalendarSyncServiceImpl}.
  */
-public class CalendarSyncServiceImplTest {
+class CalendarSyncServiceImplTest {
 
     private SettingsService settingsService;
     private CalendarService calendarService;
@@ -27,8 +27,8 @@ public class CalendarSyncServiceImplTest {
     private CalendarSyncService calendarSyncService;
     private Settings settings;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         settingsService = mock(SettingsService.class);
         settings = new Settings();
@@ -45,7 +45,7 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureAddsAbsenceToExchangeCalendar() {
+    void ensureAddsAbsenceToExchangeCalendar() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
 
@@ -59,7 +59,7 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureUpdatesAbsenceInExchangeCalendar() {
+    void ensureUpdatesAbsenceInExchangeCalendar() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
 
@@ -74,7 +74,7 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureDeletedAbsenceInExchangeCalendar() {
+    void ensureDeletedAbsenceInExchangeCalendar() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
 
@@ -88,7 +88,7 @@ public class CalendarSyncServiceImplTest {
 
 
     @Test
-    public void ensureChecksExchangeCalendarSettings() {
+    void ensureChecksExchangeCalendarSettings() {
 
         ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
 

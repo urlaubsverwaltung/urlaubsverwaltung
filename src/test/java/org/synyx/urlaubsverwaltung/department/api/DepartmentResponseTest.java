@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.department.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
@@ -12,12 +12,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DepartmentResponseTest {
+class DepartmentResponseTest {
 
     private DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
-    public void ensureDepartmentResponseCreatedCorrectly() {
+    void ensureDepartmentResponseCreatedCorrectly() {
 
         final Department department = new Department();
 

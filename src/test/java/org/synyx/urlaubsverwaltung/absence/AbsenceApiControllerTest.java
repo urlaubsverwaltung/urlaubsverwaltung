@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,8 +37,8 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class AbsenceApiControllerTest {
+@ExtendWith(MockitoExtension.class)
+class AbsenceApiControllerTest {
 
     private AbsenceApiController sut;
 
@@ -49,13 +49,13 @@ public class AbsenceApiControllerTest {
     @Mock
     private ApplicationService applicationService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new AbsenceApiController(personService, applicationService, sickNoteService);
     }
 
     @Test
-    public void ensureReturnsAbsencesOfPerson() throws Exception {
+    void ensureReturnsAbsencesOfPerson() throws Exception {
         final Person person = createPerson("muster");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
@@ -75,7 +75,7 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureCorrectConversionOfVacationAndSickNotes() throws Exception {
+    void ensureCorrectConversionOfVacationAndSickNotes() throws Exception {
         final Person person = createPerson("muster");
         final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
             LocalDate.of(2016, 5, 20), DayLength.FULL);
@@ -110,7 +110,7 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureTypeFilterIsWorking() throws Exception {
+    void ensureTypeFilterIsWorking() throws Exception {
         final Person person = createPerson("muster");
         final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
             LocalDate.of(2016, 4, 6), DayLength.FULL);
@@ -129,7 +129,7 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureMonthFilterIsWorking() throws Exception {
+    void ensureMonthFilterIsWorking() throws Exception {
         final Person person = createPerson("muster");
         final Application vacation = createApplication(person, LocalDate.of(2016, 5, 30),
             LocalDate.of(2016, 6, 1), DayLength.FULL);
@@ -153,14 +153,14 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingYearParameter() throws Exception {
+    void ensureBadRequestForMissingYearParameter() throws Exception {
         perform(get("/api/absences")
             .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void ensureBadRequestForInvalidYearParameter() throws Exception {
+    void ensureBadRequestForInvalidYearParameter() throws Exception {
         final Person person = createPerson("muster");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
@@ -171,7 +171,7 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidMonthParameter() throws Exception {
+    void ensureBadRequestForInvalidMonthParameter() throws Exception {
         final Person person = createPerson("muster");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
@@ -183,7 +183,7 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForOtherInvalidMonthParameter() throws Exception {
+    void ensureBadRequestForOtherInvalidMonthParameter() throws Exception {
         final Person person = createPerson("muster");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
@@ -195,12 +195,12 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingPersonParameter() throws Exception {
+    void ensureBadRequestForMissingPersonParameter() throws Exception {
         perform(get("/api/absences").param("year", "2016")).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void ensureBadRequestForInvalidPersonParameter() throws Exception {
+    void ensureBadRequestForInvalidPersonParameter() throws Exception {
         perform(get("/api/absences")
             .param("year", "2016")
             .param("person", "foo"))
@@ -208,7 +208,7 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
+    void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         perform(get("/api/absences")
@@ -218,7 +218,7 @@ public class AbsenceApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidTypeParameter() throws Exception {
+    void ensureBadRequestForInvalidTypeParameter() throws Exception {
         when(personService.getPersonByID(anyInt()))
             .thenReturn(Optional.of(createPerson()));
 

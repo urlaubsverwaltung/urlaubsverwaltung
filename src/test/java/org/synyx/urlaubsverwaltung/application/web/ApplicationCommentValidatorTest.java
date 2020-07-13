@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 
@@ -15,13 +15,13 @@ import static org.mockito.Mockito.verifyNoInteractions;
 /**
  * Unit test for {@link ApplicationCommentValidator}.
  */
-public class ApplicationCommentValidatorTest {
+class ApplicationCommentValidatorTest {
 
     private ApplicationCommentValidator validator;
     private Errors errors;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         validator = new ApplicationCommentValidator();
         errors = mock(Errors.class);
@@ -29,28 +29,28 @@ public class ApplicationCommentValidatorTest {
 
 
     @Test
-    public void ensureSupportsCommentClass() {
+    void ensureSupportsCommentClass() {
 
         assertTrue(validator.supports(ApplicationCommentForm.class));
     }
 
 
     @Test
-    public void ensureDoesNotSupportNull() {
+    void ensureDoesNotSupportNull() {
 
         assertFalse(validator.supports(null));
     }
 
 
     @Test
-    public void ensureDoesNotSupportOtherClass() {
+    void ensureDoesNotSupportOtherClass() {
 
         assertFalse(validator.supports(SickNoteComment.class));
     }
 
 
     @Test
-    public void ensureReasonCanBeNullIfNotMandatory() {
+    void ensureReasonCanBeNullIfNotMandatory() {
 
         ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(false);
@@ -63,7 +63,7 @@ public class ApplicationCommentValidatorTest {
 
 
     @Test
-    public void ensureReasonCanBeEmptyIfNotMandatory() {
+    void ensureReasonCanBeEmptyIfNotMandatory() {
 
         ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(false);
@@ -76,7 +76,7 @@ public class ApplicationCommentValidatorTest {
 
 
     @Test
-    public void ensureReasonCanNotBeNullIfMandatory() {
+    void ensureReasonCanNotBeNullIfMandatory() {
 
         ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(true);
@@ -89,7 +89,7 @@ public class ApplicationCommentValidatorTest {
 
 
     @Test
-    public void ensureReasonCanNotBeEmptyIfMandatory() {
+    void ensureReasonCanNotBeEmptyIfMandatory() {
 
         ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(true);
@@ -102,7 +102,7 @@ public class ApplicationCommentValidatorTest {
 
 
     @Test
-    public void ensureThereIsAMaximumCharLengthForReason() {
+    void ensureThereIsAMaximumCharLengthForReason() {
 
         ApplicationCommentForm comment = new ApplicationCommentForm();
 

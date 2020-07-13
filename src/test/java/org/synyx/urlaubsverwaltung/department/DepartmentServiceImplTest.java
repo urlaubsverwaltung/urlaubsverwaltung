@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,15 +28,15 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 
-public class DepartmentServiceImplTest {
+class DepartmentServiceImplTest {
 
     private DepartmentServiceImpl sut;
 
     private DepartmentRepository departmentRepository;
     private ApplicationService applicationService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         departmentRepository = mock(DepartmentRepository.class);
         applicationService = mock(ApplicationService.class);
@@ -46,7 +46,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureCallDepartmentDAOSave() {
+    void ensureCallDepartmentDAOSave() {
 
         Department department = DemoDataCreator.createDepartment();
 
@@ -57,7 +57,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureCallDepartmentDAOfindById() {
+    void ensureCallDepartmentDAOfindById() {
 
         sut.getDepartmentById(42);
         verify(departmentRepository).findById(eq(42));
@@ -65,7 +65,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureUpdateCallDepartmentDAOUpdate() {
+    void ensureUpdateCallDepartmentDAOUpdate() {
 
         Department department = DemoDataCreator.createDepartment();
 
@@ -76,7 +76,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureGetAllCallDepartmentDAOFindAll() {
+    void ensureGetAllCallDepartmentDAOFindAll() {
 
         sut.getAllDepartments();
 
@@ -85,7 +85,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() {
+    void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() {
 
         Person person = mock(Person.class);
 
@@ -96,7 +96,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureGetManagedDepartmentsOfSecondStageAuthorityCallCorrectDAOMethod() {
+    void ensureGetManagedDepartmentsOfSecondStageAuthorityCallCorrectDAOMethod() {
 
         Person person = mock(Person.class);
 
@@ -107,7 +107,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() {
+    void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() {
 
         Person person = mock(Person.class);
 
@@ -118,7 +118,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureDeletionIsNotExecutedIfDepartmentWithGivenIDDoesNotExist() {
+    void ensureDeletionIsNotExecutedIfDepartmentWithGivenIDDoesNotExist() {
 
         int id = 0;
         when(departmentRepository.findById(id)).thenReturn(Optional.empty());
@@ -130,7 +130,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureDeleteCallFindOneAndDelete() {
+    void ensureDeleteCallFindOneAndDelete() {
 
         int id = 0;
         when(departmentRepository.findById(id)).thenReturn(Optional.of(DemoDataCreator.createDepartment()));
@@ -143,7 +143,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureSetLastModificationOnUpdate() {
+    void ensureSetLastModificationOnUpdate() {
 
         Department department = mock(Department.class);
 
@@ -154,7 +154,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsAllMembersOfTheManagedDepartmentsOfTheDepartmentHead() {
+    void ensureReturnsAllMembersOfTheManagedDepartmentsOfTheDepartmentHead() {
 
         Person departmentHead = mock(Person.class);
         Person secondDepartmentHead = mock(Person.class);
@@ -185,7 +185,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsEmptyListIfPersonHasNoManagedDepartment() {
+    void ensureReturnsEmptyListIfPersonHasNoManagedDepartment() {
 
         Person departmentHead = mock(Person.class);
 
@@ -199,7 +199,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsTrueIfIsDepartmentHeadOfTheGivenPerson() {
+    void ensureReturnsTrueIfIsDepartmentHeadOfTheGivenPerson() {
 
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
@@ -219,7 +219,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsFalseIfIsNotDepartmentHeadOfTheGivenPerson() {
+    void ensureReturnsFalseIfIsNotDepartmentHeadOfTheGivenPerson() {
 
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
@@ -241,7 +241,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsFalseIfIsInTheSameDepartmentButHasNotDepartmentHeadRole() {
+    void ensureReturnsFalseIfIsInTheSameDepartmentButHasNotDepartmentHeadRole() {
 
         Person noDepartmentHead = mock(Person.class);
         when(noDepartmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(false);
@@ -262,7 +262,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
+    void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
@@ -280,7 +280,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
+    void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
 
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
@@ -331,7 +331,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsOnlyWaitingAndAllowedDepartmentApplicationsForLeave() {
+    void ensureReturnsOnlyWaitingAndAllowedDepartmentApplicationsForLeave() {
 
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
@@ -377,7 +377,7 @@ public class DepartmentServiceImplTest {
     }
 
     @Test
-    public void ensureSignedInOfficeUserCanAccessPersonData() throws IllegalAccessException {
+    void ensureSignedInOfficeUserCanAccessPersonData() throws IllegalAccessException {
 
         Person person = DemoDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
@@ -392,7 +392,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureSignedInBossUserCanAccessPersonData() throws IllegalAccessException {
+    void ensureSignedInBossUserCanAccessPersonData() throws IllegalAccessException {
 
         Person person = DemoDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
@@ -407,7 +407,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() throws IllegalAccessException {
+    void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() throws IllegalAccessException {
 
         Person person = DemoDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
@@ -428,7 +428,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData()
+    void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData()
         throws IllegalAccessException {
 
         Person person = DemoDataCreator.createPerson(23, "person");
@@ -450,7 +450,7 @@ public class DepartmentServiceImplTest {
     }
 
     @Test
-    public void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData()
+    void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData()
         throws IllegalAccessException {
 
         Person secondStageAuthority = DemoDataCreator.createPerson(23, "secondStageAuthority");
@@ -473,7 +473,7 @@ public class DepartmentServiceImplTest {
     }
 
     @Test
-    public void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData()
+    void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData()
         throws IllegalAccessException {
 
         Person secondStageAuthority = DemoDataCreator.createPerson(23, "secondStageAuthority");
@@ -496,7 +496,7 @@ public class DepartmentServiceImplTest {
     }
 
     @Test
-    public void ensureNotPrivilegedUserCanNotAccessPersonData() throws IllegalAccessException {
+    void ensureNotPrivilegedUserCanNotAccessPersonData() throws IllegalAccessException {
 
         Person person = DemoDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
@@ -516,7 +516,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureNotPrivilegedUserCanAccessOwnPersonData() throws IllegalAccessException {
+    void ensureNotPrivilegedUserCanAccessOwnPersonData() throws IllegalAccessException {
 
         Person user = DemoDataCreator.createPerson(42, "user");
         user.setPermissions(singletonList(Role.USER));

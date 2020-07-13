@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.account.dao.AccountRepository;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Optional;
 
@@ -19,14 +19,14 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.account.service.AccountServiceImpl}.
  */
-public class AccountServiceImplTest {
+class AccountServiceImplTest {
 
     private AccountService accountService;
 
     private AccountRepository accountRepository;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         accountRepository = mock(AccountRepository.class);
 
@@ -35,7 +35,7 @@ public class AccountServiceImplTest {
 
 
     @Test
-    public void ensureReturnsOptionalWithHolidaysAccountIfExists() {
+    void ensureReturnsOptionalWithHolidaysAccountIfExists() {
 
         Person person = DemoDataCreator.createPerson();
         Account account = DemoDataCreator.createHolidaysAccount(person, 2012);
@@ -50,7 +50,7 @@ public class AccountServiceImplTest {
 
 
     @Test
-    public void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
+    void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
 
         when(accountRepository.getHolidaysAccountByYearAndPerson(anyInt(), any(Person.class)))
             .thenReturn(null);

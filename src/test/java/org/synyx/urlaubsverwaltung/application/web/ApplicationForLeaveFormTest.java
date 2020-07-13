@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -18,10 +18,10 @@ import static java.math.BigDecimal.ONE;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApplicationForLeaveFormTest {
+class ApplicationForLeaveFormTest {
 
     @Test
-    public void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
+    void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
 
         final LocalDate startDate = LocalDate.now(UTC);
         final LocalDate endDate = startDate.plusDays(3);
@@ -41,7 +41,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
+    void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -58,7 +58,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureGeneratedApplicationForLeaveHasCorrectProperties() {
+    void ensureGeneratedApplicationForLeaveHasCorrectProperties() {
 
         final VacationType overtime = DemoDataCreator.createVacationType(VacationCategory.OVERTIME);
 
@@ -88,7 +88,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureGeneratedApplicationForLeaveHasNullHoursForOtherVacationTypeThanOvertime() {
+    void ensureGeneratedApplicationForLeaveHasNullHoursForOtherVacationTypeThanOvertime() {
 
         Consumer<VacationType> assertHoursAreNotSet = (type) -> {
             final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
@@ -109,7 +109,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureBuilderSetsAllPropertiesCorrectly() {
+    void ensureBuilderSetsAllPropertiesCorrectly() {
 
         final Person person = new Person();
         final Person holidayReplacement = new Person();
@@ -154,7 +154,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
 
         final Person person = new Person();
         final Person holidayReplacement = new Person();

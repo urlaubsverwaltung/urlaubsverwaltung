@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -23,13 +24,13 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 /**
  * Unit test for {@link Absence}.
  */
-public class AbsenceTest {
+class AbsenceTest {
 
     private Person person;
     private AbsenceTimeConfiguration timeConfiguration;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         person = DemoDataCreator.createPerson();
 
@@ -42,7 +43,7 @@ public class AbsenceTest {
 
 
     @Test
-    public void ensureCanBeInstantiatedWithCorrectProperties() {
+    void ensureCanBeInstantiatedWithCorrectProperties() {
 
         LocalDate start = LocalDate.of(2015, 9, 21);
         LocalDate end = LocalDate.of(2015, 9, 23);
@@ -62,7 +63,7 @@ public class AbsenceTest {
 
 
     @Test
-    public void ensureCanBeInstantiatedWithCorrectPropertiesConsideringDaylightSavingTime() {
+    void ensureCanBeInstantiatedWithCorrectPropertiesConsideringDaylightSavingTime() {
 
         // Date where daylight saving time is relevant
         LocalDate start = LocalDate.of(2015, 10, 23);
@@ -83,7 +84,7 @@ public class AbsenceTest {
 
 
     @Test
-    public void ensureCorrectTimeForMorningAbsence() {
+    void ensureCorrectTimeForMorningAbsence() {
 
         LocalDateTime today = LocalDate.now(UTC).atStartOfDay();
 
@@ -100,7 +101,7 @@ public class AbsenceTest {
 
 
     @Test
-    public void ensureCorrectTimeForNoonAbsence() {
+    void ensureCorrectTimeForNoonAbsence() {
 
         LocalDateTime today = LocalDate.now(UTC).atStartOfDay();
 
@@ -117,7 +118,7 @@ public class AbsenceTest {
 
 
     @Test
-    public void ensureIsAllDayForFullDayPeriod() {
+    void ensureIsAllDayForFullDayPeriod() {
 
         LocalDate start = LocalDate.now(UTC);
         LocalDate end = start.plusDays(2);
@@ -129,9 +130,8 @@ public class AbsenceTest {
         Assert.assertTrue("Should be all day", absence.isAllDay());
     }
 
-
     @Test
-    public void ensureIsNotAllDayForMorningPeriod() {
+    void ensureIsNotAllDayForMorningPeriod() {
 
         LocalDate today = LocalDate.now(UTC);
 
@@ -142,9 +142,8 @@ public class AbsenceTest {
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
 
-
     @Test
-    public void ensureIsNotAllDayForNoonPeriod() {
+    void ensureIsNotAllDayForNoonPeriod() {
 
         LocalDate today = LocalDate.now(UTC);
 
@@ -155,34 +154,28 @@ public class AbsenceTest {
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullPeriod() {
-
-        new Absence(person, null, timeConfiguration);
+    @Test
+    void ensureThrowsOnNullPeriod() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new Absence(person, null, timeConfiguration));
     }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullPerson() {
-
-        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
-
-        new Absence(null, period, timeConfiguration);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullConfiguration() {
-
-        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
-
-        new Absence(person, period, null);
-    }
-
 
     @Test
-    public void ensureCorrectEventSubject() {
+    void ensureThrowsOnNullPerson() {
+        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new Absence(null, period, timeConfiguration));
+    }
+
+    @Test
+    void ensureThrowsOnNullConfiguration() {
+        Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.FULL);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new Absence(person, period, null));
+    }
+
+    @Test
+    void ensureCorrectEventSubject() {
 
         LocalDate today = LocalDate.now(UTC);
         Period period = new Period(today, today, DayLength.FULL);
@@ -194,7 +187,7 @@ public class AbsenceTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPassword("Theo");

@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class PublicHolidayAbsenceProviderTest {
+class PublicHolidayAbsenceProviderTest {
 
     private PublicHolidayAbsenceProvider publicHolidayAbsenceProvider;
 
@@ -36,8 +36,8 @@ public class PublicHolidayAbsenceProviderTest {
     private LocalDate newYearsDay;
     private LocalDate standardWorkingDay;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = DemoDataCreator.createPerson();
@@ -76,7 +76,7 @@ public class PublicHolidayAbsenceProviderTest {
 
 
     @Test
-    public void ensurePersonIsNotAvailableOnHoliDays() {
+    void ensurePersonIsNotAvailableOnHoliDays() {
 
         TimedAbsenceSpans updatedTimedAbsenceSpans = publicHolidayAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
             testPerson, newYearsDay);
@@ -92,7 +92,7 @@ public class PublicHolidayAbsenceProviderTest {
 
 
     @Test
-    public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
+    void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
         publicHolidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, newYearsDay);
 
@@ -101,7 +101,7 @@ public class PublicHolidayAbsenceProviderTest {
 
 
     @Test
-    public void ensureCallsSickDayAbsenceProviderIfNotAbsentForHoliday() {
+    void ensureCallsSickDayAbsenceProviderIfNotAbsentForHoliday() {
 
         publicHolidayAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 

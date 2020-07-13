@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -19,21 +19,21 @@ import java.util.Map;
 import static org.mockito.Mockito.verify;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CalendarMailServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CalendarMailServiceTest {
 
     private CalendarMailService sut;
 
     @Mock
     private MailService mailService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new CalendarMailService(mailService);
     }
 
     @Test
-    public void sendRejectedNotification() {
+    void sendRejectedNotification() {
 
         final String calendarName = "calendar name";
         final String exception = "Some exception";
@@ -59,7 +59,7 @@ public class CalendarMailServiceTest {
 
 
     @Test
-    public void sendCalendarUpdateErrorNotification() {
+    void sendCalendarUpdateErrorNotification() {
 
         final String calendarName = "calendar name";
         final String exception = "Some exception";
@@ -86,7 +86,7 @@ public class CalendarMailServiceTest {
     }
 
     @Test
-    public void sendCalendarDeleteErrorNotification() {
+    void sendCalendarDeleteErrorNotification() {
 
         final String calendarName = "calendar name";
         final String exception = "Some exception";

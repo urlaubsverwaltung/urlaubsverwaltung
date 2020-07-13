@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -22,8 +22,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteServiceImplTest {
 
     private SickNoteServiceImpl sut;
 
@@ -32,20 +32,20 @@ public class SickNoteServiceImplTest {
     @Mock
     private SettingsService settingsService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteServiceImpl(sickNoteRepository, settingsService);
     }
 
     @Test
-    public void save() {
+    void save() {
         final SickNote sickNote = new SickNote();
         sut.save(sickNote);
         verify(sickNoteRepository).save(sickNote);
     }
 
     @Test
-    public void getById() {
+    void getById() {
         final Optional<SickNote> sickNote = Optional.of(new SickNote());
         when(sickNoteRepository.findById(1)).thenReturn(sickNote);
 
@@ -54,7 +54,7 @@ public class SickNoteServiceImplTest {
     }
 
     @Test
-    public void findByPeriod() {
+    void findByPeriod() {
         final LocalDate from = LocalDate.of(2015, 1, 1);
         final LocalDate to = LocalDate.of(2016, 1, 1);
         final SickNote sickNote = new SickNote();
@@ -65,7 +65,7 @@ public class SickNoteServiceImplTest {
     }
 
     @Test
-    public void getAllActiveByYear() {
+    void getAllActiveByYear() {
         final SickNote sickNote = new SickNote();
         when(sickNoteRepository.findAllActiveByYear(2017)).thenReturn(singletonList(sickNote));
 
@@ -74,7 +74,7 @@ public class SickNoteServiceImplTest {
     }
 
     @Test
-    public void getNumberOfPersonsWithMinimumOneSickNote() {
+    void getNumberOfPersonsWithMinimumOneSickNote() {
         when(sickNoteRepository.findNumberOfPersonsWithMinimumOneSickNote(2017)).thenReturn(5L);
 
         final Long numberOfPersonsWithMinimumOneSickNote = sut.getNumberOfPersonsWithMinimumOneSickNote(2017);
@@ -82,7 +82,7 @@ public class SickNoteServiceImplTest {
     }
 
     @Test
-    public void getSickNotesReachingEndOfSickPay() {
+    void getSickNotesReachingEndOfSickPay() {
 
         final AbsenceSettings absenceSettings = new AbsenceSettings();
         absenceSettings.setMaximumSickPayDays(5);
@@ -99,7 +99,7 @@ public class SickNoteServiceImplTest {
     }
 
     @Test
-    public void getForStates() {
+    void getForStates() {
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
 
         final SickNote sickNote = new SickNote();
@@ -113,7 +113,7 @@ public class SickNoteServiceImplTest {
 
 
     @Test
-    public void getForStatesAndPerson() {
+    void getForStatesAndPerson() {
         final Person person = new Person();
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);

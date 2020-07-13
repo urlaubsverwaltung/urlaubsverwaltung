@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -11,35 +11,29 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
-public class FilterPeriodTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullStartDate() {
-
-        new FilterPeriod(null, LocalDate.now(UTC));
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullEndDate() {
-
-        new FilterPeriod(LocalDate.now(UTC), null);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithEndDateThatIsBeforeStartDate() {
-
-        LocalDate now = LocalDate.now(UTC);
-
-        new FilterPeriod(now, now.minusDays(1));
-    }
-
+class FilterPeriodTest {
 
     @Test
-    public void ensureCanBeInitializedWithStartAndEndDate() {
+    void ensureThrowsIfInitializedWithNullStartDate() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new FilterPeriod(null, LocalDate.now(UTC)));
+    }
+
+    @Test
+    void ensureThrowsIfInitializedWithNullEndDate() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new FilterPeriod(LocalDate.now(UTC), null));
+    }
+
+    @Test
+    void ensureThrowsIfInitializedWithEndDateThatIsBeforeStartDate() {
+        LocalDate now = LocalDate.now(UTC);
+        assertThatIllegalArgumentException().isThrownBy(() -> new FilterPeriod(now, now.minusDays(1)));
+    }
+
+    @Test
+    void ensureCanBeInitializedWithStartAndEndDate() {
 
         LocalDate now = LocalDate.now(UTC);
         LocalDate later = now.plusDays(2);
@@ -53,9 +47,8 @@ public class FilterPeriodTest {
         Assert.assertEquals("Wrong end date", later, period.getEndDate());
     }
 
-
     @Test
-    public void ensureCanBeInitializedWithSameStartAndEndDate() {
+    void ensureCanBeInitializedWithSameStartAndEndDate() {
 
         LocalDate now = LocalDate.now(UTC);
 
@@ -70,7 +63,7 @@ public class FilterPeriodTest {
 
 
     @Test
-    public void ensureHasDefaultStartAndEndDateIfInitializedWithoutStartAndEndDate() {
+    void ensureHasDefaultStartAndEndDateIfInitializedWithoutStartAndEndDate() {
 
         LocalDate now = LocalDate.now(UTC);
 
@@ -87,7 +80,7 @@ public class FilterPeriodTest {
 
 
     @Test
-    public void ensureReturnsCorrectStringRepresentationOfDates() {
+    void ensureReturnsCorrectStringRepresentationOfDates() {
 
         LocalDate startDate = LocalDate.of(2015, 12, 13);
         LocalDate endDate = LocalDate.of(2016, 1, 6);
@@ -101,30 +94,26 @@ public class FilterPeriodTest {
         Assert.assertEquals("Wrong string representation of end date", "06.01.2016", period.getEndDateAsString());
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullStartDateString() {
-
-        new FilterPeriod(null, Optional.of("19.05.2015"));
+    @Test
+    void ensureThrowsIfInitializedWithNullStartDateString() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new FilterPeriod(null, Optional.of("19.05.2015")));
     }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullEndDateString() {
-
-        new FilterPeriod(Optional.of("19.05.2015"), null);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithEndDateStringThatIsBeforeStartDateString() {
-
-        new FilterPeriod(Optional.of("21.12.2015"), Optional.of("19.05.2015"));
-    }
-
 
     @Test
-    public void ensureDatesCanBeParsedFromString() {
+    void ensureThrowsIfInitializedWithNullEndDateString() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new FilterPeriod(Optional.of("19.05.2015"), null));
+    }
+
+    @Test
+    void ensureThrowsIfInitializedWithEndDateStringThatIsBeforeStartDateString() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new FilterPeriod(Optional.of("21.12.2015"), Optional.of("19.05.2015")));
+    }
+
+    @Test
+    void ensureDatesCanBeParsedFromString() {
 
         LocalDate startDate = LocalDate.of(2015, MAY, 19);
         LocalDate endDate = LocalDate.of(2015, DECEMBER, 21);
@@ -138,9 +127,8 @@ public class FilterPeriodTest {
         Assert.assertEquals("Wrong end date", endDate, period.getEndDate());
     }
 
-
     @Test
-    public void ensureDefaultDatesForEmptyStrings() {
+    void ensureDefaultDatesForEmptyStrings() {
 
         LocalDate now = LocalDate.now(UTC);
 
@@ -155,9 +143,8 @@ public class FilterPeriodTest {
             period.getEndDate());
     }
 
-
     @Test
-    public void ensureThrowsIfTryingToParseDatesWithUnsupportedFormat() {
+    void ensureThrowsIfTryingToParseDatesWithUnsupportedFormat() {
 
         Consumer<String> assertDateFormatNotSupported = (dateString) -> {
             try {

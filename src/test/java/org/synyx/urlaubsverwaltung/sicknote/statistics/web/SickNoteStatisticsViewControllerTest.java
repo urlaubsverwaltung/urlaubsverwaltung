@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteStatisticsViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteStatisticsViewControllerTest {
 
     private SickNoteStatisticsViewController sut;
 
@@ -31,13 +31,13 @@ public class SickNoteStatisticsViewControllerTest {
     @Mock
     private WorkDaysService calendarService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteStatisticsViewController(statisticsService);
     }
 
     @Test
-    public void sickNoteStatistics() throws Exception {
+    void sickNoteStatistics() throws Exception {
 
         final int year = 2017;
         final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, sickNoteService, calendarService);

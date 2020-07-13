@@ -1,16 +1,16 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -23,10 +23,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class AvailabilityApiControllerTest {
+@ExtendWith(MockitoExtension.class)
+class AvailabilityApiControllerTest {
 
     private static final Integer PERSON_ID = 1;
 
@@ -37,18 +38,13 @@ public class AvailabilityApiControllerTest {
     @Mock
     private AvailabilityService availabilityService;
 
-    private Person testPerson;
-
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new AvailabilityApiController(availabilityService, personService);
-
-        testPerson = DemoDataCreator.createPerson("testPerson");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
     }
 
     @Test
-    public void ensurePersonsAvailabilitiesForUnknownPersonResultsInBadRequest() throws Exception {
+    void ensurePersonsAvailabilitiesForUnknownPersonResultsInBadRequest() throws Exception {
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
@@ -58,13 +54,14 @@ public class AvailabilityApiControllerTest {
     }
 
     @Test
-    public void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
+    void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
+        final Person testPerson = createPerson();
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
+
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"))
             .andExpect(status().isOk());
-
-        verify(personService).getPersonByID(PERSON_ID);
 
         verify(availabilityService)
             .getPersonsAvailabilities(eq(LocalDate.of(2016, 1, 1)),
@@ -72,7 +69,10 @@ public class AvailabilityApiControllerTest {
     }
 
     @Test
-    public void ensureNoContentAvailabilitiesForGivenPersonWithoutConfiguredWorkingTime() throws Exception {
+    void ensureNoContentAvailabilitiesForGivenPersonWithoutConfiguredWorkingTime() throws Exception {
+
+        final Person testPerson = createPerson();
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
 
         when(availabilityService.getPersonsAvailabilities(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenThrow(FreeTimeAbsenceException.class);
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
@@ -82,7 +82,7 @@ public class AvailabilityApiControllerTest {
     }
 
     @Test
-    public void ensureRequestsAreOnlyAllowedForADateRangeOfMaxOneMonth() throws Exception {
+    void ensureRequestsAreOnlyAllowedForADateRangeOfMaxOneMonth() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2016-02-01"))
@@ -90,7 +90,7 @@ public class AvailabilityApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingPersonParameter() throws Exception {
+    void ensureBadRequestForMissingPersonParameter() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("to", "2016-12-31")
             .param("to", "2016-12-31"))
@@ -98,14 +98,14 @@ public class AvailabilityApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingFromParameter() throws Exception {
+    void ensureBadRequestForMissingFromParameter() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("to", "2016-12-31"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void ensureBadRequestForInvalidFromParameter() throws Exception {
+    void ensureBadRequestForInvalidFromParameter() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "foo")
             .param("to", "2016-12-31"))
@@ -113,14 +113,14 @@ public class AvailabilityApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingToParameter() throws Exception {
+    void ensureBadRequestForMissingToParameter() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void ensureBadRequestForInvalidToParameter() throws Exception {
+    void ensureBadRequestForInvalidToParameter() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "foo"))
@@ -128,7 +128,7 @@ public class AvailabilityApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidPeriod() throws Exception {
+    void ensureBadRequestForInvalidPeriod() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
