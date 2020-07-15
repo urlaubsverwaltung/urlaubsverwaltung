@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -172,6 +172,6 @@ class VacationApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return MockMvcBuilders.standaloneSetup(sut).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build().perform(builder);
+        return MockMvcBuilders.standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
     }
 }

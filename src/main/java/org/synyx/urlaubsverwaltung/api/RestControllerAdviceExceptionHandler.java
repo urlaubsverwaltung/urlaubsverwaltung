@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
  * Handles exceptions and redirects to error page.
  */
 @RestControllerAdvice(annotations = RestControllerAdviceMarker.class)
-public class ApiExceptionHandlerControllerAdvice {
+public class RestControllerAdviceExceptionHandler {
 
     @ResponseStatus(NO_CONTENT)
     @ExceptionHandler({NoValidWorkingTimeException.class})
