@@ -17,7 +17,7 @@ public class WorkingTimeProperties {
     /**
      * Define the default working days that will be configured for
      * every newly created person.
-     *
+     * <p>
      * Default values: Monday, Tuesday, Wednesday, Thursday, Friday
      */
     @NotNull
