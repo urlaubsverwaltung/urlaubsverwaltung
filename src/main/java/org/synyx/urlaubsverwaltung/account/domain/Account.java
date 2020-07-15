@@ -6,7 +6,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.Year;
 
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
@@ -17,9 +18,9 @@ public class Account extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
-    private LocalDate validFrom;
+    private Instant validFrom;
 
-    private LocalDate validTo;
+    private Instant validTo;
 
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
     // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
@@ -40,7 +41,7 @@ public class Account extends AbstractPersistable<Integer> {
         /* OK */
     }
 
-    public Account(Person person, LocalDate validFrom, LocalDate validTo, BigDecimal annualVacationDays,
+    public Account(Person person, Instant validFrom, Instant validTo, BigDecimal annualVacationDays,
                    BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
@@ -102,7 +103,7 @@ public class Account extends AbstractPersistable<Integer> {
         this.vacationDays = vacationDays;
     }
 
-    public LocalDate getValidFrom() {
+    public Instant getValidFrom() {
 
         if (this.validFrom == null) {
             return null;
@@ -111,12 +112,12 @@ public class Account extends AbstractPersistable<Integer> {
         return this.validFrom;
     }
 
-    public void setValidFrom(LocalDate validFrom) {
+    public void setValidFrom(Instant validFrom) {
 
         this.validFrom = validFrom;
     }
 
-    public LocalDate getValidTo() {
+    public Instant getValidTo() {
 
         if (this.validTo == null) {
             return null;
@@ -125,14 +126,14 @@ public class Account extends AbstractPersistable<Integer> {
         return this.validTo;
     }
 
-    public void setValidTo(LocalDate validTo) {
+    public void setValidTo(Instant validTo) {
 
         this.validTo = validTo;
     }
 
     public int getYear() {
 
-        return this.validFrom.getYear();
+        return Year.from(validFrom).getValue();
     }
 
     @Override

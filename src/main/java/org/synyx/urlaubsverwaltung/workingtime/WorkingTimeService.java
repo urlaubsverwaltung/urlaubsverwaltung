@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.util.DateFormat;
 import org.synyx.urlaubsverwaltung.workingtime.config.WorkingTimeProperties;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -81,7 +82,7 @@ public class WorkingTimeService {
     }
 
 
-    public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
+    public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, Instant date) {
 
         return Optional.ofNullable(workingTimeDAO.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
     }
@@ -93,13 +94,13 @@ public class WorkingTimeService {
     }
 
 
-    public FederalState getFederalStateForPerson(Person person, LocalDate date) {
+    public FederalState getFederalStateForPerson(Person person, Instant date) {
 
         Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
 
         if (!optionalWorkingTime.isPresent()) {
             LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                person.getId(), date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
+                person.getId(), DateTimeFormatter.ofPattern(DateFormat.PATTERN).format(date));
 
             return getSystemDefaultFederalState();
         }

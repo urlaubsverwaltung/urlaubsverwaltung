@@ -13,8 +13,11 @@ import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,15 +59,17 @@ public class VacationOverviewService {
                 LocalDate date = LocalDate.now(clock);
                 int year = selectedYear != null ? selectedYear : date.getYear();
                 int month = selectedMonth != null ? selectedMonth : date.getMonthValue();
-                LocalDate lastDay = DateUtil.getLastDayOfMonth(year, month);
+                Instant lastDay = DateUtil.getLastDayOfMonth(year, month);
 
                 VacationOverview holidayOverview = getVacationOverview(person);
 
-                for (int i = 1; i <= lastDay.getDayOfMonth(); i++) {
+                for (int i = 1; i <= lastDay.get(ChronoField.DAY_OF_MONTH); i++) {
 
                     DayOfMonth dayOfMonth = new DayOfMonth();
-                    LocalDate currentDay = LocalDate.of(year, month, i);
-                    dayOfMonth.setDayText(currentDay.format(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+                    Instant currentDay = Instant.now()
+                        .with(ChronoField.YEAR, year)
+                        .with(ChronoField.MONTH_OF_YEAR, month).with(ChronoField.DAY_OF_MONTH, i);
+                    dayOfMonth.setDayText((DateTimeFormatter.ofPattern(DATE_FORMAT)).format(currentDay));
                     dayOfMonth.setDayNumber(i);
 
                     dayOfMonth.setTypeOfDay(getTypeOfDay(person, currentDay));
@@ -76,7 +81,7 @@ public class VacationOverviewService {
         return holidayOverviewList;
     }
 
-    private DayOfMonth.TypeOfDay getTypeOfDay(Person person, LocalDate currentDay) {
+    private DayOfMonth.TypeOfDay getTypeOfDay(Person person, Instant currentDay) {
         DayOfMonth.TypeOfDay typeOfDay;
 
         FederalState state = workingTimeService.getFederalStateForPerson(person, currentDay);

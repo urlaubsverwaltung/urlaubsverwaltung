@@ -5,7 +5,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,24 +47,24 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
-     * @param startDate {@link LocalDate}
-     * @param endDate   {@link LocalDate}
+     * @param startDate {@link Instant}
+     * @param endDate   {@link Instant}
      * @param person    {@link Person}
      * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
+    List<Application> getApplicationsForACertainPeriodAndPerson(Instant startDate, Instant endDate,
                                                                 Person person);
 
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
      *
-     * @param startDate {@link LocalDate}
-     * @param endDate   {@link LocalDate}
+     * @param startDate {@link Instant}
+     * @param endDate   {@link Instant}
      * @param status    {@link ApplicationStatus}
      * @return all {@link Application}s with the given state and vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate,
+    List<Application> getApplicationsForACertainPeriodAndState(Instant startDate, Instant endDate,
                                                                ApplicationStatus status);
 
 
@@ -72,14 +72,14 @@ public interface ApplicationService {
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
      * state.
      *
-     * @param startDate {@link LocalDate}
-     * @param endDate   {@link LocalDate}
+     * @param startDate {@link Instant}
+     * @param endDate   {@link Instant}
      * @param person    {@link Person}
      * @param status    {@link ApplicationStatus}
      * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y and
      * with a certain state
      */
-    List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate,
+    List<Application> getApplicationsForACertainPeriodAndPersonAndState(Instant startDate, Instant endDate,
                                                                         Person person, ApplicationStatus status);
 
 

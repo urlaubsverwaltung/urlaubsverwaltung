@@ -10,9 +10,14 @@ import org.synyx.urlaubsverwaltung.util.DateFormat;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 
 /**
@@ -21,6 +26,7 @@ import java.util.Optional;
 @Service
 public class WorkDaysService {
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
@@ -44,19 +50,19 @@ public class WorkDaysService {
      * @param endDate   the last day of the time period to calculate workdays
      * @return number of weekdays
      */
-    public double getWeekDays(LocalDate startDate, LocalDate endDate) {
+    public double getWeekDays(Instant startDate, Instant endDate) {
 
         double workDays = 0.0;
 
         if (!startDate.equals(endDate)) {
-            LocalDate day = startDate;
+            Instant day = startDate;
 
             while (!day.isAfter(endDate)) {
                 if (DateUtil.isWorkDay(day)) {
                     workDays++;
                 }
 
-                day = day.plusDays(1);
+                day = day.plus(1, DAYS);
             }
         } else {
             if (DateUtil.isWorkDay(startDate)) {
@@ -80,15 +86,15 @@ public class WorkDaysService {
      * @param person    to calculate workdays in a certain time period
      * @return number of workdays in a certain time period
      */
-    public BigDecimal getWorkDays(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
+    public BigDecimal getWorkDays(DayLength dayLength, Instant startDate, Instant endDate, Person person) {
 
         Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             person, startDate);
 
         if (!optionalWorkingTime.isPresent()) {
             throw new NoValidWorkingTimeException("No working time found for User '" + person.getId()
-                + "' in period " + startDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) + " - "
-                + endDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
+                + "' in period " + DATE_TIME_FORMATTER.format(startDate) + " - "
+                + DATE_TIME_FORMATTER.format(endDate));
         }
 
         WorkingTime workingTime = optionalWorkingTime.get();
@@ -97,20 +103,20 @@ public class WorkDaysService {
 
         BigDecimal vacationDays = BigDecimal.ZERO;
 
-        LocalDate day = startDate;
+        Instant day = startDate;
 
         while (!day.isAfter(endDate)) {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
             BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day, federalState);
 
-            int dayOfWeek = day.getDayOfWeek().getValue();
+            int dayOfWeek = day.get(ChronoField.DAY_OF_WEEK);
             BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
 
             BigDecimal result = duration.multiply(workingDuration);
 
             vacationDays = vacationDays.add(result);
 
-            day = day.plusDays(1);
+            day = day.plus(1, DAYS);
         }
 
         // vacation days < 1 day --> must not be divided, else an ArithmeticException is thrown

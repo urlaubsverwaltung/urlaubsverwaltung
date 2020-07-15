@@ -24,7 +24,9 @@ import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -96,7 +98,7 @@ public class PublicHolidayApiController {
     private FederalState getFederalState(String year, Optional<String> optionalMonth, Optional<Person> optionalPerson) {
 
         if (optionalPerson.isPresent()) {
-            LocalDate validFrom = getValidFrom(year, optionalMonth);
+            Instant validFrom = getValidFrom(year, optionalMonth);
 
             return workingTimeService.getFederalStateForPerson(optionalPerson.get(), validFrom);
         }
@@ -105,14 +107,17 @@ public class PublicHolidayApiController {
     }
 
 
-    private static LocalDate getValidFrom(String year, Optional<String> optionalMonth) {
+    private static Instant getValidFrom(String year, Optional<String> optionalMonth) {
 
         int holidaysYear = Integer.parseInt(year);
 
         if (optionalMonth.isPresent()) {
             int holidaysMonth = Integer.parseInt(optionalMonth.get());
 
-            return LocalDate.of(holidaysYear, holidaysMonth, 1);
+            return Instant.now()
+                .with(ChronoField.YEAR, holidaysYear)
+                .with(ChronoField.MONTH_OF_YEAR, holidaysMonth)
+                .with(ChronoField.DAY_OF_MONTH, 1);
         }
 
         return DateUtil.getFirstDayOfYear(holidaysYear);

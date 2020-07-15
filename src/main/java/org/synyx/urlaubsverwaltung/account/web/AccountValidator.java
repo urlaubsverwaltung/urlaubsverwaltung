@@ -9,7 +9,9 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 
 /**
  * Validates {@link AccountForm}.
@@ -69,15 +71,15 @@ class AccountValidator implements Validator {
 
     void validatePeriod(AccountForm form, Errors errors) {
 
-        LocalDate holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
-        LocalDate holidaysAccountValidTo = form.getHolidaysAccountValidTo();
+        Instant holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
+        Instant holidaysAccountValidTo = form.getHolidaysAccountValidTo();
 
         validateDateNotNull(holidaysAccountValidFrom, "holidaysAccountValidFrom", errors);
         validateDateNotNull(holidaysAccountValidTo, "holidaysAccountValidTo", errors);
 
         if (holidaysAccountValidFrom != null && holidaysAccountValidTo != null) {
-            boolean periodIsNotWithinOneYear = holidaysAccountValidFrom.getYear() != form.getHolidaysAccountYear()
-                || holidaysAccountValidTo.getYear() != form.getHolidaysAccountYear();
+            boolean periodIsNotWithinOneYear = Year.from(holidaysAccountValidFrom).getValue() != form.getHolidaysAccountYear()
+                || Year.from(holidaysAccountValidTo).getValue() != form.getHolidaysAccountYear();
             boolean periodIsOnlyOneDay = holidaysAccountValidFrom.equals(holidaysAccountValidTo);
             boolean beginOfPeriodIsAfterEndOfPeriod = holidaysAccountValidFrom.isAfter(holidaysAccountValidTo);
 
@@ -87,7 +89,7 @@ class AccountValidator implements Validator {
         }
     }
 
-    private void validateDateNotNull(LocalDate date, String field, Errors errors) {
+    private void validateDateNotNull(Instant date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && errors.getFieldErrors(field).isEmpty()) {

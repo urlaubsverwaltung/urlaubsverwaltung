@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public interface SickNoteService {
      * @param to     defines the end of the period
      * @return all the sick notes matching the given parameters
      */
-    List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to);
+    List<SickNote> getByPersonAndPeriod(Person person, Instant from, Instant to);
 
 
     /**
@@ -47,7 +48,7 @@ public interface SickNoteService {
      * @param to   defines the end of the period
      * @return all the sick notes matching the given parameters
      */
-    List<SickNote> getByPeriod(LocalDate from, LocalDate to);
+    List<SickNote> getByPeriod(Instant from, Instant to);
 
 
     /**

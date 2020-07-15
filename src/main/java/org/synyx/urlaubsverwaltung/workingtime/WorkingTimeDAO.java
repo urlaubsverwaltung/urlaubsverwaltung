@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -25,7 +26,7 @@ interface WorkingTimeDAO extends CrudRepository<WorkingTime, Integer> {
         "SELECT x FROM WorkingTime x WHERE x.person = ?1 "
             + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
     )
-    WorkingTime findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
+    WorkingTime findByPersonAndValidityDateEqualsOrMinorDate(Person person, Instant date);
 
 
     @Query(

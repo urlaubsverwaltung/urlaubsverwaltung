@@ -10,7 +10,9 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
 
@@ -65,8 +67,8 @@ public class UsedDaysOverview {
 
     private BigDecimal getVacationDays(Application application, WorkDaysService calendarService) {
 
-        int yearOfStartDate = application.getStartDate().getYear();
-        int yearOfEndDate = application.getEndDate().getYear();
+        int yearOfStartDate = Year.from(application.getStartDate()).getValue();
+        int yearOfEndDate = Year.from(application.getEndDate()).getValue();
 
         Assert.isTrue(yearOfStartDate == this.year || yearOfEndDate == this.year,
             "Either start date or end date must be in the given year.");
@@ -75,8 +77,8 @@ public class UsedDaysOverview {
         Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {
-            LocalDate startDate = getStartDateForCalculation(application);
-            LocalDate endDate = getEndDateForCalculation(application);
+            Instant startDate = getStartDateForCalculation(application);
+            Instant endDate = getEndDateForCalculation(application);
 
             return calendarService.getWorkDays(dayLength, startDate, endDate, person);
         }
@@ -85,20 +87,20 @@ public class UsedDaysOverview {
     }
 
 
-    private LocalDate getStartDateForCalculation(Application application) {
+    private Instant getStartDateForCalculation(Application application) {
 
-        if (application.getStartDate().getYear() != this.year) {
-            return DateUtil.getFirstDayOfYear(application.getEndDate().getYear());
+        if (Year.from(application.getStartDate()).getValue() != this.year) {
+            return DateUtil.getFirstDayOfYear(Year.from(application.getEndDate()).getValue());
         }
 
         return application.getStartDate();
     }
 
 
-    private LocalDate getEndDateForCalculation(Application application) {
+    private Instant getEndDateForCalculation(Application application) {
 
-        if (application.getEndDate().getYear() != this.year) {
-            return DateUtil.getLastDayOfYear(application.getStartDate().getYear());
+        if (Year.from(application.getEndDate()).getValue() != this.year) {
+            return DateUtil.getLastDayOfYear(Year.from(application.getStartDate()).getValue());
         }
 
         return application.getEndDate();

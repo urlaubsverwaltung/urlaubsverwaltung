@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -41,9 +42,9 @@ public class SickNote extends AbstractPersistable<Integer> {
     /**
      * Sick note period: start and end date of the period, the employee is sick.
      */
-    private LocalDate startDate;
+    private Instant startDate;
 
-    private LocalDate endDate;
+    private Instant endDate;
 
     /**
      * Time of day for the sick note: morning, noon or full day
@@ -56,18 +57,18 @@ public class SickNote extends AbstractPersistable<Integer> {
     /**
      * Period of the AUB (Arbeitsunfähigkeitsbescheinigung), is optional.
      */
-    private LocalDate aubStartDate;
+    private Instant aubStartDate;
 
-    private LocalDate aubEndDate;
+    private Instant aubEndDate;
 
-    private LocalDate lastEdited;
+    private Instant lastEdited;
 
     @Enumerated(EnumType.STRING)
     private SickNoteStatus status;
 
     public SickNote() {
 
-        this.lastEdited = LocalDate.now(UTC);
+        this.lastEdited = Instant.now();
     }
 
     public Person getPerson() {
@@ -94,7 +95,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         if (this.startDate == null) {
             return null;
@@ -104,13 +105,13 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
 
         this.startDate = startDate;
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         if (this.endDate == null) {
             return null;
@@ -120,7 +121,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
 
         this.endDate = endDate;
     }
@@ -144,7 +145,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getAubStartDate() {
+    public Instant getAubStartDate() {
 
         if (this.aubStartDate == null) {
             return null;
@@ -154,13 +155,13 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public void setAubStartDate(LocalDate aubStartDate) {
+    public void setAubStartDate(Instant aubStartDate) {
 
         this.aubStartDate = aubStartDate;
     }
 
 
-    public LocalDate getAubEndDate() {
+    public Instant getAubEndDate() {
 
         if (this.aubEndDate == null) {
             return null;
@@ -170,13 +171,13 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public void setAubEndDate(LocalDate aubEndDate) {
+    public void setAubEndDate(Instant aubEndDate) {
 
         this.aubEndDate = aubEndDate;
     }
 
 
-    public LocalDate getLastEdited() {
+    public Instant getLastEdited() {
 
         if (this.lastEdited == null) {
             return null;
@@ -186,7 +187,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public void setLastEdited(LocalDate lastEdited) {
+    public void setLastEdited(Instant lastEdited) {
 
         this.lastEdited = lastEdited;
     }
@@ -238,7 +239,7 @@ public class SickNote extends AbstractPersistable<Integer> {
             '}';
     }
 
-    private Object formatNullable(LocalDate date) {
-        return date != null ? date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) : null;
+    private Object formatNullable(Instant date) {
+        return date != null ? DateTimeFormatter.ofPattern(DateFormat.PATTERN).format(date) : null;
     }
 }

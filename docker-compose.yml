@@ -1,4 +1,4 @@
-version: '2.4'
+version: '3.3'
 services:
   mariadb:
     build: src/main/docker/mariadb

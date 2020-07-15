@@ -6,7 +6,7 @@ import org.synyx.urlaubsverwaltung.util.DateFormat;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -17,44 +17,44 @@ import java.time.format.DateTimeParseException;
  */
 public class FilterPeriod {
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Instant startDate;
+    private Instant endDate;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
 
     public FilterPeriod(String startDateAsString, String endDateAsString) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
         int currentYear = Year.now(Clock.systemUTC()).getValue();
         try {
             this.startDate = StringUtils.isEmpty(startDateAsString) ?
-                DateUtil.getFirstDayOfYear(currentYear) : LocalDate.parse(startDateAsString, formatter);
+                DateUtil.getFirstDayOfYear(currentYear) : Instant.from(formatter.parse(startDateAsString));
             this.endDate = StringUtils.isEmpty(endDateAsString) ?
-                DateUtil.getLastDayOfYear(currentYear) : LocalDate.parse(endDateAsString, formatter);
+                DateUtil.getLastDayOfYear(currentYear) : Instant.from(formatter.parse(endDateAsString));
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }
 
-        Assert.isTrue(endDate.isAfter(startDate) || endDate.isEqual(startDate), "Start date must be before end date");
+        Assert.isTrue(endDate.isAfter(startDate) || endDate.equals(startDate), "Start date must be before end date");
     }
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         return startDate;
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         return endDate;
     }
 
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
 
         this.startDate = startDate;
     }
 
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
 
         this.endDate = endDate;
     }
@@ -62,13 +62,13 @@ public class FilterPeriod {
 
     public String getStartDateAsString() {
 
-        return getStartDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN));
+        return formatter.format(getStartDate());
     }
 
 
     public String getEndDateAsString() {
 
-        return getEndDate().format(DateTimeFormatter.ofPattern(DateFormat.PATTERN));
+        return formatter.format(getEndDate());
     }
 
     @Override

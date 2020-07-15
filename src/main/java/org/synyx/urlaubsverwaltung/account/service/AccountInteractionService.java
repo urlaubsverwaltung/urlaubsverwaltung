@@ -4,7 +4,7 @@ import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 
 /**
  * Provides interactions with {@link org.synyx.urlaubsverwaltung.account.domain.Account}s like creating or editing.
@@ -34,7 +34,7 @@ public interface AccountInteractionService {
      * @param comment                  comment to changes to the annual vacation days
      * @return the created holidays account
      */
-    Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
+    Account updateOrCreateHolidaysAccount(Person person, Instant validFrom, Instant validTo,
                                           BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
                                           BigDecimal remainingDaysNotExpiring, String comment);
 
@@ -51,7 +51,7 @@ public interface AccountInteractionService {
      * @param comment                  comment to changes to the annual vacation days
      * @return the updated holidays account
      */
-    Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo,
+    Account editHolidaysAccount(Account account, Instant validFrom, Instant validTo,
                                 BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
                                 BigDecimal remainingDaysNotExpiring, String comment);
 

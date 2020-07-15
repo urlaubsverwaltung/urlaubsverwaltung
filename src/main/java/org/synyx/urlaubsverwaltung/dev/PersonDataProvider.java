@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
@@ -92,8 +93,8 @@ class PersonDataProvider {
             asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
             Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);
 
-        final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(currentYear);
-        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(currentYear);
+        final Instant firstDayOfYear = DateUtil.getFirstDayOfYear(currentYear);
+        final Instant lastDayOfYear = DateUtil.getLastDayOfYear(currentYear);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,
             lastDayOfYear, new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
             ZERO, null);

@@ -1,15 +1,11 @@
 package org.synyx.urlaubsverwaltung.util;
 
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZonedDateTime;
-
-import static java.time.ZoneOffset.UTC;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import java.time.YearMonth;
+import java.time.temporal.ChronoField;
 
 public final class DateUtil {
 
@@ -27,9 +23,9 @@ public final class DateUtil {
      * @param date to check
      * @return {@code true} if the given date is a work day, else {@code false}
      */
-    public static boolean isWorkDay(LocalDate date) {
+    public static boolean isWorkDay(Instant date) {
 
-        return !(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY);
+        return !(DayOfWeek.from(date) == DayOfWeek.SATURDAY || DayOfWeek.from(date) == DayOfWeek.SUNDAY);
     }
 
     /**
@@ -50,9 +46,9 @@ public final class DateUtil {
      * @param date to check
      * @return {@code true} if the given date is on Christmas Eve, else {@code false}
      */
-    public static boolean isChristmasEve(LocalDate date) {
+    public static boolean isChristmasEve(Instant date) {
 
-        return date.getDayOfMonth() == DAY_OF_CHRISTMAS_EVE && date.getMonth() == Month.DECEMBER;
+        return date.get(ChronoField.DAY_OF_WEEK) == DAY_OF_CHRISTMAS_EVE && Month.from(date) == Month.DECEMBER;
     }
 
     /**
@@ -61,9 +57,9 @@ public final class DateUtil {
      * @param date to check
      * @return {@code true} if the given date is on New Year's Eve, else {@code false}
      */
-    public static boolean isNewYearsEve(LocalDate date) {
+    public static boolean isNewYearsEve(Instant date) {
 
-        return date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonth() == Month.DECEMBER;
+        return date.get(ChronoField.DAY_OF_MONTH) == DAY_OF_NEW_YEARS_EVE && Month.from(date) == Month.DECEMBER;
     }
 
     /**
@@ -72,9 +68,9 @@ public final class DateUtil {
      * @param year to get the first day of
      * @return the first day of the given year
      */
-    public static LocalDate getFirstDayOfYear(int year) {
+    public static Instant getFirstDayOfYear(int year) {
 
-        return ZonedDateTime.now(UTC).withYear(year).with(firstDayOfYear()).toLocalDate();
+        return Instant.from(YearMonth.of(year, 1).atDay(1));
     }
 
     /**
@@ -83,9 +79,9 @@ public final class DateUtil {
      * @param year to get the last day of
      * @return the last day of the given year
      */
-    public static LocalDate getLastDayOfYear(int year) {
+    public static Instant getLastDayOfYear(int year) {
 
-        return ZonedDateTime.now(UTC).withYear(year).with(lastDayOfYear()).toLocalDate();
+        return Instant.from(YearMonth.of(year, 12).atEndOfMonth());
     }
 
     /**
@@ -95,9 +91,9 @@ public final class DateUtil {
      * @param month to get the first day of
      * @return the first day of the given month in the given year
      */
-    public static LocalDate getFirstDayOfMonth(int year, int month) {
+    public static Instant getFirstDayOfMonth(int year, int month) {
 
-        return ZonedDateTime.now(UTC).withYear(year).withMonth(month).with(firstDayOfMonth()).toLocalDate();
+        return Instant.from(YearMonth.of(year, month).atDay(1));
     }
 
     /**
@@ -107,9 +103,9 @@ public final class DateUtil {
      * @param month to get the first day of
      * @return the last day of the given month in the given year
      */
-    public static LocalDate getLastDayOfMonth(int year, int month) {
+    public static Instant getLastDayOfMonth(int year, int month) {
 
-        return ZonedDateTime.now(UTC).withYear(year).withMonth(month).with(lastDayOfMonth()).toLocalDate();
+        return Instant.from(YearMonth.of(year, month).atEndOfMonth());
     }
 
     /**

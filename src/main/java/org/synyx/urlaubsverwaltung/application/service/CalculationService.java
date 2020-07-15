@@ -18,13 +18,20 @@ import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.YEAR;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -69,10 +76,10 @@ public class CalculationService {
 
         DayLength dayLength = application.getDayLength();
 
-        LocalDate startDate = application.getStartDate();
-        LocalDate endDate = application.getEndDate();
-        int yearOfStartDate = startDate.getYear();
-        int yearOfEndDate = endDate.getYear();
+        Instant startDate = application.getStartDate();
+        Instant endDate = application.getEndDate();
+        int yearOfStartDate = Year.from(startDate).getValue();
+        int yearOfEndDate = Year.from(endDate).getValue();
 
         if (yearOfStartDate == yearOfEndDate) {
             BigDecimal workDays = calendarService.getWorkDays(dayLength, startDate, endDate, person);
@@ -153,8 +160,8 @@ public class CalculationService {
         DateTime end = beforeApril.get(0).getEnd();
         return calendarService.getWorkDays(
             application.getDayLength(),
-            LocalDate.of(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth()),
-            LocalDate.of(end.getYear(), end.getMonthOfYear(), end.getDayOfMonth()),
+            Instant.now().with(YEAR,start.getYear()).with(MONTH_OF_YEAR, start.getMonthOfYear()).with(DAY_OF_MONTH, start.getDayOfMonth()),
+            Instant.now().with(YEAR,end.getYear()).with(MONTH_OF_YEAR, end.getMonthOfYear()).with(DAY_OF_MONTH, end.getDayOfMonth()),
             application.getPerson());
     }
 

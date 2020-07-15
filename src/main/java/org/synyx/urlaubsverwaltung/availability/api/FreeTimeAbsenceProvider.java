@@ -8,7 +8,9 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +31,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, Instant date) {
 
         Optional<TimedAbsence> freeTimeAbsence = checkForFreeTime(date, person);
 
@@ -51,7 +53,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private Optional<TimedAbsence> checkForFreeTime(LocalDate currentDay, Person person) {
+    private Optional<TimedAbsence> checkForFreeTime(Instant currentDay, Person person) {
 
         DayLength expectedWorkTime = getExpectedWorkTimeFor(person, currentDay);
         BigDecimal expectedWorkTimeDuration = expectedWorkTime.getDuration();
@@ -66,7 +68,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
 
-    private DayLength getExpectedWorkTimeFor(Person person, LocalDate currentDay) {
+    private DayLength getExpectedWorkTimeFor(Person person, Instant currentDay) {
 
         Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
             currentDay);
@@ -77,6 +79,6 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
         WorkingTime workingTime = workingTimeOrNot.get();
 
-        return workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek().getValue());
+        return workingTime.getDayLengthForWeekDay(currentDay.get(ChronoField.DAY_OF_WEEK));
     }
 }

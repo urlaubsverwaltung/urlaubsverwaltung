@@ -11,7 +11,10 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
+import java.time.temporal.ChronoField;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -43,7 +46,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     @Override
     public void createDefaultAccount(Person person) {
 
-        LocalDate today = LocalDate.now(clock);
+        Instant today = Instant.now(clock);
         Integer defaultVacationDays = accountProperties.getDefaultVacationDays();
 
         BigDecimal remainingVacationDaysForThisYear = getRemainingVacationDaysForThisYear(today, defaultVacationDays);
@@ -61,19 +64,19 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     // calculate remaining vacation days starting from todays month, round to ceiling
-    private BigDecimal getRemainingVacationDaysForThisYear(LocalDate today, Integer defaultVacationDays) {
+    private BigDecimal getRemainingVacationDaysForThisYear(Instant today, Integer defaultVacationDays) {
         double vacationDaysPerMonth = ((double) defaultVacationDays) / 12;
-        int remainingMonthForThisYear = 12 - today.getMonthValue();
+        int remainingMonthForThisYear = 12 - today.get(ChronoField.MONTH_OF_YEAR);
         return new BigDecimal((int) Math.ceil(vacationDaysPerMonth * remainingMonthForThisYear));
     }
 
     @Override
-    public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
+    public Account updateOrCreateHolidaysAccount(Person person, Instant validFrom, Instant validTo,
                                                  BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                                  BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring,
                                                  String comment) {
 
-        Optional<Account> optionalAccount = accountService.getHolidaysAccount(validFrom.getYear(), person);
+        Optional<Account> optionalAccount = accountService.getHolidaysAccount(Year.from(validFrom).getValue(), person);
         Account account;
 
         if (optionalAccount.isPresent()) {
@@ -97,7 +100,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo,
+    public Account editHolidaysAccount(Account account, Instant validFrom, Instant validTo,
                                        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
                                        BigDecimal remainingDaysNotExpiring, String comment) {
 

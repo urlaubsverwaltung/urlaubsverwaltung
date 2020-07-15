@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.sql.Time;
-import java.time.LocalDate;
+import java.time.Instant;
 
 
 /**
@@ -20,11 +20,11 @@ public class ApplicationForLeaveForm {
     private Person person;
 
     // period: date and time
-    private LocalDate startDate;
+    private Instant startDate;
 
     private Time startTime;
 
-    private LocalDate endDate;
+    private Instant endDate;
 
     private Time endTime;
 
@@ -74,13 +74,13 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         return endDate;
     }
 
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
 
         this.endDate = endDate;
     }
@@ -134,13 +134,13 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         return startDate;
     }
 
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
 
         this.startDate = startDate;
     }
@@ -251,9 +251,9 @@ public class ApplicationForLeaveForm {
     public static class Builder {
 
         private Person person;
-        private LocalDate startDate;
+        private Instant startDate;
         private Time startTime;
-        private LocalDate endDate;
+        private Instant endDate;
         private Time endTime;
         private VacationType vacationType;
         private DayLength dayLength;
@@ -269,7 +269,7 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder startDate(LocalDate startDate) {
+        public ApplicationForLeaveForm.Builder startDate(Instant startDate) {
             this.startDate = startDate;
             return this;
         }
@@ -279,7 +279,7 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder endDate(LocalDate endDate) {
+        public ApplicationForLeaveForm.Builder endDate(Instant endDate) {
             this.endDate = endDate;
             return this;
         }

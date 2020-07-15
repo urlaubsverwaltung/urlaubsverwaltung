@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -60,7 +61,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Start date of the application for leave.
      */
-    private LocalDate startDate;
+    private Instant startDate;
 
     /**
      * Start time of the application for leave.
@@ -72,7 +73,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * End date of the application for leave.
      */
-    private LocalDate endDate;
+    private Instant endDate;
 
     /**
      * End time of the application for leave.
@@ -113,22 +114,22 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Date of application for leave creation.
      */
-    private LocalDate applicationDate;
+    private Instant applicationDate;
 
     /**
      * Date of application for leave cancellation.
      */
-    private LocalDate cancelDate;
+    private Instant cancelDate;
 
     /**
      * Date of application for leave processing (allow or reject).
      */
-    private LocalDate editedDate;
+    private Instant editedDate;
 
     /**
      * Last date of sending a remind notification that application for leave has to be processed.
      */
-    private LocalDate remindDate;
+    private Instant remindDate;
 
     /**
      * Describes the current status of the application for leave (e.g. allowed, rejected etc.)
@@ -166,7 +167,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getApplicationDate() {
+    public Instant getApplicationDate() {
 
         if (this.applicationDate == null) {
             return null;
@@ -176,13 +177,13 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public void setApplicationDate(LocalDate applicationDate) {
+    public void setApplicationDate(Instant applicationDate) {
 
         this.applicationDate = applicationDate;
     }
 
 
-    public LocalDate getCancelDate() {
+    public Instant getCancelDate() {
 
         if (this.cancelDate == null) {
             return null;
@@ -192,13 +193,13 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public void setCancelDate(LocalDate cancelDate) {
+    public void setCancelDate(Instant cancelDate) {
 
         this.cancelDate = cancelDate;
     }
 
 
-    public LocalDate getEditedDate() {
+    public Instant getEditedDate() {
 
         if (this.editedDate == null) {
             return null;
@@ -208,7 +209,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public void setEditedDate(LocalDate editedDate) {
+    public void setEditedDate(Instant editedDate) {
 
         this.editedDate = editedDate;
     }
@@ -262,7 +263,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         if (this.endDate == null) {
             return null;
@@ -272,7 +273,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
 
         this.endDate = endDate;
     }
@@ -350,7 +351,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         if (this.startDate == null) {
             return null;
@@ -360,7 +361,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
 
         this.startDate = startDate;
     }
@@ -396,7 +397,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getRemindDate() {
+    public Instant getRemindDate() {
 
         if (this.remindDate == null) {
             return null;
@@ -406,7 +407,7 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public void setRemindDate(LocalDate remindDate) {
+    public void setRemindDate(Instant remindDate) {
 
         this.remindDate = remindDate;
     }
@@ -491,7 +492,7 @@ public class Application extends AbstractPersistable<Integer> {
      */
     public ZonedDateTime getStartDateWithTime() {
 
-        LocalDate date = getStartDate();
+        Instant date = getStartDate();
         Time time = getStartTime();
 
         if (date != null && time != null) {
@@ -509,7 +510,7 @@ public class Application extends AbstractPersistable<Integer> {
      */
     public ZonedDateTime getEndDateWithTime() {
 
-        LocalDate date = getEndDate();
+        Instant date = getEndDate();
         Time time = getEndTime();
 
         if (date != null && time != null) {

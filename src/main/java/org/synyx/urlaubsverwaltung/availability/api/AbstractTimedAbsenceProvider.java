@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.availability.api;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 
 
@@ -24,7 +24,7 @@ abstract class AbstractTimedAbsenceProvider {
     /**
      * Convenience function for initial call, so that the caller does not have to create an empty list himself.
      */
-    TimedAbsenceSpans checkForAbsence(Person person, LocalDate date) {
+    TimedAbsenceSpans checkForAbsence(Person person, Instant date) {
 
         return checkForAbsence(new TimedAbsenceSpans(new ArrayList<>()), person, date);
     }
@@ -34,7 +34,7 @@ abstract class AbstractTimedAbsenceProvider {
      * Checks for absences for the given person on the given day. Recursively calls the next priority provider if the
      * absence spans do not yet sum up to a full day.
      */
-    TimedAbsenceSpans checkForAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
+    TimedAbsenceSpans checkForAbsence(TimedAbsenceSpans knownAbsences, Person person, Instant date) {
 
         TimedAbsenceSpans updatedAbsences = addAbsence(knownAbsences, person, date);
 
@@ -49,7 +49,7 @@ abstract class AbstractTimedAbsenceProvider {
     /**
      * Each provider implements his own logic to retrieve absences via this method.
      */
-    abstract TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date);
+    abstract TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, Instant date);
 
 
     /**

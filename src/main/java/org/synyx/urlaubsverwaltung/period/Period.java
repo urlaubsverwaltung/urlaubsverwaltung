@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.period;
 
 import org.springframework.util.Assert;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 
@@ -14,7 +15,7 @@ public class Period {
     private final LocalDate endDate;
     private final DayLength dayLength;
 
-    public Period(LocalDate startDate, LocalDate endDate, DayLength dayLength) {
+    public Period(Instant startDate, Instant endDate, DayLength dayLength) {
 
         Assert.notNull(startDate, "Start date must be given");
         Assert.notNull(endDate, "End date must be given");

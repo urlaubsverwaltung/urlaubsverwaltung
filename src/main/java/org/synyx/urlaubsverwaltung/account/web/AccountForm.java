@@ -4,15 +4,16 @@ import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.Year;
 
 public class AccountForm {
 
     private int holidaysAccountYear;
 
-    private LocalDate holidaysAccountValidFrom;
+    private Instant holidaysAccountValidFrom;
 
-    private LocalDate holidaysAccountValidTo;
+    private Instant holidaysAccountValidTo;
 
     private BigDecimal annualVacationDays;
 
@@ -36,14 +37,14 @@ public class AccountForm {
 
     AccountForm(Account holidaysAccountOptional) {
 
-        this.holidaysAccountYear = holidaysAccountOptional.getValidFrom().getYear();
-        this.holidaysAccountValidFrom = holidaysAccountOptional.getValidFrom();
-        this.holidaysAccountValidTo = holidaysAccountOptional.getValidTo();
-        this.annualVacationDays = holidaysAccountOptional.getAnnualVacationDays();
-        this.actualVacationDays = holidaysAccountOptional.getVacationDays();
-        this.remainingVacationDays = holidaysAccountOptional.getRemainingVacationDays();
-        this.remainingVacationDaysNotExpiring = holidaysAccountOptional.getRemainingVacationDaysNotExpiring();
-        this.comment = holidaysAccountOptional.getComment();
+            this.holidaysAccountYear = Year.from(holidaysAccountOptional.getValidFrom()).getValue();
+            this.holidaysAccountValidFrom = holidaysAccountOptional.getValidFrom();
+            this.holidaysAccountValidTo = holidaysAccountOptional.getValidTo();
+            this.annualVacationDays = holidaysAccountOptional.getAnnualVacationDays();
+            this.actualVacationDays = holidaysAccountOptional.getVacationDays();
+            this.remainingVacationDays = holidaysAccountOptional.getRemainingVacationDays();
+            this.remainingVacationDaysNotExpiring = holidaysAccountOptional.getRemainingVacationDaysNotExpiring();
+            this.comment = holidaysAccountOptional.getComment();
     }
 
     public int getHolidaysAccountYear() {
@@ -56,22 +57,22 @@ public class AccountForm {
         this.holidaysAccountYear = holidaysAccountYear;
     }
 
-    public LocalDate getHolidaysAccountValidFrom() {
+    public Instant getHolidaysAccountValidFrom() {
 
         return holidaysAccountValidFrom;
     }
 
-    public void setHolidaysAccountValidFrom(LocalDate holidaysAccountValidFrom) {
+    public void setHolidaysAccountValidFrom(Instant holidaysAccountValidFrom) {
 
         this.holidaysAccountValidFrom = holidaysAccountValidFrom;
     }
 
-    public LocalDate getHolidaysAccountValidTo() {
+    public Instant getHolidaysAccountValidTo() {
 
         return holidaysAccountValidTo;
     }
 
-    public void setHolidaysAccountValidTo(LocalDate holidaysAccountValidTo) {
+    public void setHolidaysAccountValidTo(Instant holidaysAccountValidTo) {
 
         this.holidaysAccountValidTo = holidaysAccountValidTo;
     }

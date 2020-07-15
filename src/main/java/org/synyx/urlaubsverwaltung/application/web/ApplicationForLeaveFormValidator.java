@@ -24,8 +24,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
@@ -135,15 +137,15 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private static void validateDayLength(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
 
-        final LocalDate startDate = applicationForm.getStartDate();
-        final LocalDate endDate = applicationForm.getEndDate();
+        final Instant startDate = applicationForm.getStartDate();
+        final Instant endDate = applicationForm.getEndDate();
         final DayLength dayLength = applicationForm.getDayLength();
 
         if (startDate == null) {
             return;
         }
 
-        if (endDate == null || startDate.isEqual(endDate)) {
+        if (endDate == null || startDate.equals(endDate)) {
             if (isChristmasEve(startDate)) {
                 validateChristmasEve(dayLength, settings.getWorkingTimeSettings(), errors);
             } else if (isNewYearsEve(startDate)) {
@@ -210,8 +212,8 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
-        LocalDate startDate = applicationForLeave.getStartDate();
-        LocalDate endDate = applicationForLeave.getEndDate();
+        Instant startDate = applicationForLeave.getStartDate();
+        Instant endDate = applicationForLeave.getEndDate();
 
         validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
@@ -223,7 +225,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     }
 
 
-    private void validateNotNull(LocalDate date, String field, Errors errors) {
+    private void validateNotNull(Instant date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && errors.getFieldErrors(field).isEmpty()) {
@@ -232,7 +234,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     }
 
 
-    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, Settings settings,
+    private void validatePeriod(Instant startDate, Instant endDate, DayLength dayLength, Settings settings,
                                 Errors errors) {
 
         // ensure that startDate < endDate
@@ -248,10 +250,10 @@ public class ApplicationForLeaveFormValidator implements Validator {
     }
 
 
-    private void validateNotTooFarInTheFuture(LocalDate date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInTheFuture(Instant date, AbsenceSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonths).toLocalDate();
+        Instant future = Instant.now(clock).plus(maximumMonths, ChronoUnit.MONTHS);
 
         if (date.isAfter(future)) {
             errors.reject(ERROR_TOO_LONG, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
@@ -259,10 +261,10 @@ public class ApplicationForLeaveFormValidator implements Validator {
     }
 
 
-    private void validateNotTooFarInThePast(LocalDate date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInThePast(Instant date, AbsenceSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonths).toLocalDate();
+        Instant past = Instant.now(clock).minus(maximumMonths, ChronoUnit.MONTHS);
 
         if (date.isBefore(past)) {
             errors.reject(ERROR_PAST);
@@ -270,12 +272,12 @@ public class ApplicationForLeaveFormValidator implements Validator {
     }
 
 
-    private void validateSameDayIfHalfDayPeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength,
+    private void validateSameDayIfHalfDayPeriod(Instant startDate, Instant endDate, DayLength dayLength,
                                                 Errors errors) {
 
         boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
 
-        if (isHalfDay && !startDate.isEqual(endDate)) {
+        if (isHalfDay && !startDate.equals(endDate)) {
             errors.reject(ERROR_HALF_DAY_PERIOD);
         }
     }

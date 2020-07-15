@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -121,8 +122,8 @@ public class VacationDaysService {
 
     BigDecimal getUsedDaysBeforeApril(Account account) {
 
-        LocalDate firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), Month.JANUARY.getValue());
-        LocalDate lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), Month.MARCH.getValue());
+        Instant firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), Month.JANUARY.getValue());
+        Instant lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), Month.MARCH.getValue());
 
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
     }
@@ -130,14 +131,14 @@ public class VacationDaysService {
 
     BigDecimal getUsedDaysAfterApril(Account account) {
 
-        LocalDate firstOfApril = DateUtil.getFirstDayOfMonth(account.getYear(), Month.APRIL.getValue());
-        LocalDate lastOfDecember = DateUtil.getLastDayOfMonth(account.getYear(), Month.DECEMBER.getValue());
+        Instant firstOfApril = DateUtil.getFirstDayOfMonth(account.getYear(), Month.APRIL.getValue());
+        Instant lastOfDecember = DateUtil.getLastDayOfMonth(account.getYear(), Month.DECEMBER.getValue());
 
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
     }
 
 
-    BigDecimal getUsedDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
+    BigDecimal getUsedDaysBetweenTwoMilestones(Person person, Instant firstMilestone, Instant lastMilestone) {
 
         // get all applications for leave
         List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -154,8 +155,8 @@ public class VacationDaysService {
         BigDecimal usedDays = BigDecimal.ZERO;
 
         for (Application applicationForLeave : applicationsForLeave) {
-            LocalDate startDate = applicationForLeave.getStartDate();
-            LocalDate endDate = applicationForLeave.getEndDate();
+            Instant startDate = applicationForLeave.getStartDate();
+            Instant endDate = applicationForLeave.getEndDate();
 
             if (startDate.isBefore(firstMilestone)) {
                 startDate = firstMilestone;

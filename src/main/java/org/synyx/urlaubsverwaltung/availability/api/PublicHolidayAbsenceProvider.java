@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +35,7 @@ class PublicHolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, Instant date) {
 
         Optional<TimedAbsence> holidayAbsence = checkForHolidays(date, person);
 
@@ -55,7 +55,7 @@ class PublicHolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
         return false;
     }
 
-    private Optional<TimedAbsence> checkForHolidays(LocalDate currentDay, Person person) {
+    private Optional<TimedAbsence> checkForHolidays(Instant currentDay, Person person) {
 
         BigDecimal expectedWorkingDuration = publicHolidaysService.getWorkingDurationOfDate(currentDay,
             getFederalState(currentDay, person));
@@ -74,7 +74,7 @@ class PublicHolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
         return Optional.ofNullable(absence);
     }
 
-    private FederalState getFederalState(LocalDate date, Person person) {
+    private FederalState getFederalState(Instant date, Person person) {
         return workingTimeService.getFederalStateForPerson(person, date);
     }
 }

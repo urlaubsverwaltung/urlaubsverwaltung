@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
 /**
@@ -68,7 +69,7 @@ public class ApplicationForLeaveStatisticsViewController {
         FilterPeriod period = new FilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
-        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+        if (Year.from(period.getStartDate()) != Year.from(period.getEndDate())) {
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
 
@@ -97,7 +98,7 @@ public class ApplicationForLeaveStatisticsViewController {
         FilterPeriod period = new FilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
-        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+        if (Year.from(period.getStartDate()) != Year.from(period.getEndDate())) {
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
 

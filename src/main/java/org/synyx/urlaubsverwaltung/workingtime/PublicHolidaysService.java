@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -43,12 +44,12 @@ public class PublicHolidaysService {
      * @param federalState the federal state to consider holiday settings for
      * @return working duration of the given date
      */
-    public BigDecimal getWorkingDurationOfDate(LocalDate date, FederalState federalState) {
+    public BigDecimal getWorkingDurationOfDate(Instant date, FederalState federalState) {
 
         return getAbsenceTypeOfDate(date, federalState).getInverse().getDuration();
     }
 
-    public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
+    public DayLength getAbsenceTypeOfDate(Instant date, FederalState federalState) {
 
         Settings settings = settingsService.getSettings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -82,9 +83,9 @@ public class PublicHolidaysService {
         return holidays.stream().filter(byMonth(month)).collect(Collectors.toSet());
     }
 
-    private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+    private boolean isPublicHoliday(Instant date, FederalState federalState) {
 
-        return manager.isHoliday(date, federalState.getCodes());
+        return manager.isHoliday(LocalDate.from(date), federalState.getCodes());
     }
 
     private Predicate<Holiday> byMonth(int month) {

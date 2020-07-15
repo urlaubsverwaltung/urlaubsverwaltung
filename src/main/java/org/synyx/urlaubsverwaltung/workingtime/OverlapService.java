@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -202,9 +204,9 @@ public class OverlapService {
      * @param sickNotes            overlapping the reference application for leave
      * @return {@link List} of overlap intervals
      */
-    public List<Interval> getListOfOverlaps(LocalDate startDate, LocalDate endDate,
+    public List<Interval> getListOfOverlaps(Instant startDate, Instant endDate,
                                             List<Application> applicationsForLeave, List<SickNote> sickNotes) {
-        Interval interval = new Interval(startDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli(),
+        Interval interval = new Interval(startDate.with(DayTime.clock.getZone()).toInstant().toEpochMilli(),
             endDate.atStartOfDay(clock.getZone()).toInstant().toEpochMilli());
 
         List<Interval> overlappingIntervals = new ArrayList<>();
