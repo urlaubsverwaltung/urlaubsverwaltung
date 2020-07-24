@@ -32,7 +32,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
           draft: false
-          prerelease: false
+          prerelease: true
       - name: Extract release tag
         id: vars
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
