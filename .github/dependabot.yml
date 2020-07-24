@@ -1,12 +1,9 @@
 version: 2
 updates:
-- package-ecosystem: npm
+- package-ecosystem: "npm"
   directory: "/"
   schedule:
-    interval: monthly
-    time: "04:00"
-  open-pull-requests-limit: 10
-  target-branch: master
+    interval: "monthly"
   labels:
   - dependencies
   - javascript
@@ -14,26 +11,19 @@ updates:
   - dependency-name: bootstrap
     versions:
     - ">= 4.a"
-    - "< 5"
   - dependency-name: timepicker
     versions:
     - "> 1.11.14"
-  - dependency-name: timepicker
-    versions:
-    - ">= 1.13.a"
-    - "< 1.14"
-- package-ecosystem: maven
+
+- package-ecosystem: "maven"
   directory: "/"
   schedule:
-    interval: weekly
-    time: "04:00"
-  open-pull-requests-limit: 10
-  target-branch: master
+    interval: "weekly"
   labels:
   - dependencies
   - java
-  ignore:
-  - dependency-name: org.springframework.boot:spring-boot-starter-parent
-    versions:
-    - ">= 2.2.a"
-    - "< 2.4"
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "weekly"
