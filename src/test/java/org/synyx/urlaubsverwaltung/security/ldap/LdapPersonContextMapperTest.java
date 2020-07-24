@@ -166,12 +166,15 @@ class LdapPersonContextMapperTest {
         final Person person = createPerson();
         person.setPermissions(singletonList(INACTIVE));
 
+        final String username = person.getUsername();
+
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenReturn(new LdapUser(person.getUsername(), Optional.of(person.getFirstName()),
+            .thenReturn(new LdapUser(username, Optional.of(person.getFirstName()),
                 Optional.of(person.getLastName()), Optional.of(person.getEmail())));
 
-        assertThatThrownBy(() -> sut.mapUserFromContext(context, person.getUsername(), null)).isInstanceOf(DisabledException.class);
+        assertThatThrownBy(() -> sut.mapUserFromContext(context, username, null))
+            .isInstanceOf(DisabledException.class);
     }
 
     @Test

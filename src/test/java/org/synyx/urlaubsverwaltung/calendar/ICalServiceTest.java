@@ -20,7 +20,6 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
-
 class ICalServiceTest {
 
     private ICalService sut;
@@ -31,13 +30,14 @@ class ICalServiceTest {
 
     @BeforeEach
     void setUp() {
-
         sut = new ICalService();
     }
 
     @Test
     void getCalendarForPersonAndNoAbsenceFound() {
-        assertThatThrownBy(() -> sut.generateCalendar("Abwesenheitskalender", List.of()))
+        final List<Absence> absences = List.of();
+
+        assertThatThrownBy(() -> sut.generateCalendar("Abwesenheitskalender", absences))
             .isInstanceOf(CalendarException.class);
     }
 

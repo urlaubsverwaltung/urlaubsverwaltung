@@ -99,7 +99,9 @@ class OidcPersonAuthoritiesMapperTest {
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
         when(personService.save(personForLogin)).thenReturn(personForLogin);
 
-        assertThatThrownBy(() -> sut.mapAuthorities(List.of(oidcUserAuthority))).isInstanceOf(DisabledException.class);
+        final List<OidcUserAuthority> oidcUserAuthorities = List.of(oidcUserAuthority);
+        assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))
+            .isInstanceOf(DisabledException.class);
     }
 
     @Test
@@ -144,7 +146,8 @@ class OidcPersonAuthoritiesMapperTest {
 
     @Test
     void mapAuthoritiesWrongAuthority() {
-        assertThatThrownBy(() -> sut.mapAuthorities(List.of(new SimpleGrantedAuthority("NO_ROLE"))))
+        final List<SimpleGrantedAuthority> noRole = List.of(new SimpleGrantedAuthority("NO_ROLE"));
+        assertThatThrownBy(() -> sut.mapAuthorities(noRole))
             .isInstanceOf(OidcPersonMappingException.class);
     }
 
