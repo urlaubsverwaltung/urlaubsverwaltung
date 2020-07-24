@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DepartmentResponseTest {
 
-    private DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     void ensureDepartmentResponseCreatedCorrectly() {
@@ -64,16 +64,13 @@ class DepartmentResponseTest {
     }
 
     private void assertPersonResponseEqualsPerson(PersonResponse personResponse, Person person) {
-
         assertThat(personResponse.getEmail()).isEqualTo(person.getEmail());
         assertThat(personResponse.getFirstName()).isEqualTo(person.getFirstName());
         assertThat(personResponse.getLastName()).isEqualTo(person.getLastName());
     }
 
     private Person person(String username, String email, String firstName, String lastName) {
-
         final Person person = new Person();
-
         person.setUsername(username);
         person.setEmail(email);
         person.setFirstName(firstName);
@@ -81,5 +78,4 @@ class DepartmentResponseTest {
 
         return person;
     }
-
 }

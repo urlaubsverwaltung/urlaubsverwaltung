@@ -25,7 +25,6 @@ public class DepartmentApiController {
 
     @Autowired
     DepartmentApiController(DepartmentService departmentService) {
-
         this.departmentService = departmentService;
     }
 
