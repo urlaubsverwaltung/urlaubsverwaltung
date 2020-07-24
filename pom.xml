@@ -191,6 +191,12 @@
       <groupId>com.google.api-client</groupId>
       <artifactId>google-api-client</artifactId>
       <version>1.30.10</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
@@ -243,6 +249,38 @@
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- WebDriver Tests -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>selenium</artifactId>
+      <version>1.14.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-remote-driver</artifactId>
+      <version>3.141.59</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>3.141.59</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-support</artifactId>
+      <version>3.141.59</version>
       <scope>test</scope>
     </dependency>
 

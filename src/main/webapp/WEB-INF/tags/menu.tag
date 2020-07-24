@@ -30,7 +30,7 @@
       <ul class="nav navbar-nav navbar-right">
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="${URL_PREFIX}/application/new">
+            <a href="${URL_PREFIX}/application/new" id="application-new-link">
               <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i> <spring:message code="nav.apply.title"/>
             </a>
           </li>
