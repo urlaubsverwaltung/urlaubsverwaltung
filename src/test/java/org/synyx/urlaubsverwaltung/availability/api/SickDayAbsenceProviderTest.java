@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
@@ -22,17 +22,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickDayAbsenceProviderTest {
+@ExtendWith(MockitoExtension.class)
+class SickDayAbsenceProviderTest {
 
     private SickDayAbsenceProvider sut;
 
@@ -41,13 +41,13 @@ public class SickDayAbsenceProviderTest {
     @Mock
     private VacationAbsenceProvider nextAbsenceProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickDayAbsenceProvider(nextAbsenceProvider, sickNoteService);
     }
 
     @Test
-    public void ensurePersonIsNotAvailableOnFullSickDay() {
+    void ensurePersonIsNotAvailableOnFullSickDay() {
 
         final Person person = createPerson();
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
@@ -65,7 +65,7 @@ public class SickDayAbsenceProviderTest {
     }
 
     @Test
-    public void ensurePersonIsNotAvailableOnTwoHalfSickDays() {
+    void ensurePersonIsNotAvailableOnTwoHalfSickDays() {
 
         final Person person = createPerson();
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
@@ -87,7 +87,7 @@ public class SickDayAbsenceProviderTest {
     }
 
     @Test
-    public void ensurePersonIsAvailableOnFullSickDayCancelled() {
+    void ensurePersonIsAvailableOnFullSickDayCancelled() {
 
         // we need this because sick day provider is not the last provider and otherwise the mock
         // would return null
@@ -107,7 +107,7 @@ public class SickDayAbsenceProviderTest {
     }
 
     @Test
-    public void ensurePersonIsAvailableOnFullSickDayConvertedToVacation() {
+    void ensurePersonIsAvailableOnFullSickDayConvertedToVacation() {
 
         // we need this because sick day provider is not the last provider and otherwise the mock
         // would return null
@@ -127,7 +127,7 @@ public class SickDayAbsenceProviderTest {
     }
 
     @Test
-    public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
+    void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
         final Person person = createPerson();
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
@@ -141,7 +141,7 @@ public class SickDayAbsenceProviderTest {
     }
 
     @Test
-    public void ensureCallsVacationAbsenceProviderIfNotAbsentForSickDay() {
+    void ensureCallsVacationAbsenceProviderIfNotAbsentForSickDay() {
 
         final LocalDate sickDay = LocalDate.of(2016, 1, 5);
         final Person person = createPerson();

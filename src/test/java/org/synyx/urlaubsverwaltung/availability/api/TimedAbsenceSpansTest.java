@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,10 +15,10 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 
-public class TimedAbsenceSpansTest {
+class TimedAbsenceSpansTest {
 
     @Test
-    public void ensurePresenceRatioCalculatedCorrectly() {
+    void ensurePresenceRatioCalculatedCorrectly() {
 
         final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
         final TimedAbsence timedAbsence2 = new TimedAbsence(NOON, VACATION);
@@ -30,7 +30,7 @@ public class TimedAbsenceSpansTest {
 
 
     @Test
-    public void ensurePresenceRatioIsNotNegative() {
+    void ensurePresenceRatioIsNotNegative() {
 
         final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
         final TimedAbsence timedAbsence2 = new TimedAbsence(FULL, SICK_NOTE);
@@ -42,7 +42,7 @@ public class TimedAbsenceSpansTest {
 
 
     @Test
-    public void ensurePresenceRatioIsCalculatedCorrectlyForEmptyList() {
+    void ensurePresenceRatioIsCalculatedCorrectlyForEmptyList() {
 
         final BigDecimal presenceRatio = new TimedAbsenceSpans(emptyList()).calculatePresenceRatio();
         assertThat(presenceRatio).isEqualTo(BigDecimal.ONE);
@@ -50,7 +50,7 @@ public class TimedAbsenceSpansTest {
 
 
     @Test
-    public void ensureCalculationIsNullSave() {
+    void ensureCalculationIsNullSave() {
 
         final BigDecimal bigDecimal = new TimedAbsenceSpans(null).calculatePresenceRatio();
         assertThat(bigDecimal).isSameAs(BigDecimal.ONE);

@@ -24,7 +24,6 @@ class MailBuilder {
 
     @Autowired
     MailBuilder(Configuration freemarkerConfiguration) {
-
         this.freemarkerConfiguration = freemarkerConfiguration;
     }
 
@@ -38,10 +37,10 @@ class MailBuilder {
      */
     String buildMailBody(String templateName, Map<String, Object> model, Locale locale) {
 
-        String templateFilename = templateName + FILE_EXTENSION;
+        final String templateFilename = templateName + FILE_EXTENSION;
 
         try {
-            Template template = freemarkerConfiguration.getTemplate(templateFilename, locale);
+            final Template template = freemarkerConfiguration.getTemplate(templateFilename, locale);
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         } catch (TemplateException | IOException e) {
             throw new MailBuilderException("Something went wrong processing email template=" + templateName, e);

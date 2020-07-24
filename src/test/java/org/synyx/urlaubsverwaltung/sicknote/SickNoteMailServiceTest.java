@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
@@ -16,12 +16,12 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteMailServiceTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteMailServiceTest {
 
     private SickNoteMailService sut;
 
@@ -32,13 +32,13 @@ public class SickNoteMailServiceTest {
     @Mock
     private MailService mailService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteMailService(settingsService, sickNoteService, mailService);
     }
 
     @Test
-    public void ensureSendEndOfSickPayNotification() {
+    void ensureSendEndOfSickPayNotification() {
 
         final Person person = new Person();
         person.setUsername("Hulk");
@@ -73,13 +73,13 @@ public class SickNoteMailServiceTest {
     }
 
     @Test
-    public void ensureNoSendWhenDeactivated() {
+    void ensureNoSendWhenDeactivated() {
 
         boolean isInactive = false;
         prepareSettingsWithRemindForWaitingApplications(isInactive);
 
         sut.sendEndOfSickPayNotification();
-        verifyZeroInteractions(mailService);
+        verifyNoInteractions(mailService);
     }
 
 

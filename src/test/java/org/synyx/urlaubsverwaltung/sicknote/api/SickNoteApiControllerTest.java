@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.sicknote.api;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -25,17 +25,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteApiControllerTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteApiControllerTest {
 
     private SickNoteApiController sut;
 
@@ -44,24 +44,24 @@ public class SickNoteApiControllerTest {
     @Mock
     private SickNoteService sickNoteService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteApiController(sickNoteService, personService);
     }
 
     @Test
-    public void ensureReturnsAllSickNotesIfNoPersonProvided() throws Exception {
+    void ensureReturnsAllSickNotesIfNoPersonProvided() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01")
             .param("to", "2016-12-31"))
             .andExpect(status().isOk());
 
         verify(sickNoteService).getByPeriod(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
-        verifyZeroInteractions(personService);
+        verifyNoInteractions(personService);
     }
 
     @Test
-    public void ensureReturnsSickNotesOfPersonIfPersonProvided() throws Exception {
+    void ensureReturnsSickNotesOfPersonIfPersonProvided() throws Exception {
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(createPerson()));
 
         perform(get("/api/sicknotes").param("from", "2016-01-01")
@@ -76,7 +76,7 @@ public class SickNoteApiControllerTest {
     }
 
     @Test
-    public void ensureCorrectConversionOfSickNotes() throws Exception {
+    void ensureCorrectConversionOfSickNotes() throws Exception {
 
         SickNote sickNote1 = createSickNote(createPerson("foo"),
             LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
@@ -90,7 +90,7 @@ public class SickNoteApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "2016-12-31"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.response").exists())
             .andExpect(jsonPath("$.response.sickNotes").exists())
             .andExpect(jsonPath("$.response.sickNotes", hasSize(3)))
@@ -100,14 +100,14 @@ public class SickNoteApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingFromParameter() throws Exception {
+    void ensureBadRequestForMissingFromParameter() throws Exception {
         perform(get("/api/sicknotes")
             .param("to", "2016-12-31"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void ensureBadRequestForInvalidFromParameter() throws Exception {
+    void ensureBadRequestForInvalidFromParameter() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "foo")
             .param("to", "2016-12-31"))
@@ -115,14 +115,14 @@ public class SickNoteApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForMissingToParameter() throws Exception {
+    void ensureBadRequestForMissingToParameter() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void ensureBadRequestForInvalidToParameter() throws Exception {
+    void ensureBadRequestForInvalidToParameter() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01")
             .param("to", "foo"))
@@ -130,7 +130,7 @@ public class SickNoteApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidPeriod() throws Exception {
+    void ensureBadRequestForInvalidPeriod() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
@@ -138,7 +138,7 @@ public class SickNoteApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestForInvalidPersonParameter() throws Exception {
+    void ensureBadRequestForInvalidPersonParameter() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01")
             .param("to", "foo")
@@ -147,7 +147,7 @@ public class SickNoteApiControllerTest {
     }
 
     @Test
-    public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
+    void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01")
             .param("to", "foo")
@@ -156,6 +156,6 @@ public class SickNoteApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return MockMvcBuilders.standaloneSetup(sut).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build().perform(builder);
+        return MockMvcBuilders.standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
     }
 }

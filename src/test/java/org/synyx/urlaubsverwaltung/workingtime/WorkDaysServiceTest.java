@@ -3,16 +3,16 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link WorkDaysService}.
  */
-public class WorkDaysServiceTest {
+class WorkDaysServiceTest {
 
     private WorkDaysService instance;
     private PublicHolidaysService publicHolidaysService;
@@ -45,8 +45,8 @@ public class WorkDaysServiceTest {
     private WorkingTime workingTime;
     private Person person;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         settingsService = mock(SettingsService.class);
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -61,11 +61,11 @@ public class WorkDaysServiceTest {
 
         instance = new WorkDaysService(publicHolidaysService, workingTimeService, settingsService);
 
-        person = TestDataCreator.createPerson();
-        application = TestDataCreator.createApplication(person,
-            TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        person = DemoDataCreator.createPerson();
+        application = DemoDataCreator.createApplication(person,
+            DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
-        workingTime = TestDataCreator.createWorkingTime();
+        workingTime = DemoDataCreator.createWorkingTime();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
             any(LocalDate.class)))
@@ -77,7 +77,7 @@ public class WorkDaysServiceTest {
      * Test of getWeekDays method, of class OwnCalendarService.
      */
     @Test
-    public void testGetWeekDays() {
+    void testGetWeekDays() {
 
         LocalDate start = LocalDate.of(2011, 11, 16);
         LocalDate end = LocalDate.of(2011, 11, 28);
@@ -93,7 +93,7 @@ public class WorkDaysServiceTest {
      * Test of getWorkDays method, of class OwnCalendarService.
      */
     @Test
-    public void testGetVacationDays() {
+    void testGetVacationDays() {
 
         // testing for full days
         application.setDayLength(DayLength.FULL);
@@ -165,7 +165,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForTeilzeitPersons() {
+    void testGetWorkDaysForTeilzeitPersons() {
 
         List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.WEDNESDAY.getValue(),
             DayOfWeek.FRIDAY.getValue(), DayOfWeek.SATURDAY.getValue());
@@ -181,7 +181,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForVollzeitPersons() {
+    void testGetWorkDaysForVollzeitPersons() {
 
         List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.TUESDAY.getValue(),
             DayOfWeek.WEDNESDAY.getValue(), DayOfWeek.THURSDAY.getValue(), DayOfWeek.FRIDAY.getValue());
@@ -197,7 +197,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysHalfDay() {
+    void testGetWorkDaysHalfDay() {
 
         // monday
         LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 25);
@@ -210,7 +210,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysZero() {
+    void testGetWorkDaysZero() {
 
         // saturday
         LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 23);
@@ -223,7 +223,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysHalfDayZero() {
+    void testGetWorkDaysHalfDayZero() {
 
         // saturday
         LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 23);
@@ -236,7 +236,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForChristmasEve() {
+    void testGetWorkDaysForChristmasEve() {
 
         LocalDate date = LocalDate.of(2013, Month.DECEMBER, 24);
 
@@ -247,7 +247,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForChristmasEveDayLengthMorning() {
+    void testGetWorkDaysForChristmasEveDayLengthMorning() {
 
         LocalDate date = LocalDate.of(2013, Month.DECEMBER, 24);
 
@@ -258,7 +258,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForNewYearsEve() {
+    void testGetWorkDaysForNewYearsEve() {
 
         LocalDate date = LocalDate.of(2013, Month.DECEMBER, 31);
 
@@ -269,7 +269,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForNewYearsEveDayLengthMorning() {
+    void testGetWorkDaysForNewYearsEveDayLengthMorning() {
 
         LocalDate date = LocalDate.of(2013, Month.DECEMBER, 31);
 
@@ -280,7 +280,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForChristmasEveAndNewYearsHoliday() {
+    void testGetWorkDaysForChristmasEveAndNewYearsHoliday() {
 
         LocalDate from = LocalDate.of(2013, Month.DECEMBER, 23);
         LocalDate to = LocalDate.of(2014, Month.JANUARY, 2);
@@ -292,7 +292,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void testGetWorkDaysForChristmasEveAndNewYearsHolidayDayLengthMorning() {
+    void testGetWorkDaysForChristmasEveAndNewYearsHolidayDayLengthMorning() {
 
         LocalDate from = LocalDate.of(2013, Month.DECEMBER, 23);
         LocalDate to = LocalDate.of(2014, Month.JANUARY, 2);
@@ -304,7 +304,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void ensureCorrectWorkDaysForAssumptionDayForSystemDefaultFederalState() {
+    void ensureCorrectWorkDaysForAssumptionDayForSystemDefaultFederalState() {
 
         LocalDate from = LocalDate.of(2016, Month.AUGUST, 15);
         LocalDate to = LocalDate.of(2016, Month.AUGUST, 15);
@@ -316,7 +316,7 @@ public class WorkDaysServiceTest {
 
 
     @Test
-    public void ensureCorrectWorkDaysForAssumptionDayForOverriddenFederalState() {
+    void ensureCorrectWorkDaysForAssumptionDayForOverriddenFederalState() {
 
         LocalDate from = LocalDate.of(2016, Month.AUGUST, 15);
         LocalDate to = LocalDate.of(2016, Month.AUGUST, 15);

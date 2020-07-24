@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -20,32 +20,32 @@ import java.util.Optional;
 @Service
 class ApplicationServiceImpl implements ApplicationService {
 
-    private final ApplicationDAO applicationDAO;
+    private final ApplicationRepository applicationRepository;
 
     @Autowired
-    ApplicationServiceImpl(ApplicationDAO applicationDAO) {
+    ApplicationServiceImpl(ApplicationRepository applicationRepository) {
 
-        this.applicationDAO = applicationDAO;
+        this.applicationRepository = applicationRepository;
     }
 
     @Override
     public Optional<Application> getApplicationById(Integer id) {
 
-        return applicationDAO.findById(id);
+        return applicationRepository.findById(id);
     }
 
 
     @Override
     public Application save(Application application) {
 
-        return applicationDAO.save(application);
+        return applicationRepository.save(application);
     }
 
 
     @Override
     public List<Application> getApplicationsForACertainState(ApplicationStatus state) {
 
-        return applicationDAO.getApplicationsForACertainState(state);
+        return applicationRepository.getApplicationsForACertainState(state);
     }
 
 
@@ -53,7 +53,7 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
                                                                        Person person) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+        return applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
     }
 
 
@@ -61,7 +61,7 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate,
                                                                       ApplicationStatus status) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndState(startDate, endDate, status);
+        return applicationRepository.getApplicationsForACertainTimeAndState(startDate, endDate, status);
     }
 
 
@@ -69,19 +69,19 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate,
                                                                                LocalDate endDate, Person person, ApplicationStatus status) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status);
+        return applicationRepository.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status);
     }
 
     @Override
     public List<Application> getForStates(List<ApplicationStatus> statuses) {
 
-        return applicationDAO.findByStatusIn(statuses);
+        return applicationRepository.findByStatusIn(statuses);
     }
 
     @Override
     public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons) {
 
-        return applicationDAO.findByStatusInAndPersonIn(statuses, persons);
+        return applicationRepository.findByStatusInAndPersonIn(statuses, persons);
     }
 
 
@@ -90,7 +90,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
         Assert.notNull(person, "Person to get overtime reduction for must be given.");
 
-        return Optional.ofNullable(applicationDAO.calculateTotalOvertimeOfPerson(person))
+        return Optional.ofNullable(applicationRepository.calculateTotalOvertimeOfPerson(person))
             .orElse(BigDecimal.ZERO);
     }
 }

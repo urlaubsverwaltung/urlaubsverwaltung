@@ -8,6 +8,7 @@ import java.util.Optional;
 /**
  * Sync absences with all activated and configured calendar providers.
  */
+@Deprecated(since = "4.0.0", forRemoval = true)
 public interface CalendarSyncService {
 
     /**

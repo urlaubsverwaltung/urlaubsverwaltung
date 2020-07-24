@@ -29,16 +29,16 @@ class PersonServiceImpl implements PersonService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final PersonDAO personDAO;
+    private final PersonRepository personRepository;
     private final AccountInteractionService accountInteractionService;
     private final WorkingTimeService workingTimeService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    PersonServiceImpl(PersonDAO personDAO, AccountInteractionService accountInteractionService,
+    PersonServiceImpl(PersonRepository personRepository, AccountInteractionService accountInteractionService,
                       WorkingTimeService workingTimeService, ApplicationEventPublisher applicationEventPublisher) {
 
-        this.personDAO = personDAO;
+        this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
         this.workingTimeService = workingTimeService;
         this.applicationEventPublisher = applicationEventPublisher;
@@ -109,7 +109,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Person save(Person person) {
 
-        final Person persistedPerson = personDAO.save(person);
+        final Person persistedPerson = personRepository.save(person);
 
         final boolean isInactive = persistedPerson.getPermissions().contains(INACTIVE);
         if (isInactive) {
@@ -122,20 +122,20 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> getPersonByID(Integer id) {
 
-        return personDAO.findById(id);
+        return personRepository.findById(id);
     }
 
 
     @Override
     public Optional<Person> getPersonByUsername(String username) {
 
-        return Optional.ofNullable(personDAO.findByUsername(username));
+        return Optional.ofNullable(personRepository.findByUsername(username));
     }
 
     @Override
     public List<Person> getActivePersons() {
 
-        return personDAO.findAll()
+        return personRepository.findAll()
             .stream()
             .filter(person -> !person.hasRole(INACTIVE))
             .sorted(personComparator())
@@ -145,7 +145,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getInactivePersons() {
 
-        return personDAO.findAll()
+        return personRepository.findAll()
             .stream()
             .filter(person -> person.hasRole(INACTIVE))
             .sorted(personComparator())

@@ -1,25 +1,25 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Time;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class TimePropertyEditorTest {
+
+class TimePropertyEditorTest {
 
     private TimePropertyEditor editor;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         editor = new TimePropertyEditor();
     }
 
-
     @Test
-    public void ensureCorrectFormatting() {
+    void ensureCorrectFormatting() {
 
         editor.setValue(Time.valueOf("11:23:30"));
 
@@ -27,18 +27,16 @@ public class TimePropertyEditorTest {
         Assert.assertEquals("Wrong text representation", "11:23", editor.getAsText());
     }
 
-
     @Test
-    public void ensureEmptyTextForNullTime() {
+    void ensureEmptyTextForNullTime() {
 
         editor.setValue(null);
 
         Assert.assertEquals("Wrong text representation", "", editor.getAsText());
     }
 
-
     @Test
-    public void ensureCorrectParsing() {
+    void ensureCorrectParsing() {
 
         Time time = Time.valueOf("11:23:00");
 
@@ -48,28 +46,24 @@ public class TimePropertyEditorTest {
         Assert.assertEquals("Wrong time", time, editor.getValue());
     }
 
-
     @Test
-    public void ensureNullTimeForEmptyText() {
+    void ensureNullTimeForEmptyText() {
 
         editor.setAsText("");
 
         Assert.assertNull("Should be null", editor.getValue());
     }
 
-
     @Test
-    public void ensureNullTimeForNullText() {
+    void ensureNullTimeForNullText() {
 
         editor.setAsText(null);
 
         Assert.assertNull("Should be null", editor.getValue());
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureSettingTextRepresentingInvalidTimeThrows() {
-
-        editor.setAsText("foo");
+    @Test
+    void ensureSettingTextRepresentingInvalidTimeThrows() {
+        assertThatIllegalArgumentException().isThrownBy(() -> editor.setAsText("foo"));
     }
 }

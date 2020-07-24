@@ -61,11 +61,10 @@ class ApplicationRecipientService {
          * Thus no need to use a {@link java.util.Set} to avoid person duplicates within the returned list.
          */
 
-        Person applicationPerson = application.getPerson();
+        final Person applicationPerson = application.getPerson();
+        final List<Person> bosses = personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
 
-        List<Person> bosses = personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
-
-        List<Person> relevantBosses =
+        final List<Person> relevantBosses =
             personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS).stream()
                 .filter(bossesForDepartmentOf(applicationPerson))
                 .collect(toList());

@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.sickdays.web;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -19,9 +19,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class SickDaysOverviewViewControllerSecurityIT {
+class SickDaysOverviewViewControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -31,14 +31,14 @@ public class SickDaysOverviewViewControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "USER")
-    public void periodsSickNotesWithWrongRole() throws Exception {
+    void periodsSickNotesWithWrongRole() throws Exception {
         final ResultActions resultActions = perform(get("/web/sicknote"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = {"USER", "OFFICE"})
-    public void periodsSickNotesWithCorrectRole() throws Exception {
+    void periodsSickNotesWithCorrectRole() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(new Person());
 

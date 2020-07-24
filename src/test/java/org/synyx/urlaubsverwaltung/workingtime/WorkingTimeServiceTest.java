@@ -1,17 +1,16 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.config.WorkingTimeProperties;
 
 import java.time.Clock;
@@ -26,165 +25,148 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WorkingTimeServiceTest {
+@ExtendWith(MockitoExtension.class)
+class WorkingTimeServiceTest {
     private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 9, 13);
+
+    private WorkingTimeService sut;
 
     @Mock
     private WorkingTimeProperties workingTimeProperties;
-
     @Mock
-    private WorkingTimeDAO workingTimeDAOMock;
-
+    private WorkingTimeRepository workingTimeRepositoryMock;
     @Mock
     private SettingsService settingsServiceMock;
-
     @Mock
     private Clock clock;
 
-    private WorkingTimeService workingTimeService;
+    @BeforeEach
+    void setUp() {
+        sut = new WorkingTimeService(workingTimeProperties, workingTimeRepositoryMock, settingsServiceMock, clock);
+    }
 
-    @Before
-    public void setUp() {
-        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+    @Test
+    void ensureDefaultWorkingTimeCreation() {
+
+        final Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
 
         when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
 
-        workingTimeService = new WorkingTimeService(workingTimeProperties, workingTimeDAOMock, settingsServiceMock, clock);
-    }
 
-    @Test
-    public void ensureDefaultWorkingTimeCreation() {
-        ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
-
-        Person person = TestDataCreator.createPerson();
-        WorkingTime expectedWorkingTime = new WorkingTime();
+        final Person person = createPerson();
+        final WorkingTime expectedWorkingTime = new WorkingTime();
         expectedWorkingTime.setWorkingDays(List.of(1, 2, 3, 4, 5), FULL);
         expectedWorkingTime.setPerson(person);
         expectedWorkingTime.setValidFrom(LocalDate.now(clock));
 
-        workingTimeService.createDefaultWorkingTime(person);
+        sut.createDefaultWorkingTime(person);
 
-        verify(workingTimeProperties).getDefaultWorkingDays();
-        verify(workingTimeDAOMock).save(argument.capture());
+        ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
+        verify(workingTimeRepositoryMock).save(argument.capture());
         assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedWorkingTime);
     }
 
     @Test
-    public void ensureReturnsOverriddenFederalStateIfPersonHasSpecialFederalState() {
+    void ensureReturnsOverriddenFederalStateIfPersonHasSpecialFederalState() {
 
-        LocalDate now = LocalDate.now(UTC);
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
 
-        Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
-
-        Person person = TestDataCreator.createPerson();
-        WorkingTime workingTime = new WorkingTime();
-        workingTime.setFederalStateOverride(FederalState.BAYERN);
-
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        final WorkingTime workingTime = new WorkingTime();
+        workingTime.setFederalStateOverride(BAYERN);
+        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(workingTime);
 
-        FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
+        final LocalDate now = LocalDate.now(UTC);
+        final Person person = createPerson();
+        final FederalState federalState = sut.getFederalStateForPerson(person, now);
 
-        verifyZeroInteractions(settingsServiceMock);
-        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
+        verifyNoInteractions(settingsServiceMock);
 
-        Assert.assertNotNull("Missing federal state", federalState);
-        Assert.assertEquals("Wrong federal state", FederalState.BAYERN, federalState);
+        assertThat(federalState).isEqualTo(BAYERN);
     }
 
 
     @Test
-    public void ensureReturnsSystemFederalStateIfPersonHasNoSpecialFederalState() {
+    void ensureReturnsSystemFederalStateIfPersonHasNoSpecialFederalState() {
 
-        LocalDate now = LocalDate.now(UTC);
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
 
-        Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
-
-        Person person = TestDataCreator.createPerson();
-        WorkingTime workingTime = new WorkingTime();
+        final WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(null);
+        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTime);
 
-        when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
-            .thenReturn(workingTime);
-
-        FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
-
-        verify(settingsServiceMock).getSettings();
-        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
-
-        Assert.assertNotNull("Missing federal state", federalState);
-        Assert.assertEquals("Wrong federal statecheckCalendarSyncSettingsNoExceptionForEmptyEmail", FederalState.BADEN_WUERTTEMBERG, federalState);
+        final LocalDate now = LocalDate.now(UTC);
+        final Person person = createPerson();
+        final FederalState federalState = sut.getFederalStateForPerson(person, now);
+        assertThat(federalState).isEqualTo(BADEN_WUERTTEMBERG);
     }
 
 
     @Test
-    public void ensureReturnsSystemFederalStateIfPersonHasNoMatchingWorkingTime() {
+    void ensureReturnsSystemFederalStateIfPersonHasNoMatchingWorkingTime() {
 
-        LocalDate now = LocalDate.now(UTC);
-        Person person = TestDataCreator.createPerson();
-
-        Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
-
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+
+        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(null);
 
-        FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
-
-        verify(settingsServiceMock).getSettings();
-        verify(workingTimeDAOMock).findByPersonAndValidityDateEqualsOrMinorDate(person, now);
-
-        Assert.assertNotNull("Missing federal state", federalState);
-        Assert.assertEquals("Wrong federal state", FederalState.BADEN_WUERTTEMBERG, federalState);
+        Person person = createPerson();
+        LocalDate now = LocalDate.now(UTC);
+        final FederalState federalState = sut.getFederalStateForPerson(person, now);
+        assertThat(federalState).isEqualTo(BADEN_WUERTTEMBERG);
     }
 
 
     @Test
-    public void ensureSetsFederalStateOverrideIfGiven() {
+    void ensureSetsFederalStateOverrideIfGiven() {
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
 
-        workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), LocalDate.now(UTC), person);
+        sut.touch(Arrays.asList(1, 2), Optional.of(BAYERN), LocalDate.now(UTC), person);
 
-        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeRepositoryMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 
         Optional<FederalState> optionalFederalState = workingTime.getFederalStateOverride();
         Assert.assertTrue("Missing federal state", optionalFederalState.isPresent());
-        Assert.assertEquals("Wrong federal state", FederalState.BAYERN, optionalFederalState.get());
+        Assert.assertEquals("Wrong federal state", BAYERN, optionalFederalState.get());
     }
 
 
     @Test
-    public void ensureRemovesFederalStateOverrideIfNull() {
+    void ensureRemovesFederalStateOverrideIfNull() {
 
-        WorkingTime existentWorkingTime = TestDataCreator.createWorkingTime();
-        existentWorkingTime.setFederalStateOverride(FederalState.BAYERN);
+        WorkingTime existentWorkingTime = createWorkingTime();
+        existentWorkingTime.setFederalStateOverride(BAYERN);
 
-        when(workingTimeDAOMock.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepositoryMock.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(existentWorkingTime);
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
 
-        workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
+        sut.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 
-        verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+        verify(workingTimeRepositoryMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 

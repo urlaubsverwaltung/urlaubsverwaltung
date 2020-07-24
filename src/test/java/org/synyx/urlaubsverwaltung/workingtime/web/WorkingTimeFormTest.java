@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.workingtime.web;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 
 import java.time.LocalDate;
@@ -11,14 +11,14 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 
-public class WorkingTimeFormTest {
+class WorkingTimeFormTest {
 
     private static final LocalDate VALID_FROM = LocalDate.now().minusDays(10);
     private static final List<Integer> WORKING_DAYS = asList(3, 4, 5, 7);
     private static final FederalState FEDERAL_STATE = FederalState.BERLIN;
 
     @Test
-    public void ensureEqualsUsesCorrectAttributes() {
+    void ensureEqualsUsesCorrectAttributes() {
 
         WorkingTimeForm form1 = new WorkingTimeForm();
         form1.setValidFrom(VALID_FROM);
@@ -50,7 +50,7 @@ public class WorkingTimeFormTest {
     }
 
     @Test
-    public void ensureHashCodeUsesCorrectAttribute() {
+    void ensureHashCodeUsesCorrectAttribute() {
 
         final WorkingTimeForm form1 = new WorkingTimeForm();
         form1.setValidFrom(VALID_FROM);

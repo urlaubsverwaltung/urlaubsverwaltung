@@ -2,16 +2,15 @@ package org.synyx.urlaubsverwaltung.account.service;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -35,9 +34,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountInteractionServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class AccountInteractionServiceImplTest {
 
     private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 8, 13);
 
@@ -52,39 +52,35 @@ public class AccountInteractionServiceImplTest {
     @Mock
     private AccountProperties accountProperties;
 
-    private Person person;
-
-
-    @Before
-    public void setup() {
-
-        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        doReturn(fixedClock.instant()).when(clock).instant();
-        doReturn(fixedClock.getZone()).when(clock).getZone();
-
-        when(accountProperties.getDefaultVacationDays()).thenReturn(20);
-
+    @BeforeEach
+    void setup() {
         sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, clock);
-
-        person = TestDataCreator.createPerson("horscht");
     }
 
     @Test
-    public void testDefaultAccountCreation() {
-        ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
+    void testDefaultAccountCreation() {
+
+        final Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
+
+        final Person person = createPerson();
+
+        when(accountProperties.getDefaultVacationDays()).thenReturn(20);
+
+        sut.createDefaultAccount(person);
 
         Account expectedAccount = new Account(person, LocalDate.now(clock), LocalDate.now(clock).with(lastDayOfYear()), valueOf(20), ZERO, ZERO, "");
         expectedAccount.setVacationDays(valueOf(7));
 
-        sut.createDefaultAccount(person);
-
-        verify(accountProperties).getDefaultVacationDays();
+        ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
         verify(accountService).save(argument.capture());
         AssertionsForClassTypes.assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedAccount);
     }
 
     @Test
-    public void testUpdateRemainingVacationDays() {
+    void testUpdateRemainingVacationDays() {
+        final Person person = createPerson();
 
         final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
@@ -117,7 +113,8 @@ public class AccountInteractionServiceImplTest {
     }
 
     @Test
-    public void testUpdateRemainingVacationDaysAndNotExpiringDaysAreGreaterThenRemaining() {
+    void testUpdateRemainingVacationDaysAndNotExpiringDaysAreGreaterThenRemaining() {
+        final Person person = createPerson();
 
         final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
@@ -138,7 +135,8 @@ public class AccountInteractionServiceImplTest {
     }
 
     @Test
-    public void testUpdateRemainingVacationDaysHasNoThisYearAccount() {
+    void testUpdateRemainingVacationDaysHasNoThisYearAccount() {
+        final Person person = createPerson();
 
         final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
@@ -159,7 +157,8 @@ public class AccountInteractionServiceImplTest {
 
 
     @Test
-    public void ensureCreatesNewHolidaysAccountIfNotExistsYet() {
+    void ensureCreatesNewHolidaysAccountIfNotExistsYet() {
+        final Person person = createPerson();
 
         int year = 2014;
         int nextYear = 2015;
@@ -199,7 +198,8 @@ public class AccountInteractionServiceImplTest {
 
 
     @Test
-    public void ensureUpdatesRemainingVacationDaysOfHolidaysAccountIfAlreadyExists() {
+    void ensureUpdatesRemainingVacationDaysOfHolidaysAccountIfAlreadyExists() {
+        final Person person = createPerson();
 
         int year = 2014;
         int nextYear = 2015;
@@ -237,7 +237,8 @@ public class AccountInteractionServiceImplTest {
     }
 
     @Test
-    public void createHolidaysAccount() {
+    void createHolidaysAccount() {
+        final Person person = createPerson();
 
         LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
@@ -255,7 +256,8 @@ public class AccountInteractionServiceImplTest {
     }
 
     @Test
-    public void updateHolidaysAccount() {
+    void updateHolidaysAccount() {
+        final Person person = createPerson();
 
         LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);

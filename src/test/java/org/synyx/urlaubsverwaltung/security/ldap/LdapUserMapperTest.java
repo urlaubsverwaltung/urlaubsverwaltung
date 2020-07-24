@@ -1,14 +1,15 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.ldap.core.DirContextOperations;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class LdapUserMapperTest {
+class LdapUserMapperTest {
 
     private static final String IDENTIFIER_ATTRIBUTE = "uid";
     private static final String FIRST_NAME_ATTRIBUTE = "givenName";
@@ -28,8 +29,8 @@ public class LdapUserMapperTest {
 
     private LdapUserMapper ldapUserMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
         directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
@@ -45,7 +46,7 @@ public class LdapUserMapperTest {
     // Map user from attributes ----------------------------------------------------------------------------------------
 
     @Test
-    public void ensureThrowsIfTryingToCreateLdapUserFromAttributesWithInvalidIdentifierAttribute()
+    void ensureThrowsIfTryingToCreateLdapUserFromAttributesWithInvalidIdentifierAttribute()
         throws NamingException {
 
         Attributes attributes = mock(Attributes.class);
@@ -66,7 +67,7 @@ public class LdapUserMapperTest {
 
 
     @Test
-    public void ensureCreatesLdapUserFromAttributesWithOnlyUsernameGiven() throws NamingException {
+    void ensureCreatesLdapUserFromAttributesWithOnlyUsernameGiven() throws NamingException {
 
         Attributes attributes = mock(Attributes.class);
         when(attributes.get(IDENTIFIER_ATTRIBUTE))
@@ -90,7 +91,7 @@ public class LdapUserMapperTest {
 
 
     @Test
-    public void ensureCreatesLdapUserFromAttributes() throws NamingException {
+    void ensureCreatesLdapUserFromAttributes() throws NamingException {
 
         Attributes attributes = mock(Attributes.class);
         when(attributes.get(IDENTIFIER_ATTRIBUTE))
@@ -119,7 +120,7 @@ public class LdapUserMapperTest {
     // Map user from context -------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws UnsupportedMemberAffiliationException {
+    void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
@@ -139,7 +140,7 @@ public class LdapUserMapperTest {
 
 
     @Test
-    public void ensureCreatesLdapUserFromContext() throws UnsupportedMemberAffiliationException {
+    void ensureCreatesLdapUserFromContext() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
@@ -162,8 +163,8 @@ public class LdapUserMapperTest {
     }
 
 
-    @Test(expected = UnsupportedMemberAffiliationException.class)
-    public void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws UnsupportedMemberAffiliationException {
+    @Test
+    void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
@@ -174,12 +175,13 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
             .thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
 
-        ldapUserMapper.mapFromContext(ctx);
+        assertThatThrownBy(() -> ldapUserMapper.mapFromContext(ctx))
+            .isInstanceOf(UnsupportedMemberAffiliationException.class);
     }
 
 
     @Test
-    public void ensureNoMemberOfCheckIfMemberOfFilterIsNull() {
+    void ensureNoMemberOfCheckIfMemberOfFilterIsNull() {
 
         final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
         directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
@@ -210,7 +212,7 @@ public class LdapUserMapperTest {
 
 
     @Test
-    public void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() {
+    void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() {
 
         final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
         directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);

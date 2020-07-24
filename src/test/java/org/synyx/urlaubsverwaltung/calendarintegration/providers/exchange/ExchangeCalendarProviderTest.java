@@ -12,9 +12,9 @@ import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.property.complex.time.TimeZoneDefinition;
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
@@ -30,10 +30,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ExchangeCalendarProviderTest {
+class ExchangeCalendarProviderTest {
 
     @Test
-    public void checkCalendarSyncSettingsNoExceptionForEmptyEmail() {
+    void checkCalendarSyncSettingsNoExceptionForEmptyEmail() {
         final CalendarMailService calendarMailService = mock(CalendarMailService.class);
 
         ExchangeCalendarProvider cut = new ExchangeCalendarProvider(calendarMailService);
@@ -94,7 +94,7 @@ public class ExchangeCalendarProviderTest {
 
 
     @Test
-    public void add() throws Exception {
+    void add() throws Exception {
         CalendarMailService calendarMailService = mock(CalendarMailService.class);
         ExchangeFactory exchangeFactory = mock(ExchangeFactory.class);
 

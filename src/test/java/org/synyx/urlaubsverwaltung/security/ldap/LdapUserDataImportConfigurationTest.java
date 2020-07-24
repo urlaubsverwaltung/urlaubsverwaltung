@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
@@ -9,12 +9,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
-public class LdapUserDataImportConfigurationTest {
+class LdapUserDataImportConfigurationTest {
 
     @Test
-    public void importsLdapUserDataWithGivenCronJobInterval() {
+    void importsLdapUserDataWithGivenCronJobInterval() {
 
         final DirectoryServiceSecurityProperties properties = new DirectoryServiceSecurityProperties();
         final LdapUserDataImporter importer = mock(LdapUserDataImporter.class);
@@ -29,7 +29,7 @@ public class LdapUserDataImportConfigurationTest {
         final CronTask cronTask = cronTaskList.get(0);
         assertThat(cronTask.getExpression()).isEqualTo("0 0 1 * * ?");
 
-        verifyZeroInteractions(importer);
+        verifyNoInteractions(importer);
 
         cronTask.getRunnable().run();
         verify(importer).sync();

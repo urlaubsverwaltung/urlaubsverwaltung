@@ -4,11 +4,11 @@ import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
@@ -44,16 +43,16 @@ import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 /**
  * Unit test for {@link CalculationService}.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class CalculationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CalculationServiceTest {
 
     private CalculationService sut;
 
@@ -64,82 +63,33 @@ public class CalculationServiceTest {
     @Mock
     private AccountService accountService;
     @Mock
-    private WorkDaysService calendarService;
+    private SettingsService settingsService;
+    @Mock
+    private WorkingTimeService workingTimeService;
 
-    @Before
-    public void setUp() {
-        WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
-        SettingsService settingsService = mock(SettingsService.class);
+    @BeforeEach
+    void setUp() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL url = cl.getResource("Holidays_de.xml");
-        ManagerParameter managerParameter = ManagerParameters.create(url);
-        HolidayManager holidayManager = HolidayManager.getInstance(managerParameter);
-
-        calendarService = new WorkDaysService(new PublicHolidaysService(settingsService, holidayManager), workingTimeService,
-            settingsService);
+        final HolidayManager holidayManager = getHolidayManager();
+        final PublicHolidaysService publicHolidaysService = new PublicHolidaysService(settingsService, holidayManager);
+        final WorkDaysService calendarService = new WorkDaysService(publicHolidaysService, workingTimeService, settingsService);
 
         // create working time object (MON-FRI)
-        WorkingTime workingTime = new WorkingTime();
+        final WorkingTime workingTime = new WorkingTime();
         List<Integer> workingDays = asList(MONDAY.getValue(), TUESDAY.getValue(), WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
         workingTime.setWorkingDays(workingDays, FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, calendarService, new OverlapService(null, null));
     }
 
-    private Application createApplicationStub(Person person) {
-        Application template = new Application();
-        template.setPerson(person);
-        template.setDayLength(FULL);
-        return template;
-    }
-
-    private void prepareSetupWith10DayAnnualVacation(Person person, int usedDaysBeforeApril, int usedDaysAfterApril) {
-
-        Optional<Account> account2012 = Optional.of(new Account());
-        Optional<Account> account2013 = Optional.of(new Account());
-        Optional<Account> account2014 = Optional.of(new Account());
-        when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
-        when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
-        when(accountService.getHolidaysAccount(2014, person)).thenReturn(account2014);
-
-        // vacation days would be left after this application for leave
-        when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
-            VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
-                .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
-                .get());
-        when(vacationDaysService.getVacationDaysLeft(account2013.get(), account2014)).thenReturn(
-            VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
-                .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
-                .get());
-/*        when(vacationDaysService.getVacationDaysLeft(account2014.get(), Optional.empty())).thenReturn(
-            VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.ZERO)
-                .forUsedDaysAfterApril(BigDecimal.ZERO)
-                .get());*/
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2014)).thenReturn(BigDecimal.ZERO);
-    }
 
     @Test
-    public void testCheckApplicationSameYearAndEnoughDaysLeft() {
+    void testCheckApplicationSameYearAndEnoughDaysLeft() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -149,9 +99,6 @@ public class CalculationServiceTest {
 
         Account account = new Account();
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
-
-        // vacation days would be left after this application for leave
-        //when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(BigDecimal.TEN);
 
         when(vacationDaysService.getVacationDaysLeft(any(), any())).thenReturn(
             VacationDaysLeft.builder()
@@ -168,9 +115,9 @@ public class CalculationServiceTest {
     }
 
     @Test
-    public void testCheckApplicationSameYearAndNotEnoughDaysLeft() {
+    void testCheckApplicationSameYearAndNotEnoughDaysLeft() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -196,9 +143,9 @@ public class CalculationServiceTest {
     }
 
     @Test
-    public void testCheckApplicationSameYearAndExactEnoughDaysLeft() {
+    void testCheckApplicationSameYearAndExactEnoughDaysLeft() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -225,24 +172,39 @@ public class CalculationServiceTest {
 
 
     @Test
-    public void testCheckApplicationOneDayIsToMuch() {
+    void testCheckApplicationOneDayIsToMuch() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
 
         // not enough vacation days for this application for leave
-        prepareSetupWith10DayAnnualVacation(person, 0, 10);
+
+        final Optional<Account> account2012 = Optional.of(new Account());
+        final Optional<Account> account2013 = Optional.of(new Account());
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
+
+        // vacation days would be left after this application for leave
+        when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
+            VacationDaysLeft.builder()
+                .withAnnualVacation(BigDecimal.TEN)
+                .withRemainingVacation(BigDecimal.ZERO)
+                .notExpiring(BigDecimal.ZERO)
+                .forUsedDaysBeforeApril(BigDecimal.valueOf(0))
+                .forUsedDaysAfterApril(BigDecimal.valueOf(10))
+                .get());
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isFalse();
     }
 
     @Test
-    public void testPersonWithoutHolidayAccount() {
-        Person person = TestDataCreator.createPerson("horscht");
+    void testPersonWithoutHolidayAccount() {
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -253,25 +215,40 @@ public class CalculationServiceTest {
     }
 
     @Test
-    public void testCheckApplicationOneDayIsOkay() {
+    void testCheckApplicationOneDayIsOkay() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
 
         // enough vacation days for this application for leave, but none would be left
-        prepareSetupWith10DayAnnualVacation(person, 4, 5);
+
+        final Optional<Account> account2012 = Optional.of(new Account());
+        final Optional<Account> account2013 = Optional.of(new Account());
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
+
+        // vacation days would be left after this application for leave
+        when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
+            VacationDaysLeft.builder()
+                .withAnnualVacation(BigDecimal.TEN)
+                .withRemainingVacation(BigDecimal.ZERO)
+                .notExpiring(BigDecimal.ZERO)
+                .forUsedDaysBeforeApril(BigDecimal.valueOf(4))
+                .forUsedDaysAfterApril(BigDecimal.valueOf(5))
+                .get());
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isTrue();
     }
 
     @Test
-    public void testCheckApplicationLastYear() {
+    void testCheckApplicationLastYear() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
@@ -299,9 +276,9 @@ public class CalculationServiceTest {
     }
 
     @Test
-    public void testCheckApplicationOneDayIsOkayOverAYear() {
+    void testCheckApplicationOneDayIsOkayOverAYear() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
@@ -309,32 +286,44 @@ public class CalculationServiceTest {
 
         prepareSetupWith10DayAnnualVacation(person, 5, 4);
 
-        Assert.assertTrue("Should be enough vacation days to apply for leave",
-            sut.checkApplication(applicationForLeaveToCheck));
+        assertThat(sut.checkApplication(applicationForLeaveToCheck)).isTrue();
     }
 
     @Test
-    public void testCheckApplicationOneDayIsNotOkayOverAYear() {
+    void testCheckApplicationOneDayIsNotOkayOverAYear() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2013, JANUARY, 2));
 
-        prepareSetupWith10DayAnnualVacation(person, 5, 5);
+        final Optional<Account> account2012 = Optional.of(new Account());
+        final Optional<Account> account2013 = Optional.of(new Account());
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
-        Assert.assertFalse("Should not be enough vacation days to apply for leave",
-            sut.checkApplication(applicationForLeaveToCheck));
+        // vacation days would be left after this application for leave
+        when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
+            VacationDaysLeft.builder()
+                .withAnnualVacation(BigDecimal.TEN)
+                .withRemainingVacation(BigDecimal.ZERO)
+                .notExpiring(BigDecimal.ZERO)
+                .forUsedDaysBeforeApril(BigDecimal.valueOf(5))
+                .forUsedDaysAfterApril(BigDecimal.valueOf(5))
+                .get());
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
+
+        assertThat(sut.checkApplication(applicationForLeaveToCheck)).isFalse();
     }
 
     /**
      * https://github.com/synyx/urlaubsverwaltung/issues/447
      */
     @Test
-    public void testCheckApplicationNextYearUsingRemainingAlready() {
+    void testCheckApplicationNextYearUsingRemainingAlready() {
 
-        Person person = TestDataCreator.createPerson("horscht");
+        Person person = createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         // nine days
@@ -357,16 +346,6 @@ public class CalculationServiceTest {
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
-        // set up 13 days already used next year, i.e. 10 + 3 remaining
-/*        when(vacationDaysService.getVacationDaysLeft(account2013.get(), Optional.empty())).thenReturn(
-            VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.TEN)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.valueOf(13))
-                .forUsedDaysAfterApril(BigDecimal.ZERO)
-                .get());*/
-
         // this year still has all ten days (but 3 of them used up next year, see above)
         when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
             VacationDaysLeft.builder()
@@ -380,9 +359,51 @@ public class CalculationServiceTest {
 
         when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.TEN);
 
-//        when(vacationDaysService.calculateTotalLeftVacationDays(account2012.get())).thenReturn(BigDecimal.TEN);
-
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isFalse();
+    }
+
+    private Application createApplicationStub(Person person) {
+        Application template = new Application();
+        template.setPerson(person);
+        template.setDayLength(FULL);
+        return template;
+    }
+
+    private void prepareSetupWith10DayAnnualVacation(Person person, int usedDaysBeforeApril, int usedDaysAfterApril) {
+
+        final Optional<Account> account2012 = Optional.of(new Account());
+        final Optional<Account> account2013 = Optional.of(new Account());
+        final Optional<Account> account2014 = Optional.of(new Account());
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
+        when(accountService.getHolidaysAccount(2014, person)).thenReturn(account2014);
+
+        // vacation days would be left after this application for leave
+        when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
+            VacationDaysLeft.builder()
+                .withAnnualVacation(BigDecimal.TEN)
+                .withRemainingVacation(BigDecimal.ZERO)
+                .notExpiring(BigDecimal.ZERO)
+                .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
+                .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
+                .get());
+        when(vacationDaysService.getVacationDaysLeft(account2013.get(), account2014)).thenReturn(
+            VacationDaysLeft.builder()
+                .withAnnualVacation(BigDecimal.TEN)
+                .withRemainingVacation(BigDecimal.ZERO)
+                .notExpiring(BigDecimal.ZERO)
+                .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
+                .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
+                .get());
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2014)).thenReturn(BigDecimal.ZERO);
+    }
+
+    private HolidayManager getHolidayManager() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        URL url = cl.getResource("Holidays_de.xml");
+        ManagerParameter managerParameter = ManagerParameters.create(url);
+        return HolidayManager.getInstance(managerParameter);
     }
 }

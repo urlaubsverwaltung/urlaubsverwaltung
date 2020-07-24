@@ -19,8 +19,8 @@ import com.google.api.services.calendar.model.EventDateTime;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
@@ -37,6 +37,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class GoogleCalendarSyncProvider implements CalendarProvider {
 

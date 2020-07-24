@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -19,23 +19,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class ApplicationForLeaveTest {
+class ApplicationForLeaveTest {
 
     private WorkDaysService calendarService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         calendarService = mock(WorkDaysService.class);
     }
 
 
     @Test
-    public void ensureCreatesCorrectApplicationForLeave() {
+    void ensureCreatesCorrectApplicationForLeave() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
+        Application application = DemoDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
@@ -61,11 +61,11 @@ public class ApplicationForLeaveTest {
 
 
     @Test
-    public void ensureApplicationForLeaveHasInformationAboutDayOfWeek() {
+    void ensureApplicationForLeaveHasInformationAboutDayOfWeek() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = DemoDataCreator.createPerson();
 
-        Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
+        Application application = DemoDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),

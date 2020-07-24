@@ -1,20 +1,20 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionServiceImpl}.
  */
-public class SickNoteInteractionServiceImplTest {
+class SickNoteInteractionServiceImplTest {
 
     private SickNoteInteractionService sickNoteInteractionService;
 
@@ -49,8 +49,8 @@ public class SickNoteInteractionServiceImplTest {
     private Person person;
     private AbsenceMapping absenceMapping;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sickNoteService = mock(SickNoteService.class);
         commentService = mock(SickNoteCommentService.class);
@@ -74,14 +74,14 @@ public class SickNoteInteractionServiceImplTest {
         sickNote.setStartDate(LocalDate.now(UTC));
         sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setPerson(TestDataCreator.createPerson());
+        sickNote.setPerson(DemoDataCreator.createPerson());
 
-        person = TestDataCreator.createPerson();
+        person = DemoDataCreator.createPerson();
     }
 
 
     @Test
-    public void ensureCreatedSickNoteIsPersisted() {
+    void ensureCreatedSickNoteIsPersisted() {
 
         SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
@@ -94,7 +94,7 @@ public class SickNoteInteractionServiceImplTest {
     }
 
     @Test
-    public void ensureCreatedSickNoteHasComment() {
+    void ensureCreatedSickNoteHasComment() {
         String comment = "test comment";
 
         sickNoteInteractionService.create(sickNote, person, comment);
@@ -105,7 +105,7 @@ public class SickNoteInteractionServiceImplTest {
 
 
     @Test
-    public void ensureCreatingSickNoteAddsEventToCalendar() {
+    void ensureCreatingSickNoteAddsEventToCalendar() {
 
         sickNoteInteractionService.create(sickNote, person);
 
@@ -116,7 +116,7 @@ public class SickNoteInteractionServiceImplTest {
 
 
     @Test
-    public void ensureUpdatedSickNoteIsPersisted() {
+    void ensureUpdatedSickNoteIsPersisted() {
 
         SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
 
@@ -129,7 +129,7 @@ public class SickNoteInteractionServiceImplTest {
     }
 
     @Test
-    public void ensureUpdatedSickHasComment() {
+    void ensureUpdatedSickHasComment() {
         final String comment = "test comment";
 
         sickNoteInteractionService.update(sickNote, person, comment);
@@ -140,7 +140,7 @@ public class SickNoteInteractionServiceImplTest {
 
 
     @Test
-    public void ensureUpdatingSickNoteUpdatesCalendarEvent() {
+    void ensureUpdatingSickNoteUpdatesCalendarEvent() {
 
         sickNoteInteractionService.update(sickNote, person);
 
@@ -150,7 +150,7 @@ public class SickNoteInteractionServiceImplTest {
 
 
     @Test
-    public void ensureCancelledSickNoteIsPersisted() {
+    void ensureCancelledSickNoteIsPersisted() {
 
         SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, person);
 
@@ -164,7 +164,7 @@ public class SickNoteInteractionServiceImplTest {
 
 
     @Test
-    public void ensureCancellingSickNoteDeletesCalendarEvent() {
+    void ensureCancellingSickNoteDeletesCalendarEvent() {
 
         sickNoteInteractionService.cancel(sickNote, person);
 
@@ -175,14 +175,14 @@ public class SickNoteInteractionServiceImplTest {
 
 
     @Test
-    public void ensureConvertedSickNoteIsPersisted() {
+    void ensureConvertedSickNoteIsPersisted() {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setStartDate(LocalDate.now(UTC));
         applicationForLeave.setEndDate(LocalDate.now(UTC));
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
-        applicationForLeave.setPerson(TestDataCreator.createPerson());
+        applicationForLeave.setPerson(DemoDataCreator.createPerson());
 
         SickNote convertedSickNote = sickNoteInteractionService.convert(sickNote, applicationForLeave, person);
 
@@ -202,7 +202,7 @@ public class SickNoteInteractionServiceImplTest {
 
 
     @Test
-    public void ensureConvertingSickNoteToVacationUpdatesCalendarEvent() {
+    void ensureConvertingSickNoteToVacationUpdatesCalendarEvent() {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setStartDate(LocalDate.now(UTC));

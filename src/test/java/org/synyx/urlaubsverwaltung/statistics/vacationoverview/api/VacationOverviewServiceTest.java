@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
 
-public class VacationOverviewServiceTest {
+class VacationOverviewServiceTest {
 
     private VacationOverviewService sut;
 
@@ -30,8 +30,8 @@ public class VacationOverviewServiceTest {
     private WorkingTimeService workingTimeService;
     private PublicHolidaysService publicHolidayService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.departmentService = mock(DepartmentService.class);
         this.workingTimeService = mock(WorkingTimeService.class);
         this.publicHolidayService = mock(PublicHolidaysService.class);
@@ -39,7 +39,7 @@ public class VacationOverviewServiceTest {
     }
 
     @Test
-    public void assertVacationOverviewsForExistingDepartment() {
+    void assertVacationOverviewsForExistingDepartment() {
         Department department = new Department();
         String departmentName = "Admins";
         department.setName(departmentName);

@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
@@ -13,10 +12,10 @@ import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTA
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
 
 
-public class SickDaysTest {
+class SickDaysTest {
 
     @Test
-    public void ensureDaysMapIsInitialized() {
+    void ensureDaysMapIsInitialized() {
 
         final SickDays sickDays = new SickDays();
 
@@ -28,7 +27,7 @@ public class SickDaysTest {
 
 
     @Test
-    public void ensureCanAddDays() {
+    void ensureCanAddDays() {
 
         final SickDays sickDays = new SickDays();
 

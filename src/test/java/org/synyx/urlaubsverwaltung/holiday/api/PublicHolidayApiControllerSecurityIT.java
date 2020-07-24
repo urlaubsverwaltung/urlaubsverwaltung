@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.holiday.api;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,9 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class PublicHolidayApiControllerSecurityIT {
+class PublicHolidayApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -38,14 +38,14 @@ public class PublicHolidayApiControllerSecurityIT {
     private WorkingTimeService workingTimeService;
 
     @Test
-    public void getHolidaysWithoutAuthIsUnauthorized() throws Exception {
+    void getHolidaysWithoutAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/holidays"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    public void getHolidaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+    void getHolidaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
             .param("month", "11")
@@ -55,7 +55,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getHolidaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    void getHolidaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
             .param("month", "11")
@@ -65,7 +65,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getHolidaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    void getHolidaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
             .param("month", "11")
@@ -75,7 +75,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getHolidaysAsBossUserForOtherUserIsForbidden() throws Exception {
+    void getHolidaysAsBossUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
             .param("month", "11")
@@ -85,7 +85,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getHolidaysAsAdminUserForOtherUserIsForbidden() throws Exception {
+    void getHolidaysAsAdminUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
             .param("month", "11")
@@ -95,7 +95,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getHolidaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
+    void getHolidaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
             .param("month", "11")
@@ -105,7 +105,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getHolidaysWithOfficeRoleIsOk() throws Exception {
+    void getHolidaysWithOfficeRoleIsOk() throws Exception {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
@@ -119,7 +119,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(username = "user")
-    public void getHolidaysWithSameUserIsOk() throws Exception {
+    void getHolidaysWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -135,7 +135,7 @@ public class PublicHolidayApiControllerSecurityIT {
 
     @Test
     @WithMockUser(username = "differentUser")
-    public void getHolidaysWithDifferentUserIsForbidden() throws Exception {
+    void getHolidaysWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");

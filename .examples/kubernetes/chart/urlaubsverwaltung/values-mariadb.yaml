@@ -4,7 +4,7 @@ image:
 applicationProperties: |-
   # AUTHENTICATION
   uv.security.auth=default
-  uv.development.testdata.create=true
+  uv.development.demodata.create=true
 
 # use mariadb to store data
 deployMariaDb: true

@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -25,31 +26,31 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class FreeTimeAbsenceProviderTest {
+class FreeTimeAbsenceProviderTest {
 
     private FreeTimeAbsenceProvider freeTimeAbsenceProvider;
 
-    private HolidayAbsenceProvider holidayAbsenceProvider;
+    private PublicHolidayAbsenceProvider publicHolidayAbsenceProvider;
     private WorkingTimeService workingTimeService;
     private TimedAbsenceSpans emptyTimedAbsenceSpans;
     private Person testPerson;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
-        holidayAbsenceProvider = mock(HolidayAbsenceProvider.class);
+        publicHolidayAbsenceProvider = mock(PublicHolidayAbsenceProvider.class);
         setupDefaultWorkingTimeService();
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
-        testPerson = TestDataCreator.createPerson();
+        testPerson = DemoDataCreator.createPerson();
 
-        freeTimeAbsenceProvider = new FreeTimeAbsenceProvider(holidayAbsenceProvider, workingTimeService);
+        freeTimeAbsenceProvider = new FreeTimeAbsenceProvider(publicHolidayAbsenceProvider, workingTimeService);
     }
 
 
     private void setupDefaultWorkingTimeService() {
 
-        WorkingTime testWorkingTime = TestDataCreator.createWorkingTime();
+        WorkingTime testWorkingTime = DemoDataCreator.createWorkingTime();
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
             any(LocalDate.class)))
@@ -61,7 +62,7 @@ public class FreeTimeAbsenceProviderTest {
 
 
     @Test
-    public void ensurePersonIsNotAvailableOnFreeDays() {
+    void ensurePersonIsNotAvailableOnFreeDays() {
 
         LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
 
@@ -77,8 +78,8 @@ public class FreeTimeAbsenceProviderTest {
         Assert.assertTrue("wrong absence ratio", BigDecimal.ONE.compareTo(absencesList.get(0).getRatio()) == 0);
     }
 
-    @Test(expected = FreeTimeAbsenceException.class)
-    public void ensureExceptionWhenPersonWorkingTimeIsNotAvailable() {
+    @Test
+    void ensureExceptionWhenPersonWorkingTimeIsNotAvailable() {
 
         LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
 
@@ -86,29 +87,29 @@ public class FreeTimeAbsenceProviderTest {
             eq(firstSundayIn2016)))
             .thenReturn(Optional.empty());
 
-        TimedAbsenceSpans updatedTimedAbsenceSpans = freeTimeAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
-            testPerson, firstSundayIn2016);
+        assertThatThrownBy(() -> freeTimeAbsenceProvider.addAbsence(emptyTimedAbsenceSpans, testPerson, firstSundayIn2016))
+            .isInstanceOf(FreeTimeAbsenceException.class);
     }
 
     @Test
-    public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
+    void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
         LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, firstSundayIn2016);
 
-        Mockito.verifyNoMoreInteractions(holidayAbsenceProvider);
+        Mockito.verifyNoMoreInteractions(publicHolidayAbsenceProvider);
     }
 
 
     @Test
-    public void ensureCallsHolidayAbsenceProviderIfNotAbsentForFreeTime() {
+    void ensureCallsHolidayAbsenceProviderIfNotAbsentForFreeTime() {
 
         LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 
-        verify(holidayAbsenceProvider, times(1))
+        verify(publicHolidayAbsenceProvider, times(1))
             .checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
     }
 }

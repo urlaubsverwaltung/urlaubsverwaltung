@@ -1,74 +1,74 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createDepartment;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createDepartment;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DepartmentValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class DepartmentValidatorTest {
 
     private DepartmentValidator sut;
 
     @Mock
     private Errors errors;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new DepartmentValidator();
     }
 
     @Test
-    public void ensureSupportsOnlyDepartmentClass() {
+    void ensureSupportsOnlyDepartmentClass() {
         assertThat(sut.supports(null)).isFalse();
         assertThat(sut.supports(Application.class)).isFalse();
         assertThat(sut.supports(Department.class)).isTrue();
     }
 
     @Test
-    public void ensureNameMustNotBeNull() {
+    void ensureNameMustNotBeNull() {
         final Department department = createDepartment(null);
         sut.validate(department, errors);
         verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
     @Test
-    public void ensureNameMustNotBeEmpty() {
+    void ensureNameMustNotBeEmpty() {
         Department department = createDepartment("");
         sut.validate(department, errors);
         verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
     @Test
-    public void ensureNameMustNotBeTooLong() {
+    void ensureNameMustNotBeTooLong() {
         Department department = createDepartment("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         sut.validate(department, errors);
         verify(errors).rejectValue("name", "error.entry.tooManyChars");
     }
 
     @Test
-    public void ensureValidNameHasNoValidationError() {
+    void ensureValidNameHasNoValidationError() {
         Department department = createDepartment("Foobar Department");
         sut.validate(department, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureDescriptionMustNotBeTooLong() {
+    void ensureDescriptionMustNotBeTooLong() {
         Department department = createDepartment("Foobar Department");
         department.setDescription(
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
@@ -87,27 +87,27 @@ public class DepartmentValidatorTest {
     }
 
     @Test
-    public void ensureValidDescriptionHasNoValidationError() {
+    void ensureValidDescriptionHasNoValidationError() {
         Department department = createDepartment("Foobar Department",
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut");
 
         sut.validate(department, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureSettingNeitherMembersNorDepartmentHeadsHasNoValidationError() {
+    void ensureSettingNeitherMembersNorDepartmentHeadsHasNoValidationError() {
         Department department = createDepartment("Admins");
         department.setMembers(null);
         department.setDepartmentHeads(null);
 
         sut.validate(department, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingAnyMember() {
-        Person person = TestDataCreator.createPerson();
+    void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingAnyMember() {
+        Person person = DemoDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
         Department department = createDepartment("Admins");
@@ -119,21 +119,21 @@ public class DepartmentValidatorTest {
     }
 
     @Test
-    public void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingThePersonAsMember() {
-        Person person = TestDataCreator.createPerson("muster");
+    void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingThePersonAsMember() {
+        Person person = DemoDataCreator.createPerson("muster");
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
         Department department = createDepartment("Admins");
         department.setDepartmentHeads(Collections.singletonList(person));
-        department.setMembers(Collections.singletonList(TestDataCreator.createPerson("member")));
+        department.setMembers(Collections.singletonList(DemoDataCreator.createPerson("member")));
 
         sut.validate(department, errors);
         verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
     }
 
     @Test
-    public void ensureCanNotSetAPersonWithoutDepartmentHeadRoleAsDepartmentHead() {
-        Person person = TestDataCreator.createPerson();
+    void ensureCanNotSetAPersonWithoutDepartmentHeadRoleAsDepartmentHead() {
+        Person person = DemoDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Department department = createDepartment("Admins");
@@ -144,8 +144,8 @@ public class DepartmentValidatorTest {
     }
 
     @Test
-    public void ensureCanNotSetAPersonWithoutSecondStageAuthorityRoleAsSecondStageAutority() {
-        Person person = TestDataCreator.createPerson();
+    void ensureCanNotSetAPersonWithoutSecondStageAuthorityRoleAsSecondStageAutority() {
+        Person person = DemoDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Department department = createDepartment("Admins");

@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.account.service;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -23,12 +23,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createHolidaysAccount;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createHolidaysAccount;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TurnOfTheYearAccountUpdaterServiceTest {
+@ExtendWith(MockitoExtension.class)
+class TurnOfTheYearAccountUpdaterServiceTest {
 
     private static final int NEW_YEAR = ZonedDateTime.now(UTC).getYear();
     private static final int LAST_YEAR = NEW_YEAR - 1;
@@ -44,13 +44,13 @@ public class TurnOfTheYearAccountUpdaterServiceTest {
     @Mock
     private MailService mailService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService);
     }
 
     @Test
-    public void ensureUpdatesHolidaysAccountsOfAllActivePersons() {
+    void ensureUpdatesHolidaysAccountsOfAllActivePersons() {
 
         Person user1 = createPerson("rick");
         Person user2 = createPerson("carl");

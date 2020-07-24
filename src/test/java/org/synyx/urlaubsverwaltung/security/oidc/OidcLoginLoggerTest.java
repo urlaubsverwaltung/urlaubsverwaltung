@@ -5,8 +5,8 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.assertj.core.groups.Tuple;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class OidcLoginLoggerTest {
+class OidcLoginLoggerTest {
 
     private static final Integer UNIQUE_ID = 42;
 
@@ -30,8 +30,8 @@ public class OidcLoginLoggerTest {
     private Authentication authentication;
     private ListAppender<ILoggingEvent> loggingEventAppender;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         personService = mock(PersonService.class);
         authentication = prepareAuthentication();
         loggingEventAppender = prepareLoggingEventAppender();
@@ -69,7 +69,7 @@ public class OidcLoginLoggerTest {
     }
 
     @Test
-    public void ensureLoggingUserIdForExistingUser() {
+    void ensureLoggingUserIdForExistingUser() {
 
         Person person = new Person("username", "lastname", "firstname", "firstname.lastname@firma.test");
         person.setId(UNIQUE_ID);
@@ -83,7 +83,7 @@ public class OidcLoginLoggerTest {
     }
 
     @Test
-    public void ensureLoggingErrorOnNonExistingUser() {
+    void ensureLoggingErrorOnNonExistingUser() {
         when(personService.getPersonByUsername(UNIQUE_ID.toString())).thenReturn(Optional.empty());
 
         sut.handle(new AuthenticationSuccessEvent(authentication));

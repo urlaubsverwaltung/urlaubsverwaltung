@@ -1,54 +1,49 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
+@ExtendWith(MockitoExtension.class)
+class PersonApiControllerTest {
 
-public class PersonApiControllerTest {
-
-    private PersonService personServiceMock;
-
-    @Before
-    public void setUp() {
-
-        personServiceMock = mock(PersonService.class);
-    }
-
+    @Mock
+    private PersonService personService;
 
     @Test
-    public void ensureReturnsAllActivePersons() throws Exception {
+    void ensureReturnsAllActivePersons() throws Exception {
 
-        Person person1 = TestDataCreator.createPerson("foo");
+        final Person person1 = createPerson("foo");
         person1.setId(1);
-        Person person2 = TestDataCreator.createPerson("bar");
+        final Person person2 = createPerson("bar");
         person2.setId(2);
 
-        when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(person1, person2));
+        when(personService.getActivePersons()).thenReturn(List.of(person1, person2));
 
         perform(get("/api/persons"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$", hasSize(2)))
             .andExpect(jsonPath("$.[0].firstName", is("Foo")))
             .andExpect(jsonPath("$.[0].links..rel", hasItem("self")))
@@ -58,20 +53,19 @@ public class PersonApiControllerTest {
             .andExpect(jsonPath("$.[0].email", is("foo@test.de")))
             .andExpect(jsonPath("$.[1].lastName", is("Bar")))
             .andReturn();
-
     }
 
     @Test
-    public void ensureReturnSpecificPerson() throws Exception {
+    void ensureReturnSpecificPerson() throws Exception {
 
-        Person person1 = TestDataCreator.createPerson("foo");
+        final Person person1 = createPerson("foo");
         person1.setId(42);
 
-        when(personServiceMock.getPersonByID(person1.getId())).thenReturn(Optional.of(person1));
+        when(personService.getPersonByID(person1.getId())).thenReturn(Optional.of(person1));
 
         perform(get("/api/persons/42"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.firstName", is("Foo")))
             .andExpect(jsonPath("$.lastName", is("Foo")))
             .andExpect(jsonPath("$.email", is("foo@test.de")))
@@ -82,9 +76,8 @@ public class PersonApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
-        return standaloneSetup(new PersonApiController(personServiceMock))
-            .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
+        return standaloneSetup(new PersonApiController(personService))
+            .setControllerAdvice(new RestControllerAdviceExceptionHandler())
             .build().perform(builder);
     }
 }

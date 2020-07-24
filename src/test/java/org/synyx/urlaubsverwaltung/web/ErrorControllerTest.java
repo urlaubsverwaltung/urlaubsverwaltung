@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.web;
 
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -14,17 +14,17 @@ import javax.servlet.http.HttpServletResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class ErrorControllerTest {
+class ErrorControllerTest {
 
     private ErrorController sut;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new ErrorController(mock(ErrorAttributes.class));
     }
 
     @Test
-    public void errorHtml() {
+    void errorHtml() {
         final HttpServletRequest request = new MockHttpServletRequest();
         final HttpServletResponse response = new MockHttpServletResponse();
         response.setStatus(403);

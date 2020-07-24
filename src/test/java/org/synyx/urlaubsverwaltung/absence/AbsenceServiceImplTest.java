@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -24,14 +24,14 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AbsenceServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class AbsenceServiceImplTest {
 
     private AbsenceServiceImpl sut;
 
@@ -42,13 +42,13 @@ public class AbsenceServiceImplTest {
     @Mock
     private SickNoteService sickNoteService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new AbsenceServiceImpl(applicationService, sickNoteService, settingsService);
     }
 
     @Test
-    public void getOpenAbsencesForPersons() {
+    void getOpenAbsencesForPersons() {
 
         final Settings settings = new Settings();
         settings.setCalendarSettings(new CalendarSettings());
@@ -77,7 +77,7 @@ public class AbsenceServiceImplTest {
     }
 
     @Test
-    public void getOpenAbsences() {
+    void getOpenAbsences() {
 
         final Settings settings = new Settings();
         settings.setCalendarSettings(new CalendarSettings());

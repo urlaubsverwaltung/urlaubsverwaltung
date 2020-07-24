@@ -7,7 +7,6 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 class AssetFilenameHashMapper {
 
@@ -29,14 +28,13 @@ class AssetFilenameHashMapper {
         }
 
         return assets.get(assetNameWithoutHash);
-
     }
 
     private HashMap<String, String> getAssets(InputStream manifest) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(manifest, new TypeReference<Map<String, String>>() {
+            return objectMapper.readValue(manifest, new TypeReference<>() {
             });
         } catch (IOException e) {
             throw new IllegalStateException("could not parse manifest json file");

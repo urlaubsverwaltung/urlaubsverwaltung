@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -26,15 +26,15 @@ import static org.synyx.urlaubsverwaltung.settings.FederalState.BERLIN;
 /**
  * Unit test for {@link PublicHolidaysService}.
  */
-public class PublicHolidaysServiceTest {
+class PublicHolidaysServiceTest {
 
     private static final FederalState state = BADEN_WUERTTEMBERG;
 
     private PublicHolidaysService publicHolidaysService;
     private SettingsService settingsService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL url = cl.getResource("Holidays_de.xml");
@@ -48,7 +48,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureCorrectWorkingDurationForWorkDay() {
+    void ensureCorrectWorkingDurationForWorkDay() {
 
         LocalDate testDate = LocalDate.of(2013, Month.NOVEMBER, 27);
 
@@ -59,7 +59,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureCorrectWorkingDurationForPublicHoliday() {
+    void ensureCorrectWorkingDurationForPublicHoliday() {
 
         LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 25);
 
@@ -70,7 +70,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
+    void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.FULL);
@@ -86,7 +86,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
+    void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
@@ -102,7 +102,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
+    void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.MORNING);
@@ -118,7 +118,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
+    void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.NOON);
@@ -134,7 +134,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
+    void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.ZERO);
@@ -150,7 +150,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
+    void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.ZERO);
@@ -166,7 +166,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
+    void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
             Month.AUGUST, 15), FederalState.BERLIN);
@@ -176,7 +176,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
+    void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
             Month.AUGUST, 15), BADEN_WUERTTEMBERG);
@@ -186,7 +186,7 @@ public class PublicHolidaysServiceTest {
 
 
     @Test
-    public void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
+    void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
             Month.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
@@ -195,7 +195,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureGetAbsenceTypeOfDateReturnsZeroWhenDateIsNoPublicHoliday() {
+    void ensureGetAbsenceTypeOfDateReturnsZeroWhenDateIsNoPublicHoliday() {
 
         final LocalDate date = LocalDate.of(2019, 1, 2);
 
@@ -204,7 +204,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureGetAbsenceTypeOfDateReturnsFullForCorpusChristi() {
+    void ensureGetAbsenceTypeOfDateReturnsFullForCorpusChristi() {
 
         final LocalDate corpusChristi = LocalDate.of(2019, Month.MAY, 30);
 
@@ -213,7 +213,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureGetAbsenceTypeOfDateReturnsFullForAussumptionDayInBayernMunich() {
+    void ensureGetAbsenceTypeOfDateReturnsFullForAussumptionDayInBayernMunich() {
 
         final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
 
@@ -222,7 +222,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBerlin() {
+    void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBerlin() {
 
         final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
 
@@ -231,7 +231,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBadenWuerttemberg() {
+    void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBadenWuerttemberg() {
 
         final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
 
@@ -240,7 +240,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureGetAbsenceTypeOfDateReturnsForChristmasEve() {
+    void ensureGetAbsenceTypeOfDateReturnsForChristmasEve() {
 
         final LocalDate date = LocalDate.of(2019, 12, 24);
 
@@ -249,7 +249,7 @@ public class PublicHolidaysServiceTest {
     }
 
     @Test
-    public void ensureGetAbsenceTypeOfDateReturnsForNewYearsEve() {
+    void ensureGetAbsenceTypeOfDateReturnsForNewYearsEve() {
 
         final LocalDate date = LocalDate.of(2019, 12, 31);
 

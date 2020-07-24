@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
@@ -25,18 +25,19 @@ import static java.time.LocalDate.parse;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createDepartment;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class DepartmentCalendarServiceTest {
+@ExtendWith(MockitoExtension.class)
+class DepartmentCalendarServiceTest {
 
     private DepartmentCalendarService sut;
 
@@ -53,14 +54,14 @@ public class DepartmentCalendarServiceTest {
     @Mock
     private MessageSource messageSource;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new DepartmentCalendarService(absenceService, departmentService, personService, departmentCalendarRepository, iCalService, messageSource);
     }
 
     @Test
-    public void deleteCalendarForDepartmentAndPerson() {
+    void deleteCalendarForDepartmentAndPerson() {
 
         final Department department = createDepartment("DepartmentName");
         department.setId(1);
@@ -76,7 +77,7 @@ public class DepartmentCalendarServiceTest {
     }
 
     @Test
-    public void getCalendarForDepartment() {
+    void getCalendarForDepartment() {
 
         final Department department = createDepartment("DepartmentName");
         department.setId(1);
@@ -94,7 +95,7 @@ public class DepartmentCalendarServiceTest {
     }
 
     @Test
-    public void getCalendarForDepartmentForOneFullDay() {
+    void getCalendarForDepartmentForOneFullDay() {
 
         final Department department = createDepartment("DepartmentName");
         department.setId(1);
@@ -121,8 +122,8 @@ public class DepartmentCalendarServiceTest {
         assertThat(calendar).isEqualTo("calendar");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForDepartmentButDepartmentNotFound() {
+    @Test
+    void getCalendarForDepartmentButDepartmentNotFound() {
 
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.empty());
 
@@ -132,39 +133,41 @@ public class DepartmentCalendarServiceTest {
 
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(new DepartmentCalendar());
 
-        sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "secret", GERMAN));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForDepartmentSecretIsNull() {
-
-        sut.getCalendarForDepartment(1, 10, null, GERMAN);
+    @Test
+    void getCalendarForDepartmentSecretIsNull() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, null, GERMAN));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForDepartmentSecretIsEmpty() {
-
-        sut.getCalendarForDepartment(1, 10, "", GERMAN);
+    @Test
+    void getCalendarForDepartmentSecretIsEmpty() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "", GERMAN));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForDepartmentSecretIsEmptyWithWhitespace() {
-
-        sut.getCalendarForDepartment(1, 10, "  ", GERMAN);
+    @Test
+    void getCalendarForDepartmentSecretIsEmptyWithWhitespace() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "  ", GERMAN));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForDepartmentButSecretDoesNotExist() {
+    @Test
+    void getCalendarForDepartmentButSecretDoesNotExist() {
 
         final Person person = new Person();
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
 
-        sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "secret", GERMAN));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForDepartmentButSecretDoesNotMatchTheGivenPerson() {
+    @Test
+    void getCalendarForDepartmentButSecretDoesNotMatchTheGivenPerson() {
 
         final Department department = createDepartment();
         department.setId(1);
@@ -179,11 +182,12 @@ public class DepartmentCalendarServiceTest {
         calendar.setDepartment(notMatchingDepartment);
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(calendar);
 
-        sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "secret", GERMAN));
     }
 
     @Test
-    public void createCalendarForDepartmentAndPerson() {
+    void createCalendarForDepartmentAndPerson() {
 
         final Person person = createPerson();
         person.setId(1);
@@ -204,16 +208,16 @@ public class DepartmentCalendarServiceTest {
         assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createCalendarForDepartmentAndPersonNoPersonFound() {
-
+    @Test
+    void createCalendarForDepartmentAndPersonNoPersonFound() {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
-        sut.createCalendarForDepartmentAndPerson(42, 1);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createCalendarForDepartmentAndPersonNoDepartmentFound() {
+    @Test
+    void createCalendarForDepartmentAndPersonNoDepartmentFound() {
 
         final Person person = createPerson();
         person.setId(1);
@@ -221,11 +225,12 @@ public class DepartmentCalendarServiceTest {
 
         when(departmentService.getDepartmentById(42)).thenReturn(Optional.empty());
 
-        sut.createCalendarForDepartmentAndPerson(42, 1);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1));
     }
 
     @Test
-    public void createCalendarForDepartmentAndPersonNoCalendarFound() {
+    void createCalendarForDepartmentAndPersonNoCalendarFound() {
 
         final Person person = createPerson();
         person.setId(1);
@@ -248,7 +253,7 @@ public class DepartmentCalendarServiceTest {
     }
 
     @Test
-    public void deleteDepartmentsCalendarsForPerson() {
+    void deleteDepartmentsCalendarsForPerson() {
 
         final Person person = createPerson();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));

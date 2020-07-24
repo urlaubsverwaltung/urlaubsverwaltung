@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.settings.web;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -12,7 +11,6 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
@@ -30,11 +28,6 @@ public class SettingsValidator implements Validator {
     private static final int HOURS_PER_DAY = 24;
     private static final int MAX_CHARS = 255;
 
-    private final boolean isMailServerFromApplicationProperties;
-
-    public SettingsValidator(@Value("${spring.mail.host:unknown}") String mailServerFromApplicationProperties) {
-        this.isMailServerFromApplicationProperties = !mailServerFromApplicationProperties.equalsIgnoreCase("unknown");
-    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -57,10 +50,6 @@ public class SettingsValidator implements Validator {
         validateVacationSettings(settings, errors);
 
         validateSickNoteSettings(settings, errors);
-
-        if (!isMailServerFromApplicationProperties) {
-            validateMailSettings(settings, errors);
-        }
 
         validateCalendarSettings(settings, errors);
     }
@@ -168,37 +157,6 @@ public class SettingsValidator implements Validator {
     }
 
 
-    private void validateMailSettings(Settings settings, Errors errors) {
-
-        MailSettings mailSettings = settings.getMailSettings();
-
-        if (mailSettings.isActive()) {
-            validateMailHost(mailSettings, errors);
-
-            validateMailPort(mailSettings, errors);
-
-            validateMailUsername(mailSettings, errors);
-
-            validateMailPassword(mailSettings, errors);
-
-            validateMailFrom(mailSettings, errors);
-
-            validateMailAdministrator(mailSettings, errors);
-
-            validateMailBaseLinkURL(mailSettings, errors);
-        }
-    }
-
-
-    private void validateMailHost(MailSettings mailSettings, Errors errors) {
-
-        String hostAttribute = "mailSettings.host";
-        String host = mailSettings.getHost();
-
-        validateMandatoryTextField(host, hostAttribute, errors);
-    }
-
-
     private void validateMandatoryTextField(String input, String attributeName, Errors errors) {
 
         if (!StringUtils.hasText(input)) {
@@ -216,51 +174,6 @@ public class SettingsValidator implements Validator {
         return string.length() <= MAX_CHARS;
     }
 
-
-    private void validateMailPort(MailSettings mailSettings, Errors errors) {
-
-        String portAttribute = "mailSettings.port";
-        Integer port = mailSettings.getPort();
-
-        if (port == null) {
-            errors.rejectValue(portAttribute, ERROR_MANDATORY_FIELD);
-        } else {
-            if (port <= 0) {
-                errors.rejectValue(portAttribute, ERROR_INVALID_ENTRY);
-            }
-        }
-    }
-
-
-    private void validateMailUsername(MailSettings mailSettings, Errors errors) {
-
-        String username = mailSettings.getUsername();
-
-        if (username != null && !validStringLength(username)) {
-            errors.rejectValue("mailSettings.username", ERROR_LENGTH);
-        }
-    }
-
-
-    private void validateMailPassword(MailSettings mailSettings, Errors errors) {
-
-        String password = mailSettings.getPassword();
-
-        if (password != null && !validStringLength(password)) {
-            errors.rejectValue("mailSettings.password", ERROR_LENGTH);
-        }
-    }
-
-
-    private void validateMailFrom(MailSettings mailSettings, Errors errors) {
-
-        String fromAttribute = "mailSettings.from";
-        String from = mailSettings.getFrom();
-
-        validateMandatoryMailAddress(from, fromAttribute, errors);
-    }
-
-
     private void validateMandatoryMailAddress(String mailAddress, String attributeName, Errors errors) {
 
         if (!StringUtils.hasText(mailAddress)) {
@@ -275,25 +188,6 @@ public class SettingsValidator implements Validator {
             }
         }
     }
-
-
-    private void validateMailAdministrator(MailSettings mailSettings, Errors errors) {
-
-        String administratorAttribute = "mailSettings.administrator";
-        String administrator = mailSettings.getAdministrator();
-
-        validateMandatoryMailAddress(administrator, administratorAttribute, errors);
-    }
-
-
-    private void validateMailBaseLinkURL(MailSettings mailSettings, Errors errors) {
-
-        String baseLinkURLAttribute = "mailSettings.baseLinkURL";
-        String baseLinkURL = mailSettings.getBaseLinkURL();
-
-        validateMandatoryTextField(baseLinkURL, baseLinkURLAttribute, errors);
-    }
-
 
     private void validateCalendarSettings(Settings settings, Errors errors) {
 

@@ -1,19 +1,21 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor}.
  */
-public class DecimalNumberPropertyEditorTest {
+class DecimalNumberPropertyEditorTest {
 
     @Test
-    public void ensureCorrectNumberFormattingForGermanLocale() {
+    void ensureCorrectNumberFormattingForGermanLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
@@ -38,7 +40,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureCorrectNumberFormattingForEnglishLocale() {
+    void ensureCorrectNumberFormattingForEnglishLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
@@ -63,7 +65,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureCorrectNumberParsingForGermanLocale() {
+    void ensureCorrectNumberParsingForGermanLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
@@ -82,7 +84,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureCorrectNumberParsingForEnglishLocale() {
+    void ensureCorrectNumberParsingForEnglishLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
@@ -101,7 +103,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureNumberParsingWorksWithCommaSeparatedNumberForGermanLocale() {
+    void ensureNumberParsingWorksWithCommaSeparatedNumberForGermanLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
@@ -111,7 +113,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureNumberParsingWorksWithDotSeparatedNumberForGermanLocale() {
+    void ensureNumberParsingWorksWithDotSeparatedNumberForGermanLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
@@ -121,7 +123,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureNumberParsingWorksWithCommaSeparatedNumberForEnglishLocale() {
+    void ensureNumberParsingWorksWithCommaSeparatedNumberForEnglishLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
@@ -131,7 +133,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureNumberParsingWorksWithDotSeparatedNumberForEnglishLocale() {
+    void ensureNumberParsingWorksWithDotSeparatedNumberForEnglishLocale() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
@@ -141,7 +143,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureEmptyTextForNullNumber() {
+    void ensureEmptyTextForNullNumber() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
@@ -150,18 +152,18 @@ public class DecimalNumberPropertyEditorTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureFormattingThrowsIfProvidingAnInvalidNumber() {
+    @Test
+    void ensureFormattingThrowsIfProvidingAnInvalidNumber() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
-
         propertyEditor.setValue("foo");
-        propertyEditor.getAsText();
+
+        assertThatIllegalArgumentException().isThrownBy(propertyEditor::getAsText);
     }
 
 
     @Test
-    public void ensureSettingEmptyTextResultsInNullNumber() {
+    void ensureSettingEmptyTextResultsInNullNumber() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
@@ -171,7 +173,7 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
-    public void ensureSettingNullTextResultsInNullNumber() {
+    void ensureSettingNullTextResultsInNullNumber() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
@@ -180,11 +182,10 @@ public class DecimalNumberPropertyEditorTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureSettingTextNotRepresentingANumberThrows() {
+    @Test
+    void ensureSettingTextNotRepresentingANumberThrows() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
-
-        propertyEditor.setAsText("foo");
+        assertThatIllegalArgumentException().isThrownBy(() -> propertyEditor.setAsText("foo"));
     }
 }

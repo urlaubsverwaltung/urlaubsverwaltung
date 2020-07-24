@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -12,19 +12,19 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createVacationType;
 
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.sicknote.web.SickNoteConvertForm}.
  */
-public class SickNoteConvertFormTest {
+class SickNoteConvertFormTest {
 
     @Test
-    public void ensureCorrectProvidedValuesFromSickNote() {
+    void ensureCorrectProvidedValuesFromSickNote() {
 
         final Person person = createPerson();
         final LocalDate startDate = LocalDate.of(2014, 1, 1);
@@ -44,7 +44,7 @@ public class SickNoteConvertFormTest {
     }
 
     @Test
-    public void ensureGeneratesBasicApplicationForLeave() {
+    void ensureGeneratesBasicApplicationForLeave() {
 
         final Person person = createPerson();
         final LocalDate startDate = LocalDate.of(2014, 1, 1);

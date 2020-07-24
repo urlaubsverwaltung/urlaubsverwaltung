@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,21 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -38,21 +33,15 @@ public class SettingsViewController {
 
     private final SettingsService settingsService;
     private final List<CalendarProvider> calendarProviders;
-    private final MailService mailService;
     private final SettingsValidator settingsValidator;
-    private final boolean isMailServerFromApplicationProperties;
 
     @Autowired
     public SettingsViewController(SettingsService settingsService,
                                   List<CalendarProvider> calendarProviders,
-                                  MailService mailService,
-                                  SettingsValidator settingsValidator,
-                                  @Value("${spring.mail.host:unknown}") String mailServerFromApplicationProperties) {
+                                  SettingsValidator settingsValidator) {
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
-        this.mailService = mailService;
         this.settingsValidator = settingsValidator;
-        this.isMailServerFromApplicationProperties = !mailServerFromApplicationProperties.equalsIgnoreCase("unknown");
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
@@ -84,7 +73,6 @@ public class SettingsViewController {
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
-        model.addAttribute("isMailServerFromApplicationProperties", isMailServerFromApplicationProperties);
 
         List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())
@@ -125,15 +113,7 @@ public class SettingsViewController {
             return "settings/settings_form";
         }
 
-        if (isMailServerFromApplicationProperties) {
-            settings.setMailSettings(new MailSettings());
-        }
-
         settingsService.save(processGoogleRefreshToken(settings));
-
-        if (!isMailServerFromApplicationProperties) {
-            sendSuccessfullyUpdatedSettingsNotification(settings);
-        }
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
@@ -144,20 +124,6 @@ public class SettingsViewController {
         return "redirect:/web/settings";
     }
 
-
-    /**
-     * Sends mail to the tool's manager if settings has been updated to ensure that the mail configuration works.
-     *
-     * @param settings the updated {@link Settings} to notify via mail
-     */
-    private void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("host", settings.getMailSettings().getHost());
-        model.put("port", settings.getMailSettings().getPort());
-
-        mailService.sendTechnicalMail("subject.settings.updated", "updated_settings", model);
-    }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {
         Settings storedSettings = settingsService.getSettings();

@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.sickdays.web;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -45,8 +45,8 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickDaysOverviewViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class SickDaysOverviewViewControllerTest {
 
     private SickDaysOverviewViewController sut;
 
@@ -57,13 +57,13 @@ public class SickDaysOverviewViewControllerTest {
     @Mock
     private WorkDaysService calendarService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickDaysOverviewViewController(sickNoteService, personService, calendarService);
     }
 
     @Test
-    public void filterSickNotes() throws Exception {
+    void filterSickNotes() throws Exception {
         final int year = ZonedDateTime.now(UTC).getYear();
 
         final ResultActions resultActions = perform(post("/web/sicknote/filter"));
@@ -72,7 +72,7 @@ public class SickDaysOverviewViewControllerTest {
     }
 
     @Test
-    public void periodsSickNotesWithDateRange() throws Exception {
+    void periodsSickNotesWithDateRange() throws Exception {
 
         final Person person = new Person();
         final List<Person> persons = singletonList(person);
@@ -134,7 +134,7 @@ public class SickDaysOverviewViewControllerTest {
     }
 
     @Test
-    public void periodsSickNotesWithDateWithoutRange() throws Exception {
+    void periodsSickNotesWithDateWithoutRange() throws Exception {
 
         final int year = ZonedDateTime.now(UTC).getYear();
         final LocalDate startDate = ZonedDateTime.now(UTC).withYear(year).with(firstDayOfYear()).toLocalDate();

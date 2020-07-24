@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -18,17 +18,17 @@ import static java.math.BigDecimal.ONE;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApplicationForLeaveFormTest {
+class ApplicationForLeaveFormTest {
 
     @Test
-    public void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
+    void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
 
         final LocalDate startDate = LocalDate.now(UTC);
         final LocalDate endDate = startDate.plusDays(3);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
 
-        form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        form.setVacationType(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
         form.setDayLength(DayLength.FULL);
         form.setStartDate(startDate);
         form.setEndDate(endDate);
@@ -41,12 +41,12 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
+    void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
 
         final LocalDate now = LocalDate.now(UTC);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
-        form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        form.setVacationType(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY));
         form.setDayLength(DayLength.MORNING);
         form.setStartDate(now);
         form.setEndDate(now);
@@ -58,12 +58,12 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureGeneratedApplicationForLeaveHasCorrectProperties() {
+    void ensureGeneratedApplicationForLeaveHasCorrectProperties() {
 
-        final VacationType overtime = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
+        final VacationType overtime = DemoDataCreator.createVacationType(VacationCategory.OVERTIME);
 
-        final Person person = TestDataCreator.createPerson();
-        final Person holidayReplacement = TestDataCreator.createPerson("vertretung");
+        final Person person = DemoDataCreator.createPerson();
+        final Person holidayReplacement = DemoDataCreator.createPerson("vertretung");
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setPerson(person);
@@ -88,7 +88,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureGeneratedApplicationForLeaveHasNullHoursForOtherVacationTypeThanOvertime() {
+    void ensureGeneratedApplicationForLeaveHasNullHoursForOtherVacationTypeThanOvertime() {
 
         Consumer<VacationType> assertHoursAreNotSet = (type) -> {
             final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
@@ -99,9 +99,9 @@ public class ApplicationForLeaveFormTest {
             assertThat(application.getHours()).isNull();
         };
 
-        final VacationType holiday = TestDataCreator.createVacationType(VacationCategory.HOLIDAY);
-        final VacationType specialLeave = TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
-        final VacationType unpaidLeave = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
+        final VacationType holiday = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY);
+        final VacationType specialLeave = DemoDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
+        final VacationType unpaidLeave = DemoDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
         assertHoursAreNotSet.accept(holiday);
         assertHoursAreNotSet.accept(specialLeave);
@@ -109,7 +109,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void ensureBuilderSetsAllPropertiesCorrectly() {
+    void ensureBuilderSetsAllPropertiesCorrectly() {
 
         final Person person = new Person();
         final Person holidayReplacement = new Person();
@@ -154,7 +154,7 @@ public class ApplicationForLeaveFormTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
 
         final Person person = new Person();
         final Person holidayReplacement = new Person();

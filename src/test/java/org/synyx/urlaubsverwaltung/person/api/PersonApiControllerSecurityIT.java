@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,9 +21,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class PersonApiControllerSecurityIT {
+class PersonApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -32,111 +32,111 @@ public class PersonApiControllerSecurityIT {
     private PersonService personService;
 
     @Test
-    public void getPersonsWithoutBasicAuthIsUnauthorized() throws Exception {
+    void getPersonsWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    public void getPersonsAuthenticatedIsNotOk() throws Exception {
+    void getPersonsAuthenticatedIsNotOk() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getPersonsAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    void getPersonsAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getPersonsAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    void getPersonsAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getPersonsAsBossUserForOtherUserIsForbidden() throws Exception {
+    void getPersonsAsBossUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getPersonsAsAdminUserForOtherUserIsForbidden() throws Exception {
+    void getPersonsAsAdminUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getPersonsAsInactiveUserForOtherUserIsForbidden() throws Exception {
+    void getPersonsAsInactiveUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getPersonsWithOfficeRoleIsOk() throws Exception {
+    void getPersonsWithOfficeRoleIsOk() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons"));
         resultActions.andExpect(status().isOk());
     }
 
     @Test
-    public void getPersonWithoutBasicAuthIsUnauthorized() throws Exception {
+    void getPersonWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    public void getPersonAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+    void getPersonAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getPersonAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    void getPersonAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getPersonAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    void getPersonAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getPersonAsBossUserForOtherUserIsForbidden() throws Exception {
+    void getPersonAsBossUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getPersonAsAdminUserForOtherUserIsForbidden() throws Exception {
+    void getPersonAsAdminUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getPersonAsInactiveUserForOtherUserIsForbidden() throws Exception {
+    void getPersonAsInactiveUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getPersonAuthenticatedWithOfficeRoleIsOk() throws Exception {
+    void getPersonAuthenticatedWithOfficeRoleIsOk() throws Exception {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
 

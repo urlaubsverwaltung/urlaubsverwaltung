@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
@@ -22,12 +22,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationCronMailServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationCronMailServiceTest {
 
     private ApplicationCronMailService sut;
 
@@ -38,13 +38,13 @@ public class ApplicationCronMailServiceTest {
     @Mock
     private ApplicationMailService applicationMailService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new ApplicationCronMailService(applicationService, settingsService, applicationMailService);
     }
 
     @Test
-    public void ensureSendWaitingApplicationsReminderNotification() {
+    void ensureSendWaitingApplicationsReminderNotification() {
 
         boolean isActive = true;
         prepareSettingsWithRemindForWaitingApplications(isActive);

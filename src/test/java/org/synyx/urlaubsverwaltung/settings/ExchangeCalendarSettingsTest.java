@@ -1,16 +1,16 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
  * Unit test for {@link ExchangeCalendarSettings}.
  */
-public class ExchangeCalendarSettingsTest {
+class ExchangeCalendarSettingsTest {
 
     @Test
-    public void ensureHasSomeDefaultValues() {
+    void ensureHasSomeDefaultValues() {
 
         ExchangeCalendarSettings calendarSettings = new ExchangeCalendarSettings();
 

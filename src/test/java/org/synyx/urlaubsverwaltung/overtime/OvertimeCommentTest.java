@@ -1,49 +1,52 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createOvertimeRecord;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 
 
-public class OvertimeCommentTest {
+class OvertimeCommentTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullPerson() {
-
-        new OvertimeComment(null, TestDataCreator.createOvertimeRecord(), OvertimeAction.CREATED);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullOvertime() {
-
-        new OvertimeComment(TestDataCreator.createPerson(), null, OvertimeAction.CREATED);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullAction() {
-
-        new OvertimeComment(TestDataCreator.createPerson(), TestDataCreator.createOvertimeRecord(), null);
+    @Test
+    void ensureThrowsOnNullPerson() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new OvertimeComment(null, createOvertimeRecord(), CREATED));
     }
 
 
     @Test
-    public void ensureCorrectPropertiesAfterInitialization() {
+    void ensureThrowsOnNullOvertime() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new OvertimeComment(createPerson(), null, CREATED));
+    }
 
-        Person author = TestDataCreator.createPerson();
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
 
-        OvertimeComment comment = new OvertimeComment(author, overtime, OvertimeAction.CREATED);
+    @Test
+    void ensureThrowsOnNullAction() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new OvertimeComment(createPerson(), createOvertimeRecord(), null));
+    }
+
+
+    @Test
+    void ensureCorrectPropertiesAfterInitialization() {
+
+        Person author = createPerson();
+        Overtime overtime = createOvertimeRecord();
+
+        OvertimeComment comment = new OvertimeComment(author, overtime, CREATED);
 
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong overtime record", overtime, comment.getOvertime());
-        Assert.assertEquals("Wrong action", OvertimeAction.CREATED, comment.getAction());
+        Assert.assertEquals("Wrong action", CREATED, comment.getAction());
         Assert.assertEquals("Wrong date", LocalDate.now(UTC), comment.getDate());
 
         Assert.assertNull("Should not be set", comment.getText());

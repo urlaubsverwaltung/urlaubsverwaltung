@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class AbsenceSettingsTest {
+class AbsenceSettingsTest {
 
     @Test
-    public void ensureDefaultValues() {
+    void ensureDefaultValues() {
 
         AbsenceSettings settings = new AbsenceSettings();
 

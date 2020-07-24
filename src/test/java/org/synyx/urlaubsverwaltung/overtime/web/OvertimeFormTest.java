@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -13,21 +13,21 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 
-public class OvertimeFormTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullPerson() {
-
-        new OvertimeForm((Person) null);
-    }
-
+class OvertimeFormTest {
 
     @Test
-    public void ensureCanBeInitializedWithPerson() {
+    void ensureThrowsIfInitializedWithNullPerson() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm((Person) null));
+    }
 
-        Person person = TestDataCreator.createPerson();
+    @Test
+    void ensureCanBeInitializedWithPerson() {
+
+        Person person = createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
 
@@ -42,11 +42,10 @@ public class OvertimeFormTest {
         Assert.assertNull("Should be not set", overtimeForm.getComment());
     }
 
-
     @Test
-    public void ensureCanConstructAnOvertimeObject() {
+    void ensureCanConstructAnOvertimeObject() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
@@ -67,27 +66,22 @@ public class OvertimeFormTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfGeneratingOvertimeWithoutCheckingFormAttributes() {
-
-        Person person = TestDataCreator.createPerson();
-
-        new OvertimeForm(person).generateOvertime();
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullOvertime() {
-
-        new OvertimeForm((Overtime) null);
+    @Test
+    void ensureThrowsIfGeneratingOvertimeWithoutCheckingFormAttributes() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm(createPerson()).generateOvertime());
     }
 
 
     @Test
-    public void ensureCanBeInitializedWithExistentOvertime() throws IllegalAccessException {
+    void ensureThrowsIfInitializedWithNullOvertime() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm((Overtime) null));
+    }
+
+    @Test
+    void ensureCanBeInitializedWithExistentOvertime() throws IllegalAccessException {
 
         // Simulate existing overtime record
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
+        Overtime overtime = DemoDataCreator.createOvertimeRecord();
         Field idField = ReflectionUtils.findField(Overtime.class, "id");
         idField.setAccessible(true);
         idField.set(overtime, 42);
@@ -106,9 +100,9 @@ public class OvertimeFormTest {
 
 
     @Test
-    public void ensureCanUpdateOvertime() {
+    void ensureCanUpdateOvertime() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
@@ -116,7 +110,7 @@ public class OvertimeFormTest {
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
+        Overtime overtime = DemoDataCreator.createOvertimeRecord();
 
         overtimeForm.updateOvertime(overtime);
 

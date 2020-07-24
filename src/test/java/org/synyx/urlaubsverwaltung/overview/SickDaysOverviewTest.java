@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
@@ -10,7 +11,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -23,19 +23,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-public class SickDaysOverviewTest {
+class SickDaysOverviewTest {
 
     private WorkDaysService calendarService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         calendarService = mock(WorkDaysService.class);
     }
 
 
     @Test
-    public void ensureGeneratesCorrectSickDaysOverview() {
+    void ensureGeneratesCorrectSickDaysOverview() {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
@@ -45,13 +45,13 @@ public class SickDaysOverviewTest {
         sickNoteTypeChild.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
         sickNoteTypeChild.setMessageKey("Kind-Krankmeldung");
 
-        SickNote sickNoteWithoutAUB = TestDataCreator.anySickNote();
+        SickNote sickNoteWithoutAUB = DemoDataCreator.anySickNote();
         sickNoteWithoutAUB.setSickNoteType(sickNoteType);
         sickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 13));
         sickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 13));
 
-        SickNote sickNoteWithAUB = TestDataCreator.anySickNote();
+        SickNote sickNoteWithAUB = DemoDataCreator.anySickNote();
         sickNoteWithAUB.setSickNoteType(sickNoteType);
         sickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 14));
@@ -59,13 +59,13 @@ public class SickDaysOverviewTest {
         sickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 14));
         sickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 14));
 
-        SickNote childSickNoteWithoutAUB = TestDataCreator.anySickNote();
+        SickNote childSickNoteWithoutAUB = DemoDataCreator.anySickNote();
         childSickNoteWithoutAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 15));
         childSickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 15));
 
-        SickNote childSickNoteWithAUB = TestDataCreator.anySickNote();
+        SickNote childSickNoteWithAUB = DemoDataCreator.anySickNote();
         childSickNoteWithAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 16));
@@ -73,13 +73,13 @@ public class SickDaysOverviewTest {
         childSickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 16));
         childSickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 16));
 
-        SickNote inactiveSickNote = TestDataCreator.anySickNote();
+        SickNote inactiveSickNote = DemoDataCreator.anySickNote();
         inactiveSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveSickNote.setStartDate(LocalDate.of(2014, 10, 17));
         inactiveSickNote.setEndDate(LocalDate.of(2014, 10, 17));
 
-        SickNote inactiveChildSickNote = TestDataCreator.anySickNote();
+        SickNote inactiveChildSickNote = DemoDataCreator.anySickNote();
         inactiveChildSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveChildSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveChildSickNote.setStartDate(LocalDate.of(2014, 10, 18));

@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.workingtime.web;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -15,17 +15,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 
-public class WorkingTimeValidatorTest {
+class WorkingTimeValidatorTest {
 
     private WorkingTimeValidator validator;
     private WorkingTimeForm form;
     private Errors errors;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         validator = new WorkingTimeValidator();
 
@@ -40,7 +40,7 @@ public class WorkingTimeValidatorTest {
 
     // TEST OF SUPPORTS METHOD
     @Test
-    public void ensureSupportsOnlyWorkingTimeFormClass() {
+    void ensureSupportsOnlyWorkingTimeFormClass() {
 
         boolean returnValue;
 
@@ -58,7 +58,7 @@ public class WorkingTimeValidatorTest {
     // VALIDATION OF WORKING TIMES
 
     @Test
-    public void ensureValidFromCanNotBeNull() {
+    void ensureValidFromCanNotBeNull() {
 
         form.setValidFrom(null);
 
@@ -69,7 +69,7 @@ public class WorkingTimeValidatorTest {
 
 
     @Test
-    public void ensureWeekDaysCanNotBeNull() {
+    void ensureWeekDaysCanNotBeNull() {
 
         form.setWorkingDays(null);
 
@@ -80,7 +80,7 @@ public class WorkingTimeValidatorTest {
 
 
     @Test
-    public void ensureAtLeastOneWeekDayMustBeSelectedAsWorkingTime() {
+    void ensureAtLeastOneWeekDayMustBeSelectedAsWorkingTime() {
 
         form.setWorkingDays(Collections.emptyList());
 
@@ -91,23 +91,23 @@ public class WorkingTimeValidatorTest {
 
 
     @Test
-    public void ensureValidWeekDaySelectionHasNoValidationError() {
+    void ensureValidWeekDaySelectionHasNoValidationError() {
 
         form.setWorkingDays(Arrays.asList(1, 2));
 
         validator.validate(form, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
 
     @Test
-    public void ensureFederalStateCanBeNull() {
+    void ensureFederalStateCanBeNull() {
 
         form.setFederalState(null);
 
         validator.validate(form, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 }

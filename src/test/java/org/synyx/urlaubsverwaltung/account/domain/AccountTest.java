@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.account.domain;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
@@ -11,10 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
-public class AccountTest {
+class AccountTest {
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPassword("Theo");

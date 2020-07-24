@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -23,6 +23,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -31,19 +34,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.security.ldap.SecurityTestUtil.authorityForRoleExists;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
 /**
  * Unit test for {@link LdapPersonContextMapper}.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class LdapPersonContextMapperTest {
+@ExtendWith(MockitoExtension.class)
+class LdapPersonContextMapperTest {
 
     private LdapPersonContextMapper sut;
 
@@ -54,36 +57,26 @@ public class LdapPersonContextMapperTest {
     @Mock
     private DirContextOperations context;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new LdapPersonContextMapper(personService, ldapUserMapper);
-
-        when(context.getDn()).thenReturn(mock(Name.class));
-        when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
-        when(context.getStringAttribute(anyString())).thenReturn("Foo");
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetAuthoritiesForNullPerson() {
-
-        sut.getGrantedAuthorities(null);
+    @Test
+    void ensureThrowsIfTryingToGetAuthoritiesForNullPerson() {
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getGrantedAuthorities(null));
     }
 
-
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIfTryingToGetAuthoritiesOfPersonWithNoRoles() {
-
+    @Test
+    void ensureThrowsIfTryingToGetAuthoritiesOfPersonWithNoRoles() {
         final Person person = createPerson();
         person.setPermissions(emptyList());
 
-        sut.getGrantedAuthorities(person);
+        assertThatIllegalStateException().isThrownBy(() -> sut.getGrantedAuthorities(person));
     }
 
-
     @Test
-    public void ensureReturnsCorrectListOfAuthoritiesUsingTheRolesOfTheGivenPerson() {
+    void ensureReturnsCorrectListOfAuthoritiesUsingTheRolesOfTheGivenPerson() {
 
         final Person person = createPerson();
         person.setPermissions(Arrays.asList(USER, BOSS));
@@ -99,7 +92,11 @@ public class LdapPersonContextMapperTest {
 
 
     @Test
-    public void ensureCreatesPersonIfPersonDoesNotExist() throws UnsupportedMemberAffiliationException {
+    void ensureCreatesPersonIfPersonDoesNotExist() throws UnsupportedMemberAffiliationException {
+
+        when(context.getDn()).thenReturn(mock(Name.class));
+        when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
+        when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         when(ldapUserMapper.mapFromContext(eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
@@ -117,7 +114,11 @@ public class LdapPersonContextMapperTest {
 
 
     @Test
-    public void ensureSyncsPersonDataUsingLDAPAttributes() throws UnsupportedMemberAffiliationException {
+    void ensureSyncsPersonDataUsingLDAPAttributes() throws UnsupportedMemberAffiliationException {
+
+        when(context.getDn()).thenReturn(mock(Name.class));
+        when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
+        when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         final Person person = createPerson();
         person.setPermissions(singletonList(USER));
@@ -139,7 +140,11 @@ public class LdapPersonContextMapperTest {
 
 
     @Test
-    public void ensureUsernameIsBasedOnLdapUsername() throws UnsupportedMemberAffiliationException {
+    void ensureUsernameIsBasedOnLdapUsername() throws UnsupportedMemberAffiliationException {
+
+        when(context.getDn()).thenReturn(mock(Name.class));
+        when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
+        when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         final String userIdentifier = "mgroehning";
         final String userNameSignedInWith = "mgroehning@simpsons.com";
@@ -155,9 +160,8 @@ public class LdapPersonContextMapperTest {
         assertThat(userDetails.getUsername()).isEqualTo(userIdentifier);
     }
 
-
-    @Test(expected = DisabledException.class)
-    public void ensureLoginIsNotPossibleIfUserIsDeactivated() throws UnsupportedMemberAffiliationException {
+    @Test
+    void ensureLoginIsNotPossibleIfUserIsDeactivated() throws UnsupportedMemberAffiliationException {
 
         final Person person = createPerson();
         person.setPermissions(singletonList(INACTIVE));
@@ -167,32 +171,29 @@ public class LdapPersonContextMapperTest {
             .thenReturn(new LdapUser(person.getUsername(), Optional.of(person.getFirstName()),
                 Optional.of(person.getLastName()), Optional.of(person.getEmail())));
 
-        sut.mapUserFromContext(context, person.getUsername(), null);
+        assertThatThrownBy(() -> sut.mapUserFromContext(context, person.getUsername(), null)).isInstanceOf(DisabledException.class);
     }
-
-
-    @Test(expected = BadCredentialsException.class)
-    public void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier() throws UnsupportedMemberAffiliationException {
-
-        when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenThrow(new InvalidSecurityConfigurationException("Bad!"));
-
-        sut.mapUserFromContext(context, "username", null);
-    }
-
-
-    @Test(expected = BadCredentialsException.class)
-    public void ensureLoginIsNotPossibleIfLdapUserHasNotSupportedMemberOfAttribute() throws UnsupportedMemberAffiliationException {
-
-        when(ldapUserMapper.mapFromContext(eq(context)))
-            .thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
-
-        sut.mapUserFromContext(context, "username", null);
-    }
-
 
     @Test
-    public void ensureAuthoritiesAreBasedOnRolesOfTheSignedInPerson() throws UnsupportedMemberAffiliationException {
+    void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier() throws UnsupportedMemberAffiliationException {
+        when(ldapUserMapper.mapFromContext(eq(context))).thenThrow(new InvalidSecurityConfigurationException("Bad!"));
+
+        assertThatThrownBy(() -> sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
+    }
+
+    @Test
+    void ensureLoginIsNotPossibleIfLdapUserHasNotSupportedMemberOfAttribute() throws UnsupportedMemberAffiliationException {
+        when(ldapUserMapper.mapFromContext(eq(context))).thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
+
+        assertThatThrownBy(() -> sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
+    }
+
+    @Test
+    void ensureAuthoritiesAreBasedOnRolesOfTheSignedInPerson() throws UnsupportedMemberAffiliationException {
+
+        when(context.getDn()).thenReturn(mock(Name.class));
+        when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
+        when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         final Person person = createPerson("username");
         person.setPermissions(Arrays.asList(USER, BOSS));
@@ -210,9 +211,12 @@ public class LdapPersonContextMapperTest {
         Assert.assertTrue("Missing authority for boss role", authorityForRoleExists(authorities, BOSS));
     }
 
-
     @Test
-    public void ensureAddsOfficeRoleToSignedInUserIfNoUserWithOfficeRoleExistsYet() throws UnsupportedMemberAffiliationException {
+    void ensureAddsOfficeRoleToSignedInUserIfNoUserWithOfficeRoleExistsYet() throws UnsupportedMemberAffiliationException {
+
+        when(context.getDn()).thenReturn(mock(Name.class));
+        when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
+        when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
         final Person person = createPerson("username");
         person.setPermissions(singletonList(USER));

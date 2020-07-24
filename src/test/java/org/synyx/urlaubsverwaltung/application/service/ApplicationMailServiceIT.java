@@ -1,29 +1,28 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.junit.After;
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.jvnet.mock_javamail.Mailbox;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,6 +33,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -41,38 +41,31 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
-@SpringBootTest
-@RunWith(SpringRunner.class)
+@SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
+@ExtendWith(SpringExtension.class)
 @Transactional
-public class ApplicationMailServiceIT {
+class ApplicationMailServiceIT {
+
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private ApplicationMailService sut;
 
     @Autowired
-    private SettingsService settingsService;
-    @Autowired
     private PersonService personService;
     @Autowired
-    private SettingsDAO settingsDAO;
+    private MailProperties mailProperties;
 
     @MockBean
     private ApplicationRecipientService applicationRecipientService;
     @MockBean
     private DepartmentService departmentService;
 
-    @After
-    public void tearDown() {
-        Mailbox.clearAll();
-    }
-
     @Test
     public void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -93,14 +86,14 @@ public class ApplicationMailServiceIT {
         sut.sendAllowedNotification(application, comment);
 
         // were both emails sent?
-        List<Message> inboxOffice = Mailbox.get(office.getEmail());
-        assertThat(inboxOffice.size()).isOne();
+        MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        assertThat(inboxOffice.length).isOne();
 
-        List<Message> inboxUser = Mailbox.get(person.getEmail());
-        assertThat(inboxUser.size()).isOne();
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
 
         // check email user attributes
-        Message msg = inboxUser.get(0);
+        Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -113,7 +106,7 @@ public class ApplicationMailServiceIT {
         assertThat(contentUser).contains("/web/application/1234");
 
         // check email office attributes
-        Message msgOffice = inboxOffice.get(0);
+        Message msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Neuer bewilligter Antrag");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
 
@@ -132,8 +125,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
@@ -148,11 +139,11 @@ public class ApplicationMailServiceIT {
         sut.sendRejectedNotification(application, comment);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
 
         // check content of user email
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde abgelehnt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -168,8 +159,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureCorrectReferMail() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person recipient = createPerson("recipient", "Max", "Muster", "mustermann@test.de");
         final Person sender = createPerson("sender", "Rick", "Grimes", "rick@grimes.com");
 
@@ -178,11 +167,11 @@ public class ApplicationMailServiceIT {
         sut.sendReferApplicationNotification(application, recipient, sender);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(recipient.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
+        assertThat(inbox.length).isOne();
 
         // check content of user email
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Hilfe bei der Entscheidung über einen Urlaubsantrag");
         assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -196,8 +185,6 @@ public class ApplicationMailServiceIT {
 
     @Test
     public void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -213,10 +200,10 @@ public class ApplicationMailServiceIT {
 
         sut.sendCancellationRequest(application, comment);
 
-        List<Message> inbox = Mailbox.get(office.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -231,8 +218,6 @@ public class ApplicationMailServiceIT {
     public void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
@@ -244,11 +229,11 @@ public class ApplicationMailServiceIT {
         sut.sendSickNoteConvertedToVacationNotification(application);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
 
         // has mail correct attributes?
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
 
         // check subject
         assertThat(msg.getSubject()).contains("Deine Krankmeldung wurde zu Urlaub umgewandelt");
@@ -266,8 +251,6 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Person holidayReplacement = createPerson("replacement", "Mar", "Teria", "replacement@firma.test");
@@ -278,10 +261,10 @@ public class ApplicationMailServiceIT {
         sut.notifyHolidayReplacement(application);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(holidayReplacement.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Urlaubsvertretung");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -294,29 +277,25 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureCorrectFrom() throws MessagingException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Application application = createApplication(person);
 
         sut.sendConfirmation(application, null);
 
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         Address[] from = msg.getFrom();
         assertThat(from).isNotNull();
         assertThat(from.length).isOne();
-        assertThat(from[0]).hasToString("absender@urlaubsverwaltung.test");
+        assertThat(from[0]).hasToString(mailProperties.getSender());
     }
 
     @Test
     public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -328,10 +307,10 @@ public class ApplicationMailServiceIT {
         sut.sendConfirmation(application, comment);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -349,8 +328,6 @@ public class ApplicationMailServiceIT {
     public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Application application = createApplication(person);
@@ -365,10 +342,10 @@ public class ApplicationMailServiceIT {
         sut.sendAppliedForLeaveByOfficeNotification(application, comment);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(person.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Für dich wurde ein Urlaubsantrag eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -385,8 +362,6 @@ public class ApplicationMailServiceIT {
     public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
         final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
@@ -401,10 +376,10 @@ public class ApplicationMailServiceIT {
         sut.sendCancelledByOfficeNotification(application, comment);
 
         // was email sent?
-        List<Message> inboxApplicant = Mailbox.get(person.getEmail());
-        assertThat(inboxApplicant.size()).isOne();
+        MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxApplicant.length).isOne();
 
-        Message msg = inboxApplicant.get(0);
+        Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Dein Antrag wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -420,8 +395,6 @@ public class ApplicationMailServiceIT {
 
     @Test
     public void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -443,16 +416,16 @@ public class ApplicationMailServiceIT {
         sut.sendNewApplicationNotification(application, comment);
 
         // was email sent to boss?
-        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
-        assertThat(inboxOfBoss.size()).isOne();
+        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        assertThat(inboxOfBoss.length).isOne();
 
         // was email sent to department head?
-        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
-        assertThat(inboxOfDepartmentHead.size()).isOne();
+        MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        assertThat(inboxOfDepartmentHead.length).isOne();
 
         // get email
-        Message msgBoss = inboxOfBoss.get(0);
-        Message msgDepartmentHead = inboxOfDepartmentHead.get(0);
+        Message msgBoss = inboxOfBoss[0];
+        Message msgDepartmentHead = inboxOfDepartmentHead[0];
 
         verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
         verifyNotificationAboutNewApplication(departmentHead, msgDepartmentHead, application.getPerson().getNiceName(),
@@ -463,12 +436,10 @@ public class ApplicationMailServiceIT {
     @Test
     public void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = DemoDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
         final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
@@ -485,15 +456,15 @@ public class ApplicationMailServiceIT {
         sut.sendNewApplicationNotification(application, comment);
 
         // was email sent to boss?
-        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
-        assertThat(inboxOfBoss.size()).isOne();
+        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        assertThat(inboxOfBoss.length).isOne();
 
         // no email sent to department head
-        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
-        assertThat(inboxOfDepartmentHead.size()).isOne();
+        MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        assertThat(inboxOfDepartmentHead.length).isOne();
 
         // get email
-        Message msgBoss = inboxOfBoss.get(0);
+        Message msgBoss = inboxOfBoss[0];
         verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
     }
 
@@ -502,12 +473,10 @@ public class ApplicationMailServiceIT {
     public void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority()
         throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = DemoDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
         final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
@@ -524,16 +493,16 @@ public class ApplicationMailServiceIT {
         sut.sendNewApplicationNotification(application, comment);
 
         // was email sent to boss?
-        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
-        assertThat(inboxOfBoss.size()).isOne();
+        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        assertThat(inboxOfBoss.length).isOne();
 
         // was email sent to secondary stage?
-        List<Message> inboxOfSecondaryStage = Mailbox.get(secondStage.getEmail());
-        assertThat(inboxOfSecondaryStage.size()).isOne();
+        MimeMessage[] inboxOfSecondaryStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        assertThat(inboxOfSecondaryStage.length).isOne();
 
         // get email
-        Message msgBoss = inboxOfBoss.get(0);
-        Message msgSecondaryStage = inboxOfSecondaryStage.get(0);
+        Message msgBoss = inboxOfBoss[0];
+        Message msgSecondaryStage = inboxOfSecondaryStage[0];
 
         verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
         verifyNotificationAboutNewApplication(secondStage, msgSecondaryStage, application.getPerson().getNiceName(),
@@ -544,11 +513,9 @@ public class ApplicationMailServiceIT {
     public void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
         throws MessagingException, IOException {
 
-        activateMailSettings();
-
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
-        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = DemoDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
         final ApplicationComment comment = new ApplicationComment(secondStage);
@@ -562,14 +529,14 @@ public class ApplicationMailServiceIT {
         sut.sendTemporaryAllowedNotification(application, comment);
 
         // were both emails sent?
-        List<Message> inboxSecondStage = Mailbox.get(secondStage.getEmail());
-        assertThat(inboxSecondStage.size()).isOne();
+        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        assertThat(inboxSecondStage.length).isOne();
 
-        List<Message> inboxUser = Mailbox.get(person.getEmail());
-        assertThat(inboxUser.size()).isOne();
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
 
         // get email user
-        Message msg = inboxUser.get(0);
+        Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig bewilligt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -583,7 +550,7 @@ public class ApplicationMailServiceIT {
         assertThat(contentUser).contains("/web/application/1234");
 
         // get email office
-        Message msgSecondStage = inboxSecondStage.get(0);
+        Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig bewilligt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
@@ -601,8 +568,6 @@ public class ApplicationMailServiceIT {
 
     @Test
     public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
-
-        activateMailSettings();
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -622,15 +587,15 @@ public class ApplicationMailServiceIT {
         sut.sendRemindBossNotification(application);
 
         // was email sent to boss?
-        List<Message> inboxOfBoss = Mailbox.get(boss.getEmail());
-        assertThat(inboxOfBoss.size()).isOne();
+        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        assertThat(inboxOfBoss.length).isOne();
 
         // was email sent to department head?
-        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHead.getEmail());
-        assertThat(inboxOfDepartmentHead.size()).isOne();
+        MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        assertThat(inboxOfDepartmentHead.length).isOne();
 
         // has mail correct attributes?
-        Message msg = inboxOfBoss.get(0);
+        Message msg = inboxOfBoss[0];
         assertThat(msg.getSubject()).contains("Erinnerung wartender Urlaubsantrag");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -642,8 +607,6 @@ public class ApplicationMailServiceIT {
 
     @Test
     public void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
-
-        activateMailSettings();
 
         // PERSONs
         final Person personDepartmentA = createPerson("personDepartmentA");
@@ -677,10 +640,10 @@ public class ApplicationMailServiceIT {
 
     private void verifyInbox(Person inboxOwner, List<Application> applications) throws MessagingException, IOException {
 
-        List<Message> inbox = Mailbox.get(inboxOwner.getEmail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(inboxOwner.getEmail());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung für wartende Urlaubsanträge");
 
         String content = (String) msg.getContent();
@@ -720,7 +683,7 @@ public class ApplicationMailServiceIT {
         Application application = new Application();
         application.setId(1234);
         application.setPerson(person);
-        application.setVacationType(TestDataCreator.createVacationType(HOLIDAY, "application.data.vacationType.holiday"));
+        application.setVacationType(DemoDataCreator.createVacationType(HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);
@@ -728,13 +691,5 @@ public class ApplicationMailServiceIT {
         application.setApplier(person);
 
         return application;
-    }
-
-    private void activateMailSettings() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        mailSettings.setActive(true);
-        settings.setMailSettings(mailSettings);
-        settingsDAO.save(settings);
     }
 }

@@ -62,7 +62,7 @@ public class UserApiMethodSecurity {
         } else if (principal instanceof User) {
             username = ((User) principal).getUsername();
         } else if (principal instanceof DefaultOidcUser) {
-            username =  ((DefaultOidcUser) principal).getIdToken().getSubject();
+            username = ((DefaultOidcUser) principal).getIdToken().getSubject();
         }
         return username;
     }

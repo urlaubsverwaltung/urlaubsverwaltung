@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,17 +9,17 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
-public class PersonTest {
+class PersonTest {
 
     @Test
-    public void ensureReturnsFirstAndLastNameAsNiceName() {
+    void ensureReturnsFirstAndLastNameAsNiceName() {
 
         Person person = new Person("muster", "Muster", "Max", "");
 
@@ -28,7 +28,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureReturnsDummyAsNiceNameIfFirstAndLastNameAreNotSet() {
+    void ensureReturnsDummyAsNiceNameIfFirstAndLastNameAreNotSet() {
 
         Person person = new Person("muster", "", "", "");
 
@@ -37,7 +37,7 @@ public class PersonTest {
     }
 
     @Test
-    public void ensureReturnsFirstNameAsNiceNameIfLastNameIsNotSet() {
+    void ensureReturnsFirstNameAsNiceNameIfLastNameIsNotSet() {
 
         Person person = new Person("muster", "Muster", "", "");
 
@@ -45,7 +45,7 @@ public class PersonTest {
     }
 
     @Test
-    public void ensureReturnsLastNameAsNiceNameIfFirstNameIsNotSet() {
+    void ensureReturnsLastNameAsNiceNameIfFirstNameIsNotSet() {
 
         Person person = new Person("muster", "", "Max", "");
 
@@ -54,7 +54,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureReturnsTrueIfPersonHasTheGivenRole() {
+    void ensureReturnsTrueIfPersonHasTheGivenRole() {
 
         Person person = createPerson();
         person.setPermissions(Arrays.asList(USER, BOSS));
@@ -64,7 +64,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureReturnsFalseIfPersonHasNotTheGivenRole() {
+    void ensureReturnsFalseIfPersonHasNotTheGivenRole() {
 
         Person person = createPerson();
         person.setPermissions(singletonList(USER));
@@ -74,7 +74,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
+    void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
         Person person = createPerson();
         person.setNotifications(Arrays.asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
@@ -84,7 +84,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
+    void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
         Person person = createPerson();
         person.setNotifications(singletonList(NOTIFICATION_USER));
@@ -94,7 +94,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureReturnsEmptyStringAsGravatarURLIfEmailIsEmpty() {
+    void ensureReturnsEmptyStringAsGravatarURLIfEmailIsEmpty() {
 
         Person person = createPerson();
         person.setEmail(null);
@@ -104,7 +104,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureCanReturnGravatarURL() {
+    void ensureCanReturnGravatarURL() {
 
         Person person = createPerson();
         person.setEmail("muster@test.de");
@@ -115,7 +115,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensurePermissionsAreUnmodifiable() {
+    void ensurePermissionsAreUnmodifiable() {
 
         List<Role> modifiableList = new ArrayList<>();
         modifiableList.add(USER);
@@ -133,7 +133,7 @@ public class PersonTest {
 
 
     @Test
-    public void ensureNotificationsAreUnmodifiable() {
+    void ensureNotificationsAreUnmodifiable() {
 
         List<MailNotification> modifiableList = new ArrayList<>();
         modifiableList.add(NOTIFICATION_USER);
@@ -150,7 +150,7 @@ public class PersonTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPassword("Theo");

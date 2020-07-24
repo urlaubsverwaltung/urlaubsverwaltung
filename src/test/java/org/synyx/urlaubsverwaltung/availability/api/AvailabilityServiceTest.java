@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class AvailabilityServiceTest {
+class AvailabilityServiceTest {
 
     private static final int DAYS_IN_TEST_DATE_RANGE = 8;
 
@@ -31,8 +31,8 @@ public class AvailabilityServiceTest {
     private LocalDate testDateRangeEnd;
     private TimedAbsenceSpans timedAbsenceSpansMock;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         freeTimeAbsenceProvider = mock(FreeTimeAbsenceProvider.class);
         timedAbsenceSpansMock = mock(TimedAbsenceSpans.class);
@@ -44,14 +44,14 @@ public class AvailabilityServiceTest {
 
         availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
 
-        testPerson = TestDataCreator.createPerson();
+        testPerson = DemoDataCreator.createPerson();
         testDateRangeStart = LocalDate.of(2016, 1, 1);
         testDateRangeEnd = LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE);
     }
 
 
     @Test
-    public void ensureFetchesAvailabilityListForEachDayInDateRange() {
+    void ensureFetchesAvailabilityListForEachDayInDateRange() {
 
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
@@ -61,7 +61,7 @@ public class AvailabilityServiceTest {
 
 
     @Test
-    public void ensureReturnsDayAvailabilityWithCalculatedPresenceRatio() {
+    void ensureReturnsDayAvailabilityWithCalculatedPresenceRatio() {
 
         LocalDate dayToTest = testDateRangeStart;
 

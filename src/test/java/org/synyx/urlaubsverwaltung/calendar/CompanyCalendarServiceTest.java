@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,14 +30,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class CompanyCalendarServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CompanyCalendarServiceTest {
 
     private CompanyCalendarService sut;
 
@@ -55,14 +56,14 @@ public class CompanyCalendarServiceTest {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
     }
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource);
     }
 
     @Test
-    public void getCalendarForAllForOneFullDay() {
+    void getCalendarForAllForOneFullDay() {
 
         final List<Absence> absences = List.of(absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
         when(absenceService.getOpenAbsences()).thenReturn(absences);
@@ -82,8 +83,8 @@ public class CompanyCalendarServiceTest {
         assertThat(calendar).isEqualTo("calendar");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForAllButNoCompanyCalendarWithSecretFound() {
+    @Test
+    void getCalendarForAllButNoCompanyCalendarWithSecretFound() {
 
         final Person person = new Person();
         person.setId(10);
@@ -91,37 +92,38 @@ public class CompanyCalendarServiceTest {
 
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
 
-        sut.getCalendarForAll(10, "secret", GERMAN);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForAllSecretIsNull() {
-
-        sut.getCalendarForAll(1, null, GERMAN);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForAllSecretIsEmpty() {
-
-        sut.getCalendarForAll(1, "", GERMAN);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForAllSecretIsEmptyWithWhitespace() {
-
-        sut.getCalendarForAll(1, "  ", GERMAN);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCalendarForAllCorrectSecretButPersonIsWrong() {
-
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
-
-        sut.getCalendarForAll(1, "secret", GERMAN);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForAll(10, "secret", GERMAN));
     }
 
     @Test
-    public void deleteCalendarForPerson() {
+    void getCalendarForAllSecretIsNull() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForAll(1, null, GERMAN));
+    }
+
+    @Test
+    void getCalendarForAllSecretIsEmpty() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForAll(1, "", GERMAN));
+    }
+
+    @Test
+    void getCalendarForAllSecretIsEmptyWithWhitespace() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForAll(1, "  ", GERMAN));
+    }
+
+    @Test
+    void getCalendarForAllCorrectSecretButPersonIsWrong() {
+        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCalendarForAll(1, "secret", GERMAN));
+    }
+
+    @Test
+    void deleteCalendarForPerson() {
 
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -132,7 +134,7 @@ public class CompanyCalendarServiceTest {
     }
 
     @Test
-    public void deleteCalendarsForPersonsWithoutOneOfRole() {
+    void deleteCalendarsForPersonsWithoutOneOfRole() {
 
         final Person office = createPerson("office", OFFICE);
         final Person user = createPerson("user", USER);
@@ -145,16 +147,16 @@ public class CompanyCalendarServiceTest {
         verify(companyCalendarRepository, never()).deleteByPerson(office);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureGetCompanyCalendarThrowsWhenGivenPersonDoesNotExist() {
-
+    @Test
+    void ensureGetCompanyCalendarThrowsWhenGivenPersonDoesNotExist() {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
-        sut.getCompanyCalendar(1);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.getCompanyCalendar(1));
     }
 
     @Test
-    public void ensureGetCompanyCalendarReturnsCalendar() {
+    void ensureGetCompanyCalendarReturnsCalendar() {
 
         final CompanyCalendar expectedCalendar = mock(CompanyCalendar.class);
 
@@ -168,7 +170,7 @@ public class CompanyCalendarServiceTest {
     }
 
     @Test
-    public void ensureGetCompanyCalendarReturnsEmptyOptional() {
+    void ensureGetCompanyCalendarReturnsEmptyOptional() {
 
         final Person person = createPerson();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -179,16 +181,16 @@ public class CompanyCalendarServiceTest {
         assertThat(actualCompanyCalendar).isEmpty();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureCreateCalendarForPersonThrowsWhenGivenPersonDoesNotExist() {
-
+    @Test
+    void ensureCreateCalendarForPersonThrowsWhenGivenPersonDoesNotExist() {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
-        sut.createCalendarForPerson(1);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.createCalendarForPerson(1));
     }
 
     @Test
-    public void ensureCreateCalendarForPerson() {
+    void ensureCreateCalendarForPerson() {
 
         final Person person = createPerson();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -203,7 +205,7 @@ public class CompanyCalendarServiceTest {
     }
 
     @Test
-    public void ensureCreateCalendarForPersonUpdatesExistingCalendar() {
+    void ensureCreateCalendarForPersonUpdatesExistingCalendar() {
 
         final Person person = createPerson();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
