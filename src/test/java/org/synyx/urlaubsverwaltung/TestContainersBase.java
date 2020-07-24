@@ -4,11 +4,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.testcontainers.containers.MariaDBContainer.IMAGE;
 
-@Testcontainers
 @DirtiesContext
 public abstract class TestContainersBase {
 
