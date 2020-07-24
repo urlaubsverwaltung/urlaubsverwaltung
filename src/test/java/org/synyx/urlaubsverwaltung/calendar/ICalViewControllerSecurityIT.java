@@ -9,6 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 
 import static java.util.Locale.GERMAN;
 import static org.mockito.Mockito.when;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class ICalViewControllerSecurityIT {
+class ICalViewControllerSecurityIT extends TestContainersBase {
 
     @Autowired
     private WebApplicationContext context;

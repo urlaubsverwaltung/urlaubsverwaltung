@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -28,7 +29,7 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @ExtendWith(SpringExtension.class)
 @Transactional
-class CalendarMailServiceIT {
+class CalendarMailServiceIT extends TestContainersBase {
 
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);

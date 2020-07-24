@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -30,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class CalendarSharingViewControllerDepartmentCalendarSecurityIT {
+class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestContainersBase {
 
     @Autowired
     private WebApplicationContext context;

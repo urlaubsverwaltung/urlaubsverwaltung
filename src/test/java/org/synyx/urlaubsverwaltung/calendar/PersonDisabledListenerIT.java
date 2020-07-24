@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.PersonDisabledEvent;
 
 import static org.mockito.Mockito.verify;
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ContextConfiguration(classes = {PersonDisabledListener.class})
-class PersonDisabledListenerIT {
+class PersonDisabledListenerIT extends TestContainersBase {
 
     @MockBean
     private PersonCalendarService personCalendarService;

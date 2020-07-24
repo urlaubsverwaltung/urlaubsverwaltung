@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -23,7 +24,7 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-class AccountRepositoryIT {
+class AccountRepositoryIT extends TestContainersBase {
 
     @Autowired
     private AccountRepository sut;

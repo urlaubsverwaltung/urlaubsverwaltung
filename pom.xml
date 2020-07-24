@@ -127,6 +127,12 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>mariadb</artifactId>
+      <version>1.14.3</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- MAIL -->
     <dependency>
@@ -256,6 +262,18 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.14.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>1.14.3</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -370,23 +388,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <executions>
-          <execution>
-            <configuration>
-              <!-- Those can be overridden in build.properties.local -->
-              <systemPropertyVariables>
-                <!-- Spring Datasource configuration -->
-                <spring.datasource.url>
-                  jdbc:mariadb://${docker.host.address}:${docker.mariadb.port}/urlaubsverwaltung
-                </spring.datasource.url>
-              </systemPropertyVariables>
-            </configuration>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <!-- Docker -->
@@ -422,46 +423,6 @@
             </image>
           </images>
         </configuration>
-        <executions>
-          <execution>
-            <id>docker-prepare-integration-test</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>build</goal>
-              <goal>start</goal>
-            </goals>
-            <configuration>
-              <images>
-                <!-- MariaDB -->
-                <image>
-                  <name>urlaubsverwaltung/database</name>
-                  <build>
-                    <contextDir>mariadb</contextDir>
-                  </build>
-                  <run>
-                    <ports>
-                      <port>docker.mariadb.port:3306</port>
-                    </ports>
-                    <wait>
-                      <healthy>true</healthy>
-                      <time>120000</time>
-                    </wait>
-                  </run>
-                </image>
-              </images>
-            </configuration>
-          </execution>
-          <execution>
-            <id>docker-stop</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <configuration>
-              <removeVolumes>true</removeVolumes>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
       <!-- Editorconfig -->

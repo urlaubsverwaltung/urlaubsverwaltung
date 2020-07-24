@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +18,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-class SickNoteRepositoryIT {
+class SickNoteRepositoryIT extends TestContainersBase {
 
     @Autowired
     private SickNoteRepository sickNoteRepository;

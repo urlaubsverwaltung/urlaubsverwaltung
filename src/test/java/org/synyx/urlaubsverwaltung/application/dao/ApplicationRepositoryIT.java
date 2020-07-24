@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -37,7 +38,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-class ApplicationRepositoryIT {
+class ApplicationRepositoryIT extends TestContainersBase {
 
     @Autowired
     private PersonService personService;
