@@ -36,9 +36,7 @@ public class VacationOverviewApiController {
         @RequestParam("selectedYear") Integer selectedYear,
         @RequestParam("selectedMonth") Integer selectedMonth) {
 
-        List<VacationOverview> holidayOverviewList =
-            vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
-
+        final List<VacationOverview> holidayOverviewList = vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
         return new VacationOverviewResponse(holidayOverviewList);
     }
 }
