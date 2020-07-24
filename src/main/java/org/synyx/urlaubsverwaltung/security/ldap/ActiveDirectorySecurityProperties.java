@@ -5,10 +5,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties("uv.security.directory-service.active-directory")
-public class ActiveDirectorySecurityConfigurationProperties {
+public class ActiveDirectorySecurityProperties {
 
     private String domain;
     private String url;
+    private String searchFilter;
 
     private SecurityActiveDirectorySync sync = new SecurityActiveDirectorySync();
 
@@ -26,6 +27,14 @@ public class ActiveDirectorySecurityConfigurationProperties {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        this.searchFilter = searchFilter;
     }
 
     public SecurityActiveDirectorySync getSync() {

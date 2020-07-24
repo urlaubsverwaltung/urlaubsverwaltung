@@ -2,12 +2,8 @@ package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 /**
@@ -16,54 +12,35 @@ import java.util.Set;
 final class LdapUser {
 
     private final String username;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final List<String> memberOf;
 
-    private String firstName;
-    private String lastName;
-    private String email;
-
-    private final Set<String> memberOf = new HashSet<>();
-
-    LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email,
-             String... memberOf) {
+    LdapUser(String username, String firstName, String lastName, String email, List<String> memberOf) {
 
         if (!StringUtils.hasText(username)) {
             throw new IllegalArgumentException("Username must be given.");
         }
 
         this.username = username;
-
-        if (firstName.isPresent()) {
-            this.firstName = firstName.get();
-        }
-
-        if (lastName.isPresent()) {
-            this.lastName = lastName.get();
-        }
-
-        if (email.isPresent()) {
-            this.email = email.get();
-        }
-
-        Collections.addAll(this.memberOf, memberOf);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.memberOf = memberOf;
     }
 
     String getUsername() {
-
         return username;
     }
 
-
     Optional<String> getFirstName() {
-
         return Optional.ofNullable(firstName);
     }
 
-
     Optional<String> getLastName() {
-
         return Optional.ofNullable(lastName);
     }
-
 
     Optional<String> getEmail() {
 
@@ -78,7 +55,6 @@ final class LdapUser {
     }
 
     List<String> getMemberOf() {
-
-        return Collections.unmodifiableList(new ArrayList<>(memberOf));
+        return List.copyOf(memberOf);
     }
 }

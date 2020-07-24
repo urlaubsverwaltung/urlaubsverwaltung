@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties("uv.security.directory-service.ldap")
-public class LdapSecurityConfigurationProperties {
+public class LdapSecurityProperties {
 
     private String url;
     private String base;

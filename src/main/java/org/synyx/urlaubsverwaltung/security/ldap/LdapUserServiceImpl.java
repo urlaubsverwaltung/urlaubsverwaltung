@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.query.ContainerCriteria;
 
 import java.util.List;
 
@@ -9,9 +10,6 @@ import static org.springframework.util.StringUtils.hasText;
 
 
 public class LdapUserServiceImpl implements LdapUserService {
-
-    private static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";
-    private static final String MEMBER_OF_ATTRIBUTE = "memberOf";
 
     private final LdapTemplate ldapTemplate;
     private final LdapUserMapper ldapUserMapper;
@@ -31,13 +29,11 @@ public class LdapUserServiceImpl implements LdapUserService {
         final String memberOf = directoryServiceSecurityProperties.getFilter().getMemberOf();
         final String objectClass = directoryServiceSecurityProperties.getFilter().getObjectClass();
 
+        final ContainerCriteria criteria = query().where("objectClass").is(objectClass);
         if (hasText(memberOf)) {
-            return ldapTemplate.search(query().where(OBJECT_CLASS_ATTRIBUTE)
-                .is(objectClass)
-                .and(MEMBER_OF_ATTRIBUTE)
-                .is(memberOf), ldapUserMapper);
+            criteria.and("memberOf").is(memberOf);
         }
 
-        return ldapTemplate.search(query().where(OBJECT_CLASS_ATTRIBUTE).is(objectClass), ldapUserMapper);
+        return ldapTemplate.search(criteria, ldapUserMapper);
     }
 }

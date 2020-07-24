@@ -86,7 +86,6 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         /*
          * NOTE: If the system has no office user yet, grant office permissions to successfully signed in user
          */
-
         final Essence user = new Essence(ctx);
         user.setUsername(ldapUsername);
         user.setAuthorities(getGrantedAuthorities(person));
@@ -108,13 +107,11 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         Assert.notNull(person, "Person must be given.");
 
         Collection<Role> permissions = person.getPermissions();
-
         if (permissions.isEmpty()) {
             throw new IllegalStateException("Every user must have at least one role, data seems to be corrupt.");
         }
 
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
         permissions.forEach(role -> grantedAuthorities.add(role::name));
 
         return grantedAuthorities;

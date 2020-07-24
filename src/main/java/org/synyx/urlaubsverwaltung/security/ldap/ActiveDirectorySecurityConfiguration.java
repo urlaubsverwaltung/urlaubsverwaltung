@@ -6,9 +6,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Configuration
 public class ActiveDirectorySecurityConfiguration {
@@ -18,29 +21,31 @@ public class ActiveDirectorySecurityConfiguration {
     public static class ActiveDirectoryAuthConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final ActiveDirectorySecurityConfigurationProperties configurationProperties;
+        private final ActiveDirectorySecurityProperties adProperties;
 
         @Autowired
-        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties configurationProperties) {
+        public ActiveDirectoryAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityProperties adProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
-            this.configurationProperties = configurationProperties;
+            this.adProperties = adProperties;
         }
 
         @Bean
         public AuthenticationProvider activeDirectoryAuthenticationProvider(LdapPersonContextMapper ldapPersonContextMapper) {
-
-            String domain = configurationProperties.getDomain();
-            String url = configurationProperties.getUrl();
+            final String domain = adProperties.getDomain();
+            final String url = adProperties.getUrl();
+            final String searchFilter = adProperties.getSearchFilter();
 
             final ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(domain, url);
             authenticationProvider.setUserDetailsContextMapper(ldapPersonContextMapper);
+            if (hasText(searchFilter)) {
+                authenticationProvider.setSearchFilter(searchFilter);
+            }
 
             return authenticationProvider;
         }
 
         @Bean
         public LdapUserMapper ldapUserMapper() {
-
             return new LdapUserMapper(directoryServiceSecurityProperties);
         }
 
@@ -55,17 +60,12 @@ public class ActiveDirectorySecurityConfiguration {
     static class LdapAuthSyncConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final ActiveDirectorySecurityConfigurationProperties adProperties;
+        private final ActiveDirectorySecurityProperties adProperties;
 
         @Autowired
-        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityConfigurationProperties adProperties) {
+        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, ActiveDirectorySecurityProperties adProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.adProperties = adProperties;
-        }
-
-        @Bean
-        public ActiveDirectoryContextSourceSync ldapContextSourceSync() {
-            return new ActiveDirectoryContextSourceSync(adProperties);
         }
 
         @Bean
@@ -79,13 +79,28 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapUserServiceImpl ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
+        public LdapUserService ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
             return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, directoryServiceSecurityProperties);
         }
 
         @Bean
         public LdapTemplate ldapTemplate() {
-            return new UVLdapTemplate(ldapContextSourceSync());
+            final LdapTemplate ldapTemplate = new LdapTemplate(ldapContextSourceSync());
+            ldapTemplate.setIgnorePartialResultException(true);
+            ldapTemplate.setIgnoreNameNotFoundException(true);
+
+            return ldapTemplate;
+        }
+
+        @Bean
+        public LdapContextSource ldapContextSourceSync() {
+            final LdapContextSource ldapContextSource = new LdapContextSource();
+            ldapContextSource.setUrl(adProperties.getUrl());
+            ldapContextSource.setBase(adProperties.getSync().getUserSearchBase());
+            ldapContextSource.setUserDn(adProperties.getSync().getUserDn());
+            ldapContextSource.setPassword(adProperties.getSync().getPassword());
+
+            return ldapContextSource;
         }
     }
 }
