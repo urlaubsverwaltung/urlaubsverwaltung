@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;

@@ -21,7 +21,6 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.C
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
