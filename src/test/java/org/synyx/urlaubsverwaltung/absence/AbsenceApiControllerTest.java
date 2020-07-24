@@ -96,17 +96,16 @@ class AbsenceApiControllerTest {
         perform(get("/api/absences").param("year", "2016").param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.absences").exists())
-            .andExpect(jsonPath("$.response.absences", hasSize(3)))
-            .andExpect(jsonPath("$.response.absences[0].date", is("2016-04-06")))
-            .andExpect(jsonPath("$.response.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.response.absences[1].date", is("2016-05-19")))
-            .andExpect(jsonPath("$.response.absences[1].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.response.absences[1].href", is("1")))
-            .andExpect(jsonPath("$.response.absences[2].date", is("2016-05-20")))
-            .andExpect(jsonPath("$.response.absences[2].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.response.absences[2].href", is("1")));
+            .andExpect(jsonPath("$.absences").exists())
+            .andExpect(jsonPath("$.absences", hasSize(3)))
+            .andExpect(jsonPath("$.absences[0].date", is("2016-04-06")))
+            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
+            .andExpect(jsonPath("$.absences[1].date", is("2016-05-19")))
+            .andExpect(jsonPath("$.absences[1].type", is("SICK_NOTE")))
+            .andExpect(jsonPath("$.absences[1].href", is("1")))
+            .andExpect(jsonPath("$.absences[2].date", is("2016-05-20")))
+            .andExpect(jsonPath("$.absences[2].type", is("SICK_NOTE")))
+            .andExpect(jsonPath("$.absences[2].href", is("1")));
     }
 
     @Test
@@ -121,11 +120,10 @@ class AbsenceApiControllerTest {
         perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "VACATION"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.absences").exists())
-            .andExpect(jsonPath("$.response.absences", hasSize(1)))
-            .andExpect(jsonPath("$.response.absences[0].date", is("2016-04-06")))
-            .andExpect(jsonPath("$.response.absences[0].type", is("VACATION")));
+            .andExpect(jsonPath("$.absences").exists())
+            .andExpect(jsonPath("$.absences", hasSize(1)))
+            .andExpect(jsonPath("$.absences[0].date", is("2016-04-06")))
+            .andExpect(jsonPath("$.absences[0].type", is("VACATION")));
     }
 
     @Test
@@ -143,13 +141,12 @@ class AbsenceApiControllerTest {
         perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.absences").exists())
-            .andExpect(jsonPath("$.response.absences", hasSize(2)))
-            .andExpect(jsonPath("$.response.absences[0].date", is("2016-06-01")))
-            .andExpect(jsonPath("$.response.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.response.absences[1].date", is("2016-06-30")))
-            .andExpect(jsonPath("$.response.absences[1].type", is("SICK_NOTE")));
+            .andExpect(jsonPath("$.absences").exists())
+            .andExpect(jsonPath("$.absences", hasSize(2)))
+            .andExpect(jsonPath("$.absences[0].date", is("2016-06-01")))
+            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
+            .andExpect(jsonPath("$.absences[1].date", is("2016-06-30")))
+            .andExpect(jsonPath("$.absences[1].type", is("SICK_NOTE")));
     }
 
     @Test

@@ -62,9 +62,8 @@ class WorkDayApiControllerTest {
             .param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.workDays").exists())
-            .andExpect(jsonPath("$.response.workDays", is("1")));
+            .andExpect(jsonPath("$.workDays").exists())
+            .andExpect(jsonPath("$.workDays", is("1")));
 
         verify(personServiceMock).getPersonByID(23);
         verify(workDaysServiceMock).getWorkDays(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);

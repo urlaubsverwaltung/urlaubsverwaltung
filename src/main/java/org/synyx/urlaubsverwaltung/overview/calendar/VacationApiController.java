@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.api.SwaggerConfig;
@@ -59,7 +58,7 @@ public class VacationApiController {
     )
     @GetMapping("/vacations")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public ResponseWrapper<VacationListResponse> vacations(
+    public VacationListResponse vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
             Boolean departmentMembers,
@@ -109,6 +108,6 @@ public class VacationApiController {
 
         List<VacationResponse> vacationResponses = applications.stream().map(VacationResponse::new).collect(toList());
 
-        return new ResponseWrapper<>(new VacationListResponse(vacationResponses));
+        return new VacationListResponse(vacationResponses);
     }
 }

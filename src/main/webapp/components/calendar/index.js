@@ -195,7 +195,7 @@ $(function() {
 
             return function(data) {
 
-                var absences = data.response.absences;
+                var absences = data.absences;
 
                 if(absences.length > 0) {
                     $.each(absences, function(idx, absence) {
@@ -216,7 +216,7 @@ $(function() {
 
             return function(data) {
 
-                var publicHolidays = data.response.publicHolidays;
+                var publicHolidays = data.publicHolidays;
 
                 if(publicHolidays.length > 0) {
                     $.each(publicHolidays, function(idx, publicHoliday) {

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
@@ -32,7 +31,7 @@ public class VacationOverviewApiController {
         notes = "Get Vacation-Overview metadata for all members of a department")
     @GetMapping("/vacationoverview")
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    public ResponseWrapper<VacationOverviewResponse> getHolidayOverview(
+    public VacationOverviewResponse getHolidayOverview(
         @RequestParam("selectedDepartment") String selectedDepartment,
         @RequestParam("selectedYear") Integer selectedYear,
         @RequestParam("selectedMonth") Integer selectedMonth) {
@@ -40,6 +39,6 @@ public class VacationOverviewApiController {
         List<VacationOverview> holidayOverviewList =
             vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
 
-        return new ResponseWrapper<>(new VacationOverviewResponse(holidayOverviewList));
+        return new VacationOverviewResponse(holidayOverviewList);
     }
 }

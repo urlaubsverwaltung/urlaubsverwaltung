@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -58,7 +57,7 @@ public class AbsenceApiController {
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
-    public ResponseWrapper<DayAbsenceList> personsVacations(
+    public DayAbsenceList personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = EXAMPLE_YEAR)
         @RequestParam("year")
             String year,
@@ -98,7 +97,7 @@ public class AbsenceApiController {
             absences.addAll(getSickNotes(startDate, endDate, person));
         }
 
-        return new ResponseWrapper<>(new DayAbsenceList(absences));
+        return new DayAbsenceList(absences);
     }
 
     private static LocalDate getStartDate(String year, Optional<String> optionalMonth) {

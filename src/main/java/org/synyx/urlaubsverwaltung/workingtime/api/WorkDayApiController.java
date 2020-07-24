@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -57,7 +56,7 @@ public class WorkDayApiController {
     )
     @GetMapping("/workdays")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public ResponseWrapper<WorkDayResponse> workDays(
+    public WorkDayResponse workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
             String from,
@@ -87,13 +86,13 @@ public class WorkDayApiController {
 
         final Optional<Person> person = personService.getPersonByID(personId);
 
-        if (!person.isPresent()) {
+        if (person.isEmpty()) {
             throw new IllegalArgumentException("No person found for ID=" + personId);
         }
 
         final DayLength howLong = DayLength.valueOf(length);
         final BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
 
-        return new ResponseWrapper<>(new WorkDayResponse(days.toString()));
+        return new WorkDayResponse(days.toString());
     }
 }

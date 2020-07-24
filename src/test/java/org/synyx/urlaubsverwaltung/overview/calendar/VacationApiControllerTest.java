@@ -101,12 +101,11 @@ class VacationApiControllerTest {
         perform(get("/api/vacations").param("from", "2016-01-01").param("to", "2016-12-31"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;"))
-            .andExpect(jsonPath("$.response").exists())
-            .andExpect(jsonPath("$.response.vacations").exists())
-            .andExpect(jsonPath("$.response.vacations", hasSize(2)))
-            .andExpect(jsonPath("$.response.vacations[0].from", is("2016-05-19")))
-            .andExpect(jsonPath("$.response.vacations[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$.response.vacations[0].person").exists());
+            .andExpect(jsonPath("$.vacations").exists())
+            .andExpect(jsonPath("$.vacations", hasSize(2)))
+            .andExpect(jsonPath("$.vacations[0].from", is("2016-05-19")))
+            .andExpect(jsonPath("$.vacations[0].to", is("2016-05-20")))
+            .andExpect(jsonPath("$.vacations[0].person").exists());
     }
 
     @Test

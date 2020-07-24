@@ -34,9 +34,9 @@ $(function () {
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send();
         const holyDayOverviewResponse = JSON.parse(xhttp.responseText);
-        if (holyDayOverviewResponse && holyDayOverviewResponse.response) {
+        if (holyDayOverviewResponse) {
 
-          const overViewList = holyDayOverviewResponse.response.list;
+          const overViewList = holyDayOverviewResponse.list;
           overViewList
             .forEach(function (listItem) {
               const personId = listItem.personID;
@@ -56,7 +56,7 @@ $(function () {
 
                 listItem.days
                   .forEach(currentDay => {
-                      let absences = response.response.absences;
+                      let absences = response.absences;
 
                       currentDay.cssClass = '';
 

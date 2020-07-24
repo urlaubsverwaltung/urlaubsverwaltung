@@ -97,8 +97,8 @@ function getAbsences(data) {
 
   const absences = [];
 
-  for (let i = 0; i < data.response.absences.length; i++) {
-    const value = data.response.absences[i];
+  for (let i = 0; i < data.absences.length; i++) {
+    const value = data.absences[i];
     if ($.inArray(value, absences) == -1) {
       absences.push(value);
     }
@@ -111,8 +111,8 @@ function getPublicHolidays(data) {
 
   const publicHolidayDates = [];
 
-  for (let i = 0; i < data.response.publicHolidays.length; i++) {
-    const value = data.response.publicHolidays[i];
+  for (let i = 0; i < data.publicHolidays.length; i++) {
+    const value = data.publicHolidays[i];
     publicHolidayDates.push(value);
   }
 
