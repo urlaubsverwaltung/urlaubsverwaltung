@@ -1,282 +1,200 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationTypes;
 
+@ExtendWith(MockitoExtension.class)
+class ApplicationForLeaveStatisticsTest {
 
-/**
- * Unit test for {@link ApplicationForLeaveStatistics}.
- */
-public class ApplicationForLeaveStatisticsTest {
-
-    // Initialization --------------------------------------------------------------------------------------------------
-
+    @Mock
     private VacationTypeService vacationTypeService;
 
-    private List<VacationType> vacationTypes;
-
-    @Before
-    public void setUp() {
-
-        vacationTypeService = mock(VacationTypeService.class);
-        vacationTypes = DemoDataCreator.createVacationTypes();
-        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+    @Test
+    void ensureThrowsIfInitializedWithNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new ApplicationForLeaveStatistics(null, null));
     }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNull() {
-
-        new ApplicationForLeaveStatistics(null, null);
-    }
-
 
     @Test
-    public void ensureHasDefaultValues() {
+    void ensureHasDefaultValues() {
 
-        Person person = mock(Person.class);
+        final List<VacationType> vacationTypes = createVacationTypes();
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        Assert.assertNotNull("Person should not be null", statistics.getPerson());
-        Assert.assertNotNull("Total waiting vacation days should not be null",
-            statistics.getTotalWaitingVacationDays());
-        Assert.assertNotNull("Total allowed vacation days should not be null",
-            statistics.getTotalAllowedVacationDays());
-        Assert.assertNotNull("Left vacation days should not be null", statistics.getLeftVacationDays());
-        Assert.assertNotNull("Left overtime should not be null", statistics.getLeftOvertime());
-        Assert.assertNotNull("Waiting vacation days per type should not be null", statistics.getWaitingVacationDays());
-        Assert.assertNotNull("Allowed vacation days per type should not be null", statistics.getAllowedVacationDays());
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
 
         // Total
-        Assert.assertEquals("Total waiting vacation days should have default value", BigDecimal.ZERO,
+        Assert.assertEquals("Total waiting vacation days should have default value", ZERO,
             statistics.getTotalWaitingVacationDays());
-        Assert.assertEquals("Total allowed vacation days should have default value", BigDecimal.ZERO,
+        Assert.assertEquals("Total allowed vacation days should have default value", ZERO,
             statistics.getTotalAllowedVacationDays());
 
         // Left
-        Assert.assertEquals("Left vacation days should have default value", BigDecimal.ZERO,
+        Assert.assertEquals("Left vacation days should have default value", ZERO,
             statistics.getLeftVacationDays());
-        Assert.assertEquals("Left overtime should have default value", BigDecimal.ZERO, statistics.getLeftOvertime());
+        Assert.assertEquals("Left overtime should have default value", ZERO, statistics.getLeftOvertime());
 
         // Per vacation type
-        Assert.assertEquals("Wrong number of elements", DemoDataCreator.createVacationTypes().size(),
+        Assert.assertEquals("Wrong number of elements", createVacationTypes().size(),
             statistics.getWaitingVacationDays().size());
-        Assert.assertEquals("Wrong number of elements", DemoDataCreator.createVacationTypes().size(),
+        Assert.assertEquals("Wrong number of elements", createVacationTypes().size(),
             statistics.getAllowedVacationDays().size());
 
-        for (VacationType type : DemoDataCreator.createVacationTypes()) {
-            Assert.assertEquals("Waiting vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,
+        for (VacationType type : createVacationTypes()) {
+            Assert.assertEquals("Waiting vacation days for " + type.getCategory() + " should be zero", ZERO,
                 statistics.getWaitingVacationDays().get(type));
-            Assert.assertEquals("Allowed vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,
+            Assert.assertEquals("Allowed vacation days for " + type.getCategory() + " should be zero", ZERO,
                 statistics.getAllowedVacationDays().get(type));
         }
     }
 
-
     // Total left vacation days ----------------------------------------------------------------------------------------
+    @Test
+    void ensureCanSetTotalLeftVacationDays() {
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
+        statistics.setLeftVacationDays(ONE);
+
+        assertThat(statistics.getLeftVacationDays()).isEqualByComparingTo(ONE);
+    }
 
     @Test
-    public void ensureCanSetTotalLeftVacationDays() {
+    void ensureThrowsIfSettingTotalLeftVacationDaysToNull() {
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
 
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.setLeftVacationDays(BigDecimal.ONE);
-
-        Assert.assertEquals("Wrong number of days", BigDecimal.ONE, statistics.getLeftVacationDays());
+        assertThatIllegalArgumentException().isThrownBy(() -> statistics.setLeftVacationDays(null));
     }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfSettingTotalLeftVacationDaysToNull() {
-
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.setLeftVacationDays(null);
-    }
-
 
     // Adding vacation days --------------------------------------------------------------------------------------------
+    @Test
+    void ensureThrowsIfAddingWaitingVacationDaysWithNullVacationType() {
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfAddingWaitingVacationDaysWithNullVacationType() {
-
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addWaitingVacationDays(null, BigDecimal.ONE);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfAddingWaitingVacationDaysWithNullDays() {
-
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addWaitingVacationDays(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfAddingAllowedVacationDaysWithNullVacationType() {
-
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addAllowedVacationDays(null, BigDecimal.ONE);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfAddingAllowedVacationDaysWithNullDays() {
-
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addAllowedVacationDays(DemoDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
+        assertThatIllegalArgumentException().isThrownBy(() -> statistics.addWaitingVacationDays(null, ONE));
     }
 
 
     @Test
-    public void ensureCanAddWaitingVacationDays() {
+    void ensureThrowsIfAddingWaitingVacationDaysWithNullDays() {
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
 
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-
-        statistics.addWaitingVacationDays(vacationTypes.get(1), BigDecimal.ONE);
-
-        Assert.assertEquals("Wrong number of days", new BigDecimal("2"),
-            statistics.getWaitingVacationDays().get(vacationTypes.get(0)));
-        Assert.assertEquals("Wrong number of days", BigDecimal.ONE,
-            statistics.getWaitingVacationDays().get(vacationTypes.get(1)));
-        Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getWaitingVacationDays().get(vacationTypes.get(2)));
-        Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getWaitingVacationDays().get(vacationTypes.get(3)));
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> statistics.addWaitingVacationDays(createVacationType(HOLIDAY), null));
     }
-
 
     @Test
-    public void ensureCanAddAllowedVacationDays() {
+    void ensureThrowsIfAddingAllowedVacationDaysWithNullVacationType() {
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
 
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addAllowedVacationDays(vacationTypes.get(2), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(vacationTypes.get(2), BigDecimal.ONE);
-
-        statistics.addAllowedVacationDays(vacationTypes.get(3), BigDecimal.ONE);
-
-        Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getAllowedVacationDays().get(vacationTypes.get(0)));
-        Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getAllowedVacationDays().get(vacationTypes.get(1)));
-        Assert.assertEquals("Wrong number of days", new BigDecimal("2"),
-            statistics.getAllowedVacationDays().get(vacationTypes.get(2)));
-        Assert.assertEquals("Wrong number of days", BigDecimal.ONE,
-            statistics.getAllowedVacationDays().get(vacationTypes.get(3)));
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> statistics.addAllowedVacationDays(null, ONE));
     }
 
+    @Test
+    void ensureThrowsIfAddingAllowedVacationDaysWithNullDays() {
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
+
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> statistics.addAllowedVacationDays(createVacationType(HOLIDAY), null));
+    }
+
+    @Test
+    void ensureCanAddWaitingVacationDays() {
+        final List<VacationType> vacationTypes = createVacationTypes();
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
+
+        Assert.assertEquals("Wrong number of days", new BigDecimal("2"), statistics.getWaitingVacationDays().get(vacationTypes.get(0)));
+        Assert.assertEquals("Wrong number of days", ONE, statistics.getWaitingVacationDays().get(vacationTypes.get(1)));
+        Assert.assertEquals("Wrong number of days", ZERO, statistics.getWaitingVacationDays().get(vacationTypes.get(2)));
+        Assert.assertEquals("Wrong number of days", ZERO, statistics.getWaitingVacationDays().get(vacationTypes.get(3)));
+    }
+
+    @Test
+    void ensureCanAddAllowedVacationDays() {
+        final List<VacationType> vacationTypes = createVacationTypes();
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
+        statistics.addAllowedVacationDays(vacationTypes.get(2), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(2), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(3), ONE);
+
+        Assert.assertEquals("Wrong number of days", ZERO, statistics.getAllowedVacationDays().get(vacationTypes.get(0)));
+        Assert.assertEquals("Wrong number of days", ZERO, statistics.getAllowedVacationDays().get(vacationTypes.get(1)));
+        Assert.assertEquals("Wrong number of days", new BigDecimal("2"), statistics.getAllowedVacationDays().get(vacationTypes.get(2)));
+        Assert.assertEquals("Wrong number of days", ONE, statistics.getAllowedVacationDays().get(vacationTypes.get(3)));
+    }
 
     // Total waiting vacation days -------------------------------------------------------------------------------------
-
     @Test
-    public void ensureCanCalculateTotalWaitingVacationDays() {
+    void ensureCanCalculateTotalWaitingVacationDays() {
+        final List<VacationType> vacationTypes = createVacationTypes();
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-
-        statistics.addWaitingVacationDays(vacationTypes.get(1), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(vacationTypes.get(1), BigDecimal.ONE);
-
-        statistics.addWaitingVacationDays(vacationTypes.get(2), BigDecimal.ONE);
-
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(2), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(3), BigDecimal.TEN);
 
-        Assert.assertEquals("Wrong total waiting vacation days", new BigDecimal("16"),
-            statistics.getTotalWaitingVacationDays());
+        assertThat(statistics.getTotalWaitingVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(16));
     }
-
 
     // Total allowed vacation days -------------------------------------------------------------------------------------
-
     @Test
-    public void ensureCanCalculateTotalAllowedVacationDays() {
+    void ensureCanCalculateTotalAllowedVacationDays() {
+        final List<VacationType> vacationTypes = createVacationTypes();
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.addAllowedVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(vacationTypes.get(0), BigDecimal.ONE);
-
-        statistics.addAllowedVacationDays(vacationTypes.get(1), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(vacationTypes.get(1), BigDecimal.ONE);
-
-        statistics.addAllowedVacationDays(vacationTypes.get(2), BigDecimal.ONE);
-
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
+        statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(1), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(1), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(2), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(3), BigDecimal.TEN);
 
-        Assert.assertEquals("Wrong total allowed vacation days", new BigDecimal("16"),
-            statistics.getTotalAllowedVacationDays());
+        assertThat(statistics.getTotalAllowedVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(16));
     }
-
 
     // Total left overtime ---------------------------------------------------------------------------------------------
-
     @Test
-    public void ensureCanSetTotalLeftOvertime() {
-
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.setLeftOvertime(BigDecimal.ONE);
-
-        Assert.assertEquals("Wrong number of hours", BigDecimal.ONE, statistics.getLeftOvertime());
+    void ensureCanSetTotalLeftOvertime() {
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
+        statistics.setLeftOvertime(ONE);
+        assertThat(statistics.getLeftOvertime()).isEqualByComparingTo(ONE);
     }
 
+    @Test
+    void ensureThrowsIfSettingTotalLeftOvertimeToNull() {
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(createPerson(), vacationTypeService);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfSettingTotalLeftOvertimeToNull() {
-
-        Person person = mock(Person.class);
-
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
-
-        statistics.setLeftOvertime(null);
+        assertThatIllegalArgumentException().isThrownBy(() -> statistics.setLeftOvertime(null));
     }
 }

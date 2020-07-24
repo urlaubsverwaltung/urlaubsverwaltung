@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,21 +21,21 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.EDITED;
 /**
  * Unit test for {@link SickNoteCommentServiceImpl}.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteCommentServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteCommentServiceImplTest {
 
     private SickNoteCommentService sut;
 
     @Mock
     private SickNoteCommentRepository commentDAO;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteCommentServiceImpl(commentDAO);
     }
 
     @Test
-    public void ensureCreatesACommentAndPersistsIt() {
+    void ensureCreatesACommentAndPersistsIt() {
 
         when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -57,7 +57,7 @@ public class SickNoteCommentServiceImplTest {
     }
 
     @Test
-    public void ensureCreationOfCommentWithTextWorks() {
+    void ensureCreationOfCommentWithTextWorks() {
 
         when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 

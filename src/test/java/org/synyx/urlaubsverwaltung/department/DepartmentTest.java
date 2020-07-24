@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import org.junit.Assert;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.person.Person;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -12,12 +12,13 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
-public class DepartmentTest {
+class DepartmentTest {
 
     @Test
-    public void ensureLastModificationDateIsSetAfterInitialization() {
+    void ensureLastModificationDateIsSetAfterInitialization() {
 
         Department department = new Department();
 
@@ -27,15 +28,14 @@ public class DepartmentTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureCanNotSetLastModificationDateToNull() {
-
-        new Department().setLastModification(null);
+    @Test
+    void ensureCanNotSetLastModificationDateToNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new Department().setLastModification(null));
     }
 
 
     @Test
-    public void ensureReturnsCorrectLastModificationDate() {
+    void ensureReturnsCorrectLastModificationDate() {
 
         LocalDate lastModification = ZonedDateTime.now(UTC).minusDays(5).toLocalDate();
 
@@ -47,7 +47,7 @@ public class DepartmentTest {
 
 
     @Test
-    public void ensureMembersListIsUnmodifiable() {
+    void ensureMembersListIsUnmodifiable() {
 
         List<Person> modifiableList = new ArrayList<>();
         modifiableList.add(DemoDataCreator.createPerson());
@@ -65,7 +65,7 @@ public class DepartmentTest {
 
 
     @Test
-    public void ensureDepartmentHeadsListIsUnmodifiable() {
+    void ensureDepartmentHeadsListIsUnmodifiable() {
 
         List<Person> modifiableList = new ArrayList<>();
         modifiableList.add(DemoDataCreator.createPerson());
@@ -82,7 +82,7 @@ public class DepartmentTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         final Department department = new Department();
         department.setId(1);
         department.setLastModification(LocalDate.MAX);

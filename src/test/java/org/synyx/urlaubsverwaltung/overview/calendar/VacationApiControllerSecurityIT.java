@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.overview.calendar;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,9 +25,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class VacationApiControllerSecurityIT {
+class VacationApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -42,14 +42,14 @@ public class VacationApiControllerSecurityIT {
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
-    public void getVacationsWithoutBasicAuthIsUnauthorized() throws Exception {
+    void getVacationsWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/vacations"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    public void getVacationsAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+    void getVacationsAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/vacations")
             .param("from", dtf.format(now))
@@ -60,7 +60,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getVacationsAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    void getVacationsAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/vacations")
             .param("from", dtf.format(now))
@@ -71,7 +71,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getVacationsAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    void getVacationsAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/vacations")
             .param("from", dtf.format(now))
@@ -82,7 +82,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getVacationsAsBossUserForOtherUserIsForbidden() throws Exception {
+    void getVacationsAsBossUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/vacations")
             .param("from", dtf.format(now))
@@ -93,7 +93,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getVacationsAsAdminUserForOtherUserIsForbidden() throws Exception {
+    void getVacationsAsAdminUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/vacations")
             .param("from", dtf.format(now))
@@ -104,7 +104,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getVacationsAsInactiveUserForOtherUserIsForbidden() throws Exception {
+    void getVacationsAsInactiveUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/vacations")
             .param("from", dtf.format(now))
@@ -115,7 +115,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getVacationsWithBasicAuthIsOk() throws Exception {
+    void getVacationsWithBasicAuthIsOk() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/vacations")
             .param("from", dtf.format(now))
@@ -126,7 +126,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(username = "user")
-    public void getVacationsForSameUserIsOk() throws Exception {
+    void getVacationsForSameUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -144,7 +144,7 @@ public class VacationApiControllerSecurityIT {
 
     @Test
     @WithMockUser(username = "differentUser")
-    public void getVacationsForDifferentUserIsForbidden() throws Exception {
+    void getVacationsForDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");

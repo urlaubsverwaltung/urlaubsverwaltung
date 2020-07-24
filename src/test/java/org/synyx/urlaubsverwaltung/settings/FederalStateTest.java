@@ -1,16 +1,16 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
  * Unit test for {@link FederalState}.
  */
-public class FederalStateTest {
+class FederalStateTest {
 
     @Test
-    public void ensureCorrectCodeForBerlin() {
+    void ensureCorrectCodeForBerlin() {
 
         String[] codes = FederalState.BERLIN.getCodes();
 
@@ -19,7 +19,7 @@ public class FederalStateTest {
 
 
     @Test
-    public void ensureCorrectCodeForBadenWuerttemberg() {
+    void ensureCorrectCodeForBadenWuerttemberg() {
 
         String[] codes = FederalState.BADEN_WUERTTEMBERG.getCodes();
 
@@ -29,7 +29,7 @@ public class FederalStateTest {
 
 
     @Test
-    public void ensureCorrectCodeForBayernMuenchen() {
+    void ensureCorrectCodeForBayernMuenchen() {
 
         String[] codes = FederalState.BAYERN_MUENCHEN.getCodes();
 

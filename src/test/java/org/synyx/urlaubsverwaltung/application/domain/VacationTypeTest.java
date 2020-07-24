@@ -1,22 +1,22 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
-public class VacationTypeTest {
+class VacationTypeTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfCheckingCategoryWithNull() {
-
-        new VacationType().isOfCategory(null);
+    @Test
+    void ensureThrowsIfCheckingCategoryWithNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new VacationType().isOfCategory(null));
     }
 
 
     @Test
-    public void ensureReturnsTrueIfVacationTypeIsOfGivenCategory() {
+    void ensureReturnsTrueIfVacationTypeIsOfGivenCategory() {
 
         VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.OVERTIME);
@@ -26,7 +26,7 @@ public class VacationTypeTest {
 
 
     @Test
-    public void ensureReturnsFalseIfVacationTypeIsNotOfGivenCategory() {
+    void ensureReturnsFalseIfVacationTypeIsNotOfGivenCategory() {
 
         VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
@@ -35,7 +35,7 @@ public class VacationTypeTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
         vacationType.setMessageKey("messageKey");

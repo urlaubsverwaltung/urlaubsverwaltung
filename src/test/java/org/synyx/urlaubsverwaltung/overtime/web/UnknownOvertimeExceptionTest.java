@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class UnknownOvertimeExceptionTest {
+class UnknownOvertimeExceptionTest {
 
     @Test
-    public void ensureCorrectExceptionMessage() {
+    void ensureCorrectExceptionMessage() {
 
         UnknownOvertimeException exception = new UnknownOvertimeException(42);
 

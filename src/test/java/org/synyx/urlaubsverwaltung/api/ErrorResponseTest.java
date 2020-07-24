@@ -1,15 +1,15 @@
 package org.synyx.urlaubsverwaltung.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class ErrorResponseTest {
+class ErrorResponseTest {
 
     @Test
-    public void ensureCorrectErrorResponse() {
+    void ensureCorrectErrorResponse() {
 
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, new NumberFormatException("foo"));
 

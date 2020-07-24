@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -52,8 +52,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class PersonViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class PersonViewControllerTest {
 
     private static final int UNKNOWN_PERSON_ID = 365;
     private static final int PERSON_ID = 1;
@@ -79,8 +79,8 @@ public class PersonViewControllerTest {
 
     private Person person;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new PersonViewController(personService, accountService, vacationDaysService, departmentService,
             workingTimeService, settingsService, new PersonConfigurationProperties());
@@ -88,11 +88,10 @@ public class PersonViewControllerTest {
         person = new Person();
         person.setId(1);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
-        when(personService.getSignedInUser()).thenReturn(person);
     }
 
     @Test
-    public void showPersonRedirectsToPersonActiveTrue() throws Exception {
+    void showPersonRedirectsToPersonActiveTrue() throws Exception {
 
         final ResultActions resultActions = perform(get("/web/person"));
 
@@ -101,31 +100,28 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonInformationForUnknownIdThrowsUnknownPersonException() {
+    void showPersonInformationForUnknownIdThrowsUnknownPersonException() {
 
         assertThatThrownBy(() ->
-
             perform(get("/web/person/" + UNKNOWN_PERSON_ID))
-
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     @Test
-    public void showPersonInformationIfSignedInUserIsNotAllowedToAccessPersonDataThrowsAccessDeniedException() {
-
+    void showPersonInformationIfSignedInUserIsNotAllowedToAccessPersonDataThrowsAccessDeniedException() {
+        when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
-
             perform(get("/web/person/" + PERSON_ID))
-
         ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
-    public void showPersonInformationUsesGivenYear() throws Exception {
+    void showPersonInformationUsesGivenYear() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
@@ -135,8 +131,9 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonInformationUsesCurrentYearIfNoYearGiven() throws Exception {
+    void showPersonInformationUsesCurrentYearIfNoYearGiven() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
@@ -148,8 +145,9 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonInformationUsesPersonsWorkingTimeIfPresent() throws Exception {
+    void showPersonInformationUsesPersonsWorkingTimeIfPresent() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
@@ -165,8 +163,9 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonInformationUsesFederalStateOfPersonsWorkingTimeIfPresent() throws Exception {
+    void showPersonInformationUsesFederalStateOfPersonsWorkingTimeIfPresent() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
@@ -184,8 +183,9 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonInformationUsesAccountIfPresent() throws Exception {
+    void showPersonInformationUsesAccountIfPresent() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
@@ -201,8 +201,9 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonInformationUsesCorrectView() throws Exception {
+    void showPersonInformationUsesCorrectView() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
@@ -212,7 +213,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveTrueForUserWithRoleBossCallsCorrectService() throws Exception {
+    void showPersonWithActiveTrueForUserWithRoleBossCallsCorrectService() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
 
@@ -222,7 +223,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveTrueForUserWithRoleOfficeCallsCorrectService() throws Exception {
+    void showPersonWithActiveTrueForUserWithRoleOfficeCallsCorrectService() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
@@ -232,7 +233,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveTrueForUserWithRoleDepartmentHeadCallsCorrectService() throws Exception {
+    void showPersonWithActiveTrueForUserWithRoleDepartmentHeadCallsCorrectService() throws Exception {
 
         final Person signedInUser = personWithRole(DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -243,7 +244,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveTrueForUserWithRoleSecondStageAuthorityCallsCorrectService() throws Exception {
+    void showPersonWithActiveTrueForUserWithRoleSecondStageAuthorityCallsCorrectService() throws Exception {
 
         final Person signedInUser = personWithRole(SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -254,7 +255,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveFalseForUserWithRoleBossCallsCorrectService() throws Exception {
+    void showPersonWithActiveFalseForUserWithRoleBossCallsCorrectService() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
 
@@ -264,7 +265,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveFalseForUserWithRoleOfficeCallsCorrectService() throws Exception {
+    void showPersonWithActiveFalseForUserWithRoleOfficeCallsCorrectService() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
@@ -274,7 +275,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveFalseForUserWithRoleDepartmentHeadCallsCorrectService() throws Exception {
+    void showPersonWithActiveFalseForUserWithRoleDepartmentHeadCallsCorrectService() throws Exception {
 
         final Person signedInUser = personWithRole(DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -285,7 +286,7 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveFalseForUserWithRoleSecondStageAuthorityCallsCorrectService() throws Exception {
+    void showPersonWithActiveFalseForUserWithRoleSecondStageAuthorityCallsCorrectService() throws Exception {
 
         final Person signedInUser = personWithRole(SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -296,8 +297,9 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonForUnknownDepartmentIdThrowsUnknownDepartmentException() {
+    void showPersonForUnknownDepartmentIdThrowsUnknownDepartmentException() {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         assertThatThrownBy(() ->
 
             perform(get("/web/person")
@@ -308,10 +310,11 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonUsesDepartmentWithGivenId() throws Exception {
+    void showPersonUsesDepartmentWithGivenId() throws Exception {
 
         final Department department = new Department();
 
+        when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getDepartmentById(PERSON_ID)).thenReturn(Optional.of(department));
 
         perform(get("/web/person")
@@ -321,15 +324,17 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonUsesDepartmentUsesCorrectView() throws Exception {
+    void showPersonUsesDepartmentUsesCorrectView() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         perform(get("/web/person").param("active", "true"))
             .andExpect(view().name("person/person_view"));
     }
 
     @Test
-    public void showPersonWithActiveFlagUsesGivenYear() throws Exception {
+    void showPersonWithActiveFlagUsesGivenYear() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         perform(get("/web/person/")
             .param("active", "true")
             .param(YEAR_ATTRIBUTE, "1985")
@@ -337,8 +342,9 @@ public class PersonViewControllerTest {
     }
 
     @Test
-    public void showPersonWithActiveFlagUsesCurrentYearIfNoYearGiven() throws Exception {
+    void showPersonWithActiveFlagUsesCurrentYearIfNoYearGiven() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(person);
         final int currentYear = ZonedDateTime.now(UTC).getYear();
 
         perform(get("/web/person/").param("active", "true"))

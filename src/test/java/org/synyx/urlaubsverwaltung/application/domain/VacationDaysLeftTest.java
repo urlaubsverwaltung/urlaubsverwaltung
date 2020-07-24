@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
 
 import java.math.BigDecimal;
@@ -11,12 +11,12 @@ import java.math.BigDecimal;
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft}.
  */
-public class VacationDaysLeftTest {
+class VacationDaysLeftTest {
 
     private VacationDaysLeft.Builder builder;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         builder = VacationDaysLeft.builder().withAnnualVacation(new BigDecimal("28"))
             .withRemainingVacation(new BigDecimal("5"))
@@ -25,7 +25,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureBuildsCorrectVacationDaysLeftObject() {
+    void ensureBuildsCorrectVacationDaysLeftObject() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(new BigDecimal("10"))
@@ -36,7 +36,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAndAfterApril() {
+    void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAndAfterApril() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(new BigDecimal("10"))
@@ -56,7 +56,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithOnlyUsedDaysAfterApril() {
+    void ensureCorrectVacationDaysLeftWithOnlyUsedDaysAfterApril() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(BigDecimal.ZERO)
             .forUsedDaysAfterApril(new BigDecimal("10"))
@@ -76,7 +76,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAprilGreaterThanRemainingVacationDays() {
+    void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAprilGreaterThanRemainingVacationDays() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("10"))
             .forUsedDaysAfterApril(new BigDecimal("5"))
@@ -96,7 +96,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsedDaysLessThanRemainingVacationDays() {
+    void ensureCorrectVacationDaysLeftWithUsedDaysLessThanRemainingVacationDays() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("2"))
             .forUsedDaysAfterApril(new BigDecimal("2"))
@@ -116,7 +116,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithOnlyUsedDaysBeforeAprilLessThanRemainingVacationDays() {
+    void ensureCorrectVacationDaysLeftWithOnlyUsedDaysBeforeAprilLessThanRemainingVacationDays() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("3"))
             .forUsedDaysAfterApril(BigDecimal.ZERO)
@@ -136,7 +136,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsingDifferenceOfNotExpiringRemainingVacationDays() {
+    void ensureCorrectVacationDaysLeftWithUsingDifferenceOfNotExpiringRemainingVacationDays() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
             .forUsedDaysAfterApril(BigDecimal.ZERO)
@@ -156,7 +156,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsingNotExpiringRemainingVacationDays() {
+    void ensureCorrectVacationDaysLeftWithUsingNotExpiringRemainingVacationDays() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
             .forUsedDaysAfterApril(new BigDecimal("2"))
@@ -176,7 +176,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeApril() {
+    void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeApril() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(new BigDecimal("2"))
@@ -196,7 +196,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeAprilWithoutUsedDaysAfterApril() {
+    void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeAprilWithoutUsedDaysAfterApril() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(BigDecimal.ZERO)
@@ -216,7 +216,7 @@ public class VacationDaysLeftTest {
 
 
     @Test
-    public void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysExpiringAndNotExpiring() {
+    void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysExpiringAndNotExpiring() {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
             .forUsedDaysAfterApril(new BigDecimal("1"))

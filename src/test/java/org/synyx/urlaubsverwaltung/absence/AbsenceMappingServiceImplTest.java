@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,13 +9,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
-public class AbsenceMappingServiceImplTest {
+class AbsenceMappingServiceImplTest {
 
     private AbsenceMappingService sut;
     private AbsenceMappingRepository absenceMappingRepository;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         absenceMappingRepository = mock(AbsenceMappingRepository.class);
         sut = new AbsenceMappingServiceImpl(absenceMappingRepository);
@@ -23,7 +23,7 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCreateAbsenceMappingForVacation() {
+    void shouldCreateAbsenceMappingForVacation() {
 
         String eventId = "eventId";
 
@@ -37,7 +37,7 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCreateAbsenceMappingForSickDay() {
+    void shouldCreateAbsenceMappingForSickDay() {
 
         String eventId = "eventId";
 
@@ -51,7 +51,7 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCallAbsenceMappingDaoDelete() {
+    void shouldCallAbsenceMappingDaoDelete() {
 
         AbsenceMapping absenceMapping = new AbsenceMapping(42, AbsenceType.VACATION, "dummyEvent");
         sut.delete(absenceMapping);
@@ -61,7 +61,7 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCallAbsenceMappingDaoFind() {
+    void shouldCallAbsenceMappingDaoFind() {
 
         sut.getAbsenceByIdAndType(21, AbsenceType.SICKNOTE);
 

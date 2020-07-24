@@ -1,20 +1,19 @@
 package org.synyx.urlaubsverwaltung.holiday.api;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -27,10 +26,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PublicHolidayApiControllerTest {
+@ExtendWith(MockitoExtension.class)
+class PublicHolidayApiControllerTest {
 
     private PublicHolidayApiController sut;
 
@@ -43,19 +43,17 @@ public class PublicHolidayApiControllerTest {
     @Mock
     private SettingsService settingsServiceMock;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new PublicHolidayApiController(publicHolidayServiceMock, personServiceMock, workingTimeServiceMock, settingsServiceMock);
+    }
+
+    @Test
+    void ensureReturnsCorrectPublicHolidaysForYear() throws Exception {
 
         final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-    }
-
-
-    @Test
-    public void ensureReturnsCorrectPublicHolidaysForYear() throws Exception {
 
         perform(get("/api/holidays")
             .param("year", "2016"))
@@ -66,7 +64,11 @@ public class PublicHolidayApiControllerTest {
 
 
     @Test
-    public void ensureReturnsCorrectPublicHolidaysForYearAndMonth() throws Exception {
+    void ensureReturnsCorrectPublicHolidaysForYearAndMonth() throws Exception {
+
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
 
         perform(get("/api/holidays")
             .param("year", "2016")
@@ -76,9 +78,8 @@ public class PublicHolidayApiControllerTest {
         verify(publicHolidayServiceMock).getHolidays(2016, 4, BADEN_WUERTTEMBERG);
     }
 
-
     @Test
-    public void ensureReturnsCorrectPublicHolidaysForYearAndPersonWithOverriddenFederalState() throws Exception {
+    void ensureReturnsCorrectPublicHolidaysForYearAndPersonWithOverriddenFederalState() throws Exception {
 
         Person person = DemoDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -97,7 +98,7 @@ public class PublicHolidayApiControllerTest {
 
 
     @Test
-    public void ensureReturnsCorrectPublicHolidaysForYearAndMonthAndPersonWithOverriddenFederalState()
+    void ensureReturnsCorrectPublicHolidaysForYearAndMonthAndPersonWithOverriddenFederalState()
         throws Exception {
 
         Person person = DemoDataCreator.createPerson();
@@ -118,7 +119,7 @@ public class PublicHolidayApiControllerTest {
 
 
     @Test
-    public void ensureBadRequestForMissingYearParameter() throws Exception {
+    void ensureBadRequestForMissingYearParameter() throws Exception {
 
         perform(get("/api/holidays"))
             .andExpect(status().isBadRequest());
@@ -126,7 +127,11 @@ public class PublicHolidayApiControllerTest {
 
 
     @Test
-    public void ensureBadRequestForInvalidYearParameter() throws Exception {
+    void ensureBadRequestForInvalidYearParameter() throws Exception {
+
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
 
         perform(get("/api/holidays")
             .param("year", "foo"))
@@ -135,7 +140,11 @@ public class PublicHolidayApiControllerTest {
 
 
     @Test
-    public void ensureBadRequestForInvalidMonthParameter() throws Exception {
+    void ensureBadRequestForInvalidMonthParameter() throws Exception {
+
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
+        when(settingsServiceMock.getSettings()).thenReturn(settings);
 
         perform(get("/api/holidays")
             .param("year", "2016")
@@ -145,7 +154,7 @@ public class PublicHolidayApiControllerTest {
 
 
     @Test
-    public void ensureBadRequestForInvalidPersonParameter() throws Exception {
+    void ensureBadRequestForInvalidPersonParameter() throws Exception {
 
         perform(get("/api/holidays")
             .param("year", "2016")
@@ -155,7 +164,7 @@ public class PublicHolidayApiControllerTest {
 
 
     @Test
-    public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
+    void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
         when(personServiceMock.getPersonByID(any())).thenReturn(Optional.empty());
 
@@ -166,6 +175,6 @@ public class PublicHolidayApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return MockMvcBuilders.standaloneSetup(sut).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build().perform(builder);
+        return standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
     }
 }

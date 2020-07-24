@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -14,22 +14,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PersonPropertyEditorTest {
+@ExtendWith(MockitoExtension.class)
+class PersonPropertyEditorTest {
 
     private PersonPropertyEditor sut;
 
     @Mock
     private PersonService personService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new PersonPropertyEditor(personService);
     }
 
     @Test
-    public void ensureGetAsTextReturnsEmptyStringForNullValue() {
+    void ensureGetAsTextReturnsEmptyStringForNullValue() {
 
         sut.setValue(null);
 
@@ -37,7 +37,7 @@ public class PersonPropertyEditorTest {
     }
 
     @Test
-    public void ensureGetAsTextReturnsIdOfPerson() {
+    void ensureGetAsTextReturnsIdOfPerson() {
 
         final int personId = 10;
         sut.setValue(personWithId(personId));
@@ -46,7 +46,7 @@ public class PersonPropertyEditorTest {
     }
 
     @Test
-    public void ensureSetAsTextSetsValueToPersonForExistingPersonId() {
+    void ensureSetAsTextSetsValueToPersonForExistingPersonId() {
 
         final int personId = 5;
         final Person person = personWithId(personId);
@@ -58,7 +58,7 @@ public class PersonPropertyEditorTest {
     }
 
     @Test
-    public void ensureSetAsTextSetsValueToNullForNotExistingPersonId() {
+    void ensureSetAsTextSetsValueToNullForNotExistingPersonId() {
 
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 

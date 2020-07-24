@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
@@ -12,12 +12,12 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -36,10 +37,11 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.A
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationTypes;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationForLeaveStatisticsBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationForLeaveStatisticsBuilderTest {
 
     private ApplicationForLeaveStatisticsBuilder sut;
 
@@ -56,49 +58,39 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     @Mock
     private VacationTypeService vacationTypeService;
 
-    private List<VacationType> vacationTypes;
 
-    @Before
-    public void setUp() {
-
-        vacationTypes = DemoDataCreator.createVacationTypes();
-        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
-
+    @BeforeEach
+    void setUp() {
         sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
             vacationDaysService, overtimeService, vacationTypeService);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTheGivenPersonIsNull() {
-
-        sut.build(null, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31));
+    @Test
+    void ensureThrowsIfTheGivenPersonIsNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(null, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31)));
     }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTheGivenFromDateIsNull() {
-
-        sut.build(mock(Person.class), null, LocalDate.of(2015, 12, 31));
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTheGivenToDateIsNull() {
-
-        sut.build(mock(Person.class), LocalDate.of(2014, 1, 1), null);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
-
-        sut.build(mock(Person.class), LocalDate.of(2014, 1, 1), LocalDate.of(2015, 1, 1));
-    }
-
 
     @Test
-    public void ensureUsesWaitingAndAllowedVacationOfAllHolidayTypesToBuildStatistics() {
+    void ensureThrowsIfTheGivenFromDateIsNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(mock(Person.class), null, LocalDate.of(2015, 12, 31)));
+    }
+
+    @Test
+    void ensureThrowsIfTheGivenToDateIsNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(mock(Person.class), LocalDate.of(2014, 1, 1), null));
+    }
+
+    @Test
+    void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(mock(Person.class), LocalDate.of(2014, 1, 1), LocalDate.of(2015, 1, 1)));
+    }
+
+    @Test
+    void ensureUsesWaitingAndAllowedVacationOfAllHolidayTypesToBuildStatistics() {
+
+        final List<VacationType> vacationTypes = createVacationTypes();
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
         LocalDate from = LocalDate.of(2014, 1, 1);
         LocalDate to = LocalDate.of(2014, 12, 31);
@@ -176,7 +168,10 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     }
 
     @Test
-    public void ensureCallsCalendarServiceToCalculatePartialVacationDaysOfVacationsSpanningTwoYears() {
+    void ensureCallsCalendarServiceToCalculatePartialVacationDaysOfVacationsSpanningTwoYears() {
+
+        final List<VacationType> vacationTypes = createVacationTypes();
+        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
         LocalDate from = LocalDate.of(2015, 1, 1);
         LocalDate to = LocalDate.of(2015, 12, 31);
@@ -222,7 +217,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     }
 
     @Test
-    public void ensureCalculatesLeftVacationDaysAndLeftOvertimeCorrectly() {
+    void ensureCalculatesLeftVacationDaysAndLeftOvertimeCorrectly() {
 
         LocalDate from = LocalDate.of(2015, 1, 1);
         LocalDate to = LocalDate.of(2015, 12, 31);

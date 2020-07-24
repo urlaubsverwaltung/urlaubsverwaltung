@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,26 +24,27 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OidcPersonAuthoritiesMapperTest {
+@ExtendWith(MockitoExtension.class)
+class OidcPersonAuthoritiesMapperTest {
 
     private OidcPersonAuthoritiesMapper sut;
 
     @Mock
     private PersonService personService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new OidcPersonAuthoritiesMapper(personService);
     }
 
     @Test
-    public void mapAuthoritiesFromIdTokenBySync() {
+    void mapAuthoritiesFromIdTokenBySync() {
         final String uniqueID = "uniqueID";
         final String givenName = "test";
         final String familyName = "me";
@@ -63,7 +64,7 @@ public class OidcPersonAuthoritiesMapperTest {
     }
 
     @Test
-    public void mapAuthoritiesFromIdTokenByCreate() {
+    void mapAuthoritiesFromIdTokenByCreate() {
         final String uniqueID = "uniqueID";
         final String givenName = "test";
         final String familyName = "me";
@@ -82,8 +83,8 @@ public class OidcPersonAuthoritiesMapperTest {
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
     }
 
-    @Test(expected = DisabledException.class)
-    public void userIsDeactivated() {
+    @Test
+    void userIsDeactivated() {
         final String uniqueID = "uniqueID";
         final String givenName = "test";
         final String familyName = "me";
@@ -98,11 +99,11 @@ public class OidcPersonAuthoritiesMapperTest {
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
         when(personService.save(personForLogin)).thenReturn(personForLogin);
 
-        sut.mapAuthorities(List.of(oidcUserAuthority));
+        assertThatThrownBy(() -> sut.mapAuthorities(List.of(oidcUserAuthority))).isInstanceOf(DisabledException.class);
     }
 
     @Test
-    public void mapAuthoritiesFromUserInfoByCreate() {
+    void mapAuthoritiesFromUserInfoByCreate() {
         final String uniqueID = "uniqueID";
         final String givenName = "test";
         final String familyName = "me";
@@ -122,7 +123,7 @@ public class OidcPersonAuthoritiesMapperTest {
     }
 
     @Test
-    public void mapAuthoritiesFromUserInfoBySync() {
+    void mapAuthoritiesFromUserInfoBySync() {
         final String uniqueID = "uniqueID";
         final String givenName = "test";
         final String familyName = "me";
@@ -141,10 +142,10 @@ public class OidcPersonAuthoritiesMapperTest {
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
     }
 
-    @Test(expected = OidcPersonMappingException.class)
-    public void mapAuthoritiesWrongAuthority() {
-
-        sut.mapAuthorities(List.of(new SimpleGrantedAuthority("NO_ROLE")));
+    @Test
+    void mapAuthoritiesWrongAuthority() {
+        assertThatThrownBy(() -> sut.mapAuthorities(List.of(new SimpleGrantedAuthority("NO_ROLE"))))
+            .isInstanceOf(OidcPersonMappingException.class);
     }
 
     private OidcUserAuthority getOidcUserAuthority(String uniqueID, String givenName, String familyName, String email) {

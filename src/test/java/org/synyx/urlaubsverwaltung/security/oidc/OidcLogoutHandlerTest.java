@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -17,12 +17,12 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OidcLogoutHandlerTest {
+class OidcLogoutHandlerTest {
 
     private OidcLogoutHandler sut;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         final OidcSecurityProperties properties = new OidcSecurityProperties();
         properties.setLogoutPath("/log/out/path");
@@ -31,7 +31,7 @@ public class OidcLogoutHandlerTest {
     }
 
     @Test
-    public void prepareValidResponse() {
+    void prepareValidResponse() {
 
         final Map<String, Object> claims = Map.of(
             IdTokenClaimNames.SUB, "uniqueId",

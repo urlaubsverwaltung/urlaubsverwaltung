@@ -1,25 +1,25 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class LocalDatePropertyEditorTest {
+
+class LocalDatePropertyEditorTest {
 
     private LocalDatePropertyEditor editor;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         editor = new LocalDatePropertyEditor();
     }
 
-
     @Test
-    public void ensureCorrectFormatting() {
+    void ensureCorrectFormatting() {
 
         editor.setValue(LocalDate.of(2015, 12, 21));
 
@@ -27,18 +27,16 @@ public class LocalDatePropertyEditorTest {
         Assert.assertEquals("Wrong text representation", "21.12.2015", editor.getAsText());
     }
 
-
     @Test
-    public void ensureEmptyTextForNullDate() {
+    void ensureEmptyTextForNullDate() {
 
         editor.setValue(null);
 
         Assert.assertEquals("Wrong text representation", "", editor.getAsText());
     }
 
-
     @Test
-    public void ensureCorrectParsing() {
+    void ensureCorrectParsing() {
 
         editor.setAsText("13.12.2016");
 
@@ -46,28 +44,24 @@ public class LocalDatePropertyEditorTest {
         Assert.assertEquals("Wrong date", LocalDate.of(2016, 12, 13), editor.getValue());
     }
 
-
     @Test
-    public void ensureNullDateForEmptyText() {
+    void ensureNullDateForEmptyText() {
 
         editor.setAsText("");
 
         Assert.assertNull("Should be null", editor.getValue());
     }
 
-
     @Test
-    public void ensureNullDateForNullText() {
+    void ensureNullDateForNullText() {
 
         editor.setAsText(null);
 
         Assert.assertNull("Should be null", editor.getValue());
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureSettingTextRepresentingInvalidDateThrows() {
-
-        editor.setAsText("foo");
+    @Test
+    void ensureSettingTextRepresentingInvalidDateThrows() {
+        assertThatIllegalArgumentException().isThrownBy(() -> editor.setAsText("foo"));
     }
 }

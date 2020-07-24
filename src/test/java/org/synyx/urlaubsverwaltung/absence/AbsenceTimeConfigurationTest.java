@@ -1,21 +1,20 @@
 package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
 
 /**
  * Unit test for {@link AbsenceTimeConfiguration}.
  */
-public class AbsenceTimeConfigurationTest {
+class AbsenceTimeConfigurationTest {
 
     private CalendarSettings calendarSettings;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         calendarSettings = new CalendarSettings();
         calendarSettings.setWorkDayBeginHour(8);
@@ -24,7 +23,7 @@ public class AbsenceTimeConfigurationTest {
 
 
     @Test
-    public void ensureCorrectMorningStart() {
+    void ensureCorrectMorningStart() {
 
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
@@ -34,7 +33,7 @@ public class AbsenceTimeConfigurationTest {
 
 
     @Test
-    public void ensureCorrectMorningEnd() {
+    void ensureCorrectMorningEnd() {
 
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
@@ -44,7 +43,7 @@ public class AbsenceTimeConfigurationTest {
 
 
     @Test
-    public void ensureCorrectNoonStart() {
+    void ensureCorrectNoonStart() {
 
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
@@ -54,7 +53,7 @@ public class AbsenceTimeConfigurationTest {
 
 
     @Test
-    public void ensureCorrectNoonEnd() {
+    void ensureCorrectNoonEnd() {
 
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 

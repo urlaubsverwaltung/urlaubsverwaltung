@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Helper class for tests concerning security relevant stuff.
  */
-public class SecurityTestUtil {
+class SecurityTestUtil {
 
     public static boolean authorityForRoleExists(Collection<? extends GrantedAuthority> authorities, final Role role) {
 

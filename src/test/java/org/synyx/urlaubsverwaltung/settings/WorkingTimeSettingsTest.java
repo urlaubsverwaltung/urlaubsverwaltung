@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 
-public class WorkingTimeSettingsTest {
+class WorkingTimeSettingsTest {
 
     @Test
-    public void ensureDefaultValues() {
+    void ensureDefaultValues() {
 
         WorkingTimeSettings settings = new WorkingTimeSettings();
 

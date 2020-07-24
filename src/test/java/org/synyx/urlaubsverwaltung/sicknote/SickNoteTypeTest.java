@@ -1,20 +1,20 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
-public class SickNoteTypeTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfCheckingCategoryWithNull() {
-
-        new SickNoteType().isOfCategory(null);
-    }
-
+class SickNoteTypeTest {
 
     @Test
-    public void ensureReturnsTrueIfTypeIsOfGivenCategory() {
+    void ensureThrowsIfCheckingCategoryWithNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new SickNoteType().isOfCategory(null));
+    }
+
+    @Test
+    void ensureReturnsTrueIfTypeIsOfGivenCategory() {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
@@ -22,9 +22,8 @@ public class SickNoteTypeTest {
         Assert.assertTrue("Categories should match", sickNoteType.isOfCategory(SickNoteCategory.SICK_NOTE));
     }
 
-
     @Test
-    public void ensureReturnsFalseIfTypeIsNotOfGivenCategory() {
+    void ensureReturnsFalseIfTypeIsNotOfGivenCategory() {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);

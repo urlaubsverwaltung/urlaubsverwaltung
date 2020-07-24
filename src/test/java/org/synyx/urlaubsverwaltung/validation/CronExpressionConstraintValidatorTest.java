@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.validation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CronExpressionConstraintValidatorTest {
+class CronExpressionConstraintValidatorTest {
 
     @Test
-    public void returnsFalseForEmptyString() {
+    void returnsFalseForEmptyString() {
         final CronExpressionConstraintValidator validator = new CronExpressionConstraintValidator();
 
         boolean actual = validator.isValid("", null);
@@ -15,7 +15,7 @@ public class CronExpressionConstraintValidatorTest {
     }
 
     @Test
-    public void returnsFalseForNull() {
+    void returnsFalseForNull() {
         final CronExpressionConstraintValidator validator = new CronExpressionConstraintValidator();
 
         boolean actual = validator.isValid(null, null);
@@ -23,7 +23,7 @@ public class CronExpressionConstraintValidatorTest {
     }
 
     @Test
-    public void returnsFalseForRandomString() {
+    void returnsFalseForRandomString() {
         final CronExpressionConstraintValidator validator = new CronExpressionConstraintValidator();
 
         boolean actual = validator.isValid("random", null);
@@ -31,7 +31,7 @@ public class CronExpressionConstraintValidatorTest {
     }
 
     @Test
-    public void returnsTrueForCronString() {
+    void returnsTrueForCronString() {
         final CronExpressionConstraintValidator validator = new CronExpressionConstraintValidator();
 
         boolean actual = validator.isValid("0 0 7 * * *", null);

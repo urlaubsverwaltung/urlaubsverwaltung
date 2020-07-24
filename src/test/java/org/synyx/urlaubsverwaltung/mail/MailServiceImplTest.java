@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -21,8 +21,8 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class MailServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class MailServiceImplTest {
 
     private MailServiceImpl sut;
 
@@ -37,8 +37,8 @@ public class MailServiceImplTest {
     @Mock
     private RecipientService recipientService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
         when(mailBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
@@ -49,7 +49,7 @@ public class MailServiceImplTest {
     }
 
     @Test
-    public void sendMailToWithNotification() {
+    void sendMailToWithNotification() {
 
         final Person person = new Person();
         final List<Person> persons = singletonList(person);
@@ -70,7 +70,7 @@ public class MailServiceImplTest {
     }
 
     @Test
-    public void sendMailToWithPerson() {
+    void sendMailToWithPerson() {
 
         final Person hans = new Person();
         final List<Person> persons = singletonList(hans);
@@ -87,7 +87,7 @@ public class MailServiceImplTest {
     }
 
     @Test
-    public void sendMailToEachPerson() {
+    void sendMailToEachPerson() {
 
         final Person hans = new Person();
         final String hansMail = "hans@firma.test";
@@ -112,7 +112,7 @@ public class MailServiceImplTest {
 
 
     @Test
-    public void sendTechnicalMail() {
+    void sendTechnicalMail() {
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";

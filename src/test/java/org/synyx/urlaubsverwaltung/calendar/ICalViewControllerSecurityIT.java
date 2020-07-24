@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
@@ -18,9 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ICalViewControllerSecurityIT {
+class ICalViewControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -33,7 +33,7 @@ public class ICalViewControllerSecurityIT {
     private CompanyCalendarService companyCalendarService;
 
     @Test
-    public void getPersonCalendarUnauthorized() throws Exception {
+    void getPersonCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
         when(personCalendarService.getCalendarForPerson(1, secret, GERMAN)).thenReturn("calendar");
@@ -43,7 +43,7 @@ public class ICalViewControllerSecurityIT {
     }
 
     @Test
-    public void getDepartmentCalendarUnauthorized() throws Exception {
+    void getDepartmentCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
         when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn("calendar");
@@ -53,7 +53,7 @@ public class ICalViewControllerSecurityIT {
     }
 
     @Test
-    public void getCompanyCalendarUnauthorized() throws Exception {
+    void getCompanyCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
         when(companyCalendarService.getCalendarForAll(1, secret, GERMAN)).thenReturn("calendar");

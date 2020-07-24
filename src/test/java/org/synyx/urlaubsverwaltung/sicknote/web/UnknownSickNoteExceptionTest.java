@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class UnknownSickNoteExceptionTest {
+class UnknownSickNoteExceptionTest {
 
     @Test
-    public void ensureCorrectExceptionMessage() {
+    void ensureCorrectExceptionMessage() {
 
         UnknownSickNoteException exception = new UnknownSickNoteException(42);
 

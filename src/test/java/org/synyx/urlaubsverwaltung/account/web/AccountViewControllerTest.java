@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.account.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class AccountViewControllerTest {
 
     private AccountViewController sut;
 
@@ -47,34 +47,27 @@ public class AccountViewControllerTest {
 
     @Mock
     private PersonService personService;
-
     @Mock
     private AccountService accountService;
-
     @Mock
     private AccountInteractionService accountInteractionService;
-
     @Mock
     private AccountValidator validator;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new AccountViewController(personService, accountService, accountInteractionService, validator);
     }
 
     @Test
-    public void editAccountForUnknownIdThrowsUnknownPersonException() {
-
+    void editAccountForUnknownIdThrowsUnknownPersonException() {
         assertThatThrownBy(() ->
-
             perform(get("/web/person/" + UNKNOWN_PERSON_ID + "/account"))
-
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     @Test
-    public void editAccountProvidesCorrectModelAndView() throws Exception {
+    void editAccountProvidesCorrectModelAndView() throws Exception {
 
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
@@ -87,7 +80,7 @@ public class AccountViewControllerTest {
     }
 
     @Test
-    public void editAccountUsesProvidedYear() throws Exception {
+    void editAccountUsesProvidedYear() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
@@ -99,7 +92,7 @@ public class AccountViewControllerTest {
     }
 
     @Test
-    public void editAccountDefaultsToCurrentYear() throws Exception {
+    void editAccountDefaultsToCurrentYear() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
@@ -110,17 +103,14 @@ public class AccountViewControllerTest {
     }
 
     @Test
-    public void updateAccountForUnknownIdThrowsUnknownPersonException() {
-
+    void updateAccountForUnknownIdThrowsUnknownPersonException() {
         assertThatThrownBy(() ->
-
             perform(post("/web/person/" + UNKNOWN_PERSON_ID + "/account"))
-
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     @Test
-    public void updateAccountShowsFormIfValidationFails() throws Exception {
+    void updateAccountShowsFormIfValidationFails() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
@@ -135,7 +125,7 @@ public class AccountViewControllerTest {
     }
 
     @Test
-    public void updateAccountCallsEditForExistingAccount() throws Exception {
+    void updateAccountCallsEditForExistingAccount() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
@@ -147,7 +137,7 @@ public class AccountViewControllerTest {
     }
 
     @Test
-    public void updateAccountCallsUpdateOrCreateForNotExistingAccount() throws Exception {
+    void updateAccountCallsUpdateOrCreateForNotExistingAccount() throws Exception {
 
         Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
@@ -159,7 +149,7 @@ public class AccountViewControllerTest {
     }
 
     @Test
-    public void updateAccountAddsFlashAttributeAndRedirectsToPerson() throws Exception {
+    void updateAccountAddsFlashAttributeAndRedirectsToPerson() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(someAccount()));
@@ -171,17 +161,14 @@ public class AccountViewControllerTest {
     }
 
     private Person somePerson() {
-
         return new Person();
     }
 
     private Account someAccount() {
-
         return new Account();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
 }

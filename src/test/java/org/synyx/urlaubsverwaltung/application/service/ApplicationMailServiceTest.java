@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
@@ -32,8 +32,8 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationMailServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationMailServiceTest {
 
     private ApplicationMailService sut;
 
@@ -46,13 +46,13 @@ public class ApplicationMailServiceTest {
     @Mock
     private MessageSource messageSource;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, messageSource);
     }
 
     @Test
-    public void ensureSendsAllowedNotificationToOffice() {
+    void ensureSendsAllowedNotificationToOffice() {
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -85,7 +85,7 @@ public class ApplicationMailServiceTest {
 
 
     @Test
-    public void sendRejectedNotification() {
+    void sendRejectedNotification() {
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -116,7 +116,7 @@ public class ApplicationMailServiceTest {
     }
 
     @Test
-    public void sendReferApplicationNotification() {
+    void sendReferApplicationNotification() {
 
         final Person recipient = new Person();
         final Person sender = new Person();
@@ -143,7 +143,7 @@ public class ApplicationMailServiceTest {
     }
 
     @Test
-    public void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
+    void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
         final Application application = new Application();
         final ApplicationComment applicationComment = new ApplicationComment(new Person());
@@ -158,7 +158,7 @@ public class ApplicationMailServiceTest {
     }
 
     @Test
-    public void sendSickNoteConvertedToVacationNotification() {
+    void sendSickNoteConvertedToVacationNotification() {
         final Person person = new Person();
 
         final Application application = new Application();
@@ -173,7 +173,7 @@ public class ApplicationMailServiceTest {
     }
 
     @Test
-    public void notifyHolidayReplacement() {
+    void notifyHolidayReplacement() {
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -194,7 +194,7 @@ public class ApplicationMailServiceTest {
     }
 
     @Test
-    public void sendConfirmation() {
+    void sendConfirmation() {
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -230,7 +230,7 @@ public class ApplicationMailServiceTest {
 
 
     @Test
-    public void sendAppliedForLeaveByOfficeNotification() {
+    void sendAppliedForLeaveByOfficeNotification() {
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -262,7 +262,7 @@ public class ApplicationMailServiceTest {
     }
 
     @Test
-    public void sendCancelledByOfficeNotification() {
+    void sendCancelledByOfficeNotification() {
 
         final Person person = new Person();
 
@@ -282,7 +282,7 @@ public class ApplicationMailServiceTest {
 
 
     @Test
-    public void sendNewApplicationNotification() {
+    void sendNewApplicationNotification() {
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -328,7 +328,7 @@ public class ApplicationMailServiceTest {
 
 
     @Test
-    public void sendTemporaryAllowedNotification() {
+    void sendTemporaryAllowedNotification() {
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");

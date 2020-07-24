@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -15,6 +15,7 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -22,12 +23,12 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.application.domain.Application}.
  */
-public class ApplicationTest {
+class ApplicationTest {
 
     // Status ----------------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureReturnsTrueIfItHasTheGivenStatus() {
+    void ensureReturnsTrueIfItHasTheGivenStatus() {
 
         Application application = new Application();
 
@@ -39,7 +40,7 @@ public class ApplicationTest {
 
 
     @Test
-    public void ensureReturnsFalseIfItHasNotTheGivenStatus() {
+    void ensureReturnsFalseIfItHasNotTheGivenStatus() {
 
         Application application = new Application();
 
@@ -53,7 +54,7 @@ public class ApplicationTest {
     // Formerly allowed ------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureIsFormerlyAllowedReturnsFalseIfIsRevoked() {
+    void ensureIsFormerlyAllowedReturnsFalseIfIsRevoked() {
 
         Application application = new Application();
 
@@ -64,7 +65,7 @@ public class ApplicationTest {
 
 
     @Test
-    public void ensureIsFormerlyAllowedReturnsTrueIfIsCancelled() {
+    void ensureIsFormerlyAllowedReturnsTrueIfIsCancelled() {
 
         Application application = new Application();
 
@@ -76,44 +77,44 @@ public class ApplicationTest {
 
     // Period ----------------------------------------------------------------------------------------------------------
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutStartDate() {
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutStartDate() {
 
         Application application = new Application();
         application.setStartDate(null);
         application.setEndDate(LocalDate.now(UTC));
         application.setDayLength(DayLength.FULL);
 
-        application.getPeriod();
+        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
 
         Application application = new Application();
         application.setStartDate(LocalDate.now(UTC));
         application.setEndDate(null);
         application.setDayLength(DayLength.FULL);
 
-        application.getPeriod();
+        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
 
         Application application = new Application();
         application.setStartDate(LocalDate.now(UTC));
         application.setEndDate(LocalDate.now(UTC));
         application.setDayLength(null);
 
-        application.getPeriod();
+        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
     }
 
 
     @Test
-    public void ensureGetPeriodReturnsCorrectPeriod() {
+    void ensureGetPeriodReturnsCorrectPeriod() {
 
         LocalDate startDate = LocalDate.now(UTC);
         LocalDate endDate = startDate.plusDays(2);
@@ -135,7 +136,7 @@ public class ApplicationTest {
     // Start and end time ----------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureGetStartDateWithTimeReturnsCorrectDateTime() {
+    void ensureGetStartDateWithTimeReturnsCorrectDateTime() {
 
         LocalDate startDate = LocalDate.of(2016, 2, 1);
 
@@ -151,7 +152,7 @@ public class ApplicationTest {
 
 
     @Test
-    public void ensureGetStartDateWithTimeReturnsNullIfStartTimeIsNull() {
+    void ensureGetStartDateWithTimeReturnsNullIfStartTimeIsNull() {
 
         Application application = new Application();
         application.setStartDate(LocalDate.now(UTC));
@@ -164,7 +165,7 @@ public class ApplicationTest {
 
 
     @Test
-    public void ensureGetStartDateWithTimeReturnsNullIfStartDateIsNull() {
+    void ensureGetStartDateWithTimeReturnsNullIfStartDateIsNull() {
 
         Application application = new Application();
         application.setStartDate(null);
@@ -177,7 +178,7 @@ public class ApplicationTest {
 
 
     @Test
-    public void ensureGetEndDateWithTimeReturnsCorrectDateTime() {
+    void ensureGetEndDateWithTimeReturnsCorrectDateTime() {
 
         LocalDate endDate = LocalDate.of(2016, 12, 21);
 
@@ -193,7 +194,7 @@ public class ApplicationTest {
 
 
     @Test
-    public void ensureGetEndDateWithTimeReturnsNullIfEndTimeIsNull() {
+    void ensureGetEndDateWithTimeReturnsNullIfEndTimeIsNull() {
 
         Application application = new Application();
         application.setEndDate(LocalDate.now(UTC));
@@ -206,7 +207,7 @@ public class ApplicationTest {
 
 
     @Test
-    public void ensureGetEndDateWithTimeReturnsNullIfEndDateIsNull() {
+    void ensureGetEndDateWithTimeReturnsNullIfEndDateIsNull() {
 
         Application application = new Application();
         application.setEndDate(null);
@@ -218,7 +219,7 @@ public class ApplicationTest {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
 
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);

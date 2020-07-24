@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
@@ -15,8 +15,8 @@ import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CalendarAccessibleServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CalendarAccessibleServiceTest {
 
     private CalendarAccessibleService sut;
 
@@ -26,13 +26,13 @@ public class CalendarAccessibleServiceTest {
     @Mock
     private CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new CalendarAccessibleService(companyCalendarService, companyCalendarAccessibleRepository);
     }
 
     @Test
-    public void isCompanyCalendarAccessibleHasNoEntity() {
+    void isCompanyCalendarAccessibleHasNoEntity() {
 
         when(companyCalendarAccessibleRepository.findAll()).thenReturn(List.of());
 
@@ -41,7 +41,7 @@ public class CalendarAccessibleServiceTest {
     }
 
     @Test
-    public void isCompanyCalendarAccessibleHasEntityWithAccessible() {
+    void isCompanyCalendarAccessibleHasEntityWithAccessible() {
 
         final CompanyCalendarAccessible calendarAccessible = new CompanyCalendarAccessible();
         calendarAccessible.setAccessible(true);
@@ -52,7 +52,7 @@ public class CalendarAccessibleServiceTest {
     }
 
     @Test
-    public void isCompanyCalendarAccessibleHasEntityWithNotAccessible() {
+    void isCompanyCalendarAccessibleHasEntityWithNotAccessible() {
 
         final CompanyCalendarAccessible calendarAccessible = new CompanyCalendarAccessible();
         calendarAccessible.setAccessible(false);
@@ -63,7 +63,7 @@ public class CalendarAccessibleServiceTest {
     }
 
     @Test
-    public void setCompanyCalendarAccessibilityToTrue() {
+    void setCompanyCalendarAccessibilityToTrue() {
 
         final ArgumentCaptor<CompanyCalendarAccessible> accessibleCaptor = forClass(CompanyCalendarAccessible.class);
         when(companyCalendarAccessibleRepository.findAll()).thenReturn(List.of());
@@ -75,7 +75,7 @@ public class CalendarAccessibleServiceTest {
     }
 
     @Test
-    public void setCompanyCalendarAccessibilityToTrueAndWasFalse() {
+    void setCompanyCalendarAccessibilityToTrueAndWasFalse() {
 
         final ArgumentCaptor<CompanyCalendarAccessible> accessibleCaptor = forClass(CompanyCalendarAccessible.class);
 
@@ -90,7 +90,7 @@ public class CalendarAccessibleServiceTest {
     }
 
     @Test
-    public void ensureCalendarAccessibilityIsDisabled() {
+    void ensureCalendarAccessibilityIsDisabled() {
 
         final ArgumentCaptor<CompanyCalendarAccessible> accessibleCaptor = forClass(CompanyCalendarAccessible.class);
 
@@ -105,7 +105,7 @@ public class CalendarAccessibleServiceTest {
     }
 
     @Test
-    public void ensureCalendarDeletionWhenAccessibilityIsDisabled() {
+    void ensureCalendarDeletionWhenAccessibilityIsDisabled() {
 
         sut.disableCompanyCalendar();
 

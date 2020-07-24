@@ -4,19 +4,19 @@ import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
@@ -61,15 +61,15 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.account.service.VacationDaysService}.
  */
-public class VacationDaysServiceTest {
+class VacationDaysServiceTest {
 
     private VacationDaysService vacationDaysService;
 
     private ApplicationService applicationService;
     private NowService nowService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         applicationService = mock(ApplicationService.class);
         nowService = mock(NowService.class);
@@ -102,7 +102,7 @@ public class VacationDaysServiceTest {
 
 
     @Test
-    public void testGetDaysBeforeApril() {
+    void testGetDaysBeforeApril() {
 
         Person person = DemoDataCreator.createPerson("horscht");
 
@@ -158,7 +158,7 @@ public class VacationDaysServiceTest {
 
 
     @Test
-    public void testGetDaysAfterApril() {
+    void testGetDaysAfterApril() {
 
         Person person = DemoDataCreator.createPerson("horscht");
 
@@ -205,7 +205,7 @@ public class VacationDaysServiceTest {
 
 
     @Test
-    public void testGetDaysBetweenMilestonesWithInactiveApplicationsForLeaveAndOfOtherVacationTypeThanHoliday() {
+    void testGetDaysBetweenMilestonesWithInactiveApplicationsForLeaveAndOfOtherVacationTypeThanHoliday() {
 
         Person person = DemoDataCreator.createPerson("horscht");
 
@@ -257,7 +257,7 @@ public class VacationDaysServiceTest {
 
 
     @Test
-    public void testGetVacationDaysLeft() {
+    void testGetVacationDaysLeft() {
 
         initCustomService("4", "20");
 
@@ -287,7 +287,7 @@ public class VacationDaysServiceTest {
 
 
     @Test
-    public void testGetVacationDaysLeftWithRemainingAlreadyUsed() {
+    void testGetVacationDaysLeftWithRemainingAlreadyUsed() {
 
         initCustomService("4", "20");
 
@@ -318,13 +318,13 @@ public class VacationDaysServiceTest {
     }
 
     @Test
-    public void testGetVacationDaysUsedOfEmptyAccount() {
+    void testGetVacationDaysUsedOfEmptyAccount() {
 
         Assert.assertEquals(BigDecimal.ZERO, vacationDaysService.getRemainingVacationDaysAlreadyUsed(Optional.empty()));
     }
 
     @Test
-    public void testGetVacationDaysUsedOfZeroRemainingVacationDays() {
+    void testGetVacationDaysUsedOfZeroRemainingVacationDays() {
 
         Optional<Account> account = Optional.of(new Account());
         account.get().setRemainingVacationDays(BigDecimal.ZERO);
@@ -333,7 +333,7 @@ public class VacationDaysServiceTest {
     }
 
     @Test
-    public void testGetVacationDaysUsedOfOneRemainingVacationDays() {
+    void testGetVacationDaysUsedOfOneRemainingVacationDays() {
 
         initCustomService("20", "20");
 
@@ -347,7 +347,7 @@ public class VacationDaysServiceTest {
     }
 
     @Test
-    public void testGetTotalVacationDaysForPastYear() {
+    void testGetTotalVacationDaysForPastYear() {
 
         when(nowService.now()).thenReturn(LocalDate.of(2015, 4, 2));
 
@@ -371,7 +371,7 @@ public class VacationDaysServiceTest {
 
 
     @Test
-    public void testGetTotalVacationDaysForThisYearBeforeApril() {
+    void testGetTotalVacationDaysForThisYearBeforeApril() {
 
         when(nowService.now()).thenReturn(LocalDate.of(2015, 3, 2));
         when(nowService.currentYear()).thenReturn(2015);
@@ -395,7 +395,7 @@ public class VacationDaysServiceTest {
     }
 
     @Test
-    public void testGetTotalVacationDaysForThisYearAfterApril() {
+    void testGetTotalVacationDaysForThisYearAfterApril() {
 
         when(nowService.now()).thenReturn(LocalDate.of(2015, 4, 2));
         when(nowService.currentYear()).thenReturn(2015);
@@ -419,7 +419,7 @@ public class VacationDaysServiceTest {
     }
 
     @Test
-    public void testGetUsedDaysBeforeApril() {
+    void testGetUsedDaysBeforeApril() {
 
         String expectedUsedDays = "4";
         Person person = DemoDataCreator.createPerson("horscht");
@@ -446,7 +446,7 @@ public class VacationDaysServiceTest {
     }
 
     @Test
-    public void testGetUsedDaysAfterApril() {
+    void testGetUsedDaysAfterApril() {
 
         String expectedUsedDays = "4";
         Person person = DemoDataCreator.createPerson("horscht");

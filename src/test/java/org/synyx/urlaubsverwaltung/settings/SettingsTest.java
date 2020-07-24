@@ -1,16 +1,16 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.settings.Settings}.
  */
-public class SettingsTest {
+class SettingsTest {
 
     @Test
-    public void ensureDefaultValues() {
+    void ensureDefaultValues() {
 
         Settings settings = new Settings();
 

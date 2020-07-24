@@ -1,17 +1,17 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 
 /**
  * Unit test for {@link DemoUser}.
  */
-public class TestUserDemo {
+class TestUserDemo {
 
     @Test
-    public void ensureReturnsCorrectRolesForTestUser() {
+    void ensureReturnsCorrectRolesForTestUser() {
 
         Role[] roles = DemoUser.USER.getRoles();
 
@@ -22,7 +22,7 @@ public class TestUserDemo {
 
 
     @Test
-    public void ensureReturnsCorrectRolesForTestDepartmentHead() {
+    void ensureReturnsCorrectRolesForTestDepartmentHead() {
 
         Role[] roles = DemoUser.DEPARTMENT_HEAD.getRoles();
 
@@ -34,7 +34,7 @@ public class TestUserDemo {
 
 
     @Test
-    public void ensureReturnsCorrectRolesForTestDepartmentHeadSecondStageAuthority() {
+    void ensureReturnsCorrectRolesForTestDepartmentHeadSecondStageAuthority() {
 
         Role[] roles = DemoUser.SECOND_STAGE_AUTHORITY.getRoles();
 
@@ -46,7 +46,7 @@ public class TestUserDemo {
 
 
     @Test
-    public void ensureReturnsCorrectRolesForTestBoss() {
+    void ensureReturnsCorrectRolesForTestBoss() {
 
         Role[] roles = DemoUser.BOSS.getRoles();
 
@@ -58,7 +58,7 @@ public class TestUserDemo {
 
 
     @Test
-    public void ensureReturnsCorrectRolesForTestOffice() {
+    void ensureReturnsCorrectRolesForTestOffice() {
 
         Role[] roles = DemoUser.OFFICE.getRoles();
 

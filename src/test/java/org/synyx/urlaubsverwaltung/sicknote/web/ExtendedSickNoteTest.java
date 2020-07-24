@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -19,19 +19,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class ExtendedSickNoteTest {
+class ExtendedSickNoteTest {
 
     private WorkDaysService calendarService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         calendarService = mock(WorkDaysService.class);
     }
 
 
     @Test
-    public void ensureCreatesCorrectExtendedSickNote() {
+    void ensureCreatesCorrectExtendedSickNote() {
 
         Person person = DemoDataCreator.createPerson();
 
@@ -63,7 +63,7 @@ public class ExtendedSickNoteTest {
 
 
     @Test
-    public void ensureExtendedSickNoteHasInformationAboutDayOfWeek() {
+    void ensureExtendedSickNoteHasInformationAboutDayOfWeek() {
 
         Person person = DemoDataCreator.createPerson();
 

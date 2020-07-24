@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.account.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -15,12 +15,12 @@ import java.math.BigDecimal;
 import static java.time.LocalDate.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class AccountValidatorTest {
 
     private AccountValidator sut;
 
@@ -29,18 +29,13 @@ public class AccountValidatorTest {
     @Mock
     private Errors errors;
 
-    private Settings settings;
-
-    @Before
-    public void setUp() {
-        settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
+    @BeforeEach
+    void setUp() {
         sut = new AccountValidator(settingsService);
     }
 
     @Test
-    public void ensureSupportsOnlyAccountFormClass() {
+    void ensureSupportsOnlyAccountFormClass() {
 
         boolean returnValue;
 
@@ -55,7 +50,10 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureAnnualVacationMustNotBeNull() {
+    void ensureAnnualVacationMustNotBeNull() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(null);
 
@@ -64,7 +62,11 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureAnnualVacationMustNotBeGreaterThanMaximumDaysConfiguredInSettings() {
+    void ensureAnnualVacationMustNotBeGreaterThanMaximumDaysConfiguredInSettings() {
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         int maxDays = 40;
         settings.getAbsenceSettings().setMaximumAnnualVacationDays(maxDays);
 
@@ -76,16 +78,19 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureValidAnnualVacationHasNoValidationError() {
+    void ensureValidAnnualVacationHasNoValidationError() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("28"));
 
         sut.validateAnnualVacation(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureActualVacationMustNotBeNull() {
+    void ensureActualVacationMustNotBeNull() {
         final AccountForm form = new AccountForm(2013);
         form.setActualVacationDays(null);
         sut.validateActualVacation(form, errors);
@@ -93,7 +98,7 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureActualVacationMustNotBeGreaterThanAnnualVacation() {
+    void ensureActualVacationMustNotBeGreaterThanAnnualVacation() {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("30"));
         form.setActualVacationDays(new BigDecimal("31"));
@@ -103,17 +108,20 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureValidActualVacationHasNoValidationError() {
+    void ensureValidActualVacationHasNoValidationError() {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("30"));
         form.setActualVacationDays(new BigDecimal("28"));
 
         sut.validateActualVacation(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureRemainingVacationDaysMustNotBeNull() {
+    void ensureRemainingVacationDaysMustNotBeNull() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(null);
 
@@ -122,7 +130,10 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureRemainingVacationDaysMustNotBeGreaterThanOneYear() {
+    void ensureRemainingVacationDaysMustNotBeGreaterThanOneYear() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("367"));
 
@@ -131,17 +142,23 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureValidRemainingVacationDaysHaveNoValidationError() {
+    void ensureValidRemainingVacationDaysHaveNoValidationError() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5"));
 
         sut.validateRemainingVacationDays(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureRemainingVacationDaysNotExpiringMustNotBeNull() {
+    void ensureRemainingVacationDaysNotExpiringMustNotBeNull() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDaysNotExpiring(null);
 
@@ -150,7 +167,10 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
+    void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
@@ -160,7 +180,7 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureHolidaysAccountValidFromMustNotBeNull() {
+    void ensureHolidaysAccountValidFromMustNotBeNull() {
         final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidFrom(null);
 
@@ -169,7 +189,7 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureHolidaysAccountValidToMustNotBeNull() {
+    void ensureHolidaysAccountValidToMustNotBeNull() {
         final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidTo(null);
 
@@ -178,7 +198,7 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureFromOfPeriodMustBeBeforeTo() {
+    void ensureFromOfPeriodMustBeBeforeTo() {
         final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidFrom(of(2013, 5, 1));
         form.setHolidaysAccountValidTo(of(2013, 1, 1));
@@ -188,7 +208,7 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensurePeriodMustBeGreaterThanOnlyOneDay() {
+    void ensurePeriodMustBeGreaterThanOnlyOneDay() {
         final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidFrom(of(2013, 5, 1));
         form.setHolidaysAccountValidTo(of(2013, 5, 1));
@@ -198,7 +218,7 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensurePeriodMustBeWithinTheProvidedYear() {
+    void ensurePeriodMustBeWithinTheProvidedYear() {
         final AccountForm form = new AccountForm(2014);
         form.setHolidaysAccountValidFrom(of(2013, 1, 1));
         form.setHolidaysAccountValidTo(of(2013, 5, 1));
@@ -208,26 +228,26 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void ensureValidPeriodHasNoValidationError() {
+    void ensureValidPeriodHasNoValidationError() {
         final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidFrom(of(2013, 5, 1));
         form.setHolidaysAccountValidTo(of(2013, 5, 5));
 
         sut.validatePeriod(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureCommentHasNoValidationError() {
+    void ensureCommentHasNoValidationError() {
         final AccountForm form = new AccountForm(2017);
         form.setComment("blabla");
 
         sut.validateComment(form, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureCommentHasLengthValidationError() {
+    void ensureCommentHasLengthValidationError() {
         final AccountForm form = new AccountForm(2017);
         form.setComment("blablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
             "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +

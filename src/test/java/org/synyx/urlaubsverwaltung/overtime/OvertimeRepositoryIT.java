@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,10 +19,10 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-public class OvertimeRepositoryIT {
+class OvertimeRepositoryIT {
 
     @Autowired
     private PersonService personService;
@@ -31,7 +31,7 @@ public class OvertimeRepositoryIT {
     private OvertimeRepository overtimeRepository;
 
     @Test
-    public void ensureCanPersistOvertime() {
+    void ensureCanPersistOvertime() {
 
         final Person person = DemoDataCreator.createPerson();
         final Person savedPerson = personService.save(person);
@@ -47,7 +47,7 @@ public class OvertimeRepositoryIT {
 
 
     @Test
-    public void ensureCountsTotalHoursCorrectly() {
+    void ensureCountsTotalHoursCorrectly() {
 
         final Person person = DemoDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
         final Person savedPerson = personService.save(person);
@@ -74,7 +74,7 @@ public class OvertimeRepositoryIT {
 
 
     @Test
-    public void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
+    void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
 
         Person person = DemoDataCreator.createPerson();
         personService.save(person);
@@ -86,7 +86,7 @@ public class OvertimeRepositoryIT {
 
 
     @Test
-    public void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
+    void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
 
         final Person person = DemoDataCreator.createPerson();
         final Person savedPerson = personService.save(person);

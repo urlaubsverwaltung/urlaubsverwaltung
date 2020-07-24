@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
@@ -12,14 +12,14 @@ import static org.mockito.Mockito.verify;
 /**
  * Unit test for {@link SickNoteConvertFormValidator}.
  */
-public class SickNoteConvertFormValidatorTest {
+class SickNoteConvertFormValidatorTest {
 
     private SickNoteConvertFormValidator validator;
 
     private Errors errors;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         validator = new SickNoteConvertFormValidator();
         errors = mock(Errors.class);
@@ -27,7 +27,7 @@ public class SickNoteConvertFormValidatorTest {
 
 
     @Test
-    public void ensureNullReasonIsNotValid() {
+    void ensureNullReasonIsNotValid() {
 
         SickNoteConvertForm convertForm = new SickNoteConvertForm(new SickNote());
 
@@ -40,7 +40,7 @@ public class SickNoteConvertFormValidatorTest {
 
 
     @Test
-    public void ensureEmptyReasonIsNotValid() {
+    void ensureEmptyReasonIsNotValid() {
 
         SickNoteConvertForm convertForm = new SickNoteConvertForm(new SickNote());
 
@@ -53,7 +53,7 @@ public class SickNoteConvertFormValidatorTest {
 
 
     @Test
-    public void ensureThereIsAMaximumCharLengthForReason() {
+    void ensureThereIsAMaximumCharLengthForReason() {
 
         SickNoteConvertForm convertForm = new SickNoteConvertForm(new SickNote());
 

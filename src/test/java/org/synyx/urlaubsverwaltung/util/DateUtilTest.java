@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.util;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
@@ -9,10 +9,10 @@ import java.time.LocalDate;
 /**
  * Unit test for {@link DateUtil}.
  */
-public class DateUtilTest {
+class DateUtilTest {
 
     @Test
-    public void ensureReturnsTrueIfGivenDayIsAWorkDay() {
+    void ensureReturnsTrueIfGivenDayIsAWorkDay() {
 
         // Monday
         LocalDate date = LocalDate.of(2011, 12, 26);
@@ -24,7 +24,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsFalseIfGivenDayIsNotAWorkDay() {
+    void ensureReturnsFalseIfGivenDayIsNotAWorkDay() {
 
         // Sunday
         LocalDate date = LocalDate.of(2014, 11, 23);
@@ -36,7 +36,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsCorrectFirstDayOfMonth() {
+    void ensureReturnsCorrectFirstDayOfMonth() {
 
         int year = 2014;
         int month = 11;
@@ -49,7 +49,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsCorrectLastDayOfMonth() {
+    void ensureReturnsCorrectLastDayOfMonth() {
 
         int year = 2014;
         int month = 11;
@@ -62,7 +62,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsCorrectLastDayOfMonthForSpecialMonths() {
+    void ensureReturnsCorrectLastDayOfMonthForSpecialMonths() {
 
         int year = 2014;
         int month = 2;
@@ -75,7 +75,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsCorrectFirstDayOfYear() {
+    void ensureReturnsCorrectFirstDayOfYear() {
 
         int year = 2014;
 
@@ -86,7 +86,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsCorrectLastDayOfYear() {
+    void ensureReturnsCorrectLastDayOfYear() {
 
         int year = 2014;
 
@@ -97,7 +97,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsTrueForChristmasEve() {
+    void ensureReturnsTrueForChristmasEve() {
 
         LocalDate date = LocalDate.of(2011, 12, 24);
 
@@ -108,7 +108,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsFalseForNotChristmasEve() {
+    void ensureReturnsFalseForNotChristmasEve() {
 
         LocalDate date = LocalDate.of(2011, 12, 25);
 
@@ -119,7 +119,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsTrueForNewYearsEve() {
+    void ensureReturnsTrueForNewYearsEve() {
 
         LocalDate date = LocalDate.of(2014, 12, 31);
 
@@ -130,7 +130,7 @@ public class DateUtilTest {
 
 
     @Test
-    public void ensureReturnsFalseForNotNewYearsEve() {
+    void ensureReturnsFalseForNotNewYearsEve() {
 
         LocalDate date = LocalDate.of(2011, 12, 25);
 

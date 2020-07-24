@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.settings.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SettingsViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class SettingsViewControllerTest {
 
     private SettingsViewController sut;
 
@@ -58,13 +58,13 @@ public class SettingsViewControllerTest {
     @Mock
     private SettingsValidator settingsValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, settingsValidator);
     }
 
     @Test
-    public void getAuthorizedRedirectUrl() {
+    void getAuthorizedRedirectUrl() {
 
         String actual = sut.getAuthorizedRedirectUrl("http://localhost:8080/web/settings", OATUH_REDIRECT_REL);
         String expected = "http://localhost:8080/web" + OATUH_REDIRECT_REL;
@@ -72,7 +72,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
+    void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
 
         final Settings settings = someSettings();
         when(settingsService.getSettings()).thenReturn(settings);
@@ -90,7 +90,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsAddsOAuthErrorToModelIfErrorProvidedAndNoCurrentRefreshToken() throws Exception {
+    void ensureSettingsDetailsAddsOAuthErrorToModelIfErrorProvidedAndNoCurrentRefreshToken() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
 
@@ -101,7 +101,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfErrorProvidedAndCurrentRefreshToken() throws Exception {
+    void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfErrorProvidedAndCurrentRefreshToken() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
 
@@ -112,7 +112,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfNoErrorProvidedAndNoCurrentRefreshToken() throws Exception {
+    void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfNoErrorProvidedAndNoCurrentRefreshToken() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
 
@@ -122,7 +122,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfNoErrorProvidedAndCurrentRefreshToken() throws Exception {
+    void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfNoErrorProvidedAndCurrentRefreshToken() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
 
@@ -132,7 +132,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsSetsDefaultExchangeTimeZoneIfNoneConfigured() throws Exception {
+    void ensureSettingsDetailsSetsDefaultExchangeTimeZoneIfNoneConfigured() throws Exception {
 
         final Settings settings = someSettingsWithNoExchangeTimezone();
         when(settingsService.getSettings()).thenReturn(settings);
@@ -146,7 +146,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsDoesNotAlterExchangeTimeZoneIfAlreadyConfigured() throws Exception {
+    void ensureSettingsDetailsDoesNotAlterExchangeTimeZoneIfAlreadyConfigured() throws Exception {
 
         final String timeZoneId = "XYZ";
         final Settings settings = someSettingsWithExchangeTimeZone(timeZoneId);
@@ -160,7 +160,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsDetailsUsesCorrectView() throws Exception {
+    void ensureSettingsDetailsUsesCorrectView() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 
@@ -168,7 +168,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsSavedShowsFormIfValidationFails() throws Exception {
+    void ensureSettingsSavedShowsFormIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {
 
@@ -182,7 +182,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsSavedSavesSettingsIfValidationSuccessfully() throws Exception {
+    void ensureSettingsSavedSavesSettingsIfValidationSuccessfully() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 
@@ -191,7 +191,7 @@ public class SettingsViewControllerTest {
     }
 
     @Test
-    public void ensureSettingsSavedAddFlashAttributeAndRedirectsToSettings() throws Exception {
+    void ensureSettingsSavedAddFlashAttributeAndRedirectsToSettings() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 

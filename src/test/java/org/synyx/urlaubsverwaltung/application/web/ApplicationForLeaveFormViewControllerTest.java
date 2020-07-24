@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -51,8 +51,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationForLeaveFormViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationForLeaveFormViewControllerTest {
 
     private ApplicationForLeaveFormViewController sut;
 
@@ -69,21 +69,18 @@ public class ApplicationForLeaveFormViewControllerTest {
     @Mock
     private SettingsService settingsService;
 
-    private Person person;
-
     private static final int PERSON_ID = 1;
 
-    @Before
-    public void setUp() {
-        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService,
-            applicationInteractionService, applicationForLeaveFormValidator, settingsService);
-
-        person = new Person();
-        when(personService.getSignedInUser()).thenReturn(person);
+    @BeforeEach
+    void setUp() {
+        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService);
     }
 
     @Test
-    public void overtimeIsActivated() throws Exception {
+    void overtimeIsActivated() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final int year = ZonedDateTime.now(UTC).getYear();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
@@ -105,7 +102,10 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void overtimeIsDeactivated() throws Exception {
+    void overtimeIsDeactivated() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final int year = ZonedDateTime.now(UTC).getYear();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
@@ -127,7 +127,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void getNewApplicationFormDefaultsToSignedInPersonIfPersonIdNotGiven() throws Exception {
+    void getNewApplicationFormDefaultsToSignedInPersonIfPersonIdNotGiven() throws Exception {
 
         final Person signedInPerson = somePerson();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
@@ -140,7 +140,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void getNewApplicationFormUsesPersonOfGivenPersonId() throws Exception {
+    void getNewApplicationFormUsesPersonOfGivenPersonId() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
@@ -156,7 +156,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void getNewApplicationFormForUnknownPersonIdThrowsUnknownPersonException() {
+    void getNewApplicationFormForUnknownPersonIdThrowsUnknownPersonException() {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.empty());
 
@@ -167,7 +167,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void getNewApplicationFormThrowsAccessDeniedExceptionIfGivenPersonNotSignedInPersonAndNotOffice() {
+    void getNewApplicationFormThrowsAccessDeniedExceptionIfGivenPersonNotSignedInPersonAndNotOffice() {
 
         final Person signedInPerson = somePerson();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
@@ -178,12 +178,11 @@ public class ApplicationForLeaveFormViewControllerTest {
         assertThatThrownBy(() ->
             perform(get("/web/application/new")
                 .param("person", Integer.toString(PERSON_ID)))
-
         ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
-    public void getNewApplicationFormAccessibleIfGivenPersonIsSignedInPerson() throws Exception {
+    void getNewApplicationFormAccessibleIfGivenPersonIsSignedInPerson() throws Exception {
 
         final Person signedInPerson = somePerson();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
@@ -195,7 +194,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void getNewApplicationFormAccessibleForOfficeIfGivenPersonNotSignedInPerson() throws Exception {
+    void getNewApplicationFormAccessibleForOfficeIfGivenPersonNotSignedInPerson() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
@@ -206,14 +205,17 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void getNewApplicationFormShowsForm() throws Exception {
+    void getNewApplicationFormShowsForm() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
 
         perform(get("/web/application/new"))
             .andExpect(view().name("application/app_form"));
     }
 
     @Test
-    public void postNewApplicationFormShowFormIfValidationFails() throws Exception {
+    void postNewApplicationFormShowFormIfValidationFails() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 
@@ -230,7 +232,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void postNewApplicationFormCallsServiceToApplyApplication() throws Exception {
+    void postNewApplicationFormCallsServiceToApplyApplication() throws Exception {
 
         final Person person = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(person);
@@ -243,7 +245,7 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    public void postNewApplicationAddsFlashAttributeAndRedirectsToNewApplication() throws Exception {
+    void postNewApplicationAddsFlashAttributeAndRedirectsToNewApplication() throws Exception {
 
         final int applicationId = 11;
         final Person person = personWithRole(OFFICE);
@@ -258,12 +260,10 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     private Person somePerson() {
-
         return new Person();
     }
 
     private Person personWithRole(Role role) {
-
         Person person = somePerson();
         person.setPermissions(Collections.singletonList(role));
 
@@ -271,7 +271,6 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     private Person personWithId(int id) {
-
         Person person = somePerson();
         person.setId(id);
 
@@ -279,7 +278,6 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     private Account someAccount() {
-
         return new Account();
     }
 
@@ -306,8 +304,6 @@ public class ApplicationForLeaveFormViewControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
-
 }

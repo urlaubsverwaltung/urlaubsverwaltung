@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview.web;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -27,8 +27,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationForLeaveVacationOverviewViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationForLeaveVacationOverviewViewControllerTest {
 
     private ApplicationForLeaveVacationOverviewViewController sut;
 
@@ -37,13 +37,13 @@ public class ApplicationForLeaveVacationOverviewViewControllerTest {
     @Mock
     private DepartmentService departmentService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new ApplicationForLeaveVacationOverviewViewController(personService, departmentService);
     }
 
     @Test
-    public void applicationForLeaveVacationOverviewPostRedirect() throws Exception {
+    void applicationForLeaveVacationOverviewPostRedirect() throws Exception {
 
         final ResultActions resultActions = perform(post("/web/application/vacationoverview"));
         resultActions.andExpect(status().is3xxRedirection());
@@ -51,7 +51,7 @@ public class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @Test
-    public void applicationForLeaveVacationOverviewNoPermissions() throws Exception {
+    void applicationForLeaveVacationOverviewNoPermissions() throws Exception {
 
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
@@ -66,7 +66,7 @@ public class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @Test
-    public void applicationForLeaveVacationOverviewBOSS() throws Exception {
+    void applicationForLeaveVacationOverviewBOSS() throws Exception {
 
         final Person boss = new Person();
         boss.setPermissions(singletonList(BOSS));
@@ -82,7 +82,7 @@ public class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @Test
-    public void applicationForLeaveVacationOverviewOFFICE() throws Exception {
+    void applicationForLeaveVacationOverviewOFFICE() throws Exception {
 
         final Person office = new Person();
         office.setPermissions(singletonList(OFFICE));
@@ -98,7 +98,7 @@ public class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @Test
-    public void applicationForLeaveVacationOverviewSECONDSTAGE() throws Exception {
+    void applicationForLeaveVacationOverviewSECONDSTAGE() throws Exception {
 
         final Person ssa = new Person();
         ssa.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
@@ -114,7 +114,7 @@ public class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @Test
-    public void applicationForLeaveVacationOverviewDEPARTMENTHEAD() throws Exception {
+    void applicationForLeaveVacationOverviewDEPARTMENTHEAD() throws Exception {
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));

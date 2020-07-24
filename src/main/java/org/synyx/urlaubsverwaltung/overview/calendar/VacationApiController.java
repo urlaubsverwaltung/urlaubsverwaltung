@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
+import org.synyx.urlaubsverwaltung.api.SwaggerConfig;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -62,10 +63,10 @@ public class VacationApiController {
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
             Boolean departmentMembers,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")
             String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_YEAR)
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam(value = "to")
             String to,
         @ApiParam(value = "ID of the person")

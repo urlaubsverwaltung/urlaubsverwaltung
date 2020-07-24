@@ -1,15 +1,15 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
@@ -21,6 +21,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
@@ -28,14 +29,14 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationType;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class UsedDaysOverviewTest {
+@ExtendWith(MockitoExtension.class)
+class UsedDaysOverviewTest {
 
     @Mock
     private WorkDaysService calendarService;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfOneOfTheGivenApplicationsDoesNotMatchTheGivenYear() {
+    @Test
+    void ensureThrowsIfOneOfTheGivenApplicationsDoesNotMatchTheGivenYear() {
 
         final Application application = new Application();
         application.setVacationType(createVacationType(HOLIDAY));
@@ -43,12 +44,13 @@ public class UsedDaysOverviewTest {
         application.setEndDate(LocalDate.of(2014, 10, 13));
         application.setStatus(ApplicationStatus.WAITING);
 
-        new UsedDaysOverview(singletonList(application), 2015, calendarService);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new UsedDaysOverview(singletonList(application), 2015, calendarService));
     }
 
 
     @Test
-    public void ensureGeneratesCorrectUsedDaysOverview() {
+    void ensureGeneratesCorrectUsedDaysOverview() {
 
         final Application holiday = DemoDataCreator.anyApplication();
         holiday.setVacationType(createVacationType(HOLIDAY));
@@ -120,7 +122,7 @@ public class UsedDaysOverviewTest {
     }
 
     @Test
-    public void ensureCalculatesDaysForGivenYearForApplicationsSpanningTwoYears() {
+    void ensureCalculatesDaysForGivenYearForApplicationsSpanningTwoYears() {
 
         Person person = DemoDataCreator.createPerson();
         LocalDate startDate = LocalDate.of(2013, 12, 24);
@@ -146,7 +148,7 @@ public class UsedDaysOverviewTest {
     }
 
     @Test
-    public void ensureGeneratesCorrectUsedDaysOverviewConsideringTemporaryAllowedApplicationsForLeave() {
+    void ensureGeneratesCorrectUsedDaysOverviewConsideringTemporaryAllowedApplicationsForLeave() {
 
         final Application holiday = DemoDataCreator.anyApplication();
         holiday.setVacationType(createVacationType(HOLIDAY));

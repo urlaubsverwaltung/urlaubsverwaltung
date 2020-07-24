@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -14,13 +14,14 @@ import java.util.List;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 
-public class ICalServiceTest {
+class ICalServiceTest {
 
     private ICalService sut;
 
@@ -28,20 +29,20 @@ public class ICalServiceTest {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
     }
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new ICalService();
     }
 
-    @Test(expected = CalendarException.class)
-    public void getCalendarForPersonAndNoAbsenceFound() {
-
-        sut.generateCalendar("Abwesenheitskalender", List.of());
+    @Test
+    void getCalendarForPersonAndNoAbsenceFound() {
+        assertThatThrownBy(() -> sut.generateCalendar("Abwesenheitskalender", List.of()))
+            .isInstanceOf(CalendarException.class);
     }
 
     @Test
-    public void getCalendarForPersonForOneFullDay() {
+    void getCalendarForPersonForOneFullDay() {
 
         final Absence fullDayAbsence = absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
@@ -60,7 +61,7 @@ public class ICalServiceTest {
     }
 
     @Test
-    public void getCalendarForPersonForHalfDayMorning() {
+    void getCalendarForPersonForHalfDayMorning() {
 
         final Absence morningAbsence = absence(createPerson(), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
@@ -79,7 +80,7 @@ public class ICalServiceTest {
     }
 
     @Test
-    public void getCalendarForPersonForMultipleFullDays() {
+    void getCalendarForPersonForMultipleFullDays() {
 
         final Absence manyFullDayAbsence = absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
@@ -99,7 +100,7 @@ public class ICalServiceTest {
     }
 
     @Test
-    public void getCalendarForPersonForHalfDayNoon() {
+    void getCalendarForPersonForHalfDayNoon() {
 
         final Absence noonAbsence = absence(createPerson(), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 

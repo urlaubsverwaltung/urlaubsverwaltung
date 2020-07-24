@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -10,18 +10,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-public class BaseViewControllerTest {
+class BaseViewControllerTest {
 
     private BaseViewController sut;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new BaseViewController();
     }
 
     @Test
-    public void indexRedirectsToOverview() throws Exception {
+    void indexRedirectsToOverview() throws Exception {
 
         perform(get("/"))
             .andExpect(status().isFound())

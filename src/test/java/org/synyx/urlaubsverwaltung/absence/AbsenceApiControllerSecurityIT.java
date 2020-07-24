@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,13 +31,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class AbsenceApiControllerSecurityIT {
+class AbsenceApiControllerSecurityIT {
 
     @Autowired
     private WebApplicationContext context;
@@ -52,14 +52,14 @@ public class AbsenceApiControllerSecurityIT {
     private DepartmentService departmentService;
 
     @Test
-    public void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
+    void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/absences"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    public void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+    void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
             .param("year", String.valueOf(LocalDate.now().getYear()))
             .param("person", "1"))
@@ -68,7 +68,7 @@ public class AbsenceApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD", username = "departmentHead")
-    public void getAbsencesAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    void getAbsencesAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -90,7 +90,7 @@ public class AbsenceApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD", username = "departmentHead")
-    public void getAbsencesAsDepartmentHeadUserForOtherUserInSameDepartmentIsOk() throws Exception {
+    void getAbsencesAsDepartmentHeadUserForOtherUserInSameDepartmentIsOk() throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -122,7 +122,7 @@ public class AbsenceApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
             .param("year", String.valueOf(LocalDate.now().getYear()))
             .param("person", "1"))
@@ -131,7 +131,7 @@ public class AbsenceApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
+    void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
             .param("year", String.valueOf(LocalDate.now().getYear()))
             .param("person", "1"))
@@ -140,7 +140,7 @@ public class AbsenceApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
+    void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
             .param("year", String.valueOf(LocalDate.now().getYear()))
             .param("person", "1"))
@@ -149,21 +149,21 @@ public class AbsenceApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getAbsencesAsOfficeUserForOtherUserIsOk() throws Exception {
+    void getAbsencesAsOfficeUserForOtherUserIsOk() throws Exception {
 
         testWithUserWithCorrectPermissions();
     }
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getAbsencesAsBossUserForOtherUserIsOk() throws Exception {
+    void getAbsencesAsBossUserForOtherUserIsOk() throws Exception {
 
         testWithUserWithCorrectPermissions();
     }
 
     @Test
     @WithMockUser(username = "user")
-    public void getAbsencesAsOfficeUserForSameUserIsOk() throws Exception {
+    void getAbsencesAsOfficeUserForSameUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -188,7 +188,7 @@ public class AbsenceApiControllerSecurityIT {
 
     @Test
     @WithMockUser(username = "differentUser")
-    public void getAbsencesAsOfficeUserForDifferentUserIsForbidden() throws Exception {
+    void getAbsencesAsOfficeUserForDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
