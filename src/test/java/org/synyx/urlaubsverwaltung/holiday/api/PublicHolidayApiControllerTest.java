@@ -62,7 +62,6 @@ class PublicHolidayApiControllerTest {
         verify(publicHolidayServiceMock).getHolidays(2016, BADEN_WUERTTEMBERG);
     }
 
-
     @Test
     void ensureReturnsCorrectPublicHolidaysForYearAndMonth() throws Exception {
 
@@ -96,7 +95,6 @@ class PublicHolidayApiControllerTest {
         verify(workingTimeServiceMock).getFederalStateForPerson(person, LocalDate.of(2016, 1, 1));
     }
 
-
     @Test
     void ensureReturnsCorrectPublicHolidaysForYearAndMonthAndPersonWithOverriddenFederalState()
         throws Exception {
@@ -117,14 +115,12 @@ class PublicHolidayApiControllerTest {
         verify(workingTimeServiceMock).getFederalStateForPerson(person, LocalDate.of(2016, 4, 1));
     }
 
-
     @Test
     void ensureBadRequestForMissingYearParameter() throws Exception {
 
         perform(get("/api/holidays"))
             .andExpect(status().isBadRequest());
     }
-
 
     @Test
     void ensureBadRequestForInvalidYearParameter() throws Exception {
@@ -137,7 +133,6 @@ class PublicHolidayApiControllerTest {
             .param("year", "foo"))
             .andExpect(status().isBadRequest());
     }
-
 
     @Test
     void ensureBadRequestForInvalidMonthParameter() throws Exception {
@@ -152,7 +147,6 @@ class PublicHolidayApiControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     void ensureBadRequestForInvalidPersonParameter() throws Exception {
 
@@ -161,7 +155,6 @@ class PublicHolidayApiControllerTest {
             .param("person", "foo"))
             .andExpect(status().isBadRequest());
     }
-
 
     @Test
     void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {

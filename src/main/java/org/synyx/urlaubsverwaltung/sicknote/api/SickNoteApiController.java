@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -17,12 +17,14 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -38,7 +40,6 @@ public class SickNoteApiController {
 
     @Autowired
     SickNoteApiController(SickNoteService sickNoteService, PersonService personService) {
-
         this.sickNoteService = sickNoteService;
         this.personService = personService;
     }
@@ -61,24 +62,15 @@ public class SickNoteApiController {
         @RequestParam(value = "person", required = false)
             Integer personId) {
 
-        final LocalDate startDate;
-        final LocalDate endDate;
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-            startDate = LocalDate.parse(from, formatter);
-            endDate = LocalDate.parse(to, formatter);
-        } catch (DateTimeParseException exception) {
-            throw new IllegalArgumentException(exception.getMessage());
-        }
-
+        final LocalDate startDate = parseDate(from);
+        final LocalDate endDate = parseDate(to);
         if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
+            throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
         final Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
 
         final List<SickNote> sickNotes;
-
         if (optionalPerson.isPresent()) {
             sickNotes = sickNoteService.getByPersonAndPeriod(optionalPerson.get(), startDate, endDate);
         } else {
@@ -89,5 +81,15 @@ public class SickNoteApiController {
             .filter(SickNote::isActive)
             .map(SickNoteResponse::new)
             .collect(toList());
+    }
+
+    private LocalDate parseDate(String date) {
+        final LocalDate localDate;
+        try {
+            localDate = LocalDate.parse(date, ofPattern(DATE_PATTERN));
+        } catch (DateTimeParseException exception) {
+            throw new ResponseStatusException(BAD_REQUEST, "The value '" + date + "' has the wrong format");
+        }
+        return localDate;
     }
 }

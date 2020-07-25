@@ -9,20 +9,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
 
 @RestControllerAdviceMarker
@@ -70,29 +74,41 @@ public class WorkDayApiController {
         @RequestParam("person")
             Integer personId) {
 
-        final LocalDate startDate;
-        final LocalDate endDate;
-        try {
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-            startDate = LocalDate.parse(from, fmt);
-            endDate = LocalDate.parse(to, fmt);
-        } catch (DateTimeParseException exception) {
-            throw new IllegalArgumentException(exception.getMessage());
-        }
-
+        final LocalDate startDate = parseDate(from);
+        final LocalDate endDate = parseDate(to);
         if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
+            throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
         final Optional<Person> person = personService.getPersonByID(personId);
-
         if (person.isEmpty()) {
-            throw new IllegalArgumentException("No person found for ID=" + personId);
+            throw new ResponseStatusException(BAD_REQUEST, "No person found for ID=" + personId);
         }
 
-        final DayLength howLong = DayLength.valueOf(length);
-        final BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
+        final DayLength howLong;
+        try {
+            howLong = DayLength.valueOf(length);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
+        }
+
+        final BigDecimal days;
+        try {
+            days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
+        } catch (NoValidWorkingTimeException e) {
+            throw new ResponseStatusException(NO_CONTENT, e.getMessage());
+        }
 
         return new WorkDayResponse(days.toString());
+    }
+
+    private LocalDate parseDate(String date) {
+        final LocalDate localDate;
+        try {
+            localDate = LocalDate.parse(date, ofPattern(DATE_PATTERN));
+        } catch (DateTimeParseException exception) {
+            throw new ResponseStatusException(BAD_REQUEST, "The value '" + date + "' has the wrong format");
+        }
+        return localDate;
     }
 }
