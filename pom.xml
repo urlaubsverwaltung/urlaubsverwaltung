@@ -17,7 +17,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.2.9.RELEASE</version>
+    <version>2.3.2.RELEASE</version>
   </parent>
 
   <properties>
@@ -36,7 +36,6 @@
     <jaxb-impl.version>2.3.3</jaxb-impl.version>
     <jaxb-core.version>2.3.0.1</jaxb-core.version>
     <freemarker-java8.version>2.0.0</freemarker-java8.version>
-    <micrometer.version>1.5.2</micrometer.version>
   </properties>
 
   <scm>
@@ -106,11 +105,9 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
-
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-stackdriver</artifactId>
-      <version>${micrometer.version}</version>
     </dependency>
 
     <!-- DATABASE -->
@@ -253,6 +250,12 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <!-- Validation -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
     <!-- Test -->
