@@ -21,7 +21,7 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 
 
 @ExtendWith(MockitoExtension.class)
-public class AvailabilityServiceTest {
+class AvailabilityServiceTest {
 
     private static final int DAYS_IN_TEST_DATE_RANGE = 8;
 
