@@ -62,7 +62,8 @@ class FreeTimeAbsenceProviderTest {
         final Person person = createPerson();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), eq(firstSundayIn2016))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> sut.addAbsence(new TimedAbsenceSpans(new ArrayList<>()), person, firstSundayIn2016))
+        final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
+        assertThatThrownBy(() -> sut.addAbsence(knownAbsences, person, firstSundayIn2016))
             .isInstanceOf(FreeTimeAbsenceException.class);
     }
 
