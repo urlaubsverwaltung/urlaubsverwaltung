@@ -21,8 +21,7 @@ class DepartmentDataProvider {
         this.clock = clock;
     }
 
-    void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads,
-                              List<Person> secondStageAuthorities) {
+    void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads, List<Person> secondStageAuthorities) {
 
         final Department department = new Department();
         department.setName(name);

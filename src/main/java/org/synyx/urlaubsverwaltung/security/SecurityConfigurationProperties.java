@@ -8,14 +8,12 @@ import org.springframework.stereotype.Component;
 public class SecurityConfigurationProperties {
 
     public enum AuthenticationProvider {
-
-        DEFAULT,
         OIDC,
         LDAP,
         ACTIVEDIRECTORY
     }
 
-    private AuthenticationProvider auth = AuthenticationProvider.DEFAULT;
+    private AuthenticationProvider auth = AuthenticationProvider.OIDC;
 
     public AuthenticationProvider getAuth() {
         return auth;
