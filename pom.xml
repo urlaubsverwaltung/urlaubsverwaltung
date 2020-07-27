@@ -284,14 +284,6 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <failOnError>false</failOnError>
-          <!-- Silence error javax.interceptor.InterceptorBinding not found -->
-          <additionalDependencies>
-            <additionalDependency>
-              <groupId>javax.interceptor</groupId>
-              <artifactId>javax.interceptor-api</artifactId>
-              <version>1.2</version>
-            </additionalDependency>
-          </additionalDependencies>
         </configuration>
       </plugin>
 
