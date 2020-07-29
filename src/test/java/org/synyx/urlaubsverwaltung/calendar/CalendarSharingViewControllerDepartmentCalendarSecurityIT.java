@@ -1,12 +1,10 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
@@ -29,7 +27,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestContainersBase {
 

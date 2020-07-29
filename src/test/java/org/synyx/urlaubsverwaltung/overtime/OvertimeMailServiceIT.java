@@ -4,10 +4,8 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -27,7 +25,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIF
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
-@ExtendWith(SpringExtension.class)
 @Transactional
 class OvertimeMailServiceIT extends TestContainersBase {
 
