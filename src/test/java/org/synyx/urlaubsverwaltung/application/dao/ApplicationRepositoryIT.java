@@ -1,10 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.dao;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -35,7 +33,6 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
 class ApplicationRepositoryIT extends TestContainersBase {
