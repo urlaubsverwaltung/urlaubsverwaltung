@@ -39,7 +39,7 @@
     "underscore": "1.10.2"
   },
   "devDependencies": {
-    "@babel/core": "7.10.5",
+    "@babel/core": "7.11.0",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/preset-env": "7.11.0",
     "@urlaubsverwaltung/eslint-plugin": "1.1.0",
