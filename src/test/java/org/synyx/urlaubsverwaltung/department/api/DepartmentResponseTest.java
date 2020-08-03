@@ -22,8 +22,9 @@ class DepartmentResponseTest {
         final Department department = new Department();
 
         final String expectedName = "Forschung";
+        final String expectedDescription = "description";
         department.setName(expectedName);
-        department.setDescription("description");
+        department.setDescription(expectedDescription);
 
         final String expectedLastModification = "2019-08-02";
         final LocalDate lastModification = LocalDate.parse(expectedLastModification, DATE_TIME_FORMATTER);
@@ -43,8 +44,7 @@ class DepartmentResponseTest {
         DepartmentResponse sut = new DepartmentResponse(department);
 
         assertThat(sut.getName()).isEqualTo(expectedName);
-        // DepartmentResponse uses Department.name for description - don't know if this is intended
-        assertThat(sut.getDescription()).isEqualTo(expectedName);
+        assertThat(sut.getDescription()).isEqualTo(expectedDescription);
         assertThat(sut.getLastModification()).isEqualTo(expectedLastModification);
 
         assertThat(sut.getMembers()).isNotNull();

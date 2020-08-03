@@ -49,7 +49,7 @@ class DepartmentApiControllerTest {
 
         final Department departmentTwo = new Department();
         departmentTwo.setName("departmentTwo");
-        departmentTwo.setDescription("Description One");
+        departmentTwo.setDescription("Description Two");
         departmentTwo.setMembers(List.of(createPerson("Two")));
         departmentTwo.setDepartmentHeads(List.of(createPerson("TwoDH")));
 
@@ -62,11 +62,11 @@ class DepartmentApiControllerTest {
             .andExpect(jsonPath("$.departments").exists())
             .andExpect(jsonPath("$.departments", hasSize(2)))
             .andExpect(jsonPath("$.departments[0].name", is("departmentOne")))
-            .andExpect(jsonPath("$.departments[0].description", is("departmentOne")))
+            .andExpect(jsonPath("$.departments[0].description", is("Description One")))
             .andExpect(jsonPath("$.departments[0].members.persons[0].firstName", is("One")))
             .andExpect(jsonPath("$.departments[0].departmentHeads.persons[0].firstName", is("OneDH")))
             .andExpect(jsonPath("$.departments[1].name", is("departmentTwo")))
-            .andExpect(jsonPath("$.departments[1].description", is("departmentTwo")))
+            .andExpect(jsonPath("$.departments[1].description", is("Description Two")))
             .andExpect(jsonPath("$.departments[1].members.persons[0].firstName", is("Two")))
             .andExpect(jsonPath("$.departments[1].departmentHeads.persons[0].firstName", is("TwoDH")));
     }
@@ -84,6 +84,8 @@ class DepartmentApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
+
+        return standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build()
+            .perform(builder);
     }
 }

@@ -23,20 +23,20 @@ class DepartmentResponse {
     DepartmentResponse(Department department) {
 
         this.name = department.getName();
-        this.description = department.getName();
+        this.description = department.getDescription();
         this.lastModification = department.getLastModification().format(ofPattern(DATE_PATTERN));
 
         List<PersonResponse> membersResponses = department.getMembers()
-            .stream()
-            .map(PersonResponseMapper::mapToResponse)
-            .collect(Collectors.toList());
+                .stream()
+                .map(PersonResponseMapper::mapToResponse)
+                .collect(Collectors.toList());
 
         this.members = new PersonListResponse(membersResponses);
 
         List<PersonResponse> departmentHeadsResponses = department.getDepartmentHeads()
-            .stream()
-            .map(PersonResponseMapper::mapToResponse)
-            .collect(Collectors.toList());
+                .stream()
+                .map(PersonResponseMapper::mapToResponse)
+                .collect(Collectors.toList());
 
         this.departmentHeads = new PersonListResponse(departmentHeadsResponses);
     }
