@@ -31,13 +31,11 @@ public class DepartmentApiController {
     @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
     @GetMapping("/departments")
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    public DepartmentsListWrapper departments() {
+    public List<DepartmentResponse> departments() {
 
-        final List<DepartmentResponse> departmentResponses = departmentService.getAllDepartments()
+        return departmentService.getAllDepartments()
             .stream()
             .map(DepartmentResponse::new)
             .collect(toList());
-
-        return new DepartmentsListWrapper(departmentResponses);
     }
 }
