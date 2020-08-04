@@ -54,7 +54,7 @@
     "fetch-mock": "9.10.6",
     "file-loader": "6.0.0",
     "imports-loader": "1.1.0",
-    "jest": "26.1.0",
+    "jest": "26.2.2",
     "less": "3.12.2",
     "less-loader": "6.2.0",
     "merge": "1.2.1",
