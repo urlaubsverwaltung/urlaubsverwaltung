@@ -57,7 +57,7 @@ public class AbsenceApiController {
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
-    public DayAbsenceList personsVacations(
+    public List<DayAbsence> personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = EXAMPLE_YEAR)
         @RequestParam("year")
             String year,
@@ -97,7 +97,7 @@ public class AbsenceApiController {
             absences.addAll(getSickNotes(startDate, endDate, person));
         }
 
-        return new DayAbsenceList(absences);
+        return absences;
     }
 
     private static LocalDate getStartDate(String year, Optional<String> optionalMonth) {

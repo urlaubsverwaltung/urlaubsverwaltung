@@ -51,20 +51,19 @@ $(function () {
                 "application/json");
               xhttp.send();
 
-              const response = JSON.parse(xhttp.responseText);
-              if (response) {
+              const absences = JSON.parse(xhttp.responseText);
+              if (absences) {
 
                 listItem.days
                   .forEach(currentDay => {
-                      let absences = response.absences;
 
-                      currentDay.cssClass = '';
+                    currentDay.cssClass = '';
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'FULL'))) {
-                        currentDay.cssClass += ' vacationOverview-day-personal-holiday-status-WAITING';
-                      }
+                    if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'FULL'))) {
+                      currentDay.cssClass += ' vacationOverview-day-personal-holiday-status-WAITING';
+                    }
 
-                      if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'MORNING'))) {
+                    if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'MORNING'))) {
                         currentDay.cssClass += ' vacationOverview-day-personal-holiday-half-day-status-WAITING-morning';
                       }
                       if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'NOON'))) {
