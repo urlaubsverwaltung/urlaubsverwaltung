@@ -13,8 +13,6 @@ data:
     # because mail will be configured after the first mail was sent.
     # see https://github.com/synyx/urlaubsverwaltung/issues/507
     management.health.mail.enabled=false
-    # log everything to stdout
-    logging.file.name=
     {{- if .Values.applicationProperties }}
     {{ .Values.applicationProperties | indent 4 }}
     {{- end -}}

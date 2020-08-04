@@ -253,14 +253,14 @@ Man kann die automatische Synchronisation aller Benutzer aktivieren, indem der K
 #### Logging konfigurieren
 
 Sollten beim Starten der Anwendung Probleme auftreten, lässt sich in der Konfigurationsdatei eine
-ausführliche Debug-Ausgabe konfigurieren, indem das `logging.level.*` pro Paket konfiguriert 
+ausführliche Debug-Ausgabe konfigurieren, indem das `logging.level.*` pro Paket konfiguriert wird,
 
 ```properties
 logging.level.org.synyx.urlaubsverwaltung=TRACE
 logging.level.org.springframework.security=TRACE
 ```
 
-werden kann sowie eine Logdatei
+sowie eine Logdatei
 
 ```properties
 logging.file.name=logs/urlaubsverwaltung.log
