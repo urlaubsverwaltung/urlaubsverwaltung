@@ -7,9 +7,6 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.FREETIME;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -20,8 +17,8 @@ class TimedAbsenceSpansTest {
     @Test
     void ensurePresenceRatioCalculatedCorrectly() {
 
-        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
-        final TimedAbsence timedAbsence2 = new TimedAbsence(NOON, VACATION);
+        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING);
+        final TimedAbsence timedAbsence2 = new TimedAbsence(NOON);
         final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(List.of(timedAbsence1, timedAbsence2));
 
         final BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
@@ -32,8 +29,8 @@ class TimedAbsenceSpansTest {
     @Test
     void ensurePresenceRatioIsNotNegative() {
 
-        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
-        final TimedAbsence timedAbsence2 = new TimedAbsence(FULL, SICK_NOTE);
+        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING);
+        final TimedAbsence timedAbsence2 = new TimedAbsence(FULL);
         final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(List.of(timedAbsence1, timedAbsence2));
 
         final BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();

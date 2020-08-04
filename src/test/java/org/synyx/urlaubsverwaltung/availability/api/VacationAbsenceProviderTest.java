@@ -21,7 +21,6 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.C
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -56,7 +55,6 @@ class VacationAbsenceProviderTest {
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(1);
-        assertThat(absencesList.get(0).getType()).isEqualTo(VACATION);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(FULL.name());
         assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
     }
@@ -77,7 +75,6 @@ class VacationAbsenceProviderTest {
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(1);
-        assertThat(absencesList.get(0).getType()).isEqualTo(VACATION);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(FULL.name());
         assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
     }
@@ -98,7 +95,6 @@ class VacationAbsenceProviderTest {
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(1);
-        assertThat(absencesList.get(0).getType()).isEqualTo(VACATION);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(FULL.name());
         assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
     }
@@ -172,7 +168,6 @@ class VacationAbsenceProviderTest {
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(1);
-        assertThat(absencesList.get(0).getType()).isEqualTo(VACATION);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(MORNING.name());
         assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(0.5));
     }
@@ -193,10 +188,8 @@ class VacationAbsenceProviderTest {
 
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(2);
-        assertThat(absencesList.get(0).getType()).isEqualTo(VACATION);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(MORNING.name());
         assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(0.5));
-        assertThat(absencesList.get(1).getType()).isEqualTo(VACATION);
         assertThat(absencesList.get(1).getPartOfDay()).isEqualTo(NOON.name());
         assertThat(absencesList.get(1).getRatio()).isEqualTo(BigDecimal.valueOf(0.5));
     }
