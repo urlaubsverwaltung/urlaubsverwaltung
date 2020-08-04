@@ -56,7 +56,7 @@ public class PublicHolidayApiController {
     )
     @GetMapping("/holidays")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public PublicHolidayListResponse getPublicHolidays(
+    public List<PublicHolidayResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = EXAMPLE_YEAR)
         @RequestParam("year")
             String year,
@@ -78,11 +78,9 @@ public class PublicHolidayApiController {
         FederalState federalState = getFederalState(year, optionalMonth, optionalPerson);
         Set<Holiday> holidays = getHolidays(year, optionalMonth, federalState);
 
-        List<PublicHolidayResponse> publicHolidayResponses = holidays.stream()
+        return holidays.stream()
             .map(holiday -> this.mapPublicHolidayToDto(holiday, federalState))
             .collect(toList());
-
-        return new PublicHolidayListResponse(publicHolidayResponses);
     }
 
     private PublicHolidayResponse mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {
