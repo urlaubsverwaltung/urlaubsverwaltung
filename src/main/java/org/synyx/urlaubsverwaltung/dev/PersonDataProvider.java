@@ -71,7 +71,6 @@ class PersonDataProvider {
 
     Person createTestPerson(String username, String password, String firstName, String lastName, String email, Role... roles) {
 
-
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
             return personByUsername.get();
