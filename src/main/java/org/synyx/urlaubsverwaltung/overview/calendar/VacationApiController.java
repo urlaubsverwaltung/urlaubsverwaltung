@@ -62,12 +62,12 @@ public class VacationApiController {
     public List<VacationResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
-            Boolean departmentMembers,
+            boolean departmentMembers,
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
-        @RequestParam(value = "from")
+        @RequestParam("from")
             String from,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
-        @RequestParam(value = "to")
+        @RequestParam("to")
             String to,
         @ApiParam(value = "ID of the person")
         @RequestParam(value = "person", required = false)
@@ -80,7 +80,7 @@ public class VacationApiController {
         }
 
         List<Application> applications = new ArrayList<>();
-        if (personId == null && departmentMembers == null) {
+        if (personId == null && !departmentMembers) {
             applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED);
         }
 
@@ -88,7 +88,7 @@ public class VacationApiController {
             final Optional<Person> person = personService.getPersonByID(personId);
 
             if (person.isPresent()) {
-                if (departmentMembers == null || !departmentMembers) {
+                if (!departmentMembers) {
                     applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person.get(), ALLOWED);
                 } else {
                     applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(), startDate, endDate);
