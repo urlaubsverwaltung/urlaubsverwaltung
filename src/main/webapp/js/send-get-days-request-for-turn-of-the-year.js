@@ -53,5 +53,5 @@ async function getWorkdaysForDateRange(requestUrl, dayLength, personId, fromDate
 
   const json = await getJSON(url);
 
-  return json.response.workDays;
+  return json.workDays;
 }

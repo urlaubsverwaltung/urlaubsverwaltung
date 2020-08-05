@@ -26,7 +26,7 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
   const url = buildUrl(requestUrl, startDateString, toDateString, dayLength, personId);
 
   const data = await getJSON(url);
-  const workDays = data.response.workDays;
+  const workDays = data.workDays;
 
   let text;
 

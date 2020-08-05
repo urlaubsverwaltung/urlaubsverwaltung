@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -57,7 +56,7 @@ public class PublicHolidayApiController {
     )
     @GetMapping("/holidays")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
+    public List<PublicHolidayResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = EXAMPLE_YEAR)
         @RequestParam("year")
             String year,
@@ -70,7 +69,7 @@ public class PublicHolidayApiController {
 
         Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
 
-        if (personId != null && !optionalPerson.isPresent()) {
+        if (personId != null && optionalPerson.isEmpty()) {
             throw new IllegalArgumentException("No person found for ID=" + personId);
         }
 
@@ -79,11 +78,9 @@ public class PublicHolidayApiController {
         FederalState federalState = getFederalState(year, optionalMonth, optionalPerson);
         Set<Holiday> holidays = getHolidays(year, optionalMonth, federalState);
 
-        List<PublicHolidayResponse> publicHolidayResponses = holidays.stream()
+        return holidays.stream()
             .map(holiday -> this.mapPublicHolidayToDto(holiday, federalState))
             .collect(toList());
-
-        return new ResponseWrapper<>(new PublicHolidayListResponse(publicHolidayResponses));
     }
 
     private PublicHolidayResponse mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {

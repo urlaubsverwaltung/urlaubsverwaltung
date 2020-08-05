@@ -57,17 +57,15 @@ describe ('calendar', () => {
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
         fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
-            "response": {
-              "absences": [
-                {
-                  date: "2017-11-01",
-                  dayLength: 1,
-                  absencePeriodName: "FULL",
-                  type: 'VACATION',
-                  status: givenStatus,
-                }
-              ]
-            }
+            "absences": [
+              {
+                date: "2017-11-01",
+                dayLength: 1,
+                absencePeriodName: "FULL",
+                type: 'VACATION',
+                status: givenStatus,
+              }
+            ]
           }
         );
 
@@ -92,17 +90,15 @@ describe ('calendar', () => {
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
         fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
-            "response": {
-              "absences": [
-                {
-                  date: "2017-12-05",
-                  dayLength: 1,
-                  absencePeriodName: "FULL",
-                  type: 'VACATION',
-                  status: givenStatus,
-                }
-              ]
-            }
+            "absences": [
+              {
+                date: "2017-12-05",
+                dayLength: 1,
+                absencePeriodName: "FULL",
+                type: 'VACATION',
+                status: givenStatus,
+              }
+            ]
           }
         );
 
@@ -127,17 +123,15 @@ describe ('calendar', () => {
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
         fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
-            "response": {
-              "absences": [
-                {
-                  date: "2017-12-01",
-                  dayLength: 1,
-                  absencePeriodName: "FULL",
-                  type: 'VACATION',
-                  status: givenStatus,
-                }
-              ]
-            }
+            "absences": [
+              {
+                date: "2017-12-01",
+                dayLength: 1,
+                absencePeriodName: "FULL",
+                type: 'VACATION',
+                status: givenStatus,
+              }
+            ]
           }
         );
 

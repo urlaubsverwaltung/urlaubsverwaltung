@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.synyx.urlaubsverwaltung.api.ResponseWrapper;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -51,7 +50,7 @@ public class SickNoteApiController {
     )
     @GetMapping("/sicknotes")
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public ResponseWrapper<SickNoteListResponse> sickNotes(
+    public List<SickNoteResponse> sickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")
             String from,
@@ -86,11 +85,9 @@ public class SickNoteApiController {
             sickNotes = sickNoteService.getByPeriod(startDate, endDate);
         }
 
-        final List<SickNoteResponse> sickNoteResponses = sickNotes.stream()
+        return sickNotes.stream()
             .filter(SickNote::isActive)
             .map(SickNoteResponse::new)
             .collect(toList());
-
-        return new ResponseWrapper<>(new SickNoteListResponse(sickNoteResponses));
     }
 }

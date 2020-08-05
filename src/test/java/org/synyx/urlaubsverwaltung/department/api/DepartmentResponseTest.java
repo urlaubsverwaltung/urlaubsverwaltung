@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DepartmentResponseTest {
 
-    private DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     void ensureDepartmentResponseCreatedCorrectly() {
@@ -22,8 +22,9 @@ class DepartmentResponseTest {
         final Department department = new Department();
 
         final String expectedName = "Forschung";
+        final String expectedDescription = "description";
         department.setName(expectedName);
-        department.setDescription("description");
+        department.setDescription(expectedDescription);
 
         final String expectedLastModification = "2019-08-02";
         final LocalDate lastModification = LocalDate.parse(expectedLastModification, DATE_TIME_FORMATTER);
@@ -43,8 +44,7 @@ class DepartmentResponseTest {
         DepartmentResponse sut = new DepartmentResponse(department);
 
         assertThat(sut.getName()).isEqualTo(expectedName);
-        // DepartmentResponse uses Department.name for description - don't know if this is intended
-        assertThat(sut.getDescription()).isEqualTo(expectedName);
+        assertThat(sut.getDescription()).isEqualTo(expectedDescription);
         assertThat(sut.getLastModification()).isEqualTo(expectedLastModification);
 
         assertThat(sut.getMembers()).isNotNull();
@@ -64,16 +64,13 @@ class DepartmentResponseTest {
     }
 
     private void assertPersonResponseEqualsPerson(PersonResponse personResponse, Person person) {
-
         assertThat(personResponse.getEmail()).isEqualTo(person.getEmail());
         assertThat(personResponse.getFirstName()).isEqualTo(person.getFirstName());
         assertThat(personResponse.getLastName()).isEqualTo(person.getLastName());
     }
 
     private Person person(String username, String email, String firstName, String lastName) {
-
         final Person person = new Person();
-
         person.setUsername(username);
         person.setEmail(email);
         person.setFirstName(firstName);
@@ -81,5 +78,4 @@ class DepartmentResponseTest {
 
         return person;
     }
-
 }
