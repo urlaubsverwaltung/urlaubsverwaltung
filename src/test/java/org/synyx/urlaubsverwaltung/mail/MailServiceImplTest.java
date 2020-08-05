@@ -31,7 +31,7 @@ class MailServiceImplTest {
     @Mock
     private MailBuilder mailBuilder;
     @Mock
-    private MailSender mailSender;
+    private MailSenderService mailSenderService;
     @Mock
     private MailProperties mailProperties;
     @Mock
@@ -45,7 +45,7 @@ class MailServiceImplTest {
         when(mailProperties.getSender()).thenReturn("no-reply@firma.test");
         when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
 
-        sut = new MailServiceImpl(messageSource, mailBuilder, mailSender, mailProperties, recipientService);
+        sut = new MailServiceImpl(messageSource, mailBuilder, mailSenderService, mailProperties, recipientService);
     }
 
     @Test
@@ -66,7 +66,7 @@ class MailServiceImplTest {
 
         sut.sendMailTo(OVERTIME_NOTIFICATION_OFFICE, subjectMessageKey, templateName, model);
 
-        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(recipients), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(recipients), eq("subject"), eq("emailBody"));
     }
 
     @Test
@@ -83,7 +83,7 @@ class MailServiceImplTest {
 
         sut.sendMailTo(hans, subjectMessageKey, templateName, new HashMap<>());
 
-        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(recipients), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(recipients), eq("subject"), eq("emailBody"));
     }
 
     @Test
@@ -106,8 +106,8 @@ class MailServiceImplTest {
 
         sut.sendMailToEach(persons, subjectMessageKey, templateName, new HashMap<>());
 
-        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(singletonList(hansMail)), eq("subject"), eq("emailBody"));
-        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(singletonList(franzMail)), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList(hansMail)), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList(franzMail)), eq("subject"), eq("emailBody"));
     }
 
 
@@ -121,6 +121,6 @@ class MailServiceImplTest {
 
         sut.sendTechnicalMail(subjectMessageKey, templateName, new HashMap<>());
 
-        verify(mailSender).sendEmail(eq("no-reply@firma.test"), eq(singletonList(to)), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList(to)), eq("subject"), eq("emailBody"));
     }
 }

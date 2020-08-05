@@ -19,16 +19,16 @@ import static org.mockito.Mockito.verifyNoInteractions;
 
 
 @ExtendWith(MockitoExtension.class)
-class MailSenderImplTest {
+class MailSenderServiceTest {
 
-    private MailSenderImpl sut;
+    private MailSenderService sut;
 
     @Mock
     private JavaMailSender javaMailSender;
 
     @BeforeEach
     void setUp() {
-        sut = new MailSenderImpl(javaMailSender);
+        sut = new MailSenderService(javaMailSender);
     }
 
     @Test

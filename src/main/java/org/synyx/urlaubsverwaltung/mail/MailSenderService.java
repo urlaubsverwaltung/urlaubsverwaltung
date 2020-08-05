@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,17 +13,27 @@ import java.util.List;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-class MailSenderImpl implements MailSender {
+@Service
+class MailSenderService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final JavaMailSender javaMailSender;
 
-    MailSenderImpl(JavaMailSender javaMailSender) {
+    @Autowired
+    MailSenderService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendEmail(String from, List<String> recipients, String subject, String text) {
+    /**
+     * Send a mail with the given subject and text to the given recipients.
+     *
+     * @param from       mail address from where the mail is sent
+     * @param recipients mail addresses where the mail should be sent to
+     * @param subject    mail subject
+     * @param text       mail body
+     */
+    void sendEmail(String from, List<String> recipients, String subject, String text) {
 
         if (recipients == null || recipients.isEmpty()) {
             LOG.warn("Could not send email to empty recipients!");
