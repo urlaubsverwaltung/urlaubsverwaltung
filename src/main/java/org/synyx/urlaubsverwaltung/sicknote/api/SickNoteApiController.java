@@ -50,7 +50,7 @@ public class SickNoteApiController {
     )
     @GetMapping("/sicknotes")
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public SickNoteListResponse sickNotes(
+    public List<SickNoteResponse> sickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")
             String from,
@@ -85,11 +85,9 @@ public class SickNoteApiController {
             sickNotes = sickNoteService.getByPeriod(startDate, endDate);
         }
 
-        final List<SickNoteResponse> sickNoteResponses = sickNotes.stream()
+        return sickNotes.stream()
             .filter(SickNote::isActive)
             .map(SickNoteResponse::new)
             .collect(toList());
-
-        return new SickNoteListResponse(sickNoteResponses);
     }
 }
