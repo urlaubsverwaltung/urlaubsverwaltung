@@ -26,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-class OvertimeMailServiceIT extends TestContainersBase {
+public class OvertimeMailServiceIT extends TestContainersBase {
 
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);

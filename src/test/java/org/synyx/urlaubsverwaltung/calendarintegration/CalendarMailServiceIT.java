@@ -26,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-class CalendarMailServiceIT extends TestContainersBase {
+public class CalendarMailServiceIT extends TestContainersBase {
 
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
