@@ -31,12 +31,11 @@ public class VacationOverviewApiController {
         notes = "Get Vacation-Overview metadata for all members of a department")
     @GetMapping("/vacationoverview")
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    public VacationOverviewResponse getHolidayOverview(
+    public List<VacationOverview> getHolidayOverview(
         @RequestParam("selectedDepartment") String selectedDepartment,
         @RequestParam("selectedYear") Integer selectedYear,
         @RequestParam("selectedMonth") Integer selectedMonth) {
 
-        final List<VacationOverview> holidayOverviewList = vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
-        return new VacationOverviewResponse(holidayOverviewList);
+        return vacationOverviewService.getVacationOverviews(selectedDepartment, selectedYear, selectedMonth);
     }
 }
