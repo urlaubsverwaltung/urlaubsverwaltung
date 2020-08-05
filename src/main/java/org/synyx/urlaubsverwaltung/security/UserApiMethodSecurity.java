@@ -18,8 +18,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 @Component
 public class UserApiMethodSecurity {
 
-    private PersonService personService;
-    private DepartmentService departmentService;
+    private final PersonService personService;
+    private final DepartmentService departmentService;
 
     @Autowired
     public UserApiMethodSecurity(PersonService personService, DepartmentService departmentService) {
