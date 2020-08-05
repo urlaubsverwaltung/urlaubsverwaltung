@@ -350,6 +350,16 @@
               <arguments>run lint</arguments>
             </configuration>
           </execution>
+          <!-- lint JavaScript files report (static code analysis) -->
+          <execution>
+            <id>npm-lint-report</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run lint:report</arguments>
+            </configuration>
+          </execution>
           <!-- Build and minify assets -->
           <execution>
             <id>npm-build</id>
