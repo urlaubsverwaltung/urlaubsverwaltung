@@ -16,10 +16,10 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
   const startDateString = format(startDate, "yyyy-MM-dd");
   const toDateString = format(endDate, "yyyy-MM-dd");
 
-  const url = `${urlPrefix}/vacations?departmentMembers=true&from=${startDateString}&to=${toDateString}&person=${personId}`;
+  const url = `${urlPrefix}/persons/${personId}/vacations?from=${startDateString}&to=${toDateString}&ofDepartmentMembers`;
 
   const data = await getJSON(url);
-  const vacations = data.vacations;
+  const vacations = data;
 
   const element = document.querySelector(elementSelector);
   element.innerHTML = window.uv.i18n['application.applier.applicationsOfColleagues'] + "<br />";

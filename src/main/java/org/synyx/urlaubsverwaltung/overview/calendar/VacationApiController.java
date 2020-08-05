@@ -4,8 +4,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,30 +16,29 @@ import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Vacations: Get all vacations for a certain period")
 @RestController("restApiVacationController")
-@RequestMapping("/api")
+@RequestMapping("/api/persons/{id}/vacations")
 public class VacationApiController {
+
+    public static final String VACATIONS = "vacations";
 
     private final PersonService personService;
     private final ApplicationService applicationService;
@@ -50,62 +52,87 @@ public class VacationApiController {
     }
 
     @ApiOperation(
-        value = "Get all allowed vacations for a certain period",
-        notes = "Get all allowed vacations for a certain period. "
-            + "If a person is specified, only the allowed vacations of the person are fetched. "
-            + "If a person and the department members flag is specified, "
-            + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched. "
-            + "Information only reachable for users with role office."
+        value = "Get all allowed vacations for a person and a certain period of time",
+        notes = "Get all allowed vacations for a person and a certain period of time. "
+            + "Information only reachable for users with role office and for your own data."
     )
-    @GetMapping("/vacations")
-    @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public List<VacationResponse> vacations(
-        @ApiParam(value = "Get vacations for department members of person")
-        @RequestParam(value = "departmentMembers", required = false)
-            boolean departmentMembers,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
-        @RequestParam("from")
-            String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
-        @RequestParam("to")
-            String to,
+    @GetMapping
+    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public List<VacationResponse> getVacations(
         @ApiParam(value = "ID of the person")
-        @RequestParam(value = "person", required = false)
-            Integer personId) {
+        @PathVariable("id")
+            Integer personId,
+        @ApiParam(value = "end of interval to get vacations from (inclusive)", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @RequestParam("from")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate startDate,
+        @ApiParam(value = "end of interval to get vacations from (inclusive)", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @RequestParam("to")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate endDate) {
 
-        final LocalDate startDate = parseDate(from);
-        final LocalDate endDate = parseDate(to);
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        List<Application> applications = new ArrayList<>();
-        if (personId == null && !departmentMembers) {
-            applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED);
-        }
+        final Person person = getPerson(personId);
+        final List<Application> applications =
+            applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person, ALLOWED);
 
-        if (personId != null) {
-            final Optional<Person> person = personService.getPersonByID(personId);
-
-            if (person.isPresent()) {
-                if (!departmentMembers) {
-                    applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person.get(), ALLOWED);
-                } else {
-                    applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(), startDate, endDate);
-                }
-            }
-        }
-
-        return applications.stream().map(VacationResponse::new).collect(toList());
+        return mapToVacationResponse(applications);
     }
 
-    private LocalDate parseDate(String date) {
-        final LocalDate localDate;
-        try {
-            localDate = LocalDate.parse(date, ofPattern(DATE_PATTERN));
-        } catch (DateTimeParseException exception) {
-            throw new ResponseStatusException(BAD_REQUEST, "The value '" + date + "' has the wrong format");
+    @ApiOperation(
+        value = "Get all allowed vacations for department members for the given person and the certain period",
+        notes = "Get all allowed vacations for department members for the given person and the certain period. "
+            + "All the waiting and allowed vacations of the departments the person is assigned to, are fetched. "
+            + "Information only reachable for users with role office and for your own data."
+    )
+    @GetMapping(params = "ofDepartmentMembers")
+    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public List<VacationResponse> getVacationsOfOthersOrDepartmentColleagues(
+        @ApiParam(value = "ID of the person")
+        @PathVariable("id")
+            Integer personId,
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @RequestParam("from")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate startDate,
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @RequestParam("to")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate endDate,
+        @ApiParam(value = "If defined returns only the vacations of the department members of the person")
+        @RequestParam(value = "ofDepartmentMembers", defaultValue = "true")
+            boolean ofDepartmentMembers) {
+
+        if (startDate.isAfter(endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
-        return localDate;
+
+        final Person person = getPerson(personId);
+
+        final List<Application> applications;
+        final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
+        if (departments.isEmpty()) {
+            applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED);
+        } else {
+            applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, startDate, endDate);
+        }
+
+        return mapToVacationResponse(applications);
+    }
+
+    private Person getPerson(Integer personId) {
+        final Optional<Person> maybePerson;
+        maybePerson = personService.getPersonByID(personId);
+        if (maybePerson.isEmpty()) {
+            throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
+        }
+        return maybePerson.get();
+    }
+
+    private List<VacationResponse> mapToVacationResponse(List<Application> applications) {
+        return applications.stream().map(VacationResponse::new).collect(toList());
     }
 }

@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController;
+import org.synyx.urlaubsverwaltung.overview.calendar.VacationApiController;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.util.List;
 
@@ -23,6 +23,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController.AVAILABILITIES;
+import static org.synyx.urlaubsverwaltung.overview.calendar.VacationApiController.VACATIONS;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Persons: Get information about the persons of the application")
@@ -45,7 +47,7 @@ public class PersonApiController {
         value = "Get all active persons of the application", notes = "Get all active persons of the application"
     )
     @GetMapping
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     public ResponseEntity<List<PersonResponse>> persons() {
 
         List<PersonResponse> persons = personService.getActivePersons().stream()
@@ -57,7 +59,7 @@ public class PersonApiController {
 
     @ApiOperation(value = "Get one active person by id", notes = "Get one active person by id")
     @GetMapping(PERSON_URL)
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     public ResponseEntity<PersonResponse> getPerson(@PathVariable Integer id) {
 
         return personService.getPersonByID(id)
@@ -68,8 +70,8 @@ public class PersonApiController {
     private PersonResponse createPersonResponse(Person person) {
         final PersonResponse personResponse = PersonResponseMapper.mapToResponse(person);
         personResponse.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
-        personResponse.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null))
-            .withRel(AVAILABILITIES));
+        personResponse.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null)).withRel(AVAILABILITIES));
+        personResponse.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));
         return personResponse;
     }
 }
