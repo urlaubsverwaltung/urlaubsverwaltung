@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-
+import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @ExtendWith(MockitoExtension.class)
 class VacationApiControllerTest {
@@ -69,7 +69,7 @@ class VacationApiControllerTest {
     @Test
     void ensureReturnsAllowedVacationsOfPersonIfPersonProvided() throws Exception {
 
-        final Person person = DemoDataCreator.createPerson();
+        final Person person = createPerson();
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/vacations")
@@ -87,11 +87,11 @@ class VacationApiControllerTest {
     @Test
     void ensureCorrectConversionOfVacations() throws Exception {
 
-        final Application vacation1 = DemoDataCreator.createApplication(DemoDataCreator.createPerson("foo"),
+        final Application vacation1 = DemoDataCreator.createApplication(createPerson("foo"),
             LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
         vacation1.setStatus(ALLOWED);
 
-        final Application vacation2 = DemoDataCreator.createApplication(DemoDataCreator.createPerson("bar"),
+        final Application vacation2 = DemoDataCreator.createApplication(createPerson("bar"),
             LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), DayLength.FULL);
 
         when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class),

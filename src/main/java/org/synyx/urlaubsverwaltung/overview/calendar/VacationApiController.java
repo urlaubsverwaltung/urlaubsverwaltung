@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
-import org.synyx.urlaubsverwaltung.api.SwaggerConfig;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -29,6 +28,8 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
+import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
+import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 
 @RestControllerAdviceMarker
@@ -62,10 +63,10 @@ public class VacationApiController {
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
             Boolean departmentMembers,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR)
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam(value = "from")
             String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR)
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam(value = "to")
             String to,
         @ApiParam(value = "ID of the person")
@@ -79,7 +80,6 @@ public class VacationApiController {
         }
 
         List<Application> applications = new ArrayList<>();
-
         if (personId == null && departmentMembers == null) {
             applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED);
         }
@@ -89,11 +89,9 @@ public class VacationApiController {
 
             if (person.isPresent()) {
                 if (departmentMembers == null || !departmentMembers) {
-                    applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate,
-                        endDate, person.get(), ALLOWED);
+                    applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person.get(), ALLOWED);
                 } else {
-                    applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(),
-                        startDate, endDate);
+                    applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(), startDate, endDate);
                 }
             }
         }
