@@ -58,7 +58,7 @@ public class VacationApiController {
     )
     @GetMapping("/vacations")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public VacationListResponse vacations(
+    public List<VacationResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
             Boolean departmentMembers,
@@ -106,8 +106,6 @@ public class VacationApiController {
             }
         }
 
-        List<VacationResponse> vacationResponses = applications.stream().map(VacationResponse::new).collect(toList());
-
-        return new VacationListResponse(vacationResponses);
+        return applications.stream().map(VacationResponse::new).collect(toList());
     }
 }
