@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -57,19 +56,16 @@ class OvertimeTest {
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
-
-        Assert.assertNotNull("Should not be null", overtime.getStartDate());
-        Assert.assertEquals("Wrong start date", now, overtime.getStartDate());
+        assertThat(overtime.getStartDate()).isEqualTo(now);
     }
 
     @Test
     void ensureReturnsCorrectEndDate() {
         Person person = createPerson();
         LocalDate now = LocalDate.now(UTC);
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
 
-        Assert.assertNotNull("Should not be null", overtime.getEndDate());
-        Assert.assertEquals("Wrong end date", now, overtime.getEndDate());
+        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
+        assertThat(overtime.getEndDate()).isEqualTo(now);
     }
 
     @Test
@@ -78,9 +74,7 @@ class OvertimeTest {
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), BigDecimal.ONE);
-
-        Assert.assertNotNull("Should not be null", overtime.getLastModificationDate());
-        Assert.assertEquals("Wrong last modification date", now, overtime.getLastModificationDate());
+        assertThat(overtime.getLastModificationDate()).isEqualTo(now);
     }
 
     @Test
@@ -139,12 +133,9 @@ class OvertimeTest {
         lastModificationDateField.setAccessible(true);
         lastModificationDateField.set(overtime, now.minusDays(3));
 
-        Assert.assertEquals("Wrong initial last modification date", now.minusDays(3),
-            overtime.getLastModificationDate());
-
+        assertThat(overtime.getLastModificationDate()).isEqualTo(now.minusDays(3));
         overtime.onUpdate();
-
-        Assert.assertEquals("Last modification date should be set to now", now, overtime.getLastModificationDate());
+        assertThat(overtime.getLastModificationDate()).isEqualTo(now);
     }
 
     @Test
