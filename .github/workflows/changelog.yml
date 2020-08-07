@@ -1,0 +1,29 @@
+name: Generate changelog
+
+on:
+  push:
+    branches:
+      - 'changelog-action'
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: 'changelog-action'
+
+      - name: Generate Changelog
+        id: generate-changelog
+        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Changelog
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -sam "Update Changelog"
+          git push
