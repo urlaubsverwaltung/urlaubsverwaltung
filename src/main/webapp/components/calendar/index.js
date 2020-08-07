@@ -193,9 +193,7 @@ $(function() {
         function cacheAbsences(type, year) {
             var c = _CACHE[type] = _CACHE[type] || {};
 
-            return function(data) {
-
-                var absences = data.absences;
+            return function(absences) {
 
                 if(absences.length > 0) {
                     $.each(absences, function(idx, absence) {
@@ -214,9 +212,7 @@ $(function() {
         function cachePublicHoliday(year) {
             var c = _CACHE['publicHoliday'] = _CACHE['publicHoliday'] || {};
 
-            return function(data) {
-
-                var publicHolidays = data.publicHolidays;
+            return function(publicHolidays) {
 
                 if(publicHolidays.length > 0) {
                     $.each(publicHolidays, function(idx, publicHoliday) {
