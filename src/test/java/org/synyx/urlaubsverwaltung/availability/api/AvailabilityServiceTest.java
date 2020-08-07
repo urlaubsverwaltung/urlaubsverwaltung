@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,8 +28,8 @@ public class AvailabilityServiceTest {
     private FreeTimeAbsenceProvider freeTimeAbsenceProvider;
 
     private Person testPerson;
-    private LocalDate testDateRangeStart;
-    private LocalDate testDateRangeEnd;
+    private Instant testDateRangeStart;
+    private Instant testDateRangeEnd;
     private TimedAbsenceSpans timedAbsenceSpansMock;
 
     @Before
@@ -39,14 +40,14 @@ public class AvailabilityServiceTest {
 
         when(freeTimeAbsenceProvider.checkForAbsence(
             any(Person.class),
-            any(LocalDate.class)))
+            any(Instant.class)))
             .thenReturn(timedAbsenceSpansMock);
 
         availabilityService = new AvailabilityService(freeTimeAbsenceProvider);
 
         testPerson = TestDataCreator.createPerson();
-        testDateRangeStart = LocalDate.of(2016, 1, 1);
-        testDateRangeEnd = LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE);
+        testDateRangeStart = Instant.from(LocalDate.of(2016, 1, 1));
+        testDateRangeEnd = Instant.from(LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE));
     }
 
 
@@ -56,14 +57,14 @@ public class AvailabilityServiceTest {
         availabilityService.getPersonsAvailabilities(testDateRangeStart, testDateRangeEnd, testPerson);
 
         verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE))
-            .checkForAbsence(eq(testPerson), any(LocalDate.class));
+            .checkForAbsence(eq(testPerson), any(Instant.class));
     }
 
 
     @Test
     public void ensureReturnsDayAvailabilityWithCalculatedPresenceRatio() {
 
-        LocalDate dayToTest = testDateRangeStart;
+        Instant dayToTest = testDateRangeStart;
 
         BigDecimal expectedAvailabilityRatio = BigDecimal.ONE;
 

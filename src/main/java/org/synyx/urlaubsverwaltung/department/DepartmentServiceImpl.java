@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -111,7 +112,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
-                                                                                   LocalDate startDate, LocalDate endDate) {
+                                                                                   Instant startDate, Instant endDate) {
 
         List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
         List<Application> departmentApplications = new ArrayList<>();

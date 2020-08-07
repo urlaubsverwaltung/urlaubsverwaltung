@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 import static java.math.BigDecimal.TEN;
@@ -36,13 +37,13 @@ public class AccountDAOIT {
         final Person person = TestDataCreator.createPerson("test user");
         final Person savedPerson = personService.save(person);
 
-        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
-        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Instant validFrom = Instant.from(LocalDate.of(2014, JANUARY, 1));
+        final Instant validTo = Instant.from(LocalDate.of(2014, DECEMBER, 31));
         Account account = new Account(savedPerson, validFrom, validTo, TEN, TEN, TEN, "comment");
         sut.save(account);
 
-        final LocalDate validFrom2 = LocalDate.of(2014, JANUARY, 1);
-        final LocalDate validTo2 = LocalDate.of(2014, DECEMBER, 31);
+        final Instant validFrom2 = Instant.from(LocalDate.of(2014, JANUARY, 1));
+        final Instant validTo2 = Instant.from(LocalDate.of(2014, DECEMBER, 31));
         Account account2 = new Account(savedPerson, validFrom2, validTo2, TEN, TEN, TEN, "comment 2");
         sut.save(account2);
     }

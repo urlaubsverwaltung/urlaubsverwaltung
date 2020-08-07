@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Optional;
@@ -366,7 +367,7 @@ public class PersonViewControllerTest {
 
     private static Account accountForPerson(Person person) {
 
-        return new Account(person, LocalDate.now(clock), LocalDate.now(clock),
+        return new Account(person, Instant.now(clock), Instant.now(clock),
             BigDecimal.ONE, BigDecimal.TEN, BigDecimal.TEN, "");
     }
 

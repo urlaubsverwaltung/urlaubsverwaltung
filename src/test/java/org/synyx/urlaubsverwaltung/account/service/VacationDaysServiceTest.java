@@ -45,6 +45,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.SEPTEMBER;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -82,7 +83,7 @@ public class VacationDaysServiceTest {
         WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(List.of(MONDAY.getValue(), TUESDAY.getValue(), WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue()), FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(Instant.class)))
             .thenReturn(Optional.of(workingTime));
 
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -103,13 +104,13 @@ public class VacationDaysServiceTest {
 
         Person person = TestDataCreator.createPerson("horscht");
 
-        LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
-        LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
+        Instant firstMilestone = Instant.from(LocalDate.of(2012, JANUARY, 1));
+        Instant lastMilestone = Instant.from(LocalDate.of(2012, MARCH, 31));
 
         // 4 days at all: 2 before January + 2 after January
         Application a1 = new Application();
-        a1.setStartDate(LocalDate.of(2011, DECEMBER, 29));
-        a1.setEndDate(LocalDate.of(2012, JANUARY, 3));
+        a1.setStartDate(Instant.from(LocalDate.of(2011, DECEMBER, 29)));
+        a1.setEndDate(Instant.from(LocalDate.of(2012, JANUARY, 3)));
         a1.setDayLength(FULL);
         a1.setStatus(ALLOWED);
         a1.setVacationType(createVacationType(HOLIDAY));
@@ -117,8 +118,8 @@ public class VacationDaysServiceTest {
 
         // 5 days
         Application a2 = new Application();
-        a2.setStartDate(LocalDate.of(2012, MARCH, 12));
-        a2.setEndDate(LocalDate.of(2012, MARCH, 16));
+        a2.setStartDate(Instant.from(LocalDate.of(2012, MARCH, 12)));
+        a2.setEndDate(Instant.from(LocalDate.of(2012, MARCH, 16)));
         a2.setDayLength(FULL);
         a2.setStatus(ALLOWED);
         a2.setVacationType(createVacationType(HOLIDAY));
@@ -126,8 +127,8 @@ public class VacationDaysServiceTest {
 
         // 4 days
         Application a3 = new Application();
-        a3.setStartDate(LocalDate.of(2012, FEBRUARY, 6));
-        a3.setEndDate(LocalDate.of(2012, FEBRUARY, 9));
+        a3.setStartDate(Instant.from(LocalDate.of(2012, FEBRUARY, 6)));
+        a3.setEndDate(Instant.from(LocalDate.of(2012, FEBRUARY, 9)));
         a3.setDayLength(FULL);
         a3.setStatus(WAITING);
         a3.setVacationType(createVacationType(HOLIDAY));
@@ -135,15 +136,15 @@ public class VacationDaysServiceTest {
 
         // 6 days at all: 2 before April + 4 after April
         Application a4 = new Application();
-        a4.setStartDate(LocalDate.of(2012, MARCH, 29));
-        a4.setEndDate(LocalDate.of(2012, APRIL, 5));
+        a4.setStartDate(Instant.from(LocalDate.of(2012, MARCH, 29)));
+        a4.setEndDate(Instant.from(LocalDate.of(2012, APRIL, 5)));
         a4.setDayLength(FULL);
         a4.setStatus(WAITING);
         a4.setVacationType(createVacationType(HOLIDAY));
         a4.setPerson(person);
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class),
+            any(Instant.class), any(Person.class)))
             .thenReturn(Arrays.asList(a1, a2, a3, a4));
 
         BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
@@ -158,13 +159,13 @@ public class VacationDaysServiceTest {
 
         Person person = TestDataCreator.createPerson("horscht");
 
-        LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
-        LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
+        Instant firstMilestone = Instant.from(LocalDate.of(2012, APRIL, 1));
+        Instant lastMilestone = Instant.from(LocalDate.of(2012, DECEMBER, 31));
 
         // 4 days at all: 2.5 before January + 2 after January
         Application a1 = new Application();
-        a1.setStartDate(LocalDate.of(2012, DECEMBER, 27));
-        a1.setEndDate(LocalDate.of(2013, JANUARY, 3));
+        a1.setStartDate(Instant.from(LocalDate.of(2012, DECEMBER, 27)));
+        a1.setEndDate(Instant.from(LocalDate.of(2013, JANUARY, 3)));
         a1.setDayLength(FULL);
         a1.setPerson(person);
         a1.setStatus(ALLOWED);
@@ -172,8 +173,8 @@ public class VacationDaysServiceTest {
 
         // 5 days
         Application a2 = new Application();
-        a2.setStartDate(LocalDate.of(2012, SEPTEMBER, 3));
-        a2.setEndDate(LocalDate.of(2012, SEPTEMBER, 7));
+        a2.setStartDate(Instant.from(LocalDate.of(2012, SEPTEMBER, 3)));
+        a2.setEndDate(Instant.from(LocalDate.of(2012, SEPTEMBER, 7)));
         a2.setDayLength(FULL);
         a2.setPerson(person);
         a2.setStatus(ALLOWED);
@@ -181,15 +182,15 @@ public class VacationDaysServiceTest {
 
         // 6 days at all: 2 before April + 4 after April
         Application a4 = new Application();
-        a4.setStartDate(LocalDate.of(2012, MARCH, 29));
-        a4.setEndDate(LocalDate.of(2012, APRIL, 5));
+        a4.setStartDate(Instant.from(LocalDate.of(2012, MARCH, 29)));
+        a4.setEndDate(Instant.from(LocalDate.of(2012, APRIL, 5)));
         a4.setDayLength(FULL);
         a4.setPerson(person);
         a4.setStatus(WAITING);
         a4.setVacationType(createVacationType(HOLIDAY));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class),
+            any(Instant.class), any(Person.class)))
             .thenReturn(Arrays.asList(a1, a2, a4));
 
         BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
@@ -204,8 +205,8 @@ public class VacationDaysServiceTest {
 
         Person person = TestDataCreator.createPerson("horscht");
 
-        LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
-        LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
+        Instant firstMilestone = Instant.from(LocalDate.of(2012, APRIL, 1));
+        Instant lastMilestone = Instant.from(LocalDate.of(2012, DECEMBER, 31));
 
         Application cancelledHoliday = new Application();
         cancelledHoliday.setVacationType(createVacationType(HOLIDAY));
@@ -239,8 +240,8 @@ public class VacationDaysServiceTest {
         allowedOvertime.setVacationType(createVacationType(OVERTIME));
         allowedOvertime.setStatus(ALLOWED);
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class),
+            any(Instant.class), any(Person.class)))
             .thenReturn(Arrays.asList(cancelledHoliday, rejectedHoliday, waitingSpecialLeave, allowedSpecialLeave,
                 waitingUnpaidLeave, allowedUnpaidLeave, waitingOvertime, allowedOvertime));
 
@@ -348,7 +349,7 @@ public class VacationDaysServiceTest {
         initCustomService("4", "1");
 
         Account account = new Account();
-        account.setValidFrom(LocalDate.of(2014, 1, 1));
+        account.setValidFrom(Instant.from(LocalDate.of(2014, 1, 1)));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
@@ -372,7 +373,7 @@ public class VacationDaysServiceTest {
         initCustomService("4", "1");
 
         Account account = new Account();
-        account.setValidFrom(LocalDate.of(2015, 1, 1));
+        account.setValidFrom(Instant.from(LocalDate.of(2015, 1, 1)));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
@@ -396,7 +397,7 @@ public class VacationDaysServiceTest {
         initCustomService("4", "3");
 
         Account account = new Account();
-        account.setValidFrom(LocalDate.of(2015, 1, 1));
+        account.setValidFrom(Instant.from(LocalDate.of(2015, 1, 1)));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
@@ -428,8 +429,8 @@ public class VacationDaysServiceTest {
 
         Account account = new Account();
         account.setPerson(person);
-        account.setValidFrom(LocalDate.now(clock));
-        account.setValidTo(ZonedDateTime.now(clock).plusDays(10).toLocalDate());
+        account.setValidFrom(Instant.now(clock));
+        account.setValidTo(Instant.now(clock).plus(10, DAYS));
 
         BigDecimal usedDaysBeforeApril = vacationDaysService.getUsedDaysBeforeApril(account);
 
@@ -453,8 +454,8 @@ public class VacationDaysServiceTest {
 
         Account account = new Account();
         account.setPerson(person);
-        account.setValidFrom(LocalDate.now(clock));
-        account.setValidTo(ZonedDateTime.now(clock).plusDays(10).toLocalDate());
+        account.setValidFrom(Instant.now(clock));
+        account.setValidTo(Instant.now(clock).plus(10, DAYS));
 
         BigDecimal usedDaysAfterApril = vacationDaysService.getUsedDaysAfterApril(account);
 
@@ -464,8 +465,8 @@ public class VacationDaysServiceTest {
     private Application getSomeApplication(Person person) {
 
         Application application = new Application();
-        application.setStartDate(LocalDate.of(2015, JANUARY, 1));
-        application.setEndDate(LocalDate.of(2015, JANUARY, 3));
+        application.setStartDate(Instant.from(LocalDate.of(2015, JANUARY, 1)));
+        application.setEndDate(Instant.from(LocalDate.of(2015, JANUARY, 3)));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
         application.setVacationType(createVacationType(HOLIDAY));

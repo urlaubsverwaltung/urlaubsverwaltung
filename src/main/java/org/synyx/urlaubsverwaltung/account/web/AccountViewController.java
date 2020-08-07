@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Locale;
@@ -103,8 +104,8 @@ public class AccountViewController {
             return "account/account_form";
         }
 
-        LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
-        LocalDate validTo = accountForm.getHolidaysAccountValidTo();
+        Instant validFrom = accountForm.getHolidaysAccountValidFrom();
+        Instant validTo = accountForm.getHolidaysAccountValidTo();
 
         BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
         BigDecimal actualVacationDays = accountForm.getActualVacationDays();
@@ -113,7 +114,7 @@ public class AccountViewController {
         String comment = accountForm.getComment();
 
         // check if there is an existing account
-        Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
+        Optional<Account> account = accountService.getHolidaysAccount(Year.from(validFrom).getValue(), person);
 
         if (account.isPresent()) {
             accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,

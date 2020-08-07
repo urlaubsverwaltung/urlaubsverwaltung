@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -108,7 +109,7 @@ public class PublicHolidayApiControllerSecurityIT {
     public void getHolidaysWithOfficeRoleIsOk() throws Exception {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
-        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
+        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(Instant.class))).thenReturn(BAYERN);
 
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")
@@ -124,7 +125,7 @@ public class PublicHolidayApiControllerSecurityIT {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
+        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(Instant.class))).thenReturn(BAYERN);
 
         final ResultActions resultActions = perform(get("/api/holidays")
             .param("year", "2016")

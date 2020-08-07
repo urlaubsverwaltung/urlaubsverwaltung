@@ -210,9 +210,9 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
         OlsonTimeZoneDefinition timeZone = new OlsonTimeZoneDefinition(TimeZone.getTimeZone(exchangeTimeZoneId));
 
-        appointment.setStart(from(absence.getStartDate().toInstant()));
+        appointment.setStart(from(absence.getStartDate()));
         appointment.setStartTimeZone(timeZone);
-        appointment.setEnd(from(absence.getEndDate().toInstant()));
+        appointment.setEnd(from(absence.getEndDate()));
         appointment.setEndTimeZone(timeZone);
 
         appointment.setIsAllDayEvent(absence.isAllDay());

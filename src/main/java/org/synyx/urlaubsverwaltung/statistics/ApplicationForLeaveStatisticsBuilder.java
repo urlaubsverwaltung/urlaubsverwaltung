@@ -17,9 +17,13 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Optional;
+
+import static java.time.temporal.ChronoField.YEAR;
 
 
 /**
@@ -49,17 +53,17 @@ public class ApplicationForLeaveStatisticsBuilder {
         this.vacationTypeService = vacationTypeService;
     }
 
-    public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to) {
+    public ApplicationForLeaveStatistics build(Person person, Instant from, Instant to) {
 
         Assert.notNull(person, "Person must be given");
         Assert.notNull(from, "From must be given");
         Assert.notNull(to, "To must be given");
 
-        Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
+        Assert.isTrue(from.get(YEAR) == to.get(YEAR), "From and to must be in the same year");
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        Optional<Account> account = accountService.getHolidaysAccount(from.getYear(), person);
+        Optional<Account> account = accountService.getHolidaysAccount(from.get(YEAR), person);
 
         if (account.isPresent()) {
             BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account.get());
@@ -72,10 +76,10 @@ public class ApplicationForLeaveStatisticsBuilder {
             if (application.hasStatus(ApplicationStatus.WAITING)
                 || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 statistics.addWaitingVacationDays(application.getVacationType(),
-                    getVacationDays(application, from.getYear()));
+                    getVacationDays(application, from.get(YEAR)));
             } else if (application.hasStatus(ApplicationStatus.ALLOWED)) {
                 statistics.addAllowedVacationDays(application.getVacationType(),
-                    getVacationDays(application, from.getYear()));
+                    getVacationDays(application, from.get(YEAR)));
             }
         }
 
@@ -87,15 +91,15 @@ public class ApplicationForLeaveStatisticsBuilder {
 
     private BigDecimal getVacationDays(Application application, int relevantYear) {
 
-        int yearOfStartDate = application.getStartDate().getYear();
-        int yearOfEndDate = application.getEndDate().getYear();
+        int yearOfStartDate = application.getStartDate().get(YEAR);
+        int yearOfEndDate = application.getEndDate().get(YEAR);
 
         DayLength dayLength = application.getDayLength();
         Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {
-            LocalDate startDate = getStartDateForCalculation(application, relevantYear);
-            LocalDate endDate = getEndDateForCalculation(application, relevantYear);
+            Instant startDate = getStartDateForCalculation(application, relevantYear);
+            Instant endDate = getEndDateForCalculation(application, relevantYear);
 
             return calendarService.getWorkDays(dayLength, startDate, endDate, person);
         }
@@ -104,20 +108,20 @@ public class ApplicationForLeaveStatisticsBuilder {
     }
 
 
-    private LocalDate getStartDateForCalculation(Application application, int relevantYear) {
+    private Instant getStartDateForCalculation(Application application, int relevantYear) {
 
-        if (application.getStartDate().getYear() != relevantYear) {
-            return DateUtil.getFirstDayOfYear(application.getEndDate().getYear());
+        if (application.getStartDate().get(YEAR) != relevantYear) {
+            return DateUtil.getFirstDayOfYear(application.getEndDate().get(YEAR));
         }
 
         return application.getStartDate();
     }
 
 
-    private LocalDate getEndDateForCalculation(Application application, int relevantYear) {
+    private Instant getEndDateForCalculation(Application application, int relevantYear) {
 
-        if (application.getEndDate().getYear() != relevantYear) {
-            return DateUtil.getLastDayOfYear(application.getStartDate().getYear());
+        if (application.getEndDate().get(YEAR) != relevantYear) {
+            return DateUtil.getLastDayOfYear(application.getStartDate().get(YEAR));
         }
 
         return application.getEndDate();

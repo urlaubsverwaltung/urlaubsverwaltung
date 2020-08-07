@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.department;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -88,8 +89,8 @@ public interface DepartmentService {
      * @param endDate   of the period
      * @return list of waiting or allowed applications for leave of departments members
      */
-    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate,
-                                                                            LocalDate endDate);
+    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, Instant startDate,
+                                                                            Instant endDate);
 
 
     /**

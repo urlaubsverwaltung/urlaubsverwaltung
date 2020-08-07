@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, Instant date) {
 
         final List<Optional<TimedAbsence>> optionalTimedAbsences = checkForVacation(date, person);
         if (optionalTimedAbsences.isEmpty()) {
@@ -52,7 +53,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
         return true;
     }
 
-    private List<Optional<TimedAbsence>> checkForVacation(LocalDate date, Person person) {
+    private List<Optional<TimedAbsence>> checkForVacation(Instant date, Person person) {
 
         final
 

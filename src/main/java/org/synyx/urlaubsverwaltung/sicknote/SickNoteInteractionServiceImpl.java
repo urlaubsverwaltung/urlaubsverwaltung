@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -173,7 +174,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private void saveSickNote(SickNote sickNote) {
 
-        sickNote.setLastEdited(LocalDate.now(clock));
+        sickNote.setLastEdited(Instant.now(clock));
 
         sickNoteService.save(sickNote);
     }

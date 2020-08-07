@@ -46,12 +46,12 @@ public class SickNoteStatisticsTest {
         Person person = TestDataCreator.createPerson();
 
         SickNote sickNote1 = TestDataCreator.createSickNote(person,
-            LocalDate.of(2013, OCTOBER, 7),
-            LocalDate.of(2013, OCTOBER, 11), DayLength.FULL);
+            Instant.from(LocalDate.of(2013, OCTOBER, 7)),
+            Instant.from(LocalDate.of(2013, OCTOBER, 11)), DayLength.FULL);
 
         SickNote sickNote2 = TestDataCreator.createSickNote(person,
-            LocalDate.of(2013, DECEMBER, 18),
-            LocalDate.of(2014, JANUARY, 3), DayLength.FULL);
+            Instant.from(LocalDate.of(2013, DECEMBER, 18)),
+            Instant.from(LocalDate.of(2014, JANUARY, 3)), DayLength.FULL);
 
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
@@ -59,12 +59,12 @@ public class SickNoteStatisticsTest {
         when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
         when(sickNoteDAO.getAllActiveByYear(2013)).thenReturn(sickNotes);
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
-            LocalDate.of(2013, OCTOBER, 11), person))
+        when(calendarService.getWorkDays(DayLength.FULL, Instant.from(LocalDate.of(2013, OCTOBER, 7)),
+            Instant.from(LocalDate.of(2013, OCTOBER, 11)), person))
             .thenReturn(new BigDecimal("5"));
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
-            LocalDate.of(2013, DECEMBER, 31), person))
+        when(calendarService.getWorkDays(DayLength.FULL, Instant.from(LocalDate.of(2013, DECEMBER, 18)),
+            Instant.from(LocalDate.of(2013, DECEMBER, 31)), person))
             .thenReturn(new BigDecimal("9"));
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2013-04-02T00:00:00.00Z"), clock.getZone());

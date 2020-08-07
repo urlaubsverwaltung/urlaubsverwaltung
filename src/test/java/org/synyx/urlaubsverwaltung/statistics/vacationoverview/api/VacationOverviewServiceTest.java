@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -51,8 +52,8 @@ public class VacationOverviewServiceTest {
         FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
         when(departmentService.getAllDepartments()).thenReturn(singletonList(department));
-        when(workingTimeService.getFederalStateForPerson(ArgumentMatchers.eq(person), ArgumentMatchers.any(LocalDate.class))).thenReturn(federalState);
-        when(publicHolidayService.getWorkingDurationOfDate(ArgumentMatchers.any(LocalDate.class), ArgumentMatchers.any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
+        when(workingTimeService.getFederalStateForPerson(ArgumentMatchers.eq(person), ArgumentMatchers.any(Instant.class))).thenReturn(federalState);
+        when(publicHolidayService.getWorkingDurationOfDate(ArgumentMatchers.any(Instant.class), ArgumentMatchers.any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 
         List<VacationOverview> vacationOverviews =
             sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthValue());

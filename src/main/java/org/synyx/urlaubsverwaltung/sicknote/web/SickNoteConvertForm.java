@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
@@ -19,8 +20,8 @@ public class SickNoteConvertForm {
 
     private Person person;
     private DayLength dayLength;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Instant startDate;
+    private Instant endDate;
     private VacationType vacationType;
     private String reason;
 
@@ -60,25 +61,25 @@ public class SickNoteConvertForm {
     }
 
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         return startDate;
     }
 
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
 
         this.startDate = startDate;
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         return endDate;
     }
 
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
 
         this.endDate = endDate;
     }
@@ -120,8 +121,8 @@ public class SickNoteConvertForm {
         applicationForLeave.setReason(reason);
 
         applicationForLeave.setStatus(ALLOWED);
-        applicationForLeave.setApplicationDate(LocalDate.now(clock));
-        applicationForLeave.setEditedDate(LocalDate.now(clock));
+        applicationForLeave.setApplicationDate(Instant.now(clock));
+        applicationForLeave.setEditedDate(Instant.now(clock));
 
         return applicationForLeave;
     }

@@ -14,11 +14,13 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -110,7 +112,7 @@ public class OvertimeFormValidatorTest {
     @Test
     public void ensureStartAndEndDateCanBeEquals() {
 
-        LocalDate now = LocalDate.now(UTC);
+        Instant now = Instant.now();
 
         overtimeForm.setStartDate(now);
         overtimeForm.setEndDate(now);
@@ -124,7 +126,7 @@ public class OvertimeFormValidatorTest {
     @Test
     public void ensureStartDateCanNotBeAfterEndDate() {
 
-        overtimeForm.setStartDate(overtimeForm.getEndDate().plusDays(3));
+        overtimeForm.setStartDate(overtimeForm.getEndDate().plus(3, DAYS));
 
         validator.validate(overtimeForm, errors);
 

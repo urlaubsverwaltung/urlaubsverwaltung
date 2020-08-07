@@ -117,7 +117,7 @@ public class SickNoteValidator implements Validator {
                 final long end = sickNoteEndDate.plus(1, DAYS).with(LocalTime.MIN).toEpochMilli();
                 final Interval sickNoteInterval = new Interval(start, end);
 
-                if (!sickNoteInterval.contains(aubStartDate.with(LocalTime.MIN).toEpochMilli()) {
+                if (!sickNoteInterval.contains(aubStartDate.with(LocalTime.MIN).toEpochMilli())) {
                     errors.rejectValue(ATTRIBUTE_AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
                 }
 

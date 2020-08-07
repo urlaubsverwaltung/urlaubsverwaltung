@@ -8,8 +8,10 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,14 +49,14 @@ class SickNoteServiceImpl implements SickNoteService {
 
 
     @Override
-    public List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to) {
+    public List<SickNote> getByPersonAndPeriod(Person person, Instant from, Instant to) {
 
         return sickNoteDAO.findByPersonAndPeriod(person, from, to);
     }
 
 
     @Override
-    public List<SickNote> getByPeriod(LocalDate from, LocalDate to) {
+    public List<SickNote> getByPeriod(Instant from, Instant to) {
 
         return sickNoteDAO.findByPeriod(from, to);
     }
@@ -66,9 +68,8 @@ class SickNoteServiceImpl implements SickNoteService {
         Settings settings = settingsService.getSettings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        LocalDate endDate = ZonedDateTime.now(clock)
-            .plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification())
-            .toLocalDate();
+        Instant endDate = Instant.now(clock)
+            .plus(absenceSettings.getDaysBeforeEndOfSickPayNotification(), ChronoUnit.DAYS);
 
         return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(), endDate);
     }

@@ -7,6 +7,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 
+import static java.time.temporal.ChronoField.DAY_OF_WEEK;
+
 
 /**
  * Represents an extended {@link org.synyx.urlaubsverwaltung.sicknote.SickNote} with information about the number
@@ -36,12 +38,12 @@ public class ExtendedSickNote extends SickNote {
 
     public WeekDay getWeekDayOfStartDate() {
 
-        return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek().getValue());
+        return WeekDay.getByDayOfWeek(getStartDate().get(DAY_OF_WEEK));
     }
 
 
     public WeekDay getWeekDayOfEndDate() {
 
-        return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek().getValue());
+        return WeekDay.getByDayOfWeek(getEndDate().get(DAY_OF_WEEK));
     }
 }

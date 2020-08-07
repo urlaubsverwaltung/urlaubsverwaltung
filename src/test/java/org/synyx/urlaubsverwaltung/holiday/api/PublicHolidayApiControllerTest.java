@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -83,7 +84,7 @@ public class PublicHolidayApiControllerTest {
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
-            any(LocalDate.class)))
+            any(Instant.class)))
             .thenReturn(FederalState.BAYERN);
 
         perform(get("/api/holidays")
@@ -92,7 +93,7 @@ public class PublicHolidayApiControllerTest {
             .andExpect(status().isOk());
 
         verify(publicHolidayServiceMock).getHolidays(2016, FederalState.BAYERN);
-        verify(workingTimeServiceMock).getFederalStateForPerson(person, LocalDate.of(2016, 1, 1));
+        verify(workingTimeServiceMock).getFederalStateForPerson(person, Instant.from(LocalDate.of(2016, 1, 1)));
     }
 
 
@@ -103,7 +104,7 @@ public class PublicHolidayApiControllerTest {
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workingTimeServiceMock.getFederalStateForPerson(any(Person.class),
-            any(LocalDate.class)))
+            any(Instant.class)))
             .thenReturn(FederalState.BAYERN);
 
         perform(get("/api/holidays")
@@ -113,7 +114,7 @@ public class PublicHolidayApiControllerTest {
             .andExpect(status().isOk());
 
         verify(publicHolidayServiceMock).getHolidays(2016, 4, FederalState.BAYERN);
-        verify(workingTimeServiceMock).getFederalStateForPerson(person, LocalDate.of(2016, 4, 1));
+        verify(workingTimeServiceMock).getFederalStateForPerson(person, Instant.from(LocalDate.of(2016, 4, 1)));
     }
 
 

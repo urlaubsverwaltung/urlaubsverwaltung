@@ -89,8 +89,8 @@ public class PublicHolidayApiController {
     }
 
     private PublicHolidayResponse mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(holiday.getDate(), federalState);
-        DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(holiday.getDate(), federalState);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(Instant.from(holiday.getDate()), federalState);
+        DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(Instant.from(holiday.getDate()), federalState);
         return new PublicHolidayResponse(holiday, workingDuration, absenceType.name());
     }
 

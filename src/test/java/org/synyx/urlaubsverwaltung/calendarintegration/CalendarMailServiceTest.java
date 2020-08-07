@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,8 +43,8 @@ public class CalendarMailServiceTest {
         final CalendarSettings calendarSettings = new CalendarSettings();
         final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 5);
-        final LocalDate endDate = LocalDate.of(2019, 5, 10);
+        final Instant startDate = Instant.from(LocalDate.of(2019, 5, 5));
+        final Instant endDate = Instant.from(LocalDate.of(2019, 5, 10));
         final Period period = new Period(startDate, endDate, FULL);
 
         final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration, Clock.systemUTC());
@@ -69,8 +70,8 @@ public class CalendarMailServiceTest {
         final CalendarSettings calendarSettings = new CalendarSettings();
         final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 5);
-        final LocalDate endDate = LocalDate.of(2019, 5, 10);
+        final Instant startDate = Instant.from(LocalDate.of(2019, 5, 5));
+        final Instant endDate = Instant.from(LocalDate.of(2019, 5, 10));
         final Period period = new Period(startDate, endDate, FULL);
 
         final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration, Clock.systemUTC());

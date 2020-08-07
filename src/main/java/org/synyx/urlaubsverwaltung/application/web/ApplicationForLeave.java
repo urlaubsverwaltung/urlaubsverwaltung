@@ -6,6 +6,9 @@ import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.temporal.ChronoField;
+
+import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 
 
 /**
@@ -36,12 +39,12 @@ public class ApplicationForLeave extends Application {
 
     public WeekDay getWeekDayOfStartDate() {
 
-        return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek().getValue());
+        return WeekDay.getByDayOfWeek(getStartDate().get(DAY_OF_WEEK));
     }
 
 
     public WeekDay getWeekDayOfEndDate() {
 
-        return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek().getValue());
+        return WeekDay.getByDayOfWeek(getEndDate().get(DAY_OF_WEEK));
     }
 }

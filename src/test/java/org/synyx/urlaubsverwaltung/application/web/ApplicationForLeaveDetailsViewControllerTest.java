@@ -27,9 +27,12 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Optional;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.instanceOf;
@@ -154,7 +157,7 @@ public class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        final int applicationEndYear = application.getEndDate().getYear();
+        final int applicationEndYear = Year.from(application.getEndDate()).getValue();
         perform(get("/web/application/" + APPLICATION_ID))
             .andExpect(model().attribute("year", applicationEndYear));
     }
@@ -739,8 +742,8 @@ public class ApplicationForLeaveDetailsViewControllerTest {
         Application application = new Application();
 
         application.setPerson(person);
-        application.setStartDate(LocalDate.now().plusDays(10));
-        application.setEndDate(LocalDate.now().plusDays(30));
+        application.setStartDate(Instant.now().plus(10, DAYS));
+        application.setEndDate(Instant.now().plus(30, DAYS));
         application.setStatus(WAITING);
 
         return application;

@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Optional;
@@ -65,7 +66,7 @@ public class AccountViewControllerTest {
 
     @Before
     public void setUp() {
-        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
+        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(Instant.now(clock));
         sut = new AccountViewController(personService, accountService, accountInteractionService, validator, clock);
     }
 
@@ -163,7 +164,7 @@ public class AccountViewControllerTest {
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.empty());
 
         AccountForm mockedAccountForm = mock(AccountForm.class);
-        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
+        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(Instant.now(clock));
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", mockedAccountForm));
@@ -178,7 +179,7 @@ public class AccountViewControllerTest {
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(someAccount()));
 
         AccountForm mockedAccountForm = mock(AccountForm.class);
-        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
+        when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(Instant.now(clock));
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", mockedAccountForm))

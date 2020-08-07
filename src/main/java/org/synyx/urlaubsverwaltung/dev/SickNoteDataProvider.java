@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,7 +31,7 @@ class SickNoteDataProvider {
         this.sickNoteTypeService = sickNoteTypeService;
     }
 
-    void createSickNote(Person person, Person office, DayLength dayLength, LocalDate startDate, LocalDate endDate, SickNoteCategory sickNoteCategory, boolean withAUB) {
+    void createSickNote(Person person, Person office, DayLength dayLength, Instant startDate, Instant endDate, SickNoteCategory sickNoteCategory, boolean withAUB) {
         if (durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
 
             final SickNoteType type = getSickNoteType(sickNoteCategory);

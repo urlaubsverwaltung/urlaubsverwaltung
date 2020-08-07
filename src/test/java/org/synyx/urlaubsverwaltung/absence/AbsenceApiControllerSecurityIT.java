@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -107,15 +108,15 @@ public class AbsenceApiControllerSecurityIT {
         final List<Department> departments = List.of(department);
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
 
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
-            LocalDate.of(2016, 5, 20), DayLength.FULL);
+        final SickNote sickNote = createSickNote(person, Instant.from(LocalDate.of(2016, 5, 19)),
+            Instant.from(LocalDate.of(2016, 5, 20)), DayLength.FULL);
         sickNote.setId(1);
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(Instant.class), any(Instant.class)))
             .thenReturn(singletonList(sickNote));
 
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        final Application vacation = createApplication(person, Instant.from(LocalDate.of(2016, 4, 6)),
+            Instant.from(LocalDate.of(2016, 4, 6)), DayLength.FULL);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class), any(Instant.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")
@@ -173,15 +174,15 @@ public class AbsenceApiControllerSecurityIT {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
-            LocalDate.of(2016, 5, 20), DayLength.FULL);
+        final SickNote sickNote = createSickNote(person, Instant.from(LocalDate.of(2016, 5, 19)),
+            Instant.from(LocalDate.of(2016, 5, 20)), DayLength.FULL);
         sickNote.setId(1);
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(Instant.class), any(Instant.class)))
             .thenReturn(singletonList(sickNote));
 
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        final Application vacation = createApplication(person, Instant.from(LocalDate.of(2016, 4, 6)),
+            Instant.from(LocalDate.of(2016, 4, 6)), DayLength.FULL);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class), any(Instant.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")
@@ -208,15 +209,15 @@ public class AbsenceApiControllerSecurityIT {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
-            LocalDate.of(2016, 5, 20), DayLength.FULL);
+        final SickNote sickNote = createSickNote(person, Instant.from(LocalDate.of(2016, 5, 19)),
+            Instant.from(LocalDate.of(2016, 5, 20)), DayLength.FULL);
         sickNote.setId(1);
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(Instant.class), any(Instant.class)))
             .thenReturn(singletonList(sickNote));
 
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        final Application vacation = createApplication(person, Instant.from(LocalDate.of(2016, 4, 6)),
+            Instant.from(LocalDate.of(2016, 4, 6)), DayLength.FULL);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class), any(Instant.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")

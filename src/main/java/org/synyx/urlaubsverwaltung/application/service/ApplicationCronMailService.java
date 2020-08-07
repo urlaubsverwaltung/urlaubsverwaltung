@@ -8,7 +8,9 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -53,7 +55,7 @@ class ApplicationCronMailService {
                 applicationMailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
 
                 for (Application longWaitingApplication : longWaitingApplications) {
-                    longWaitingApplication.setRemindDate(LocalDate.now(clock));
+                    longWaitingApplication.setRemindDate(Instant.now(clock));
                     applicationService.save(longWaitingApplication);
                 }
 
@@ -67,22 +69,22 @@ class ApplicationCronMailService {
     private Predicate<Application> isLongWaitingApplications() {
         return application -> {
 
-            LocalDate remindDate = application.getRemindDate();
+            Instant remindDate = application.getRemindDate();
             if (remindDate == null) {
                 Integer daysBeforeRemindForWaitingApplications =
                     settingsService.getSettings().getAbsenceSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
-                LocalDate minDateForNotification = application.getApplicationDate()
-                    .plusDays(daysBeforeRemindForWaitingApplications);
+                Instant minDateForNotification = application.getApplicationDate()
+                    .plus(daysBeforeRemindForWaitingApplications, ChronoUnit.DAYS);
 
                 // true -> remind!
                 // false -> to early for notification
-                return minDateForNotification.isBefore(LocalDate.now(clock));
+                return minDateForNotification.isBefore(Instant.now(clock));
             } else {
                 // true -> not reminded today
                 // false -> already reminded today
-                return !remindDate.isEqual(LocalDate.now(clock));
+                return !remindDate.equals(Instant.now(clock));
             }
         };
     }

@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
@@ -27,23 +28,23 @@ public class Overtime extends AbstractPersistable<Integer> {
     private Person person;
 
     @Column(nullable = false)
-    private LocalDate startDate;
+    private Instant startDate;
 
     @Column(nullable = false)
-    private LocalDate endDate;
+    private Instant endDate;
 
     @Column(nullable = false)
     private BigDecimal hours;
 
     @Column(nullable = false)
-    private LocalDate lastModificationDate;
+    private Instant lastModificationDate;
 
     Overtime() {
         // OK
     }
 
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, BigDecimal numberOfHours) {
+    public Overtime(Person person, Instant startDate, Instant endDate, BigDecimal numberOfHours) {
 
         Assert.notNull(person, "Person must be given.");
         Assert.notNull(startDate, "Start date must be given.");
@@ -55,7 +56,7 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.endDate = endDate;
         this.hours = numberOfHours;
 
-        this.lastModificationDate = LocalDate.now(UTC);
+        this.lastModificationDate = Instant.now();
     }
 
     public Person getPerson() {
@@ -64,7 +65,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         if (startDate == null) {
             throw new IllegalStateException("Missing start date!");
@@ -74,7 +75,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         if (endDate == null) {
             throw new IllegalStateException("Missing end date!");
@@ -103,7 +104,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
 
         Assert.notNull(startDate, "Start date must be given.");
 
@@ -111,7 +112,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
 
         Assert.notNull(endDate, "End date must be given.");
 
@@ -127,7 +128,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getLastModificationDate() {
+    public Instant getLastModificationDate() {
 
         if (lastModificationDate == null) {
             throw new IllegalStateException("Missing last modification date!");
@@ -142,7 +143,7 @@ public class Overtime extends AbstractPersistable<Integer> {
      */
     public void onUpdate() {
 
-        this.lastModificationDate = LocalDate.now(UTC);
+        this.lastModificationDate = Instant.now();
     }
 
     @Override

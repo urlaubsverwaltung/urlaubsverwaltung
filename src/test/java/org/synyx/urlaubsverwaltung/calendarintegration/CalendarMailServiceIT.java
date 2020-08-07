@@ -20,6 +20,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -58,8 +59,8 @@ public class CalendarMailServiceIT {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
+        when(absence.getStartDate()).thenReturn(Instant.now(clock));
+        when(absence.getEndDate()).thenReturn(Instant.now(clock));
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
@@ -87,8 +88,8 @@ public class CalendarMailServiceIT {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
+        when(absence.getStartDate()).thenReturn(Instant.now(clock));
+        when(absence.getEndDate()).thenReturn(Instant.now(clock));
 
         sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 

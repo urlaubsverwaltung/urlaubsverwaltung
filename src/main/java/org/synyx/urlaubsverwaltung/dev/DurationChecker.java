@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 
@@ -32,11 +33,11 @@ class DurationChecker {
      * @param end   to be checked if in the current year
      * @return {@code true} if both dates are in the current year, else {@code false}
      */
-    boolean startAndEndDatesAreInCurrentYear(LocalDate start, LocalDate end) {
+    boolean startAndEndDatesAreInCurrentYear(Instant start, Instant end) {
 
         int currentYear = Year.now(clock).getValue();
 
-        return start.getYear() == currentYear && end.getYear() == currentYear;
+        return Year.from(start).getValue() == currentYear && Year.from(end).getValue() == currentYear;
     }
 
 
@@ -49,7 +50,7 @@ class DurationChecker {
      * @param person to use the working time for calculation
      * @return {@code true} if the period duration is greater than zero, else {@code false}
      */
-    boolean durationIsGreaterThanZero(LocalDate start, LocalDate end, Person person) {
+    boolean durationIsGreaterThanZero(Instant start, Instant end, Person person) {
 
         BigDecimal workDays = workDaysService.getWorkDays(DayLength.FULL, start, end, person);
 

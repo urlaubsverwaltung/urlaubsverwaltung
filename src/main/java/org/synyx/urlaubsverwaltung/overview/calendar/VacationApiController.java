@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -72,12 +73,12 @@ public class VacationApiController {
         @RequestParam(value = "person", required = false)
             Integer personId) {
 
-        final LocalDate startDate;
-        final LocalDate endDate;
+        final Instant startDate;
+        final Instant endDate;
         try {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-            startDate = LocalDate.parse(from, fmt);
-            endDate = LocalDate.parse(to, fmt);
+            startDate = Instant.from(fmt.parse(from));
+            endDate = Instant.from(fmt.parse(to));
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }

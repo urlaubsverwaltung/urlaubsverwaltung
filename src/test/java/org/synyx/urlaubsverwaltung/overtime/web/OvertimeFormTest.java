@@ -9,10 +9,12 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 
 public class OvertimeFormTest {
@@ -49,8 +51,8 @@ public class OvertimeFormTest {
         Person person = TestDataCreator.createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
-        overtimeForm.setStartDate(LocalDate.now(UTC));
-        overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
+        overtimeForm.setStartDate(Instant.now());
+        overtimeForm.setEndDate(Instant.now().plus(1, DAYS));
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 
@@ -111,8 +113,8 @@ public class OvertimeFormTest {
         Person person = TestDataCreator.createPerson();
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
-        overtimeForm.setStartDate(LocalDate.now(UTC));
-        overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
+        overtimeForm.setStartDate(Instant.now());
+        overtimeForm.setEndDate(Instant.now().plus(1, DAYS));
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 

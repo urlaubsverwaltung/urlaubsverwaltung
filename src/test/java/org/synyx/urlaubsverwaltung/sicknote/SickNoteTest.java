@@ -6,10 +6,12 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -24,7 +26,7 @@ public class SickNoteTest {
         SickNote sickNote = new SickNote();
 
         Assert.assertNotNull("Last modification date should be set", sickNote.getLastEdited());
-        Assert.assertEquals("Wrong last modification date", LocalDate.now(UTC),
+        Assert.assertEquals("Wrong last modification date", Instant.now(),
             sickNote.getLastEdited());
     }
 
@@ -33,8 +35,8 @@ public class SickNoteTest {
     public void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setAubStartDate(LocalDate.now(UTC));
-        sickNote.setAubEndDate(LocalDate.now(UTC));
+        sickNote.setAubStartDate(Instant.now());
+        sickNote.setAubEndDate(Instant.now());
 
         Assert.assertTrue("AUB should be present", sickNote.isAubPresent());
     }
@@ -44,7 +46,7 @@ public class SickNoteTest {
     public void ensureAUBIsNotPresentIfOnlyAUBStartDateIsSet() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setAubStartDate(LocalDate.now(UTC));
+        sickNote.setAubStartDate(Instant.now());
 
         Assert.assertFalse("AUB should not be present", sickNote.isAubPresent());
     }
@@ -54,7 +56,7 @@ public class SickNoteTest {
     public void ensureAUBIsNotPresentIfOnlyAUBEndDateIsSet() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setAubEndDate(LocalDate.now(UTC));
+        sickNote.setAubEndDate(Instant.now());
 
         Assert.assertFalse("AUB should not be present", sickNote.isAubPresent());
     }
@@ -101,7 +103,7 @@ public class SickNoteTest {
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(null);
-        sickNote.setEndDate(LocalDate.now(UTC));
+        sickNote.setEndDate(Instant.now());
         sickNote.setDayLength(DayLength.FULL);
 
         sickNote.getPeriod();
@@ -112,7 +114,7 @@ public class SickNoteTest {
     public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutEndDate() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(UTC));
+        sickNote.setStartDate(Instant.now());
         sickNote.setEndDate(null);
         sickNote.setDayLength(DayLength.FULL);
 
@@ -124,8 +126,8 @@ public class SickNoteTest {
     public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutDayLength() {
 
         SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(UTC));
-        sickNote.setEndDate(LocalDate.now(UTC));
+        sickNote.setStartDate(Instant.now());
+        sickNote.setEndDate(Instant.now());
         sickNote.setDayLength(null);
 
         sickNote.getPeriod();
@@ -135,8 +137,8 @@ public class SickNoteTest {
     @Test
     public void ensureGetPeriodReturnsCorrectPeriod() {
 
-        LocalDate startDate = LocalDate.now(UTC);
-        LocalDate endDate = startDate.plusDays(2);
+        Instant startDate = Instant.now();
+        Instant endDate = startDate.plus(2, DAYS);
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(startDate);
@@ -170,13 +172,13 @@ public class SickNoteTest {
         final SickNote sickNote = new SickNote();
         sickNote.setId(1);
         sickNote.setSickNoteType(sickNoteType);
-        sickNote.setStartDate(LocalDate.MIN);
-        sickNote.setEndDate(LocalDate.MAX);
+        sickNote.setStartDate(Instant.MIN);
+        sickNote.setEndDate(Instant.MAX);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setAubStartDate(LocalDate.MIN);
-        sickNote.setAubEndDate(LocalDate.MAX);
-        sickNote.setLastEdited(LocalDate.EPOCH);
+        sickNote.setAubStartDate(Instant.MIN);
+        sickNote.setAubEndDate(Instant.MAX);
+        sickNote.setLastEdited(Instant.EPOCH);
         sickNote.setPerson(person);
 
         final String sickNoteToString = sickNote.toString();

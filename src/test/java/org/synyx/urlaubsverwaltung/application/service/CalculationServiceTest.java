@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -86,7 +87,7 @@ public class CalculationServiceTest {
         List<Integer> workingDays = asList(MONDAY.getValue(), TUESDAY.getValue(), WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
         workingTime.setWorkingDays(workingDays, FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(Instant.class)))
             .thenReturn(Optional.of(workingTime));
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, calendarService, new OverlapService(null, null, Clock.systemUTC()));
@@ -143,8 +144,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
@@ -174,8 +175,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
@@ -202,8 +203,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
@@ -231,8 +232,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
 
         // not enough vacation days for this application for leave
         prepareSetupWith10DayAnnualVacation(person, 0, 10);
@@ -246,8 +247,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
 
         Assert.assertFalse("Person is not allowed to leave",
             sut.checkApplication(applicationForLeaveToCheck));
@@ -259,8 +260,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
 
         // enough vacation days for this application for leave, but none would be left
         prepareSetupWith10DayAnnualVacation(person, 4, 5);
@@ -275,8 +276,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
@@ -305,8 +306,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2013, JANUARY, 2));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, DECEMBER, 30)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2013, JANUARY, 2)));
 
         prepareSetupWith10DayAnnualVacation(person, 5, 4);
 
@@ -320,8 +321,8 @@ public class CalculationServiceTest {
         Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2013, JANUARY, 2));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, DECEMBER, 30)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2013, JANUARY, 2)));
 
         prepareSetupWith10DayAnnualVacation(person, 5, 5);
 
@@ -339,8 +340,8 @@ public class CalculationServiceTest {
 
         Application applicationForLeaveToCheck = createApplicationStub(person);
         // nine days
-        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
-        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 30));
+        applicationForLeaveToCheck.setStartDate(Instant.from(LocalDate.of(2012, AUGUST, 20)));
+        applicationForLeaveToCheck.setEndDate(Instant.from(LocalDate.of(2012, AUGUST, 30)));
 
         Optional<Account> account2012 = Optional.of(
             new Account(person, DateUtil.getFirstDayOfYear(2012), DateUtil.getLastDayOfYear(2012),

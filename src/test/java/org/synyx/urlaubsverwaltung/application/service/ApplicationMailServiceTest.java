@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -65,8 +66,8 @@ public class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(person);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MIN);
+        application.setEndDate(Instant.MAX);
         application.setStatus(ALLOWED);
 
         final ApplicationComment applicationComment = new ApplicationComment(person);
@@ -98,8 +99,8 @@ public class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(person);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MIN);
+        application.setEndDate(Instant.MAX);
         application.setStatus(ALLOWED);
 
         final ApplicationComment applicationComment = new ApplicationComment(person);
@@ -128,8 +129,8 @@ public class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(recipient);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MIN);
+        application.setEndDate(Instant.MAX);
         application.setStatus(ALLOWED);
 
         Map<String, Object> model = new HashMap<>();
@@ -211,8 +212,8 @@ public class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MIN);
+        application.setEndDate(Instant.MAX);
         application.setStatus(WAITING);
 
         final ApplicationComment comment = new ApplicationComment(person);
@@ -301,8 +302,8 @@ public class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MIN);
+        application.setEndDate(Instant.MAX);
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
@@ -312,7 +313,7 @@ public class ApplicationMailServiceTest {
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.MIN, LocalDate.MAX)).thenReturn(applicationsForLeave);
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, Instant.MIN, Instant.MAX)).thenReturn(applicationsForLeave);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -346,8 +347,8 @@ public class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MIN);
+        application.setEndDate(Instant.MAX);
         application.setStatus(WAITING);
         when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(recipients);
 
@@ -355,7 +356,7 @@ public class ApplicationMailServiceTest {
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.MIN, LocalDate.MAX)).thenReturn(applicationsForLeave);
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, Instant.MIN, Instant.MAX)).thenReturn(applicationsForLeave);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);

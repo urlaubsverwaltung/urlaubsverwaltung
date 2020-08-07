@@ -8,12 +8,15 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -81,7 +84,7 @@ public class ApplicationTest {
 
         Application application = new Application();
         application.setStartDate(null);
-        application.setEndDate(LocalDate.now(UTC));
+        application.setEndDate(Instant.now());
         application.setDayLength(DayLength.FULL);
 
         application.getPeriod();
@@ -92,7 +95,7 @@ public class ApplicationTest {
     public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
 
         Application application = new Application();
-        application.setStartDate(LocalDate.now(UTC));
+        application.setStartDate(Instant.now());
         application.setEndDate(null);
         application.setDayLength(DayLength.FULL);
 
@@ -104,8 +107,8 @@ public class ApplicationTest {
     public void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
 
         Application application = new Application();
-        application.setStartDate(LocalDate.now(UTC));
-        application.setEndDate(LocalDate.now(UTC));
+        application.setStartDate(Instant.now());
+        application.setEndDate(Instant.now());
         application.setDayLength(null);
 
         application.getPeriod();
@@ -115,8 +118,8 @@ public class ApplicationTest {
     @Test
     public void ensureGetPeriodReturnsCorrectPeriod() {
 
-        LocalDate startDate = LocalDate.now(UTC);
-        LocalDate endDate = startDate.plusDays(2);
+        Instant startDate = Instant.now();
+        Instant endDate = startDate.plus(2, DAYS);
 
         Application application = new Application();
         application.setStartDate(startDate);
@@ -137,16 +140,16 @@ public class ApplicationTest {
     @Test
     public void ensureGetStartDateWithTimeReturnsCorrectDateTime() {
 
-        LocalDate startDate = LocalDate.of(2016, 2, 1);
+        Instant startDate = Instant.from(LocalDate.of(2016, 2, 1));
 
         Application application = new Application();
         application.setStartDate(startDate);
         application.setStartTime(Time.valueOf("11:15:00"));
 
-        ZonedDateTime startDateWithTime = application.getStartDateWithTime();
+        Instant startDateWithTime = application.getStartDateWithTime();
 
         Assert.assertNotNull("Should not be null", startDateWithTime);
-        Assert.assertEquals("Wrong start date with time", ZonedDateTime.of(2016, 2, 1, 11, 15, 0, 0, startDateWithTime.getZone()), startDateWithTime);
+        Assert.assertEquals("Wrong start date with time", ZonedDateTime.of(2016, 2, 1, 11, 15, 0, 0, ZoneId.from(startDateWithTime)), startDateWithTime);
     }
 
 
@@ -154,10 +157,10 @@ public class ApplicationTest {
     public void ensureGetStartDateWithTimeReturnsNullIfStartTimeIsNull() {
 
         Application application = new Application();
-        application.setStartDate(LocalDate.now(UTC));
+        application.setStartDate(Instant.now());
         application.setStartTime(null);
 
-        ZonedDateTime startDateWithTime = application.getStartDateWithTime();
+        Instant startDateWithTime = application.getStartDateWithTime();
 
         Assert.assertNull("Should be null", startDateWithTime);
     }
@@ -170,7 +173,7 @@ public class ApplicationTest {
         application.setStartDate(null);
         application.setStartTime(Time.valueOf("10:15:00"));
 
-        ZonedDateTime startDateWithTime = application.getStartDateWithTime();
+        Instant startDateWithTime = application.getStartDateWithTime();
 
         Assert.assertNull("Should be null", startDateWithTime);
     }
@@ -179,16 +182,16 @@ public class ApplicationTest {
     @Test
     public void ensureGetEndDateWithTimeReturnsCorrectDateTime() {
 
-        LocalDate endDate = LocalDate.of(2016, 12, 21);
+        Instant endDate = Instant.from(LocalDate.of(2016, 12, 21));
 
         Application application = new Application();
         application.setEndDate(endDate);
         application.setEndTime(Time.valueOf("12:30:00"));
 
-        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
+        Instant endDateWithTime = application.getEndDateWithTime();
 
         Assert.assertNotNull("Should not be null", endDateWithTime);
-        Assert.assertEquals("Wrong end date with time", ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, endDateWithTime.getZone()), endDateWithTime);
+        Assert.assertEquals("Wrong end date with time", ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, ZoneId.from(endDateWithTime)), endDateWithTime);
     }
 
 
@@ -196,10 +199,10 @@ public class ApplicationTest {
     public void ensureGetEndDateWithTimeReturnsNullIfEndTimeIsNull() {
 
         Application application = new Application();
-        application.setEndDate(LocalDate.now(UTC));
+        application.setEndDate(Instant.now());
         application.setEndTime(null);
 
-        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
+        Instant endDateWithTime = application.getEndDateWithTime();
 
         Assert.assertNull("Should be null", endDateWithTime);
     }
@@ -212,7 +215,7 @@ public class ApplicationTest {
         application.setEndDate(null);
         application.setEndTime(Time.valueOf("10:15:00"));
 
-        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
+        Instant endDateWithTime = application.getEndDateWithTime();
 
         Assert.assertNull("Should be null", endDateWithTime);
     }
@@ -231,26 +234,26 @@ public class ApplicationTest {
 
         final Application application = new Application();
         application.setStatus(ApplicationStatus.ALLOWED);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MIN);
+        application.setEndDate(Instant.MAX);
         application.setDayLength(DayLength.FULL);
         application.setPerson(person);
         application.setVacationType(vacationType);
         application.setId(1);
         application.setHours(BigDecimal.TEN);
-        application.setApplicationDate(LocalDate.EPOCH);
+        application.setApplicationDate(Instant.EPOCH);
         application.setTwoStageApproval(true);
         application.setHolidayReplacement(person);
         application.setApplier(person);
-        application.setRemindDate(LocalDate.MAX);
+        application.setRemindDate(Instant.MAX);
         application.setBoss(person);
-        application.setEditedDate(LocalDate.MAX);
+        application.setEditedDate(Instant.MAX);
         application.setEndTime(Time.valueOf(LocalTime.MAX));
         application.setStartTime(Time.valueOf(LocalTime.MIN));
         application.setCanceller(person);
         application.setReason("Because");
         application.setAddress("Address");
-        application.setCancelDate(LocalDate.MAX);
+        application.setCancelDate(Instant.MAX);
         application.setTeamInformed(true);
 
         final String toString = application.toString();

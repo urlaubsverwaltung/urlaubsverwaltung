@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -56,8 +57,8 @@ public class SickNoteServiceImplTest {
 
     @Test
     public void findByPeriod() {
-        final LocalDate from = LocalDate.of(2015, 1, 1);
-        final LocalDate to = LocalDate.of(2016, 1, 1);
+        final Instant from = Instant.from(LocalDate.of(2015, 1, 1));
+        final Instant to = Instant.from(LocalDate.of(2016, 1, 1));
         final SickNote sickNote = new SickNote();
         when(sickNoteDAO.findByPeriod(from, to)).thenReturn(singletonList(sickNote));
 
@@ -93,7 +94,7 @@ public class SickNoteServiceImplTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(eq(5), any(LocalDate.class))).thenReturn(singletonList(sickNote));
+        when(sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(eq(5), any(Instant.class))).thenReturn(singletonList(sickNote));
 
         final List<SickNote> sickNotesReachingEndOfSickPay = sut.getSickNotesReachingEndOfSickPay();
         assertThat(sickNotesReachingEndOfSickPay).contains(sickNote);

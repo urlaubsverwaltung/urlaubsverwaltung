@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -266,7 +267,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
         Person person = mock(Person.class);
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(emptyList());
 
@@ -284,7 +285,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
 
         Person person = mock(Person.class);
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person admin2 = TestDataCreator.createPerson("admin2");
@@ -300,8 +301,8 @@ public class DepartmentServiceImplTest {
         marketing.setMembers(asList(marketing1, marketing2, marketing3, person));
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class),
+            any(Instant.class), any(Person.class)))
             .thenReturn(emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
@@ -335,7 +336,7 @@ public class DepartmentServiceImplTest {
     public void ensureReturnsOnlyWaitingAndAllowedDepartmentApplicationsForLeave() {
 
         Person person = mock(Person.class);
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
 
         Person admin1 = TestDataCreator.createPerson("admin1");
         Person marketing1 = TestDataCreator.createPerson("marketing1");
@@ -360,12 +361,12 @@ public class DepartmentServiceImplTest {
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), eq(admin1)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class),
+            any(Instant.class), eq(admin1)))
             .thenReturn(asList(waitingApplication, otherApplication));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), eq(marketing1)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class),
+            any(Instant.class), eq(marketing1)))
             .thenReturn(singletonList(allowedApplication));
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);

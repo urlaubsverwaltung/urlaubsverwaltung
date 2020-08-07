@@ -12,10 +12,12 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.function.Consumer;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ApplicationForLeaveFormTest {
@@ -25,8 +27,8 @@ public class ApplicationForLeaveFormTest {
     @Test
     public void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
 
-        LocalDate startDate = LocalDate.now(clock);
-        LocalDate endDate = startDate.plusDays(3);
+        Instant startDate = Instant.now(clock);
+        Instant endDate = startDate.plus(3, DAYS);
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
 
@@ -46,7 +48,7 @@ public class ApplicationForLeaveFormTest {
     @Test
     public void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
 
-        LocalDate now = LocalDate.now(clock);
+        Instant now = Instant.now(clock);
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
@@ -122,10 +124,10 @@ public class ApplicationForLeaveFormTest {
         final Person person = new Person();
         final Person holidayReplacement = new Person();
 
-        final LocalDate startDate = LocalDate.now().minusDays(10);
+        final Instant startDate = Instant.now().minus(10, DAYS);
         final Time startTime = Time.valueOf(LocalTime.now().minusHours(5));
 
-        final LocalDate endDate = LocalDate.now().minusDays(2);
+        final Instant endDate = Instant.now().minus(2, DAYS);
         final Time endTime = Time.valueOf(LocalTime.now().minusHours(7));
 
         final VacationType vacationType = new VacationType();
@@ -167,10 +169,10 @@ public class ApplicationForLeaveFormTest {
         final Person person = new Person();
         final Person holidayReplacement = new Person();
 
-        final LocalDate startDate = LocalDate.MIN;
+        final Instant startDate = Instant.MIN;
         final Time startTime = Time.valueOf(LocalTime.MIN);
 
-        final LocalDate endDate = LocalDate.MAX;
+        final Instant endDate = Instant.MAX;
         final Time endTime = Time.valueOf(LocalTime.MAX);
 
         final VacationType vacationType = new VacationType();

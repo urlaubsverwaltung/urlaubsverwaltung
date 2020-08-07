@@ -11,8 +11,8 @@ import java.time.LocalDate;
  */
 public class Period {
 
-    private final LocalDate startDate;
-    private final LocalDate endDate;
+    private final Instant startDate;
+    private final Instant endDate;
     private final DayLength dayLength;
 
     public Period(Instant startDate, Instant endDate, DayLength dayLength) {
@@ -30,7 +30,7 @@ public class Period {
 
         boolean isHalfDay = dayLength.equals(DayLength.MORNING) || dayLength.equals(DayLength.NOON);
 
-        if (isHalfDay && !startDate.isEqual(endDate)) {
+        if (isHalfDay && !startDate.equals(endDate)) {
             throw new IllegalArgumentException("Start and end date must be same for half day length");
         }
 
@@ -39,13 +39,13 @@ public class Period {
         this.dayLength = dayLength;
     }
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         return startDate;
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         return endDate;
     }

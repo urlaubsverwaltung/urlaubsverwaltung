@@ -22,8 +22,8 @@ class VacationResponse {
 
     VacationResponse(Application application) {
 
-        this.from = application.getStartDate().format(formatter);
-        this.to = application.getEndDate().format(formatter);
+        this.from = formatter.format(application.getStartDate());
+        this.to = formatter.format(application.getEndDate());
         this.dayLength = application.getDayLength().getDuration();
         this.person = PersonResponseMapper.mapToResponse(application.getPerson());
         this.status = application.getStatus().name();

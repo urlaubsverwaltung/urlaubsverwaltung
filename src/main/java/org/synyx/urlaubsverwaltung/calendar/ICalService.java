@@ -16,7 +16,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static java.util.Date.from;
@@ -53,12 +55,12 @@ class ICalService {
         final VTimeZone utc = TimeZoneRegistryFactory.getInstance().createRegistry()
             .getTimeZone("Etc/UTC").getVTimeZone();
 
-        final ZonedDateTime startDateTime = absence.getStartDate();
-        final ZonedDateTime endDateTime = absence.getEndDate();
+        final Instant startDateTime = absence.getStartDate();
+        final Instant endDateTime = absence.getEndDate();
 
         final TimeZone timeZone = new TimeZone(utc);
-        final DateTime start = new DateTime(from(startDateTime.toInstant()), timeZone);
-        final DateTime end = new DateTime(from(endDateTime.toInstant()), timeZone);
+        final DateTime start = new DateTime(from(startDateTime), timeZone);
+        final DateTime end = new DateTime(from(endDateTime), timeZone);
 
         final VEvent event;
         if (absence.isAllDay() && isSameDay(startDateTime, endDateTime)) {
@@ -74,8 +76,8 @@ class ICalService {
         return event;
     }
 
-    private boolean isSameDay(ZonedDateTime startDateTime, ZonedDateTime endDate) {
-        return startDateTime.toLocalDate().isEqual(endDate.toLocalDate().minusDays(1));
+    private boolean isSameDay(Instant startDateTime, Instant endDate) {
+        return startDateTime.equals(endDate.minus(1, ChronoUnit.DAYS));
     }
 
     private String generateUid(Absence absence) {

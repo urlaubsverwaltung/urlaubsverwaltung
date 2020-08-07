@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +53,10 @@ public class FreeTimeAbsenceProviderTest {
         WorkingTime testWorkingTime = TestDataCreator.createWorkingTime();
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-            any(LocalDate.class)))
+            any(Instant.class)))
             .thenReturn(Optional.of(testWorkingTime));
         when(workingTimeService.getFederalStateForPerson(any(Person.class),
-            any(LocalDate.class)))
+            any(Instant.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
 
@@ -63,7 +64,7 @@ public class FreeTimeAbsenceProviderTest {
     @Test
     public void ensurePersonIsNotAvailableOnFreeDays() {
 
-        LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
+        Instant firstSundayIn2016 = Instant.from(LocalDate.of(2016, 1, 3));
 
         TimedAbsenceSpans updatedTimedAbsenceSpans = freeTimeAbsenceProvider.addAbsence(emptyTimedAbsenceSpans,
             testPerson, firstSundayIn2016);
@@ -80,7 +81,7 @@ public class FreeTimeAbsenceProviderTest {
     @Test(expected = FreeTimeAbsenceException.class)
     public void ensureExceptionWhenPersonWorkingTimeIsNotAvailable() {
 
-        LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
+        Instant firstSundayIn2016 = Instant.from(LocalDate.of(2016, 1, 3));
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(testPerson),
             eq(firstSundayIn2016)))
@@ -93,7 +94,7 @@ public class FreeTimeAbsenceProviderTest {
     @Test
     public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
-        LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
+        Instant firstSundayIn2016 = Instant.from(LocalDate.of(2016, 1, 3));
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, firstSundayIn2016);
 
@@ -104,7 +105,7 @@ public class FreeTimeAbsenceProviderTest {
     @Test
     public void ensureCallsHolidayAbsenceProviderIfNotAbsentForFreeTime() {
 
-        LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
+        Instant standardWorkingDay = Instant.from(LocalDate.of(2016, 1, 4));
 
         freeTimeAbsenceProvider.checkForAbsence(emptyTimedAbsenceSpans, testPerson, standardWorkingDay);
 

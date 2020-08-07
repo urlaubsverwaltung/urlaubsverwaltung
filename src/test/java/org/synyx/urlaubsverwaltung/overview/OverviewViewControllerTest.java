@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -224,25 +226,25 @@ public class OverviewViewControllerTest {
         waitingApplication.setVacationType(vacationType);
         waitingApplication.setPerson(person);
         waitingApplication.setStatus(WAITING);
-        waitingApplication.setStartDate(LocalDate.now(UTC).minusDays(1L));
-        waitingApplication.setEndDate(LocalDate.now(UTC).plusDays(1L));
+        waitingApplication.setStartDate(Instant.now().minus(1L, DAYS));
+        waitingApplication.setEndDate(Instant.now().plus(1L, DAYS));
 
         final Application allowedApplication = new Application();
         allowedApplication.setVacationType(vacationType);
         allowedApplication.setPerson(person);
         allowedApplication.setStatus(ALLOWED);
-        allowedApplication.setStartDate(LocalDate.now(UTC).minusDays(10L));
-        allowedApplication.setEndDate(LocalDate.now(UTC).plusDays(10L));
+        allowedApplication.setStartDate(Instant.now().minus(10L, DAYS));
+        allowedApplication.setEndDate(Instant.now().plus(10L, DAYS));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(asList(waitingApplication, revokedApplication, allowedApplication));
 
         final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(UTC).minusDays(1L));
-        sickNote.setEndDate(LocalDate.now(UTC).plusDays(1L));
+        sickNote.setStartDate(Instant.now().minus(1L, DAYS));
+        sickNote.setEndDate(Instant.now().plus(1L, DAYS));
         final SickNote sickNote2 = new SickNote();
-        sickNote2.setStartDate(LocalDate.now(UTC).minusDays(10L));
-        sickNote2.setEndDate(LocalDate.now(UTC).plusDays(10L));
+        sickNote2.setStartDate(Instant.now().minus(10L, DAYS));
+        sickNote2.setEndDate(Instant.now().plus(10L, DAYS));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
         MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
@@ -262,8 +264,8 @@ public class OverviewViewControllerTest {
 
         Account account = new Account();
         account.setPerson(somePerson());
-        account.setValidFrom(LocalDate.now().minusDays(10));
-        account.setValidTo(LocalDate.now().plusDays(10));
+        account.setValidFrom(Instant.now().minus(10, DAYS));
+        account.setValidTo(Instant.now().plus(10, DAYS));
 
         return account;
     }

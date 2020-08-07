@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -16,7 +17,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +68,7 @@ public class CompanyCalendarServiceTest {
     @Test
     public void getCalendarForAllForOneFullDay() {
 
-        final List<Absence> absences = List.of(absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
+        final List<Absence> absences = List.of(absence(createPerson(),"2019-03-26","2019-03-26", FULL));
         when(absenceService.getOpenAbsences()).thenReturn(absences);
 
         final Person person = new Person();
@@ -222,8 +225,10 @@ public class CompanyCalendarServiceTest {
         assertThat(actualCalendarForPerson.getSecret()).isNotEqualTo(secretBeforeUpdate);
     }
 
-    private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
-        final Period period = new Period(start, end, length);
+    private Absence absence(Person person, String start, String end, DayLength length) {
+        Instant startInstant = Instant.from(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN).parse(start));
+        Instant endInstant = Instant.from(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN).parse(end));
+        final Period period = new Period(startInstant, endInstant, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
         return new Absence(person, period, timeConfig, Clock.systemUTC());

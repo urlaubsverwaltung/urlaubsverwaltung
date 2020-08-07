@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -48,49 +49,49 @@ public class SickDaysOverviewTest {
         SickNote sickNoteWithoutAUB = TestDataCreator.anySickNote();
         sickNoteWithoutAUB.setSickNoteType(sickNoteType);
         sickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
-        sickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 13));
-        sickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 13));
+        sickNoteWithoutAUB.setStartDate(Instant.from(LocalDate.of(2014, 10, 13)));
+        sickNoteWithoutAUB.setEndDate(Instant.from(LocalDate.of(2014, 10, 13)));
 
         SickNote sickNoteWithAUB = TestDataCreator.anySickNote();
         sickNoteWithAUB.setSickNoteType(sickNoteType);
         sickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
-        sickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 14));
-        sickNoteWithAUB.setEndDate(LocalDate.of(2014, 10, 14));
-        sickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 14));
-        sickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 14));
+        sickNoteWithAUB.setStartDate(Instant.from(LocalDate.of(2014, 10, 14)));
+        sickNoteWithAUB.setEndDate(Instant.from(LocalDate.of(2014, 10, 14)));
+        sickNoteWithAUB.setAubStartDate(Instant.from(LocalDate.of(2014, 10, 14)));
+        sickNoteWithAUB.setAubEndDate(Instant.from(LocalDate.of(2014, 10, 14)));
 
         SickNote childSickNoteWithoutAUB = TestDataCreator.anySickNote();
         childSickNoteWithoutAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
-        childSickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 15));
-        childSickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 15));
+        childSickNoteWithoutAUB.setStartDate(Instant.from(LocalDate.of(2014, 10, 15)));
+        childSickNoteWithoutAUB.setEndDate(Instant.from(LocalDate.of(2014, 10, 15)));
 
         SickNote childSickNoteWithAUB = TestDataCreator.anySickNote();
         childSickNoteWithAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
-        childSickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 16));
-        childSickNoteWithAUB.setEndDate(LocalDate.of(2014, 10, 16));
-        childSickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 16));
-        childSickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 16));
+        childSickNoteWithAUB.setStartDate(Instant.from(LocalDate.of(2014, 10, 16)));
+        childSickNoteWithAUB.setEndDate(Instant.from(LocalDate.of(2014, 10, 16)));
+        childSickNoteWithAUB.setAubStartDate(Instant.from(LocalDate.of(2014, 10, 16)));
+        childSickNoteWithAUB.setAubEndDate(Instant.from(LocalDate.of(2014, 10, 16)));
 
         SickNote inactiveSickNote = TestDataCreator.anySickNote();
         inactiveSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
-        inactiveSickNote.setStartDate(LocalDate.of(2014, 10, 17));
-        inactiveSickNote.setEndDate(LocalDate.of(2014, 10, 17));
+        inactiveSickNote.setStartDate(Instant.from(LocalDate.of(2014, 10, 17)));
+        inactiveSickNote.setEndDate(Instant.from(LocalDate.of(2014, 10, 17)));
 
         SickNote inactiveChildSickNote = TestDataCreator.anySickNote();
         inactiveChildSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveChildSickNote.setStatus(SickNoteStatus.CANCELLED);
-        inactiveChildSickNote.setStartDate(LocalDate.of(2014, 10, 18));
-        inactiveChildSickNote.setEndDate(LocalDate.of(2014, 10, 18));
+        inactiveChildSickNote.setStartDate(Instant.from(LocalDate.of(2014, 10, 18)));
+        inactiveChildSickNote.setEndDate(Instant.from(LocalDate.of(2014, 10, 18)));
 
         List<SickNote> sickNotes = Arrays.asList(sickNoteWithoutAUB, sickNoteWithAUB, childSickNoteWithoutAUB,
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
 
         // just return 1 day for each sick note
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(calendarService.getWorkDays(any(DayLength.class), any(Instant.class),
+            any(Instant.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);

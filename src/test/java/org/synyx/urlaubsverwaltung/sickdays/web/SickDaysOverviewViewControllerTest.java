@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
@@ -87,14 +88,14 @@ public class SickDaysOverviewViewControllerTest {
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
         final SickNote childSickNote = new SickNote();
-        childSickNote.setStartDate(parse("01.02.2019", ofPattern("dd.MM.yyyy")));
-        childSickNote.setEndDate(parse("01.03.2019", ofPattern("dd.MM.yyyy")));
+        childSickNote.setStartDate(Instant.from(ofPattern("dd.MM.yyyy").parse("01.02.2019")));
+        childSickNote.setEndDate(Instant.from(ofPattern("dd.MM.yyyy").parse("01.03.2019")));
         childSickNote.setDayLength(FULL);
         childSickNote.setStatus(ACTIVE);
         childSickNote.setSickNoteType(childSickType);
         childSickNote.setPerson(person);
-        childSickNote.setAubStartDate(parse("10.02.2019", ofPattern("dd.MM.yyyy")));
-        childSickNote.setAubEndDate(parse("15.02.2019", ofPattern("dd.MM.yyyy")));
+        childSickNote.setAubStartDate(Instant.from(ofPattern("dd.MM.yyyy").parse("10.02.2019")));
+        childSickNote.setAubEndDate(Instant.from(ofPattern("dd.MM.yyyy").parse("15.02.2019")));
         when(calendarService.getWorkDays(childSickNote.getDayLength(), childSickNote.getStartDate(), childSickNote.getEndDate(), person))
             .thenReturn(ONE);
         when(calendarService.getWorkDays(childSickNote.getDayLength(), childSickNote.getAubStartDate(), childSickNote.getAubEndDate(), person))
@@ -103,14 +104,14 @@ public class SickDaysOverviewViewControllerTest {
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
         final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(parse("01.04.2019", ofPattern("dd.MM.yyyy")));
-        sickNote.setEndDate(parse("01.05.2019", ofPattern("dd.MM.yyyy")));
+        sickNote.setStartDate(Instant.from(ofPattern("dd.MM.yyyy").parse("01.04.2019")));
+        sickNote.setEndDate(Instant.from(ofPattern("dd.MM.yyyy").parse("01.05.2019")));
         sickNote.setDayLength(FULL);
         sickNote.setStatus(ACTIVE);
         sickNote.setSickNoteType(sickType);
         sickNote.setPerson(person);
-        sickNote.setAubStartDate(parse("10.04.2019", ofPattern("dd.MM.yyyy")));
-        sickNote.setAubEndDate(parse("20.04.2019", ofPattern("dd.MM.yyyy")));
+        sickNote.setAubStartDate(Instant.from(ofPattern("dd.MM.yyyy").parse("10.04.2019")));
+        sickNote.setAubEndDate(Instant.from(ofPattern("dd.MM.yyyy").parse("20.04.2019")));
         when(calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person))
             .thenReturn(TEN);
         when(calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getAubStartDate(), sickNote.getAubEndDate(), person))
@@ -118,8 +119,8 @@ public class SickDaysOverviewViewControllerTest {
 
         final String requestStartDateString = "05.01.2019";
         final String requestEndDateString = "28.12.2019";
-        final LocalDate requestStartDate = parse(requestStartDateString, ofPattern("dd.MM.yyyy"));
-        final LocalDate requestEndDate = parse(requestEndDateString, ofPattern("dd.MM.yyyy"));
+        final Instant requestStartDate = Instant.from(ofPattern("dd.MM.yyyy").parse(requestStartDateString));
+        final Instant requestEndDate = Instant.from(ofPattern("dd.MM.yyyy").parse(requestEndDateString));
         when(sickNoteService.getByPeriod(requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
 
         final ResultActions resultActions = perform(get("/web/sicknote")

@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
@@ -62,7 +63,7 @@ public class VacationApiControllerTest {
             .andExpect(status().isOk());
 
         verify(applicationService).getApplicationsForACertainPeriodAndState(
-            LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31), ALLOWED);
+            Instant.from(LocalDate.of(2016, 1, 1)), Instant.from(LocalDate.of(2016, 12, 31)), ALLOWED);
         verifyZeroInteractions(personService);
     }
 
@@ -79,8 +80,8 @@ public class VacationApiControllerTest {
             .andExpect(status().isOk());
 
         verify(applicationService)
-            .getApplicationsForACertainPeriodAndPersonAndState(LocalDate.of(2016, 1, 1),
-                LocalDate.of(2016, 12, 31), person, ALLOWED);
+            .getApplicationsForACertainPeriodAndPersonAndState(Instant.from(LocalDate.of(2016, 1, 1)),
+                Instant.from(LocalDate.of(2016, 12, 31)), person, ALLOWED);
         verify(personService).getPersonByID(23);
     }
 
@@ -88,14 +89,14 @@ public class VacationApiControllerTest {
     public void ensureCorrectConversionOfVacations() throws Exception {
 
         final Application vacation1 = TestDataCreator.createApplication(TestDataCreator.createPerson("foo"),
-            LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
+            Instant.from(LocalDate.of(2016, 5, 19)), Instant.from(LocalDate.of(2016, 5, 20)), DayLength.FULL);
         vacation1.setStatus(ALLOWED);
 
         final Application vacation2 = TestDataCreator.createApplication(TestDataCreator.createPerson("bar"),
-            LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), DayLength.FULL);
+            Instant.from(LocalDate.of(2016, 4, 5)), Instant.from(LocalDate.of(2016, 4, 10)), DayLength.FULL);
 
-        when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class),
-            any(LocalDate.class), any(ApplicationStatus.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndState(any(Instant.class),
+            any(Instant.class), any(ApplicationStatus.class)))
             .thenReturn(Arrays.asList(vacation1, vacation2));
 
         perform(get("/api/vacations").param("from", "2016-01-01").param("to", "2016-12-31"))

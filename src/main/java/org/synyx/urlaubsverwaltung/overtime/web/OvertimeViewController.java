@@ -32,6 +32,7 @@ import java.time.Year;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.time.temporal.ChronoField.YEAR;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 
@@ -120,7 +121,7 @@ public class OvertimeViewController {
 
         model.addAttribute("record", overtime);
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().get(YEAR)));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
 
         return "overtime/overtime_details";

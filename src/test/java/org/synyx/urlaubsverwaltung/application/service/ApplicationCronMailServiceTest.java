@@ -13,11 +13,14 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,22 +56,22 @@ public class ApplicationCronMailServiceTest {
         final VacationType vacationType = createVacationType(HOLIDAY);
 
         final Application shortWaitingApplication = createApplication(createPerson("leo"), vacationType);
-        shortWaitingApplication.setApplicationDate(LocalDate.now(UTC));
+        shortWaitingApplication.setApplicationDate(Instant.now());
 
         final Application longWaitingApplicationA = createApplication(createPerson("lea"), vacationType);
-        longWaitingApplicationA.setApplicationDate(LocalDate.now(UTC).minusDays(3));
+        longWaitingApplicationA.setApplicationDate(Instant.now().minus(3, DAYS));
 
         final Application longWaitingApplicationB = createApplication(createPerson("heinz"), vacationType);
-        longWaitingApplicationB.setApplicationDate(LocalDate.now(UTC).minusDays(3));
+        longWaitingApplicationB.setApplicationDate(Instant.now().minus(3, DAYS));
 
         final Application longWaitingApplicationAlreadyRemindedToday = createApplication(createPerson("heinz"), vacationType);
-        longWaitingApplicationAlreadyRemindedToday.setApplicationDate(LocalDate.now(UTC).minusDays(3));
-        LocalDate today = LocalDate.now(UTC);
+        longWaitingApplicationAlreadyRemindedToday.setApplicationDate(Instant.now().minus(3, DAYS));
+        Instant today = Instant.now();
         longWaitingApplicationAlreadyRemindedToday.setRemindDate(today);
 
         final Application longWaitingApplicationAlreadyRemindedEarlier = createApplication(createPerson("heinz"), vacationType);
-        longWaitingApplicationAlreadyRemindedEarlier.setApplicationDate(LocalDate.now(UTC).minusDays(5));
-        LocalDate oldRemindDateEarlier = LocalDate.now(UTC).minusDays(3);
+        longWaitingApplicationAlreadyRemindedEarlier.setApplicationDate(Instant.now().minus(5, DAYS));
+        Instant oldRemindDateEarlier = Instant.now().minus(3, DAYS);
         longWaitingApplicationAlreadyRemindedEarlier.setRemindDate(oldRemindDateEarlier);
 
         final List<Application> waitingApplications = asList(shortWaitingApplication,
@@ -86,7 +89,7 @@ public class ApplicationCronMailServiceTest {
         assertTrue(longWaitingApplicationA.getRemindDate().isAfter(longWaitingApplicationA.getApplicationDate()));
         assertTrue(longWaitingApplicationB.getRemindDate().isAfter(longWaitingApplicationB.getApplicationDate()));
         assertTrue(longWaitingApplicationAlreadyRemindedEarlier.getRemindDate().isAfter(oldRemindDateEarlier));
-        assertTrue(longWaitingApplicationAlreadyRemindedToday.getRemindDate().isEqual(today));
+        assertEquals(longWaitingApplicationAlreadyRemindedToday.getRemindDate(), today);
     }
 
 

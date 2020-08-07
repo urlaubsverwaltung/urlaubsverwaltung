@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
@@ -56,7 +57,8 @@ public class SickNoteApiControllerTest {
             .param("to", "2016-12-31"))
             .andExpect(status().isOk());
 
-        verify(sickNoteService).getByPeriod(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
+        verify(sickNoteService).getByPeriod(Instant.from(LocalDate.of(2016, 1, 1)),
+            Instant.from(LocalDate.of(2016, 12, 31)));
         verifyZeroInteractions(personService);
     }
 
@@ -70,8 +72,8 @@ public class SickNoteApiControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteService)
-            .getByPersonAndPeriod(any(Person.class), eq(LocalDate.of(2016, 1, 1)),
-                eq(LocalDate.of(2016, 12, 31)));
+            .getByPersonAndPeriod(any(Person.class), eq(Instant.from(LocalDate.of(2016, 1, 1))),
+                eq(Instant.from(LocalDate.of(2016, 12, 31))));
         verify(personService).getPersonByID(23);
     }
 
@@ -79,11 +81,12 @@ public class SickNoteApiControllerTest {
     public void ensureCorrectConversionOfSickNotes() throws Exception {
 
         SickNote sickNote1 = createSickNote(createPerson("foo"),
-            LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
+            Instant.from(LocalDate.of(2016, 5, 19)),
+            Instant.from(LocalDate.of(2016, 5, 20)), DayLength.FULL);
         SickNote sickNote2 = createSickNote(createPerson("bar"));
         SickNote sickNote3 = createSickNote(createPerson("baz"));
 
-        when(sickNoteService.getByPeriod(any(LocalDate.class), any(LocalDate.class)))
+        when(sickNoteService.getByPeriod(any(Instant.class), any(Instant.class)))
             .thenReturn(Arrays.asList(sickNote1, sickNote2, sickNote3));
 
         perform(get("/api/sicknotes")

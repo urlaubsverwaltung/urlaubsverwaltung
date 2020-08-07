@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -60,12 +61,12 @@ public class SickNoteApiController {
         @RequestParam(value = "person", required = false)
             Integer personId) {
 
-        final LocalDate startDate;
-        final LocalDate endDate;
+        final Instant startDate;
+        final Instant endDate;
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-            startDate = LocalDate.parse(from, formatter);
-            endDate = LocalDate.parse(to, formatter);
+            startDate = Instant.from(formatter.parse(from));
+            endDate = Instant.from(formatter.parse(to));
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }

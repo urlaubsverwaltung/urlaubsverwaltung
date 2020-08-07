@@ -9,7 +9,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +36,7 @@ class ApplicationForLeaveDataProvider {
         this.vacationTypeService = vacationTypeService;
     }
 
-    Application createWaitingApplication(Person person, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    Application createWaitingApplication(Person person, VacationCategory vacationCategory, DayLength dayLength, Instant startDate, Instant endDate) {
 
         Application application = null;
 
@@ -45,7 +47,7 @@ class ApplicationForLeaveDataProvider {
 
             application = new Application();
             application.setPerson(person);
-            application.setApplicationDate(startDate.minusDays(5L));
+            application.setApplicationDate(startDate.minus(5L, ChronoUnit.DAYS));
             application.setStartDate(startDate);
             application.setEndDate(endDate);
             application.setVacationType(vacationType);
@@ -70,7 +72,7 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    Application createAllowedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    Application createAllowedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, Instant startDate, Instant endDate) {
 
         final Application application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
 
@@ -82,7 +84,7 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    void createRejectedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    void createRejectedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, Instant startDate, Instant endDate) {
 
         final Application application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
 
@@ -92,7 +94,7 @@ class ApplicationForLeaveDataProvider {
     }
 
 
-    void createCancelledApplication(Person person, Person office, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    void createCancelledApplication(Person person, Person office, VacationCategory vacationCategory, DayLength dayLength, Instant startDate, Instant endDate) {
 
         final Application application = createAllowedApplication(person, office, vacationCategory, dayLength, startDate, endDate);
 

@@ -19,9 +19,13 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.Optional;
 
 @RestControllerAdviceMarker
@@ -69,12 +73,12 @@ public class WorkDayApiController {
         @RequestParam("person")
             Integer personId) {
 
-        final LocalDate startDate;
-        final LocalDate endDate;
+        final Instant startDate;
+        final Instant endDate;
         try {
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-            startDate = LocalDate.parse(from, fmt);
-            endDate = LocalDate.parse(to, fmt);
+            DateTimeFormatter fmt = new DateTimeFormatterBuilder().appendPattern(RestApiDateFormat.DATE_PATTERN).toFormatter();
+            startDate = Instant.from(fmt.parse(from));
+            endDate = Instant.from(fmt.parse(to));
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }

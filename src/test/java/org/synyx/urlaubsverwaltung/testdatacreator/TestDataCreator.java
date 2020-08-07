@@ -24,8 +24,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +39,7 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * Util class to create data for tests.
@@ -98,16 +101,16 @@ public final class TestDataCreator {
 
     public static Overtime createOvertimeRecord() {
 
-        LocalDate startDate = LocalDate.now(UTC);
-        LocalDate endDate = startDate.plusDays(7);
+        Instant startDate = Instant.now();
+        Instant endDate = startDate.plus(7, DAYS);
 
         return new Overtime(createPerson(), startDate, endDate, BigDecimal.ONE);
     }
 
     public static Overtime createOvertimeRecord(Person person) {
 
-        LocalDate startDate = LocalDate.now(UTC);
-        LocalDate endDate = startDate.plusDays(7);
+        Instant startDate = Instant.now();
+        Instant endDate = startDate.plus(7, DAYS);
 
         Overtime overtime = new Overtime(person, startDate, endDate, BigDecimal.ONE);
         overtime.setId(1234);
@@ -118,11 +121,11 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, VacationType vacationType) {
 
-        LocalDate now = LocalDate.now(UTC);
-        return createApplication(person, vacationType, now, now.plusDays(3), DayLength.FULL);
+        Instant now = Instant.now();
+        return createApplication(person, vacationType, now, now.plus(3, DAYS), DayLength.FULL);
     }
 
-    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
+    public static Application createApplication(Person person, Instant startDate, Instant endDate, DayLength dayLength) {
 
         VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 
@@ -137,8 +140,8 @@ public final class TestDataCreator {
         return application;
     }
 
-    public static Application createApplication(Person person, VacationType vacationType, LocalDate startDate,
-                                                LocalDate endDate, DayLength dayLength) {
+    public static Application createApplication(Person person, VacationType vacationType, Instant startDate,
+                                                Instant endDate, DayLength dayLength) {
 
         Application application = new Application();
         application.setPerson(person);
@@ -172,10 +175,10 @@ public final class TestDataCreator {
 
     public static SickNote createSickNote(Person person) {
 
-        return createSickNote(person, LocalDate.now(UTC), ZonedDateTime.now(UTC).plusDays(3).toLocalDate(), DayLength.FULL);
+        return createSickNote(person, Instant.now(), Instant.now().plus(3, DAYS), DayLength.FULL);
     }
 
-    public static SickNote createSickNote(Person person, LocalDate startDate, LocalDate endDate,
+    public static SickNote createSickNote(Person person, Instant startDate, Instant endDate,
                                           DayLength dayLength) {
 
         SickNoteType sickNoteType = new SickNoteType();
@@ -225,8 +228,8 @@ public final class TestDataCreator {
     public static Account createHolidaysAccount(Person person, int year, BigDecimal annualVacationDays,
                                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
-        LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
-        LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
+        Instant firstDayOfYear = DateUtil.getFirstDayOfYear(year);
+        Instant lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
         return new Account(person, firstDayOfYear, lastDayOfYear, annualVacationDays,
             remainingVacationDays, remainingVacationDaysNotExpiring, comment);

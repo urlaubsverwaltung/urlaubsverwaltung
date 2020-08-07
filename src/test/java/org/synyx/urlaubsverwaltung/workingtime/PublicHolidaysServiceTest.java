@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -50,7 +51,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForWorkDay() {
 
-        LocalDate testDate = LocalDate.of(2013, Month.NOVEMBER, 27);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.NOVEMBER, 27));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -61,7 +62,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForPublicHoliday() {
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 25);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.DECEMBER, 25));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -77,7 +78,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.DECEMBER, 24));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -93,7 +94,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.DECEMBER, 31));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -109,7 +110,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.DECEMBER, 24));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -125,7 +126,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.DECEMBER, 31));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -141,7 +142,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.DECEMBER, 24));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -157,7 +158,7 @@ public class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
+        Instant testDate = Instant.from(LocalDate.of(2013, Month.DECEMBER, 31));
 
         BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
 
@@ -168,8 +169,8 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-            Month.AUGUST, 15), FederalState.BERLIN);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(Instant.from(LocalDate.of(2015,
+            Month.AUGUST, 15)), FederalState.BERLIN);
 
         assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -178,8 +179,8 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-            Month.AUGUST, 15), BADEN_WUERTTEMBERG);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(Instant.from(LocalDate.of(2015,
+            Month.AUGUST, 15)), BADEN_WUERTTEMBERG);
 
         assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -188,8 +189,8 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-            Month.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(Instant.from(LocalDate.of(2015,
+            Month.AUGUST, 15)), FederalState.BAYERN_MUENCHEN);
 
         assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
@@ -197,7 +198,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureGetAbsenceTypeOfDateReturnsZeroWhenDateIsNoPublicHoliday() {
 
-        final LocalDate date = LocalDate.of(2019, 1, 2);
+        final Instant date = Instant.from(LocalDate.of(2019, 1, 2));
 
         DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
         assertEquals(null, DayLength.ZERO, actual);
@@ -206,7 +207,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureGetAbsenceTypeOfDateReturnsFullForCorpusChristi() {
 
-        final LocalDate corpusChristi = LocalDate.of(2019, Month.MAY, 30);
+        final Instant corpusChristi = Instant.from(LocalDate.of(2019, Month.MAY, 30));
 
         DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(corpusChristi, BADEN_WUERTTEMBERG);
         assertEquals(null, DayLength.FULL, actual);
@@ -215,7 +216,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureGetAbsenceTypeOfDateReturnsFullForAussumptionDayInBayernMunich() {
 
-        final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
+        final Instant assumptionDay = Instant.from(LocalDate.of(2019, Month.AUGUST, 15));
 
         DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(assumptionDay, BAYERN_MUENCHEN);
         assertEquals(null, DayLength.FULL, actual);
@@ -224,7 +225,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBerlin() {
 
-        final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
+        final Instant assumptionDay = Instant.from(LocalDate.of(2019, Month.AUGUST, 15));
 
         DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(assumptionDay, BERLIN);
         assertEquals(null, DayLength.ZERO, actual);
@@ -233,7 +234,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBadenWuerttemberg() {
 
-        final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
+        final Instant assumptionDay = Instant.from(LocalDate.of(2019, Month.AUGUST, 15));
 
         DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(assumptionDay, BADEN_WUERTTEMBERG);
         assertEquals(null, DayLength.ZERO, actual);
@@ -242,7 +243,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureGetAbsenceTypeOfDateReturnsForChristmasEve() {
 
-        final LocalDate date = LocalDate.of(2019, 12, 24);
+        final Instant date = Instant.from(LocalDate.of(2019, 12, 24));
 
         DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
         assertEquals(null, DayLength.NOON, actual);
@@ -251,7 +252,7 @@ public class PublicHolidaysServiceTest {
     @Test
     public void ensureGetAbsenceTypeOfDateReturnsForNewYearsEve() {
 
-        final LocalDate date = LocalDate.of(2019, 12, 31);
+        final Instant date = Instant.from(LocalDate.of(2019, 12, 31));
 
         DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
         assertEquals(null, DayLength.NOON, actual);

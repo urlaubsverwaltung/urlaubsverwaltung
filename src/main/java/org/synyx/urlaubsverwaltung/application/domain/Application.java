@@ -490,13 +490,13 @@ public class Application extends AbstractPersistable<Integer> {
      *
      * @return start date with time or {@code null} if start date or start time is missing
      */
-    public ZonedDateTime getStartDateWithTime() {
+    public Instant getStartDateWithTime() {
 
         Instant date = getStartDate();
         Time time = getStartTime();
 
         if (date != null && time != null) {
-            return ZonedDateTime.of(date, time.toLocalTime(), UTC);
+            return date;
         }
 
         return null;
@@ -508,13 +508,13 @@ public class Application extends AbstractPersistable<Integer> {
      *
      * @return end date with time or {@code null} if end date or end time is missing
      */
-    public ZonedDateTime getEndDateWithTime() {
+    public Instant getEndDateWithTime() {
 
         Instant date = getEndDate();
         Time time = getEndTime();
 
         if (date != null && time != null) {
-            return ZonedDateTime.of(date, time.toLocalTime(), UTC);
+            return date;
         }
 
         return null;

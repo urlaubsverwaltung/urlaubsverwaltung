@@ -21,7 +21,9 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.time.DateTimeException;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,8 +85,8 @@ public class AbsenceApiController {
         final List<DayAbsence> absences = new ArrayList<>();
         final Person person = optionalPerson.get();
 
-        LocalDate startDate;
-        LocalDate endDate;
+        Instant startDate;
+        Instant endDate;
         try {
             startDate = getStartDate(year, Optional.ofNullable(month));
             endDate = getEndDate(year, Optional.ofNullable(month));
@@ -103,17 +105,17 @@ public class AbsenceApiController {
         return new ResponseWrapper<>(new DayAbsenceList(absences));
     }
 
-    private static LocalDate getStartDate(String year, Optional<String> optionalMonth) {
+    private static Instant getStartDate(String year, Optional<String> optionalMonth) {
         return optionalMonth.map(s -> DateUtil.getFirstDayOfMonth(parseInt(year), parseInt(s)))
             .orElseGet(() -> DateUtil.getFirstDayOfYear(parseInt(year)));
     }
 
-    private static LocalDate getEndDate(String year, Optional<String> optionalMonth) {
+    private static Instant getEndDate(String year, Optional<String> optionalMonth) {
         return optionalMonth.map(s -> DateUtil.getLastDayOfMonth(parseInt(year), parseInt(s)))
             .orElseGet(() -> DateUtil.getLastDayOfYear(parseInt(year)));
     }
 
-    private List<DayAbsence> getVacations(LocalDate start, LocalDate end, Person person) {
+    private List<DayAbsence> getVacations(Instant start, Instant end, Person person) {
 
         List<DayAbsence> absences = new ArrayList<>();
 
@@ -127,10 +129,10 @@ public class AbsenceApiController {
             .collect(toList());
 
         for (Application application : applications) {
-            LocalDate startDate = application.getStartDate();
-            LocalDate endDate = application.getEndDate();
+            Instant startDate = application.getStartDate();
+            Instant endDate = application.getEndDate();
 
-            LocalDate day = startDate;
+            Instant day = startDate;
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
@@ -138,7 +140,7 @@ public class AbsenceApiController {
                         application.getStatus().name(), application.getId()));
                 }
 
-                day = day.plusDays(1);
+                day = day.plus(1, ChronoUnit.DAYS);
             }
         }
 
@@ -146,7 +148,7 @@ public class AbsenceApiController {
     }
 
 
-    private List<DayAbsence> getSickNotes(LocalDate start, LocalDate end, Person person) {
+    private List<DayAbsence> getSickNotes(Instant start, Instant end, Person person) {
 
         List<DayAbsence> absences = new ArrayList<>();
 
@@ -156,10 +158,10 @@ public class AbsenceApiController {
             .collect(toList());
 
         for (SickNote sickNote : sickNotes) {
-            LocalDate startDate = sickNote.getStartDate();
-            LocalDate endDate = sickNote.getEndDate();
+            Instant startDate = sickNote.getStartDate();
+            Instant endDate = sickNote.getEndDate();
 
-            LocalDate day = startDate;
+            Instant day = startDate;
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
@@ -168,7 +170,7 @@ public class AbsenceApiController {
                         sickNote.getId()));
                 }
 
-                day = day.plusDays(1);
+                day = day.plus(1, ChronoUnit.DAYS);
             }
         }
 

@@ -36,6 +36,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,7 +107,7 @@ public class ApplicationForLeaveDetailsViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
+        int year = requestedYear == null ? Year.from(application.getEndDate()).getValue() : requestedYear;
 
         prepareDetailView(application, year, action, shortcut, model);
 

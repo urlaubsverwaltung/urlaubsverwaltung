@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -66,31 +67,31 @@ public class AbsenceApiControllerTest {
             .andExpect(status().isOk());
 
         verify(sickNoteService)
-            .getByPersonAndPeriod(any(Person.class), eq(LocalDate.of(2016, 1, 1)),
-                eq(LocalDate.of(2016, 12, 31)));
+            .getByPersonAndPeriod(any(Person.class), eq(Instant.from(LocalDate.of(2016, 1, 1))),
+                eq(Instant.from(LocalDate.of(2016, 12, 31))));
         verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(eq(LocalDate.of(2016, 1, 1)),
-                eq(LocalDate.of(2016, 12, 31)), any(Person.class));
+            .getApplicationsForACertainPeriodAndPerson(eq(Instant.from(LocalDate.of(2016, 1, 1))),
+                eq(Instant.from(LocalDate.of(2016, 12, 31))), any(Person.class));
         verify(personService).getPersonByID(23);
     }
 
     @Test
     public void ensureCorrectConversionOfVacationAndSickNotes() throws Exception {
         final Person person = createPerson("muster");
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
-            LocalDate.of(2016, 5, 20), DayLength.FULL);
+        final SickNote sickNote = createSickNote(person, Instant.from(LocalDate.of(2016, 5, 19)),
+            Instant.from(LocalDate.of(2016, 5, 20)), DayLength.FULL);
         sickNote.setId(1);
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
+        final Application vacation = createApplication(person, Instant.from(LocalDate.of(2016, 4, 6)),
+            Instant.from(LocalDate.of(2016, 4, 6)), DayLength.FULL);
 
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         when(sickNoteService.getByPersonAndPeriod(any(Person.class),
-            any(LocalDate.class), any(LocalDate.class)))
+            any(Instant.class), any(Instant.class)))
             .thenReturn(singletonList(sickNote));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class),
+            any(Instant.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences").param("year", "2016").param("person", "23"))
@@ -112,11 +113,11 @@ public class AbsenceApiControllerTest {
     @Test
     public void ensureTypeFilterIsWorking() throws Exception {
         final Person person = createPerson("muster");
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
+        final Application vacation = createApplication(person, Instant.from(LocalDate.of(2016, 4, 6)),
+            Instant.from(LocalDate.of(2016, 4, 6)), DayLength.FULL);
 
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class), any(Instant.class), any(Person.class))).thenReturn(singletonList(vacation));
 
         perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "VACATION"))
             .andExpect(status().isOk())
@@ -131,14 +132,14 @@ public class AbsenceApiControllerTest {
     @Test
     public void ensureMonthFilterIsWorking() throws Exception {
         final Person person = createPerson("muster");
-        final Application vacation = createApplication(person, LocalDate.of(2016, 5, 30),
-            LocalDate.of(2016, 6, 1), DayLength.FULL);
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 6, 30),
-            LocalDate.of(2016, 7, 6), DayLength.FULL);
+        final Application vacation = createApplication(person, Instant.from(LocalDate.of(2016, 5, 30)),
+            Instant.from(LocalDate.of(2016, 6, 1)), DayLength.FULL);
+        final SickNote sickNote = createSickNote(person, Instant.from(LocalDate.of(2016, 6, 30)),
+            Instant.from(LocalDate.of(2016, 7, 6)), DayLength.FULL);
 
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(singletonList(sickNote));
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
+        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(Instant.class), any(Instant.class))).thenReturn(singletonList(sickNote));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(Instant.class), any(Instant.class), any(Person.class))).thenReturn(singletonList(vacation));
 
         perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))
             .andExpect(status().isOk())

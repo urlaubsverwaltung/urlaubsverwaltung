@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 /**
@@ -18,15 +19,15 @@ public class SickNoteForm {
 
     private SickNoteType sickNoteType;
 
-    private LocalDate startDate;
+    private Instant startDate;
 
-    private LocalDate endDate;
+    private Instant endDate;
 
     private DayLength dayLength;
 
-    private LocalDate aubStartDate;
+    private Instant aubStartDate;
 
-    private LocalDate aubEndDate;
+    private Instant aubEndDate;
 
     private String comment;
 
@@ -69,19 +70,19 @@ public class SickNoteForm {
         this.sickNoteType = sickNoteType;
     }
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
         this.endDate = endDate;
     }
 
@@ -93,19 +94,19 @@ public class SickNoteForm {
         this.dayLength = dayLength;
     }
 
-    public LocalDate getAubStartDate() {
+    public Instant getAubStartDate() {
         return aubStartDate;
     }
 
-    public void setAubStartDate(LocalDate aubStartDate) {
+    public void setAubStartDate(Instant aubStartDate) {
         this.aubStartDate = aubStartDate;
     }
 
-    public LocalDate getAubEndDate() {
+    public Instant getAubEndDate() {
         return aubEndDate;
     }
 
-    public void setAubEndDate(LocalDate aubEndDate) {
+    public void setAubEndDate(Instant aubEndDate) {
         this.aubEndDate = aubEndDate;
     }
 

@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +38,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
             getTranslation("person.data.lastName", "Nachname"), "",
             getTranslation("applications.statistics.allowed", "genehmigt"),
             getTranslation("applications.statistics.waiting", "noch nicht genehmigt"),
-            getTranslation("applications.statistics.left", "verbleibend") + " (" + period.getStartDate().getYear() + ")", ""};
+            getTranslation("applications.statistics.left", "verbleibend") + " (" + Year.from(period.getStartDate()).getValue() + ")", ""};
 
         final String[] csvSubHeader = {"", "", "", "", "", getTranslation("duration.vacationDays", "Urlaubstage"),
             getTranslation("duration.overtime", "Überstunden")};
@@ -91,8 +92,8 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
     public String getFileName(FilterPeriod period) {
         return String.format("%s_%s_%s.csv",
             getTranslation("applications.statistics", "Statistik"),
-            period.getStartDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
-            period.getEndDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+            DateTimeFormatter.ofPattern(DATE_FORMAT).format(period.getStartDate()),
+            DateTimeFormatter.ofPattern(DATE_FORMAT).format(period.getEndDate()));
     }
 
     private String getTranslation(String key, Object... args) {

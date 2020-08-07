@@ -24,11 +24,12 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.time.Year;
 import java.util.Collections;
 import java.util.Optional;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -293,8 +294,8 @@ public class ApplicationForLeaveFormViewControllerTest {
     private Application someApplication() {
 
         Application application = new Application();
-        application.setStartDate(LocalDate.now().plusDays(10));
-        application.setEndDate(LocalDate.now().plusDays(20));
+        application.setStartDate(Instant.now().plus(10, DAYS));
+        application.setEndDate(Instant.now().plus(20, DAYS));
 
         return new Application();
     }

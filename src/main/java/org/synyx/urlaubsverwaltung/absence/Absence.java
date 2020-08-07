@@ -5,7 +5,10 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 
 /**
@@ -13,8 +16,8 @@ import java.time.ZonedDateTime;
  */
 public class Absence {
 
-    private final ZonedDateTime startDate;
-    private final ZonedDateTime endDate;
+    private final Instant startDate;
+    private final Instant endDate;
     private final Person person;
     private final boolean isAllDay;
 
@@ -27,25 +30,27 @@ public class Absence {
 
         this.person = person;
 
-        ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(clock.getZone());
-        ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(clock.getZone());
+        LocalDate.from(period.getStartDate()).atStartOfDay(clock.getZone()).toInstant();
+
+        Instant periodStartDate = LocalDate.from(period.getStartDate()).atStartOfDay(clock.getZone()).toInstant();
+        Instant periodEndDate = LocalDate.from(period.getEndDate()).atStartOfDay(clock.getZone()).toInstant();
 
         switch (period.getDayLength()) {
             case FULL:
                 this.startDate = periodStartDate;
-                this.endDate = periodEndDate.plusDays(1);
+                this.endDate = periodEndDate.plus(1, ChronoUnit.DAYS);
                 this.isAllDay = true;
                 break;
 
             case MORNING:
-                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getMorningStart());
-                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getMorningEnd());
+                this.startDate = periodStartDate.plus(absenceTimeConfiguration.getMorningStart(), ChronoUnit.HOURS);
+                this.endDate = periodEndDate.plus(absenceTimeConfiguration.getMorningEnd(), ChronoUnit.HOURS);
                 this.isAllDay = false;
                 break;
 
             case NOON:
-                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getNoonStart());
-                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getNoonEnd());
+                this.startDate = periodStartDate.plus(absenceTimeConfiguration.getNoonStart(), ChronoUnit.HOURS);
+                this.endDate = periodEndDate.plus(absenceTimeConfiguration.getNoonEnd(), ChronoUnit.HOURS);
                 this.isAllDay = false;
                 break;
 
@@ -55,13 +60,13 @@ public class Absence {
     }
 
 
-    public ZonedDateTime getStartDate() {
+    public Instant getStartDate() {
 
         return startDate;
     }
 
 
-    public ZonedDateTime getEndDate() {
+    public Instant getEndDate() {
 
         return endDate;
     }

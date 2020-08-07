@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class SickDayAbsenceProviderTest {
 
         final Person person = createPerson();
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
-        final LocalDate sickDay = LocalDate.of(2016, 1, 4);
+        final Instant sickDay = Instant.from(LocalDate.of(2016, 1, 4));
 
         final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
         when(sickNoteService.getByPersonAndPeriod(person, sickDay, sickDay)).thenReturn(singletonList(sickNote));
@@ -69,7 +70,7 @@ public class SickDayAbsenceProviderTest {
 
         final Person person = createPerson();
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
-        final LocalDate sickDay = LocalDate.of(2016, 1, 4);
+        final Instant sickDay = Instant.from(LocalDate.of(2016, 1, 4));
 
         final SickNote sickNoteMorning = createSickNote(person, sickDay, sickDay, MORNING);
         final SickNote sickNoteNoon = createSickNote(person, sickDay, sickDay, NOON);
@@ -95,7 +96,7 @@ public class SickDayAbsenceProviderTest {
 
         final Person person = createPerson();
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
-        final LocalDate sickDay = LocalDate.of(2016, 1, 4);
+        final Instant sickDay = Instant.from(LocalDate.of(2016, 1, 4));
 
         final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
         sickNote.setStatus(CANCELLED);
@@ -115,7 +116,7 @@ public class SickDayAbsenceProviderTest {
 
         final Person person = createPerson();
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
-        final LocalDate sickDay = LocalDate.of(2016, 1, 4);
+        final Instant sickDay = Instant.from(LocalDate.of(2016, 1, 4));
 
         final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
         sickNote.setStatus(CONVERTED_TO_VACATION);
@@ -130,7 +131,7 @@ public class SickDayAbsenceProviderTest {
     public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
         final Person person = createPerson();
-        final LocalDate sickDay = LocalDate.of(2016, 1, 4);
+        final Instant sickDay = Instant.from(LocalDate.of(2016, 1, 4));
 
         final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
         when(sickNoteService.getByPersonAndPeriod(person, sickDay, sickDay)).thenReturn(singletonList(sickNote));
@@ -143,7 +144,7 @@ public class SickDayAbsenceProviderTest {
     @Test
     public void ensureCallsVacationAbsenceProviderIfNotAbsentForSickDay() {
 
-        final LocalDate sickDay = LocalDate.of(2016, 1, 5);
+        final Instant sickDay = Instant.from(LocalDate.of(2016, 1, 5));
         final Person person = createPerson();
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         sut.checkForAbsence(knownAbsences, person, sickDay);

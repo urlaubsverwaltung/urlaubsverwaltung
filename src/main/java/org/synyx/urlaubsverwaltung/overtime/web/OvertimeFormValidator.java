@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -76,8 +77,8 @@ public class OvertimeFormValidator implements Validator {
 
     private void validatePeriod(OvertimeForm overtimeForm, Errors errors) {
 
-        LocalDate startDate = overtimeForm.getStartDate();
-        LocalDate endDate = overtimeForm.getEndDate();
+        Instant startDate = overtimeForm.getStartDate();
+        Instant endDate = overtimeForm.getEndDate();
 
         validateDateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateDateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
@@ -88,7 +89,7 @@ public class OvertimeFormValidator implements Validator {
     }
 
 
-    private void validateDateNotNull(LocalDate date, String field, Errors errors) {
+    private void validateDateNotNull(Instant date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && !errors.hasFieldErrors(field)) {

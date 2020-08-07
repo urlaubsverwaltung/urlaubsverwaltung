@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
+    public List<Application> getApplicationsForACertainPeriodAndPerson(Instant startDate, Instant endDate,
                                                                        Person person) {
 
         return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
@@ -58,7 +59,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate,
+    public List<Application> getApplicationsForACertainPeriodAndState(Instant startDate, Instant endDate,
                                                                       ApplicationStatus status) {
 
         return applicationDAO.getApplicationsForACertainTimeAndState(startDate, endDate, status);
@@ -66,8 +67,8 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate,
-                                                                               LocalDate endDate, Person person, ApplicationStatus status) {
+    public List<Application> getApplicationsForACertainPeriodAndPersonAndState(Instant startDate,
+                                                                               Instant endDate, Person person, ApplicationStatus status) {
 
         return applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status);
     }

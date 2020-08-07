@@ -25,6 +25,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -715,7 +716,7 @@ public class ApplicationMailServiceIT {
 
     private Application createApplication(Person person) {
 
-        LocalDate now = LocalDate.now(UTC);
+        Instant now = Instant.now();
 
         Application application = new Application();
         application.setId(1234);

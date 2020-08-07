@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -56,13 +57,13 @@ public class AbsenceServiceImplTest {
 
         final Person person = createPerson();
 
-        final LocalDate startDate = LocalDate.of(2019, 12, 10);
-        final LocalDate endDate = LocalDate.of(2019, 12, 23);
+        final Instant startDate = Instant.from(LocalDate.of(2019, 12, 10));
+        final Instant endDate = Instant.from(LocalDate.of(2019, 12, 23));
         final Application application = createApplication(person, startDate, endDate, FULL);
         when(applicationService.getForStatesAndPerson(eq(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED)), eq(List.of(person)))).thenReturn(List.of(application));
 
-        final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
-        final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
+        final Instant startDateSickNote = Instant.from(LocalDate.of(2019, 10, 10));
+        final Instant endDateSickNote = Instant.from(LocalDate.of(2019, 10, 23));
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
         when(sickNoteService.getForStatesAndPerson(eq(List.of(ACTIVE)), eq(List.of(person)))).thenReturn(List.of(sickNote));
 
@@ -85,13 +86,13 @@ public class AbsenceServiceImplTest {
 
         final Person person = createPerson();
 
-        final LocalDate startDate = LocalDate.of(2019, 11, 10);
-        final LocalDate endDate = LocalDate.of(2019, 11, 23);
+        final Instant startDate = Instant.from(LocalDate.of(2019, 11, 10));
+        final Instant endDate = Instant.from(LocalDate.of(2019, 11, 23));
         final Application application = createApplication(person, startDate, endDate, FULL);
         when(applicationService.getForStates(eq(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED)))).thenReturn(List.of(application));
 
-        final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
-        final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
+        final Instant startDateSickNote = Instant.from(LocalDate.of(2019, 10, 10));
+        final Instant endDateSickNote = Instant.from(LocalDate.of(2019, 10, 23));
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
         when(sickNoteService.getForStates(eq(List.of(ACTIVE)))).thenReturn(List.of(sickNote));
 

@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +34,16 @@ public class PublicHolidayAbsenceProviderTest {
 
     private TimedAbsenceSpans emptyTimedAbsenceSpans;
     private Person testPerson;
-    private LocalDate newYearsDay;
-    private LocalDate standardWorkingDay;
+    private Instant newYearsDay;
+    private Instant standardWorkingDay;
 
     @Before
     public void setUp() {
 
         emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
         testPerson = TestDataCreator.createPerson();
-        newYearsDay = LocalDate.of(2016, 1, 1);
-        standardWorkingDay = LocalDate.of(2016, 1, 4);
+        newYearsDay = Instant.from(LocalDate.of(2016, 1, 1));
+        standardWorkingDay = Instant.from(LocalDate.of(2016, 1, 4));
 
         sickDayAbsenceProvider = mock(SickDayAbsenceProvider.class);
         setupWorkingTimeServiceMock();
@@ -57,7 +58,7 @@ public class PublicHolidayAbsenceProviderTest {
 
         workingTimeService = mock(WorkingTimeService.class);
         when(workingTimeService.getFederalStateForPerson(any(Person.class),
-            any(LocalDate.class)))
+            any(Instant.class)))
             .thenReturn(FederalState.BADEN_WUERTTEMBERG);
     }
 

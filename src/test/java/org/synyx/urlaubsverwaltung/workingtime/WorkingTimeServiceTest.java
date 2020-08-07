@@ -79,7 +79,7 @@ public class WorkingTimeServiceTest {
     @Test
     public void ensureReturnsOverriddenFederalStateIfPersonHasSpecialFederalState() {
 
-        LocalDate now = LocalDate.now(UTC);
+        Instant now = Instant.now();
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
@@ -88,7 +88,7 @@ public class WorkingTimeServiceTest {
         WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(FederalState.BAYERN);
 
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(Instant.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
@@ -104,7 +104,7 @@ public class WorkingTimeServiceTest {
     @Test
     public void ensureReturnsSystemFederalStateIfPersonHasNoSpecialFederalState() {
 
-        LocalDate now = LocalDate.now(UTC);
+        Instant now = Instant.now();
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
@@ -114,7 +114,7 @@ public class WorkingTimeServiceTest {
         workingTime.setFederalStateOverride(null);
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(Instant.class)))
             .thenReturn(workingTime);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);
@@ -130,14 +130,14 @@ public class WorkingTimeServiceTest {
     @Test
     public void ensureReturnsSystemFederalStateIfPersonHasNoMatchingWorkingTime() {
 
-        LocalDate now = LocalDate.now(UTC);
+        Instant now = Instant.now();
         Person person = TestDataCreator.createPerson();
 
         Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
         when(settingsServiceMock.getSettings()).thenReturn(settings);
-        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeDAOMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(Instant.class)))
             .thenReturn(null);
 
         FederalState federalState = workingTimeService.getFederalStateForPerson(person, now);

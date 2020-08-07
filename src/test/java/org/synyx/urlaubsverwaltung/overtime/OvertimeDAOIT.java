@@ -11,11 +11,13 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -36,8 +38,8 @@ public class OvertimeDAOIT {
         final Person person = TestDataCreator.createPerson();
         final Person savedPerson = personService.save(person);
 
-        final LocalDate now = LocalDate.now(UTC);
-        final Overtime overtime = new Overtime(savedPerson, now, now.plusDays(2), BigDecimal.ONE);
+        final Instant now = Instant.now();
+        final Overtime overtime = new Overtime(savedPerson, now, now.plus(2, DAYS), BigDecimal.ONE);
         assertThat(overtime.getId()).isNull();
 
         overtimeDAO.save(overtime);
@@ -55,15 +57,15 @@ public class OvertimeDAOIT {
         final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
         final Person savedOtherPerson = personService.save(otherPerson);
 
-        LocalDate now = LocalDate.now(UTC);
+        Instant now = Instant.now();
 
         // Overtime for person
-        overtimeDAO.save(new Overtime(savedPerson, now, now.plusDays(2), new BigDecimal("3")));
-        overtimeDAO.save(new Overtime(savedPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("0.5")));
-        overtimeDAO.save(new Overtime(savedPerson, now.minusDays(8), now.minusDays(4), new BigDecimal("-1")));
+        overtimeDAO.save(new Overtime(savedPerson, now, now.plus(2, DAYS), new BigDecimal("3")));
+        overtimeDAO.save(new Overtime(savedPerson, now.plus(5, DAYS), now.plus(10, DAYS), new BigDecimal("0.5")));
+        overtimeDAO.save(new Overtime(savedPerson, now.minus(8, DAYS), now.minus(4, DAYS), new BigDecimal("-1")));
 
         // Overtime for other person
-        overtimeDAO.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("5")));
+        overtimeDAO.save(new Overtime(savedOtherPerson, now.plus(5, DAYS), now.plus(10, DAYS), new BigDecimal("5")));
 
         BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
 
@@ -92,19 +94,19 @@ public class OvertimeDAOIT {
         final Person savedPerson = personService.save(person);
 
         // records for 2015
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
-            new BigDecimal("1")));
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
-            new BigDecimal("2")));
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
-            new BigDecimal("3")));
+        overtimeDAO.save(new Overtime(savedPerson, Instant.from(LocalDate.of(2014, 12, 30)),
+            Instant.from(LocalDate.of(2015, 1, 3)), new BigDecimal("1")));
+        overtimeDAO.save(new Overtime(savedPerson, Instant.from(LocalDate.of(2015, 10, 5)),
+            Instant.from(LocalDate.of(2015, 10, 20)), new BigDecimal("2")));
+        overtimeDAO.save(new Overtime(savedPerson, Instant.from(LocalDate.of(2015, 12, 28)),
+            Instant.from(LocalDate.of(2016, 1, 6)), new BigDecimal("3")));
 
         // record for 2014
-        overtimeDAO.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
-            new BigDecimal("4")));
+        overtimeDAO.save(new Overtime(savedPerson, Instant.from(LocalDate.of(2014, 12, 5)),
+            Instant.from(LocalDate.of(2014, 12, 31)), new BigDecimal("4")));
 
         List<Overtime> records = overtimeDAO.findByPersonAndPeriod(savedPerson,
-            LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31));
+            Instant.from(LocalDate.of(2015, 1, 1)), Instant.from(LocalDate.of(2015, 12, 31)));
 
         assertThat(records).isNotNull();
         assertThat(records.size()).isEqualTo(3);

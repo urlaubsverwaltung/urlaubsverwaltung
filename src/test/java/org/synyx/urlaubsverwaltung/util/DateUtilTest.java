@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.util;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 
@@ -15,7 +16,7 @@ public class DateUtilTest {
     public void ensureReturnsTrueIfGivenDayIsAWorkDay() {
 
         // Monday
-        LocalDate date = LocalDate.of(2011, 12, 26);
+        Instant date = Instant.from(LocalDate.of(2011, 12, 26));
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
@@ -27,7 +28,7 @@ public class DateUtilTest {
     public void ensureReturnsFalseIfGivenDayIsNotAWorkDay() {
 
         // Sunday
-        LocalDate date = LocalDate.of(2014, 11, 23);
+        Instant date = Instant.from(LocalDate.of(2014, 11, 23));
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
@@ -41,7 +42,7 @@ public class DateUtilTest {
         int year = 2014;
         int month = 11;
 
-        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+        Instant firstDayOfMonth = Instant.from(LocalDate.of(year, month, 1));
 
         Assert.assertEquals("Not the correct first day of month", firstDayOfMonth,
             DateUtil.getFirstDayOfMonth(year, month));
@@ -54,7 +55,7 @@ public class DateUtilTest {
         int year = 2014;
         int month = 11;
 
-        LocalDate lastDayOfMonth = LocalDate.of(year, month, 30);
+        Instant lastDayOfMonth = Instant.from(LocalDate.of(year, month, 30));
 
         Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
             DateUtil.getLastDayOfMonth(year, month));
@@ -67,7 +68,7 @@ public class DateUtilTest {
         int year = 2014;
         int month = 2;
 
-        LocalDate lastDayOfMonth = LocalDate.of(year, month, 28);
+        Instant lastDayOfMonth = Instant.from(LocalDate.of(year, month, 28));
 
         Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
             DateUtil.getLastDayOfMonth(year, month));
@@ -79,7 +80,7 @@ public class DateUtilTest {
 
         int year = 2014;
 
-        LocalDate firstDayOfYear = LocalDate.of(year, 1, 1);
+        Instant firstDayOfYear = Instant.from(LocalDate.of(year, 1, 1));
 
         Assert.assertEquals("Not the correct first day of year", firstDayOfYear, DateUtil.getFirstDayOfYear(year));
     }
@@ -90,7 +91,7 @@ public class DateUtilTest {
 
         int year = 2014;
 
-        LocalDate lastDayOfYear = LocalDate.of(year, 12, 31);
+        Instant lastDayOfYear = Instant.from(LocalDate.of(year, 12, 31));
 
         Assert.assertEquals("Not the correct last day of year", lastDayOfYear, DateUtil.getLastDayOfYear(year));
     }
@@ -99,7 +100,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsTrueForChristmasEve() {
 
-        LocalDate date = LocalDate.of(2011, 12, 24);
+        Instant date = Instant.from(LocalDate.of(2011, 12, 24));
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
@@ -110,7 +111,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsFalseForNotChristmasEve() {
 
-        LocalDate date = LocalDate.of(2011, 12, 25);
+        Instant date = Instant.from(LocalDate.of(2011, 12, 25));
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
@@ -121,7 +122,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsTrueForNewYearsEve() {
 
-        LocalDate date = LocalDate.of(2014, 12, 31);
+        Instant date = Instant.from(LocalDate.of(2014, 12, 31));
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 
@@ -132,7 +133,7 @@ public class DateUtilTest {
     @Test
     public void ensureReturnsFalseForNotNewYearsEve() {
 
-        LocalDate date = LocalDate.of(2011, 12, 25);
+        Instant date = Instant.from(LocalDate.of(2011, 12, 25));
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 

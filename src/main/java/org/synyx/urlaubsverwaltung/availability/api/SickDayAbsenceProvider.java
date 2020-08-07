@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
     }
 
     @Override
-    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, LocalDate date) {
+    TimedAbsenceSpans addAbsence(TimedAbsenceSpans knownAbsences, Person person, Instant date) {
 
         final List<Optional<TimedAbsence>> optionalSickDayAbsences = checkForSickDay(date, person);
         if (optionalSickDayAbsences.isEmpty()) {
@@ -49,7 +50,7 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
         return false;
     }
 
-    private List<Optional<TimedAbsence>> checkForSickDay(LocalDate date, Person person) {
+    private List<Optional<TimedAbsence>> checkForSickDay(Instant date, Person person) {
 
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, date, date);
         if (sickNotes.isEmpty()) {

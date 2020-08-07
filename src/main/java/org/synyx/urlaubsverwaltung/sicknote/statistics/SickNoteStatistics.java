@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -20,7 +21,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
  */
 public class SickNoteStatistics {
 
-    private final LocalDate created;
+    private final Instant created;
     private final int year;
     private final int totalNumberOfSickNotes;
     private final BigDecimal totalNumberOfSickDays;
@@ -30,7 +31,7 @@ public class SickNoteStatistics {
 
         this.year = Year.now(clock).getValue();
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteService.getNumberOfPersonsWithMinimumOneSickNote(year);
-        this.created = LocalDate.now(clock);
+        this.created = Instant.now(clock);
 
         List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year);
 
@@ -55,22 +56,22 @@ public class SickNoteStatistics {
         BigDecimal numberOfSickDays = BigDecimal.ZERO;
 
         for (SickNote sickNote : sickNotes) {
-            LocalDate sickNoteStartDate = sickNote.getStartDate();
-            LocalDate sickNoteEndDate = sickNote.getEndDate();
+            Instant sickNoteStartDate = sickNote.getStartDate();
+            Instant sickNoteEndDate = sickNote.getEndDate();
 
-            LocalDate startDate;
-            LocalDate endDate;
+            Instant startDate;
+            Instant endDate;
 
-            Assert.isTrue(sickNoteStartDate.getYear() == this.year || sickNoteEndDate.getYear() == this.year,
+            Assert.isTrue(Year.from(sickNoteStartDate).getValue() == this.year || Year.from(sickNoteEndDate).getValue() == this.year,
                 "Start date OR end date of the sick note must be in the year " + this.year);
 
-            if (sickNoteStartDate.getYear() == this.year) {
+            if (Year.from(sickNoteStartDate).getValue() == this.year) {
                 startDate = sickNoteStartDate;
             } else {
                 startDate = sickNoteEndDate.with(firstDayOfYear());
             }
 
-            if (sickNoteEndDate.getYear() == this.year) {
+            if (Year.from(sickNoteEndDate).getValue() == this.year) {
                 endDate = sickNoteEndDate;
             } else {
                 endDate = sickNoteStartDate.with(lastDayOfYear());
@@ -86,7 +87,7 @@ public class SickNoteStatistics {
     }
 
 
-    public LocalDate getCreated() {
+    public Instant getCreated() {
 
         return this.created;
     }

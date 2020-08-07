@@ -5,8 +5,11 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AccountFormTest {
@@ -32,10 +35,10 @@ public class AccountFormTest {
 
         Account account = new Account();
 
-        final LocalDate localDateFrom = LocalDate.now().minusDays(20);
-        account.setValidFrom(localDateFrom);
+        final Instant from = Instant.now().minus(20, DAYS);
+        account.setValidFrom(from);
 
-        final LocalDate localDateTo = LocalDate.now().plusDays(10);
+        final Instant localDateTo = Instant.now().plus(10, DAYS);
         account.setValidTo(localDateTo);
 
         account.setAnnualVacationDays(BigDecimal.ZERO);
@@ -45,8 +48,8 @@ public class AccountFormTest {
 
         final AccountForm form = new AccountForm(account);
 
-        assertThat(form.getHolidaysAccountYear()).isEqualTo(localDateFrom.getYear());
-        assertThat(form.getHolidaysAccountValidFrom()).isEqualTo(localDateFrom);
+        assertThat(form.getHolidaysAccountYear()).isEqualTo(Year.from(from).getValue());
+        assertThat(form.getHolidaysAccountValidFrom()).isEqualTo(from);
         assertThat(form.getHolidaysAccountValidTo()).isEqualTo(localDateTo);
         assertThat(form.getAnnualVacationDays()).isEqualTo(BigDecimal.ZERO);
         assertThat(form.getActualVacationDays()).isEqualTo(BigDecimal.TEN);

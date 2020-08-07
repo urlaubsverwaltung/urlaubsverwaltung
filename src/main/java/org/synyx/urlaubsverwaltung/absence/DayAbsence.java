@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.absence;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -25,9 +26,9 @@ public class DayAbsence {
     private final String status;
     private final String href;
 
-    DayAbsence(LocalDate date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
+    DayAbsence(Instant date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
 
-        this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
+        this.date = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN).format(date);
         this.dayLength = dayLength;
         this.absencePeriodName = absencePeriodName;
         this.type = type.name();

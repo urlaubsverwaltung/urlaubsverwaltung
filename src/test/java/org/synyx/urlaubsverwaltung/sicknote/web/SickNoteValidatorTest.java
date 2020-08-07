@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -54,15 +55,15 @@ public class SickNoteValidatorTest {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+            any(Instant.class))).thenReturn(Optional.of(createWorkingTime()));
     }
 
     @Test
     public void ensureValidDatesHaveNoErrors() {
 
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 19),
-            LocalDate.of(2013, NOVEMBER, 20),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 19)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 20)),
             FULL);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -74,8 +75,8 @@ public class SickNoteValidatorTest {
     public void ensureDayLengthMayNotBeNull() {
 
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 19),
-            LocalDate.of(2013, NOVEMBER, 20),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 19)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 20)),
             null);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -86,9 +87,7 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureStartDateMayNotBeNull() {
         final SickNote sickNote = createSickNote(createPerson(),
-            null,
-            LocalDate.of(2013, NOVEMBER, 20),
-            FULL);
+            null, Instant.from(LocalDate.of(2013, NOVEMBER, 20)), FULL);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -98,7 +97,7 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureEndDateMayNotBeNull() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 19),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 19)),
             null,
             FULL);
 
@@ -110,8 +109,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriod() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, DECEMBER, 10),
-            LocalDate.of(2013, DECEMBER, 1),
+            Instant.from(LocalDate.of(2013, DECEMBER, 10)),
+            Instant.from(LocalDate.of(2013, DECEMBER, 1)),
             FULL);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -122,8 +121,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthNoon() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 19),
-            LocalDate.of(2013, NOVEMBER, 21),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 19)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 21)),
             NOON);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -134,8 +133,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthMorning() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 19),
-            LocalDate.of(2013, NOVEMBER, 21),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 19)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 21)),
             MORNING);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -146,8 +145,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthMorning() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 21),
-            LocalDate.of(2013, NOVEMBER, 19),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 21)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 19)),
             MORNING);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -158,8 +157,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthNoon() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 21),
-            LocalDate.of(2013, NOVEMBER, 19),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 21)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 19)),
             NOON);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -202,11 +201,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 30),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 30)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 19));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 20)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 19)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -216,11 +215,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureValidAUPeriodHasNoErrors() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 30),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 30)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 19));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 20));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 19)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 20)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -230,11 +229,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDays() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 30),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 30)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 30)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -244,11 +243,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStart() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 30),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 30)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 10));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 10)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -258,11 +257,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEnd() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 30),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 30)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 20)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 30)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -272,11 +271,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStartOverlapping() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 20),
-            LocalDate.of(2013, NOVEMBER, 30),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 20)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 30)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 20));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 20)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -286,11 +285,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEndOverlapping() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 20),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 20)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 20)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 30)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -300,11 +299,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysNoneOverlapping() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 10),
-            LocalDate.of(2013, NOVEMBER, 20),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 10)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 20)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 9));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 9)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -315,11 +314,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 1),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 1));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -329,11 +328,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriodButIsNotForOneDay() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 1),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 2));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 2));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 2)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 2)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -343,8 +342,8 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureSickNoteMustNotHaveAnyOverlapping() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, MARCH, 1),
-            LocalDate.of(2013, MARCH, 10),
+            Instant.from(LocalDate.of(2013, MARCH, 1)),
+            Instant.from(LocalDate.of(2013, MARCH, 10)),
             FULL);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(FULLY_OVERLAPPING);
 
@@ -355,14 +354,14 @@ public class SickNoteValidatorTest {
 
     @Test
     public void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
-        final LocalDate startDate = LocalDate.of(2015, MARCH, 1);
+        final Instant startDate = Instant.from(LocalDate.of(2015, MARCH, 1));
         final SickNote sickNote = createSickNote(createPerson(),
             startDate,
-            LocalDate.of(2015, MARCH, 10),
+            Instant.from(LocalDate.of(2015, MARCH, 10)),
             FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
-            any(LocalDate.class))).thenReturn(Optional.empty());
+            any(Instant.class))).thenReturn(Optional.empty());
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -373,11 +372,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureInvalidPeriodWithValidAUBPeriodIsNotValid() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 10),
-            LocalDate.of(2013, NOVEMBER, 4),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 10)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 4)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 2));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 2)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -387,11 +386,11 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
         final SickNote sickNote = createSickNote(createPerson(),
-            LocalDate.of(2013, NOVEMBER, 1),
-            LocalDate.of(2013, NOVEMBER, 4),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 1)),
+            Instant.from(LocalDate.of(2013, NOVEMBER, 4)),
             FULL);
-        sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 2));
-        sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 1));
+        sickNote.setAubStartDate(Instant.from(LocalDate.of(2013, NOVEMBER, 2)));
+        sickNote.setAubEndDate(Instant.from(LocalDate.of(2013, NOVEMBER, 1)));
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);

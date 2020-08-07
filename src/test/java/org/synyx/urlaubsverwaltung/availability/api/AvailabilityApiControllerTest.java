@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -67,14 +68,14 @@ public class AvailabilityApiControllerTest {
         verify(personService).getPersonByID(PERSON_ID);
 
         verify(availabilityService)
-            .getPersonsAvailabilities(eq(LocalDate.of(2016, 1, 1)),
-                eq(LocalDate.of(2016, 1, 31)), eq(testPerson));
+            .getPersonsAvailabilities(eq(Instant.from(LocalDate.of(2016, 1, 1))),
+                eq(Instant.from(LocalDate.of(2016, 1, 31))), eq(testPerson));
     }
 
     @Test
     public void ensureNoContentAvailabilitiesForGivenPersonWithoutConfiguredWorkingTime() throws Exception {
 
-        when(availabilityService.getPersonsAvailabilities(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenThrow(FreeTimeAbsenceException.class);
+        when(availabilityService.getPersonsAvailabilities(any(Instant.class), any(Instant.class), any(Person.class))).thenThrow(FreeTimeAbsenceException.class);
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2015-01-01")
             .param("to", "2015-01-31"))

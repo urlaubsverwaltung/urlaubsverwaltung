@@ -245,8 +245,8 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             startEventDateTime = new EventDateTime().setDate(startDateTime);
             endEventDateTime = new EventDateTime().setDate(endDateTime);
         } else {
-            DateTime dateTimeStart = new DateTime(Date.from(absence.getStartDate().toInstant()));
-            DateTime dateTimeEnd = new DateTime(Date.from(absence.getEndDate().toInstant()));
+            DateTime dateTimeStart = new DateTime(Date.from(absence.getStartDate()));
+            DateTime dateTimeEnd = new DateTime(Date.from(absence.getEndDate()));
 
             startEventDateTime = new EventDateTime().setDateTime(dateTimeStart);
             endEventDateTime = new EventDateTime().setDateTime(dateTimeEnd);

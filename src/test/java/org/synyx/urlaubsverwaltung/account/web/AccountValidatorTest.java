@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 import static java.time.LocalDate.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -180,8 +181,8 @@ public class AccountValidatorTest {
     @Test
     public void ensureFromOfPeriodMustBeBeforeTo() {
         final AccountForm form = new AccountForm(2013);
-        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(of(2013, 1, 1));
+        form.setHolidaysAccountValidFrom(Instant.from(of(2013, 5, 1)));
+        form.setHolidaysAccountValidTo(Instant.from(of(2013, 1, 1)));
 
         sut.validatePeriod(form, errors);
         verify(errors).reject("error.entry.invalidPeriod");
@@ -190,8 +191,8 @@ public class AccountValidatorTest {
     @Test
     public void ensurePeriodMustBeGreaterThanOnlyOneDay() {
         final AccountForm form = new AccountForm(2013);
-        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(of(2013, 5, 1));
+        form.setHolidaysAccountValidFrom(Instant.from(of(2013, 5, 1)));
+        form.setHolidaysAccountValidTo(Instant.from(of(2013, 5, 1)));
 
         sut.validatePeriod(form, errors);
         verify(errors).reject("error.entry.invalidPeriod");
@@ -200,8 +201,8 @@ public class AccountValidatorTest {
     @Test
     public void ensurePeriodMustBeWithinTheProvidedYear() {
         final AccountForm form = new AccountForm(2014);
-        form.setHolidaysAccountValidFrom(of(2013, 1, 1));
-        form.setHolidaysAccountValidTo(of(2013, 5, 1));
+        form.setHolidaysAccountValidFrom(Instant.from(of(2013, 1, 1)));
+        form.setHolidaysAccountValidTo(Instant.from(of(2013, 5, 1)));
 
         sut.validatePeriod(form, errors);
         verify(errors).reject("error.entry.invalidPeriod");
@@ -210,8 +211,8 @@ public class AccountValidatorTest {
     @Test
     public void ensureValidPeriodHasNoValidationError() {
         final AccountForm form = new AccountForm(2013);
-        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(of(2013, 5, 5));
+        form.setHolidaysAccountValidFrom(Instant.from(of(2013, 5, 1)));
+        form.setHolidaysAccountValidTo(Instant.from(of(2013, 5, 5)));
 
         sut.validatePeriod(form, errors);
         verifyZeroInteractions(errors);

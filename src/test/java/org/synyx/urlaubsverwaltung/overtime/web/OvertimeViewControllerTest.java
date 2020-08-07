@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Collections;
@@ -87,7 +88,7 @@ public class OvertimeViewControllerTest {
     @Test
     public void postUpdateOvertimeShowsFormIfValidationFails() throws Exception {
 
-        final Overtime overtime = new Overtime(new Person(), LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(new Person(), Instant.MIN, Instant.MAX, BigDecimal.TEN);
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(overtime));
 
         final Person signedInPerson = new Person();
@@ -133,7 +134,7 @@ public class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
 
-        final List<Overtime> records = List.of(new Overtime(person, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN));
+        final List<Overtime> records = List.of(new Overtime(person, Instant.MIN, Instant.MAX, BigDecimal.TEN));
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(records);
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(BigDecimal.ONE);
@@ -164,7 +165,7 @@ public class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
 
-        final List<Overtime> records = List.of(new Overtime(person, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN));
+        final List<Overtime> records = List.of(new Overtime(person, Instant.MIN, Instant.MAX, BigDecimal.TEN));
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(records);
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(BigDecimal.ONE);
@@ -206,8 +207,8 @@ public class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
 
         final int overtimeId = 2;
-        final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Instant overtimeEndDate = Instant.MAX;
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, overtimeEndDate, BigDecimal.TEN);
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -219,7 +220,7 @@ public class OvertimeViewControllerTest {
         final List<OvertimeComment> overtimeComments = List.of(new OvertimeComment(overtimePerson, overtime, CREATED));
         when(overtimeService.getCommentsForOvertime(overtime)).thenReturn(overtimeComments);
 
-        when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(BigDecimal.ONE);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, Year.from(overtimeEndDate).getValue())).thenReturn(BigDecimal.ONE);
         when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(BigDecimal.ZERO);
 
         final ResultActions resultActions = perform(get("/web/overtime/2"));
@@ -237,7 +238,7 @@ public class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
 
         final int overtimeId = 2;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, Instant.MAX, BigDecimal.TEN);
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -311,8 +312,8 @@ public class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
 
         final int overtimeId = 2;
-        final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Instant overtimeEndDate = Instant.MAX;
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, overtimeEndDate, BigDecimal.TEN);
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
@@ -330,8 +331,8 @@ public class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
 
         final int overtimeId = 2;
-        final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Instant overtimeEndDate = Instant.MAX;
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, overtimeEndDate, BigDecimal.TEN);
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -347,8 +348,8 @@ public class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
 
         final int overtimeId = 2;
-        final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Instant overtimeEndDate = Instant.MAX;
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, overtimeEndDate, BigDecimal.TEN);
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -368,7 +369,7 @@ public class OvertimeViewControllerTest {
         overtimePerson.setId(4);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, Instant.MAX, BigDecimal.TEN);
         overtime.setId(2);
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
@@ -415,7 +416,7 @@ public class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, Instant.MAX, BigDecimal.TEN);
         overtime.setId(2);
 
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
@@ -441,7 +442,7 @@ public class OvertimeViewControllerTest {
         overtimePerson.setId(4);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, Instant.MAX, BigDecimal.TEN);
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 
@@ -469,7 +470,7 @@ public class OvertimeViewControllerTest {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, Instant.MAX, BigDecimal.TEN);
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 
@@ -493,7 +494,7 @@ public class OvertimeViewControllerTest {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, Instant.MIN, Instant.MAX, BigDecimal.TEN);
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 

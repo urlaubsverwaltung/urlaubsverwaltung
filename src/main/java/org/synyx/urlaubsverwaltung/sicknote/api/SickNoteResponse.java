@@ -24,8 +24,8 @@ public class SickNoteResponse {
 
     public SickNoteResponse(SickNote sickNote) {
 
-        this.from = sickNote.getStartDate().format(formatter);
-        this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);
+        this.from = formatter.format(sickNote.getStartDate());
+        this.to = formatter.format(Objects.requireNonNull(sickNote.getEndDate()));
         this.dayLength = sickNote.getDayLength().getDuration();
         this.person = PersonResponseMapper.mapToResponse(sickNote.getPerson());
         this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";

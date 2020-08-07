@@ -21,12 +21,15 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.YEARS;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -80,16 +83,16 @@ public class ApplicationForLeaveFormValidatorTest {
 
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(2).toLocalDate());
+        appForm.setStartDate(Instant.now());
+        appForm.setEndDate(Instant.now().plus(2, DAYS));
         appForm.setPerson(TestDataCreator.createPerson());
 
         // Default: everything is alright, override for negative cases
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(Instant.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(Instant.class), any(Instant.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
@@ -151,8 +154,8 @@ public class ApplicationForLeaveFormValidatorTest {
     public void ensureStartDateMustBeBeforeEndDate() {
 
         appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDate(LocalDate.of(2012, 1, 17));
-        appForm.setEndDate(LocalDate.of(2012, 1, 12));
+        appForm.setStartDate(Instant.from(LocalDate.of(2012, 1, 17)));
+        appForm.setEndDate(Instant.from(LocalDate.of(2012, 1, 12)));
 
         validator.validate(appForm, errors);
 
@@ -163,11 +166,11 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureVeryPastDateIsNotValid() {
 
-        LocalDate pastDate = ZonedDateTime.now(UTC).minusYears(10).toLocalDate();
+        Instant pastDate = Instant.now().minus(10, YEARS);
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(pastDate);
-        appForm.setEndDate(pastDate.plusDays(1));
+        appForm.setEndDate(pastDate.plus(1, DAYS));
 
         validator.validate(appForm, errors);
 
@@ -178,11 +181,11 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureVeryFutureDateIsNotValid() {
 
-        LocalDate futureDate = ZonedDateTime.now(UTC).plusYears(10).toLocalDate();
+        Instant futureDate = Instant.now().plus(10, YEARS);
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(futureDate);
-        appForm.setEndDate(futureDate.plusDays(1));
+        appForm.setEndDate(futureDate.plus(1, DAYS));
 
         validator.validate(appForm, errors);
 
@@ -196,8 +199,8 @@ public class ApplicationForLeaveFormValidatorTest {
     public void ensureMorningApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.MORNING);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
+        appForm.setStartDate(Instant.now());
+        appForm.setEndDate(Instant.now().plus(1, DAYS));
 
         validator.validate(appForm, errors);
 
@@ -209,8 +212,8 @@ public class ApplicationForLeaveFormValidatorTest {
     public void ensureNoonApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
+        appForm.setStartDate(Instant.now());
+        appForm.setEndDate(Instant.now().plus(1, DAYS));
 
         validator.validate(appForm, errors);
 
@@ -221,7 +224,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
 
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
 
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(date);
@@ -236,7 +239,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
 
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
 
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDate(date);
@@ -251,7 +254,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
 
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
 
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDate(date);
@@ -304,7 +307,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureStartTimeMustBeBeforeEndTime() {
 
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
 
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDate(date);
@@ -321,7 +324,7 @@ public class ApplicationForLeaveFormValidatorTest {
     @Test
     public void ensureStartTimeAndEndTimeMustNotBeEquals() {
 
-        LocalDate date = LocalDate.now(UTC);
+        Instant date = Instant.now();
         Time time = Time.valueOf("13:30:00");
 
         appForm.setDayLength(DayLength.MORNING);
@@ -420,7 +423,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(Instant.class), any(Instant.class),
             any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         validator.validate(appForm, errors);
@@ -436,13 +439,13 @@ public class ApplicationForLeaveFormValidatorTest {
     public void ensureApplyingForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC));
+        appForm.setStartDate(Instant.now());
+        appForm.setEndDate(Instant.now());
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(Instant.class), any(Instant.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
@@ -459,8 +462,8 @@ public class ApplicationForLeaveFormValidatorTest {
     public void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC));
+        appForm.setStartDate(Instant.now());
+        appForm.setEndDate(Instant.now());
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
@@ -486,7 +489,7 @@ public class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDays(any(DayLength.class), any(Instant.class), any(Instant.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
@@ -629,8 +632,8 @@ public class ApplicationForLeaveFormValidatorTest {
         appForm.setStartDate(null);
         appForm.setEndDate(null);
 
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC));
+        appForm.setStartDate(Instant.now());
+        appForm.setEndDate(Instant.now());
         appForm.setDayLength(DayLength.MORNING);
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
@@ -692,8 +695,8 @@ public class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(DayLength.MORNING)
-            .startDate(LocalDate.of(2019, 12, 24))
-            .endDate(LocalDate.of(2019, 12, 24))
+            .startDate(Instant.from(LocalDate.of(2019, 12, 24)))
+            .endDate(Instant.from(LocalDate.of(2019, 12, 24)))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -712,8 +715,8 @@ public class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(DayLength.MORNING)
-            .startDate(LocalDate.of(2019, 12, 24))
-            .endDate(LocalDate.of(2019, 12, 24))
+            .startDate(Instant.from(LocalDate.of(2019, 12, 24)))
+            .endDate(Instant.from(LocalDate.of(2019, 12, 24)))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -732,8 +735,8 @@ public class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(DayLength.NOON)
-            .startDate(LocalDate.of(2019, 12, 24))
-            .endDate(LocalDate.of(2019, 12, 24))
+            .startDate(Instant.from(LocalDate.of(2019, 12, 24)))
+            .endDate(Instant.from(LocalDate.of(2019, 12, 24)))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -764,7 +767,7 @@ public class ApplicationForLeaveFormValidatorTest {
         when(settingsService.getSettings())
             .thenReturn(createSettingsForChristmasEveWithAbsence(DayLength.FULL));
 
-        final LocalDate christmasEve = LocalDate.of(2019, 12, 24);
+        final Instant christmasEve = Instant.from(LocalDate.of(2019, 12, 24));
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(dayLengthRequest)
             .startDate(christmasEve)
@@ -787,8 +790,8 @@ public class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(DayLength.MORNING)
-            .startDate(LocalDate.of(2019, 12, 31))
-            .endDate(LocalDate.of(2019, 12, 31))
+            .startDate(Instant.from(LocalDate.of(2019, 12, 31)))
+            .endDate(Instant.from(LocalDate.of(2019, 12, 31)))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -807,8 +810,8 @@ public class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(DayLength.MORNING)
-            .startDate(LocalDate.of(2019, 12, 31))
-            .endDate(LocalDate.of(2019, 12, 31))
+            .startDate(Instant.from(LocalDate.of(2019, 12, 31)))
+            .endDate(Instant.from(LocalDate.of(2019, 12, 31)))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -827,8 +830,8 @@ public class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(DayLength.NOON)
-            .startDate(LocalDate.of(2019, 12, 31))
-            .endDate(LocalDate.of(2019, 12, 31))
+            .startDate(Instant.from(LocalDate.of(2019, 12, 31)))
+            .endDate(Instant.from(LocalDate.of(2019, 12, 31)))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -859,7 +862,7 @@ public class ApplicationForLeaveFormValidatorTest {
         when(settingsService.getSettings())
             .thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.FULL));
 
-        final LocalDate christmasEve = LocalDate.of(2019, 12, 31);
+        final Instant christmasEve = Instant.from(LocalDate.of(2019, 12, 31));
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(dayLengthRequest)
             .startDate(christmasEve)

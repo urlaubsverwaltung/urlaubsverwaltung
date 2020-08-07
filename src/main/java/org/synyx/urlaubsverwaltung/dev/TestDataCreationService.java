@@ -6,12 +6,17 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.WEEKS;
+import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -123,47 +128,47 @@ public class TestDataCreationService {
 
     private void createApplicationsForLeave(Person person, Person boss, Person office) {
 
-        final LocalDate now = LocalDate.now(clock);
+        final Instant now = Instant.now(clock);
 
         // FUTURE APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createWaitingApplication(person, HOLIDAY, FULL, now.plusDays(10), now.plusDays(16));
-        applicationForLeaveDataProvider.createWaitingApplication(person, OVERTIME, FULL, now.plusDays(1), now.plusDays(1));
-        applicationForLeaveDataProvider.createWaitingApplication(person, SPECIALLEAVE, FULL, now.plusDays(4), now.plusDays(6));
+        applicationForLeaveDataProvider.createWaitingApplication(person, HOLIDAY, FULL, now.plus(10, DAYS), now.plus(16, DAYS));
+        applicationForLeaveDataProvider.createWaitingApplication(person, OVERTIME, FULL, now.plus(1, DAYS), now.plus(1, DAYS));
+        applicationForLeaveDataProvider.createWaitingApplication(person, SPECIALLEAVE, FULL, now.plus(4, DAYS), now.plus(6, DAYS));
 
         // PAST APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, FULL, now.minusDays(20), now.minusDays(13));
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(5), now.minusDays(5));
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, SPECIALLEAVE, MORNING, now.minusDays(9), now.minusDays(9));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, FULL, now.minus(20, DAYS), now.minus(13, DAYS));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, MORNING, now.minus(5, DAYS), now.minus(5, DAYS));
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, SPECIALLEAVE, MORNING, now.minus(9, DAYS), now.minus(9, DAYS));
 
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, FULL, now.minusDays(33), now.minusDays(30));
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(32), now.minusDays(32));
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, FULL, now.minus(33, DAYS), now.minus(30, DAYS));
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, MORNING, now.minus(32, DAYS), now.minus(32, DAYS));
 
-        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, FULL, now.minusDays(11), now.minusDays(10));
-        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, NOON, now.minusDays(12), now.minusDays(12));
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, FULL, now.minus(11, DAYS), now.minus(10, DAYS));
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, NOON, now.minus(12, DAYS), now.minus(12, DAYS));
     }
 
 
     private void createSickNotes(Person person, Person office) {
 
-        final LocalDate now = LocalDate.now(clock);
+        final Instant now = Instant.now(clock);
 
         // SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), SICK_NOTE, false);
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(2), now.minusDays(2), SICK_NOTE, false);
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(30), now.minusDays(25), SICK_NOTE, true);
+        sickNoteDataProvider.createSickNote(person, office, NOON, now.minus(10, DAYS), now.minus(10, DAYS), SICK_NOTE, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minus(2, DAYS), now.minus(2, DAYS), SICK_NOTE, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minus(30, DAYS), now.minus(25, DAYS), SICK_NOTE, true);
 
         // CHILD SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), SICK_NOTE_CHILD, false);
+        sickNoteDataProvider.createSickNote(person, office, FULL, now.minus(40, DAYS), now.minus(38, DAYS), SICK_NOTE_CHILD, false);
     }
 
 
     private void createOvertimeRecords(Person person) {
 
-        final LocalDate now = LocalDate.now(clock);
+        final Instant now = Instant.now(clock);
 
-        final LocalDate lastWeek = now.minusWeeks(1);
-        final LocalDate weekBeforeLast = now.minusWeeks(2);
-        final LocalDate lastYear = now.minusYears(1);
+        final Instant lastWeek = now.minus(1, WEEKS);
+        final Instant weekBeforeLast = now.minus(2, WEEKS);
+        final Instant lastYear = now.minus(1, YEARS);
 
         overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.with(MONDAY), lastWeek.with(FRIDAY), new BigDecimal("2.5"));
         overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.with(MONDAY), weekBeforeLast.with(FRIDAY), new BigDecimal("3"));

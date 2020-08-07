@@ -18,9 +18,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.MONTHS;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
@@ -55,11 +59,11 @@ public class AvailabilityApiController {
         @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam("from")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate startDate,
+            Instant startDate,
         @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = RestApiDateFormat.EXAMPLE_LAST_DAY_OF_MONTH)
         @RequestParam("to")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate endDate) {
+            Instant endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
@@ -70,7 +74,7 @@ public class AvailabilityApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
         }
 
-        boolean requestedDateRangeIsMoreThanOneMonth = startDate.minusDays(1).isBefore(endDate.minusMonths(1));
+        boolean requestedDateRangeIsMoreThanOneMonth = startDate.minus(1, DAYS).isBefore(endDate.minus(1, MONTHS));
         if (requestedDateRangeIsMoreThanOneMonth) {
             throw new ResponseStatusException(BAD_REQUEST, "Requested date range to large. Maximum allowed range is one month");
         }

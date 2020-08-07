@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -68,8 +68,8 @@ public class ApplicationForLeaveViewControllerTest {
         application.setId(1);
         application.setPerson(person);
         application.setStatus(WAITING);
-        application.setStartDate(LocalDate.MAX);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MAX);
+        application.setEndDate(Instant.MAX);
         application.setDayLength(FULL);
 
         final Person headPerson = new Person();
@@ -105,8 +105,8 @@ public class ApplicationForLeaveViewControllerTest {
         application.setId(1);
         application.setPerson(person);
         application.setStatus(WAITING);
-        application.setStartDate(LocalDate.MAX);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MAX);
+        application.setEndDate(Instant.MAX);
         application.setDayLength(FULL);
 
         final Person bossPerson = new Person();
@@ -115,8 +115,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(bossPerson);
         applicationOfBoss.setStatus(WAITING);
-        applicationOfBoss.setStartDate(LocalDate.MAX);
-        applicationOfBoss.setEndDate(LocalDate.MAX);
+        applicationOfBoss.setStartDate(Instant.MAX);
+        applicationOfBoss.setEndDate(Instant.MAX);
 
         final Person secondStagePerson = new Person();
         secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
@@ -124,8 +124,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
-        applicationOfSecondStage.setStartDate(LocalDate.MAX);
-        applicationOfSecondStage.setEndDate(LocalDate.MAX);
+        applicationOfSecondStage.setStartDate(Instant.MAX);
+        applicationOfSecondStage.setEndDate(Instant.MAX);
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
         when(applicationService.getApplicationsForACertainState(WAITING)).thenReturn(asList(application, applicationOfBoss, applicationOfSecondStage));
@@ -145,8 +145,8 @@ public class ApplicationForLeaveViewControllerTest {
         application.setId(1);
         application.setPerson(person);
         application.setStatus(TEMPORARY_ALLOWED);
-        application.setStartDate(LocalDate.MAX);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MAX);
+        application.setEndDate(Instant.MAX);
         application.setDayLength(FULL);
 
         final Person officePerson = new Person();
@@ -155,8 +155,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(officePerson);
         applicationOfBoss.setStatus(WAITING);
-        applicationOfBoss.setStartDate(LocalDate.MAX);
-        applicationOfBoss.setEndDate(LocalDate.MAX);
+        applicationOfBoss.setStartDate(Instant.MAX);
+        applicationOfBoss.setEndDate(Instant.MAX);
 
         final Person secondStagePerson = new Person();
         secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
@@ -164,8 +164,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
-        applicationOfSecondStage.setStartDate(LocalDate.MAX);
-        applicationOfSecondStage.setEndDate(LocalDate.MAX);
+        applicationOfSecondStage.setStartDate(Instant.MAX);
+        applicationOfSecondStage.setEndDate(Instant.MAX);
 
         when(personService.getSignedInUser()).thenReturn(officePerson);
         when(applicationService.getApplicationsForACertainState(WAITING)).thenReturn(asList(applicationOfBoss, applicationOfSecondStage));
@@ -187,8 +187,8 @@ public class ApplicationForLeaveViewControllerTest {
         application.setId(1);
         application.setPerson(person);
         application.setStatus(TEMPORARY_ALLOWED);
-        application.setStartDate(LocalDate.MAX);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(Instant.MAX);
+        application.setEndDate(Instant.MAX);
         application.setDayLength(FULL);
 
         final Person officePerson = new Person();
@@ -198,8 +198,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(officePerson);
         applicationOfBoss.setStatus(WAITING);
-        applicationOfBoss.setStartDate(LocalDate.MAX);
-        applicationOfBoss.setEndDate(LocalDate.MAX);
+        applicationOfBoss.setStartDate(Instant.MAX);
+        applicationOfBoss.setEndDate(Instant.MAX);
 
         final Person secondStagePerson = new Person();
         secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
@@ -207,8 +207,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
-        applicationOfSecondStage.setStartDate(LocalDate.MAX);
-        applicationOfSecondStage.setEndDate(LocalDate.MAX);
+        applicationOfSecondStage.setStartDate(Instant.MAX);
+        applicationOfSecondStage.setEndDate(Instant.MAX);
 
         when(personService.getSignedInUser()).thenReturn(secondStagePerson);
         when(departmentService.getManagedMembersForSecondStageAuthority(secondStagePerson)).thenReturn(asList(secondStagePerson, person, officePerson));
@@ -240,8 +240,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfUserA.setId(1);
         applicationOfUserA.setPerson(userOfDepartmentA);
         applicationOfUserA.setStatus(TEMPORARY_ALLOWED);
-        applicationOfUserA.setStartDate(LocalDate.MAX);
-        applicationOfUserA.setEndDate(LocalDate.MAX);
+        applicationOfUserA.setStartDate(Instant.MAX);
+        applicationOfUserA.setEndDate(Instant.MAX);
 
         final Person userOfDepartmentB = new Person();
         userOfDepartmentB.setFirstName("userOfDepartmentB");
@@ -250,8 +250,8 @@ public class ApplicationForLeaveViewControllerTest {
         applicationOfUserB.setId(2);
         applicationOfUserB.setPerson(userOfDepartmentB);
         applicationOfUserB.setStatus(WAITING);
-        applicationOfUserB.setStartDate(LocalDate.MAX);
-        applicationOfUserB.setEndDate(LocalDate.MAX);
+        applicationOfUserB.setStartDate(Instant.MAX);
+        applicationOfUserB.setEndDate(Instant.MAX);
 
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
         when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentA));
@@ -286,15 +286,15 @@ public class ApplicationForLeaveViewControllerTest {
         temporaryAllowedApplication.setId(1);
         temporaryAllowedApplication.setPerson(userOfDepartment);
         temporaryAllowedApplication.setStatus(TEMPORARY_ALLOWED);
-        temporaryAllowedApplication.setStartDate(LocalDate.MAX);
-        temporaryAllowedApplication.setEndDate(LocalDate.MAX);
+        temporaryAllowedApplication.setStartDate(Instant.MAX);
+        temporaryAllowedApplication.setEndDate(Instant.MAX);
 
         final Application waitingApplication = new Application();
         waitingApplication.setId(2);
         waitingApplication.setPerson(userOfDepartment);
         waitingApplication.setStatus(WAITING);
-        waitingApplication.setStartDate(LocalDate.MAX);
-        waitingApplication.setEndDate(LocalDate.MAX);
+        waitingApplication.setStartDate(Instant.MAX);
+        waitingApplication.setEndDate(Instant.MAX);
 
 
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);

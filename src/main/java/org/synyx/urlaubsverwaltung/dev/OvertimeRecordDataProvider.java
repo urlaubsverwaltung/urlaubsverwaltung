@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ class OvertimeRecordDataProvider {
         settingsService.save(settings);
     }
 
-    void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, BigDecimal hours) {
+    void createOvertimeRecord(Person person, Instant startDate, Instant endDate, BigDecimal hours) {
 
         final Overtime overtime = new Overtime(person, startDate, endDate, hours);
         overtimeService.record(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);

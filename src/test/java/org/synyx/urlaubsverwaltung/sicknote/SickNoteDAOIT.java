@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -25,12 +26,12 @@ public class SickNoteDAOIT {
     @Test
     public void findSickNotesByMinimumLengthAndEndDateLessThanLimitAndWrongStatus() {
 
-        final LocalDate endDate = LocalDate.of(2019, 5, 20);
+        final Instant endDate = Instant.from(LocalDate.of(2019, 5, 20));
 
-        final SickNote sickNote = createSickNote(LocalDate.of(2019, 5, 19), endDate, ACTIVE);
+        final SickNote sickNote = createSickNote(Instant.from(LocalDate.of(2019, 5, 19)), endDate, ACTIVE);
         sickNoteDAO.save(sickNote);
 
-        final SickNote sickNoteCancelled = createSickNote(LocalDate.of(2019, 5, 10), endDate, CANCELLED);
+        final SickNote sickNoteCancelled = createSickNote(Instant.from(LocalDate.of(2019, 5, 10)), endDate, CANCELLED);
         sickNoteDAO.save(sickNoteCancelled);
 
         final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(2, endDate);
@@ -41,8 +42,8 @@ public class SickNoteDAOIT {
     @Test
     public void findSickNotesByMinimumLengthAndEndDateExactlyOnLimitAndWrongStatus() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
-        final LocalDate endDate = LocalDate.of(2019, 5, 20);
+        final Instant startDate = Instant.from(LocalDate.of(2019, 5, 19));
+        final Instant endDate = Instant.from(LocalDate.of(2019, 5, 20));
 
         final SickNote sickNote = createSickNote(startDate, endDate, ACTIVE);
         sickNoteDAO.save(sickNote);
@@ -59,8 +60,8 @@ public class SickNoteDAOIT {
     @Test
     public void findSickNotesByMinimumLengthAndEndDateMoreThanLimitAndWrongStatus() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
-        final LocalDate endDate = LocalDate.of(2019, 5, 25);
+        final Instant startDate = Instant.from(LocalDate.of(2019, 5, 19));
+        final Instant endDate = Instant.from(LocalDate.of(2019, 5, 25));
 
         final SickNote sickNote = createSickNote(startDate, endDate, ACTIVE);
         sickNoteDAO.save(sickNote);
@@ -74,7 +75,7 @@ public class SickNoteDAOIT {
         assertThat(sickNotesByMinimumLengthAndEndDate).doesNotContain(sickNoteCancelled);
     }
 
-    private SickNote createSickNote(LocalDate startDate, LocalDate endDate, SickNoteStatus active) {
+    private SickNote createSickNote(Instant startDate, Instant endDate, SickNoteStatus active) {
         final SickNote sickNote = new SickNote();
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);

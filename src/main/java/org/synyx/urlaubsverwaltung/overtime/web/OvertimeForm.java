@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 
@@ -17,9 +18,9 @@ public class OvertimeForm {
 
     private Person person;
 
-    private LocalDate startDate;
+    private Instant startDate;
 
-    private LocalDate endDate;
+    private Instant endDate;
 
     private BigDecimal numberOfHours;
 
@@ -74,25 +75,25 @@ public class OvertimeForm {
     }
 
 
-    public LocalDate getStartDate() {
+    public Instant getStartDate() {
 
         return startDate;
     }
 
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Instant startDate) {
 
         this.startDate = startDate;
     }
 
 
-    public LocalDate getEndDate() {
+    public Instant getEndDate() {
 
         return endDate;
     }
 
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Instant endDate) {
 
         this.endDate = endDate;
     }

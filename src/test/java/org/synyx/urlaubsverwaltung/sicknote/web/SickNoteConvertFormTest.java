@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,8 +29,8 @@ public class SickNoteConvertFormTest {
     public void ensureCorrectProvidedValuesFromSickNote() {
 
         final Person person = createPerson();
-        final LocalDate startDate = LocalDate.of(2014, 1, 1);
-        final LocalDate endDate = LocalDate.of(2014, 1, 10);
+        final Instant startDate = Instant.from(LocalDate.of(2014, 1, 1));
+        final Instant endDate = Instant.from(LocalDate.of(2014, 1, 10));
         final SickNote sickNote = createSickNote(person, startDate, endDate, DayLength.NOON);
 
         final SickNoteConvertForm sut = new SickNoteConvertForm(sickNote);
@@ -48,8 +49,8 @@ public class SickNoteConvertFormTest {
     public void ensureGeneratesBasicApplicationForLeave() {
 
         final Person person = createPerson();
-        final LocalDate startDate = LocalDate.of(2014, 1, 1);
-        final LocalDate endDate = LocalDate.of(2014, 1, 10);
+        final Instant startDate = Instant.from(LocalDate.of(2014, 1, 1));
+        final Instant endDate = Instant.from(LocalDate.of(2014, 1, 10));
         final SickNote sickNote = createSickNote(person, startDate, endDate, FULL);
         final VacationType vacationType = createVacationType(VacationCategory.UNPAIDLEAVE);
 

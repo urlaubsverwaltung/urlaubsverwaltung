@@ -16,7 +16,9 @@ import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -52,7 +54,7 @@ public class WorkDayApiControllerTest {
 
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(Instant.class), any(Instant.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         perform(get("/api/workdays")
@@ -67,7 +69,8 @@ public class WorkDayApiControllerTest {
             .andExpect(jsonPath("$.response.workDays", is("1")));
 
         verify(personServiceMock).getPersonByID(23);
-        verify(workDaysServiceMock).getWorkDays(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
+        verify(workDaysServiceMock).getWorkDays(FULL, Instant.from(LocalDate.of(2016, 1, 4).atStartOfDay(ZoneId.of("UTC"))),
+            Instant.from(LocalDate.of(2016, 1, 4).atStartOfDay(ZoneId.of("UTC"))), person);
     }
 
     @Test
@@ -75,7 +78,7 @@ public class WorkDayApiControllerTest {
 
         Person person = TestDataCreator.createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(Instant.class), any(Instant.class), any(Person.class)))
             .thenThrow(NoValidWorkingTimeException.class);
 
         perform(get("/api/workdays")

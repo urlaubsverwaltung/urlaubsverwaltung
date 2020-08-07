@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
@@ -222,8 +223,8 @@ public class OvertimeServiceImplTest {
 
         sut.getOvertimeRecordsForPersonAndYear(person, 2015);
 
-        LocalDate firstDay = LocalDate.of(2015, 1, 1);
-        LocalDate lastDay = LocalDate.of(2015, 12, 31);
+        Instant firstDay = Instant.from(LocalDate.of(2015, 1, 1));
+        Instant lastDay = Instant.from(LocalDate.of(2015, 12, 31));
 
         verify(overtimeDAO).findByPersonAndPeriod(person, firstDay, lastDay);
     }
@@ -277,13 +278,13 @@ public class OvertimeServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
+        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(Instant.class), any(Instant.class)))
             .thenReturn(Collections.emptyList());
 
         BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
 
-        LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
-        LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
+        Instant firstDayOfYear = Instant.from(LocalDate.of(2016, 1, 1));
+        Instant lastDayOfYear = Instant.from(LocalDate.of(2016, 12, 31));
 
         verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
@@ -303,13 +304,13 @@ public class OvertimeServiceImplTest {
         Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
         otherOvertimeRecord.setHours(BigDecimal.TEN);
 
-        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
+        when(overtimeDAO.findByPersonAndPeriod(eq(person), any(Instant.class), any(Instant.class)))
             .thenReturn(Arrays.asList(overtimeRecord, otherOvertimeRecord));
 
         BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
 
-        LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
-        LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
+        Instant firstDayOfYear = Instant.from(LocalDate.of(2016, 1, 1));
+        Instant lastDayOfYear = Instant.from(LocalDate.of(2016, 12, 31));
 
         verify(overtimeDAO).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
