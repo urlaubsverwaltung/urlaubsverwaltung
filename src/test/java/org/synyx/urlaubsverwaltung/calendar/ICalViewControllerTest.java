@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 
 import static java.util.Locale.GERMAN;
 import static org.mockito.Mockito.when;
@@ -135,6 +134,6 @@ class ICalViewControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
+        return standaloneSetup(sut).build().perform(builder);
     }
 }

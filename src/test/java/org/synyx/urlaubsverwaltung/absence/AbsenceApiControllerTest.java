@@ -36,7 +36,6 @@ import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.create
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
 
-
 @ExtendWith(MockitoExtension.class)
 class AbsenceApiControllerTest {
 
