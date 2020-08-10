@@ -30,18 +30,18 @@ class AbsenceTimeConfigurationTest {
     @Test
     void ensureCorrectMorningEnd() {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-        assertThat(timeConfiguration.getMorningStart()).isEqualTo(12);
+        assertThat(timeConfiguration.getMorningEnd()).isEqualTo(12);
     }
 
     @Test
     void ensureCorrectNoonStart() {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-        assertThat(timeConfiguration.getMorningStart()).isEqualTo(12);
+        assertThat(timeConfiguration.getNoonStart()).isEqualTo(12);
     }
 
     @Test
     void ensureCorrectNoonEnd() {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-        assertThat(timeConfiguration.getMorningStart()).isEqualTo(16);
+        assertThat(timeConfiguration.getNoonEnd()).isEqualTo(16);
     }
 }
