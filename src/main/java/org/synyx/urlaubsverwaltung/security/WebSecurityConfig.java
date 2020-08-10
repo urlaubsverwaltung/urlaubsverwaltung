@@ -37,7 +37,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf()
             .disable()
             .authorizeRequests()
-            // TODO move to common url static or resources
             .antMatchers("/favicons/**").permitAll()
             .antMatchers("/browserconfig.xml").permitAll()
             .antMatchers("/manifest.json").permitAll()
@@ -45,8 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/fonts/**").permitAll()
             .antMatchers("/images/**").permitAll()
             .antMatchers("/assets/**").permitAll()
-            .antMatchers("/login*").permitAll()
             // WEB
+            .antMatchers("/login*").permitAll()
             .antMatchers(GET, "/web/company/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/persons/*/calendar").permitAll()
