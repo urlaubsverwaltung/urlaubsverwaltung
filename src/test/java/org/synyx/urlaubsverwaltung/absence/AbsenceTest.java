@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
@@ -47,18 +46,12 @@ class AbsenceTest {
 
         LocalDate start = LocalDate.of(2015, 9, 21);
         LocalDate end = LocalDate.of(2015, 9, 23);
-
         Period period = new Period(start, end, DayLength.FULL);
 
         Absence absence = new Absence(person, period, timeConfiguration);
-
-        Assert.assertNotNull("Start date must not be null", absence.getStartDate());
-        Assert.assertNotNull("End date must not be null", absence.getEndDate());
-        Assert.assertNotNull("Person must not be null", absence.getPerson());
-
-        Assert.assertEquals("Wrong start date", start.atStartOfDay(UTC), absence.getStartDate());
-        Assert.assertEquals("Wrong end date", end.atStartOfDay(UTC).plusDays(1), absence.getEndDate());
-        Assert.assertEquals("Wrong person", person, absence.getPerson());
+        assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(UTC));
+        assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay(UTC).plusDays(1));
+        assertThat(absence.getPerson()).isEqualTo(person);
     }
 
 
@@ -68,18 +61,13 @@ class AbsenceTest {
         // Date where daylight saving time is relevant
         LocalDate start = LocalDate.of(2015, 10, 23);
         LocalDate end = LocalDate.of(2015, 10, 25);
-
         Period period = new Period(start, end, DayLength.FULL);
 
         Absence absence = new Absence(person, period, timeConfiguration);
 
-        Assert.assertNotNull("Start date must not be null", absence.getStartDate());
-        Assert.assertNotNull("End date must not be null", absence.getEndDate());
-        Assert.assertNotNull("Person must not be null", absence.getPerson());
-
-        Assert.assertEquals("Wrong start date", start.atStartOfDay(UTC), absence.getStartDate());
-        Assert.assertEquals("Wrong end date", end.atStartOfDay(UTC).plusDays(1), absence.getEndDate());
-        Assert.assertEquals("Wrong person", person, absence.getPerson());
+        assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(UTC));
+        assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay(UTC).plusDays(1));
+        assertThat(absence.getPerson()).isEqualTo(person);
     }
 
 
@@ -87,16 +75,13 @@ class AbsenceTest {
     void ensureCorrectTimeForMorningAbsence() {
 
         LocalDateTime today = LocalDate.now(UTC).atStartOfDay();
-
         ZonedDateTime start = today.withHour(8).atZone(UTC);
         ZonedDateTime end = today.withHour(12).atZone(UTC);
-
         Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.MORNING);
 
         Absence absence = new Absence(person, period, timeConfiguration);
-
-        Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
-        Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
+        assertThat(absence.getStartDate()).isEqualTo(start);
+        assertThat(absence.getEndDate()).isEqualTo(end);
     }
 
 
@@ -104,16 +89,13 @@ class AbsenceTest {
     void ensureCorrectTimeForNoonAbsence() {
 
         LocalDateTime today = LocalDate.now(UTC).atStartOfDay();
-
         ZonedDateTime start = today.withHour(12).atZone(UTC);
         ZonedDateTime end = today.withHour(16).atZone(UTC);
-
         Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.NOON);
 
         Absence absence = new Absence(person, period, timeConfiguration);
-
-        Assert.assertEquals("Should start at 12 pm", start, absence.getStartDate());
-        Assert.assertEquals("Should end at 4 pm", end, absence.getEndDate());
+        assertThat(absence.getStartDate()).isEqualTo(start);
+        assertThat(absence.getEndDate()).isEqualTo(end);
     }
 
 
@@ -122,36 +104,30 @@ class AbsenceTest {
 
         LocalDate start = LocalDate.now(UTC);
         LocalDate end = start.plusDays(2);
-
         Period period = new Period(start, end, DayLength.FULL);
 
         Absence absence = new Absence(person, period, timeConfiguration);
-
-        Assert.assertTrue("Should be all day", absence.isAllDay());
+        assertThat(absence.isAllDay()).isTrue();
     }
 
     @Test
     void ensureIsNotAllDayForMorningPeriod() {
 
         LocalDate today = LocalDate.now(UTC);
-
         Period period = new Period(today, today, DayLength.MORNING);
 
         Absence absence = new Absence(person, period, timeConfiguration);
-
-        Assert.assertFalse("Should be not all day", absence.isAllDay());
+        assertThat(absence.isAllDay()).isFalse();
     }
 
     @Test
     void ensureIsNotAllDayForNoonPeriod() {
 
         LocalDate today = LocalDate.now(UTC);
-
         Period period = new Period(today, today, DayLength.NOON);
 
         Absence absence = new Absence(person, period, timeConfiguration);
-
-        Assert.assertFalse("Should be not all day", absence.isAllDay());
+        assertThat(absence.isAllDay()).isFalse();
     }
 
     @Test
@@ -181,9 +157,7 @@ class AbsenceTest {
         Period period = new Period(today, today, DayLength.FULL);
 
         Absence absence = new Absence(person, period, timeConfiguration);
-
-        Assert.assertNotNull("Event subject must not be null", absence.getEventSubject());
-        Assert.assertEquals("Wrong event subject", "Marlene Muster abwesend", absence.getEventSubject());
+        assertThat(absence.getEventSubject()).isEqualTo("Marlene Muster abwesend");
     }
 
     @Test
