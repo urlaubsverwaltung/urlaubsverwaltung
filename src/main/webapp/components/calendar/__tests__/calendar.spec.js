@@ -56,17 +56,16 @@ describe ('calendar', () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
-            "absences": [
-              {
-                date: "2017-11-01",
-                dayLength: 1,
-                absencePeriodName: "FULL",
-                type: 'VACATION',
-                status: givenStatus,
-              }
-            ]
-          }
+        fetchMock.mock('/absences?person=42&year=2017&type=VACATION',
+          [
+            {
+              date: "2017-11-01",
+              dayLength: 1,
+              absencePeriodName: "FULL",
+              type: 'VACATION',
+              status: givenStatus,
+            }
+          ]
         );
 
         await calendarTestSetup();
@@ -89,17 +88,16 @@ describe ('calendar', () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
-            "absences": [
-              {
-                date: "2017-12-05",
-                dayLength: 1,
-                absencePeriodName: "FULL",
-                type: 'VACATION',
-                status: givenStatus,
-              }
-            ]
-          }
+        fetchMock.mock('/absences?person=42&year=2017&type=VACATION',
+          [
+            {
+              date: "2017-12-05",
+              dayLength: 1,
+              absencePeriodName: "FULL",
+              type: 'VACATION',
+              status: givenStatus,
+            }
+          ]
         );
 
         await calendarTestSetup();
@@ -122,17 +120,15 @@ describe ('calendar', () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
-            "absences": [
-              {
-                date: "2017-12-01",
-                dayLength: 1,
-                absencePeriodName: "FULL",
-                type: 'VACATION',
-                status: givenStatus,
-              }
-            ]
-          }
+        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', [
+            {
+              date: "2017-12-01",
+              dayLength: 1,
+              absencePeriodName: "FULL",
+              type: 'VACATION',
+              status: givenStatus,
+            }
+          ]
         );
 
         await calendarTestSetup();
