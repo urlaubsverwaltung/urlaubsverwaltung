@@ -40,14 +40,7 @@ export default async function createDatepickerInstances(selectors, regional, url
         calendrier.css({'top': top, 'left': left});
       }, 10);
 
-      let date;
-
-      if ($(input).datepicker("getDate") == null) {
-        date = new Date();
-      } else {
-        date = $(input).datepicker("getDate");
-      }
-
+      const date = $(input).datepicker("getDate") || new Date();
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
 

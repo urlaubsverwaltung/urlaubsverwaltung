@@ -7,8 +7,9 @@ export default function getUrlParameter(name) {
   var regex = new RegExp(regexS);
   var results = regex.exec(window.location.href);
 
-  if (results == null)
-    return "";
-  else
+  if (results) {
     return results[1];
+  } else {
+    return "";
+  }
 }

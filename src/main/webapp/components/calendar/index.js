@@ -297,7 +297,7 @@ $(function() {
                 }
               }
 
-              return null;
+              return undefined;
 
             },
 

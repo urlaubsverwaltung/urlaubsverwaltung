@@ -43,17 +43,17 @@ $(document).ready(function () {
 
   initCalendar();
 
-  var resizeTimer = null;
+  var resizeTimer;
 
   $(window).on('resize', function () {
 
-    if (resizeTimer !== null) {
+    if (resizeTimer) {
       clearTimeout(resizeTimer);
     }
 
     resizeTimer = setTimeout(function () {
       Urlaubsverwaltung.Calendar.reRender();
-      resizeTimer = null;
+      resizeTimer = false;
     }, 30)
 
   });

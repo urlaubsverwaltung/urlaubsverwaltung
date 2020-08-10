@@ -22,7 +22,7 @@ $(function () {
       const selectedYearValue = selectedYear.options[selectedYear.selectedIndex].text;
       const selectedMonthValue = selectedMonth.options[selectedMonth.selectedIndex].value;
 
-      if (selectedYearValue != null && selectedMonthValue != null && selectedDepartmentValue != null) {
+      if (selectedYearValue && selectedMonthValue && selectedDepartmentValue) {
         const url = location.protocol + "//" + location.host
           + "/api/vacationoverview?selectedYear="
           + encodeURIComponent(selectedYearValue) + "&selectedMonth="
