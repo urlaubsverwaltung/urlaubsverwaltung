@@ -25,7 +25,7 @@ class OidcLogoutHandlerTest {
     void setUp() {
 
         final OidcSecurityProperties properties = new OidcSecurityProperties();
-        properties.setLogoutPath("/log/out/path");
+        properties.setLogoutUri("https://issuer.com/log/out/path");
 
         sut = new OidcLogoutHandler(properties);
     }
@@ -51,6 +51,7 @@ class OidcLogoutHandlerTest {
 
         sut.logout(request, response, authentication);
 
-        assertThat(response.getRedirectedUrl()).isEqualTo("https://issuer.com/log/out/path?id_token_hint=tokenValue&redirect_uri=http://uv.de:8080&client_id&returnTo=http://uv.de:8080");
+        assertThat(response.getRedirectedUrl())
+            .isEqualTo("https://issuer.com/log/out/path?id_token_hint=tokenValue&redirect_uri=http://uv.de:8080&client_id&returnTo=http://uv.de:8080");
     }
 }
