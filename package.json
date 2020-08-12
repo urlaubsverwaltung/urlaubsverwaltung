@@ -44,7 +44,7 @@
     "@babel/preset-env": "7.11.0",
     "@urlaubsverwaltung/eslint-plugin": "1.1.0",
     "babel-eslint": "10.1.0",
-    "babel-jest": "26.2.2",
+    "babel-jest": "26.3.0",
     "babel-loader": "8.1.0",
     "css-loader": "4.2.0",
     "date-fns": "2.15.0",
