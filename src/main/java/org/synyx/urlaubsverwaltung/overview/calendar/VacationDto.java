@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.overview.calendar;
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
+import org.synyx.urlaubsverwaltung.person.api.PersonDto;
+import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +15,7 @@ class VacationDto {
     private String from;
     private String to;
     private BigDecimal dayLength;
-    private PersonResponse person;
+    private PersonDto person;
     private String type;
     private String status;
 
@@ -24,7 +24,7 @@ class VacationDto {
         this.from = application.getStartDate().format(formatter);
         this.to = application.getEndDate().format(formatter);
         this.dayLength = application.getDayLength().getDuration();
-        this.person = PersonResponseMapper.mapToResponse(application.getPerson());
+        this.person = PersonMapper.mapToDto(application.getPerson());
         this.status = application.getStatus().name();
 
         VacationType vacationType = application.getVacationType();
@@ -55,11 +55,11 @@ class VacationDto {
         this.dayLength = dayLength;
     }
 
-    public PersonResponse getPerson() {
+    public PersonDto getPerson() {
         return person;
     }
 
-    public void setPerson(PersonResponse person) {
+    public void setPerson(PersonDto person) {
         this.person = person;
     }
 

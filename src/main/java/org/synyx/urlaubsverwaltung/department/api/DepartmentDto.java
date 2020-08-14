@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.department.api;
 
 import org.synyx.urlaubsverwaltung.department.Department;
-import org.synyx.urlaubsverwaltung.person.api.PersonListResponse;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
+import org.synyx.urlaubsverwaltung.person.api.PersonsDto;
+import org.synyx.urlaubsverwaltung.person.api.PersonDto;
+import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,8 +16,8 @@ class DepartmentDto {
     private String name;
     private String description;
     private String lastModification;
-    private PersonListResponse members;
-    private PersonListResponse departmentHeads;
+    private PersonsDto members;
+    private PersonsDto departmentHeads;
 
     DepartmentDto(Department department) {
 
@@ -25,19 +25,19 @@ class DepartmentDto {
         this.description = department.getDescription();
         this.lastModification = department.getLastModification().format(ofPattern(DATE_PATTERN));
 
-        List<PersonResponse> membersResponses = department.getMembers()
+        List<PersonDto> membersResponses = department.getMembers()
                 .stream()
-                .map(PersonResponseMapper::mapToResponse)
+                .map(PersonMapper::mapToDto)
                 .collect(Collectors.toList());
 
-        this.members = new PersonListResponse(membersResponses);
+        this.members = new PersonsDto(membersResponses);
 
-        List<PersonResponse> departmentHeadsResponses = department.getDepartmentHeads()
+        List<PersonDto> departmentHeadsResponses = department.getDepartmentHeads()
                 .stream()
-                .map(PersonResponseMapper::mapToResponse)
+                .map(PersonMapper::mapToDto)
                 .collect(Collectors.toList());
 
-        this.departmentHeads = new PersonListResponse(departmentHeadsResponses);
+        this.departmentHeads = new PersonsDto(departmentHeadsResponses);
     }
 
     public String getName() {
@@ -64,19 +64,19 @@ class DepartmentDto {
         this.lastModification = lastModification;
     }
 
-    public PersonListResponse getMembers() {
+    public PersonsDto getMembers() {
         return members;
     }
 
-    public void setMembers(PersonListResponse members) {
+    public void setMembers(PersonsDto members) {
         this.members = members;
     }
 
-    public PersonListResponse getDepartmentHeads() {
+    public PersonsDto getDepartmentHeads() {
         return departmentHeads;
     }
 
-    public void setDepartmentHeads(PersonListResponse departmentHeads) {
+    public void setDepartmentHeads(PersonsDto departmentHeads) {
         this.departmentHeads = departmentHeads;
     }
 }

@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
+import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ class VacationOverviewApiControllerTest {
         dayOfMonth.setTypeOfDay(DayOfMonth.TypeOfDay.WORKDAY);
 
         final VacationOverviewDto vacationOverviewDto = new VacationOverviewDto();
-        vacationOverviewDto.setPerson(PersonResponseMapper.mapToResponse(createPerson("someOne")));
+        vacationOverviewDto.setPerson(PersonMapper.mapToDto(createPerson("someOne")));
         vacationOverviewDto.setPersonID(2);
         vacationOverviewDto.setDays(List.of(dayOfMonth));
 
