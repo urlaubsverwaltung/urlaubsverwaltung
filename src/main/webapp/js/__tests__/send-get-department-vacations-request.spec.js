@@ -51,16 +51,18 @@ describe('send-get-department-vacations-request', () => {
 
   it('renders response', async () => {
     fetchMock.mock(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`,
-      [
-        {
-          status: 'ALLOWED',
-          from: '2020-08-19',
-          to: '2020-08-21',
-          person: {
-            niceName: 'Bruce Wayne'
-          },
-        }
-      ],
+      {
+        vacations: [
+          {
+            status: 'ALLOWED',
+            from: '2020-08-19',
+            to: '2020-08-21',
+            person: {
+              niceName: 'Bruce Wayne'
+            },
+          }
+        ]
+      },
     );
 
     const div = document.createElement('div');
@@ -84,7 +86,7 @@ describe('send-get-department-vacations-request', () => {
 
   it('renders empty response', async () => {
     fetchMock.mock(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`,
-      [],
+      {vacations: []},
     );
 
     const div = document.createElement('div');
