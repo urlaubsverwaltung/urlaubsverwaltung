@@ -71,11 +71,10 @@ class VacationApiControllerTest {
             .param("to", "2016-12-31"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;"))
-            .andExpect(jsonPath("$").exists())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].from", is("2016-05-19")))
-            .andExpect(jsonPath("$[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$[0].person.firstName", is("Marlene")));
+            .andExpect(jsonPath("$.vacations", hasSize(1)))
+            .andExpect(jsonPath("$.vacations.[0].from", is("2016-05-19")))
+            .andExpect(jsonPath("$.vacations.[0].to", is("2016-05-20")))
+            .andExpect(jsonPath("$.vacations.[0].person.firstName", is("Marlene")));
     }
 
     @Test
@@ -167,11 +166,10 @@ class VacationApiControllerTest {
             .param("ofDepartmentMembers", "true"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;"))
-            .andExpect(jsonPath("$").exists())
-            .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].from", is("2016-05-19")))
-            .andExpect(jsonPath("$[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$[0].person.firstName", is("Marlene")));
+            .andExpect(jsonPath("$.vacations", hasSize(2)))
+            .andExpect(jsonPath("$.vacations.[0].from", is("2016-05-19")))
+            .andExpect(jsonPath("$.vacations.[0].to", is("2016-05-20")))
+            .andExpect(jsonPath("$.vacations.[0].person.firstName", is("Marlene")));
     }
 
     @Test
@@ -198,11 +196,10 @@ class VacationApiControllerTest {
             .param("ofDepartmentMembers", "true"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;"))
-            .andExpect(jsonPath("$").exists())
-            .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].from", is("2016-05-19")))
-            .andExpect(jsonPath("$[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$[0].person.firstName", is("Marlene")));
+            .andExpect(jsonPath("$.vacations", hasSize(2)))
+            .andExpect(jsonPath("$.vacations.[0].from", is("2016-05-19")))
+            .andExpect(jsonPath("$.vacations.[0].to", is("2016-05-20")))
+            .andExpect(jsonPath("$.vacations.[0].person.firstName", is("Marlene")));
     }
 
     @Test
