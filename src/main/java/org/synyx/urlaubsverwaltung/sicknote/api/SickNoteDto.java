@@ -10,8 +10,7 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-
-public class SickNoteResponse {
+public class SickNoteDto {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
 
@@ -22,7 +21,7 @@ public class SickNoteResponse {
     private String type;
     private String status;
 
-    public SickNoteResponse(SickNote sickNote) {
+    public SickNoteDto(SickNote sickNote) {
 
         this.from = sickNote.getStartDate().format(formatter);
         this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);
