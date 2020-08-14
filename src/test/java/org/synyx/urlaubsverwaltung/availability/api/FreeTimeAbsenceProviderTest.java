@@ -21,8 +21,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createWorkingTime;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 

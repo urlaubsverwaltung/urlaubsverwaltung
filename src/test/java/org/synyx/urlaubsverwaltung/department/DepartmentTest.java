@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;

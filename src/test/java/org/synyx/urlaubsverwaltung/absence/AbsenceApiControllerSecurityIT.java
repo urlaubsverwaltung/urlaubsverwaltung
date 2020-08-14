@@ -30,8 +30,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
 @SpringBootTest

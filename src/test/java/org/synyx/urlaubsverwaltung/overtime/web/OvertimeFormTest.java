@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.overtime.web;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
 
 
 class OvertimeFormTest {

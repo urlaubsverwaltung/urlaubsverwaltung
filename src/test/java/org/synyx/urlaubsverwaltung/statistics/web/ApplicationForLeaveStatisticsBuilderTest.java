@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -37,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.A
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationTypes;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createVacationTypes;
 
 
 @ExtendWith(MockitoExtension.class)

@@ -8,8 +8,8 @@ import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createOvertimeRecord;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createOvertimeRecord;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 
 

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.demodatacreator;
+package org.synyx.urlaubsverwaltung;
 
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;

@@ -17,7 +17,7 @@ import static java.math.BigDecimal.TEN;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
 
 @SpringBootTest
 @Transactional

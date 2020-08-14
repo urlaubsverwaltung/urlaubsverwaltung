@@ -30,7 +30,7 @@ import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.SATURDAY;
