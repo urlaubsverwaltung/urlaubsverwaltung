@@ -39,10 +39,10 @@ public class VacationOverviewService {
         this.publicHolidayService = publicHolidayService;
     }
 
-    public List<VacationOverview> getVacationOverviews(String selectedDepartment,
-                                                       Integer selectedYear,
-                                                       Integer selectedMonth) {
-        List<VacationOverview> holidayOverviewList = new ArrayList<>();
+    public List<VacationOverviewDto> getVacationOverviews(String selectedDepartment,
+                                                          Integer selectedYear,
+                                                          Integer selectedMonth) {
+        List<VacationOverviewDto> holidayOverviewList = new ArrayList<>();
 
         Department department = getDepartmentByName(selectedDepartment);
 
@@ -55,7 +55,7 @@ public class VacationOverviewService {
                 int month = selectedMonth != null ? selectedMonth : date.getMonthValue();
                 LocalDate lastDay = DateUtil.getLastDayOfMonth(year, month);
 
-                VacationOverview holidayOverview = getVacationOverview(person);
+                VacationOverviewDto holidayOverview = getVacationOverview(person);
 
                 for (int i = 1; i <= lastDay.getDayOfMonth(); i++) {
 
@@ -98,11 +98,11 @@ public class VacationOverviewService {
         return department;
     }
 
-    private VacationOverview getVacationOverview(Person person) {
-        VacationOverview vacationOverview = new VacationOverview();
-        vacationOverview.setDays(new ArrayList<>());
-        vacationOverview.setPerson(PersonResponseMapper.mapToResponse(person));
-        vacationOverview.setPersonID(person.getId());
-        return vacationOverview;
+    private VacationOverviewDto getVacationOverview(Person person) {
+        VacationOverviewDto vacationOverviewDto = new VacationOverviewDto();
+        vacationOverviewDto.setDays(new ArrayList<>());
+        vacationOverviewDto.setPerson(PersonResponseMapper.mapToResponse(person));
+        vacationOverviewDto.setPersonID(person.getId());
+        return vacationOverviewDto;
     }
 }

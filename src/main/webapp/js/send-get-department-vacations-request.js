@@ -21,7 +21,7 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
   const url = `${urlPrefix}/persons/${personId}/vacations?from=${startDateString}&to=${toDateString}&ofDepartmentMembers`;
 
   const data = await getJSON(url);
-  const vacations = data;
+  const vacations = data.vacations;
 
   const element = document.querySelector(elementSelector);
   element.innerHTML = window.uv.i18n['application.applier.applicationsOfColleagues'] + "<br />";

@@ -4,7 +4,7 @@ import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
 
 import java.util.List;
 
-public class VacationOverview {
+public class VacationOverviewDto {
 
     private PersonResponse person;
     private Integer personID;
