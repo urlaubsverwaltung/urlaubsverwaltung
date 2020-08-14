@@ -27,8 +27,8 @@ import java.util.Optional;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.absence.DayAbsence.Type.SICK_NOTE;
-import static org.synyx.urlaubsverwaltung.absence.DayAbsence.Type.VACATION;
+import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.VACATION;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -64,7 +64,7 @@ public class AbsenceApiController {
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
-    public DayAbsenceList personsVacations(
+    public DayAbsencesDto personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = EXAMPLE_YEAR)
         @RequestParam("year")
             String year,
@@ -83,7 +83,7 @@ public class AbsenceApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for ID=" + personId);
         }
 
-        final List<DayAbsence> absences = new ArrayList<>();
+        final List<DayAbsenceDto> absences = new ArrayList<>();
         final Person person = optionalPerson.get();
 
         LocalDate startDate;
@@ -96,17 +96,17 @@ public class AbsenceApiController {
         }
 
         try {
-            if (type == null || DayAbsence.Type.valueOf(type).equals(VACATION)) {
+            if (type == null || DayAbsenceDto.Type.valueOf(type).equals(VACATION)) {
                 absences.addAll(getVacations(startDate, endDate, person));
             }
-            if (type == null || DayAbsence.Type.valueOf(type).equals(SICK_NOTE)) {
+            if (type == null || DayAbsenceDto.Type.valueOf(type).equals(SICK_NOTE)) {
                 absences.addAll(getSickNotes(startDate, endDate, person));
             }
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
 
-        return new DayAbsenceList(absences);
+        return new DayAbsencesDto(absences);
     }
 
     private static LocalDate getStartDate(String year, Optional<String> optionalMonth) {
@@ -119,9 +119,9 @@ public class AbsenceApiController {
             .orElseGet(() -> getLastDayOfYear(parseInt(year)));
     }
 
-    private List<DayAbsence> getVacations(LocalDate start, LocalDate end, Person person) {
+    private List<DayAbsenceDto> getVacations(LocalDate start, LocalDate end, Person person) {
 
-        List<DayAbsence> absences = new ArrayList<>();
+        List<DayAbsenceDto> absences = new ArrayList<>();
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end,
             person)
@@ -140,7 +140,7 @@ public class AbsenceApiController {
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
-                    absences.add(new DayAbsence(day, application.getDayLength().getDuration(), application.getDayLength().toString(), VACATION,
+                    absences.add(new DayAbsenceDto(day, application.getDayLength().getDuration(), application.getDayLength().toString(), VACATION,
                         application.getStatus().name(), application.getId()));
                 }
 
@@ -151,9 +151,9 @@ public class AbsenceApiController {
         return absences;
     }
 
-    private List<DayAbsence> getSickNotes(LocalDate start, LocalDate end, Person person) {
+    private List<DayAbsenceDto> getSickNotes(LocalDate start, LocalDate end, Person person) {
 
-        final List<DayAbsence> absences = new ArrayList<>();
+        final List<DayAbsenceDto> absences = new ArrayList<>();
 
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, start, end)
             .stream()
@@ -168,7 +168,7 @@ public class AbsenceApiController {
 
             while (!day.isAfter(endDate)) {
                 if (!day.isBefore(start) && !day.isAfter(end)) {
-                    absences.add(new DayAbsence(day, sickNote.getDayLength().getDuration(),
+                    absences.add(new DayAbsenceDto(day, sickNote.getDayLength().getDuration(),
                         sickNote.getDayLength().toString(), SICK_NOTE, "ACTIVE",
                         sickNote.getId()));
                 }
