@@ -241,7 +241,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    void getVacationsOfDepartmentMembersWithBasicAuthIsOk() throws Exception {
+    void getVacationsOfDepartmentMembersWithOfficeUserIsOk() throws Exception {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
 
