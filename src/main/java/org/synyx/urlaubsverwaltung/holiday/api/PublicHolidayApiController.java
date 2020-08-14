@@ -58,7 +58,7 @@ public class PublicHolidayApiController {
     )
     @GetMapping("/holidays")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public List<PublicHolidayResponse> getPublicHolidays(
+    public PublicHolidaysDto getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = EXAMPLE_YEAR)
         @RequestParam("year")
             String year,
@@ -78,18 +78,20 @@ public class PublicHolidayApiController {
         final FederalState federalState = getFederalState(year, optionalMonth, optionalPerson);
 
         try {
-            return getHolidays(year, optionalMonth, federalState).stream()
+            final List<PublicHolidayDto> publicHolidays = getHolidays(year, optionalMonth, federalState).stream()
                 .map(holiday -> this.mapPublicHolidayToDto(holiday, federalState))
                 .collect(toList());
+
+            return new PublicHolidaysDto(publicHolidays);
         } catch (NumberFormatException e) {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
 
-    private PublicHolidayResponse mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {
+    private PublicHolidayDto mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {
         final BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(holiday.getDate(), federalState);
         final DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(holiday.getDate(), federalState);
-        return new PublicHolidayResponse(holiday, workingDuration, absenceType.name());
+        return new PublicHolidayDto(holiday, workingDuration, absenceType.name());
     }
 
     private FederalState getFederalState(String year, Optional<String> optionalMonth, Optional<Person> optionalPerson) {
