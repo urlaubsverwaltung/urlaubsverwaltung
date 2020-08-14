@@ -86,7 +86,7 @@ class LdapPersonContextMapperTest {
     }
 
     @Test
-    void ensureCreatesPersonIfPersonDoesNotExist() throws UnsupportedMemberAffiliationException {
+    void ensurecreatePersonIfPersonDoesNotExist() throws UnsupportedMemberAffiliationException {
 
         when(context.getDn()).thenReturn(mock(Name.class));
         when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
@@ -139,7 +139,7 @@ class LdapPersonContextMapperTest {
         when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser(userIdentifier, null, null, null, List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
 
-        final Person person = createPerson(userIdentifier);
+        final Person person = createPerson();
         when(personService.create("mgroehning", null, null, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
@@ -184,7 +184,7 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
-        final Person person = createPerson("username");
+        final Person person = createPerson();
         person.setPermissions(List.of(USER, BOSS));
 
         when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", null, null, null, List.of()));
@@ -204,7 +204,7 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
-        final Person person = createPerson("username");
+        final Person person = createPerson();
         person.setPermissions(List.of(USER));
 
         when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", null, null, null, List.of()));

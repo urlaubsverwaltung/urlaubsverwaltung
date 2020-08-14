@@ -48,13 +48,8 @@ public final class DemoDataCreator {
         return DemoDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
     }
 
-    public static Person createPerson(String username) {
-        final String name = capitalize(username);
-        return DemoDataCreator.createPerson(username, name, name, username + "@test.de");
-    }
-
     public static Person createPerson(Integer id, String username) {
-        final Person person = DemoDataCreator.createPerson(username);
+        final Person person = DemoDataCreator.createPerson();
         person.setId(id);
         return person;
     }

@@ -55,7 +55,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureReturnsAbsencesOfPerson() throws Exception {
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/absences")
@@ -75,7 +75,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfVacationAndSickNotes() throws Exception {
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
             LocalDate.of(2016, 5, 20), DayLength.FULL);
         sickNote.setId(1);
@@ -109,7 +109,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureTypeFilterIsWorking() throws Exception {
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
             LocalDate.of(2016, 4, 6), DayLength.FULL);
 
@@ -127,7 +127,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureMonthFilterIsWorking() throws Exception {
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         final Application vacation = createApplication(person, LocalDate.of(2016, 5, 30),
             LocalDate.of(2016, 6, 1), DayLength.FULL);
         final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 6, 30),
@@ -157,7 +157,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureBadRequestForInvalidYearParameter() throws Exception {
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/absences")
@@ -168,7 +168,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureBadRequestForInvalidMonthParameter() throws Exception {
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/absences")
@@ -180,7 +180,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureBadRequestForOtherInvalidMonthParameter() throws Exception {
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/absences")

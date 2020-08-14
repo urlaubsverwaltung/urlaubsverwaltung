@@ -32,7 +32,7 @@ class AccountRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintOfPersonAndValidFrom() {
 
-        final Person person = createPerson("test user");
+        final Person person = createPerson();
         final Person savedPerson = personService.save(person);
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);

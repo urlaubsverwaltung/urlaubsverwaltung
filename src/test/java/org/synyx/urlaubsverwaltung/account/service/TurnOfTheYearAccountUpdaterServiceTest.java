@@ -52,9 +52,9 @@ class TurnOfTheYearAccountUpdaterServiceTest {
     @Test
     void ensureUpdatesHolidaysAccountsOfAllActivePersons() {
 
-        Person user1 = createPerson("rick");
-        Person user2 = createPerson("carl");
-        Person user3 = createPerson("shane");
+        Person user1 = createPerson();
+        Person user2 = createPerson();
+        Person user3 = createPerson();
 
         Account account1 = createHolidaysAccount(user1, LAST_YEAR);
         Account account2 = createHolidaysAccount(user2, LAST_YEAR);

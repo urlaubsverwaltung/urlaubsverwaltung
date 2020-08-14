@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -28,9 +28,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.DemoDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceImplTest {
@@ -156,12 +157,12 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         Person secondDepartmentHead = mock(Person.class);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = DemoDataCreator.createPerson();
+        Person admin2 = DemoDataCreator.createPerson();
 
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
-        Person marketing2 = DemoDataCreator.createPerson("marketing2");
-        Person marketing3 = DemoDataCreator.createPerson("marketing3");
+        Person marketing1 = DemoDataCreator.createPerson();
+        Person marketing2 = DemoDataCreator.createPerson();
+        Person marketing3 = DemoDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead, secondDepartmentHead));
@@ -195,8 +196,8 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = DemoDataCreator.createPerson();
+        Person admin2 = DemoDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
@@ -213,13 +214,13 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = DemoDataCreator.createPerson();
+        Person admin2 = DemoDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
 
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
+        Person marketing1 = DemoDataCreator.createPerson();
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
 
@@ -234,14 +235,11 @@ class DepartmentServiceImplTest {
         Person noDepartmentHead = mock(Person.class);
         when(noDepartmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(false);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = DemoDataCreator.createPerson();
+        Person admin2 = DemoDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, noDepartmentHead));
-
-        when(departmentRepository.getManagedDepartments(noDepartmentHead))
-            .thenReturn(singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(noDepartmentHead, admin1);
         assertThat(isDepartmentHead).isFalse();
@@ -270,12 +268,12 @@ class DepartmentServiceImplTest {
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = DemoDataCreator.createPerson();
+        Person admin2 = DemoDataCreator.createPerson();
 
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
-        Person marketing2 = DemoDataCreator.createPerson("marketing2");
-        Person marketing3 = DemoDataCreator.createPerson("marketing3");
+        Person marketing1 = DemoDataCreator.createPerson();
+        Person marketing2 = DemoDataCreator.createPerson();
+        Person marketing3 = DemoDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, person));
@@ -318,8 +316,8 @@ class DepartmentServiceImplTest {
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
+        Person admin1 = new Person("shane", "shane", "shane", "shane@example.org");
+        Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, person));
@@ -328,14 +326,14 @@ class DepartmentServiceImplTest {
         marketing.setMembers(asList(marketing1, person));
 
         Application waitingApplication = mock(Application.class);
-        when(waitingApplication.hasStatus(WAITING)).thenReturn(true);
+        when(waitingApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(true);
         when(waitingApplication.hasStatus(ALLOWED)).thenReturn(false);
 
         Application allowedApplication = mock(Application.class);
-        when(allowedApplication.hasStatus(WAITING)).thenReturn(false);
         when(allowedApplication.hasStatus(ALLOWED)).thenReturn(true);
 
         Application otherApplication = mock(Application.class);
+        when(otherApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(false);
         when(otherApplication.hasStatus(WAITING)).thenReturn(false);
         when(otherApplication.hasStatus(ALLOWED)).thenReturn(false);
 
@@ -352,7 +350,8 @@ class DepartmentServiceImplTest {
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
         assertThat(applications)
             .hasSize(2)
-            .contains(waitingApplication, allowedApplication, otherApplication);
+            .contains(waitingApplication, allowedApplication)
+            .doesNotContain(otherApplication);
     }
 
     @Test
@@ -381,7 +380,6 @@ class DepartmentServiceImplTest {
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
         assertThat(isAllowed).isTrue();
     }
-
 
     @Test
     void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() {
@@ -469,11 +467,6 @@ class DepartmentServiceImplTest {
 
         Person user = DemoDataCreator.createPerson(42, "user");
         user.setPermissions(singletonList(Role.USER));
-
-        Department dep = createDepartment("dep");
-        dep.setMembers(asList(person, user));
-        when(departmentRepository.getManagedDepartments(user))
-            .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, person);
         assertThat(isAllowed).isFalse();

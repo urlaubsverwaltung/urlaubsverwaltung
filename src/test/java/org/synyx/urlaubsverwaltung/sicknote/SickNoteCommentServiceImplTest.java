@@ -39,7 +39,7 @@ class SickNoteCommentServiceImplTest {
 
         when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        final Person author = createPerson("author");
+        final Person author = createPerson();
         final SickNote sickNote = createSickNote(author);
 
         final SickNoteComment comment = sut.create(sickNote, EDITED, author);
@@ -62,7 +62,7 @@ class SickNoteCommentServiceImplTest {
         when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final String givenComment = "Foo";
-        final Person givenAuthor = createPerson("author");
+        final Person givenAuthor = createPerson();
         final SickNote givenSickNote = createSickNote(givenAuthor);
 
         final SickNoteComment sickNoteComment = sut.create(givenSickNote, CONVERTED_TO_VACATION, givenAuthor, givenComment);

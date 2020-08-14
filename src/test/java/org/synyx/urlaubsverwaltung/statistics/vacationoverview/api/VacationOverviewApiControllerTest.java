@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 
 import java.util.List;
@@ -19,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
 
 @ExtendWith(MockitoExtension.class)
 class VacationOverviewApiControllerTest {
@@ -42,8 +42,9 @@ class VacationOverviewApiControllerTest {
         dayOfMonth.setDayText("Monday");
         dayOfMonth.setTypeOfDay(DayOfMonth.TypeOfDay.WORKDAY);
 
+        final Person person = new Person("shane", "shane", "shane", "shane@example.org");
         final VacationOverviewDto vacationOverviewDto = new VacationOverviewDto();
-        vacationOverviewDto.setPerson(PersonMapper.mapToDto(createPerson("someOne")));
+        vacationOverviewDto.setPerson(PersonMapper.mapToDto(person));
         vacationOverviewDto.setPersonID(2);
         vacationOverviewDto.setDays(List.of(dayOfMonth));
 
@@ -55,7 +56,7 @@ class VacationOverviewApiControllerTest {
             .param("selectedMonth", "1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.overviews[0].person.firstName", is("SomeOne")))
+            .andExpect(jsonPath("$.overviews[0].person.firstName", is("shane")))
             .andExpect(jsonPath("$.overviews[0].personID", is(2)))
             .andExpect(jsonPath("$.overviews[0].days[0].dayNumber", is(1)))
             .andExpect(jsonPath("$.overviews[0].days[0].dayText", is("Monday")))

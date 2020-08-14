@@ -89,7 +89,7 @@ class PersonManagementViewControllerTest {
     }
 
     @Test
-    void newPersonCreatesPersonCorrectly() throws Exception {
+    void newPersoncreatePersonCorrectly() throws Exception {
 
         personConfigurationProperties.setCanBeManipulated(true);
 

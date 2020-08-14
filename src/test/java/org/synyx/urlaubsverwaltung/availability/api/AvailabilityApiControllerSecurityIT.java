@@ -120,7 +120,7 @@ class AvailabilityApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "OFFICE")
     void getAvailabilitiesHasOfficeRole() throws Exception {
 
-        final Person testPerson = createPerson("testPerson");
+        final Person testPerson = createPerson();
         when(personService.getPersonByID(5)).thenReturn(Optional.of(testPerson));
         when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityListDto(emptyList(), testPerson.getId()));
 

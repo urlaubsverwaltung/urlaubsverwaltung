@@ -176,7 +176,7 @@ class WorkDayApiControllerTest {
     @Test
     void ensureBadRequestForInvalidLengthParameter() throws Exception {
 
-        final Person person = createPerson("muster");
+        final Person person = createPerson();
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/workdays")

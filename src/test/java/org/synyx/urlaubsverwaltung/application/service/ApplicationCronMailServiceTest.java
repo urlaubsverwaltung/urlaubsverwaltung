@@ -51,21 +51,21 @@ class ApplicationCronMailServiceTest {
 
         final VacationType vacationType = createVacationType(HOLIDAY);
 
-        final Application shortWaitingApplication = createApplication(createPerson("leo"), vacationType);
+        final Application shortWaitingApplication = createApplication(createPerson(), vacationType);
         shortWaitingApplication.setApplicationDate(LocalDate.now(UTC));
 
-        final Application longWaitingApplicationA = createApplication(createPerson("lea"), vacationType);
+        final Application longWaitingApplicationA = createApplication(createPerson(), vacationType);
         longWaitingApplicationA.setApplicationDate(LocalDate.now(UTC).minusDays(3));
 
-        final Application longWaitingApplicationB = createApplication(createPerson("heinz"), vacationType);
+        final Application longWaitingApplicationB = createApplication(createPerson(), vacationType);
         longWaitingApplicationB.setApplicationDate(LocalDate.now(UTC).minusDays(3));
 
-        final Application longWaitingApplicationAlreadyRemindedToday = createApplication(createPerson("heinz"), vacationType);
+        final Application longWaitingApplicationAlreadyRemindedToday = createApplication(createPerson(), vacationType);
         longWaitingApplicationAlreadyRemindedToday.setApplicationDate(LocalDate.now(UTC).minusDays(3));
         LocalDate today = LocalDate.now(UTC);
         longWaitingApplicationAlreadyRemindedToday.setRemindDate(today);
 
-        final Application longWaitingApplicationAlreadyRemindedEarlier = createApplication(createPerson("heinz"), vacationType);
+        final Application longWaitingApplicationAlreadyRemindedEarlier = createApplication(createPerson(), vacationType);
         longWaitingApplicationAlreadyRemindedEarlier.setApplicationDate(LocalDate.now(UTC).minusDays(5));
         LocalDate oldRemindDateEarlier = LocalDate.now(UTC).minusDays(3);
         longWaitingApplicationAlreadyRemindedEarlier.setRemindDate(oldRemindDateEarlier);

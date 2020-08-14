@@ -597,9 +597,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
 
         // PERSONs
-        final Person personDepartmentA = createPerson("personDepartmentA");
-        final Person personDepartmentB = createPerson("personDepartmentB");
-        final Person personDepartmentC = createPerson("personDepartmentC");
+        final Person personDepartmentA = createPerson();
+        final Person personDepartmentB = createPerson();
+        final Person personDepartmentC = createPerson();
 
         // APPLICATIONs
         final Application applicationA = createApplication(personDepartmentA);

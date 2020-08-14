@@ -63,7 +63,7 @@ class ApplicationForLeaveFormTest {
         final VacationType overtime = DemoDataCreator.createVacationType(VacationCategory.OVERTIME);
 
         final Person person = DemoDataCreator.createPerson();
-        final Person holidayReplacement = DemoDataCreator.createPerson("vertretung");
+        final Person holidayReplacement = DemoDataCreator.createPerson();
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setPerson(person);

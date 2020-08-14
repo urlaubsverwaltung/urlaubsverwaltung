@@ -120,12 +120,12 @@ class DepartmentValidatorTest {
 
     @Test
     void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingThePersonAsMember() {
-        Person person = DemoDataCreator.createPerson("muster");
+        Person person = DemoDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
         Department department = createDepartment("Admins");
         department.setDepartmentHeads(Collections.singletonList(person));
-        department.setMembers(Collections.singletonList(DemoDataCreator.createPerson("member")));
+        department.setMembers(Collections.singletonList(DemoDataCreator.createPerson()));
 
         sut.validate(department, errors);
         verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");

@@ -34,45 +34,45 @@ class PersonApiControllerTest {
     @Test
     void ensureReturnsAllActivePersons() throws Exception {
 
-        final Person person1 = createPerson("foo");
-        person1.setId(1);
-        final Person person2 = createPerson("bar");
-        person2.setId(2);
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setId(1);
+        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        carl.setId(2);
 
-        when(personService.getActivePersons()).thenReturn(List.of(person1, person2));
+        when(personService.getActivePersons()).thenReturn(List.of(shane, carl));
 
         perform(get("/api/persons"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$.[0].firstName", is("Foo")))
+            .andExpect(jsonPath("$.[0].firstName", is("shane")))
             .andExpect(jsonPath("$.[0].links..rel", hasItem("self")))
             .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1"))))
             .andExpect(jsonPath("$.[0].links..rel", hasItem("availabilities")))
             .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[0].email", is("foo@test.de")))
-            .andExpect(jsonPath("$.[1].lastName", is("Bar")))
+            .andExpect(jsonPath("$.[0].email", is("shane@example.org")))
+            .andExpect(jsonPath("$.[1].lastName", is("carl")))
             .andReturn();
     }
 
     @Test
     void ensureReturnSpecificPerson() throws Exception {
 
-        final Person person1 = createPerson("foo");
-        person1.setId(42);
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setId(1);
 
-        when(personService.getPersonByID(person1.getId())).thenReturn(Optional.of(person1));
+        when(personService.getPersonByID(shane.getId())).thenReturn(Optional.of(shane));
 
-        perform(get("/api/persons/42"))
+        perform(get("/api/persons/1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.firstName", is("Foo")))
-            .andExpect(jsonPath("$.lastName", is("Foo")))
-            .andExpect(jsonPath("$.email", is("foo@test.de")))
+            .andExpect(jsonPath("$.firstName", is("shane")))
+            .andExpect(jsonPath("$.lastName", is("shane")))
+            .andExpect(jsonPath("$.email", is("shane@example.org")))
             .andExpect(jsonPath("$.links..rel", hasItem("self")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42"))))
+            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1"))))
             .andExpect(jsonPath("$.links..rel", hasItem("availabilities")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42/availabilities?from={from}&to={to}"))));
+            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

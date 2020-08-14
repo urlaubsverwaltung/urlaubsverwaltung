@@ -78,10 +78,10 @@ class SickNoteApiControllerTest {
     @Test
     void ensureCorrectConversionOfSickNotes() throws Exception {
 
-        SickNote sickNote1 = createSickNote(createPerson("foo"),
+        SickNote sickNote1 = createSickNote(createPerson(),
             LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
-        SickNote sickNote2 = createSickNote(createPerson("bar"));
-        SickNote sickNote3 = createSickNote(createPerson("baz"));
+        SickNote sickNote2 = createSickNote(createPerson());
+        SickNote sickNote3 = createSickNote(createPerson());
 
         when(sickNoteService.getByPeriod(any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Arrays.asList(sickNote1, sickNote2, sickNote3));

@@ -42,7 +42,7 @@ class LdapUserDataImporterTest {
     }
 
     @Test
-    void ensureCreatesPersonIfLdapUserNotYetExists() {
+    void ensurecreatePersonIfLdapUserNotYetExists() {
 
         final LdapUser ldapUser = new LdapUser("muster", null, null, null, List.of());
         when(personService.getPersonByUsername(ldapUser.getUsername())).thenReturn(Optional.empty());
