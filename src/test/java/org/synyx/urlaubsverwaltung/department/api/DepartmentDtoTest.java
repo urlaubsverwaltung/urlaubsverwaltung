@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DepartmentResponseTest {
+class DepartmentDtoTest {
 
     private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -41,7 +41,7 @@ class DepartmentResponseTest {
         departmentHeads.add(person("departmentHead2", "departmentheadNina@net.com", "Nina", "Link"));
         department.setDepartmentHeads(departmentHeads);
 
-        DepartmentResponse sut = new DepartmentResponse(department);
+        DepartmentDto sut = new DepartmentDto(department);
 
         assertThat(sut.getName()).isEqualTo(expectedName);
         assertThat(sut.getDescription()).isEqualTo(expectedDescription);

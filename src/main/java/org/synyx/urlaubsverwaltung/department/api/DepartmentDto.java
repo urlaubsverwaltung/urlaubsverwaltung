@@ -11,8 +11,7 @@ import java.util.stream.Collectors;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 
-
-class DepartmentResponse {
+class DepartmentDto {
 
     private String name;
     private String description;
@@ -20,7 +19,7 @@ class DepartmentResponse {
     private PersonListResponse members;
     private PersonListResponse departmentHeads;
 
-    DepartmentResponse(Department department) {
+    DepartmentDto(Department department) {
 
         this.name = department.getName();
         this.description = department.getDescription();
