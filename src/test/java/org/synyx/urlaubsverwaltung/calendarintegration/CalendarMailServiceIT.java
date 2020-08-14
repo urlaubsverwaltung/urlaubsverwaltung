@@ -1,13 +1,11 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -26,13 +24,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-public class CalendarMailServiceIT extends TestContainersBase {
+class CalendarMailServiceIT extends TestContainersBase {
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    @RegisterExtension
+    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private CalendarMailService sut;
@@ -41,7 +38,7 @@ public class CalendarMailServiceIT extends TestContainersBase {
     private MailProperties mailProperties;
 
     @Test
-    public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
+    void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
@@ -67,7 +64,7 @@ public class CalendarMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
+    void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
         IOException {
 
         final Person person = new Person();
@@ -95,7 +92,7 @@ public class CalendarMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
+    void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
         IOException {
 
         sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");

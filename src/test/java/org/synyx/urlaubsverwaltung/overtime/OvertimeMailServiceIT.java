@@ -1,13 +1,11 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -26,13 +24,12 @@ import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-public class OvertimeMailServiceIT extends TestContainersBase {
+class OvertimeMailServiceIT extends TestContainersBase {
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    @RegisterExtension
+    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private OvertimeMailService sut;
@@ -41,7 +38,7 @@ public class OvertimeMailServiceIT extends TestContainersBase {
     private PersonService personService;
 
     @Test
-    public void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
+    void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen12@example.org");
         final Overtime overtimeRecord = createOvertimeRecord(person);
