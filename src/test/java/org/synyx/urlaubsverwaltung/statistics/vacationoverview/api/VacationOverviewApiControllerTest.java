@@ -55,11 +55,11 @@ class VacationOverviewApiControllerTest {
             .param("selectedMonth", "1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$[0].person.firstName", is("SomeOne")))
-            .andExpect(jsonPath("$[0].personID", is(2)))
-            .andExpect(jsonPath("$[0].days[0].dayNumber", is(1)))
-            .andExpect(jsonPath("$[0].days[0].dayText", is("Monday")))
-            .andExpect(jsonPath("$[0].days[0].typeOfDay", is("WORKDAY")));
+            .andExpect(jsonPath("$.list[0].person.firstName", is("SomeOne")))
+            .andExpect(jsonPath("$.list[0].personID", is(2)))
+            .andExpect(jsonPath("$.list[0].days[0].dayNumber", is(1)))
+            .andExpect(jsonPath("$.list[0].days[0].dayText", is("Monday")))
+            .andExpect(jsonPath("$.list[0].days[0].typeOfDay", is("WORKDAY")));
     }
 
     @Test
@@ -73,7 +73,7 @@ class VacationOverviewApiControllerTest {
             .param("selectedMonth", "1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$").isEmpty());
+            .andExpect(jsonPath("$.list").isEmpty());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

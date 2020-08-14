@@ -33,9 +33,10 @@ $(function () {
         xhttp.open("GET", url, false);
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send();
-        const overViewList = JSON.parse(xhttp.responseText);
-        if (overViewList) {
+        const holyDayOverviewResponse = JSON.parse(xhttp.responseText);
+        if (holyDayOverviewResponse) {
 
+          const overViewList = holyDayOverviewResponse.list;
           overViewList
             .forEach(function (listItem) {
               const personId = listItem.personID;
