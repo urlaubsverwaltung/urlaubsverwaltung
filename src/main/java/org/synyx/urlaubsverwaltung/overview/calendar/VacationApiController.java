@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
