@@ -124,12 +124,8 @@ public class VacationApiController {
     }
 
     private Person getPerson(Integer personId) {
-        final Optional<Person> maybePerson;
-        maybePerson = personService.getPersonByID(personId);
-        if (maybePerson.isEmpty()) {
-            throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
-        }
-        return maybePerson.get();
+        return personService.getPersonByID(personId)
+            .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId));
     }
 
     private List<VacationResponse> mapToVacationResponse(List<Application> applications) {
