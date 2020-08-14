@@ -62,7 +62,7 @@ public class WorkDayApiController {
     )
     @GetMapping("/workdays")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public WorkDayResponse workDays(
+    public WorkDayDto workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
@@ -101,6 +101,6 @@ public class WorkDayApiController {
             throw new ResponseStatusException(NO_CONTENT, e.getMessage());
         }
 
-        return new WorkDayResponse(days.toString());
+        return new WorkDayDto(days.toString());
     }
 }
