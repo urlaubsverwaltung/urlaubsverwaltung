@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,14 +19,11 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -53,17 +52,17 @@ public class SickNoteApiController {
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public List<SickNoteResponse> sickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
-        @RequestParam(value = "from")
-            String from,
+        @RequestParam("from")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate startDate,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
-        @RequestParam(value = "to")
-            String to,
+        @RequestParam("to")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate endDate,
         @ApiParam(value = "ID of the person")
         @RequestParam(value = "person", required = false)
             Integer personId) {
 
-        final LocalDate startDate = parseDate(from);
-        final LocalDate endDate = parseDate(to);
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
@@ -81,15 +80,5 @@ public class SickNoteApiController {
             .filter(SickNote::isActive)
             .map(SickNoteResponse::new)
             .collect(toList());
-    }
-
-    private LocalDate parseDate(String date) {
-        final LocalDate localDate;
-        try {
-            localDate = LocalDate.parse(date, ofPattern(DATE_PATTERN));
-        } catch (DateTimeParseException exception) {
-            throw new ResponseStatusException(BAD_REQUEST, "The value '" + date + "' has the wrong format");
-        }
-        return localDate;
     }
 }
