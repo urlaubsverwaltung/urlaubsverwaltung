@@ -1,6 +1,6 @@
 // disabling date-fns#format is ok since we're formatting dates for api requests
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
-import { isAfter, format } from 'date-fns'
+import { isAfter, format, parseISO } from 'date-fns'
 import { getJSON } from "../js/fetch"
 
 export default async function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, elementSelector) {
@@ -33,8 +33,8 @@ export default async function sendGetDepartmentVacationsRequest(urlPrefix, start
 }
 
 function createHtmlForVacation(vacation) {
-  const startDate = format(Date.parse(vacation.from), "dd.MM.yyyy");
-  const endDate = format(Date.parse(vacation.to), "dd.MM.yyyy");
+  const startDate = format(parseISO(vacation.from), "dd.MM.yyyy");
+  const endDate = format(parseISO(vacation.to), "dd.MM.yyyy");
   const person = vacation.person.niceName;
 
   let html = `${person}: ${startDate} - ${endDate}`;
