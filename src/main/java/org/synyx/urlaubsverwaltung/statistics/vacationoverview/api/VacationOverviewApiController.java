@@ -13,10 +13,14 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.util.List;
 
+/**
+ * @deprecated historically used by the vacation overview which has been implemented with client side rendering. meanwhile server side rending is used which makes this API obsolete.
+ */
 @RestControllerAdviceMarker
 @Api("VacationOverview: Get Vacation-Overview Metadata")
 @RestController("restApiVacationOverview")
 @RequestMapping("/api")
+@Deprecated(since = "4.0.0", forRemoval = true)
 public class VacationOverviewApiController {
 
     private final VacationOverviewService vacationOverviewService;

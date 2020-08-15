@@ -4,6 +4,10 @@ import org.synyx.urlaubsverwaltung.person.api.PersonDto;
 
 import java.util.List;
 
+/**
+ * @deprecated this class has been used for the client side rendered vacation overview which is obsolete now.
+ */
+@Deprecated(since = "4.0.0", forRemoval = true)
 public class VacationOverviewDto {
 
     private PersonDto person;
