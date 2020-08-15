@@ -115,6 +115,10 @@
   font-weight: normal;
 }
 
+.vacationOverview-table td {
+  text-align: center;
+}
+
 .vacationOverview-table thead th {
   padding: 8px;
   cursor: default !important; /* override $.tablesorter */

@@ -161,7 +161,19 @@
                                                 ${(absence.type eq 'activeSickNoteMorning') ? ' vacationOverview-day-sick-note-half-day-morning' : ''}
                                                 ${(absence.type eq 'activeSickNoteNoon') ? ' vacationOverview-day-sick-note-half-day-noon' : ''}
                                                 ${(absence.weekend) ? ' vacationOverview-day-weekend' : ''}"
-                                        ></td>
+                                        >
+                                            <span>
+                                                <c:out value="${(absence.type eq 'waitingVacationFull') ? 'uw' : ''}
+                                                    ${(absence.type eq 'waitingVacationMorning') ? ' umw' : ''}
+                                                    ${(absence.type eq 'waitingVacationNoon') ? 'unw' : ''}
+                                                    ${(absence.type eq 'allowedVacationFull') ? 'u' : ''}
+                                                    ${(absence.type eq 'allowedVacationMorning') ? 'um' : ''}
+                                                    ${(absence.type eq 'allowedVacationNoon') ? 'un' : ''}
+                                                    ${(absence.type eq 'activeSickNoteFull') ? 'k' : ''}
+                                                    ${(absence.type eq 'activeSickNoteMorning') ? 'km' : ''}
+                                                    ${(absence.type eq 'activeSickNoteNoon') ? 'kn' : ''}" />
+                                            </span>
+                                        </td>
                                     </c:forEach>
                                 </tr>
                                 </c:forEach>
