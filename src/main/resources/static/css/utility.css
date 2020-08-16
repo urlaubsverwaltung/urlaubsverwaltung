@@ -180,6 +180,15 @@
 .mb-16 { margin-bottom: 64px !important; }
 .mb-20 { margin-bottom: 80px !important; }
 
+.-mb-1 { margin-bottom: -4px !important; }
+.-mb-2 { margin-bottom: -8px !important; }
+.-mb-3 { margin-bottom: -12px !important; }
+.-mb-4 { margin-bottom: -16px !important; }
+.-mb-5 { margin-bottom: -20px !important; }
+.-mb-6 { margin-bottom: -24px !important; }
+.-mb-7 { margin-bottom: -28px !important; }
+.-mb-8 { margin-bottom: -32px !important; }
+
 .text-xs { font-size: 12px !important; }
 .text-sm { font-size: 14px !important; }
 .text-base { font-size: 16px !important; }
@@ -310,4 +319,235 @@
   .xl\:flex { display: flex !important; }
   .xl\:flex-row { flex-direction: row !important; }
   .xl\:flex-col { flex-direction: column !important; }
+}
+
+@media print {
+  .p-0 { padding: 0 !important; }
+  .p-1 { padding: 3pt !important; }
+  .p-2 { padding: 6pt !important; }
+  .p-3 { padding: 9pt !important; }
+  .p-4 { padding: 12pt !important; }
+  .p-5 { padding: 15pt !important; }
+  .p-6 { padding: 18pt !important; }
+  .p-7 { padding: 21pt !important; }
+  .p-8 { padding: 24pt !important; }
+  .p-9 { padding: 27pt !important; }
+  .p-10 { padding: 30pt !important; }
+  .p-11 { padding: 33pt !important; }
+  .p-12 { padding: 36pt !important; }
+
+  .px-0 { padding-left: 0 !important; padding-right: 0 !important; }
+  .px-1 { padding-left: 3pt !important; padding-right: 3pt !important; }
+  .px-2 { padding-left: 6pt !important; padding-right: 6pt !important; }
+  .px-3 { padding-left: 9pt !important; padding-right: 9pt !important; }
+  .px-4 { padding-left: 12pt !important; padding-right: 12pt !important; }
+  .px-5 { padding-left: 15pt !important; padding-right: 15pt !important; }
+  .px-6 { padding-left: 18pt !important; padding-right: 18pt !important; }
+  .px-7 { padding-left: 21pt !important; padding-right: 21pt !important; }
+  .px-8 { padding-left: 24pt !important; padding-right: 24pt !important; }
+  .px-9 { padding-left: 27pt !important; padding-right: 27pt !important; }
+  .px-10 { padding-left: 30pt !important; padding-right: 30pt !important; }
+  .px-11 { padding-left: 33pt !important; padding-right: 33pt !important; }
+  .px-12 { padding-left: 36pt !important; padding-right: 36pt !important; }
+
+  .py-0 { padding-top: 0 !important; padding-bottom: 0 !important; }
+  .py-1 { padding-top: 3pt !important; padding-bottom: 3pt !important; }
+  .py-2 { padding-top: 6pt !important; padding-bottom: 6pt !important; }
+  .py-3 { padding-top: 9pt !important; padding-bottom: 9pt !important; }
+  .py-4 { padding-top: 12pt !important; padding-bottom: 12pt !important; }
+  .py-5 { padding-top: 15pt !important; padding-bottom: 15pt !important; }
+  .py-6 { padding-top: 18pt !important; padding-bottom: 18pt !important; }
+  .py-7 { padding-top: 21pt !important; padding-bottom: 21pt !important; }
+  .py-8 { padding-top: 24pt !important; padding-bottom: 24pt !important; }
+  .py-9 { padding-top: 27pt !important; padding-bottom: 27pt !important; }
+  .py-10 { padding-top: 30pt !important; padding-bottom: 30pt !important; }
+  .py-11 { padding-top: 33pt !important; padding-bottom: 33pt !important; }
+  .py-12 { padding-top: 36pt !important; padding-bottom: 36pt !important; }
+
+  .pl-0 { padding-left: 0 !important; }
+  .pl-1 { padding-left: 3pt !important; }
+  .pl-2 { padding-left: 6pt !important; }
+  .pl-3 { padding-left: 9pt !important; }
+  .pl-4 { padding-left: 12pt !important; }
+  .pl-5 { padding-left: 15pt !important; }
+  .pl-6 { padding-left: 18pt !important; }
+  .pl-7 { padding-left: 21pt !important; }
+  .pl-8 { padding-left: 24pt !important; }
+  .pl-9 { padding-left: 27pt !important; }
+  .pl-10 { padding-left: 30pt !important; }
+  .pl-11 { padding-left: 33pt !important; }
+  .pl-12 { padding-left: 36pt !important; }
+
+  .pr-0 { padding-right: 0 !important; }
+  .pr-1 { padding-right: 3pt !important; }
+  .pr-2 { padding-right: 6pt !important; }
+  .pr-3 { padding-right: 9pt !important; }
+  .pr-4 { padding-right: 12pt !important; }
+  .pr-5 { padding-right: 15pt !important; }
+  .pr-6 { padding-right: 18pt !important; }
+  .pr-7 { padding-right: 21pt !important; }
+  .pr-8 { padding-right: 24pt !important; }
+  .pr-9 { padding-right: 27pt !important; }
+  .pr-10 { padding-right: 30pt !important; }
+  .pr-11 { padding-right: 33pt !important; }
+  .pr-12 { padding-right: 36pt !important; }
+
+  .pt-0 { padding-top: 0 !important; }
+  .pt-1 { padding-top: 3pt !important; }
+  .pt-2 { padding-top: 6pt !important; }
+  .pt-3 { padding-top: 9pt !important; }
+  .pt-4 { padding-top: 12pt !important; }
+  .pt-5 { padding-top: 15pt !important; }
+  .pt-6 { padding-top: 18pt !important; }
+  .pt-7 { padding-top: 21pt !important; }
+  .pt-8 { padding-top: 24pt !important; }
+  .pt-9 { padding-top: 27pt !important; }
+  .pt-10 { padding-top: 30pt !important; }
+  .pt-11 { padding-top: 33pt !important; }
+  .pt-12 { padding-top: 36pt !important; }
+
+  .pb-0 { padding-bottom: 0 !important; }
+  .pb-1 { padding-bottom: 3pt !important; }
+  .pb-2 { padding-bottom: 6pt !important; }
+  .pb-3 { padding-bottom: 9pt !important; }
+  .pb-4 { padding-bottom: 12pt !important; }
+  .pb-5 { padding-bottom: 15pt !important; }
+  .pb-6 { padding-bottom: 18pt !important; }
+  .pb-7 { padding-bottom: 21pt !important; }
+  .pb-8 { padding-bottom: 24pt !important; }
+  .pb-9 { padding-bottom: 27pt !important; }
+  .pb-10 { padding-bottom: 30pt !important; }
+  .pb-11 { padding-bottom: 33pt !important; }
+  .pb-12 { padding-bottom: 36pt !important; }
+
+  .m-0 { margin: 0 !important; }
+  .m-1 { margin: 3pt !important; }
+  .m-2 { margin: 6pt !important; }
+  .m-3 { margin: 9pt !important; }
+  .m-4 { margin: 12pt !important; }
+  .m-5 { margin: 15pt !important; }
+  .m-6 { margin: 18pt !important; }
+  .m-7 { margin: 21pt !important; }
+  .m-8 { margin: 24pt !important; }
+  .m-9 { margin: 27pt !important; }
+  .m-10 { margin: 30pt !important; }
+  .m-11 { margin: 33pt !important; }
+  .m-12 { margin: 36pt !important; }
+
+  .mx-0 { margin-left: 0 !important; margin-right: 0 !important; }
+  .mx-1 { margin-left: 3pt !important; margin-right: 3pt !important; }
+  .mx-2 { margin-left: 6pt !important; margin-right: 6pt !important; }
+  .mx-3 { margin-left: 9pt !important; margin-right: 9pt !important; }
+  .mx-4 { margin-left: 12pt !important; margin-right: 12pt !important; }
+  .mx-5 { margin-left: 15pt !important; margin-right: 15pt !important; }
+  .mx-6 { margin-left: 18pt !important; margin-right: 18pt !important; }
+  .mx-7 { margin-left: 21pt !important; margin-right: 21pt !important; }
+  .mx-8 { margin-left: 24pt !important; margin-right: 24pt !important; }
+  .mx-9 { margin-left: 27pt !important; margin-right: 27pt !important; }
+  .mx-10 { margin-left: 30pt !important; margin-right: 30pt !important; }
+  .mx-11 { margin-left: 33pt !important; margin-right: 33pt !important; }
+  .mx-12 { margin-left: 36pt !important; margin-right: 36pt !important; }
+
+  .ml-0 { margin-left: 0 !important; }
+  .ml-1 { margin-left: 3pt !important; }
+  .ml-2 { margin-left: 6pt !important; }
+  .ml-3 { margin-left: 9pt !important; }
+  .ml-4 { margin-left: 12pt !important; }
+  .ml-5 { margin-left: 15pt !important; }
+  .ml-6 { margin-left: 18pt !important; }
+  .ml-7 { margin-left: 21pt !important; }
+  .ml-8 { margin-left: 24pt !important; }
+  .ml-9 { margin-left: 27pt !important; }
+  .ml-10 { margin-left: 30pt !important; }
+  .ml-11 { margin-left: 33pt !important; }
+  .ml-12 { margin-left: 36pt !important; }
+
+  .mr-0 { margin-right: 0 !important; }
+  .mr-1 { margin-right: 3pt !important; }
+  .mr-2 { margin-right: 6pt !important; }
+  .mr-3 { margin-right: 9pt !important; }
+  .mr-4 { margin-right: 12pt !important; }
+  .mr-5 { margin-right: 15pt !important; }
+  .mr-6 { margin-right: 18pt !important; }
+  .mr-7 { margin-right: 21pt !important; }
+  .mr-8 { margin-right: 24pt !important; }
+  .mr-9 { margin-right: 27pt !important; }
+  .mr-10 { margin-right: 30pt !important; }
+  .mr-11 { margin-right: 33pt !important; }
+  .mr-12 { margin-right: 36pt !important; }
+
+  .mb-0 { margin-bottom: 0 !important; }
+  .mb-1 { margin-bottom: 3pt !important; }
+  .mb-2 { margin-bottom: 6pt !important; }
+  .mb-3 { margin-bottom: 9pt !important; }
+  .mb-4 { margin-bottom: 12pt !important; }
+  .mb-5 { margin-bottom: 15pt !important; }
+  .mb-6 { margin-bottom: 18pt !important; }
+  .mb-7 { margin-bottom: 21pt !important; }
+  .mb-8 { margin-bottom: 24pt !important; }
+  .mb-9 { margin-bottom: 27pt !important; }
+  .mb-10 { margin-bottom: 30pt !important; }
+  .mb-11 { margin-bottom: 33pt !important; }
+  .mb-12 { margin-bottom: 36pt !important; }
+  .mb-16 { margin-bottom: 48pt !important; }
+  .mb-20 { margin-bottom: 50pt !important; }
+
+  .-mb-1 { margin-bottom: -3pt !important; }
+  .-mb-2 { margin-bottom: -6pt !important; }
+  .-mb-3 { margin-bottom: -9pt !important; }
+  .-mb-4 { margin-bottom: -12pt !important; }
+  .-mb-5 { margin-bottom: -15pt !important; }
+  .-mb-6 { margin-bottom: -18pt !important; }
+  .-mb-7 { margin-bottom: -21pt !important; }
+  .-mb-8 { margin-bottom: -24pt !important; }
+
+  .text-xs { font-size: 9pt !important; }
+  .text-sm { font-size: 10.5pt !important; }
+  .text-base { font-size: 12pt !important; }
+  .text-lg { font-size: 13.5pt !important; }
+  .text-xl { font-size: 15pt !important; }
+  .text-2xl { font-size: 18pt !important; }
+  .text-3xl { font-size: 22.5pt !important; }
+  .text-3xl { font-size: 27pt !important; }
+  .text-4xl { font-size: 36pt !important; }
+
+  .print\:no-break-inside { break-inside: avoid; }
+  .print\:no-page-break-inside { break-inside: avoid-page; }
+  .print\:no-col-break-inside { break-inside: avoid-column; }
+
+  .print\:block { display: block !important; }
+  .print\:inline { display: inline !important; }
+  .print\:hidden { display: none !important; }
+
+  .print\:underline { text-decoration: underline !important; }
+  .print\:font-mono { font-family: monospace !important; }
+
+  .print\:mb-0 { margin-bottom: 0 !important; }
+  .print\:mb-1 { margin-bottom: 3pt !important; }
+  .print\:mb-2 { margin-bottom: 6pt !important; }
+  .print\:mb-3 { margin-bottom: 9pt !important; }
+  .print\:mb-4 { margin-bottom: 12pt !important; }
+  .print\:mb-5 { margin-bottom: 15pt !important; }
+  .print\:mb-6 { margin-bottom: 18pt !important; }
+  .print\:mb-7 { margin-bottom: 21pt !important; }
+  .print\:mb-8 { margin-bottom: 24pt !important; }
+
+  .print\:-mb-1 { margin-bottom: -3pt !important; }
+  .print\:-mb-2 { margin-bottom: -6pt !important; }
+  .print\:-mb-3 { margin-bottom: -9pt !important; }
+  .print\:-mb-4 { margin-bottom: -12pt !important; }
+  .print\:-mb-5 { margin-bottom: -15pt !important; }
+  .print\:-mb-6 { margin-bottom: -18pt !important; }
+  .print\:-mb-7 { margin-bottom: -21pt !important; }
+  .print\:-mb-8 { margin-bottom: -24pt !important; }
+
+  .print\:text-xs { font-size: 9pt !important; }
+  .print\:text-sm { font-size: 10.5pt !important; }
+  .print\:text-base { font-size: 12pt !important; }
+  .print\:text-lg { font-size: 13.5pt !important; }
+  .print\:text-xl { font-size: 15pt !important; }
+  .print\:text-2xl { font-size: 18pt !important; }
+  .print\:text-3xl { font-size: 22.5pt !important; }
+  .print\:text-3xl { font-size: 27pt !important; }
+  .print\:text-4xl { font-size: 36pt !important; }
 }
