@@ -56,6 +56,7 @@
                 <div class="col-xs-12">
                     <legend id="vacation">
                         <spring:message code="overview.vacationOverview.title"/>
+                        <uv:print />
                     </legend>
                 </div>
             </div>
