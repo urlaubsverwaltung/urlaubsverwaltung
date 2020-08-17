@@ -39,10 +39,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
@@ -79,7 +75,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
         @RequestParam(required = false) String department,
         Model model, Locale locale)
     {
-        var departments = getAllowedDepartmentsOfSignedInUser();
+        var departments = departmentService.getAllowedDepartmentsOfPerson(personService.getSignedInUser());
         model.addAttribute("departments", departments);
 
         var selectedDepartmentName = hasText(department) ? department : departments.get(0).getName();
@@ -182,20 +178,6 @@ public class ApplicationForLeaveVacationOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "application/vacation_overview";
-    }
-
-    private List<Department> getAllowedDepartmentsOfSignedInUser() {
-        final Person signedInUser = personService.getSignedInUser();
-
-        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return departmentService.getAllDepartments();
-        } else if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            return departmentService.getManagedDepartmentsOfSecondStageAuthority(signedInUser);
-        } else if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            return departmentService.getManagedDepartmentsOfDepartmentHead(signedInUser);
-        } else {
-            return departmentService.getAssignedDepartmentsOfMember(signedInUser);
-        }
     }
 
     private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate localDate) {

@@ -83,7 +83,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview"));
 
@@ -104,7 +104,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview"));
 
@@ -124,7 +124,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(ssa);
 
         final var department = department();
-        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(ssa)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview"));
 
@@ -144,7 +144,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         final var department = department();
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(departmentHead)).thenReturn(singletonList(department));
 
         final ResultActions resultActions = perform(get("/web/application/vacationoverview"));
 
@@ -167,7 +167,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("department", departmentName));
@@ -187,7 +187,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("department", "villains"));
@@ -210,7 +210,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("year", givenYearParam));
@@ -232,7 +232,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("year", String.valueOf(expectedSelectedYear)));
@@ -253,7 +253,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview"));
 
@@ -270,7 +270,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("month", ""));
@@ -288,7 +288,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("month", "1"));
@@ -306,7 +306,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview"));
 
@@ -340,7 +340,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("year", String.valueOf(givenYear))
@@ -367,7 +367,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("month", "11")
@@ -399,7 +399,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("month", "12")
@@ -435,7 +435,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("year", String.valueOf(givenYear))
@@ -471,7 +471,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview")
             .param("year", String.valueOf(givenYear))
@@ -500,7 +500,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
 
@@ -536,7 +536,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person, personTwo, personThree));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
 

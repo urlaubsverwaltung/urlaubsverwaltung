@@ -141,4 +141,12 @@ public interface DepartmentService {
      * @return {@code true} if the given user may access the data of the given person, else {@code false}
      */
     boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person);
+
+    /**
+     * Get all departments which the given user is allowed to access the data
+     *
+     * @param person to check the permissions
+     * @return List of departments which are accessible by the given person
+     */
+    List<Department> getAllowedDepartmentsOfPerson(Person person);
 }
