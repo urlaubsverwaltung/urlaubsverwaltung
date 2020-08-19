@@ -167,15 +167,15 @@
                                                     ${(absence.weekend) ? ' vacationOverview-day-weekend' : ''}"
                                             >
                                                 <span class="hidden print:inline print:font-mono">
-                                                    <c:out value="${(absence.type eq 'waitingVacationFull') ? 'uw' : ''}
-                                                        ${(absence.type eq 'waitingVacationMorning') ? ' uw__' : ''}
-                                                        ${(absence.type eq 'waitingVacationNoon') ? '__uw' : ''}
-                                                        ${(absence.type eq 'allowedVacationFull') ? 'u' : ''}
-                                                        ${(absence.type eq 'allowedVacationMorning') ? 'u__' : ''}
-                                                        ${(absence.type eq 'allowedVacationNoon') ? '__u' : ''}
-                                                        ${(absence.type eq 'activeSickNoteFull') ? 'k' : ''}
-                                                        ${(absence.type eq 'activeSickNoteMorning') ? 'k__' : ''}
-                                                        ${(absence.type eq 'activeSickNoteNoon') ? '__k' : ''}" />
+                                                    <c:if test="${absence.type eq 'waitingVacationFull'}"><spring:message code="overview.vacationOverview.vacation.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'waitingVacationMorning'}"><spring:message code="overview.vacationOverview.vacation.noon.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'waitingVacationNoon'}"><spring:message code="overview.vacationOverview.vacation.noon.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'allowedVacationFull'}"><spring:message code="overview.vacationOverview.allowed.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'allowedVacationMorning'}"><spring:message code="overview.vacationOverview.allowed.morning.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'allowedVacationNoon'}"><spring:message code="overview.vacationOverview.allowed.noon.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'activeSickNoteFull'}"><spring:message code="overview.vacationOverview.sick.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'activeSickNoteMorning'}"><spring:message code="overview.vacationOverview.sick.morning.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'activeSickNoteNoon'}"><spring:message code="overview.vacationOverview.sick.noon.abbr"/></c:if>
                                                 </span>
                                             </td>
                                         </c:forEach>
