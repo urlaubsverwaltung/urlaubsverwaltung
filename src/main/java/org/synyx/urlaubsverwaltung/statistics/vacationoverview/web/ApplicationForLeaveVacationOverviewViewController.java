@@ -78,7 +78,8 @@ public class ApplicationForLeaveVacationOverviewViewController {
         var departments = departmentService.getAllowedDepartmentsOfPerson(personService.getSignedInUser());
         model.addAttribute("departments", departments);
 
-        var selectedDepartmentName = hasText(department) ? department : departments.get(0).getName();
+        final var fallbackDepartment = departments.isEmpty() ? "" : departments.get(0).getName();
+        final var selectedDepartmentName = hasText(department) ? department : fallbackDepartment;
         model.addAttribute("selectedDepartment", selectedDepartmentName);
 
         final var startDate = getStartDate(year, month);

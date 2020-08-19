@@ -27,11 +27,13 @@ import java.time.Period;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasLength;
 import static org.hamcrest.Matchers.hasProperty;
@@ -488,6 +490,25 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
     void ensureOverviewForGivenDepartment() {
         // TODO implement me
+    }
+
+    @Test
+    void ensureOverviewIsEmptyWhenThereAreNoDepartmentsForADepartmentHead() throws Exception {
+        final var person = new Person();
+        person.setFirstName("department head");
+        person.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(emptyList());
+
+        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", hasItem(allOf(
+                    hasProperty("persons", empty())
+                )))));
     }
 
     @Test
