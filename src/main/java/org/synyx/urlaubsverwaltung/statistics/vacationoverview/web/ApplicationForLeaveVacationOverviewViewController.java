@@ -39,6 +39,8 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
@@ -75,7 +77,8 @@ public class ApplicationForLeaveVacationOverviewViewController {
         @RequestParam(required = false) String department,
         Model model, Locale locale)
     {
-        var departments = departmentService.getAllowedDepartmentsOfPerson(personService.getSignedInUser());
+        final var signedInUser = personService.getSignedInUser();
+        final var departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
         model.addAttribute("departments", departments);
 
         final var fallbackDepartment = departments.isEmpty() ? "" : departments.get(0).getName();
@@ -98,17 +101,11 @@ public class ApplicationForLeaveVacationOverviewViewController {
         }
         model.addAttribute("selectedMonth", selectedMonth);
 
-        var activePersons = departments.stream()
-            .filter(d -> d.getName().equals(selectedDepartmentName))
-            .map(Department::getMembers)
-            .flatMap(List::stream)
-            .sorted(comparing(Person::getFirstName))
-            .collect(toList());
-
+        final var overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
         final var sickNotes = sickNoteService.getAllActiveByYear(year == null ? LocalDate.now(UTC).getYear() : year);
 
         final var vacationsByEmail = new HashMap<String, List<Application>>();
-        for (Person p : activePersons) {
+        for (Person p : overviewPersons) {
             var apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, p);
             vacationsByEmail.put(p.getEmail(), apps);
         }
@@ -128,8 +125,8 @@ public class ApplicationForLeaveVacationOverviewViewController {
                 // since `monthDate` is increased by one day at the end of the loop we have to check
                 // if we have to create the month view dto in the current loop iteration.
                 if (!monthsByNr.containsKey(date.getMonthValue())) {
-                    var monthViewPersons = new ArrayList<AbsenceOverviewMonthPersonDto>(activePersons.size());
-                    for (Person person : activePersons) {
+                    var monthViewPersons = new ArrayList<AbsenceOverviewMonthPersonDto>(overviewPersons.size());
+                    for (Person person : overviewPersons) {
                         var p = new AbsenceOverviewMonthPersonDto(
                             person.getFirstName(), person.getLastName(), person.getEmail(), new ArrayList<>());
 
@@ -179,6 +176,20 @@ public class ApplicationForLeaveVacationOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "application/vacation_overview";
+    }
+
+    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, String selectedDepartmentName) {
+
+        if (departments.isEmpty() && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE))) {
+            return personService.getActivePersons();
+        }
+
+        return departments.stream()
+            .filter(d -> d.getName().equals(selectedDepartmentName))
+            .map(Department::getMembers)
+            .flatMap(List::stream)
+            .sorted(comparing(Person::getFirstName))
+            .collect(toList());
     }
 
     private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate localDate) {

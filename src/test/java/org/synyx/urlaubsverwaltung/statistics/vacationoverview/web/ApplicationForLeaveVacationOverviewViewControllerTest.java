@@ -492,6 +492,34 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         // TODO implement me
     }
 
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureOverviewShowsAllPersonsThereAreNoDepartmentsFor(Role role) throws Exception {
+        final var person = new Person();
+        person.setFirstName("batman");
+        person.setPermissions(singletonList(role));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(emptyList());
+
+        final var personTwo = new Person();
+        personTwo.setFirstName("aa");
+
+        final var personThree = new Person();
+        personThree.setFirstName("AA");
+
+        when(personService.getActivePersons()).thenReturn(List.of(person, personTwo, personThree));
+
+        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", hasItem(allOf(
+                    hasProperty("persons", hasSize(3))
+                )))));
+    }
+
     @Test
     void ensureOverviewIsEmptyWhenThereAreNoDepartmentsForADepartmentHead() throws Exception {
         final var person = new Person();
