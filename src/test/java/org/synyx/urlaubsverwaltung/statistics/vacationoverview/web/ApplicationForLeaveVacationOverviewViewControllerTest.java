@@ -488,8 +488,33 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         verifyNoMoreInteractions(messageSource);
     }
 
-    void ensureOverviewForGivenDepartment() {
-        // TODO implement me
+    @Test
+    void ensureOverviewForGivenDepartment() throws Exception {
+        final var person = new Person();
+        person.setFirstName("batman");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var heroDepartment = department("heroes");
+        heroDepartment.setMembers(List.of(person));
+
+        final var joker = person("joker");
+        final var lex = person("lex");
+        final var harley = person("harley");
+        final var villainsDepartment = department("villains");
+        villainsDepartment.setMembers(List.of(joker, lex, harley));
+
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
+
+        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY)
+            .param("department", "villains"));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("selectedDepartment", "villains"))
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", hasItem(allOf(
+                    hasProperty("persons", hasSize(3))
+                )))));
     }
 
     @ParameterizedTest
@@ -514,6 +539,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         resultActions
             .andExpect(status().isOk())
+            .andExpect(model().attribute("selectedDepartment", ""))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(3))
@@ -533,6 +559,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
         resultActions
             .andExpect(status().isOk())
+            .andExpect(model().attribute("selectedDepartment", ""))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", empty())
@@ -611,6 +638,14 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
         department.setName(name);
 
         return department;
+    }
+
+    private static Person person(String firstName) {
+        var person = new Person();
+
+        person.setFirstName(firstName);
+
+        return person;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
