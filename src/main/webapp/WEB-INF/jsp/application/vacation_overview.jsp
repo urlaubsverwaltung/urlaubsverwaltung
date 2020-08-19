@@ -106,6 +106,7 @@
                             </div>
                         </div>
                     </div>
+                    <c:if test="${not empty departments}">
                     <div class="form-group">
                         <div class="row">
                             <label class="control-label col-md-3" for="departmentSelect">
@@ -122,6 +123,7 @@
                             </div>
                         </div>
                     </div>
+                    </c:if>
                 </div>
             </form>
 
