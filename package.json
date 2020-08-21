@@ -2,10 +2,6 @@
   "name": "urlaubsverwaltung",
   "version": "1.0.0",
   "description": "Paperless absence management",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
