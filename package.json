@@ -104,6 +104,7 @@
     "collectCoverage": false,
     "collectCoverageFrom": [
       "**/*.js",
+      "!**/*.{test,spec}.js",
       "!**/__tests__/**",
       "!**/WEB-INF/**"
     ],
