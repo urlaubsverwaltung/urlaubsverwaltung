@@ -1,7 +1,7 @@
 import fetchMock from "fetch-mock";
 import dateParseISOSpy from 'date-fns/parseISO';
 import dateFormatSpy from 'date-fns/format';
-import sendGetDepartmentVacationsRequest from './send-get-department-vacations-request';
+import sendGetDepartmentVacationsRequest from '../send-get-department-vacations-request';
 
 jest.mock('date-fns/parseISO', () => {
   const original = jest.requireActual('date-fns/parseISO');
