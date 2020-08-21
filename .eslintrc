@@ -21,7 +21,8 @@
     {
       "files": ["**/*.spec.js", "**/*.test.js"],
       "rules": {
-        "unicorn/consistent-function-scoping": "off"
+        "unicorn/consistent-function-scoping": "off",
+        "@urlaubsverwaltung/no-date-fns": "off"
       }
     },
     {
