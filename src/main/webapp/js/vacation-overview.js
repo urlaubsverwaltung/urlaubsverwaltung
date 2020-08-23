@@ -36,7 +36,7 @@ $(function () {
         const holyDayOverviewResponse = JSON.parse(xhttp.responseText);
         if (holyDayOverviewResponse) {
 
-          const overViewList = holyDayOverviewResponse.list;
+          const overViewList = holyDayOverviewResponse.overviews;
           overViewList
             .forEach(function (listItem) {
               const personId = listItem.personID;
