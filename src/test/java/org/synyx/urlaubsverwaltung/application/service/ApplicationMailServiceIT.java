@@ -1,14 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -43,13 +41,12 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-public class ApplicationMailServiceIT extends TestContainersBase {
+class ApplicationMailServiceIT extends TestContainersBase {
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    @RegisterExtension
+    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private ApplicationMailService sut;
@@ -65,8 +62,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     private DepartmentService departmentService;
 
     @Test
-    public void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException,
-        IOException {
+    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -124,7 +120,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
+    void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -158,7 +154,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureCorrectReferMail() throws MessagingException, IOException {
+    void ensureCorrectReferMail() throws MessagingException, IOException {
 
         final Person recipient = createPerson("recipient", "Max", "Muster", "mustermann@test.de");
         final Person sender = createPerson("sender", "Rick", "Grimes", "rick@grimes.com");
@@ -185,7 +181,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
 
 
     @Test
-    public void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
+    void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -216,8 +212,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException,
-        IOException {
+    void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -250,7 +245,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
+    void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -276,7 +271,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureCorrectFrom() throws MessagingException {
+    void ensureCorrectFrom() throws MessagingException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -295,8 +290,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException,
-        IOException {
+    void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -326,8 +320,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
 
 
     @Test
-    public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,
-        IOException {
+    void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -360,8 +353,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException,
-        IOException {
+    void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -393,9 +385,8 @@ public class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("/web/application/1234");
     }
 
-
     @Test
-    public void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
+    void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -433,9 +424,8 @@ public class ApplicationMailServiceIT extends TestContainersBase {
             comment);
     }
 
-
     @Test
-    public void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
+    void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -469,10 +459,8 @@ public class ApplicationMailServiceIT extends TestContainersBase {
         verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
     }
 
-
     @Test
-    public void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority()
-        throws MessagingException, IOException {
+    void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority() throws MessagingException, IOException {
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -511,7 +499,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
+    void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
         throws MessagingException, IOException {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
@@ -566,9 +554,8 @@ public class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentSecondStageMail).contains(comment.getPerson().getNiceName());
     }
 
-
     @Test
-    public void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
+    void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
@@ -607,7 +594,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    public void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
+    void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
 
         // PERSONs
         final Person personDepartmentA = createPerson("personDepartmentA");
@@ -638,7 +625,6 @@ public class ApplicationMailServiceIT extends TestContainersBase {
         verifyInbox(departmentHeadB, singletonList(applicationB));
     }
 
-
     private void verifyInbox(Person inboxOwner, List<Application> applications) throws MessagingException, IOException {
 
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(inboxOwner.getEmail());
@@ -655,7 +641,6 @@ public class ApplicationMailServiceIT extends TestContainersBase {
             assertThat(content).contains("/web/application/" + application.getId());
         }
     }
-
 
     private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName,
                                                        ApplicationComment comment) throws MessagingException, IOException {
@@ -679,7 +664,7 @@ public class ApplicationMailServiceIT extends TestContainersBase {
 
     private Application createApplication(Person person) {
 
-        LocalDate now = LocalDate.now(UTC);
+        final LocalDate now = LocalDate.now(UTC);
 
         Application application = new Application();
         application.setId(1234);

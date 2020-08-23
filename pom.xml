@@ -135,8 +135,8 @@
     </dependency>
     <dependency>
       <groupId>com.icegreen</groupId>
-      <artifactId>greenmail</artifactId>
-      <version>1.5.14</version>
+      <artifactId>greenmail-junit5</artifactId>
+      <version>1.6.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -224,6 +224,12 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
 
