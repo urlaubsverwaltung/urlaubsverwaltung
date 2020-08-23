@@ -59,16 +59,16 @@ class DepartmentApiControllerTest {
         perform(get("/api/departments"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$").exists())
-            .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].name", is("departmentOne")))
-            .andExpect(jsonPath("$[0].description", is("Description One")))
-            .andExpect(jsonPath("$[0].members.persons[0].firstName", is("One")))
-            .andExpect(jsonPath("$[0].departmentHeads.persons[0].firstName", is("OneDH")))
-            .andExpect(jsonPath("$[1].name", is("departmentTwo")))
-            .andExpect(jsonPath("$[1].description", is("Description Two")))
-            .andExpect(jsonPath("$[1].members.persons[0].firstName", is("Two")))
-            .andExpect(jsonPath("$[1].departmentHeads.persons[0].firstName", is("TwoDH")));
+            .andExpect(jsonPath("$.departments").exists())
+            .andExpect(jsonPath("$.departments", hasSize(2)))
+            .andExpect(jsonPath("$.departments[0].name", is("departmentOne")))
+            .andExpect(jsonPath("$.departments[0].description", is("Description One")))
+            .andExpect(jsonPath("$.departments[0].members.persons[0].firstName", is("One")))
+            .andExpect(jsonPath("$.departments[0].departmentHeads.persons[0].firstName", is("OneDH")))
+            .andExpect(jsonPath("$.departments[1].name", is("departmentTwo")))
+            .andExpect(jsonPath("$.departments[1].description", is("Description Two")))
+            .andExpect(jsonPath("$.departments[1].members.persons[0].firstName", is("Two")))
+            .andExpect(jsonPath("$.departments[1].departmentHeads.persons[0].firstName", is("TwoDH")));
     }
 
     @Test
@@ -79,8 +79,8 @@ class DepartmentApiControllerTest {
         perform(get("/api/departments"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$").exists())
-            .andExpect(jsonPath("$", hasSize(0)));
+            .andExpect(jsonPath("$.departments").exists())
+            .andExpect(jsonPath("$.departments", hasSize(0)));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

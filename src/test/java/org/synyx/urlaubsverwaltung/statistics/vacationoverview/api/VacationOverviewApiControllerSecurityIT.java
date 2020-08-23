@@ -38,7 +38,7 @@ class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
     void getHolidayOverviewWithUserRoleIsForbidden() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -52,7 +52,7 @@ class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
     void getHolidayOverviewWithAdminRoleIsForbidden() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -66,7 +66,7 @@ class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
     void getHolidayOverviewWithInactiveRoleIsForbidden() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -80,7 +80,7 @@ class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
     void getHolidayOverviewWithOfficeRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -94,7 +94,7 @@ class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
     void getHolidayOverviewWithDepartmentHeadRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -109,7 +109,7 @@ class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
     void getHolidayOverviewWithBossRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -123,7 +123,7 @@ class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
     void getHolidayOverviewWithSecondStageAuthorityRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")

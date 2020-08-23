@@ -1,20 +1,20 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
-import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
+import org.synyx.urlaubsverwaltung.person.api.PersonDto;
 
 import java.util.List;
 
-public class VacationOverview {
+public class VacationOverviewDto {
 
-    private PersonResponse person;
+    private PersonDto person;
     private Integer personID;
     private List<DayOfMonth> days;
 
-    public PersonResponse getPerson() {
+    public PersonDto getPerson() {
         return person;
     }
 
-    public void setPerson(PersonResponse person) {
+    public void setPerson(PersonDto person) {
         this.person = person;
     }
 

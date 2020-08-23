@@ -48,9 +48,9 @@ public class PersonApiController {
     )
     @GetMapping
     @PreAuthorize(IS_OFFICE)
-    public ResponseEntity<List<PersonResponse>> persons() {
+    public ResponseEntity<List<PersonDto>> persons() {
 
-        List<PersonResponse> persons = personService.getActivePersons().stream()
+        List<PersonDto> persons = personService.getActivePersons().stream()
             .map(this::createPersonResponse)
             .collect(toList());
 
@@ -60,18 +60,18 @@ public class PersonApiController {
     @ApiOperation(value = "Get one active person by id", notes = "Get one active person by id")
     @GetMapping(PERSON_URL)
     @PreAuthorize(IS_OFFICE)
-    public ResponseEntity<PersonResponse> getPerson(@PathVariable Integer id) {
+    public ResponseEntity<PersonDto> getPerson(@PathVariable Integer id) {
 
         return personService.getPersonByID(id)
             .map(value -> new ResponseEntity<>(createPersonResponse(value), OK))
             .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    private PersonResponse createPersonResponse(Person person) {
-        final PersonResponse personResponse = PersonResponseMapper.mapToResponse(person);
-        personResponse.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
-        personResponse.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null)).withRel(AVAILABILITIES));
-        personResponse.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));
-        return personResponse;
+    private PersonDto createPersonResponse(Person person) {
+        final PersonDto personDto = PersonMapper.mapToDto(person);
+        personDto.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
+        personDto.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null)).withRel(AVAILABILITIES));
+        personDto.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));
+        return personDto;
     }
 }

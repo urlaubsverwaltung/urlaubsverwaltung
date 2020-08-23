@@ -33,9 +33,10 @@ $(function () {
         xhttp.open("GET", url, false);
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send();
-        const overViewList = JSON.parse(xhttp.responseText);
-        if (overViewList) {
+        const holyDayOverviewResponse = JSON.parse(xhttp.responseText);
+        if (holyDayOverviewResponse) {
 
+          const overViewList = holyDayOverviewResponse.list;
           overViewList
             .forEach(function (listItem) {
               const personId = listItem.personID;
@@ -50,19 +51,20 @@ $(function () {
                 "application/json");
               xhttp.send();
 
-              const absences = JSON.parse(xhttp.responseText);
-              if (absences) {
+              const response = JSON.parse(xhttp.responseText);
+              if (response) {
 
                 listItem.days
                   .forEach(currentDay => {
+                      let absences = response.absences;
 
-                    currentDay.cssClass = '';
+                      currentDay.cssClass = '';
 
-                    if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'FULL'))) {
-                      currentDay.cssClass += ' vacationOverview-day-personal-holiday-status-WAITING';
-                    }
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'FULL'))) {
+                        currentDay.cssClass += ' vacationOverview-day-personal-holiday-status-WAITING';
+                      }
 
-                    if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'MORNING'))) {
+                      if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'MORNING'))) {
                         currentDay.cssClass += ' vacationOverview-day-personal-holiday-half-day-status-WAITING-morning';
                       }
                       if (absences.find(currentValue => compare(currentDay, currentValue, "WAITING", "VACATION", 'NOON'))) {

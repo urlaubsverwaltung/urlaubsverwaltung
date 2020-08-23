@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
+import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 
 import java.util.List;
 
@@ -42,12 +42,12 @@ class VacationOverviewApiControllerTest {
         dayOfMonth.setDayText("Monday");
         dayOfMonth.setTypeOfDay(DayOfMonth.TypeOfDay.WORKDAY);
 
-        final VacationOverview vacationOverview = new VacationOverview();
-        vacationOverview.setPerson(PersonResponseMapper.mapToResponse(createPerson("someOne")));
-        vacationOverview.setPersonID(2);
-        vacationOverview.setDays(List.of(dayOfMonth));
+        final VacationOverviewDto vacationOverviewDto = new VacationOverviewDto();
+        vacationOverviewDto.setPerson(PersonMapper.mapToDto(createPerson("someOne")));
+        vacationOverviewDto.setPersonID(2);
+        vacationOverviewDto.setDays(List.of(dayOfMonth));
 
-        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1)).thenReturn(List.of(vacationOverview));
+        when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1)).thenReturn(List.of(vacationOverviewDto));
 
         perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -55,11 +55,11 @@ class VacationOverviewApiControllerTest {
             .param("selectedMonth", "1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$[0].person.firstName", is("SomeOne")))
-            .andExpect(jsonPath("$[0].personID", is(2)))
-            .andExpect(jsonPath("$[0].days[0].dayNumber", is(1)))
-            .andExpect(jsonPath("$[0].days[0].dayText", is("Monday")))
-            .andExpect(jsonPath("$[0].days[0].typeOfDay", is("WORKDAY")));
+            .andExpect(jsonPath("$.overviews[0].person.firstName", is("SomeOne")))
+            .andExpect(jsonPath("$.overviews[0].personID", is(2)))
+            .andExpect(jsonPath("$.overviews[0].days[0].dayNumber", is(1)))
+            .andExpect(jsonPath("$.overviews[0].days[0].dayText", is("Monday")))
+            .andExpect(jsonPath("$.overviews[0].days[0].typeOfDay", is("WORKDAY")));
     }
 
     @Test
@@ -73,7 +73,7 @@ class VacationOverviewApiControllerTest {
             .param("selectedMonth", "1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$").isEmpty());
+            .andExpect(jsonPath("$.overviews").isEmpty());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

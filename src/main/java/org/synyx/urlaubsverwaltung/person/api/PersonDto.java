@@ -2,14 +2,14 @@ package org.synyx.urlaubsverwaltung.person.api;
 
 import org.springframework.hateoas.RepresentationModel;
 
-public class PersonResponse extends RepresentationModel<PersonResponse> {
+public class PersonDto extends RepresentationModel<PersonDto> {
 
     private String email;
     private String firstName;
     private String lastName;
     private String niceName;
 
-    PersonResponse(String email, String firstName, String lastName, String niceName) {
+    PersonDto(String email, String firstName, String lastName, String niceName) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;

@@ -91,11 +91,11 @@ class SickNoteApiControllerTest {
             .param("to", "2016-12-31"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$").exists())
-            .andExpect(jsonPath("$", hasSize(3)))
-            .andExpect(jsonPath("$[0].from", is("2016-05-19")))
-            .andExpect(jsonPath("$[0].to", is("2016-05-20")))
-            .andExpect(jsonPath("$[0].person").exists());
+            .andExpect(jsonPath("$.sickNotes").exists())
+            .andExpect(jsonPath("$.sickNotes", hasSize(3)))
+            .andExpect(jsonPath("$.sickNotes[0].from", is("2016-05-19")))
+            .andExpect(jsonPath("$.sickNotes[0].to", is("2016-05-20")))
+            .andExpect(jsonPath("$.sickNotes[0].person").exists());
     }
 
     @Test

@@ -57,7 +57,7 @@ public class VacationApiController {
     )
     @GetMapping
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public List<VacationResponse> getVacations(
+    public VacationsDto getVacations(
         @ApiParam(value = "ID of the person")
         @PathVariable("id")
             Integer personId,
@@ -89,7 +89,7 @@ public class VacationApiController {
     )
     @GetMapping(params = "ofDepartmentMembers")
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public List<VacationResponse> getVacationsOfOthersOrDepartmentColleagues(
+    public VacationsDto getVacationsOfOthersOrDepartmentColleagues(
         @ApiParam(value = "ID of the person")
         @PathVariable("id")
             Integer personId,
@@ -127,7 +127,8 @@ public class VacationApiController {
             .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId));
     }
 
-    private List<VacationResponse> mapToVacationResponse(List<Application> applications) {
-        return applications.stream().map(VacationResponse::new).collect(toList());
+    private VacationsDto mapToVacationResponse(List<Application> applications) {
+        final List<VacationDto> vacationsDto = applications.stream().map(VacationDto::new).collect(toList());
+        return new VacationsDto(vacationsDto);
     }
 }

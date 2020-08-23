@@ -6,11 +6,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
 /**
  * Represents an absence for a day.
  */
-public class DayAbsence {
+public class DayAbsenceDto {
 
     public enum Type {
 
@@ -25,8 +24,7 @@ public class DayAbsence {
     private final String status;
     private final String href;
 
-    DayAbsence(LocalDate date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
-
+    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
         this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
         this.dayLength = dayLength;
         this.absencePeriodName = absencePeriodName;
@@ -36,36 +34,26 @@ public class DayAbsence {
     }
 
     public String getDate() {
-
         return date;
     }
 
-
     public BigDecimal getDayLength() {
-
         return dayLength;
     }
-
 
     public String getAbsencePeriodName() {
         return absencePeriodName;
     }
 
-
     public String getType() {
-
         return type;
     }
 
-
     public String getStatus() {
-
         return status;
     }
 
-
     public String getHref() {
-
         return href;
     }
 }

@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote.api;
 
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponse;
-import org.synyx.urlaubsverwaltung.person.api.PersonResponseMapper;
+import org.synyx.urlaubsverwaltung.person.api.PersonDto;
+import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
@@ -10,24 +10,23 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-
-public class SickNoteResponse {
+public class SickNoteDto {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
 
     private String from;
     private String to;
     private BigDecimal dayLength;
-    private PersonResponse person;
+    private PersonDto person;
     private String type;
     private String status;
 
-    public SickNoteResponse(SickNote sickNote) {
+    public SickNoteDto(SickNote sickNote) {
 
         this.from = sickNote.getStartDate().format(formatter);
         this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);
         this.dayLength = sickNote.getDayLength().getDuration();
-        this.person = PersonResponseMapper.mapToResponse(sickNote.getPerson());
+        this.person = PersonMapper.mapToDto(sickNote.getPerson());
         this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";
 
         SickNoteType sickNoteType = sickNote.getSickNoteType();
@@ -71,13 +70,13 @@ public class SickNoteResponse {
     }
 
 
-    public PersonResponse getPerson() {
+    public PersonDto getPerson() {
 
         return person;
     }
 
 
-    public void setPerson(PersonResponse person) {
+    public void setPerson(PersonDto person) {
 
         this.person = person;
     }
