@@ -162,7 +162,7 @@ uv.security.directory-service.ldap.sync.user-search-base=ou=people,ou=accounts
 uv.security.oidc.client-id
 uv.security.oidc.client-secret
 uv.security.oidc.issuer-uri
-uv.security.oidc.logout-path
+uv.security.oidc.logout-uri
 
 # person
 uv.person.can-be-manipulated=false

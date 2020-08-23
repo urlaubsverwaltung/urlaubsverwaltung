@@ -32,16 +32,14 @@ public class OidcSecurityProperties {
     private String clientSecret;
 
     /**
-     * The path after the given {@link OidcSecurityProperties#issuerUri} where the logout is defined
-     * for the used provider.
+     * The logout URI where the logout is defined for the used provider.
      *
-     * <p>e.g. for <i>keycloak</i> this would be <pre>'/protocol/openid-connect/logout'<pre>
-     * because the logout is defined at 'https://$provider/auth/realms/$realm/protocol/openid-connect/logout'
-     * and the {@link OidcSecurityProperties#issuerUri} should be defined with 'https://$provider/auth/realms/$realm'
+     * <p>e.g. for <i>keycloak</i> this would be
+     * <pre>'https://$provider/auth/realms/$realm/protocol/openid-connect/logout'</pre>
      * </p>
      */
     @NotEmpty
-    private String logoutPath;
+    private String logoutUri;
 
     public String getIssuerUri() {
         return issuerUri;
@@ -67,11 +65,11 @@ public class OidcSecurityProperties {
         this.clientSecret = clientSecret;
     }
 
-    public String getLogoutPath() {
-        return logoutPath;
+    public String getLogoutUri() {
+        return logoutUri;
     }
 
-    public void setLogoutPath(String logoutPath) {
-        this.logoutPath = logoutPath;
+    public void setLogoutUri(String logoutUri) {
+        this.logoutUri = logoutUri;
     }
 }
