@@ -23,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String USER = "USER";
     private static final String ADMIN = "ADMIN";
 
-    private boolean isOauth2Enabled;
+    private final boolean isOauth2Enabled;
     private SecurityContextLogoutHandler oidcLogoutHandler;
 
     public WebSecurityConfig(SecurityConfigurationProperties properties) {
