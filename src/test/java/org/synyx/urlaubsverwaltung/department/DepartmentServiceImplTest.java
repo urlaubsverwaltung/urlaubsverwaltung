@@ -357,24 +357,27 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInOfficeUserCanAccessPersonData() {
 
-        Person person = TestDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson();
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person office = TestDataCreator.createPerson(42, "office");
+        Person office = TestDataCreator.createPerson();
+        office.setId(2);
         office.setPermissions(asList(Role.USER, Role.OFFICE));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(office, person);
         assertThat(isAllowed).isTrue();
     }
 
-
     @Test
     void ensureSignedInBossUserCanAccessPersonData() {
 
-        Person person = TestDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson();
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person boss = TestDataCreator.createPerson(42, "boss");
+        Person boss = TestDataCreator.createPerson();
+        boss.setId(2);
         boss.setPermissions(asList(Role.USER, Role.BOSS));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
@@ -384,10 +387,12 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() {
 
-        Person person = TestDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson();
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson();
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
@@ -403,10 +408,12 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData() {
 
-        Person person = TestDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson();
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson();
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
@@ -422,10 +429,12 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData() {
 
-        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
+        Person secondStageAuthority = TestDataCreator.createPerson();
+        secondStageAuthority.setId(1);
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
-        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson();
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
@@ -442,10 +451,12 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData() {
 
-        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
+        Person secondStageAuthority = TestDataCreator.createPerson();
+        secondStageAuthority.setId(1);
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
 
-        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson();
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
         Department dep = createDepartment("dep");
@@ -462,10 +473,12 @@ class DepartmentServiceImplTest {
     @Test
     void ensureNotPrivilegedUserCanNotAccessPersonData() {
 
-        Person person = TestDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson();
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person user = TestDataCreator.createPerson(42, "user");
+        Person user = TestDataCreator.createPerson();
+        user.setId(2);
         user.setPermissions(singletonList(Role.USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, person);
@@ -475,7 +488,8 @@ class DepartmentServiceImplTest {
     @Test
     void ensureNotPrivilegedUserCanAccessOwnPersonData() {
 
-        Person user = TestDataCreator.createPerson(42, "user");
+        Person user = TestDataCreator.createPerson();
+        user.setId(1);
         user.setPermissions(singletonList(Role.USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, user);
