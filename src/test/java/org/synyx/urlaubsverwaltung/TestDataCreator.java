@@ -57,8 +57,7 @@ public final class TestDataCreator {
 
     public static Person createPerson(String username, String firstName, String lastName, String email) {
         final Person person = new Person(username, lastName, firstName, email);
-        person.setPermissions(Collections.singletonList(Role.USER));
-        person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
+        person.setNotifications(List.of(MailNotification.NOTIFICATION_USER));
         return person;
     }
 

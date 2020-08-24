@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import javax.naming.Name;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,7 +87,7 @@ class LdapPersonContextMapperTest {
     }
 
     @Test
-    void ensurecreatePersonIfPersonDoesNotExist() throws UnsupportedMemberAffiliationException {
+    void ensureCreatePersonIfPersonDoesNotExist() throws UnsupportedMemberAffiliationException {
 
         when(context.getDn()).thenReturn(mock(Name.class));
         when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
@@ -94,7 +95,10 @@ class LdapPersonContextMapperTest {
 
         when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
-        when(personService.create(anyString(), anyString(), anyString(), anyString(), anyList(), anyList())).thenReturn(createPerson());
+
+        final Person person = createPerson();
+        person.setPermissions(List.of(Role.USER));
+        when(personService.create(anyString(), anyString(), anyString(), anyString(), anyList(), anyList())).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
         sut.mapUserFromContext(context, "murygina", null);
@@ -140,6 +144,7 @@ class LdapPersonContextMapperTest {
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
 
         final Person person = createPerson();
+        person.setPermissions(List.of(Role.USER));
         when(personService.create("mgroehning", null, null, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
