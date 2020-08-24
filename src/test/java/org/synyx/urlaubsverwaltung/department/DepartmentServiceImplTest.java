@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -157,12 +157,12 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         Person secondDepartmentHead = mock(Person.class);
 
-        Person admin1 = DemoDataCreator.createPerson();
-        Person admin2 = DemoDataCreator.createPerson();
+        Person admin1 = TestDataCreator.createPerson();
+        Person admin2 = TestDataCreator.createPerson();
 
-        Person marketing1 = DemoDataCreator.createPerson();
-        Person marketing2 = DemoDataCreator.createPerson();
-        Person marketing3 = DemoDataCreator.createPerson();
+        Person marketing1 = TestDataCreator.createPerson();
+        Person marketing2 = TestDataCreator.createPerson();
+        Person marketing3 = TestDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead, secondDepartmentHead));
@@ -196,8 +196,8 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = DemoDataCreator.createPerson();
-        Person admin2 = DemoDataCreator.createPerson();
+        Person admin1 = TestDataCreator.createPerson();
+        Person admin2 = TestDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
@@ -214,13 +214,13 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = DemoDataCreator.createPerson();
-        Person admin2 = DemoDataCreator.createPerson();
+        Person admin1 = TestDataCreator.createPerson();
+        Person admin2 = TestDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
 
-        Person marketing1 = DemoDataCreator.createPerson();
+        Person marketing1 = TestDataCreator.createPerson();
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
 
@@ -235,8 +235,8 @@ class DepartmentServiceImplTest {
         Person noDepartmentHead = mock(Person.class);
         when(noDepartmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(false);
 
-        Person admin1 = DemoDataCreator.createPerson();
-        Person admin2 = DemoDataCreator.createPerson();
+        Person admin1 = TestDataCreator.createPerson();
+        Person admin2 = TestDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, noDepartmentHead));
@@ -268,12 +268,12 @@ class DepartmentServiceImplTest {
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
 
-        Person admin1 = DemoDataCreator.createPerson();
-        Person admin2 = DemoDataCreator.createPerson();
+        Person admin1 = TestDataCreator.createPerson();
+        Person admin2 = TestDataCreator.createPerson();
 
-        Person marketing1 = DemoDataCreator.createPerson();
-        Person marketing2 = DemoDataCreator.createPerson();
-        Person marketing3 = DemoDataCreator.createPerson();
+        Person marketing1 = TestDataCreator.createPerson();
+        Person marketing2 = TestDataCreator.createPerson();
+        Person marketing3 = TestDataCreator.createPerson();
 
         Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, person));
@@ -357,10 +357,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInOfficeUserCanAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
 
-        Person office = DemoDataCreator.createPerson(42, "office");
+        Person office = TestDataCreator.createPerson(42, "office");
         office.setPermissions(asList(Role.USER, Role.OFFICE));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(office, person);
@@ -371,10 +371,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInBossUserCanAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
 
-        Person boss = DemoDataCreator.createPerson(42, "boss");
+        Person boss = TestDataCreator.createPerson(42, "boss");
         boss.setPermissions(asList(Role.USER, Role.BOSS));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
@@ -384,10 +384,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
@@ -403,10 +403,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
@@ -422,10 +422,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData() {
 
-        Person secondStageAuthority = DemoDataCreator.createPerson(23, "secondStageAuthority");
+        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
         Department dep = createDepartment("dep");
@@ -442,10 +442,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData() {
 
-        Person secondStageAuthority = DemoDataCreator.createPerson(23, "secondStageAuthority");
+        Person secondStageAuthority = TestDataCreator.createPerson(23, "secondStageAuthority");
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = TestDataCreator.createPerson(42, "departmentHead");
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
         Department dep = createDepartment("dep");
@@ -462,10 +462,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureNotPrivilegedUserCanNotAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = TestDataCreator.createPerson(23, "person");
         person.setPermissions(singletonList(Role.USER));
 
-        Person user = DemoDataCreator.createPerson(42, "user");
+        Person user = TestDataCreator.createPerson(42, "user");
         user.setPermissions(singletonList(Role.USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, person);
@@ -475,7 +475,7 @@ class DepartmentServiceImplTest {
     @Test
     void ensureNotPrivilegedUserCanAccessOwnPersonData() {
 
-        Person user = DemoDataCreator.createPerson(42, "user");
+        Person user = TestDataCreator.createPerson(42, "user");
         user.setPermissions(singletonList(Role.USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, user);

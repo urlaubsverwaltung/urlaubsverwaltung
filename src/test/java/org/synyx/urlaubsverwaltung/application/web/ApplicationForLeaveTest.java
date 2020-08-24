@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -33,9 +33,9 @@ class ApplicationForLeaveTest {
     @Test
     void ensureCreatesCorrectApplicationForLeave() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
-        Application application = DemoDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
+        Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
@@ -63,9 +63,9 @@ class ApplicationForLeaveTest {
     @Test
     void ensureApplicationForLeaveHasInformationAboutDayOfWeek() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
-        Application application = DemoDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
+        Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),

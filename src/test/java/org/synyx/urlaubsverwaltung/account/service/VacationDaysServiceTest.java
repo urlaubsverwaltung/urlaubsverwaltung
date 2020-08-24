@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -104,7 +104,7 @@ class VacationDaysServiceTest {
     @Test
     void testGetDaysBeforeApril() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
         LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
         LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
@@ -160,7 +160,7 @@ class VacationDaysServiceTest {
     @Test
     void testGetDaysAfterApril() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
         LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
@@ -207,7 +207,7 @@ class VacationDaysServiceTest {
     @Test
     void testGetDaysBetweenMilestonesWithInactiveApplicationsForLeaveAndOfOtherVacationTypeThanHoliday() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
         LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
@@ -422,7 +422,7 @@ class VacationDaysServiceTest {
     void testGetUsedDaysBeforeApril() {
 
         String expectedUsedDays = "4";
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
@@ -449,7 +449,7 @@ class VacationDaysServiceTest {
     void testGetUsedDaysAfterApril() {
 
         String expectedUsedDays = "4";
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
@@ -507,6 +507,6 @@ class VacationDaysServiceTest {
 
     private VacationType getVacationType(VacationCategory category) {
 
-        return DemoDataCreator.createVacationType(category);
+        return TestDataCreator.createVacationType(category);
     }
 }

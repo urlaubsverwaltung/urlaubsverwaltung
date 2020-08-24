@@ -16,8 +16,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createHolidaysAccount;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 
 
 /**

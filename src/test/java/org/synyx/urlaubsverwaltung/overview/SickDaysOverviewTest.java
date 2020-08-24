@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.overview;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
@@ -45,13 +45,13 @@ class SickDaysOverviewTest {
         sickNoteTypeChild.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
         sickNoteTypeChild.setMessageKey("Kind-Krankmeldung");
 
-        SickNote sickNoteWithoutAUB = DemoDataCreator.anySickNote();
+        SickNote sickNoteWithoutAUB = TestDataCreator.anySickNote();
         sickNoteWithoutAUB.setSickNoteType(sickNoteType);
         sickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 13));
         sickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 13));
 
-        SickNote sickNoteWithAUB = DemoDataCreator.anySickNote();
+        SickNote sickNoteWithAUB = TestDataCreator.anySickNote();
         sickNoteWithAUB.setSickNoteType(sickNoteType);
         sickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 14));
@@ -59,13 +59,13 @@ class SickDaysOverviewTest {
         sickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 14));
         sickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 14));
 
-        SickNote childSickNoteWithoutAUB = DemoDataCreator.anySickNote();
+        SickNote childSickNoteWithoutAUB = TestDataCreator.anySickNote();
         childSickNoteWithoutAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 15));
         childSickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 15));
 
-        SickNote childSickNoteWithAUB = DemoDataCreator.anySickNote();
+        SickNote childSickNoteWithAUB = TestDataCreator.anySickNote();
         childSickNoteWithAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 16));
@@ -73,13 +73,13 @@ class SickDaysOverviewTest {
         childSickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 16));
         childSickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 16));
 
-        SickNote inactiveSickNote = DemoDataCreator.anySickNote();
+        SickNote inactiveSickNote = TestDataCreator.anySickNote();
         inactiveSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveSickNote.setStartDate(LocalDate.of(2014, 10, 17));
         inactiveSickNote.setEndDate(LocalDate.of(2014, 10, 17));
 
-        SickNote inactiveChildSickNote = DemoDataCreator.anySickNote();
+        SickNote inactiveChildSickNote = TestDataCreator.anySickNote();
         inactiveChildSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveChildSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveChildSickNote.setStartDate(LocalDate.of(2014, 10, 18));

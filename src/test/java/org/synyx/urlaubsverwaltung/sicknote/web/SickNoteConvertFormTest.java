@@ -11,10 +11,10 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createSickNote;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 

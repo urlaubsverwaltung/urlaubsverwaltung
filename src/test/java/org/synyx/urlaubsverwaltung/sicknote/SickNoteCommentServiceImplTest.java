@@ -12,8 +12,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.CONVERTED_TO_VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.EDITED;
 

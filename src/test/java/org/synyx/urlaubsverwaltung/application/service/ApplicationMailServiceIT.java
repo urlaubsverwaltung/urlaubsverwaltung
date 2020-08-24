@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -32,7 +32,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -430,7 +430,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person secondStage = DemoDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
         final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
@@ -465,7 +465,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person secondStage = DemoDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
         final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
@@ -504,7 +504,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
-        final Person secondStage = DemoDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
         final ApplicationComment comment = new ApplicationComment(secondStage);
@@ -669,7 +669,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Application application = new Application();
         application.setId(1234);
         application.setPerson(person);
-        application.setVacationType(DemoDataCreator.createVacationType(HOLIDAY, "application.data.vacationType.holiday"));
+        application.setVacationType(TestDataCreator.createVacationType(HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);

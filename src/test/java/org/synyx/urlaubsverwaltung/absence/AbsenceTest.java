@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -31,7 +31,7 @@ class AbsenceTest {
     @BeforeEach
     void setUp() {
 
-        person = DemoDataCreator.createPerson();
+        person = TestDataCreator.createPerson();
 
         CalendarSettings calendarSettings = new CalendarSettings();
         calendarSettings.setWorkDayBeginHour(8);

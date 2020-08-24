@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -49,7 +49,7 @@ class PersonValidatorTest {
 
     @BeforeEach
     void setUp() {
-        person = DemoDataCreator.createPerson();
+        person = TestDataCreator.createPerson();
         sut = new PersonValidator(personService);
     }
 
@@ -144,7 +144,7 @@ class PersonValidatorTest {
 
     @Test
     void ensureUsernameMustBeUnique() {
-        when(personService.getPersonByUsername("foo")).thenReturn(Optional.of(DemoDataCreator.createPerson()));
+        when(personService.getPersonByUsername("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
         sut.validateUsername("foo", errors);
         verify(errors).rejectValue("username", "person.form.data.login.error");
     }

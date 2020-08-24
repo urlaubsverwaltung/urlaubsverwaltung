@@ -7,7 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
@@ -25,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -52,49 +52,49 @@ class UsedDaysOverviewTest {
     @Test
     void ensureGeneratesCorrectUsedDaysOverview() {
 
-        final Application holiday = DemoDataCreator.anyApplication();
+        final Application holiday = TestDataCreator.anyApplication();
         holiday.setVacationType(createVacationType(HOLIDAY));
         holiday.setStartDate(LocalDate.of(2014, 10, 13));
         holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
-        final Application holidayAllowed = DemoDataCreator.anyApplication();
+        final Application holidayAllowed = TestDataCreator.anyApplication();
         holidayAllowed.setVacationType(createVacationType(HOLIDAY));
         holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        final Application specialLeave = DemoDataCreator.anyApplication();
+        final Application specialLeave = TestDataCreator.anyApplication();
         specialLeave.setVacationType(createVacationType(VacationCategory.SPECIALLEAVE));
         specialLeave.setStartDate(LocalDate.of(2014, 10, 15));
         specialLeave.setEndDate(LocalDate.of(2014, 10, 15));
         specialLeave.setStatus(ApplicationStatus.WAITING);
 
-        final Application specialLeaveAllowed = DemoDataCreator.anyApplication();
+        final Application specialLeaveAllowed = TestDataCreator.anyApplication();
         specialLeaveAllowed.setVacationType(createVacationType(VacationCategory.SPECIALLEAVE));
         specialLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 16));
         specialLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 16));
         specialLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        final Application unpaidLeave = DemoDataCreator.anyApplication();
+        final Application unpaidLeave = TestDataCreator.anyApplication();
         unpaidLeave.setVacationType(createVacationType(VacationCategory.UNPAIDLEAVE));
         unpaidLeave.setStartDate(LocalDate.of(2014, 10, 17));
         unpaidLeave.setEndDate(LocalDate.of(2014, 10, 17));
         unpaidLeave.setStatus(ApplicationStatus.WAITING);
 
-        final Application unpaidLeaveAllowed = DemoDataCreator.anyApplication();
+        final Application unpaidLeaveAllowed = TestDataCreator.anyApplication();
         unpaidLeaveAllowed.setVacationType(createVacationType(VacationCategory.UNPAIDLEAVE));
         unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 20));
         unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 20));
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        final Application overtimeLeave = DemoDataCreator.anyApplication();
+        final Application overtimeLeave = TestDataCreator.anyApplication();
         overtimeLeave.setVacationType(createVacationType(VacationCategory.OVERTIME));
         overtimeLeave.setStartDate(LocalDate.of(2014, 10, 21));
         overtimeLeave.setEndDate(LocalDate.of(2014, 10, 21));
         overtimeLeave.setStatus(ApplicationStatus.WAITING);
 
-        final Application overtimeLeaveAllowed = DemoDataCreator.anyApplication();
+        final Application overtimeLeaveAllowed = TestDataCreator.anyApplication();
         overtimeLeaveAllowed.setVacationType(createVacationType(VacationCategory.OVERTIME));
         overtimeLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 22));
@@ -124,7 +124,7 @@ class UsedDaysOverviewTest {
     @Test
     void ensureCalculatesDaysForGivenYearForApplicationsSpanningTwoYears() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
         LocalDate startDate = LocalDate.of(2013, 12, 24);
         LocalDate endDate = LocalDate.of(2014, 1, 6);
 
@@ -150,19 +150,19 @@ class UsedDaysOverviewTest {
     @Test
     void ensureGeneratesCorrectUsedDaysOverviewConsideringTemporaryAllowedApplicationsForLeave() {
 
-        final Application holiday = DemoDataCreator.anyApplication();
+        final Application holiday = TestDataCreator.anyApplication();
         holiday.setVacationType(createVacationType(HOLIDAY));
         holiday.setStartDate(LocalDate.of(2014, 10, 13));
         holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
-        final Application holidayAllowed = DemoDataCreator.anyApplication();
+        final Application holidayAllowed = TestDataCreator.anyApplication();
         holidayAllowed.setVacationType(createVacationType(HOLIDAY));
         holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
-        final Application holidayTemporaryAllowed = DemoDataCreator.anyApplication();
+        final Application holidayTemporaryAllowed = TestDataCreator.anyApplication();
         holidayTemporaryAllowed.setVacationType(createVacationType(HOLIDAY));
         holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, 10, 15));
         holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, 10, 15));

@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -27,7 +27,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.R
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.DemoDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -47,7 +47,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
-        final Person person = DemoDataCreator.createPerson();
+        final Person person = TestDataCreator.createPerson();
         final Person savedPerson = personService.save(person);
 
         BigDecimal totalHours = applicationRepository.calculateTotalOvertimeOfPerson(savedPerson);
@@ -58,10 +58,10 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureCountsTotalOvertimeReductionCorrectly() {
 
-        final Person person = DemoDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
+        final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
         final Person savedPerson = personService.save(person);
 
-        final Person otherPerson = DemoDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
+        final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
         final Person savedOtherPerson = personService.save(otherPerson);
 
         final LocalDate now = LocalDate.now(UTC);

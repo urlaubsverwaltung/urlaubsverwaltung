@@ -37,26 +37,26 @@ import static java.time.ZoneOffset.UTC;
 import static org.springframework.util.StringUtils.capitalize;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
-public final class DemoDataCreator {
+public final class TestDataCreator {
 
-    private DemoDataCreator() {
+    private TestDataCreator() {
         // Hide constructor for util class
     }
 
     // Person ----------------------------------------------------------------------------------------------------------
     public static Person createPerson() {
-        return DemoDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
+        return TestDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
     }
 
     public static Person createPerson(Integer id, String username) {
-        final Person person = DemoDataCreator.createPerson();
+        final Person person = TestDataCreator.createPerson();
         person.setId(id);
         return person;
     }
 
     public static Person createPerson(String username, Role... roles) {
         final String name = capitalize(username);
-        final Person person = DemoDataCreator.createPerson(username, name, name, username + "@test.de");
+        final Person person = TestDataCreator.createPerson(username, name, name, username + "@test.de");
         person.setPermissions(List.of(roles));
         return person;
     }
@@ -94,7 +94,7 @@ public final class DemoDataCreator {
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 
         Application application = new Application();
         application.setPerson(person);

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -80,7 +80,7 @@ class ApplicationServiceImplTest {
     @Test
     void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
         when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
 
@@ -110,7 +110,7 @@ class ApplicationServiceImplTest {
         final Application application = new Application();
         final List<Application> applications = List.of(application);
 
-        final Person person = DemoDataCreator.createPerson();
+        final Person person = TestDataCreator.createPerson();
 
         when(applicationRepository.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
 
@@ -122,7 +122,7 @@ class ApplicationServiceImplTest {
     @Test
     void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = TestDataCreator.createPerson();
 
         when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
 
