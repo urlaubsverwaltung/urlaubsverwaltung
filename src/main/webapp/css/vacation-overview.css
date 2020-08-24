@@ -142,6 +142,7 @@
     font-weight: 600 !important;
     padding: 4pt 8pt;
   }
+
   .vacationOverview-table tbody th {
     font-weight: 300 !important;
     padding: 4pt 8pt;
@@ -155,54 +156,47 @@
 
   .vacationOverview-day-personal-holiday-status-WAITING {
     color: #b7791f !important;
-  }
-  .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning {
-    color: #b7791f !important;
-  }
-  .vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
-    color: #b7791f !important;
-  }
-  .vacationOverview-day-personal-holiday-status-ALLOWED {
-    color: #b7791f !important;
-  }
-  .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning {
-    color: #b7791f !important;
-  }
-  .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
-    color: #b7791f !important;
-  }
-  .vacationOverview-day-sick-note {
-    color: #e53e3e !important;
-  }
-  .vacationOverview-day-sick-note-half-day-morning {
-    color: #e53e3e !important;
-  }
-  .vacationOverview-day-sick-note-half-day-noon {
-    color: #e53e3e !important;
-  }
-
-  .vacationOverview-day-personal-holiday-status-ALLOWED {
-    background: #FFEDA0 !important;
-  }
-
-  .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning {
-    background: linear-gradient(90deg, #FFEDA0 50%, #ffffff 50%) !important;
-  }
-
-  .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
-    background: linear-gradient(-90deg, #FFEDA0 50%, #ffffff 50%) !important;
-  }
-
-  .vacationOverview-day-personal-holiday-status-WAITING {
     background: #FFE165 !important;
   }
 
   .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning {
+    color: #b7791f !important;
     background: linear-gradient(90deg, #FFE165 50%, #ffffff 50%) !important;
   }
 
   .vacationOverview-day-personal-holiday-half-day-status-WAITING-noon {
+    color: #b7791f !important;
     background: linear-gradient(-90deg, #FFE165 50%, #ffffff 50%) !important;
+  }
+
+  .vacationOverview-day-personal-holiday-status-ALLOWED {
+    color: #b7791f !important;
+    background: #FFEDA0 !important;
+  }
+
+  .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning {
+    color: #b7791f !important;
+    background: linear-gradient(90deg, #FFEDA0 50%, #ffffff 50%) !important;
+  }
+
+  .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
+    color: #b7791f !important;
+    background: linear-gradient(-90deg, #FFEDA0 50%, #ffffff 50%) !important;
+  }
+
+  .vacationOverview-day-sick-note {
+    color: #e53e3e !important;
+    background: #FFC5BF !important;
+  }
+
+  .vacationOverview-day-sick-note-half-day-morning {
+    color: #e53e3e !important;
+    background: linear-gradient(90deg, #FFC5BF 50%, #ffffff 50%) !important;
+  }
+
+  .vacationOverview-day-sick-note-half-day-noon {
+    color: #e53e3e !important;
+    background: linear-gradient(-90deg, #FFC5BF 50%, #ffffff 50%) !important;
   }
 
   .vacationOverview-day-personal-holiday-half-day-status-ALLOWED-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
@@ -219,18 +213,6 @@
 
   .vacationOverview-day-personal-holiday-half-day-status-WAITING-morning.vacationOverview-day-personal-holiday-half-day-status-ALLOWED-noon {
     background: linear-gradient(90deg, #FFE165 50%, #FFEDA0 50%) !important;
-  }
-
-  .vacationOverview-day-sick-note {
-    background: #FFC5BF !important;
-  }
-
-  .vacationOverview-day-sick-note-half-day-morning {
-    background: linear-gradient(90deg, #FFC5BF 50%, #ffffff 50%) !important;
-  }
-
-  .vacationOverview-day-sick-note-half-day-noon {
-    background: linear-gradient(-90deg, #FFC5BF 50%, #ffffff 50%) !important;
   }
 
   .vacationOverview-day-sick-note-half-day-morning.vacationOverview-day-sick-note-half-day-noon {
