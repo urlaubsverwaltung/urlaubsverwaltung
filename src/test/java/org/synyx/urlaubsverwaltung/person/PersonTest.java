@@ -107,7 +107,7 @@ class PersonTest {
     void ensureCanReturnGravatarURL() {
 
         Person person = createPerson();
-        person.setEmail("muster@test.de");
+        person.setEmail("muster@example.org");
 
         assertThat(person.getGravatarURL()).isNotEqualTo("");
         assertThat(person.getEmail()).isNotEqualTo(person.getGravatarURL());

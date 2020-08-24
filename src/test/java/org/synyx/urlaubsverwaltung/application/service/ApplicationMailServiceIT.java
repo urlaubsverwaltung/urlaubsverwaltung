@@ -156,7 +156,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureCorrectReferMail() throws MessagingException, IOException {
 
-        final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@test.de");
+        final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
         final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
 
         final Application application = createApplication(recipient);

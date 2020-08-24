@@ -43,12 +43,12 @@ public final class TestDataCreator {
 
     // Person ----------------------------------------------------------------------------------------------------------
     public static Person createPerson() {
-        return new Person("muster", "Muster", "Marlene", "muster@test.de");
+        return new Person("muster", "Muster", "Marlene", "muster@example.org");
     }
 
     public static Person createPerson(String username, Role... roles) {
         final String name = capitalize(username);
-        final Person person = new Person(username, name, name, username + "@test.de");
+        final Person person = new Person(username, name, name, username + "@example.org");
         person.setPermissions(List.of(roles));
         return person;
     }
