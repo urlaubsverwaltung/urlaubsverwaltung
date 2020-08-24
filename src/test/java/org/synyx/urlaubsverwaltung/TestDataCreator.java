@@ -56,9 +56,7 @@ public final class TestDataCreator {
     }
 
     public static Person createPerson(String username, String firstName, String lastName, String email) {
-        final Person person = new Person(username, lastName, firstName, email);
-        person.setNotifications(List.of(MailNotification.NOTIFICATION_USER));
-        return person;
+        return new Person(username, lastName, firstName, email);
     }
 
     // Overtime record -------------------------------------------------------------------------------------------------
