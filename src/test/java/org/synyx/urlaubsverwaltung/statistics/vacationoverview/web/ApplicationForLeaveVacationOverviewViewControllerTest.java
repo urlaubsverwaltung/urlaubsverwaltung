@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
@@ -23,19 +22,16 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 import java.util.Locale;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasLength;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -44,7 +40,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,7 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -98,7 +92,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void applicationForLeaveVacationOverviewAllDepartments(Role role) throws Exception {
 
         final var person = new Person();
@@ -518,7 +512,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureOverviewShowsAllPersonsThereAreNoDepartmentsFor(Role role) throws Exception {
         final var person = new Person();
         person.setFirstName("batman");
@@ -599,7 +593,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @Test
-    void ensureOverviewPersonsAreSortedByFirstName() throws Exception{
+    void ensureOverviewPersonsAreSortedByFirstName() throws Exception {
         final var person = new Person();
         person.setFirstName("boss");
         when(personService.getSignedInUser()).thenReturn(person);
