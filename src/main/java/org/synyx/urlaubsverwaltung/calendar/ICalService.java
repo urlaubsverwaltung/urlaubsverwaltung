@@ -12,11 +12,15 @@ import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendar.config.ICalProperties;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static java.util.Date.from;
 import static java.util.stream.Collectors.toList;
@@ -27,6 +31,12 @@ import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 @Service
 class ICalService {
 
+    private final ICalProperties iCalProperties;
+
+    public ICalService(ICalProperties iCalProperties) {
+        this.iCalProperties = iCalProperties;
+    }
+
     String generateCalendar(String title, List<Absence> absences) {
 
         final Calendar calendar = new Calendar();
@@ -36,7 +46,9 @@ class ICalService {
         calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
 
-        final List<VEvent> absencesVEvents = absences.stream().map(this::toVEvent).collect(toList());
+        final List<VEvent> absencesVEvents = absences.stream()
+            .filter(notOlderThan(iCalProperties.getDaysInPast()))
+            .map(this::toVEvent).collect(toList());
         calendar.getComponents().addAll(absencesVEvents);
 
         final StringWriter calenderWriter = new StringWriter();
@@ -48,6 +60,16 @@ class ICalService {
         }
 
         return calenderWriter.toString();
+    }
+
+    private Predicate<? super Absence> notOlderThan(Integer days) {
+        return (absence ->
+        {
+            // Adding +1L is needed to be able to use .isAfter() method
+            var filterDate = LocalDate.now(ZoneOffset.UTC).minusDays(days + 1L);
+            return absence.getStartDate().toLocalDate().isAfter(filterDate)
+                || absence.getEndDate().toLocalDate().isAfter(filterDate);
+        });
     }
 
 
