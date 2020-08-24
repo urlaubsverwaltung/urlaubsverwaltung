@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -31,7 +30,7 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureCanPersistOvertime() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person savedPerson = personService.save(person);
 
         final LocalDate now = LocalDate.now(UTC);
@@ -74,7 +73,7 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         personService.save(person);
 
         BigDecimal totalHours = overtimeRepository.calculateTotalHoursForPerson(person);
@@ -86,7 +85,7 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person savedPerson = personService.save(person);
 
         // records for 2015

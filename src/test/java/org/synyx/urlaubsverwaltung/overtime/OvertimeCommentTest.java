@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 
 
@@ -25,21 +24,21 @@ class OvertimeCommentTest {
     @Test
     void ensureThrowsOnNullOvertime() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new OvertimeComment(createPerson(), null, CREATED));
+            .isThrownBy(() -> new OvertimeComment(new Person("muster", "Muster", "Marlene", "muster@example.org"), null, CREATED));
     }
 
 
     @Test
     void ensureThrowsOnNullAction() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new OvertimeComment(createPerson(), createOvertimeRecord(), null));
+            .isThrownBy(() -> new OvertimeComment(new Person("muster", "Muster", "Marlene", "muster@example.org"), createOvertimeRecord(), null));
     }
 
 
     @Test
     void ensureCorrectPropertiesAfterInitialization() {
 
-        Person author = createPerson();
+        Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Overtime overtime = createOvertimeRecord();
 
         OvertimeComment comment = new OvertimeComment(author, overtime, CREATED);

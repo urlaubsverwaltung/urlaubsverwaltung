@@ -63,7 +63,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithoutCompanyCalendarForUserDueToDisabledFeature() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(person);
@@ -84,7 +84,7 @@ class CalendarSharingViewControllerTest {
 
         final Person bossPerson = createPerson("boss", BOSS);
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
@@ -105,7 +105,7 @@ class CalendarSharingViewControllerTest {
 
         final Person bossPerson = createPerson("boss", BOSS);
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
@@ -126,7 +126,7 @@ class CalendarSharingViewControllerTest {
 
         final Person officeUser = createPerson("boss", OFFICE);
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(officeUser);
@@ -211,7 +211,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithoutDepartments() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(person);
@@ -228,7 +228,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithDepartments() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         final Department sockentraeger = createDepartment("sockenträger");
@@ -251,7 +251,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithVisibleDepartment() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(List.of(USER));
 
@@ -274,7 +274,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithVisibleAndSharedDepartment() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(List.of(USER));
 
@@ -302,7 +302,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithVisibleAndSharedDepartmentHasModelAttributePersonalCalendar() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(List.of(USER));
 
@@ -323,7 +323,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithVisibleAndSharedDepartmentDoesNotHaveModelAttributeCompanyCalendarForRoleUser() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(List.of(USER));
 
@@ -345,7 +345,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleUser() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(List.of(BOSS));
 
@@ -370,7 +370,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleOffice() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(List.of(OFFICE));
 
@@ -392,7 +392,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleBoss() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(List.of(BOSS));
 
@@ -414,7 +414,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithActiveDepartmentThrowsWhenPersonIsNotAMemberOfTheDepartment() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         final Department sockentraeger = createDepartment("sockenträger");
@@ -431,7 +431,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexNoPersonCalendar() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(person);
@@ -449,7 +449,7 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithPersonCalendar() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(person);

@@ -124,7 +124,7 @@ class UsedDaysOverviewTest {
     @Test
     void ensureCalculatesDaysForGivenYearForApplicationsSpanningTwoYears() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate startDate = LocalDate.of(2013, 12, 24);
         LocalDate endDate = LocalDate.of(2014, 1, 6);
 

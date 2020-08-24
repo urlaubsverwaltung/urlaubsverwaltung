@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 
 
 class OvertimeServiceImplTest {
@@ -163,7 +162,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureGetForPersonCallsCorrectDAOMethod() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         sut.getOvertimeRecordsForPerson(person);
 
@@ -216,7 +215,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureGetRecordsByPersonAndYearCallsCorrectDAOMethod() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         sut.getOvertimeRecordsForPersonAndYear(person, 2015);
 
@@ -251,19 +250,19 @@ class OvertimeServiceImplTest {
 
     @Test
     void ensureThrowsIfTryingToGetYearOvertimeForNegativeYear() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeForPersonAndYear(createPerson(), -1));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeForPersonAndYear(new Person("muster", "Muster", "Marlene", "muster@example.org"), -1));
     }
 
     @Test
     void ensureThrowsIfTryingToGetYearOvertimeForZeroYear() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeForPersonAndYear(createPerson(), 0));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeForPersonAndYear(new Person("muster", "Muster", "Marlene", "muster@example.org"), 0));
     }
 
 
     @Test
     void ensureReturnsZeroIfPersonHasNoOvertimeRecordsYetForTheGivenYear() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.emptyList());
@@ -283,7 +282,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureReturnsCorrectYearOvertimeForPerson() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
         overtimeRecord.setHours(BigDecimal.ONE);
@@ -315,7 +314,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureReturnsZeroAsLeftOvertimeIfPersonHasNoOvertimeRecordsYet() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
@@ -333,7 +332,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureTheLeftOvertimeIsTheDifferenceBetweenTotalOvertimeAndOvertimeReduction() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
@@ -351,7 +350,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureTheLeftOvertimeIsZeroIfPersonHasNeitherOvertimeRecordsNorOvertimeReduction() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);

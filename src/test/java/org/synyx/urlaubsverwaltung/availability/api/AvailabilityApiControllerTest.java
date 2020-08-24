@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +53,7 @@ class AvailabilityApiControllerTest {
 
     @Test
     void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
-        final Person testPerson = createPerson();
+        final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
 
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
@@ -70,7 +69,7 @@ class AvailabilityApiControllerTest {
     @Test
     void ensureNoContentAvailabilitiesForGivenPersonWithoutConfiguredWorkingTime() throws Exception {
 
-        final Person testPerson = createPerson();
+        final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
 
         when(availabilityService.getPersonsAvailabilities(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenThrow(FreeTimeAbsenceException.class);

@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
@@ -50,13 +49,13 @@ class DepartmentTest {
     void ensureMembersListIsUnmodifiable() {
 
         List<Person> modifiableList = new ArrayList<>();
-        modifiableList.add(TestDataCreator.createPerson());
+        modifiableList.add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
 
         Department department = new Department();
         department.setMembers(modifiableList);
 
         try {
-            department.getMembers().add(TestDataCreator.createPerson());
+            department.getMembers().add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
             Assert.fail("Members list should be unmodifiable!");
         } catch (UnsupportedOperationException ex) {
             // Expected
@@ -68,13 +67,13 @@ class DepartmentTest {
     void ensureDepartmentHeadsListIsUnmodifiable() {
 
         List<Person> modifiableList = new ArrayList<>();
-        modifiableList.add(TestDataCreator.createPerson());
+        modifiableList.add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
 
         Department department = new Department();
         department.setDepartmentHeads(modifiableList);
 
         try {
-            department.getDepartmentHeads().add(TestDataCreator.createPerson());
+            department.getDepartmentHeads().add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
             Assert.fail("Department head list should be unmodifiable!");
         } catch (UnsupportedOperationException ex) {
             // Expected

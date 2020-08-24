@@ -104,7 +104,7 @@ class VacationDaysServiceTest {
     @Test
     void testGetDaysBeforeApril() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
         LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
@@ -160,7 +160,7 @@ class VacationDaysServiceTest {
     @Test
     void testGetDaysAfterApril() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
@@ -207,7 +207,7 @@ class VacationDaysServiceTest {
     @Test
     void testGetDaysBetweenMilestonesWithInactiveApplicationsForLeaveAndOfOtherVacationTypeThanHoliday() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
@@ -422,7 +422,7 @@ class VacationDaysServiceTest {
     void testGetUsedDaysBeforeApril() {
 
         String expectedUsedDays = "4";
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
@@ -449,7 +449,7 @@ class VacationDaysServiceTest {
     void testGetUsedDaysAfterApril() {
 
         String expectedUsedDays = "4";
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));

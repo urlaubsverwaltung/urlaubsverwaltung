@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -47,7 +46,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person savedPerson = personService.save(person);
 
         BigDecimal totalHours = applicationRepository.calculateTotalOvertimeOfPerson(savedPerson);

@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
@@ -25,14 +24,14 @@ class ApplicationCommentTest {
         };
 
         assertDateIsSetToToday.accept(new ApplicationComment());
-        assertDateIsSetToToday.accept(new ApplicationComment(TestDataCreator.createPerson()));
+        assertDateIsSetToToday.accept(new ApplicationComment(new Person("muster", "Muster", "Marlene", "muster@example.org")));
     }
 
 
     @Test
     void ensureCanBeInitializedWithPerson() {
 
-        Person commentingPerson = TestDataCreator.createPerson();
+        Person commentingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         ApplicationComment comment = new ApplicationComment(commentingPerson);
 

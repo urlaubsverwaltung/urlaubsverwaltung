@@ -21,7 +21,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -54,7 +53,7 @@ class AbsenceServiceImplTest {
         settings.setCalendarSettings(new CalendarSettings());
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2019, 12, 10);
         final LocalDate endDate = LocalDate.of(2019, 12, 23);
@@ -83,7 +82,7 @@ class AbsenceServiceImplTest {
         settings.setCalendarSettings(new CalendarSettings());
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2019, 11, 10);
         final LocalDate endDate = LocalDate.of(2019, 11, 23);

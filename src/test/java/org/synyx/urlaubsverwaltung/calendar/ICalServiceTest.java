@@ -15,7 +15,6 @@ import java.util.List;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -44,7 +43,7 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForOneFullDay() {
 
-        final Absence fullDayAbsence = absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
 
@@ -63,7 +62,7 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForHalfDayMorning() {
 
-        final Absence morningAbsence = absence(createPerson(), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+        final Absence morningAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(morningAbsence));
 
@@ -82,7 +81,7 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForMultipleFullDays() {
 
-        final Absence manyFullDayAbsence = absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+        final Absence manyFullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
 
@@ -102,7 +101,7 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForHalfDayNoon() {
 
-        final Absence noonAbsence = absence(createPerson(), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(noonAbsence));
         assertThat(calendar)

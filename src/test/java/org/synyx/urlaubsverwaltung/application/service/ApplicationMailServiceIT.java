@@ -32,7 +32,6 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -597,9 +596,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureSendRemindForWaitingApplicationsReminderNotification() throws Exception {
 
         // PERSONs
-        final Person personDepartmentA = createPerson();
-        final Person personDepartmentB = createPerson();
-        final Person personDepartmentC = createPerson();
+        final Person personDepartmentA = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person personDepartmentB = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person personDepartmentC = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         // APPLICATIONs
         final Application applicationA = createApplication(personDepartmentA);

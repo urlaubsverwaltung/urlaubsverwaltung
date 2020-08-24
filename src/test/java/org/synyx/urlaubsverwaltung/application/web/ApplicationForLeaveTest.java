@@ -33,7 +33,7 @@ class ApplicationForLeaveTest {
     @Test
     void ensureCreatesCorrectApplicationForLeave() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.FULL);
@@ -63,7 +63,7 @@ class ApplicationForLeaveTest {
     @Test
     void ensureApplicationForLeaveHasInformationAboutDayOfWeek() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);

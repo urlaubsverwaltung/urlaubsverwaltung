@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
@@ -69,7 +68,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -97,7 +96,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -125,7 +124,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -147,7 +146,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -169,7 +168,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -192,7 +191,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -215,7 +214,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -238,7 +237,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -260,7 +259,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -282,7 +281,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -301,7 +300,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -320,7 +319,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -339,7 +338,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -356,7 +355,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -373,7 +372,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -390,7 +389,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -407,7 +406,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -425,7 +424,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -443,7 +442,7 @@ class WorkDaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -467,7 +466,7 @@ class WorkDaysServiceTest {
         final WorkingTime workingTime = createWorkingTime();
         workingTime.setFederalStateOverride(BAYERN_AUGSBURG);
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
             any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));

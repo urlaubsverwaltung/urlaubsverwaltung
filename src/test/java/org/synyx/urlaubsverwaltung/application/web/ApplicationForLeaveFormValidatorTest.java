@@ -81,7 +81,7 @@ class ApplicationForLeaveFormValidatorTest {
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(ZonedDateTime.now(UTC).plusDays(2).toLocalDate());
-        appForm.setPerson(TestDataCreator.createPerson());
+        appForm.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
 
         // Default: everything is alright, override for negative cases
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
@@ -887,7 +887,7 @@ class ApplicationForLeaveFormValidatorTest {
 
     private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
         return new ApplicationForLeaveForm.Builder()
-            .person(TestDataCreator.createPerson())
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .vacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
     }
 

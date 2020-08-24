@@ -17,7 +17,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 
 @ExtendWith(MockitoExtension.class)
 class AvailabilityServiceTest {
@@ -43,7 +42,7 @@ class AvailabilityServiceTest {
 
         final LocalDate startDate = LocalDate.of(2016, 1, 1);
         final LocalDate endDate = LocalDate.of(2016, 1, DAYS_IN_TEST_DATE_RANGE);
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         sut.getPersonsAvailabilities(startDate, endDate, person);
 
         verify(freeTimeAbsenceProvider, times(DAYS_IN_TEST_DATE_RANGE)).checkForAbsence(eq(person), any(LocalDate.class));
@@ -56,7 +55,7 @@ class AvailabilityServiceTest {
         when(timedAbsenceSpans.calculatePresenceRatio()).thenReturn(ONE);
 
         final LocalDate dayToTest = LocalDate.of(2016, 1, 1);
-        final AvailabilityListDto personsAvailabilities = sut.getPersonsAvailabilities(dayToTest, dayToTest, createPerson());
+        final AvailabilityListDto personsAvailabilities = sut.getPersonsAvailabilities(dayToTest, dayToTest, new Person("muster", "Muster", "Marlene", "muster@example.org"));
 
         verify(timedAbsenceSpans, times(1)).calculatePresenceRatio();
         final List<DayAvailability> availabilityList = personsAvailabilities.getAvailabilities();

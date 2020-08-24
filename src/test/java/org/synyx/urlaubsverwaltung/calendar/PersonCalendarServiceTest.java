@@ -28,7 +28,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -63,7 +62,7 @@ class PersonCalendarServiceTest {
     @Test
     void getCalendarForPersonForOneFullDay() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -84,7 +83,7 @@ class PersonCalendarServiceTest {
     @Test
     void getCalendarForPersonForHalfDayMorning() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -105,7 +104,7 @@ class PersonCalendarServiceTest {
     @Test
     void getCalendarForPersonForMultipleFullDays() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -126,7 +125,7 @@ class PersonCalendarServiceTest {
     @Test
     void getCalendarForPersonForHalfDayNoon() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -150,7 +149,7 @@ class PersonCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.ofNullable(null));
 
         final PersonCalendar personCalendar = new PersonCalendar();
-        personCalendar.setPerson(createPerson());
+        personCalendar.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
 
         assertThatIllegalArgumentException()
@@ -185,11 +184,11 @@ class PersonCalendarServiceTest {
     @Test
     void getCalendarForPersonButSecretDoesNotMatchTheGivenPerson() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final Person notMatchingPerson = createPerson();
+        final Person notMatchingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         notMatchingPerson.setId(1337);
         PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(notMatchingPerson);
@@ -202,7 +201,7 @@ class PersonCalendarServiceTest {
     @Test
     void getPersonCalendar() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -224,7 +223,7 @@ class PersonCalendarServiceTest {
     @Test
     void getPersonCalendarNoPersonCalendarFound() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -237,7 +236,7 @@ class PersonCalendarServiceTest {
     @Test
     void createCalendarForPerson() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -261,7 +260,7 @@ class PersonCalendarServiceTest {
     @Test
     void createCalendarForPersonNoPersonCalendarFound() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -279,7 +278,7 @@ class PersonCalendarServiceTest {
     @Test
     void deletePersonalCalendarForPerson() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 

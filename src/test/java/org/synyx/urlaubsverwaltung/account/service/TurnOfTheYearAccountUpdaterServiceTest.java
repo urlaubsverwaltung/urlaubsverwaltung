@@ -24,7 +24,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,9 +51,9 @@ class TurnOfTheYearAccountUpdaterServiceTest {
     @Test
     void ensureUpdatesHolidaysAccountsOfAllActivePersons() {
 
-        Person user1 = createPerson();
-        Person user2 = createPerson();
-        Person user3 = createPerson();
+        Person user1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person user2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person user3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         Account account1 = createHolidaysAccount(user1, LAST_YEAR);
         Account account2 = createHolidaysAccount(user2, LAST_YEAR);

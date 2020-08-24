@@ -33,7 +33,7 @@ class ExtendedSickNoteTest {
     @Test
     void ensureCreatesCorrectExtendedSickNote() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.MORNING);
@@ -65,7 +65,7 @@ class ExtendedSickNoteTest {
     @Test
     void ensureExtendedSickNoteHasInformationAboutDayOfWeek() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);

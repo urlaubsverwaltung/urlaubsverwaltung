@@ -46,7 +46,7 @@ class SickNoteStatisticsTest {
 
         sickNotes = new ArrayList<>();
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         SickNote sickNote1 = TestDataCreator.createSickNote(person,
             LocalDate.of(2013, OCTOBER, 7),

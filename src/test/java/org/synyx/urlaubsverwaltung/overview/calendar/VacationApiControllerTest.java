@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 @ExtendWith(MockitoExtension.class)
@@ -151,10 +150,10 @@ class VacationApiControllerTest {
 
         when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
 
-        final Application vacationAllowed = createApplication(createPerson(),
+        final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             of(2016, 5, 19), of(2016, 5, 20), FULL);
         vacationAllowed.setStatus(ALLOWED);
-        final Application vacationWaiting = createApplication(createPerson(),
+        final Application vacationWaiting = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             of(2016, 5, 19), of(2016, 5, 20), FULL);
         vacationAllowed.setStatus(WAITING);
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(eq(person), any(LocalDate.class), any(LocalDate.class)))
@@ -181,10 +180,10 @@ class VacationApiControllerTest {
 
         when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
 
-        final Application vacationAllowed = createApplication(createPerson(),
+        final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             of(2016, 5, 19), of(2016, 5, 20), FULL);
         vacationAllowed.setStatus(ALLOWED);
-        final Application vacationWaiting = createApplication(createPerson(),
+        final Application vacationWaiting = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             of(2016, 5, 19), of(2016, 5, 20), FULL);
         vacationAllowed.setStatus(WAITING);
         when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class), any(LocalDate.class), eq(ALLOWED)))

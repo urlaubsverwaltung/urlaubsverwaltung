@@ -40,11 +40,6 @@ public final class TestDataCreator {
         // Hide constructor for util class
     }
 
-    // Person ----------------------------------------------------------------------------------------------------------
-    public static Person createPerson() {
-        return new Person("muster", "Muster", "Marlene", "muster@example.org");
-    }
-
     public static Person createPerson(String username, Role... roles) {
         final Person person = new Person(username, username, username, username + "@example.org");
         person.setPermissions(List.of(roles));
@@ -55,7 +50,7 @@ public final class TestDataCreator {
     public static Overtime createOvertimeRecord() {
         final LocalDate startDate = LocalDate.now(UTC);
         final LocalDate endDate = startDate.plusDays(7);
-        return new Overtime(createPerson(), startDate, endDate, BigDecimal.ONE);
+        return new Overtime(new Person("muster", "Muster", "Marlene", "muster@example.org"), startDate, endDate, BigDecimal.ONE);
     }
 
     public static Overtime createOvertimeRecord(Person person) {
@@ -112,14 +107,14 @@ public final class TestDataCreator {
 
     public static Application anyApplication() {
         Application application = new Application();
-        application.setPerson(createPerson());
+        application.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
         application.setDayLength(FULL);
         return application;
     }
 
     // Sick note -------------------------------------------------------------------------------------------------------
     public static SickNote anySickNote() {
-        return createSickNote(createPerson());
+        return createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"));
     }
 
     public static SickNote createSickNote(Person person) {
