@@ -40,11 +40,11 @@ class OvertimeMailServiceIT extends TestContainersBase {
     @Test
     void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen12@example.org");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
         final Overtime overtimeRecord = createOvertimeRecord(person);
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED);
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@example.org");
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(OVERTIME_NOTIFICATION_OFFICE));
         personService.save(office);

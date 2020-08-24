@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import javax.naming.Name;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

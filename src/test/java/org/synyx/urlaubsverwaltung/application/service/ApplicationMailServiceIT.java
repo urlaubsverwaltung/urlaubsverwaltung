@@ -64,14 +64,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.save(office);
 
-        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
         final Application application = createApplication(person);
@@ -122,9 +122,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
         final ApplicationComment comment = new ApplicationComment(boss);
@@ -156,8 +156,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureCorrectReferMail() throws MessagingException, IOException {
 
-        final Person recipient = createPerson("recipient", "Max", "Muster", "mustermann@test.de");
-        final Person sender = createPerson("sender", "Rick", "Grimes", "rick@grimes.com");
+        final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@test.de");
+        final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
 
         final Application application = createApplication(recipient);
 
@@ -183,9 +183,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.save(office);
@@ -214,9 +214,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
 
         final Application application = createApplication(person);
@@ -247,9 +247,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final Person holidayReplacement = createPerson("replacement", "Mar", "Teria", "replacement@firma.test");
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@firma.test");
 
         final Application application = createApplication(person);
         application.setHolidayReplacement(holidayReplacement);
@@ -273,7 +273,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureCorrectFrom() throws MessagingException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         final Application application = createApplication(person);
 
@@ -292,7 +292,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         final Application application = createApplication(person);
 
@@ -322,14 +322,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         final Application application = createApplication(person);
 
         final ApplicationComment comment = new ApplicationComment(person);
         comment.setText("Habe das mal für dich beantragt");
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
@@ -355,9 +355,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
 
         final Application application = createApplication(person);
@@ -388,14 +388,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
 
-        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
         boss.setNotifications(singletonList(NOTIFICATION_BOSS_ALL));
 
-        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@firma.test");
         departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         final ApplicationComment comment = new ApplicationComment(person);
         comment.setText("Hätte gerne Urlaub");
@@ -427,13 +427,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
 
-        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
-        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@firma.test");
         departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final ApplicationComment comment = new ApplicationComment(secondStage);
@@ -462,13 +462,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority() throws MessagingException, IOException {
 
-        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
-        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@firma.test");
         departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final ApplicationComment comment = new ApplicationComment(departmentHead);
@@ -502,9 +502,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
         throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final Person secondStage = TestDataCreator.createPerson("manager", "Kai", "Schmitt", "manager@firma.test");
+        final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
         final ApplicationComment comment = new ApplicationComment(secondStage);
@@ -557,13 +557,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
-        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person departmentHead = createPerson("departmentHead", "Senior", "Kopf", "head@firma.test");
+        final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@firma.test");
         departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         final ApplicationComment comment = new ApplicationComment(person);
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
@@ -610,9 +610,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         applicationC.setId(3);
 
         // DEPARTMENT HEADs
-        final Person boss = createPerson("boss", "Hugo", "Boss", "boss@firma.test");
-        final Person departmentHeadA = createPerson("headAC", "Heinz", "Wurst", "headAC@firma.test");
-        final Person departmentHeadB = createPerson("headB", "Michel", "Mustermann", "headB@firma.test");
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
+        final Person departmentHeadA = new Person("headAC", "Wurst", "Heinz", "headAC@firma.test");
+        final Person departmentHeadB = new Person("headB", "Mustermann", "Michel", "headB@firma.test");
 
         when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationA)).thenReturn(asList(boss, departmentHeadA));
         when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationB)).thenReturn(asList(boss, departmentHeadB));

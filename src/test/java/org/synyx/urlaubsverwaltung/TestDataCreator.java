@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -24,7 +23,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.math.BigDecimal.ZERO;
@@ -45,18 +43,14 @@ public final class TestDataCreator {
 
     // Person ----------------------------------------------------------------------------------------------------------
     public static Person createPerson() {
-        return TestDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
+        return new Person("muster", "Muster", "Marlene", "muster@test.de");
     }
 
     public static Person createPerson(String username, Role... roles) {
         final String name = capitalize(username);
-        final Person person = TestDataCreator.createPerson(username, name, name, username + "@test.de");
+        final Person person = new Person(username, name, name, username + "@test.de");
         person.setPermissions(List.of(roles));
         return person;
-    }
-
-    public static Person createPerson(String username, String firstName, String lastName, String email) {
-        return new Person(username, lastName, firstName, email);
     }
 
     // Overtime record -------------------------------------------------------------------------------------------------

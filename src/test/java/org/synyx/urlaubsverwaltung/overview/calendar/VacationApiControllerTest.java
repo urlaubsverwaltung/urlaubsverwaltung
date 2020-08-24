@@ -56,7 +56,7 @@ class VacationApiControllerTest {
     @Test
     void getVacations() throws Exception {
 
-        final Person person = createPerson("muster", "Marlene", "Muster", "muster@test.de");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@test.de");
         final Application vacationAllowed = createApplication(person,
             of(2016, 5, 19), of(2016, 5, 20), FULL);
         vacationAllowed.setStatus(ALLOWED);
@@ -144,7 +144,7 @@ class VacationApiControllerTest {
     @Test
     void getVacationsOfOthersOrDepartmentColleaguesWithDepartments() throws Exception {
 
-        final Person person = createPerson("muster", "Marlene", "Muster", "muster@test.de");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@test.de");
 
         final List<Department> departments = List.of(new Department(), new Department());
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(departments);
@@ -175,7 +175,7 @@ class VacationApiControllerTest {
     @Test
     void getVacationsOfOthersOrDepartmentColleaguesWithoutDepartments() throws Exception {
 
-        final Person person = createPerson("muster", "Marlene", "Muster", "muster@test.de");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@test.de");
 
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
 

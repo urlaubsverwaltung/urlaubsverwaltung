@@ -41,7 +41,7 @@ class CalendarMailServiceIT extends TestContainersBase {
     void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);

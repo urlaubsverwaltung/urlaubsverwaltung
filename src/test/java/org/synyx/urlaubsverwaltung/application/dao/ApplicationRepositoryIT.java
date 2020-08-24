@@ -58,10 +58,10 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureCountsTotalOvertimeReductionCorrectly() {
 
-        final Person person = TestDataCreator.createPerson("sam", "sam", "smith", "smith@test.de");
+        final Person person = new Person("sam", "smith", "sam", "smith@test.de");
         final Person savedPerson = personService.save(person);
 
-        final Person otherPerson = TestDataCreator.createPerson("freddy", "freddy", "Gwin", "gwin@test.de");
+        final Person otherPerson = new Person("freddy", "Gwin", "freddy", "gwin@test.de");
         final Person savedOtherPerson = personService.save(otherPerson);
 
         final LocalDate now = LocalDate.now(UTC);
