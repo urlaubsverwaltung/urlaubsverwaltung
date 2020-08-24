@@ -32,7 +32,6 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
-import static org.springframework.util.StringUtils.capitalize;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 public final class TestDataCreator {
@@ -47,8 +46,7 @@ public final class TestDataCreator {
     }
 
     public static Person createPerson(String username, Role... roles) {
-        final String name = capitalize(username);
-        final Person person = new Person(username, name, name, username + "@example.org");
+        final Person person = new Person(username, username, username, username + "@example.org");
         person.setPermissions(List.of(roles));
         return person;
     }
