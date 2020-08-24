@@ -22,13 +22,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
 
 @RestControllerAdviceMarker
@@ -50,10 +47,10 @@ public class WorkDayApiController {
     /**
      * Calculate number of work days for the given period and person.
      *
-     * @param startDate     start date as String (e.g. 2013-3-21)
-     * @param endDate       end date as String (e.g. 2013-3-21)
-     * @param length   day length as String (FULL, MORNING or NOON)
-     * @param personId id of the person to number of work days for
+     * @param startDate start date as String (e.g. 2013-3-21)
+     * @param endDate   end date as String (e.g. 2013-3-21)
+     * @param length    day length as String (FULL, MORNING or NOON)
+     * @param personId  id of the person to number of work days for
      * @return number of days as String for the given parameters or "N/A" if parameters are not valid in any way
      */
     @ApiOperation(
