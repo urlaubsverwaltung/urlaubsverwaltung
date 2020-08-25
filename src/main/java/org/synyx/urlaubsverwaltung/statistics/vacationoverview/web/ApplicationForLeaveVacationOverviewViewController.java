@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -79,16 +80,16 @@ public class ApplicationForLeaveVacationOverviewViewController {
         @RequestParam(required = false) String department,
         Model model, Locale locale)
     {
-        final var signedInUser = personService.getSignedInUser();
-        final var departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
+        final Person signedInUser = personService.getSignedInUser();
+        final List<Department> departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
         model.addAttribute("departments", departments);
 
-        final var fallbackDepartment = departments.isEmpty() ? "" : departments.get(0).getName();
-        final var selectedDepartmentName = hasText(department) ? department : fallbackDepartment;
+        final String fallbackDepartment = departments.isEmpty() ? "" : departments.get(0).getName();
+        final String selectedDepartmentName = hasText(department) ? department : fallbackDepartment;
         model.addAttribute("selectedDepartment", selectedDepartmentName);
 
-        final var startDate = getStartDate(year, month);
-        final var endDate = getEndDate(year, month);
+        final LocalDate startDate = getStartDate(year, month);
+        final LocalDate endDate = getEndDate(year, month);
 
         model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("selectedYear", startDate.getYear());
@@ -96,50 +97,50 @@ public class ApplicationForLeaveVacationOverviewViewController {
         final String selectedMonth = getSelectedMonth(month, startDate);
         model.addAttribute("selectedMonth", selectedMonth);
 
-        final var overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
-        final var sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
+        final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
+        final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
 
-        final var vacationsByEmail = new HashMap<String, List<Application>>();
+        final HashMap<String, List<Application>> vacationsByEmail = new HashMap<>();
         for (Person p : overviewPersons) {
-            var apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, p);
+            List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, p);
             vacationsByEmail.put(p.getEmail(), apps);
         }
 
-        var monthsByNr = new HashMap<Integer, AbsenceOverviewMonthDto>();
+        HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
         // `date` is increased by one month at the end of this outer loop
         // the outer loop builds the absence overview view model for every user desired month (specific one or all 12 🐵)
-        var date = startDate;
+        LocalDate date = startDate;
         while (date.isBefore(endDate) || date.isEqual(endDate)) {
 
             // `monthDate` is increased by one day at the end of this inner loop
             // this inner loop builds the monthly absence items for every person of the given department
-            var monthDate = date;
+            LocalDate monthDate = date;
             while (monthDate.getMonthValue() == date.getMonthValue()) {
 
                 // since `monthDate` is increased by one day at the end of the loop we have to check
                 // if we have to create the month view dto in the current loop iteration.
                 if (!monthsByNr.containsKey(date.getMonthValue())) {
-                    var monthViewPersons = new ArrayList<AbsenceOverviewMonthPersonDto>(overviewPersons.size());
+                    ArrayList<AbsenceOverviewMonthPersonDto> monthViewPersons = new ArrayList<>(overviewPersons.size());
                     for (Person person : overviewPersons) {
-                        var p = new AbsenceOverviewMonthPersonDto(
+                        AbsenceOverviewMonthPersonDto p = new AbsenceOverviewMonthPersonDto(
                             person.getFirstName(), person.getLastName(), person.getEmail(), new ArrayList<>());
 
                         monthViewPersons.add(p);
                     }
 
-                    var monthView = new AbsenceOverviewMonthDto(
+                    AbsenceOverviewMonthDto monthView = new AbsenceOverviewMonthDto(
                         getMonthText(monthDate, locale), new ArrayList<>(), monthViewPersons);
 
                     monthsByNr.put(date.getMonthValue(), monthView);
                 }
 
-                final var monthView = monthsByNr.get(date.getMonthValue());
-                final var tableHeadDay = tableHeadDay(monthDate);
+                final AbsenceOverviewMonthDto monthView = monthsByNr.get(date.getMonthValue());
+                final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(monthDate);
                 monthView.getDays().add(tableHeadDay);
 
-                final var thisDate = monthDate;
-                final var sickNotesOnThisDayByEmail = sickNotes.stream()
+                final LocalDate thisDate = monthDate;
+                final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotes.stream()
                     .filter(s -> isDateInPeriod(thisDate, s.getPeriod()))
                     .collect(toMap(s -> s.getPerson().getEmail(), Function.identity()));
 
@@ -147,7 +148,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
                 for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
                     AbsenceOverviewDayType personViewDayType;
 
-                    var sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
+                    SickNote sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
                     if (sickNote != null) {
                         personViewDayType = getAbsenceOverviewDayType(sickNote);
                     } else {
@@ -157,7 +158,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
                             .map(this::getAbsenceOverviewDayType).orElse(null);
                     }
 
-                    final var personDay = new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(monthDate));
+                    final AbsenceOverviewPersonDayDto personDay = new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(monthDate));
                     personView.getDays().add(personDay);
                 }
 
@@ -167,7 +168,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
             date = monthDate;
         }
 
-        var absenceOverview = new AbsenceOverviewDto(new ArrayList<>(monthsByNr.values()));
+        AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(new ArrayList<>(monthsByNr.values()));
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "application/vacation_overview";
@@ -197,8 +198,8 @@ public class ApplicationForLeaveVacationOverviewViewController {
     }
 
     private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate localDate) {
-        var tableHeadDayText = String.format("%02d", localDate.getDayOfMonth());
-        var weekend = isWeekend(localDate);
+        String tableHeadDayText = String.format("%02d", localDate.getDayOfMonth());
+        boolean weekend = isWeekend(localDate);
 
         return new AbsenceOverviewMonthDayDto(tableHeadDayText, weekend);
     }
@@ -220,7 +221,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
     }
 
     private AbsenceOverviewDayType getAbsenceOverviewDayType(Application application) {
-        var status = application.getStatus();
+        ApplicationStatus status = application.getStatus();
         if (status == ApplicationStatus.WAITING) {
             switch (application.getDayLength()) {
                 case MORNING:
@@ -244,12 +245,12 @@ public class ApplicationForLeaveVacationOverviewViewController {
     }
 
     private static boolean isDateInPeriod(LocalDate date, Period period) {
-        var startDate = period.getStartDate();
+        LocalDate startDate = period.getStartDate();
         if (startDate.isEqual(date)) {
             return true;
         }
 
-        var endDate = period.getEndDate();
+        LocalDate endDate = period.getEndDate();
         if (endDate.isEqual(date)) {
             return true;
         }
