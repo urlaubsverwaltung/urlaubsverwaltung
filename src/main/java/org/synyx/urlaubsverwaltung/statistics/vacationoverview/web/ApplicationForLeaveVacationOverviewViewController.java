@@ -101,9 +101,9 @@ public class ApplicationForLeaveVacationOverviewViewController {
         final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
 
         final HashMap<String, List<Application>> vacationsByEmail = new HashMap<>();
-        for (Person p : overviewPersons) {
-            List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, p);
-            vacationsByEmail.put(p.getEmail(), apps);
+        for (Person person : overviewPersons) {
+            List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
+            vacationsByEmail.put(person.getEmail(), apps);
         }
 
         HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
@@ -141,8 +141,8 @@ public class ApplicationForLeaveVacationOverviewViewController {
 
                 final LocalDate thisDate = monthDate;
                 final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotes.stream()
-                    .filter(s -> isDateInPeriod(thisDate, s.getPeriod()))
-                    .collect(toMap(s -> s.getPerson().getEmail(), Function.identity()));
+                    .filter(sickNote -> isDateInPeriod(thisDate, sickNote.getPeriod()))
+                    .collect(toMap(sickNote -> sickNote.getPerson().getEmail(), Function.identity()));
 
                 // create an absence day dto for every person of the department
                 for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
@@ -153,7 +153,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
                         personViewDayType = getAbsenceOverviewDayType(sickNote);
                     } else {
                         personViewDayType = vacationsByEmail.get(personView.getEmail()).stream()
-                            .filter(a -> isDateInPeriod(thisDate, a.getPeriod()))
+                            .filter(application -> isDateInPeriod(thisDate, application.getPeriod()))
                             .findFirst()
                             .map(this::getAbsenceOverviewDayType).orElse(null);
                     }
@@ -190,7 +190,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
         }
 
         return departments.stream()
-            .filter(d -> d.getName().equals(selectedDepartmentName))
+            .filter(department -> department.getName().equals(selectedDepartmentName))
             .map(Department::getMembers)
             .flatMap(List::stream)
             .sorted(comparing(Person::getFirstName))
