@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
@@ -16,15 +18,19 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -39,6 +45,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -68,10 +75,12 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
     @Mock
     private MessageSource messageSource;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveVacationOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, Clock.systemUTC());
+            personService, departmentService, applicationService, sickNoteService, messageSource, clock);
     }
 
     @Test
@@ -622,6 +631,49 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
                         hasProperty("firstName", is("boss"))
                     ))
                 )))));
+    }
+
+    private static Stream<Arguments> dayLengthSickNoteTypeData() {
+        return Stream.of(
+            Arguments.of(DayLength.FULL, "activeSickNoteFull"),
+            Arguments.of(DayLength.MORNING, "activeSickNoteMorning"),
+            Arguments.of(DayLength.NOON, "activeSickNoteNoon")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("dayLengthSickNoteTypeData")
+    void ensureSickNoteOneDay(DayLength dayLength, String dtoDayTypeText) throws Exception {
+        final var person = new Person();
+        person.setFirstName("boss");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+
+        final var sickNote = new SickNote();
+        sickNote.setStartDate(LocalDate.now(clock).minusDays(3));
+        sickNote.setEndDate(LocalDate.now(clock).minusDays(3));
+        sickNote.setDayLength(dayLength);
+        sickNote.setPerson(person);
+
+        final List<SickNote> sickNotes = List.of(sickNote);
+        when(sickNoteService.getAllActiveByYear(Year.now(clock).getValue())).thenReturn(sickNotes);
+
+        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type", is(dtoDayTypeText))
+                        ))
+                    ))
+                ))
+            ));
     }
 
     private static Department department() {
