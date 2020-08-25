@@ -93,14 +93,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
         model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("selectedYear", startDate.getYear());
 
-        String selectedMonth;
-        if (month == null) {
-            selectedMonth = String.valueOf(startDate.getMonthValue());
-        } else if (hasText(month)) {
-            selectedMonth = month;
-        } else {
-            selectedMonth = "";
-        }
+        final String selectedMonth = getSelectedMonth(month, startDate);
         model.addAttribute("selectedMonth", selectedMonth);
 
         final var overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
@@ -178,6 +171,15 @@ public class ApplicationForLeaveVacationOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "application/vacation_overview";
+    }
+
+    private String getSelectedMonth(String month, LocalDate startDate) {
+        if (month == null) {
+            return String.valueOf(startDate.getMonthValue());
+        } else if (hasText(month)) {
+            return month;
+        }
+        return "";
     }
 
     private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, String selectedDepartmentName) {
