@@ -5,7 +5,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -36,13 +35,6 @@ public class ApplicationForLeaveVacationOverviewViewController {
     public ApplicationForLeaveVacationOverviewViewController(PersonService personService, DepartmentService departmentService) {
         this.personService = personService;
         this.departmentService = departmentService;
-    }
-
-    @PreAuthorize(IS_PRIVILEGED_USER)
-    @PostMapping("/vacationoverview")
-    public String applicationForLeaveVacationOverview() {
-
-        return "redirect:/web/application/vacationoverview";
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)

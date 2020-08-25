@@ -43,14 +43,6 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
     }
 
     @Test
-    void applicationForLeaveVacationOverviewPostRedirect() throws Exception {
-
-        final ResultActions resultActions = perform(post("/web/application/vacationoverview"));
-        resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/application/vacationoverview"));
-    }
-
-    @Test
     void applicationForLeaveVacationOverviewNoPermissions() throws Exception {
 
         final Person person = new Person();
