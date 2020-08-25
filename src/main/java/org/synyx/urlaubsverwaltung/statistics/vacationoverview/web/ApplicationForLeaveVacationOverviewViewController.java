@@ -19,9 +19,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -34,7 +35,6 @@ import java.util.function.Supplier;
 import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
-import static java.time.ZoneOffset.UTC;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -55,18 +55,20 @@ public class ApplicationForLeaveVacationOverviewViewController {
     private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final MessageSource messageSource;
+    private final Clock clock;
 
     @Autowired
     public ApplicationForLeaveVacationOverviewViewController(PersonService personService,
                                                              DepartmentService departmentService,
                                                              ApplicationService applicationService,
                                                              SickNoteService sickNoteService,
-                                                             MessageSource messageSource) {
+                                                             MessageSource messageSource, Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.messageSource = messageSource;
+        this.clock = clock;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -88,7 +90,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
         final var startDate = getStartDate(year, month);
         final var endDate = getEndDate(year, month);
 
-        model.addAttribute("currentYear", ZonedDateTime.now(UTC).getYear());
+        model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("selectedYear", startDate.getYear());
 
         String selectedMonth;
@@ -102,7 +104,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
         model.addAttribute("selectedMonth", selectedMonth);
 
         final var overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
-        final var sickNotes = sickNoteService.getAllActiveByYear(year == null ? LocalDate.now(UTC).getYear() : year);
+        final var sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
 
         final var vacationsByEmail = new HashMap<String, List<Application>>();
         for (Person p : overviewPersons) {
@@ -253,16 +255,16 @@ public class ApplicationForLeaveVacationOverviewViewController {
         return startDate.isBefore(date) && date.isBefore(endDate);
     }
 
-    private static LocalDate getStartDate(Integer year, String month) {
+    private LocalDate getStartDate(Integer year, String month) {
         return getStartOrEndDate(year, month, TemporalAdjusters::firstDayOfYear, TemporalAdjusters::firstDayOfMonth);
     }
 
-    private static LocalDate getEndDate(Integer year, String month) {
+    private LocalDate getEndDate(Integer year, String month) {
         return getStartOrEndDate(year, month, TemporalAdjusters::lastDayOfYear, TemporalAdjusters::lastDayOfMonth);
     }
 
-    private static LocalDate getStartOrEndDate(Integer year, String month, Supplier<TemporalAdjuster> firstOrLastOfYearSupplier, Supplier<TemporalAdjuster> firstOrLastOfMonthSupplier) {
-        final LocalDate now = LocalDate.now(UTC);
+    private LocalDate getStartOrEndDate(Integer year, String month, Supplier<TemporalAdjuster> firstOrLastOfYearSupplier, Supplier<TemporalAdjuster> firstOrLastOfMonthSupplier) {
+        final LocalDate now = LocalDate.now(clock);
 
         if (year != null) {
             if (hasText(month)) {

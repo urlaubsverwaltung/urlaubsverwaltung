@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -69,7 +70,8 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveVacationOverviewViewController(personService, departmentService, applicationService, sickNoteService, messageSource);
+        sut = new ApplicationForLeaveVacationOverviewViewController(
+            personService, departmentService, applicationService, sickNoteService, messageSource, Clock.systemUTC());
     }
 
     @Test
