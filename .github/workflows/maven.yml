@@ -82,6 +82,7 @@ jobs:
           -Dsonar.projectKey=org.synyx:urlaubsverwaltung
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml
           -Dsonar.javascript.lcov.reportPaths=target/js-coverage/lcov.info
+          -Dsonar.eslint.reportPaths=target/js-eslint/report.json
           -Dsonar.coverage.exclusions=**/__tests__/**,**/*-spec.js,**/*.spec.js,**/*-test.js,**/*.test.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

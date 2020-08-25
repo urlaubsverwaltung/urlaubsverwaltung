@@ -6,6 +6,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "eslint src/main/webapp",
+    "lint:report": "eslint src/main/webapp -f json -o target/js-eslint/report.json",
     "build": "NODE_ENV=production webpack --mode production",
     "build:dev": "NODE_ENV=development webpack --mode development",
     "build:watch": "NODE_ENV=development webpack --mode development --watch"
