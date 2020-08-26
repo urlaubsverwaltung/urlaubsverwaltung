@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime;
+package org.synyx.urlaubsverwaltung.overlap;
 
 import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,20 +48,18 @@ public class OverlapService {
      */
     public OverlapCase checkOverlap(final Application application) {
 
-        Person person = application.getPerson();
-        LocalDate startDate = application.getStartDate();
-        LocalDate endDate = application.getEndDate();
+        final Person person = application.getPerson();
+        final LocalDate startDate = application.getStartDate();
+        final LocalDate endDate = application.getEndDate();
 
-        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
-            application.getDayLength());
-
+        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate, application.getDayLength());
         if (!application.isNew()) {
             applications = applications.stream()
                 .filter(input -> input.getId() != null && !input.getId().equals(application.getId()))
                 .collect(toList());
         }
 
-        List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
+        final List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
 
         return getOverlapCase(startDate, endDate, applications, sickNotes);
     }
@@ -75,9 +73,9 @@ public class OverlapService {
      */
     public OverlapCase checkOverlap(final SickNote sickNote) {
 
-        Person person = sickNote.getPerson();
-        LocalDate startDate = sickNote.getStartDate();
-        LocalDate endDate = sickNote.getEndDate();
+        final Person person = sickNote.getPerson();
+        final LocalDate startDate = sickNote.getStartDate();
+        final LocalDate endDate = sickNote.getEndDate();
 
         List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
             sickNote.getDayLength());

@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.department.api;
 
 import org.synyx.urlaubsverwaltung.department.Department;
-import org.synyx.urlaubsverwaltung.person.api.PersonsDto;
 import org.synyx.urlaubsverwaltung.person.api.PersonDto;
 import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
+import org.synyx.urlaubsverwaltung.person.api.PersonsDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

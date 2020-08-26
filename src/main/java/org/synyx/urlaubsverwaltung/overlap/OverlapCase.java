@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime;
+package org.synyx.urlaubsverwaltung.overlap;
 
 /**
  * <p>This enum describes what kind of overlap occurs if two (or more) applications are overlapping. There are

@@ -1,8 +1,10 @@
-package org.synyx.urlaubsverwaltung.workingtime;
+package org.synyx.urlaubsverwaltung.overlap;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -15,90 +17,88 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
+import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
+import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 
-
-/**
- * Unit test for {@link OverlapService}.
- */
+@ExtendWith(MockitoExtension.class)
 class OverlapServiceTest {
 
-    private OverlapService service;
+    private OverlapService sut;
+
+    @Mock
     private ApplicationRepository applicationRepository;
+    @Mock
     private SickNoteService sickNoteService;
 
     @BeforeEach
     void setup() {
-
-        applicationRepository = mock(ApplicationRepository.class);
-        sickNoteService = mock(SickNoteService.class);
-        service = new OverlapService(applicationRepository, sickNoteService);
+        sut = new OverlapService(applicationRepository, sickNoteService);
     }
-
 
     @Test
     void ensureNoOverlappingIfOnlyInactiveApplicationsForLeaveInThePeriod() {
 
-        LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
-        LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
+        final LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
+        final LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
 
-        Application cancelledApplication = new Application();
+        final Application cancelledApplication = new Application();
         cancelledApplication.setDayLength(DayLength.FULL);
         cancelledApplication.setStartDate(startDate);
         cancelledApplication.setEndDate(endDate);
         cancelledApplication.setStatus(ApplicationStatus.CANCELLED);
 
-        Application rejectedApplication = new Application();
+        final Application rejectedApplication = new Application();
         rejectedApplication.setDayLength(DayLength.MORNING);
         rejectedApplication.setStartDate(startDate);
         rejectedApplication.setEndDate(endDate);
         rejectedApplication.setStatus(ApplicationStatus.REJECTED);
 
-        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
-            .thenReturn(Arrays.asList(cancelledApplication, rejectedApplication));
+        final Person person = new Person();
 
-        Application applicationToBeChecked = new Application();
+        final Application applicationToBeChecked = new Application();
+        applicationToBeChecked.setPerson(person);
         applicationToBeChecked.setDayLength(DayLength.FULL);
         applicationToBeChecked.setStartDate(startDate);
         applicationToBeChecked.setEndDate(endDate);
 
-        OverlapCase overlapCase = service.checkOverlap(applicationToBeChecked);
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person))
+            .thenReturn(asList(cancelledApplication, rejectedApplication));
 
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(applicationToBeChecked);
+        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
     }
-
 
     @Test
     void ensureNoOverlappingIfNoActiveApplicationsForLeaveInThePeriod() {
 
-        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
-            .thenReturn(new ArrayList<>());
-
-        LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
-        LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
+        final LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
+        final LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
+        final Person person = new Person();
 
         // application for leave to check: 16.01. - 18.01.
-        Application applicationToCheck = new Application();
+        final Application applicationToCheck = new Application();
+        applicationToCheck.setPerson(person);
         applicationToCheck.setDayLength(DayLength.FULL);
         applicationToCheck.setStartDate(startDate);
         applicationToCheck.setEndDate(endDate);
 
-        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person))
+            .thenReturn(new ArrayList<>());
+
+        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
+        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
     }
-
 
     @Test
     void ensureFullyOverlappingIfTheApplicationForLeaveToCheckIsFullyInThePeriodOfOtherApplicationsForLeave() {
@@ -119,7 +119,7 @@ class OverlapServiceTest {
 
         when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
-            .thenReturn(Arrays.asList(waitingApplication, allowedApplication));
+            .thenReturn(asList(waitingApplication, allowedApplication));
 
         // application for leave to check: 18.01. - 19.01.
         Application applicationToCheck = TestDataCreator.anyApplication();
@@ -127,12 +127,9 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 19));
 
-        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
+        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
     }
-
 
     @Test
     void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyStartOfPeriodOfOtherApplicationsForLeave() {
@@ -154,12 +151,9 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 14));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 16));
 
-        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.PARTLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
+        assertThat(overlapCase).isEqualTo(PARTLY_OVERLAPPING);
     }
-
 
     @Test
     void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyEndOfPeriodOfOtherApplicationsForLeave() {
@@ -181,10 +175,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 20));
 
-        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.PARTLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
+        assertThat(overlapCase).isEqualTo(PARTLY_OVERLAPPING);
     }
 
 
@@ -200,39 +192,39 @@ class OverlapServiceTest {
         inactiveSickNote.setEndDate(endDate);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
 
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class),
-            any(LocalDate.class)))
-            .thenReturn(singletonList(inactiveSickNote));
+        final Person person = new Person();
 
         // sick note to be checked: 16.01. - 18.01.
-        SickNote sickNote = new SickNote();
+        final SickNote sickNote = new SickNote();
+        sickNote.setPerson(person);
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
         sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
 
-        OverlapCase overlapCase = service.checkOverlap(sickNote);
+        when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(inactiveSickNote));
 
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
+        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
     }
-
 
     @Test
     void ensureNoOverlappingIfNoActiveSickNotesInThePeriod() {
 
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(new ArrayList<>());
+        final LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
+        final LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
+        final Person person = new Person();
 
         // sick note to be checked: 16.01. - 18.01.
-        SickNote sickNote = new SickNote();
+        final SickNote sickNote = new SickNote();
+        sickNote.setPerson(person);
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
-        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
+        sickNote.setStartDate(startDate);
+        sickNote.setEndDate(endDate);
 
-        OverlapCase overlapCase = service.checkOverlap(sickNote);
+        when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(List.of());
 
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
+        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
     }
 
 
@@ -255,10 +247,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 19));
 
-        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
+        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
     }
 
 
@@ -281,10 +271,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 14));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 16));
 
-        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.PARTLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
+        assertThat(overlapCase).isEqualTo(PARTLY_OVERLAPPING);
     }
 
 
@@ -292,55 +280,60 @@ class OverlapServiceTest {
     void ensureSickNoteCanBeEditedAndNoOverlappingErrorOccurs() {
 
         // sick note: 16.03. - 16.03.
-        SickNote existentSickNote = new SickNote();
+        final LocalDate sameDay = LocalDate.of(2015, MARCH, 16);
+
+        final SickNote existentSickNote = new SickNote();
         existentSickNote.setId(23);
         existentSickNote.setDayLength(DayLength.FULL);
-        existentSickNote.setStartDate(LocalDate.of(2015, MARCH, 16));
-        existentSickNote.setEndDate(LocalDate.of(2015, MARCH, 16));
+        existentSickNote.setStartDate(sameDay);
+        existentSickNote.setEndDate(sameDay);
         existentSickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(singletonList(existentSickNote));
+        final Person person = new Person();
 
         // sick note should be edited to: 16.03. - 17.03.
-        SickNote sickNote = new SickNote();
+        final LocalDate startDate = LocalDate.of(2015, MARCH, 16);
+        final LocalDate endDate = LocalDate.of(2015, MARCH, 17);
+
+        final SickNote sickNote = new SickNote();
         sickNote.setId(23);
+        sickNote.setPerson(person);
         sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(LocalDate.of(2015, MARCH, 16));
-        sickNote.setEndDate(LocalDate.of(2015, MARCH, 17));
+        sickNote.setStartDate(startDate);
+        sickNote.setEndDate(endDate);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        // edit sick note to: 16.03. - 17.03.
-        OverlapCase overlapCase = service.checkOverlap(sickNote);
+        when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(existentSickNote));
 
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+        // edit sick note to: 16.03. - 17.03.
+        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
+        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
     }
 
 
     @Test
     void ensureNoOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayButWithDifferentTimeOfDay() {
 
-        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
+        final LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
+        final Person person = new Person();
 
-        Application morningVacation = new Application();
+        final Application morningVacation = new Application();
         morningVacation.setDayLength(DayLength.MORNING);
         morningVacation.setStartDate(vacationDate);
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.WAITING);
 
-        when(applicationRepository.getApplicationsForACertainTimeAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
-            .thenReturn(singletonList(morningVacation));
-
-        Application noonVacation = new Application();
+        final Application noonVacation = new Application();
+        noonVacation.setPerson(person);
         noonVacation.setDayLength(DayLength.NOON);
         noonVacation.setStartDate(vacationDate);
         noonVacation.setEndDate(vacationDate);
 
-        OverlapCase overlapCase = service.checkOverlap(noonVacation);
+        when(applicationRepository.getApplicationsForACertainTimeAndPerson(vacationDate, vacationDate, person))
+            .thenReturn(singletonList(morningVacation));
 
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(noonVacation);
+        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
     }
 
 
@@ -363,10 +356,8 @@ class OverlapServiceTest {
         otherMorningVacation.setStartDate(vacationDate);
         otherMorningVacation.setEndDate(vacationDate);
 
-        OverlapCase overlapCase = service.checkOverlap(otherMorningVacation);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(otherMorningVacation);
+        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
     }
 
 
@@ -389,10 +380,8 @@ class OverlapServiceTest {
         fullDayVacation.setStartDate(vacationDate);
         fullDayVacation.setEndDate(vacationDate);
 
-        OverlapCase overlapCase = service.checkOverlap(fullDayVacation);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(fullDayVacation);
+        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
     }
 
     @Test
@@ -414,10 +403,8 @@ class OverlapServiceTest {
         morningVacation.setStartDate(vacationDate);
         morningVacation.setEndDate(vacationDate);
 
-        OverlapCase overlapCase = service.checkOverlap(morningVacation);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(morningVacation);
+        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
     }
 
 
@@ -441,10 +428,8 @@ class OverlapServiceTest {
         sickNote.setEndDate(vacationDate);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        OverlapCase overlapCase = service.checkOverlap(sickNote);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
+        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
     }
 
     @Test
@@ -467,9 +452,7 @@ class OverlapServiceTest {
         sickNote.setEndDate(vacationDate);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
-        OverlapCase overlapCase = service.checkOverlap(sickNote);
-
-        Assert.assertNotNull("Should not be null", overlapCase);
-        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
+        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
     }
 }
