@@ -125,7 +125,7 @@ class WorkDaysCountServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person();
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
@@ -169,7 +169,7 @@ class WorkDaysCountServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = createPerson();
+        final Person person = new Person();
         final Application application = createApplication(person, createVacationType(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
