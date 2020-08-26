@@ -62,11 +62,11 @@ class SickNoteStatisticsTest {
         when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
         when(sickNoteDAO.getAllActiveByYear(2013)).thenReturn(sickNotes);
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
+        when(calendarService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
             LocalDate.of(2013, OCTOBER, 11), person))
             .thenReturn(new BigDecimal("5"));
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
+        when(calendarService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
             LocalDate.of(2013, DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 

@@ -387,7 +387,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private boolean vacationOfZeroDays(Application application) {
 
-        BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
+        BigDecimal days = calendarService.getWorkDaysCount(application.getDayLength(), application.getStartDate(),
             application.getEndDate(), application.getPerson());
 
         return CalcUtil.isZero(days);

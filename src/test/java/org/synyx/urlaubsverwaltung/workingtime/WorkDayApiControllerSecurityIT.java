@@ -12,7 +12,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -43,7 +42,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser
     void getWorkdaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")
@@ -56,7 +55,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void getWorkdaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")
@@ -69,7 +68,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void getWorkdaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")
@@ -82,7 +81,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "BOSS")
     void getWorkdaysAsBossUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")
@@ -95,7 +94,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "ADMIN")
     void getWorkdaysAsAdminUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")
@@ -108,7 +107,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "INACTIVE")
     void getWorkdaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")
@@ -123,7 +122,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
     void getWorkdaysWithOfficeRoleIsOk() throws Exception {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")
@@ -140,7 +139,7 @@ class WorkDayApiControllerSecurityIT extends TestContainersBase {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(workDaysService.getWorkDays(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/workdays")
             .param("from", "2016-01-04")

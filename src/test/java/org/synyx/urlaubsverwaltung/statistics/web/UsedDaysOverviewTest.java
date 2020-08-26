@@ -104,7 +104,7 @@ class UsedDaysOverviewTest {
             unpaidLeave, unpaidLeaveAllowed, overtimeLeave, overtimeLeaveAllowed);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(ONE);
 
@@ -131,7 +131,7 @@ class UsedDaysOverviewTest {
         // 3 days in 2013, 2 days in 2014
         Application holiday = createApplication(person, createVacationType(HOLIDAY), startDate, endDate, DayLength.FULL);
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
+        when(calendarService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
 
         final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(singletonList(holiday), 2014, calendarService);
@@ -171,7 +171,7 @@ class UsedDaysOverviewTest {
         List<Application> applications = Arrays.asList(holiday, holidayTemporaryAllowed, holidayAllowed);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
         final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);

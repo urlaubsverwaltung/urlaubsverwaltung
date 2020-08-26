@@ -47,14 +47,14 @@ public class SickDaysOverview {
 
     private BigDecimal getTotalDays(SickNote sickNote, WorkDaysService calendarService) {
 
-        return calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(),
+        return calendarService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(),
             sickNote.getPerson());
     }
 
 
     private BigDecimal getDaysWithAUB(SickNote sickNote, WorkDaysService calendarService) {
 
-        return calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getAubStartDate(),
+        return calendarService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getAubStartDate(),
             sickNote.getAubEndDate(), sickNote.getPerson());
     }
 

@@ -165,7 +165,7 @@ public class VacationDaysService {
                 endDate = lastMilestone;
             }
 
-            usedDays = usedDays.add(calendarService.getWorkDays(applicationForLeave.getDayLength(), startDate, endDate,
+            usedDays = usedDays.add(calendarService.getWorkDaysCount(applicationForLeave.getDayLength(), startDate, endDate,
                 person));
         }
 

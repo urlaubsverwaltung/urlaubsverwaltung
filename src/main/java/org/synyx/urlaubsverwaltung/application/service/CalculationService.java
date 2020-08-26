@@ -75,16 +75,16 @@ public class CalculationService {
         int yearOfEndDate = endDate.getYear();
 
         if (yearOfStartDate == yearOfEndDate) {
-            BigDecimal workDays = calendarService.getWorkDays(dayLength, startDate, endDate, person);
+            BigDecimal workDays = calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
 
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays, application);
         } else {
             // ensure that applying for leave for the period in the old year is possible
-            BigDecimal workDaysInOldYear = calendarService.getWorkDays(dayLength, startDate,
+            BigDecimal workDaysInOldYear = calendarService.getWorkDaysCount(dayLength, startDate,
                 DateUtil.getLastDayOfYear(yearOfStartDate), person);
 
             // ensure that applying for leave for the period in the new year is possible
-            BigDecimal workDaysInNewYear = calendarService.getWorkDays(dayLength,
+            BigDecimal workDaysInNewYear = calendarService.getWorkDaysCount(dayLength,
                 DateUtil.getFirstDayOfYear(yearOfEndDate), endDate, person);
 
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYear, application)
@@ -151,7 +151,7 @@ public class CalculationService {
     private BigDecimal calculateWorkDaysBeforeApril(Application application, List<Interval> beforeApril) {
         DateTime start = beforeApril.get(0).getStart();
         DateTime end = beforeApril.get(0).getEnd();
-        return calendarService.getWorkDays(
+        return calendarService.getWorkDaysCount(
             application.getDayLength(),
             LocalDate.of(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth()),
             LocalDate.of(end.getYear(), end.getMonthOfYear(), end.getDayOfMonth()),

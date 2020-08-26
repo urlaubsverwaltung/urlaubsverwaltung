@@ -50,7 +50,7 @@ class DurationChecker {
      */
     boolean durationIsGreaterThanZero(LocalDate start, LocalDate end, Person person) {
 
-        BigDecimal workDays = workDaysService.getWorkDays(DayLength.FULL, start, end, person);
+        BigDecimal workDays = workDaysService.getWorkDaysCount(DayLength.FULL, start, end, person);
 
         return CalcUtil.isPositive(workDays);
     }

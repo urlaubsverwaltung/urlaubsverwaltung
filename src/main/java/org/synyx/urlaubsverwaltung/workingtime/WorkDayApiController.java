@@ -91,7 +91,7 @@ public class WorkDayApiController {
 
         final BigDecimal days;
         try {
-            days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
+            days = workDaysService.getWorkDaysCount(howLong, startDate, endDate, person.get());
         } catch (NoValidWorkingTimeException e) {
             throw new ResponseStatusException(NO_CONTENT, e.getMessage());
         }

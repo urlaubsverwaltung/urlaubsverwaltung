@@ -75,7 +75,7 @@ public class SickNoteStatistics {
                 endDate = sickNoteStartDate.with(lastDayOfYear());
             }
 
-            BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), startDate, endDate,
+            BigDecimal workDays = calendarService.getWorkDaysCount(sickNote.getDayLength(), startDate, endDate,
                 sickNote.getPerson());
 
             numberOfSickDays = numberOfSickDays.add(workDays);

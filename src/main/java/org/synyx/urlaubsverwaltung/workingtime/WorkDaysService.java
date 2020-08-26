@@ -45,7 +45,7 @@ public class WorkDaysService {
      * @param endDate   the last day of the time period to calculate workdays
      * @return number of weekdays
      */
-    public double getWeekDays(LocalDate startDate, LocalDate endDate) {
+    public double getWeekDaysCount(LocalDate startDate, LocalDate endDate) {
 
         double workDays = 0.0;
 
@@ -81,7 +81,7 @@ public class WorkDaysService {
      * @param person    to calculate workdays in a certain time period
      * @return number of workdays in a certain time period
      */
-    public BigDecimal getWorkDays(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
+    public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
         final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             person, startDate);

@@ -78,10 +78,10 @@ public class UsedDaysOverview {
             LocalDate startDate = getStartDateForCalculation(application);
             LocalDate endDate = getEndDateForCalculation(application);
 
-            return calendarService.getWorkDays(dayLength, startDate, endDate, person);
+            return calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
         }
 
-        return calendarService.getWorkDays(dayLength, application.getStartDate(), application.getEndDate(), person);
+        return calendarService.getWorkDaysCount(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
 

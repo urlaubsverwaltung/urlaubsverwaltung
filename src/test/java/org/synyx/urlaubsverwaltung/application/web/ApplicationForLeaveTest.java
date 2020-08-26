@@ -38,14 +38,14 @@ class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.FULL);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
         ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);
 
         verify(calendarService)
-            .getWorkDays(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
+            .getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
 
         Assert.assertNotNull("Should not be null", applicationForLeave.getStartDate());
         Assert.assertNotNull("Should not be null", applicationForLeave.getEndDate());
@@ -68,7 +68,7 @@ class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 

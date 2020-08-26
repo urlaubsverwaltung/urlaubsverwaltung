@@ -59,7 +59,7 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2011, 11, 16);
         final LocalDate end = LocalDate.of(2011, 11, 28);
 
-        final double weekDaysCount = sut.getWeekDays(start, end);
+        final double weekDaysCount = sut.getWeekDaysCount(start, end);
         assertThat(weekDaysCount).isEqualTo(9.0);
     }
 
@@ -87,8 +87,8 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2010, 12, 17);
         final LocalDate end = LocalDate.of(2010, 12, 31);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(application.getDayLength(), start, end, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(TEN);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(TEN);
     }
 
     @Test
@@ -115,8 +115,8 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2009, 12, 17);
         final LocalDate end = LocalDate.of(2009, 12, 31);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(application.getDayLength(), start, end, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(9));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(9));
     }
 
     @Test
@@ -137,8 +137,8 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2011, 1, 4);
         final LocalDate end = LocalDate.of(2011, 1, 8);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(application.getDayLength(), start, end, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(1.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(1.5));
     }
 
     @Test
@@ -159,8 +159,8 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2011, 1, 4);
         final LocalDate end = LocalDate.of(2011, 1, 8);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(application.getDayLength(), start, end, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(1.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(1.5));
     }
 
     @Test
@@ -182,8 +182,8 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2011, 1, 2);
         final LocalDate end = LocalDate.of(2011, 1, 8);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(application.getDayLength(), start, end, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
     }
 
     @Test
@@ -205,8 +205,8 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2009, 4, 27);
         final LocalDate end = LocalDate.of(2009, 5, 2);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(application.getDayLength(), start, end, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
     }
 
     @Test
@@ -228,8 +228,8 @@ class WorkDaysServiceTest {
         final LocalDate start = LocalDate.of(2011, 12, 26);
         final LocalDate end = LocalDate.of(2012, 1, 15);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(application.getDayLength(), start, end, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(13));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(13));
     }
 
     @Test
@@ -250,8 +250,8 @@ class WorkDaysServiceTest {
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
         final LocalDate endDate = LocalDate.of(2013, DECEMBER, 31);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, startDate, endDate, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(8));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(8));
     }
 
     @Test
@@ -272,8 +272,8 @@ class WorkDaysServiceTest {
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
         final LocalDate endDate = LocalDate.of(2013, DECEMBER, 31);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, startDate, endDate, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(9));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(9));
     }
 
     @Test
@@ -291,8 +291,8 @@ class WorkDaysServiceTest {
         final LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 25);
         final LocalDate endDate = LocalDate.of(2013, Month.NOVEMBER, 25);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(MORNING, startDate, endDate, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
     @Test
@@ -310,8 +310,8 @@ class WorkDaysServiceTest {
         final LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 23);
         final LocalDate endDate = LocalDate.of(2013, Month.NOVEMBER, 23);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, startDate, endDate, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -329,8 +329,8 @@ class WorkDaysServiceTest {
         final LocalDate startDate = LocalDate.of(2013, Month.NOVEMBER, 23);
         final LocalDate endDate = LocalDate.of(2013, Month.NOVEMBER, 23);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(MORNING, startDate, endDate, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -346,8 +346,8 @@ class WorkDaysServiceTest {
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, date, date, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, date, date, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
     @Test
@@ -363,8 +363,8 @@ class WorkDaysServiceTest {
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(MORNING, date, date, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, date, date, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
     @Test
@@ -380,8 +380,8 @@ class WorkDaysServiceTest {
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, date, date, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, date, date, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
     @Test
@@ -397,8 +397,8 @@ class WorkDaysServiceTest {
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(MORNING, date, date, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, date, date, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
     @Test
@@ -415,8 +415,8 @@ class WorkDaysServiceTest {
         final LocalDate from = LocalDate.of(2013, DECEMBER, 23);
         final LocalDate to = LocalDate.of(2014, Month.JANUARY, 2);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, from, to, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, from, to, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(5));
     }
 
     @Test
@@ -433,8 +433,8 @@ class WorkDaysServiceTest {
         final LocalDate from = LocalDate.of(2013, DECEMBER, 23);
         final LocalDate to = LocalDate.of(2014, Month.JANUARY, 2);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(MORNING, from, to, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.valueOf(2.5));
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, from, to, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(2.5));
     }
 
     @Test
@@ -451,8 +451,8 @@ class WorkDaysServiceTest {
         final LocalDate from = LocalDate.of(2016, Month.AUGUST, 15);
         final LocalDate to = LocalDate.of(2016, Month.AUGUST, 15);
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, from, to, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.ONE);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, from, to, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ONE);
     }
 
     @Test
@@ -471,8 +471,8 @@ class WorkDaysServiceTest {
             any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        final BigDecimal weekDaysCount = sut.getWorkDays(FULL, from, to, person);
-        assertThat(weekDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, from, to, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     private HolidayManager getHolidayManager() {

@@ -428,7 +428,7 @@ class VacationDaysServiceTest {
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
 
         WorkDaysService workDaysService = mock(WorkDaysService.class);
-        when(workDaysService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
         VacationDaysService vacationDaysService = new VacationDaysService(
             workDaysService,
@@ -455,7 +455,7 @@ class VacationDaysServiceTest {
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
 
         WorkDaysService workDaysService = mock(WorkDaysService.class);
-        when(workDaysService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+        when(workDaysService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
         VacationDaysService vacationDaysService = new VacationDaysService(
             workDaysService,

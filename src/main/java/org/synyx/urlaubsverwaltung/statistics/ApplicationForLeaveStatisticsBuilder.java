@@ -97,10 +97,10 @@ public class ApplicationForLeaveStatisticsBuilder {
             LocalDate startDate = getStartDateForCalculation(application, relevantYear);
             LocalDate endDate = getEndDateForCalculation(application, relevantYear);
 
-            return calendarService.getWorkDays(dayLength, startDate, endDate, person);
+            return calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
         }
 
-        return calendarService.getWorkDays(dayLength, application.getStartDate(), application.getEndDate(), person);
+        return calendarService.getWorkDaysCount(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
 

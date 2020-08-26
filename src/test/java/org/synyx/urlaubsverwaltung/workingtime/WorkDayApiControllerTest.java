@@ -11,9 +11,6 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDayApiController;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -52,7 +49,7 @@ class WorkDayApiControllerTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(workDaysServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         perform(get("/api/workdays")
@@ -66,7 +63,7 @@ class WorkDayApiControllerTest {
             .andExpect(jsonPath("$.workDays", is("1")));
 
         verify(personServiceMock).getPersonByID(23);
-        verify(workDaysServiceMock).getWorkDays(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
+        verify(workDaysServiceMock).getWorkDaysCount(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
     }
 
     @Test
@@ -74,7 +71,7 @@ class WorkDayApiControllerTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(workDaysServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenThrow(NoValidWorkingTimeException.class);
 
         perform(get("/api/workdays")

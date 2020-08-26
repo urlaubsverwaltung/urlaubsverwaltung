@@ -3,11 +3,11 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -88,7 +88,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
@@ -419,7 +419,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         validator.validate(appForm, errors);
@@ -441,7 +441,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
@@ -464,7 +464,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(eq(appForm.getDayLength()), eq(appForm.getStartDate()),
+        when(calendarService.getWorkDaysCount(eq(appForm.getDayLength()), eq(appForm.getStartDate()),
             eq(appForm.getEndDate()), eq(appForm.getPerson())))
             .thenReturn(BigDecimal.ONE);
 
@@ -485,7 +485,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
