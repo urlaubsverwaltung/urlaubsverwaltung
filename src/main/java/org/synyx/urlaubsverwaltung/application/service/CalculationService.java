@@ -93,8 +93,7 @@ public class CalculationService {
     }
 
 
-    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays,
-                                                     Application application) {
+    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays, Application application) {
 
         Optional<Account> account = getHolidaysAccount(year, person);
 
@@ -128,7 +127,7 @@ public class CalculationService {
 
         if (leftUntilApril.signum() < 0 || leftAfterApril.signum() < 0) {
             if (alreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by {} for {} days in because remaining days " +
+                LOG.info("Rejecting application by {} for {} days in {} because {} remaining days " +
                     "have already been used in {}", person, workDays, year, alreadyUsedNextYear, year + 1);
             }
             return false;
