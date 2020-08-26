@@ -14,6 +14,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
+
 
 /**
  * Service for calendar purpose.
@@ -82,23 +85,19 @@ public class WorkDaysService {
      */
     public BigDecimal getWorkDays(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
-        Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             person, startDate);
 
-        if (!optionalWorkingTime.isPresent()) {
+        if (optionalWorkingTime.isEmpty()) {
             throw new NoValidWorkingTimeException("No working time found for User '" + person.getId()
-                + "' in period " + startDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) + " - "
-                + endDate.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
+                + "' in period " + startDate.format(ofPattern(PATTERN)) + " - " + endDate.format(ofPattern(PATTERN)));
         }
 
-        WorkingTime workingTime = optionalWorkingTime.get();
-
-        FederalState federalState = getFederalState(workingTime);
+        final WorkingTime workingTime = optionalWorkingTime.get();
+        final FederalState federalState = getFederalState(workingTime);
 
         BigDecimal vacationDays = BigDecimal.ZERO;
-
         LocalDate day = startDate;
-
         while (!day.isAfter(endDate)) {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
             BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day, federalState);
@@ -121,11 +120,8 @@ public class WorkDaysService {
         return vacationDays.multiply(dayLength.getDuration()).setScale(1);
     }
 
-
     private FederalState getFederalState(WorkingTime workingTime) {
-
         final Optional<FederalState> federalStateOverride = workingTime.getFederalStateOverride();
         return federalStateOverride.orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState());
-
     }
 }
