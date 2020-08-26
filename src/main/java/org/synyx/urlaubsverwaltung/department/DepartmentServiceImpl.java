@@ -22,6 +22,10 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 
 /**
@@ -219,4 +223,19 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         return isOwnData || isPrivilegedUser;
     }
+
+    @Override
+    public List<Department> getAllowedDepartmentsOfPerson(Person person) {
+
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            return getAllDepartments();
+        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            return getManagedDepartmentsOfSecondStageAuthority(person);
+        } else if (person.hasRole(DEPARTMENT_HEAD)) {
+            return getManagedDepartmentsOfDepartmentHead(person);
+        } else {
+            return getAssignedDepartmentsOfMember(person);
+        }
+    }
+
 }

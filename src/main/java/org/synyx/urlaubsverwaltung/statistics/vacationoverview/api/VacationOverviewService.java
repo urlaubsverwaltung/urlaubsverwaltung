@@ -21,7 +21,11 @@ import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WEEKEND;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
 
+/**
+ * @deprecated This service purpose was to provide information for the client side rendered vacation overview which is obsolete now.
+ */
 @Component
+@Deprecated(since = "4.0.0", forRemoval = true)
 public class VacationOverviewService {
 
     private final DepartmentService departmentService;

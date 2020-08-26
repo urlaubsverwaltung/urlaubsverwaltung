@@ -18,6 +18,7 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -524,5 +525,73 @@ class DepartmentServiceImplTest {
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, user);
 
         Assert.assertTrue("User should be able to access own data", isAllowed);
+    }
+
+    @Test
+    void ensureBossHasAccessToAllDepartments() throws IllegalAccessException {
+        Person boss = DemoDataCreator.createPerson(42, "boss");
+        boss.setPermissions(asList(Role.USER, Role.BOSS));
+
+        Department dep = DemoDataCreator.createDepartment("dep");
+        when(departmentRepository.findAll()).thenReturn(singletonList(dep));
+
+        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(boss);
+
+        assertThat(allowedDepartments).containsExactly(dep);
+    }
+
+    @Test
+    void ensureOfficeHasAccessToAllDepartments() throws IllegalAccessException {
+        Person office = DemoDataCreator.createPerson(42, "office");
+        office.setPermissions(asList(Role.USER, Role.OFFICE));
+
+        Department dep = DemoDataCreator.createDepartment("dep");
+        when(departmentRepository.findAll()).thenReturn(singletonList(dep));
+
+        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(office);
+
+        assertThat(allowedDepartments).containsExactly(dep);
+    }
+
+    @Test
+    void ensureSecondStageAuthorityHasAccessToAllowedDepartments() throws IllegalAccessException {
+        Person secondStageAuthority = DemoDataCreator.createPerson(42, "secondStageAuthority");
+        secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+
+        Department dep = DemoDataCreator.createDepartment("dep");
+        when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority))
+            .thenReturn(singletonList(dep));
+
+        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(secondStageAuthority);
+
+        assertThat(allowedDepartments).containsExactly(dep);
+    }
+
+    @Test
+    void ensureDepartmentHeadHasAccessToAllowedDepartments() throws IllegalAccessException {
+        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
+
+        Department dep = DemoDataCreator.createDepartment("dep");
+        when(departmentRepository.getManagedDepartments(departmentHead))
+            .thenReturn(singletonList(dep));
+
+        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(departmentHead);
+
+        assertThat(allowedDepartments).containsExactly(dep);
+    }
+
+    @Test
+    void ensurePersonHasAccessToAssignedDepartments() throws IllegalAccessException {
+        Person user = DemoDataCreator.createPerson(42, "user");
+        user.setPermissions(singletonList(Role.USER));
+
+        Department dep = DemoDataCreator.createDepartment("dep");
+        when(departmentRepository.getAssignedDepartments(user))
+            .thenReturn(singletonList(dep));
+
+        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(user);
+
+        assertThat(allowedDepartments).containsExactly(dep);
     }
 }
