@@ -95,6 +95,58 @@ public class OverlapService {
 
 
     /**
+     * Get a list of intervals that overlap with the period of the given {@link Application} for leave.
+     *
+     * @param startDate            defines the start of the period
+     * @param endDate              defines the end of the period
+     * @param applicationsForLeave overlapping the reference application for leave
+     * @param sickNotes            overlapping the reference application for leave
+     * @return {@link List} of overlap intervals
+     */
+    public List<Interval> getListOfOverlaps(LocalDate startDate, LocalDate endDate,
+                                            List<Application> applicationsForLeave, List<SickNote> sickNotes) {
+        Interval interval = new Interval(startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+            endDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
+
+        List<Interval> overlappingIntervals = new ArrayList<>();
+
+        for (Application application : applicationsForLeave) {
+            overlappingIntervals.add(new Interval(application.getStartDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+                application.getEndDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
+        }
+
+        for (SickNote sickNote : sickNotes) {
+            overlappingIntervals.add(new Interval(sickNote.getStartDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+                sickNote.getEndDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
+        }
+
+        List<Interval> listOfOverlaps = new ArrayList<>();
+
+        for (Interval overlappingInterval : overlappingIntervals) {
+            Interval overlap = overlappingInterval.overlap(interval);
+
+            // because intervals are inclusive of the start instant, but exclusive of the end instant
+            // you have to check if end of interval a is start of interval b
+
+            if (overlappingInterval.getEnd().equals(interval.getStart())) {
+                overlap = new Interval(interval.getStart(), interval.getStart());
+            }
+
+            if (overlappingInterval.getStart().equals(interval.getEnd())) {
+                overlap = new Interval(interval.getEnd(), interval.getEnd());
+            }
+
+            // check if they really overlap, else value of overlap would be null
+            if (overlap != null) {
+                listOfOverlaps.add(overlap);
+            }
+        }
+
+        return listOfOverlaps;
+    }
+
+
+    /**
      * Determine the case of overlap for the given period and overlapping applications for leave and sick notes.
      *
      * @param startDate    defines the start of the period to be checked
@@ -103,8 +155,8 @@ public class OverlapService {
      * @param sickNotes    that are overlapping in the given period
      * @return {@link OverlapCase} - none, partly, fully
      */
-    OverlapCase getOverlapCase(LocalDate startDate, LocalDate endDate, List<Application> applications,
-                               List<SickNote> sickNotes) {
+    private OverlapCase getOverlapCase(LocalDate startDate, LocalDate endDate, List<Application> applications,
+                                       List<SickNote> sickNotes) {
 
         // case (1): no overlap at all
         if (applications.isEmpty() && sickNotes.isEmpty()) {
@@ -187,58 +239,6 @@ public class OverlapService {
             .stream()
             .filter(SickNote::isActive)
             .collect(toList());
-    }
-
-
-    /**
-     * Get a list of intervals that overlap with the period of the given {@link Application} for leave.
-     *
-     * @param startDate            defines the start of the period
-     * @param endDate              defines the end of the period
-     * @param applicationsForLeave overlapping the reference application for leave
-     * @param sickNotes            overlapping the reference application for leave
-     * @return {@link List} of overlap intervals
-     */
-    public List<Interval> getListOfOverlaps(LocalDate startDate, LocalDate endDate,
-                                            List<Application> applicationsForLeave, List<SickNote> sickNotes) {
-        Interval interval = new Interval(startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-            endDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
-
-        List<Interval> overlappingIntervals = new ArrayList<>();
-
-        for (Application application : applicationsForLeave) {
-            overlappingIntervals.add(new Interval(application.getStartDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-                application.getEndDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
-        }
-
-        for (SickNote sickNote : sickNotes) {
-            overlappingIntervals.add(new Interval(sickNote.getStartDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-                sickNote.getEndDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()));
-        }
-
-        List<Interval> listOfOverlaps = new ArrayList<>();
-
-        for (Interval overlappingInterval : overlappingIntervals) {
-            Interval overlap = overlappingInterval.overlap(interval);
-
-            // because intervals are inclusive of the start instant, but exclusive of the end instant
-            // you have to check if end of interval a is start of interval b
-
-            if (overlappingInterval.getEnd().equals(interval.getStart())) {
-                overlap = new Interval(interval.getStart(), interval.getStart());
-            }
-
-            if (overlappingInterval.getStart().equals(interval.getEnd())) {
-                overlap = new Interval(interval.getEnd(), interval.getEnd());
-            }
-
-            // check if they really overlap, else value of overlap would be null
-            if (overlap != null) {
-                listOfOverlaps.add(overlap);
-            }
-        }
-
-        return listOfOverlaps;
     }
 
 
