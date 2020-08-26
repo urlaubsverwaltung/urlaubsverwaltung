@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.absence.web.ApplicationForLeaveVacationOverviewViewController;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -66,9 +65,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @ExtendWith(MockitoExtension.class)
-class ApplicationForLeaveVacationOverviewViewControllerTest {
+class AbsenceOverviewViewControllerTest {
 
-    private ApplicationForLeaveVacationOverviewViewController sut;
+    private AbsenceOverviewViewController sut;
 
     @Mock
     private PersonService personService;
@@ -85,7 +84,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveVacationOverviewViewController(
+        sut = new AbsenceOverviewViewController(
             personService, departmentService, applicationService, sickNoteService, messageSource, clock);
     }
 
@@ -736,7 +735,7 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
     void ensureWeekends() throws Exception {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-08-01T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new ApplicationForLeaveVacationOverviewViewController(
+        sut = new AbsenceOverviewViewController(
             personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
 
         final var person = new Person();

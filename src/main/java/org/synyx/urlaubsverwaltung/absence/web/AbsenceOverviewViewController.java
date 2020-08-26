@@ -49,7 +49,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
  */
 @RequestMapping("/web/application")
 @Controller
-public class ApplicationForLeaveVacationOverviewViewController {
+public class AbsenceOverviewViewController {
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -59,11 +59,11 @@ public class ApplicationForLeaveVacationOverviewViewController {
     private final Clock clock;
 
     @Autowired
-    public ApplicationForLeaveVacationOverviewViewController(PersonService personService,
-                                                             DepartmentService departmentService,
-                                                             ApplicationService applicationService,
-                                                             SickNoteService sickNoteService,
-                                                             MessageSource messageSource, Clock clock) {
+    public AbsenceOverviewViewController(PersonService personService,
+                                         DepartmentService departmentService,
+                                         ApplicationService applicationService,
+                                         SickNoteService sickNoteService,
+                                         MessageSource messageSource, Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationService = applicationService;
@@ -74,7 +74,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping("/vacationoverview")
-    public String applicationForLeaveVacationOverview(
+    public String absenceOverview(
         @RequestParam(required = false) Integer year,
         @RequestParam(required = false) String month,
         @RequestParam(required = false) String department,
