@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.holiday.api;
+package org.synyx.urlaubsverwaltung.holiday;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
