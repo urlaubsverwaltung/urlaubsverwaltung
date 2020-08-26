@@ -71,14 +71,14 @@
                             <div class="col-md-6">
                                 <select id="yearSelect" name="year" size="1" class="form-control">
                                     <c:forEach var="i" begin="1" end="9">
-                                        <option value="${currentYear - 10 + i}" ${(currentYear - 10 + i) == selectedYear ? 'selected="selected"' : ''}">
+                                        <option value="${currentYear - 10 + i}" ${(currentYear - 10 + i) == selectedYear ? 'selected="selected"' : ''}>
                                             <c:out value="${currentYear - 10 + i}"/>
                                         </option>
                                     </c:forEach>
-                                    <option value="${currentYear}" ${currentYear == selectedYear ? 'selected="selected"' : ''}">
+                                    <option value="${currentYear}" ${currentYear == selectedYear ? 'selected="selected"' : ''}>
                                         <c:out value="${currentYear}"/>
                                     </option>
-                                    <option value="${currentYear + 1}" ${(currentYear + 1) == selectedYear ? 'selected="selected"' : ''}">
+                                    <option value="${currentYear + 1}" ${(currentYear + 1) == selectedYear ? 'selected="selected"' : ''}>
                                         <c:out value="${currentYear + 1}"/>
                                     </option>
                                 </select>
@@ -92,12 +92,12 @@
                             </label>
                             <div class="col-md-6">
                                 <select id="monthSelect" name="month" size="1" class="form-control">
-                                    <option value="" ${selectedMonth == '' ? 'selected="selected"' : ''}">
+                                    <option value="" ${selectedMonth == '' ? 'selected="selected"' : ''}>
                                         <spring:message code="month.all"/>
                                     </option>
                                     <option disabled>──────────</option>
                                     <c:forEach var="i" begin="1" end="12">
-                                    <option value="${i}" ${i == selectedMonth ? 'selected="selected"' : ''}">
+                                    <option value="${i}" ${i == selectedMonth ? 'selected="selected"' : ''}>
                                         <spring:eval var="monthName" expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)" />
                                         <c:out value="${monthName}"/>
                                     </option>
