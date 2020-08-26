@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
@@ -28,11 +27,8 @@ import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
-/**
- * Controller to manage {@link org.synyx.urlaubsverwaltung.workingtime.WorkingTime}s of
- * {@link org.synyx.urlaubsverwaltung.person.Person}s.
- */
 @Controller
 @RequestMapping("/web")
 public class WorkingTimeViewController {
@@ -60,13 +56,13 @@ public class WorkingTimeViewController {
     }
 
 
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/workingtime")
     public String editWorkingTime(@PathVariable("personId") Integer personId, Model model)
         throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        Optional<WorkingTime> optionalWorkingTime = workingTimeService.getCurrentOne(person);
+        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getCurrentOne(person);
 
         if (optionalWorkingTime.isPresent()) {
             model.addAttribute("workingTime", new WorkingTimeForm(optionalWorkingTime.get()));
@@ -79,19 +75,7 @@ public class WorkingTimeViewController {
         return "workingtime/workingtime_form";
     }
 
-
-    private void fillModel(Model model, Person person) {
-
-        model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
-        model.addAttribute("weekDays", WeekDay.values());
-        model.addAttribute("federalStateTypes", FederalState.values());
-        model.addAttribute("defaultFederalState",
-            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
-    }
-
-
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/workingtime")
     public String updateWorkingTime(@PathVariable("personId") Integer personId,
                                     @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm,
@@ -99,7 +83,7 @@ public class WorkingTimeViewController {
                                     Errors errors,
                                     RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         validator.validate(workingTimeForm, errors);
 
@@ -113,7 +97,15 @@ public class WorkingTimeViewController {
             Optional.ofNullable(workingTimeForm.getFederalState()), workingTimeForm.getValidFrom(), person);
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
-
         return "redirect:/web/person/" + personId;
+    }
+
+    private void fillModel(Model model, Person person) {
+        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
+        model.addAttribute("weekDays", WeekDay.values());
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("defaultFederalState",
+            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
     }
 }
