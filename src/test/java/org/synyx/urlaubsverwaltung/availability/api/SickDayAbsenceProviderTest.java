@@ -21,8 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -48,7 +47,7 @@ class SickDayAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnFullSickDay() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -65,7 +64,7 @@ class SickDayAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnTwoHalfSickDays() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -89,7 +88,7 @@ class SickDayAbsenceProviderTest {
         // would return null
         when(nextAbsenceProvider.checkForAbsence(any(), any(), any())).then(returnsFirstArg());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -109,7 +108,7 @@ class SickDayAbsenceProviderTest {
         // would return null
         when(nextAbsenceProvider.checkForAbsence(any(), any(), any())).then(returnsFirstArg());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -125,7 +124,7 @@ class SickDayAbsenceProviderTest {
     @Test
     void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
         final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
@@ -140,7 +139,7 @@ class SickDayAbsenceProviderTest {
     void ensureCallsVacationAbsenceProviderIfNotAbsentForSickDay() {
 
         final LocalDate sickDay = LocalDate.of(2016, 1, 5);
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         sut.checkForAbsence(knownAbsences, person, sickDay);
 

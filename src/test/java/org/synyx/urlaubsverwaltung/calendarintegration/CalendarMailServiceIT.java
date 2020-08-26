@@ -22,7 +22,6 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
@@ -41,7 +40,7 @@ class CalendarMailServiceIT extends TestContainersBase {
     void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);

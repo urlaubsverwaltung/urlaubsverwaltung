@@ -17,7 +17,6 @@ import static java.math.BigDecimal.TEN;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @SpringBootTest
 @Transactional
@@ -32,7 +31,7 @@ class AccountRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintOfPersonAndValidFrom() {
 
-        final Person person = createPerson("test user");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person savedPerson = personService.save(person);
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);

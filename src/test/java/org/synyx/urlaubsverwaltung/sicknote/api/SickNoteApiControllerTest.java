@@ -31,8 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteApiControllerTest {
@@ -62,7 +61,7 @@ class SickNoteApiControllerTest {
 
     @Test
     void ensureReturnsSickNotesOfPersonIfPersonProvided() throws Exception {
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(createPerson()));
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
 
         perform(get("/api/sicknotes").param("from", "2016-01-01")
             .param("to", "2016-12-31")
@@ -78,10 +77,10 @@ class SickNoteApiControllerTest {
     @Test
     void ensureCorrectConversionOfSickNotes() throws Exception {
 
-        SickNote sickNote1 = createSickNote(createPerson("foo"),
+        SickNote sickNote1 = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
-        SickNote sickNote2 = createSickNote(createPerson("bar"));
-        SickNote sickNote3 = createSickNote(createPerson("baz"));
+        SickNote sickNote2 = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+        SickNote sickNote3 = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"));
 
         when(sickNoteService.getByPeriod(any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Arrays.asList(sickNote1, sickNote2, sickNote3));

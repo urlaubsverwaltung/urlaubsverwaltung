@@ -53,7 +53,7 @@ class ExchangeCalendarProviderTest {
         when(exchangeCalSettings.getTimeZoneId()).thenReturn("Europe/Berlin");
 
         when(calendarSettings.getExchangeCalendarSettings()).thenReturn(exchangeCalSettings);
-        when(exchangeCalSettings.getEmail()).thenReturn("test@test.de");
+        when(exchangeCalSettings.getEmail()).thenReturn("test@example.org");
         when(exchangeCalSettings.getPassword()).thenReturn("secret");
         when(exchangeCalSettings.getCalendar()).thenReturn("");
 

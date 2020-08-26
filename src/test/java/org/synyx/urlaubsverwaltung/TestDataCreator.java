@@ -1,7 +1,5 @@
-package org.synyx.urlaubsverwaltung.demodatacreator;
+package org.synyx.urlaubsverwaltung;
 
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.account.domain.Account;
@@ -12,7 +10,6 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -22,86 +19,38 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
-/**
- * Util class to create data for tests.
- */
-public final class DemoDataCreator {
+public final class TestDataCreator {
 
-    private DemoDataCreator() {
-
+    private TestDataCreator() {
         // Hide constructor for util class
     }
 
-    // Person ----------------------------------------------------------------------------------------------------------
-
-    // Person ----------------------------------------------------------------------------------------------------------
-    public static Person createPerson(Integer id, String username) throws IllegalAccessException {
-
-        Person person = DemoDataCreator.createPerson(username);
-
-        Field dateField = ReflectionUtils.findField(Person.class, "id");
-        dateField.setAccessible(true);
-        dateField.set(person, id);
-
-        return person;
-    }
-
-    public static Person createPerson(String username) {
-
-        String name = StringUtils.capitalize(username);
-
-        return DemoDataCreator.createPerson(username, name, name, username + "@test.de");
-    }
-
     public static Person createPerson(String username, Role... roles) {
-
-        String name = StringUtils.capitalize(username);
-
-        Person person = DemoDataCreator.createPerson(username, name, name, username + "@test.de");
-
-        person.setPermissions(Arrays.asList(roles));
-
-        return person;
-    }
-
-    public static Person createPerson() {
-
-        return DemoDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
-    }
-
-    public static Person createPerson(String username, String firstName, String lastName, String email) {
-
-        Person person = new Person(username, lastName, firstName, email);
-        person.setPermissions(Collections.singletonList(Role.USER));
-        person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
-
+        final Person person = new Person(username, username, username, username + "@example.org");
+        person.setPermissions(List.of(roles));
         return person;
     }
 
     // Overtime record -------------------------------------------------------------------------------------------------
-
     public static Overtime createOvertimeRecord() {
-
-        LocalDate startDate = LocalDate.now(UTC);
-        LocalDate endDate = startDate.plusDays(7);
-
-        return new Overtime(createPerson(), startDate, endDate, BigDecimal.ONE);
+        final LocalDate startDate = LocalDate.now(UTC);
+        final LocalDate endDate = startDate.plusDays(7);
+        return new Overtime(new Person("muster", "Muster", "Marlene", "muster@example.org"), startDate, endDate, BigDecimal.ONE);
     }
 
     public static Overtime createOvertimeRecord(Person person) {
@@ -115,16 +64,15 @@ public final class DemoDataCreator {
     }
 
     // Application for leave -------------------------------------------------------------------------------------------
-
     public static Application createApplication(Person person, VacationType vacationType) {
 
         LocalDate now = LocalDate.now(UTC);
-        return createApplication(person, vacationType, now, now.plusDays(3), DayLength.FULL);
+        return createApplication(person, vacationType, now, now.plusDays(3), FULL);
     }
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        VacationType vacationType = DemoDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
 
         Application application = new Application();
         application.setPerson(person);
@@ -159,24 +107,21 @@ public final class DemoDataCreator {
 
     public static Application anyApplication() {
         Application application = new Application();
-        application.setPerson(createPerson());
-        application.setDayLength(DayLength.FULL);
+        application.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+        application.setDayLength(FULL);
         return application;
     }
 
     // Sick note -------------------------------------------------------------------------------------------------------
-
     public static SickNote anySickNote() {
-        return createSickNote(createPerson());
+        return createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"));
     }
 
     public static SickNote createSickNote(Person person) {
-
-        return createSickNote(person, LocalDate.now(UTC), ZonedDateTime.now(UTC).plusDays(3).toLocalDate(), DayLength.FULL);
+        return createSickNote(person, LocalDate.now(UTC), ZonedDateTime.now(UTC).plusDays(3).toLocalDate(), FULL);
     }
 
-    public static SickNote createSickNote(Person person, LocalDate startDate, LocalDate endDate,
-                                          DayLength dayLength) {
+    public static SickNote createSickNote(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
@@ -194,19 +139,15 @@ public final class DemoDataCreator {
     }
 
     // Department ------------------------------------------------------------------------------------------------------
-
     public static Department createDepartment() {
-
         return createDepartment("Abteilung");
     }
 
     public static Department createDepartment(String name) {
-
         return createDepartment(name, "Dies ist eine Abteilung");
     }
 
     public static Department createDepartment(String name, String description) {
-
         Department department = new Department();
         department.setName(name);
         department.setDescription(description);
@@ -215,11 +156,8 @@ public final class DemoDataCreator {
     }
 
     // Holidays account ------------------------------------------------------------------------------------------------
-
     public static Account createHolidaysAccount(Person person, int year) {
-
-        return createHolidaysAccount(person, year, new BigDecimal("30"), new BigDecimal("3"), BigDecimal.ZERO,
-            "comment");
+        return createHolidaysAccount(person, year, new BigDecimal("30"), new BigDecimal("3"), ZERO, "comment");
     }
 
     public static Account createHolidaysAccount(Person person, int year, BigDecimal annualVacationDays,
@@ -228,8 +166,8 @@ public final class DemoDataCreator {
         LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
         LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
-        return new Account(person, firstDayOfYear, lastDayOfYear, annualVacationDays,
-            remainingVacationDays, remainingVacationDaysNotExpiring, comment);
+        return new Account(person, firstDayOfYear, lastDayOfYear, annualVacationDays, remainingVacationDays,
+            remainingVacationDaysNotExpiring, comment);
     }
 
     // Working time ----------------------------------------------------------------------------------------------------
@@ -238,22 +176,20 @@ public final class DemoDataCreator {
 
         WorkingTime workingTime = new WorkingTime();
 
-        List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+        List<Integer> workingDays = List.of(MONDAY.getValue(), TUESDAY.getValue(),
             WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
-        workingTime.setWorkingDays(workingDays, DayLength.FULL);
+        workingTime.setWorkingDays(workingDays, FULL);
 
         return workingTime;
     }
 
     public static VacationType createVacationType(VacationCategory category) {
-
         return createVacationType(category, category.getMessageKey());
     }
 
     public static VacationType createVacationType(VacationCategory category, String messageKey) {
 
         VacationType vacationType = new VacationType();
-
         vacationType.setCategory(category);
         vacationType.setMessageKey(messageKey);
 

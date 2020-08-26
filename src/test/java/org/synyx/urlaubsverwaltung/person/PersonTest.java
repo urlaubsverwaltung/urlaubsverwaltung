@@ -9,7 +9,6 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -56,7 +55,7 @@ class PersonTest {
     @Test
     void ensureReturnsTrueIfPersonHasTheGivenRole() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(Arrays.asList(USER, BOSS));
 
         assertThat(person.hasRole(BOSS)).isTrue();
@@ -66,7 +65,7 @@ class PersonTest {
     @Test
     void ensureReturnsFalseIfPersonHasNotTheGivenRole() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(singletonList(USER));
 
         assertThat(person.hasRole(BOSS)).isFalse();
@@ -76,7 +75,7 @@ class PersonTest {
     @Test
     void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(Arrays.asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
         assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isTrue();
@@ -86,7 +85,7 @@ class PersonTest {
     @Test
     void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(singletonList(NOTIFICATION_USER));
 
         assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isFalse();
@@ -96,7 +95,7 @@ class PersonTest {
     @Test
     void ensureReturnsEmptyStringAsGravatarURLIfEmailIsEmpty() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setEmail(null);
 
         assertThat(person.getGravatarURL()).isSameAs("");
@@ -106,8 +105,8 @@ class PersonTest {
     @Test
     void ensureCanReturnGravatarURL() {
 
-        Person person = createPerson();
-        person.setEmail("muster@test.de");
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setEmail("muster@example.org");
 
         assertThat(person.getGravatarURL()).isNotEqualTo("");
         assertThat(person.getEmail()).isNotEqualTo(person.getGravatarURL());
@@ -120,7 +119,7 @@ class PersonTest {
         List<Role> modifiableList = new ArrayList<>();
         modifiableList.add(USER);
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(modifiableList);
 
         try {
@@ -138,7 +137,7 @@ class PersonTest {
         List<MailNotification> modifiableList = new ArrayList<>();
         modifiableList.add(NOTIFICATION_USER);
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(modifiableList);
 
         try {

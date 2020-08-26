@@ -30,7 +30,6 @@ import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.SATURDAY;
@@ -38,6 +37,7 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.SUNDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
 
 @Testcontainers
@@ -61,7 +61,7 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
 
     @Test
     void title() {
-        final Person person = createTestData();
+        final Person person = createPerson();
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
 
@@ -87,9 +87,10 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
         assertThat(webDriver.getTitle()).isEqualTo("Vacation request of Donald Bradley");
     }
 
-    private Person createTestData() {
-        final Person person = createPerson("dBradley", "Donald", "Bradley", "Donald.Bradley@example.org");
+    private Person createPerson() {
+        final Person person = new Person("dBradley", "Bradley", "Donald", "Donald.Bradley@example.org");
         person.setPassword("2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec");
+        person.setPermissions(List.of(USER));
         final Person savedPerson = personService.save(person);
 
         final int currentYear = LocalDate.now().getYear();

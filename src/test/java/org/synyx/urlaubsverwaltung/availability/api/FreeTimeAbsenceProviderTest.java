@@ -21,8 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createWorkingTime;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
@@ -49,7 +48,7 @@ class FreeTimeAbsenceProviderTest {
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 
-        final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.addAbsence(emptyTimedAbsenceSpans, createPerson(), firstSundayIn2016);
+        final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.addAbsence(emptyTimedAbsenceSpans, new Person("muster", "Muster", "Marlene", "muster@example.org"), firstSundayIn2016);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList()).hasSize(1);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getPartOfDay()).isEqualTo(FULL.name());
         assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getRatio()).isEqualByComparingTo(BigDecimal.ONE);
@@ -59,7 +58,7 @@ class FreeTimeAbsenceProviderTest {
     void ensureExceptionWhenPersonWorkingTimeIsNotAvailable() {
 
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), eq(firstSundayIn2016))).thenReturn(Optional.empty());
 
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
@@ -75,7 +74,7 @@ class FreeTimeAbsenceProviderTest {
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 
-        sut.checkForAbsence(timedAbsenceSpans, createPerson(), firstSundayIn2016);
+        sut.checkForAbsence(timedAbsenceSpans, new Person("muster", "Muster", "Marlene", "muster@example.org"), firstSundayIn2016);
         verifyNoMoreInteractions(publicHolidayAbsenceProvider);
     }
 
@@ -86,7 +85,7 @@ class FreeTimeAbsenceProviderTest {
 
         final LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         sut.checkForAbsence(emptyTimedAbsenceSpans, person, standardWorkingDay);
         verify(publicHolidayAbsenceProvider, times(1)).checkForAbsence(emptyTimedAbsenceSpans, person, standardWorkingDay);

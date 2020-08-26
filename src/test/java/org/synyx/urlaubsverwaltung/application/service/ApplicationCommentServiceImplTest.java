@@ -22,9 +22,8 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 
 
 /**
@@ -47,13 +46,13 @@ class ApplicationCommentServiceImplTest {
     @Test
     void ensureCreatesACommentAndPersistsIt() {
 
-        final Person person = createPerson("person");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final VacationType vacationType = createVacationType(HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
         when(commentDAO.save(any())).then(returnsFirstArg());
 
-        final Person author = createPerson("author");
+        final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationComment comment = commentService.create(application, ALLOWED, Optional.empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
@@ -75,13 +74,13 @@ class ApplicationCommentServiceImplTest {
     @Test
     void ensureCreationOfCommentWithTextWorks() {
 
-        final Person person = createPerson("person");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final VacationType vacationType = createVacationType(HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
         when(commentDAO.save(any())).then(returnsFirstArg());
 
-        final Person author = createPerson("author");
+        final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationComment savedComment = commentService.create(application, REJECTED, Optional.of("Foo"), author);
 
         Assert.assertNotNull("Should not be null", savedComment);

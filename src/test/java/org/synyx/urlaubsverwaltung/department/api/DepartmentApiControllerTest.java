@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
 
@@ -22,8 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentApiControllerTest {
@@ -44,14 +43,14 @@ class DepartmentApiControllerTest {
         final Department departmentOne = new Department();
         departmentOne.setName("departmentOne");
         departmentOne.setDescription("Description One");
-        departmentOne.setMembers(List.of(createPerson("One")));
-        departmentOne.setDepartmentHeads(List.of(createPerson("OneDH")));
+        departmentOne.setMembers(List.of(new Person("One", "One", "One", "One@example.org")));
+        departmentOne.setDepartmentHeads(List.of(new Person("OneDH", "OneDH", "OneDH", "OneDH@example.org")));
 
         final Department departmentTwo = new Department();
         departmentTwo.setName("departmentTwo");
         departmentTwo.setDescription("Description Two");
-        departmentTwo.setMembers(List.of(createPerson("Two")));
-        departmentTwo.setDepartmentHeads(List.of(createPerson("TwoDH")));
+        departmentTwo.setMembers(List.of(new Person("Two", "Two", "Two", "Two@example.org")));
+        departmentTwo.setDepartmentHeads(List.of(new Person("TwoDH", "TwoDH", "TwoDH", "TwoDH@example.org")));
 
         final List<Department> departments = List.of(departmentOne, departmentTwo);
         when(departmentService.getAllDepartments()).thenReturn(departments);

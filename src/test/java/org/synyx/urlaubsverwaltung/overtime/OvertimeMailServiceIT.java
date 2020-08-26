@@ -18,8 +18,7 @@ import java.io.IOException;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createOvertimeRecord;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -40,11 +39,11 @@ class OvertimeMailServiceIT extends TestContainersBase {
     @Test
     void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen12@example.org");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
         final Overtime overtimeRecord = createOvertimeRecord(person);
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED);
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@example.org");
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(OVERTIME_NOTIFICATION_OFFICE));
         personService.save(office);

@@ -21,8 +21,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.C
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -43,7 +42,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnVacationFullDayWaiting() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
         final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
 
@@ -62,7 +61,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnTemporaryAllowed() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
         final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
         fullDayApplication.setStatus(TEMPORARY_ALLOWED);
@@ -82,7 +81,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnAllowed() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
         final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
         fullDayApplication.setStatus(ALLOWED);
@@ -102,7 +101,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsAvailableOnRejected() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
         final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
         fullDayApplication.setStatus(REJECTED);
@@ -120,7 +119,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsAvailableOnCancelled() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
         final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
         fullDayApplication.setStatus(CANCELLED);
@@ -138,7 +137,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsAvailableOnRevoked() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
         final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
         fullDayApplication.setStatus(REVOKED);
@@ -156,7 +155,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnVacationOneHalfDay() {
 
-        final Person testPerson = createPerson();
+        final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate twoHalfDayVacationsDate = LocalDate.of(2016, 1, 5);
         final Application halfMorningDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, MORNING);
 
@@ -175,7 +174,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnVacationTwoHalfDays() {
 
-        final Person testPerson = createPerson();
+        final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate twoHalfDayVacationsDate = LocalDate.of(2016, 1, 5);
         final Application halfMorningDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, MORNING);
         final Application halfNoonDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, NOON);
@@ -197,7 +196,7 @@ class VacationAbsenceProviderTest {
     @Test
     void ensureReturnsGiveAbsenceSpansIfNoVacationFound() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate vacationDay = LocalDate.of(2016, 1, 4);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 

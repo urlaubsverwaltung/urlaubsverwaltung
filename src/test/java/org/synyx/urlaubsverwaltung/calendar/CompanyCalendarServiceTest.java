@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -65,7 +65,7 @@ class CompanyCalendarServiceTest {
     @Test
     void getCalendarForAllForOneFullDay() {
 
-        final List<Absence> absences = List.of(absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
+        final List<Absence> absences = List.of(absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
         when(absenceService.getOpenAbsences()).thenReturn(absences);
 
         final Person person = new Person();
@@ -160,7 +160,7 @@ class CompanyCalendarServiceTest {
 
         final CompanyCalendar expectedCalendar = mock(CompanyCalendar.class);
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(companyCalendarRepository.findByPerson(person)).thenReturn(expectedCalendar);
 
@@ -172,7 +172,7 @@ class CompanyCalendarServiceTest {
     @Test
     void ensureGetCompanyCalendarReturnsEmptyOptional() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
 
@@ -192,7 +192,7 @@ class CompanyCalendarServiceTest {
     @Test
     void ensureCreateCalendarForPerson() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
@@ -207,7 +207,7 @@ class CompanyCalendarServiceTest {
     @Test
     void ensureCreateCalendarForPersonUpdatesExistingCalendar() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final CompanyCalendar expectedCompanyCalendar = new CompanyCalendar();

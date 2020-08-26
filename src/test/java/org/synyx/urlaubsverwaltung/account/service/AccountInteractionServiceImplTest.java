@@ -34,7 +34,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @ExtendWith(MockitoExtension.class)
 class AccountInteractionServiceImplTest {
@@ -64,7 +63,7 @@ class AccountInteractionServiceImplTest {
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(accountProperties.getDefaultVacationDays()).thenReturn(20);
 
@@ -80,7 +79,7 @@ class AccountInteractionServiceImplTest {
 
     @Test
     void testUpdateRemainingVacationDays() {
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
@@ -114,7 +113,7 @@ class AccountInteractionServiceImplTest {
 
     @Test
     void testUpdateRemainingVacationDaysAndNotExpiringDaysAreGreaterThenRemaining() {
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
@@ -136,7 +135,7 @@ class AccountInteractionServiceImplTest {
 
     @Test
     void testUpdateRemainingVacationDaysHasNoThisYearAccount() {
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2012, DECEMBER, 31);
@@ -158,7 +157,7 @@ class AccountInteractionServiceImplTest {
 
     @Test
     void ensureCreatesNewHolidaysAccountIfNotExistsYet() {
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         int year = 2014;
         int nextYear = 2015;
@@ -199,7 +198,7 @@ class AccountInteractionServiceImplTest {
 
     @Test
     void ensureUpdatesRemainingVacationDaysOfHolidaysAccountIfAlreadyExists() {
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         int year = 2014;
         int nextYear = 2015;
@@ -238,7 +237,7 @@ class AccountInteractionServiceImplTest {
 
     @Test
     void createHolidaysAccount() {
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
@@ -257,7 +256,7 @@ class AccountInteractionServiceImplTest {
 
     @Test
     void updateHolidaysAccount() {
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);

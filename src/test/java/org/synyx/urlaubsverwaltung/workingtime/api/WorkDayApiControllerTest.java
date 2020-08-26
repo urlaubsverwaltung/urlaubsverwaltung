@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
@@ -50,7 +49,7 @@ class WorkDayApiControllerTest {
     @Test
     void ensureReturnsWorkDays() throws Exception {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
@@ -72,7 +71,7 @@ class WorkDayApiControllerTest {
     @Test
     void ensureReturnsNoContentForMissingWorkingDay() throws Exception {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workDaysServiceMock.getWorkDays(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenThrow(NoValidWorkingTimeException.class);
@@ -176,7 +175,7 @@ class WorkDayApiControllerTest {
     @Test
     void ensureBadRequestForInvalidLengthParameter() throws Exception {
 
-        final Person person = createPerson("muster");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/workdays")

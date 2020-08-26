@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -46,13 +46,13 @@ class SickNoteStatisticsTest {
 
         sickNotes = new ArrayList<>();
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        SickNote sickNote1 = DemoDataCreator.createSickNote(person,
+        SickNote sickNote1 = TestDataCreator.createSickNote(person,
             LocalDate.of(2013, OCTOBER, 7),
             LocalDate.of(2013, OCTOBER, 11), DayLength.FULL);
 
-        SickNote sickNote2 = DemoDataCreator.createSickNote(person,
+        SickNote sickNote2 = TestDataCreator.createSickNote(person,
             LocalDate.of(2013, DECEMBER, 18),
             LocalDate.of(2014, JANUARY, 3), DayLength.FULL);
 

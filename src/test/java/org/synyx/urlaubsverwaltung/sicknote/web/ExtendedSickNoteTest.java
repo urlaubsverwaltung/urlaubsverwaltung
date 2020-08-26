@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.web;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -33,9 +33,9 @@ class ExtendedSickNoteTest {
     @Test
     void ensureCreatesCorrectExtendedSickNote() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        SickNote sickNote = DemoDataCreator.createSickNote(person, LocalDate.of(2015, 3, 3),
+        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.MORNING);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
@@ -65,9 +65,9 @@ class ExtendedSickNoteTest {
     @Test
     void ensureExtendedSickNoteHasInformationAboutDayOfWeek() {
 
-        Person person = DemoDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        SickNote sickNote = DemoDataCreator.createSickNote(person, LocalDate.of(2016, 3, 1),
+        SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
         when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),

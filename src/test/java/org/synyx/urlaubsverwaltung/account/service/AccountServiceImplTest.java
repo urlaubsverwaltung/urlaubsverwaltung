@@ -16,8 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createHolidaysAccount;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
 
 
 /**
@@ -39,7 +38,7 @@ class AccountServiceImplTest {
     @Test
     void ensureReturnsOptionalWithHolidaysAccountIfExists() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Account account = createHolidaysAccount(person, 2012);
         when(accountRepository.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 

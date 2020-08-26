@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -17,7 +16,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentValidatorTest {
@@ -107,7 +106,7 @@ class DepartmentValidatorTest {
 
     @Test
     void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingAnyMember() {
-        Person person = DemoDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
         Department department = createDepartment("Admins");
@@ -120,12 +119,12 @@ class DepartmentValidatorTest {
 
     @Test
     void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingThePersonAsMember() {
-        Person person = DemoDataCreator.createPerson("muster");
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
         Department department = createDepartment("Admins");
         department.setDepartmentHeads(Collections.singletonList(person));
-        department.setMembers(Collections.singletonList(DemoDataCreator.createPerson("member")));
+        department.setMembers(Collections.singletonList(new Person("muster", "Muster", "Marlene", "muster@example.org")));
 
         sut.validate(department, errors);
         verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
@@ -133,7 +132,7 @@ class DepartmentValidatorTest {
 
     @Test
     void ensureCanNotSetAPersonWithoutDepartmentHeadRoleAsDepartmentHead() {
-        Person person = DemoDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Department department = createDepartment("Admins");
@@ -145,7 +144,7 @@ class DepartmentValidatorTest {
 
     @Test
     void ensureCanNotSetAPersonWithoutSecondStageAuthorityRoleAsSecondStageAutority() {
-        Person person = DemoDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Department department = createDepartment("Admins");

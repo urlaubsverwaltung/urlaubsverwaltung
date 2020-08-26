@@ -13,7 +13,6 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -28,7 +27,7 @@ class OvertimeTest {
 
     @Test
     void ensureThrowsOnNullStartDate() {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, null, now, BigDecimal.ONE));
@@ -36,7 +35,7 @@ class OvertimeTest {
 
     @Test
     void ensureThrowsOnNullEndDate() {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, null, BigDecimal.ONE));
@@ -44,7 +43,7 @@ class OvertimeTest {
 
     @Test
     void ensureThrowsOnNullNumberOfHours() {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, now, null));
@@ -52,7 +51,7 @@ class OvertimeTest {
 
     @Test
     void ensureReturnsCorrectStartDate() {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
@@ -61,7 +60,7 @@ class OvertimeTest {
 
     @Test
     void ensureReturnsCorrectEndDate() {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -70,7 +69,7 @@ class OvertimeTest {
 
     @Test
     void ensureSetLastModificationDateOnInitialization() {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), BigDecimal.ONE);
@@ -79,7 +78,7 @@ class OvertimeTest {
 
     @Test
     void ensureThrowsIfGettingStartDateOnACorruptedOvertime() throws IllegalAccessException {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -93,7 +92,7 @@ class OvertimeTest {
 
     @Test
     void ensureThrowsIfGettingEndDateOnACorruptedOvertime() throws IllegalAccessException {
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -108,7 +107,7 @@ class OvertimeTest {
     @Test
     void ensureThrowsIfGettingLastModificationDateOnACorruptedOvertime() throws IllegalAccessException {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -123,7 +122,7 @@ class OvertimeTest {
     @Test
     void ensureCallingOnUpdateChangesLastModificationDate() throws IllegalAccessException {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);

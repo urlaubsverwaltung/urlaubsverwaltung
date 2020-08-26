@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
@@ -46,7 +45,7 @@ class PublicHolidayAbsenceProviderTest {
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
         when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -64,7 +63,7 @@ class PublicHolidayAbsenceProviderTest {
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
         when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(BigDecimal.valueOf(0.5));
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -82,7 +81,7 @@ class PublicHolidayAbsenceProviderTest {
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
         when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -97,7 +96,7 @@ class PublicHolidayAbsenceProviderTest {
         final LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
         when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(1));
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, standardWorkingDay)).thenReturn(BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());

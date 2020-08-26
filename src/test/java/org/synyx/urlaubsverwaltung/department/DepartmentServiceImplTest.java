@@ -1,12 +1,13 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -27,54 +28,51 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
-
+@ExtendWith(MockitoExtension.class)
 class DepartmentServiceImplTest {
 
     private DepartmentServiceImpl sut;
 
+    @Mock
     private DepartmentRepository departmentRepository;
+    @Mock
     private ApplicationService applicationService;
 
     @BeforeEach
     void setUp() {
-
-        departmentRepository = mock(DepartmentRepository.class);
-        applicationService = mock(ApplicationService.class);
-
         sut = new DepartmentServiceImpl(departmentRepository, applicationService);
     }
-
 
     @Test
     void ensureCallDepartmentDAOSave() {
 
-        Department department = DemoDataCreator.createDepartment();
-
+        final Department department = createDepartment();
         sut.create(department);
 
         verify(departmentRepository).save(eq(department));
     }
 
-
     @Test
-    void ensureCallDepartmentDAOfindById() {
+    void ensureCallDepartmentRepositoryFindById() {
 
         sut.getDepartmentById(42);
         verify(departmentRepository).findById(eq(42));
     }
 
-
     @Test
     void ensureUpdateCallDepartmentDAOUpdate() {
 
-        Department department = DemoDataCreator.createDepartment();
+        Department department = createDepartment();
 
         sut.update(department);
 
         verify(departmentRepository).save(eq(department));
     }
-
 
     @Test
     void ensureGetAllCallDepartmentDAOFindAll() {
@@ -83,7 +81,6 @@ class DepartmentServiceImplTest {
 
         verify(departmentRepository).findAll();
     }
-
 
     @Test
     void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() {
@@ -134,7 +131,7 @@ class DepartmentServiceImplTest {
     void ensureDeleteCallFindOneAndDelete() {
 
         int id = 0;
-        when(departmentRepository.findById(id)).thenReturn(Optional.of(DemoDataCreator.createDepartment()));
+        when(departmentRepository.findById(id)).thenReturn(Optional.of(createDepartment()));
 
         sut.delete(id);
 
@@ -160,18 +157,18 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         Person secondDepartmentHead = mock(Person.class);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
-        Person marketing2 = DemoDataCreator.createPerson("marketing2");
-        Person marketing3 = DemoDataCreator.createPerson("marketing3");
+        Person marketing1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person marketing2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person marketing3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = DemoDataCreator.createDepartment("admins");
+        Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead, secondDepartmentHead));
         admins.setDepartmentHeads(asList(departmentHead, secondDepartmentHead));
 
-        Department marketing = DemoDataCreator.createDepartment("marketing");
+        Department marketing = createDepartment("marketing");
         Person secondStageAuth = mock(Person.class);
         marketing.setMembers(asList(marketing1, marketing2, marketing3, departmentHead, secondStageAuth));
         marketing.setSecondStageAuthorities(singletonList(secondStageAuth));
@@ -179,11 +176,8 @@ class DepartmentServiceImplTest {
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(asList(admins, marketing));
 
         List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
-
-        Assert.assertNotNull("Should not be null", members);
-        Assert.assertEquals("Wrong number of members", 7, members.size());
+        assertThat(members).hasSize(7);
     }
-
 
     @Test
     void ensureReturnsEmptyListIfPersonHasNoManagedDepartment() {
@@ -193,11 +187,8 @@ class DepartmentServiceImplTest {
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(emptyList());
 
         List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
-
-        Assert.assertNotNull("Should not be null", members);
-        Assert.assertTrue("Should be empty", members.isEmpty());
+        assertThat(members).isEmpty();
     }
-
 
     @Test
     void ensureReturnsTrueIfIsDepartmentHeadOfTheGivenPerson() {
@@ -205,19 +196,17 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = DemoDataCreator.createDepartment("admins");
+        Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, admin1);
-
-        Assert.assertTrue("Should be the department head of the given person", isDepartmentHead);
+        assertThat(isDepartmentHead).isTrue();
     }
-
 
     @Test
     void ensureReturnsFalseIfIsNotDepartmentHeadOfTheGivenPerson() {
@@ -225,19 +214,18 @@ class DepartmentServiceImplTest {
         Person departmentHead = mock(Person.class);
         when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = DemoDataCreator.createDepartment("admins");
+        Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
 
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
+        Person marketing1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
 
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, marketing1);
-
-        Assert.assertFalse("Should not be the department head of the given person", isDepartmentHead);
+        assertThat(isDepartmentHead).isFalse();
     }
 
 
@@ -247,18 +235,14 @@ class DepartmentServiceImplTest {
         Person noDepartmentHead = mock(Person.class);
         when(noDepartmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(false);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = DemoDataCreator.createDepartment("admins");
+        Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, noDepartmentHead));
 
-        when(departmentRepository.getManagedDepartments(noDepartmentHead))
-            .thenReturn(singletonList(admins));
-
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(noDepartmentHead, admin1);
-
-        Assert.assertFalse("Should not be the department head of the given person", isDepartmentHead);
+        assertThat(isDepartmentHead).isFalse();
     }
 
 
@@ -271,9 +255,7 @@ class DepartmentServiceImplTest {
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
-
-        Assert.assertNotNull("Should not be null", applications);
-        Assert.assertTrue("Should be empty", applications.isEmpty());
+        assertThat(applications).isEmpty();
 
         verify(departmentRepository).getAssignedDepartments(person);
         verifyNoInteractions(applicationService);
@@ -286,17 +268,17 @@ class DepartmentServiceImplTest {
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person admin2 = DemoDataCreator.createPerson("admin2");
+        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
-        Person marketing2 = DemoDataCreator.createPerson("marketing2");
-        Person marketing3 = DemoDataCreator.createPerson("marketing3");
+        Person marketing1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person marketing2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        Person marketing3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = DemoDataCreator.createDepartment("admins");
+        Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, admin2, person));
 
-        Department marketing = DemoDataCreator.createDepartment("marketing");
+        Department marketing = createDepartment("marketing");
         marketing.setMembers(asList(marketing1, marketing2, marketing3, person));
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
@@ -305,10 +287,7 @@ class DepartmentServiceImplTest {
             .thenReturn(emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
-
-        // Ensure empty list
-        Assert.assertNotNull("Should not be null", applications);
-        Assert.assertTrue("Should be empty", applications.isEmpty());
+        assertThat(applications).isEmpty();
 
         // Ensure fetches departments of person
         verify(departmentRepository).getAssignedDepartments(person);
@@ -337,26 +316,26 @@ class DepartmentServiceImplTest {
         Person person = mock(Person.class);
         LocalDate date = LocalDate.now(UTC);
 
-        Person admin1 = DemoDataCreator.createPerson("admin1");
-        Person marketing1 = DemoDataCreator.createPerson("marketing1");
+        Person admin1 = new Person("shane", "shane", "shane", "shane@example.org");
+        Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
 
-        Department admins = DemoDataCreator.createDepartment("admins");
+        Department admins = createDepartment("admins");
         admins.setMembers(asList(admin1, person));
 
-        Department marketing = DemoDataCreator.createDepartment("marketing");
+        Department marketing = createDepartment("marketing");
         marketing.setMembers(asList(marketing1, person));
 
         Application waitingApplication = mock(Application.class);
-        when(waitingApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(true);
-        when(waitingApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(false);
+        when(waitingApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(true);
+        when(waitingApplication.hasStatus(ALLOWED)).thenReturn(false);
 
         Application allowedApplication = mock(Application.class);
-        when(allowedApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(false);
-        when(allowedApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(true);
+        when(allowedApplication.hasStatus(ALLOWED)).thenReturn(true);
 
         Application otherApplication = mock(Application.class);
-        when(otherApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(false);
-        when(otherApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(false);
+        when(otherApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(false);
+        when(otherApplication.hasStatus(WAITING)).thenReturn(false);
+        when(otherApplication.hasStatus(ALLOWED)).thenReturn(false);
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
 
@@ -369,98 +348,96 @@ class DepartmentServiceImplTest {
             .thenReturn(singletonList(allowedApplication));
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
-
-        Assert.assertEquals("Wrong number of applications", 2, applications.size());
-        Assert.assertTrue("Should contain the waiting application", applications.contains(waitingApplication));
-        Assert.assertTrue("Should contain the allowed application", applications.contains(allowedApplication));
-        Assert.assertFalse("Should not contain an application with other status",
-            applications.contains(otherApplication));
+        assertThat(applications)
+            .hasSize(2)
+            .contains(waitingApplication, allowedApplication)
+            .doesNotContain(otherApplication);
     }
 
     @Test
-    void ensureSignedInOfficeUserCanAccessPersonData() throws IllegalAccessException {
+    void ensureSignedInOfficeUserCanAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person office = DemoDataCreator.createPerson(42, "office");
+        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        office.setId(2);
         office.setPermissions(asList(Role.USER, Role.OFFICE));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(office, person);
-
-        Assert.assertTrue("Office should be able to access any person data", isAllowed);
+        assertThat(isAllowed).isTrue();
     }
 
-
     @Test
-    void ensureSignedInBossUserCanAccessPersonData() throws IllegalAccessException {
+    void ensureSignedInBossUserCanAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person boss = DemoDataCreator.createPerson(42, "boss");
+        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        boss.setId(2);
         boss.setPermissions(asList(Role.USER, Role.BOSS));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
-
-        Assert.assertTrue("Boss should be able to access any person data", isAllowed);
+        assertThat(isAllowed).isTrue();
     }
 
-
     @Test
-    void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() throws IllegalAccessException {
+    void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = createDepartment("dep");
         dep.setMembers(asList(person, departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead))
             .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
-
-        Assert.assertTrue("Department head of person should be able to access the person's data", isAllowed);
+        assertThat(isAllowed).isTrue();
     }
 
-
     @Test
-    void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData()
-        throws IllegalAccessException {
+    void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = createDepartment("dep");
         dep.setMembers(singletonList(departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead))
             .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
-
-        Assert.assertFalse("Department head - but not of person - should not be able to access the person's data",
-            isAllowed);
+        assertThat(isAllowed).isFalse();
     }
 
     @Test
-    void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData()
-        throws IllegalAccessException {
+    void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData() {
 
-        Person secondStageAuthority = DemoDataCreator.createPerson(23, "secondStageAuthority");
+        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        secondStageAuthority.setId(1);
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = createDepartment("dep");
         dep.setMembers(asList(secondStageAuthority, departmentHead));
         dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
 
@@ -468,22 +445,21 @@ class DepartmentServiceImplTest {
             .thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
-
-        Assert.assertFalse("Department head - but not of secondStageAuthority - should not be able to access the secondStageAuthority's data",
-            isAllowed);
+        assertThat(isAllowed).isFalse();
     }
 
     @Test
-    void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData()
-        throws IllegalAccessException {
+    void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData() {
 
-        Person secondStageAuthority = DemoDataCreator.createPerson(23, "secondStageAuthority");
+        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        secondStageAuthority.setId(1);
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
 
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setId(2);
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = createDepartment("dep");
         dep.setMembers(asList(secondStageAuthority, departmentHead));
         dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
         dep.setDepartmentHeads(singletonList(departmentHead));
@@ -491,48 +467,41 @@ class DepartmentServiceImplTest {
         when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority)).thenReturn(singletonList(dep));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(secondStageAuthority, departmentHead);
-
-        Assert.assertTrue("secondStageAuthority should be able to access the departmentHeads's data",
-            isAllowed);
+        assertThat(isAllowed).isTrue();
     }
 
     @Test
-    void ensureNotPrivilegedUserCanNotAccessPersonData() throws IllegalAccessException {
+    void ensureNotPrivilegedUserCanNotAccessPersonData() {
 
-        Person person = DemoDataCreator.createPerson(23, "person");
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
         person.setPermissions(singletonList(Role.USER));
 
-        Person user = DemoDataCreator.createPerson(42, "user");
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setId(2);
         user.setPermissions(singletonList(Role.USER));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
-        dep.setMembers(asList(person, user));
-        when(departmentRepository.getManagedDepartments(user))
-            .thenReturn(singletonList(dep));
-
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, person);
-
-        Assert.assertFalse("User should not be able to access the data of other person", isAllowed);
+        assertThat(isAllowed).isFalse();
     }
 
-
     @Test
-    void ensureNotPrivilegedUserCanAccessOwnPersonData() throws IllegalAccessException {
+    void ensureNotPrivilegedUserCanAccessOwnPersonData() {
 
-        Person user = DemoDataCreator.createPerson(42, "user");
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setId(1);
         user.setPermissions(singletonList(Role.USER));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(user, user);
-
-        Assert.assertTrue("User should be able to access own data", isAllowed);
+        assertThat(isAllowed).isTrue();
     }
 
     @Test
-    void ensureBossHasAccessToAllDepartments() throws IllegalAccessException {
-        Person boss = DemoDataCreator.createPerson(42, "boss");
+    void ensureBossHasAccessToAllDepartments() {
+        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(Role.USER, Role.BOSS));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.findAll()).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(boss);
@@ -541,11 +510,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureOfficeHasAccessToAllDepartments() throws IllegalAccessException {
-        Person office = DemoDataCreator.createPerson(42, "office");
+    void ensureOfficeHasAccessToAllDepartments() {
+        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(Role.USER, Role.OFFICE));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.findAll()).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(office);
@@ -554,11 +523,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureSecondStageAuthorityHasAccessToAllowedDepartments() throws IllegalAccessException {
-        Person secondStageAuthority = DemoDataCreator.createPerson(42, "secondStageAuthority");
+    void ensureSecondStageAuthorityHasAccessToAllowedDepartments() {
+        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority))
             .thenReturn(singletonList(dep));
 
@@ -568,11 +537,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureDepartmentHeadHasAccessToAllowedDepartments() throws IllegalAccessException {
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+    void ensureDepartmentHeadHasAccessToAllowedDepartments() {
+        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.getManagedDepartments(departmentHead))
             .thenReturn(singletonList(dep));
 
@@ -582,11 +551,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensurePersonHasAccessToAssignedDepartments() throws IllegalAccessException {
-        Person user = DemoDataCreator.createPerson(42, "user");
+    void ensurePersonHasAccessToAssignedDepartments() {
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(singletonList(Role.USER));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.getAssignedDepartments(user))
             .thenReturn(singletonList(dep));
 

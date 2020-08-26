@@ -14,7 +14,6 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,9 +48,9 @@ class RecipientServiceTest {
     @Test
     void ensureFiltersOutPersonsWithoutMailAddress() {
 
-        Person person = createPerson("muster", "Max", "Mustermann", "max@firma.test");
-        Person anotherPerson = createPerson("mmuster", "Marlene", "Muster", "marlene@firma.test");
-        Person personWithoutMailAddress = createPerson("nomail", "No", "Mail", null);
+        Person person = new Person("muster", "Mustermann", "Max", "max@firma.test");
+        Person anotherPerson = new Person("mmuster", "Muster", "Marlene", "marlene@firma.test");
+        Person personWithoutMailAddress = new Person("nomail", "Mail", "No", null);
 
         List<String> recipients = sut.getMailAddresses(person, anotherPerson, personWithoutMailAddress);
 

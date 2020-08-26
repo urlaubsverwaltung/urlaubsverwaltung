@@ -23,7 +23,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
 
 @SpringBootTest
 class AvailabilityApiControllerSecurityIT extends TestContainersBase {
@@ -120,7 +119,7 @@ class AvailabilityApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "OFFICE")
     void getAvailabilitiesHasOfficeRole() throws Exception {
 
-        final Person testPerson = createPerson("testPerson");
+        final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(5)).thenReturn(Optional.of(testPerson));
         when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityListDto(emptyList(), testPerson.getId()));
 

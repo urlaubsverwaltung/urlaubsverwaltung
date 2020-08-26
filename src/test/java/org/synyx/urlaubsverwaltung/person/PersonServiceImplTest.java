@@ -33,7 +33,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -110,7 +110,7 @@ class PersonServiceImplTest {
     @Test
     void ensureCreatedPersonIsPersisted() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personRepository.save(person)).thenReturn(person);
 
         final Person savedPerson = sut.create(person);
@@ -120,7 +120,7 @@ class PersonServiceImplTest {
     @Test
     void ensureUpdatedPersonHasCorrectAttributes() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personRepository.findById(anyInt())).thenReturn(Optional.of(person));
         when(personRepository.save(person)).thenReturn(person);
 
@@ -147,7 +147,7 @@ class PersonServiceImplTest {
     @Test
     void ensureUpdatedPersonIsPersisted() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         when(personRepository.save(person)).thenReturn(person);
 
@@ -160,7 +160,7 @@ class PersonServiceImplTest {
     @Test
     void ensureThrowsIfPersonToBeUpdatedHasNoID() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(null);
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.update(person));
@@ -170,7 +170,7 @@ class PersonServiceImplTest {
     @Test
     void ensureSaveCallsCorrectDaoMethod() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personRepository.save(person)).thenReturn(person);
 
         final Person savedPerson = sut.save(person);
@@ -198,16 +198,16 @@ class PersonServiceImplTest {
     @Test
     void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
-        Person inactive = createPerson("inactive");
+        Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
         inactive.setPermissions(singletonList(Role.INACTIVE));
 
-        Person user = createPerson("user");
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(singletonList(USER));
 
-        Person boss = createPerson("boss");
+        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
 
-        Person office = createPerson("office");
+        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
         List<Person> allPersons = asList(inactive, user, boss, office);
@@ -227,16 +227,16 @@ class PersonServiceImplTest {
     @Test
     void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
 
-        Person inactive = createPerson("inactive");
+        Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
         inactive.setPermissions(singletonList(Role.INACTIVE));
 
-        Person user = createPerson("user");
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(singletonList(USER));
 
-        Person boss = createPerson("boss");
+        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
 
-        Person office = createPerson("office");
+        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
         List<Person> allPersons = asList(inactive, user, boss, office);
@@ -254,13 +254,13 @@ class PersonServiceImplTest {
     @Test
     void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
-        Person user = createPerson("user");
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(singletonList(USER));
 
-        Person boss = createPerson("boss");
+        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
 
-        Person office = createPerson("office");
+        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
         List<Person> allPersons = asList(user, boss, office);
@@ -279,15 +279,15 @@ class PersonServiceImplTest {
     @Test
     void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
 
-        Person user = createPerson("user");
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(singletonList(USER));
         user.setNotifications(singletonList(NOTIFICATION_USER));
 
-        Person boss = createPerson("boss");
+        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
         boss.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
-        Person office = createPerson("office");
+        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
         office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL,
             MailNotification.NOTIFICATION_OFFICE));
@@ -308,9 +308,9 @@ class PersonServiceImplTest {
     @Test
     void ensureGetActivePersonsReturnSortedList() {
 
-        Person shane = createPerson("shane");
-        Person carl = createPerson("carl");
-        Person rick = createPerson("rick");
+        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
 
         List<Person> unsortedPersons = asList(shane, carl, rick);
 
@@ -328,9 +328,9 @@ class PersonServiceImplTest {
     @Test
     void ensureGetInactivePersonsReturnSortedList() {
 
-        Person shane = createPerson("shane");
-        Person carl = createPerson("carl");
-        Person rick = createPerson("rick");
+        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
 
         List<Person> unsortedPersons = asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setPermissions(singletonList(Role.INACTIVE)));
@@ -349,9 +349,9 @@ class PersonServiceImplTest {
     @Test
     void ensureGetPersonsByRoleReturnSortedList() {
 
-        Person shane = createPerson("shane");
-        Person carl = createPerson("carl");
-        Person rick = createPerson("rick");
+        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
 
         List<Person> unsortedPersons = asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setPermissions(singletonList(USER)));
@@ -370,9 +370,9 @@ class PersonServiceImplTest {
     @Test
     void ensureGetPersonsByNotificationTypeReturnSortedList() {
 
-        Person shane = createPerson("shane");
-        Person carl = createPerson("carl");
-        Person rick = createPerson("rick");
+        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
 
         List<Person> unsortedPersons = asList(shane, carl, rick);
         unsortedPersons.forEach(person -> person.setNotifications(singletonList(NOTIFICATION_USER)));
@@ -395,7 +395,7 @@ class PersonServiceImplTest {
     @Test
     void ensureReturnsPersonForCurrentlySignedInUser() {
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(person.getNiceName());
@@ -420,7 +420,7 @@ class PersonServiceImplTest {
         when(personRepository.findAll()).thenReturn(emptyList());
         when(personRepository.save(any())).then(returnsFirstArg());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(singletonList(USER));
         assertThat(person.getPermissions()).containsOnly(USER);
 
@@ -439,7 +439,7 @@ class PersonServiceImplTest {
         officePerson.setPermissions(singletonList(OFFICE));
         when(personRepository.findAll()).thenReturn(singletonList(officePerson));
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(singletonList(USER));
         assertThat(person.getPermissions()).containsOnly(USER);
 

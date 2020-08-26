@@ -27,8 +27,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createWorkingTime;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN;
@@ -63,7 +62,7 @@ class WorkingTimeServiceTest {
         when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
 
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final WorkingTime expectedWorkingTime = new WorkingTime();
         expectedWorkingTime.setWorkingDays(List.of(1, 2, 3, 4, 5), FULL);
         expectedWorkingTime.setPerson(person);
@@ -88,7 +87,7 @@ class WorkingTimeServiceTest {
             .thenReturn(workingTime);
 
         final LocalDate now = LocalDate.now(UTC);
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final FederalState federalState = sut.getFederalStateForPerson(person, now);
 
         verifyNoInteractions(settingsServiceMock);
@@ -109,7 +108,7 @@ class WorkingTimeServiceTest {
         when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTime);
 
         final LocalDate now = LocalDate.now(UTC);
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final FederalState federalState = sut.getFederalStateForPerson(person, now);
         assertThat(federalState).isEqualTo(BADEN_WUERTTEMBERG);
     }
@@ -125,7 +124,7 @@ class WorkingTimeServiceTest {
         when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(null);
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
         final FederalState federalState = sut.getFederalStateForPerson(person, now);
         assertThat(federalState).isEqualTo(BADEN_WUERTTEMBERG);
@@ -137,7 +136,7 @@ class WorkingTimeServiceTest {
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         sut.touch(Arrays.asList(1, 2), Optional.of(BAYERN), LocalDate.now(UTC), person);
 
@@ -162,7 +161,7 @@ class WorkingTimeServiceTest {
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
 
-        Person person = createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         sut.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 

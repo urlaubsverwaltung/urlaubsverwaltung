@@ -12,9 +12,8 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
@@ -26,7 +25,7 @@ class SickNoteConvertFormTest {
     @Test
     void ensureCorrectProvidedValuesFromSickNote() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2014, 1, 1);
         final LocalDate endDate = LocalDate.of(2014, 1, 10);
         final SickNote sickNote = createSickNote(person, startDate, endDate, DayLength.NOON);
@@ -46,7 +45,7 @@ class SickNoteConvertFormTest {
     @Test
     void ensureGeneratesBasicApplicationForLeave() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2014, 1, 1);
         final LocalDate endDate = LocalDate.of(2014, 1, 10);
         final SickNote sickNote = createSickNote(person, startDate, endDate, FULL);

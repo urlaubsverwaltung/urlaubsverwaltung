@@ -12,8 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.demodatacreator.DemoDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.CONVERTED_TO_VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.EDITED;
 
@@ -39,7 +38,7 @@ class SickNoteCommentServiceImplTest {
 
         when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        final Person author = createPerson("author");
+        final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote sickNote = createSickNote(author);
 
         final SickNoteComment comment = sut.create(sickNote, EDITED, author);
@@ -62,7 +61,7 @@ class SickNoteCommentServiceImplTest {
         when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final String givenComment = "Foo";
-        final Person givenAuthor = createPerson("author");
+        final Person givenAuthor = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote givenSickNote = createSickNote(givenAuthor);
 
         final SickNoteComment sickNoteComment = sut.create(givenSickNote, CONVERTED_TO_VACATION, givenAuthor, givenComment);
