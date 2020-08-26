@@ -120,6 +120,28 @@ class WorkDaysServiceTest {
     }
 
     @Test
+    void getWorkDaysWithHalfDayMorning() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = createPerson();
+        final Application application = createApplication(person, createVacationType(HOLIDAY));
+
+        final WorkingTime workingTime = createWorkingTime();
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
+            .thenReturn(Optional.of(workingTime));
+
+        // testing for half days morning
+        application.setDayLength(MORNING);
+
+        final LocalDate start = LocalDate.of(2011, 1, 4);
+        final LocalDate end = LocalDate.of(2011, 1, 4);
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+    }
+
+    @Test
     void getWorkDaysWithHalfDaysMorning() {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -139,6 +161,28 @@ class WorkDaysServiceTest {
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(1.5));
+    }
+
+    @Test
+    void getWorkDaysWithHalfDayNoon() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = createPerson();
+        final Application application = createApplication(person, createVacationType(HOLIDAY));
+
+        final WorkingTime workingTime = createWorkingTime();
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
+            .thenReturn(Optional.of(workingTime));
+
+        // testing for half days noon
+        application.setDayLength(NOON);
+
+        final LocalDate start = LocalDate.of(2011, 1, 4);
+        final LocalDate end = LocalDate.of(2011, 1, 4);
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
     @Test

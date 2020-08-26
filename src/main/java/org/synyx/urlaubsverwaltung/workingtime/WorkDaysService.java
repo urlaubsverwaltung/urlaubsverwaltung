@@ -9,9 +9,11 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
 
@@ -112,10 +114,10 @@ public class WorkDaysService {
 
         // vacation days < 1 day --> must not be divided, else an ArithmeticException is thrown
         if (vacationDays.compareTo(BigDecimal.ONE) < 0) {
-            return vacationDays.setScale(1);
+            return vacationDays.setScale(1, UNNECESSARY);
         }
 
-        return vacationDays.multiply(dayLength.getDuration()).setScale(1);
+        return vacationDays.multiply(dayLength.getDuration()).setScale(1, UNNECESSARY);
     }
 
     private FederalState getFederalState(WorkingTime workingTime) {
