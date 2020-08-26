@@ -9,20 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
 class WorkingTimeForm {
 
     private LocalDate validFrom;
-
     private List<Integer> workingDays = new ArrayList<>();
-
     private FederalState federalState;
 
     WorkingTimeForm() {
-
         // OK
     }
-
 
     WorkingTimeForm(WorkingTime workingTime) {
 
@@ -41,37 +36,26 @@ class WorkingTimeForm {
     }
 
     public LocalDate getValidFrom() {
-
         return validFrom;
     }
 
-
     public void setValidFrom(LocalDate validFrom) {
-
         this.validFrom = validFrom;
     }
 
-
     public List<Integer> getWorkingDays() {
-
         return workingDays;
     }
 
-
     public void setWorkingDays(List<Integer> workingDays) {
-
         this.workingDays = workingDays;
     }
 
-
     public FederalState getFederalState() {
-
         return federalState;
     }
 
-
     public void setFederalState(FederalState federalState) {
-
         this.federalState = federalState;
     }
 
