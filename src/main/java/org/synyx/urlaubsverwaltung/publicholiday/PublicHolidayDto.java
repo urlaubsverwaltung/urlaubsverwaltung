@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.holiday;
+package org.synyx.urlaubsverwaltung.publicholiday;
 
 import de.jollyday.Holiday;
 

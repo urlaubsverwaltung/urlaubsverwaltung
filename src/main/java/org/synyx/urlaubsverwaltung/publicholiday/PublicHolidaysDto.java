@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.holiday;
+package org.synyx.urlaubsverwaltung.publicholiday;
 
 import java.util.ArrayList;
 import java.util.List;

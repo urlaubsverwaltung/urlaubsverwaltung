@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.holiday;
+package org.synyx.urlaubsverwaltung.publicholiday;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
