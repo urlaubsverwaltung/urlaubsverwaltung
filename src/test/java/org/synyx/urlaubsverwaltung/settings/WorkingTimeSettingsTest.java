@@ -1,33 +1,25 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 class WorkingTimeSettingsTest {
 
     @Test
     void ensureDefaultValues() {
 
-        WorkingTimeSettings settings = new WorkingTimeSettings();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
 
         // Public holidays ---------------------------------------------------------------------------------------------
-        Assert.assertNotNull("Should not be null", settings.getWorkingDurationForChristmasEve());
-        Assert.assertNotNull("Should not be null", settings.getWorkingDurationForNewYearsEve());
-        Assert.assertNotNull("Should not be null", settings.getFederalState());
-
-        Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForChristmasEve());
-        Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForNewYearsEve());
-        Assert.assertEquals("Wrong default value", FederalState.BADEN_WUERTTEMBERG, settings.getFederalState());
+        assertThat(settings.getWorkingDurationForChristmasEve()).isEqualTo(DayLength.MORNING);
+        assertThat(settings.getWorkingDurationForNewYearsEve()).isEqualTo(DayLength.MORNING);
+        assertThat(settings.getFederalState()).isEqualTo(FederalState.BADEN_WUERTTEMBERG);
 
         // Overtime ----------------------------------------------------------------------------------------------------
-        Assert.assertNotNull("Should not be null", settings.isOvertimeActive());
-        Assert.assertNotNull("Should not be null", settings.getMaximumOvertime());
-        Assert.assertNotNull("Should not be null", settings.getMinimumOvertime());
-
-        Assert.assertFalse("Should be deactivated", settings.isOvertimeActive());
-        Assert.assertEquals("Wrong default value", (Integer) 100, settings.getMaximumOvertime());
-        Assert.assertEquals("Wrong default value", (Integer) 5, settings.getMinimumOvertime());
+        assertThat(settings.isOvertimeActive()).isFalse();
+        assertThat(settings.getMaximumOvertime()).isEqualTo(100);
+        assertThat(settings.getMinimumOvertime()).isEqualTo(5);
     }
 }
