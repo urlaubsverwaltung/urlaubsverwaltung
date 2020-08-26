@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime;
+package org.synyx.urlaubsverwaltung.publicholiday;
 
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;

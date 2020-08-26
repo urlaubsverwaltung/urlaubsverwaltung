@@ -24,11 +24,11 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .antMatcher("/api/**")
             .sessionManagement()
-              .sessionCreationPolicy(NEVER)
+            .sessionCreationPolicy(NEVER)
             .and()
             .authorizeRequests()
-              .antMatchers("/api/**").authenticated()
-              .anyRequest().authenticated();
+            .antMatchers("/api/**").authenticated()
+            .anyRequest().authenticated();
 
         if (isOauth2Enabled) {
             http.oauth2Login();

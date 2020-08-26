@@ -26,16 +26,16 @@ class DepartmentDto {
         this.lastModification = department.getLastModification().format(ofPattern(DATE_PATTERN));
 
         List<PersonDto> membersResponses = department.getMembers()
-                .stream()
-                .map(PersonMapper::mapToDto)
-                .collect(Collectors.toList());
+            .stream()
+            .map(PersonMapper::mapToDto)
+            .collect(Collectors.toList());
 
         this.members = new PersonsDto(membersResponses);
 
         List<PersonDto> departmentHeadsResponses = department.getDepartmentHeads()
-                .stream()
-                .map(PersonMapper::mapToDto)
-                .collect(Collectors.toList());
+            .stream()
+            .map(PersonMapper::mapToDto)
+            .collect(Collectors.toList());
 
         this.departmentHeads = new PersonsDto(departmentHeadsResponses);
     }
