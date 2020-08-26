@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime.web;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,10 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeForm;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeValidator;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeViewController;
 
 import java.time.LocalDate;
 import java.util.Optional;

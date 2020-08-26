@@ -1,10 +1,12 @@
-package org.synyx.urlaubsverwaltung.workingtime.web;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeForm;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeValidator;
 
 import java.time.LocalDate;
 import java.util.Arrays;

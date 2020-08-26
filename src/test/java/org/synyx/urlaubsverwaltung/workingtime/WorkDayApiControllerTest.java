@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime.api;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.NoValidWorkingTimeException;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDayApiController;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;

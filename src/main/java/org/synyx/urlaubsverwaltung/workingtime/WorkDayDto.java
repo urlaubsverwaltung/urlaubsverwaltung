@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime.api;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 class WorkDayDto {
 

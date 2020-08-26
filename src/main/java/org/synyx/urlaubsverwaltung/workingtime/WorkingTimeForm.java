@@ -1,9 +1,8 @@
-package org.synyx.urlaubsverwaltung.workingtime.web;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

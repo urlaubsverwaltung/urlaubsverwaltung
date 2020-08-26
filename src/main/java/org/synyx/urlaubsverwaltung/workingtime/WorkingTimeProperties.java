@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime.config;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

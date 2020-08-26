@@ -1,8 +1,9 @@
-package org.synyx.urlaubsverwaltung.workingtime.web;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeForm;
 
 import java.time.LocalDate;
 import java.util.List;
