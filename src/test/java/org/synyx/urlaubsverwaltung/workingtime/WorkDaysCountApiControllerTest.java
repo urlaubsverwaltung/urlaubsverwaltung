@@ -72,7 +72,7 @@ class WorkDaysCountApiControllerTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(workDaysCountServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
-            .thenThrow(NoValidWorkingTimeException.class);
+            .thenThrow(WorkDaysCountException.class);
 
         perform(get("/api/workdays")
             .param("from", "2016-01-04")

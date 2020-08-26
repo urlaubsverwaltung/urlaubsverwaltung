@@ -92,7 +92,7 @@ public class WorkDaysCountApiController {
         final BigDecimal days;
         try {
             days = workDaysCountService.getWorkDaysCount(howLong, startDate, endDate, person.get());
-        } catch (NoValidWorkingTimeException e) {
+        } catch (WorkDaysCountException e) {
             throw new ResponseStatusException(NO_CONTENT, e.getMessage());
         }
 

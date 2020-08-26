@@ -89,7 +89,7 @@ public class WorkDaysCountService {
             person, startDate);
 
         if (optionalWorkingTime.isEmpty()) {
-            throw new NoValidWorkingTimeException("No working time found for User '" + person.getId()
+            throw new WorkDaysCountException("No working time found for User '" + person.getId()
                 + "' in period " + startDate.format(ofPattern(PATTERN)) + " - " + endDate.format(ofPattern(PATTERN)));
         }
 
