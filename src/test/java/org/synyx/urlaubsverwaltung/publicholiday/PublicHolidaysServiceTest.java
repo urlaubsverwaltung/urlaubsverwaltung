@@ -5,6 +5,9 @@ import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -15,245 +18,234 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static java.time.Month.AUGUST;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN_MUENCHEN;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BERLIN;
 
-
-/**
- * Unit test for {@link PublicHolidaysService}.
- */
+@ExtendWith(MockitoExtension.class)
 class PublicHolidaysServiceTest {
 
     private static final FederalState state = BADEN_WUERTTEMBERG;
 
-    private PublicHolidaysService publicHolidaysService;
+    private PublicHolidaysService sut;
+
+    @Mock
     private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL url = cl.getResource("Holidays_de.xml");
-        ManagerParameter managerParameter = ManagerParameters.create(url);
-        HolidayManager holidayManager = HolidayManager.getInstance(managerParameter);
-
-        settingsService = mock(SettingsService.class);
-        publicHolidaysService = new PublicHolidaysService(settingsService, holidayManager);
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        sut = new PublicHolidaysService(settingsService, getHolidayManager());
     }
 
     @Test
     void ensureCorrectWorkingDurationForWorkDay() {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         LocalDate testDate = LocalDate.of(2013, Month.NOVEMBER, 27);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
     }
-
 
     @Test
     void ensureCorrectWorkingDurationForPublicHoliday() {
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 25);
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        final LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 25);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ZERO);
     }
-
 
     @Test
     void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.FULL);
-
         when(settingsService.getSettings()).thenReturn(settings);
 
         LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
     }
 
 
     @Test
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
-
         when(settingsService.getSettings()).thenReturn(settings);
 
         LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
     }
-
 
     @Test
     void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
 
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.MORNING);
-
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
+        final LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
-
 
     @Test
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
 
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.NOON);
-
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
+        final LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
-
 
     @Test
     void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
 
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.ZERO);
-
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
+        final LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 24);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ZERO);
     }
-
 
     @Test
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
 
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.ZERO);
-
         when(settingsService.getSettings()).thenReturn(settings);
 
-        LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
+        final LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 31);
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate, state);
-
-        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ZERO);
     }
-
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-            Month.AUGUST, 15), FederalState.BERLIN);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), BERLIN);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
     }
-
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-            Month.AUGUST, 15), BADEN_WUERTTEMBERG);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), BADEN_WUERTTEMBERG);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
     }
-
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(LocalDate.of(2015,
-            Month.AUGUST, 15), FederalState.BAYERN_MUENCHEN);
-
-        assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), BAYERN_MUENCHEN);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
     void ensureGetAbsenceTypeOfDateReturnsZeroWhenDateIsNoPublicHoliday() {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final LocalDate date = LocalDate.of(2019, 1, 2);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
-        assertEquals(null, DayLength.ZERO, actual);
+        final DayLength actual = sut.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        assertThat(actual).isEqualTo(DayLength.ZERO);
     }
 
     @Test
     void ensureGetAbsenceTypeOfDateReturnsFullForCorpusChristi() {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         final LocalDate corpusChristi = LocalDate.of(2019, Month.MAY, 30);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(corpusChristi, BADEN_WUERTTEMBERG);
-        assertEquals(null, DayLength.FULL, actual);
+        final DayLength actual = sut.getAbsenceTypeOfDate(corpusChristi, BADEN_WUERTTEMBERG);
+        assertThat(actual).isEqualTo(DayLength.FULL);
     }
 
     @Test
-    void ensureGetAbsenceTypeOfDateReturnsFullForAussumptionDayInBayernMunich() {
+    void ensureGetAbsenceTypeOfDateReturnsFullForAssumptionDayInBayernMunich() {
 
-        final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        final LocalDate assumptionDay = LocalDate.of(2019, AUGUST, 15);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(assumptionDay, BAYERN_MUENCHEN);
-        assertEquals(null, DayLength.FULL, actual);
+        final DayLength actual = sut.getAbsenceTypeOfDate(assumptionDay, BAYERN_MUENCHEN);
+        assertThat(actual).isEqualTo(DayLength.FULL);
     }
 
     @Test
-    void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBerlin() {
+    void ensureGetAbsenceTypeOfDateReturnsZeroForAssumptionDayInBerlin() {
 
-        final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(assumptionDay, BERLIN);
-        assertEquals(null, DayLength.ZERO, actual);
+        final LocalDate assumptionDay = LocalDate.of(2019, AUGUST, 15);
+
+        final DayLength actual = sut.getAbsenceTypeOfDate(assumptionDay, BERLIN);
+        assertThat(actual).isEqualTo(DayLength.ZERO);
     }
 
     @Test
-    void ensureGetAbsenceTypeOfDateReturnsZeroForAussumptionDayInBadenWuerttemberg() {
+    void ensureGetAbsenceTypeOfDateReturnsZeroForAssumptionDayInBadenWuerttemberg() {
 
-        final LocalDate assumptionDay = LocalDate.of(2019, Month.AUGUST, 15);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(assumptionDay, BADEN_WUERTTEMBERG);
-        assertEquals(null, DayLength.ZERO, actual);
+        final LocalDate assumptionDay = LocalDate.of(2019, AUGUST, 15);
+
+        final DayLength actual = sut.getAbsenceTypeOfDate(assumptionDay, BADEN_WUERTTEMBERG);
+        assertThat(actual).isEqualTo(DayLength.ZERO);
     }
 
     @Test
     void ensureGetAbsenceTypeOfDateReturnsForChristmasEve() {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final LocalDate date = LocalDate.of(2019, 12, 24);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
-        assertEquals(null, DayLength.NOON, actual);
+        final DayLength actual = sut.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        assertThat(actual).isEqualTo(DayLength.NOON);
     }
 
     @Test
     void ensureGetAbsenceTypeOfDateReturnsForNewYearsEve() {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final LocalDate date = LocalDate.of(2019, 12, 31);
 
-        DayLength actual = publicHolidaysService.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
-        assertEquals(null, DayLength.NOON, actual);
+        final DayLength actual = sut.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        assertThat(actual).isEqualTo(DayLength.NOON);
+    }
+
+    private HolidayManager getHolidayManager() {
+        final HolidayManager holidayManager;
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        final URL url = cl.getResource("Holidays_de.xml");
+        final ManagerParameter managerParameter = ManagerParameters.create(url);
+        holidayManager = HolidayManager.getInstance(managerParameter);
+        return holidayManager;
     }
 }
