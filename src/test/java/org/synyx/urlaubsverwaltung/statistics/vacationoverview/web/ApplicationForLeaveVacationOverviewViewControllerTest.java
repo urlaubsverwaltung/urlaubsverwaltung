@@ -15,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -26,12 +28,17 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -45,7 +52,6 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -671,6 +677,110 @@ class ApplicationForLeaveVacationOverviewViewControllerTest {
                         hasProperty("days", hasItems(
                             hasProperty("type", is(dtoDayTypeText))
                         ))
+                    ))
+                ))
+            ));
+    }
+
+    private static Stream<Arguments> dayLengthVacationTypeData() {
+        return Stream.of(
+            Arguments.of(ApplicationStatus.ALLOWED, DayLength.FULL, "allowedVacationFull"),
+            Arguments.of(ApplicationStatus.ALLOWED, DayLength.MORNING, "allowedVacationMorning"),
+            Arguments.of(ApplicationStatus.ALLOWED, DayLength.NOON, "allowedVacationNoon"),
+            Arguments.of(ApplicationStatus.WAITING, DayLength.FULL, "waitingVacationFull"),
+            Arguments.of(ApplicationStatus.WAITING, DayLength.MORNING, "waitingVacationMorning"),
+            Arguments.of(ApplicationStatus.WAITING, DayLength.NOON, "waitingVacationNoon")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("dayLengthVacationTypeData")
+    void ensureVacationOneDay(ApplicationStatus applicationStatus, DayLength dayLength, String dtoDayTypeText) throws Exception {
+        final LocalDate now = LocalDate.now(clock);
+
+        final var person = new Person();
+        person.setFirstName("boss");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+
+        final var application = new Application();
+        application.setStartDate(now.minusDays(3));
+        application.setEndDate(now.minusDays(3));
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+        application.setStatus(applicationStatus);
+
+        final List<Application> applications = List.of(application);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(now.with(firstDayOfMonth()), now.with(lastDayOfMonth()), person))
+            .thenReturn(applications);
+
+        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type", is(dtoDayTypeText))
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureWeekends() throws Exception {
+        final Clock fixedClock = Clock.fixed(Instant.parse("2020-08-01T00:00:00.00Z"), ZoneId.systemDefault());
+
+        sut = new ApplicationForLeaveVacationOverviewViewController(
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
+
+        final var person = new Person();
+        person.setFirstName("boss");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("days", contains(
+                        allOf(hasProperty("dayOfMonth", is("01")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("02")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("03")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("04")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("05")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("06")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("07")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("08")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("09")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("10")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("11")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("12")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("13")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("14")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("15")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("16")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("17")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("18")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("19")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("20")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("21")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("22")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("23")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("24")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("25")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("26")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("27")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("28")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("29")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("30")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("31")), hasProperty("weekend", is(false)))
                     ))
                 ))
             ));
