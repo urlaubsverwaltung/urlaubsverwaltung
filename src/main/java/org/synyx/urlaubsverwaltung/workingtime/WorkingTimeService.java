@@ -8,21 +8,17 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
 
-
-/**
- * Service for handling {@link WorkingTime} entities.
- */
 @Service
 @Transactional
 public class WorkingTimeService {
@@ -36,15 +32,13 @@ public class WorkingTimeService {
 
     @Autowired
     public WorkingTimeService(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository, SettingsService settingsService, Clock clock) {
-
         this.workingTimeProperties = workingTimeProperties;
         this.workingTimeRepository = workingTimeRepository;
         this.settingsService = settingsService;
         this.clock = clock;
     }
 
-    public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom,
-                      Person person) {
+    public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom, Person person) {
 
         WorkingTime workingTime = workingTimeRepository.findByPersonAndValidityDate(person, validFrom);
 
@@ -73,32 +67,24 @@ public class WorkingTimeService {
         LOG.info("Successfully created working time for person {}", person);
     }
 
-
     public List<WorkingTime> getByPerson(Person person) {
-
         return workingTimeRepository.findByPerson(person);
     }
 
-
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
-
         return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
     }
 
-
     public Optional<WorkingTime> getCurrentOne(Person person) {
-
         return Optional.ofNullable(workingTimeRepository.findLastOneByPerson(person));
     }
 
-
     public FederalState getFederalStateForPerson(Person person, LocalDate date) {
-
         Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
 
-        if (!optionalWorkingTime.isPresent()) {
+        if (optionalWorkingTime.isEmpty()) {
             LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                person.getId(), date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)));
+                person.getId(), date.format(ofPattern(PATTERN)));
 
             return getSystemDefaultFederalState();
         }
@@ -106,20 +92,16 @@ public class WorkingTimeService {
         return getFederalState(optionalWorkingTime.get());
     }
 
-
     private FederalState getFederalState(WorkingTime workingTime) {
-
         Optional<FederalState> optionalFederalStateOverride = workingTime.getFederalStateOverride();
         return optionalFederalStateOverride.orElseGet(this::getSystemDefaultFederalState);
     }
 
     private FederalState getSystemDefaultFederalState() {
-
         return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
     }
 
     public void createDefaultWorkingTime(Person person) {
-
         LocalDate today = LocalDate.now(clock);
         this.touch(workingTimeProperties.getDefaultWorkingDays(), Optional.empty(), today, person);
     }
