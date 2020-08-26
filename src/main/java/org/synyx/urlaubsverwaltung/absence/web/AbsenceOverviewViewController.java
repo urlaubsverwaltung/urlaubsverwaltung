@@ -47,7 +47,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 /**
  * Controller to generate applications for leave vacation overview.
  */
-@RequestMapping("/web/application")
+@RequestMapping("/web/absences")
 @Controller
 public class AbsenceOverviewViewController {
 
@@ -73,7 +73,7 @@ public class AbsenceOverviewViewController {
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
-    @GetMapping("/vacationoverview")
+    @GetMapping
     public String absenceOverview(
         @RequestParam(required = false) Integer year,
         @RequestParam(required = false) String month,

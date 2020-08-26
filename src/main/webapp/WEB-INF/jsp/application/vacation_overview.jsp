@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <form method="GET" action="${URL_PREFIX}/application/vacationoverview" id="absenceOverviewForm" class="print:hidden">
+            <form method="GET" action="${URL_PREFIX}/absences" id="absenceOverviewForm" class="print:hidden">
                 <div class="col-md-8">
                     <div class="form-group">
                         <div class="row">

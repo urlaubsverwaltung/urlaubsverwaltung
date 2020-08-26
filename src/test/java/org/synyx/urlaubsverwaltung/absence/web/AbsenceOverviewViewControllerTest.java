@@ -97,7 +97,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview"));
+        final var resultActions = perform(get("/web/absences"));
 
         resultActions
             .andExpect(status().isOk())
@@ -118,7 +118,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview"));
+        final var resultActions = perform(get("/web/absences"));
 
         resultActions
             .andExpect(status().isOk())
@@ -138,7 +138,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(ssa)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview"));
+        final var resultActions = perform(get("/web/absences"));
 
         resultActions
             .andExpect(status().isOk())
@@ -158,7 +158,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(departmentHead)).thenReturn(singletonList(department));
 
-        final ResultActions resultActions = perform(get("/web/application/vacationoverview"));
+        final ResultActions resultActions = perform(get("/web/absences"));
 
         resultActions
             .andExpect(status().isOk())
@@ -181,7 +181,7 @@ class AbsenceOverviewViewControllerTest {
         final var villains = department("villains");
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("department", departmentName));
 
         resultActions
@@ -201,7 +201,7 @@ class AbsenceOverviewViewControllerTest {
         final var villains = department("villains");
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("department", "villains"));
 
         resultActions
@@ -224,7 +224,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("year", givenYearParam));
 
         resultActions
@@ -246,7 +246,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("year", String.valueOf(expectedSelectedYear)));
 
         resultActions
@@ -267,7 +267,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview"));
+        final var resultActions = perform(get("/web/absences"));
 
         resultActions
             .andExpect(status().isOk())
@@ -284,7 +284,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("month", ""));
 
         resultActions
@@ -302,7 +302,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("month", "1"));
 
         resultActions
@@ -320,7 +320,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview"));
+        final var resultActions = perform(get("/web/absences"));
 
         resultActions
             .andExpect(status().isOk())
@@ -354,7 +354,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("year", String.valueOf(givenYear))
             .locale(Locale.GERMANY));
 
@@ -381,7 +381,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("month", "11")
             .locale(Locale.GERMANY));
 
@@ -413,7 +413,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("month", "12")
             .locale(Locale.GERMANY));
 
@@ -449,7 +449,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("year", String.valueOf(givenYear))
             .param("month", String.valueOf(givenMonth))
             .locale(Locale.GERMANY));
@@ -485,7 +485,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview")
+        final var resultActions = perform(get("/web/absences")
             .param("year", String.valueOf(givenYear))
             .param("month", "")
             .locale(Locale.GERMANY));
@@ -515,7 +515,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY)
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", "villains"));
 
         resultActions
@@ -545,7 +545,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(personService.getActivePersons()).thenReturn(List.of(person, personTwo, personThree));
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
@@ -565,7 +565,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(emptyList());
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
@@ -588,7 +588,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
@@ -624,7 +624,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person, personTwo, personThree));
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
@@ -666,7 +666,7 @@ class AbsenceOverviewViewControllerTest {
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getAllActiveByYear(Year.now(clock).getValue())).thenReturn(sickNotes);
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
@@ -716,7 +716,7 @@ class AbsenceOverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(now.with(firstDayOfMonth()), now.with(lastDayOfMonth()), person))
             .thenReturn(applications);
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
@@ -742,7 +742,7 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var resultActions = perform(get("/web/application/vacationoverview").locale(Locale.GERMANY));
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
