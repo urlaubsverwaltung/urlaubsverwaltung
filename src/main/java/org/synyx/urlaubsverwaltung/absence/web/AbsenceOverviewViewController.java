@@ -56,10 +56,8 @@ public class AbsenceOverviewViewController {
     private final Clock clock;
 
     @Autowired
-    public AbsenceOverviewViewController(PersonService personService,
-                                         DepartmentService departmentService,
-                                         ApplicationService applicationService,
-                                         SickNoteService sickNoteService,
+    public AbsenceOverviewViewController(PersonService personService, DepartmentService departmentService,
+                                         ApplicationService applicationService, SickNoteService sickNoteService,
                                          MessageSource messageSource, Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
@@ -180,7 +178,8 @@ public class AbsenceOverviewViewController {
         return "";
     }
 
-    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, String selectedDepartmentName) {
+    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments,
+                                                   String selectedDepartmentName) {
 
         if (departments.isEmpty() && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE))) {
             return personService.getActivePersons();
@@ -263,7 +262,9 @@ public class AbsenceOverviewViewController {
         return getStartOrEndDate(year, month, TemporalAdjusters::lastDayOfYear, TemporalAdjusters::lastDayOfMonth);
     }
 
-    private LocalDate getStartOrEndDate(Integer year, String month, Supplier<TemporalAdjuster> firstOrLastOfYearSupplier, Supplier<TemporalAdjuster> firstOrLastOfMonthSupplier) {
+    private LocalDate getStartOrEndDate(Integer year, String month, Supplier<TemporalAdjuster> firstOrLastOfYearSupplier,
+                                        Supplier<TemporalAdjuster> firstOrLastOfMonthSupplier) {
+
         final LocalDate now = LocalDate.now(clock);
 
         if (year != null) {
