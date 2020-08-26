@@ -44,9 +44,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
-/**
- * Controller to generate applications for leave vacation overview.
- */
 @RequestMapping("/web/absences")
 @Controller
 public class AbsenceOverviewViewController {
