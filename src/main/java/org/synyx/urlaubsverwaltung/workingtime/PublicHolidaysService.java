@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,10 +16,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 
-/**
- * Service for calendar purpose using jollyday library.
- */
 @Component
 public class PublicHolidaysService {
 
@@ -29,7 +29,6 @@ public class PublicHolidaysService {
 
     @Autowired
     public PublicHolidaysService(SettingsService settingsService, HolidayManager holidayManager) {
-
         this.settingsService = settingsService;
         this.manager = holidayManager;
     }
@@ -44,51 +43,41 @@ public class PublicHolidaysService {
      * @return working duration of the given date
      */
     public BigDecimal getWorkingDurationOfDate(LocalDate date, FederalState federalState) {
-
         return getAbsenceTypeOfDate(date, federalState).getInverse().getDuration();
     }
 
     public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
 
-        Settings settings = settingsService.getSettings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        final Settings settings = settingsService.getSettings();
+        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
-        DayLength workingTime = DayLength.FULL;
-
+        DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
-            if (DateUtil.isChristmasEve(date)) {
+            if (isChristmasEve(date)) {
                 workingTime = workingTimeSettings.getWorkingDurationForChristmasEve();
-            } else if (DateUtil.isNewYearsEve(date)) {
+            } else if (isNewYearsEve(date)) {
                 workingTime = workingTimeSettings.getWorkingDurationForNewYearsEve();
             } else {
-                workingTime = DayLength.ZERO;
+                workingTime = ZERO;
             }
         }
 
         return workingTime.getInverse();
     }
 
-
     public Set<Holiday> getHolidays(int year, FederalState federalState) {
-
         return manager.getHolidays(year, federalState.getCodes());
     }
 
-
     public Set<Holiday> getHolidays(int year, final int month, FederalState federalState) {
-
-        Set<Holiday> holidays = getHolidays(year, federalState);
-
-        return holidays.stream().filter(byMonth(month)).collect(Collectors.toSet());
+        return getHolidays(year, federalState).stream().filter(byMonth(month)).collect(Collectors.toSet());
     }
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-
         return manager.isHoliday(date, federalState.getCodes());
     }
 
     private Predicate<Holiday> byMonth(int month) {
-
         return holiday -> holiday.getDate().getMonthValue() == month;
     }
 }
