@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.web;
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 
@@ -16,7 +16,7 @@ public class ExtendedSickNote extends SickNote {
 
     private final BigDecimal workDays;
 
-    public ExtendedSickNote(SickNote sickNote, WorkDaysService calendarService) {
+    public ExtendedSickNote(SickNote sickNote, WorkDaysCountService calendarService) {
 
         // copy all the properties from the given sick note
         BeanUtils.copyProperties(sickNote, this);

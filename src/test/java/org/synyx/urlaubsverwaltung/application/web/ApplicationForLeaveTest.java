@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,12 +21,12 @@ import static org.mockito.Mockito.when;
 
 class ApplicationForLeaveTest {
 
-    private WorkDaysService calendarService;
+    private WorkDaysCountService calendarService;
 
     @BeforeEach
     void setUp() {
 
-        calendarService = mock(WorkDaysService.class);
+        calendarService = mock(WorkDaysCountService.class);
     }
 
 

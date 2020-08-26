@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,12 +25,12 @@ import static org.mockito.Mockito.when;
 
 class SickDaysOverviewTest {
 
-    private WorkDaysService calendarService;
+    private WorkDaysCountService calendarService;
 
     @BeforeEach
     void setUp() {
 
-        calendarService = mock(WorkDaysService.class);
+        calendarService = mock(WorkDaysCountService.class);
     }
 
 

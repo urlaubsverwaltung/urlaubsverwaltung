@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ class SickNoteStatisticsTest {
     private SickNoteStatistics sut;
 
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService calendarService;
     @Mock
     private SickNoteService sickNoteDAO;
 

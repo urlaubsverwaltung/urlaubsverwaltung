@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -73,7 +73,7 @@ class OverviewViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService calendarService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock

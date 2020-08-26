@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,12 +40,12 @@ public class CalculationService {
     private final VacationDaysService vacationDaysService;
     private final AccountInteractionService accountInteractionService;
     private final AccountService accountService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final OverlapService overlapService;
 
     @Autowired
     public CalculationService(VacationDaysService vacationDaysService, AccountService accountService,
-                              AccountInteractionService accountInteractionService, WorkDaysService calendarService,
+                              AccountInteractionService accountInteractionService, WorkDaysCountService calendarService,
                               OverlapService overlapService) {
 
         this.vacationDaysService = vacationDaysService;

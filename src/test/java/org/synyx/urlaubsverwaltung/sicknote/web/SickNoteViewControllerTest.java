@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +67,7 @@ class SickNoteViewControllerTest {
     @Mock
     private PersonService personServiceMock;
     @Mock
-    private WorkDaysService calendarServiceMock;
+    private WorkDaysCountService calendarServiceMock;
     @Mock
     private SickNoteValidator validatorMock;
     @Mock

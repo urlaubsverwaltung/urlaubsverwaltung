@@ -38,9 +38,9 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN_AUGSBURG;
 
 @ExtendWith(MockitoExtension.class)
-class WorkDaysServiceTest {
+class WorkDaysCountServiceTest {
 
-    private WorkDaysService sut;
+    private WorkDaysCountService sut;
 
     @Mock
     private WorkingTimeService workingTimeService;
@@ -50,7 +50,7 @@ class WorkDaysServiceTest {
     @BeforeEach
     void setUp() {
         final var publicHolidaysService = new PublicHolidaysService(settingsService, getHolidayManager());
-        sut = new WorkDaysService(publicHolidaysService, workingTimeService, settingsService);
+        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
     }
 
     @Test

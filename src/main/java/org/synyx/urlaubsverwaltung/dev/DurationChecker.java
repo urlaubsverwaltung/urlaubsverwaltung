@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,11 +17,11 @@ import static java.time.ZoneOffset.UTC;
  */
 class DurationChecker {
 
-    private final WorkDaysService workDaysService;
+    private final WorkDaysCountService workDaysCountService;
 
-    DurationChecker(WorkDaysService workDaysService) {
+    DurationChecker(WorkDaysCountService workDaysCountService) {
 
-        this.workDaysService = workDaysService;
+        this.workDaysCountService = workDaysCountService;
     }
 
     /**
@@ -50,7 +50,7 @@ class DurationChecker {
      */
     boolean durationIsGreaterThanZero(LocalDate start, LocalDate end, Person person) {
 
-        BigDecimal workDays = workDaysService.getWorkDaysCount(DayLength.FULL, start, end, person);
+        BigDecimal workDays = workDaysCountService.getWorkDaysCount(DayLength.FULL, start, end, person);
 
         return CalcUtil.isPositive(workDays);
     }

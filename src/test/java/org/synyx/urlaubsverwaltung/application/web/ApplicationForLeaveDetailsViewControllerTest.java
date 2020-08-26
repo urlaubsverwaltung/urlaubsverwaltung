@@ -23,7 +23,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
@@ -76,7 +76,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Mock
     private ApplicationCommentService commentService;
     @Mock
-    private WorkDaysService workDaysService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private ApplicationCommentValidator commentValidator;
     @Mock
@@ -87,7 +87,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, accountService, applicationService,
-            applicationInteractionService, commentService, workDaysService, commentValidator, departmentService, workingTimeService);
+            applicationInteractionService, commentService, workDaysCountService, commentValidator, departmentService, workingTimeService);
     }
 
     @Test

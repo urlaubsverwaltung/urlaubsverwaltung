@@ -30,16 +30,16 @@ import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
 @Api("Work Days: Get information about work day in a certain period")
 @RestController("restApiWorkDayController")
 @RequestMapping("/api")
-public class WorkDayApiController {
+public class WorkDaysCountApiController {
 
     private final PersonService personService;
-    private final WorkDaysService workDaysService;
+    private final WorkDaysCountService workDaysCountService;
 
     @Autowired
-    WorkDayApiController(PersonService personService, WorkDaysService workDaysService) {
+    WorkDaysCountApiController(PersonService personService, WorkDaysCountService workDaysCountService) {
 
         this.personService = personService;
-        this.workDaysService = workDaysService;
+        this.workDaysCountService = workDaysCountService;
     }
 
     /**
@@ -57,7 +57,7 @@ public class WorkDayApiController {
     )
     @GetMapping("/workdays")
     @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public WorkDayDto workDays(
+    public WorkDaysCountDto workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
@@ -91,11 +91,11 @@ public class WorkDayApiController {
 
         final BigDecimal days;
         try {
-            days = workDaysService.getWorkDaysCount(howLong, startDate, endDate, person.get());
+            days = workDaysCountService.getWorkDaysCount(howLong, startDate, endDate, person.get());
         } catch (NoValidWorkingTimeException e) {
             throw new ResponseStatusException(NO_CONTENT, e.getMessage());
         }
 
-        return new WorkDayDto(days.toString());
+        return new WorkDaysCountDto(days.toString());
     }
 }

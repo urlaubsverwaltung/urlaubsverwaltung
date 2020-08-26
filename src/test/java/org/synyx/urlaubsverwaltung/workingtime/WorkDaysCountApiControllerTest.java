@@ -30,18 +30,18 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 @ExtendWith(MockitoExtension.class)
-class WorkDayApiControllerTest {
+class WorkDaysCountApiControllerTest {
 
-    private WorkDayApiController sut;
+    private WorkDaysCountApiController sut;
 
     @Mock
     private PersonService personServiceMock;
     @Mock
-    private WorkDaysService workDaysServiceMock;
+    private WorkDaysCountService workDaysCountServiceMock;
 
     @BeforeEach
     void setUp() {
-        sut = new WorkDayApiController(personServiceMock, workDaysServiceMock);
+        sut = new WorkDaysCountApiController(personServiceMock, workDaysCountServiceMock);
     }
 
     @Test
@@ -49,7 +49,7 @@ class WorkDayApiControllerTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(workDaysCountServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         perform(get("/api/workdays")
@@ -63,7 +63,7 @@ class WorkDayApiControllerTest {
             .andExpect(jsonPath("$.workDays", is("1")));
 
         verify(personServiceMock).getPersonByID(23);
-        verify(workDaysServiceMock).getWorkDaysCount(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
+        verify(workDaysCountServiceMock).getWorkDaysCount(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
     }
 
     @Test
@@ -71,7 +71,7 @@ class WorkDayApiControllerTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(workDaysCountServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenThrow(NoValidWorkingTimeException.class);
 
         perform(get("/api/workdays")

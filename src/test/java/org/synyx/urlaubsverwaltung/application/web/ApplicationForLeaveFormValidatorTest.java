@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapCase;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
@@ -46,7 +46,7 @@ class ApplicationForLeaveFormValidatorTest {
     private ApplicationForLeaveFormValidator validator;
 
     private WorkingTimeService workingTimeService;
-    private WorkDaysService calendarService;
+    private WorkDaysCountService calendarService;
     private OverlapService overlapService;
     private CalculationService calculationService;
     private SettingsService settingsService;
@@ -65,7 +65,7 @@ class ApplicationForLeaveFormValidatorTest {
         settings.getWorkingTimeSettings().setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        calendarService = mock(WorkDaysService.class);
+        calendarService = mock(WorkDaysCountService.class);
         overlapService = mock(OverlapService.class);
         calculationService = mock(CalculationService.class);
         workingTimeService = mock(WorkingTimeService.class);

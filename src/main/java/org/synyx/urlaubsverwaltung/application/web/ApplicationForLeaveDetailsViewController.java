@@ -30,7 +30,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -61,7 +61,7 @@ public class ApplicationForLeaveDetailsViewController {
     private final ApplicationInteractionService applicationInteractionService;
     private final VacationDaysService vacationDaysService;
     private final ApplicationCommentService commentService;
-    private final WorkDaysService workDaysService;
+    private final WorkDaysCountService workDaysCountService;
     private final ApplicationCommentValidator commentValidator;
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
@@ -70,7 +70,7 @@ public class ApplicationForLeaveDetailsViewController {
     public ApplicationForLeaveDetailsViewController(VacationDaysService vacationDaysService, PersonService personService,
                                                     AccountService accountService, ApplicationService applicationService,
                                                     ApplicationInteractionService applicationInteractionService,
-                                                    ApplicationCommentService commentService, WorkDaysService workDaysService,
+                                                    ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
                                                     ApplicationCommentValidator commentValidator,
                                                     DepartmentService departmentService, WorkingTimeService workingTimeService) {
         this.vacationDaysService = vacationDaysService;
@@ -79,7 +79,7 @@ public class ApplicationForLeaveDetailsViewController {
         this.applicationService = applicationService;
         this.applicationInteractionService = applicationInteractionService;
         this.commentService = commentService;
-        this.workDaysService = workDaysService;
+        this.workDaysCountService = workDaysCountService;
         this.commentValidator = commentValidator;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
@@ -135,7 +135,7 @@ public class ApplicationForLeaveDetailsViewController {
         }
 
         // APPLICATION FOR LEAVE
-        model.addAttribute("application", new ApplicationForLeave(application, workDaysService));
+        model.addAttribute("application", new ApplicationForLeave(application, workDaysCountService));
 
         // WORKING TIME FOR VACATION PERIOD
         Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(

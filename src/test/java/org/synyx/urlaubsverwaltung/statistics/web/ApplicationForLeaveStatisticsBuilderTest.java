@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,7 +50,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService calendarService;
     @Mock
     private VacationDaysService vacationDaysService;
     @Mock

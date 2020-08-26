@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -94,7 +94,7 @@ class VacationDaysServiceTest {
         ManagerParameter managerParameter = ManagerParameters.create(url);
         HolidayManager holidayManager = HolidayManager.getInstance(managerParameter);
 
-        WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService, holidayManager),
+        WorkDaysCountService calendarService = new WorkDaysCountService(new PublicHolidaysService(settingsService, holidayManager),
             workingTimeService, settingsService);
 
         vacationDaysService = new VacationDaysService(calendarService, nowService, applicationService);
@@ -427,11 +427,11 @@ class VacationDaysServiceTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
 
-        WorkDaysService workDaysService = mock(WorkDaysService.class);
-        when(workDaysService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+        WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
         VacationDaysService vacationDaysService = new VacationDaysService(
-            workDaysService,
+                workDaysCountService,
             nowService,
             applicationService);
 
@@ -454,11 +454,11 @@ class VacationDaysServiceTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(Collections.singletonList(getSomeApplication(person)));
 
-        WorkDaysService workDaysService = mock(WorkDaysService.class);
-        when(workDaysService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
+        WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(new BigDecimal(expectedUsedDays));
 
         VacationDaysService vacationDaysService = new VacationDaysService(
-            workDaysService,
+                workDaysCountService,
             nowService,
             applicationService);
 
@@ -486,7 +486,7 @@ class VacationDaysServiceTest {
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        vacationDaysService = new VacationDaysService(mock(WorkDaysService.class), nowService,
+        vacationDaysService = new VacationDaysService(mock(WorkDaysCountService.class), nowService,
             applicationService) {
 
             @Override

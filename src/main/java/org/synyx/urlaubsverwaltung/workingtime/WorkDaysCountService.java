@@ -22,15 +22,15 @@ import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
  * Service for calendar purpose.
  */
 @Service
-public class WorkDaysService {
+public class WorkDaysCountService {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
 
     @Autowired
-    public WorkDaysService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService,
-                           SettingsService settingsService) {
+    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService,
+                                SettingsService settingsService) {
 
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;

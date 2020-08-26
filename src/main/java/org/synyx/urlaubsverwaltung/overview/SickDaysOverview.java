@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.overview;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,7 +18,7 @@ public class SickDaysOverview {
 
     private final SickDays childSickDays;
 
-    SickDaysOverview(List<SickNote> sickNotes, WorkDaysService calendarService) {
+    SickDaysOverview(List<SickNote> sickNotes, WorkDaysCountService calendarService) {
 
         this.sickDays = new SickDays();
         this.childSickDays = new SickDays();
@@ -45,14 +45,14 @@ public class SickDaysOverview {
         }
     }
 
-    private BigDecimal getTotalDays(SickNote sickNote, WorkDaysService calendarService) {
+    private BigDecimal getTotalDays(SickNote sickNote, WorkDaysCountService calendarService) {
 
         return calendarService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(),
             sickNote.getPerson());
     }
 
 
-    private BigDecimal getDaysWithAUB(SickNote sickNote, WorkDaysService calendarService) {
+    private BigDecimal getDaysWithAUB(SickNote sickNote, WorkDaysCountService calendarService) {
 
         return calendarService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getAubStartDate(),
             sickNote.getAubEndDate(), sickNote.getPerson());

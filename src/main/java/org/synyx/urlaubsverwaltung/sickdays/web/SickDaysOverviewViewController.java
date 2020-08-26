@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,10 +43,10 @@ public class SickDaysOverviewViewController {
 
     private final SickNoteService sickNoteService;
     private final PersonService personService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
 
     @Autowired
-    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysService calendarService) {
+    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysCountService calendarService) {
         this.sickNoteService = sickNoteService;
         this.personService = personService;
         this.calendarService = calendarService;

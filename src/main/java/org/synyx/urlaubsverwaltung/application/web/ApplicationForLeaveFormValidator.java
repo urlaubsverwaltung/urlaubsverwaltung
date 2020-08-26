@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapCase;
 import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -72,14 +72,14 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private static final String DAY_LENGTH = "dayLength";
 
     private final WorkingTimeService workingTimeService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final OverlapService overlapService;
     private final CalculationService calculationService;
     private final SettingsService settingsService;
     private final OvertimeService overtimeService;
 
     @Autowired
-    public ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
+    public ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysCountService calendarService,
                                             OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
                                             OvertimeService overtimeService) {
 

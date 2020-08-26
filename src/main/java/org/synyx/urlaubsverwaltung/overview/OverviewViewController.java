@@ -27,7 +27,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.statistics.web.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -53,7 +53,7 @@ public class OverviewViewController {
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final ApplicationService applicationService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final SickNoteService sickNoteService;
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
@@ -62,7 +62,7 @@ public class OverviewViewController {
     @Autowired
     public OverviewViewController(PersonService personService, AccountService accountService,
                                   VacationDaysService vacationDaysService,
-                                  ApplicationService applicationService, WorkDaysService calendarService,
+                                  ApplicationService applicationService, WorkDaysCountService calendarService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
                                   SettingsService settingsService, DepartmentService departmentService) {
         this.personService = personService;

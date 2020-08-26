@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
 
@@ -48,7 +48,7 @@ class ApplicationForLeaveViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService calendarService;
     @Mock
     private DepartmentService departmentService;
     @Mock
