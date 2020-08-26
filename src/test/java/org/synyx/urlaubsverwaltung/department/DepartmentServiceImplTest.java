@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -496,11 +497,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureBossHasAccessToAllDepartments() throws IllegalAccessException {
-        Person boss = DemoDataCreator.createPerson(42, "boss");
+    void ensureBossHasAccessToAllDepartments() {
+        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(Role.USER, Role.BOSS));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.findAll()).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(boss);
@@ -509,11 +510,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureOfficeHasAccessToAllDepartments() throws IllegalAccessException {
-        Person office = DemoDataCreator.createPerson(42, "office");
+    void ensureOfficeHasAccessToAllDepartments() {
+        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(Role.USER, Role.OFFICE));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.findAll()).thenReturn(singletonList(dep));
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(office);
@@ -522,11 +523,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureSecondStageAuthorityHasAccessToAllowedDepartments() throws IllegalAccessException {
-        Person secondStageAuthority = DemoDataCreator.createPerson(42, "secondStageAuthority");
+    void ensureSecondStageAuthorityHasAccessToAllowedDepartments() {
+        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority))
             .thenReturn(singletonList(dep));
 
@@ -536,11 +537,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureDepartmentHeadHasAccessToAllowedDepartments() throws IllegalAccessException {
-        Person departmentHead = DemoDataCreator.createPerson(42, "departmentHead");
+    void ensureDepartmentHeadHasAccessToAllowedDepartments() {
+        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.getManagedDepartments(departmentHead))
             .thenReturn(singletonList(dep));
 
@@ -550,11 +551,11 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensurePersonHasAccessToAssignedDepartments() throws IllegalAccessException {
-        Person user = DemoDataCreator.createPerson(42, "user");
+    void ensurePersonHasAccessToAssignedDepartments() {
+        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(singletonList(Role.USER));
 
-        Department dep = DemoDataCreator.createDepartment("dep");
+        Department dep = TestDataCreator.createDepartment("dep");
         when(departmentRepository.getAssignedDepartments(user))
             .thenReturn(singletonList(dep));
 
