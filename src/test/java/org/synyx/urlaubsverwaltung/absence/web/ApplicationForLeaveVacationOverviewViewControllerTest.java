@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.vacationoverview.web;
+package org.synyx.urlaubsverwaltung.absence.web;
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.absence.web.ApplicationForLeaveVacationOverviewViewController;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -30,7 +31,6 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;

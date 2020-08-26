@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.vacationoverview.web;
+package org.synyx.urlaubsverwaltung.absence.web;
 
 import java.util.List;
 
