@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -54,7 +55,7 @@ class PersonCalendarService {
         return Optional.ofNullable(personCalendarRepository.findByPerson(person));
     }
 
-    String getCalendarForPerson(Integer personId, String secret, Locale locale) {
+    File getCalendarForPerson(Integer personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
@@ -74,7 +75,7 @@ class PersonCalendarService {
         final String title = messageSource.getMessage("calendar.person.title", List.of(person.getNiceName()).toArray(), locale);
         final List<Absence> absences = absenceService.getOpenAbsences(List.of(person));
 
-        return iCalService.generateCalendar(title, absences);
+        return iCalService.getCalendar(title, absences);
     }
 
     @Transactional

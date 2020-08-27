@@ -56,6 +56,13 @@ class MailServiceImpl implements MailService {
     }
 
     @Override
+    public void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model, List<Attachment> attachments) {
+
+        final List<Person> persons = singletonList(person);
+        sendMailToPersons(persons, subjectMessageKey, templateName, model, attachments);
+    }
+
+    @Override
     public void sendMailToEach(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {
 
         persons.forEach(person -> {
@@ -74,6 +81,22 @@ class MailServiceImpl implements MailService {
 
         final List<String> recipients = recipientService.getMailAddresses(persons);
         sendMailToRecipients(recipients, subjectMessageKey, templateName, model);
+    }
+
+    private void sendMailToPersons(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model, List<Attachment> attachments) {
+
+        final List<String> recipients = recipientService.getMailAddresses(persons);
+        sendMailToRecipientsWithAttachments(recipients, subjectMessageKey, templateName, model, attachments);
+    }
+
+    private void sendMailToRecipientsWithAttachments(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model, List<Attachment> attachments) {
+
+        model.put("baseLinkURL", getApplicationUrl());
+
+        final String subject = getTranslation(subjectMessageKey);
+        final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
+
+        mailSenderService.sendEmail(mailProperties.getSender(), recipients, subject, text, attachments);
     }
 
     private void sendMailToRecipients(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {

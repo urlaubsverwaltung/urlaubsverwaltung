@@ -11,11 +11,17 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.mail.Attachment;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -45,14 +51,25 @@ class ApplicationMailServiceTest {
     private ApplicationRecipientService applicationRecipientService;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private ICalService iCalService;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, messageSource);
+        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, settingsService);
     }
 
     @Test
     void ensureSendsAllowedNotificationToOffice() {
+
+        final Settings settings = new Settings();
+        settings.setAbsenceSettings(new AbsenceSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final File file = new File("");
+        when(iCalService.getCalendar(any(), any())).thenReturn(file);
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -65,8 +82,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(person);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
         final ApplicationComment applicationComment = new ApplicationComment(person);
@@ -79,7 +96,7 @@ class ApplicationMailServiceTest {
 
         sut.sendAllowedNotification(application, applicationComment);
 
-        verify(mailService).sendMailTo(person, "subject.application.allowed.user", "allowed_user", model);
+        verify(mailService).sendMailTo(person, "subject.application.allowed.user", "allowed_user", model, List.of(new Attachment("calendar.ical", file)));
         verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.application.allowed.office", "allowed_office", model);
     }
 

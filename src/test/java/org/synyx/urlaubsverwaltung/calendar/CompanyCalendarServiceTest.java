@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -77,10 +78,12 @@ class CompanyCalendarServiceTest {
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(companyCalendar);
 
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
-        when(iCalService.generateCalendar("Abwesenheitskalender der Firma", absences)).thenReturn("calendar");
+        final File iCal = new File("calendar.ics");
+        iCal.deleteOnExit();
+        when(iCalService.getCalendar("Abwesenheitskalender der Firma", absences)).thenReturn(iCal);
 
-        final String calendar = sut.getCalendarForAll(10, "secret", GERMAN);
-        assertThat(calendar).isEqualTo("calendar");
+        final File calendar = sut.getCalendarForAll(10, "secret", GERMAN);
+        assertThat(calendar).hasName("calendar.ics");
     }
 
     @Test

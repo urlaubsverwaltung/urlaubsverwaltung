@@ -23,6 +23,8 @@ public interface MailService {
      */
     void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model);
 
+    void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model, List<Attachment> attachments);
+
 
     /**
      * Sends a mail to a each person separately

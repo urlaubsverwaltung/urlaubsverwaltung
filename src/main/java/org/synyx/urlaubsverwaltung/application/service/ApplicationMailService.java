@@ -3,12 +3,19 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.mail.Attachment;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -33,17 +40,25 @@ class ApplicationMailService {
     private final MailService mailService;
     private final DepartmentService departmentService;
     private final ApplicationRecipientService applicationRecipientService;
+    private final ICalService iCalService;
     private final MessageSource messageSource;
+    private final SettingsService settingsService;
 
     @Autowired
-    ApplicationMailService(MailService mailService, DepartmentService departmentService, ApplicationRecipientService applicationRecipientService, MessageSource messageSource) {
+    ApplicationMailService(MailService mailService, DepartmentService departmentService, ApplicationRecipientService applicationRecipientService, ICalService iCalService, MessageSource messageSource, SettingsService settingsService) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.applicationRecipientService = applicationRecipientService;
+        this.iCalService = iCalService;
         this.messageSource = messageSource;
+        this.settingsService = settingsService;
     }
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
+
+        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+        final File calendarFile = iCalService.getCalendar(application.getPerson().getNiceName(), List.of(absence));
+        final Attachment attachment = new Attachment("calendar.ical", calendarFile);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -52,7 +67,7 @@ class ApplicationMailService {
         model.put(COMMENT, applicationComment);
 
         // Inform user that the application for leave has been allowed
-        mailService.sendMailTo(application.getPerson(), "subject.application.allowed.user", "allowed_user", model);
+        mailService.sendMailTo(application.getPerson(), "subject.application.allowed.user", "allowed_user", model, List.of(attachment));
 
         // Inform office that there is a new allowed application for leave
         mailService.sendMailTo(NOTIFICATION_OFFICE, "subject.application.allowed.office", "allowed_office", model);
@@ -303,9 +318,12 @@ class ApplicationMailService {
         }
     }
 
-
     private String getTranslation(String key, Object... args) {
-
         return messageSource.getMessage(key, args, LOCALE);
+    }
+
+    private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
+        final CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+        return new AbsenceTimeConfiguration(calendarSettings);
     }
 }
