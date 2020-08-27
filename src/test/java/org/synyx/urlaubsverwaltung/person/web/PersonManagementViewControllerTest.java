@@ -11,7 +11,6 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
@@ -51,89 +50,9 @@ class PersonManagementViewControllerTest {
     @Mock
     private PersonValidator validator;
 
-    private PersonConfigurationProperties personConfigurationProperties = new PersonConfigurationProperties();
-
     @BeforeEach
     void setUp() {
-
-        sut = new PersonManagementViewController(personService, departmentService, validator, personConfigurationProperties);
-    }
-
-    @Test
-    void newPersonFormUsesNewPerson() throws Exception {
-
-        perform(get("/web/person/new"))
-            .andExpect(model().attribute("person", hasProperty("new", equalTo(Boolean.TRUE))));
-    }
-
-    @Test
-    void newPersonFormUsesNewPersonUsesCorrectView() throws Exception {
-
-        perform(get("/web/person/new")).andExpect(view().name("person/person_form"));
-    }
-
-    @Test
-    void newPersonForwardsToViewIfValidationFails() throws Exception {
-
-        personConfigurationProperties.setCanBeManipulated(true);
-
-        doAnswer(invocation -> {
-
-            Errors errors = invocation.getArgument(1);
-            errors.rejectValue("email", "invalid.email");
-
-            return null;
-        }).when(validator).validate(any(), any());
-
-        perform(post("/web/person")).andExpect(view().name("person/person_form"));
-    }
-
-    @Test
-    void newPersoncreatePersonCorrectly() throws Exception {
-
-        personConfigurationProperties.setCanBeManipulated(true);
-
-        when(personService.create(any())).thenReturn(personWithId(PERSON_ID));
-
-        perform(post("/web/person")
-            .param("username", "username")
-            .param("lastName", "Meier")
-            .param("firstName", "Nina")
-            .param("email", "nina@inter.net"));
-
-        Person personWithExpectedAttributes = new Person("username", "Meier", "Nina", "nina@inter.net");
-
-        verify(personService).create(refEq(personWithExpectedAttributes));
-    }
-
-    @Test
-    void newPersonAddsFlashAttribute() throws Exception {
-
-        personConfigurationProperties.setCanBeManipulated(true);
-
-        when(personService.create(any())).thenReturn(personWithId(PERSON_ID));
-
-        perform(post("/web/person")).andExpect(flash().attribute("createSuccess", true));
-    }
-
-    @Test
-    void newPersonRedirectsToCreatedPerson() throws Exception {
-
-        personConfigurationProperties.setCanBeManipulated(true);
-
-        when(personService.create(any())).thenReturn(personWithId(PERSON_ID));
-
-        perform(post("/web/person"))
-            .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/person/" + PERSON_ID));
-    }
-
-    @Test
-    void newPersonRedirectsToPersonOverviewIfCreationIsNotAllowed() throws Exception {
-
-        perform(post("/web/person"))
-            .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/person"));
+        sut = new PersonManagementViewController(personService, departmentService, validator);
     }
 
     @Test
@@ -223,15 +142,12 @@ class PersonManagementViewControllerTest {
     }
 
     private static Person personWithId(int personId) {
-
         Person person = new Person();
         person.setId(personId);
         return person;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
-
 }

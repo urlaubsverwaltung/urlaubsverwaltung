@@ -88,19 +88,8 @@
                         </ul>
                     </div>
 
-                    <uv:year-selector year="${year}"
-                                      hrefPrefix="${URL_PREFIX}/person?active=${param.active}&department=${department.id}&year="/>
-
+                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person?active=${param.active}&department=${department.id}&year="/>
                     <uv:print/>
-
-                    <c:if test="${userCanBeManipulated}">
-                        <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/person/new" class="fa-action pull-right" aria-hidden="true"
-                               data-title="<spring:message code="action.person.create"/>">
-                                <i class="fa fa-fw fa-user-plus" aria-hidden="true"></i>
-                            </a>
-                        </sec:authorize>
-                    </c:if>
                 </legend>
 
                 <c:choose>
