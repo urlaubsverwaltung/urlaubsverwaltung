@@ -62,8 +62,8 @@
                        data-title="<spring:message code="action.applications.statistics"/>">
                         <i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>
                     </a>
-                    <a href="${URL_PREFIX}/application/vacationoverview" class="fa-action pull-right"
-                       data-title="<spring:message code="action.applications.vacation_overview"/>">
+                    <a href="${URL_PREFIX}/absences" class="fa-action pull-right"
+                       data-title="<spring:message code="action.applications.absences_overview"/>">
                         <i class="fa fa-fw fa-calendar" aria-hidden="true"></i>
                     </a>
                     <sec:authorize access="hasAuthority('OFFICE')">

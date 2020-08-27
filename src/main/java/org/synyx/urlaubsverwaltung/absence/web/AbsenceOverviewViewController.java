@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.vacationoverview.web;
+package org.synyx.urlaubsverwaltung.absence.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -44,12 +44,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
-/**
- * Controller to generate applications for leave vacation overview.
- */
-@RequestMapping("/web/application")
+@RequestMapping("/web/absences")
 @Controller
-public class ApplicationForLeaveVacationOverviewViewController {
+public class AbsenceOverviewViewController {
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -59,11 +56,9 @@ public class ApplicationForLeaveVacationOverviewViewController {
     private final Clock clock;
 
     @Autowired
-    public ApplicationForLeaveVacationOverviewViewController(PersonService personService,
-                                                             DepartmentService departmentService,
-                                                             ApplicationService applicationService,
-                                                             SickNoteService sickNoteService,
-                                                             MessageSource messageSource, Clock clock) {
+    public AbsenceOverviewViewController(PersonService personService, DepartmentService departmentService,
+                                         ApplicationService applicationService, SickNoteService sickNoteService,
+                                         MessageSource messageSource, Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationService = applicationService;
@@ -73,8 +68,8 @@ public class ApplicationForLeaveVacationOverviewViewController {
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
-    @GetMapping("/vacationoverview")
-    public String applicationForLeaveVacationOverview(
+    @GetMapping
+    public String absenceOverview(
         @RequestParam(required = false) Integer year,
         @RequestParam(required = false) String month,
         @RequestParam(required = false) String department,
@@ -171,7 +166,7 @@ public class ApplicationForLeaveVacationOverviewViewController {
         AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(new ArrayList<>(monthsByNr.values()));
         model.addAttribute("absenceOverview", absenceOverview);
 
-        return "application/vacation_overview";
+        return "absences/absences_overview";
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
@@ -183,7 +178,8 @@ public class ApplicationForLeaveVacationOverviewViewController {
         return "";
     }
 
-    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, String selectedDepartmentName) {
+    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments,
+                                                   String selectedDepartmentName) {
 
         if (departments.isEmpty() && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE))) {
             return personService.getActivePersons();
@@ -266,7 +262,9 @@ public class ApplicationForLeaveVacationOverviewViewController {
         return getStartOrEndDate(year, month, TemporalAdjusters::lastDayOfYear, TemporalAdjusters::lastDayOfMonth);
     }
 
-    private LocalDate getStartOrEndDate(Integer year, String month, Supplier<TemporalAdjuster> firstOrLastOfYearSupplier, Supplier<TemporalAdjuster> firstOrLastOfMonthSupplier) {
+    private LocalDate getStartOrEndDate(Integer year, String month, Supplier<TemporalAdjuster> firstOrLastOfYearSupplier,
+                                        Supplier<TemporalAdjuster> firstOrLastOfMonthSupplier) {
+
         final LocalDate now = LocalDate.now(clock);
 
         if (year != null) {
