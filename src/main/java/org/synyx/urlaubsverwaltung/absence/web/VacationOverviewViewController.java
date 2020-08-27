@@ -14,7 +14,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * View controller for legacy reasons to not break urls for the moment (e.g. bookmarks).
  *
  * @since 4.0.0
+ * @deprecated in favor of /web/absences
  */
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Controller
 @RequestMapping("/web/application")
 public class VacationOverviewViewController {
