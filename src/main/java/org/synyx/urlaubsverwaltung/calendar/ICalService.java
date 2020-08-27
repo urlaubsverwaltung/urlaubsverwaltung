@@ -5,6 +5,8 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.parameter.Cn;
+import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
@@ -15,14 +17,15 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.util.Date.from;
 import static java.util.stream.Collectors.toList;
+import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
 import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
-
 
 @Service
 class ICalService {
@@ -50,9 +53,7 @@ class ICalService {
         return calenderWriter.toString();
     }
 
-
     private VEvent toVEvent(Absence absence) {
-
 
         final ZonedDateTime startDateTime = absence.getStartDate();
         final ZonedDateTime endDateTime = absence.getEndDate();
@@ -76,8 +77,18 @@ class ICalService {
         }
 
         event.getProperties().add(new Uid(generateUid(absence)));
+        event.getProperties().add(generateAttendee(absence));
 
         return event;
+    }
+
+    private Attendee generateAttendee(Absence absence) {
+        final Attendee attendee;
+        attendee = new Attendee(URI.create("mailto:" + absence.getPerson().getEmail()));
+        attendee.getParameters().add(REQ_PARTICIPANT);
+        attendee.getParameters().add(new Cn(absence.getPerson().getNiceName()));
+
+        return attendee;
     }
 
     private boolean isSameDay(ZonedDateTime startDateTime, ZonedDateTime endDate) {
