@@ -102,7 +102,7 @@ class AbsenceOverviewViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("departments", hasItem(department)))
-            .andExpect(view().name("application/vacation_overview"));
+            .andExpect(view().name("absences/absences_overview"));
 
         verifyNoMoreInteractions(departmentService);
     }
@@ -123,7 +123,7 @@ class AbsenceOverviewViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("departments", hasItem(department)))
-            .andExpect(view().name("application/vacation_overview"));
+            .andExpect(view().name("absences/absences_overview"));
 
         verifyNoMoreInteractions(departmentService);
     }
@@ -143,7 +143,7 @@ class AbsenceOverviewViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("departments", hasItem(department)))
-            .andExpect(view().name("application/vacation_overview"));
+            .andExpect(view().name("absences/absences_overview"));
 
         verifyNoMoreInteractions(departmentService);
     }
@@ -163,7 +163,7 @@ class AbsenceOverviewViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("departments", hasItem(department)))
-            .andExpect(view().name("application/vacation_overview"));
+            .andExpect(view().name("absences/absences_overview"));
 
         verifyNoMoreInteractions(departmentService);
     }

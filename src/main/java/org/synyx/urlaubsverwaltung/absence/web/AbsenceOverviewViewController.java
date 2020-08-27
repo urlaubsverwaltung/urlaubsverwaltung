@@ -166,7 +166,7 @@ public class AbsenceOverviewViewController {
         AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(new ArrayList<>(monthsByNr.values()));
         model.addAttribute("absenceOverview", absenceOverview);
 
-        return "application/vacation_overview";
+        return "absences/absences_overview";
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
