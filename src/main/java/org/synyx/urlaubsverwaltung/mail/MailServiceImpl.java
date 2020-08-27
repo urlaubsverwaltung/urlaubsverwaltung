@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -86,15 +87,10 @@ class MailServiceImpl implements MailService {
     }
 
     private String getApplicationUrl() {
-
-        // TODO use same url generation like in calender
-        final String applicationUrl = mailProperties.getApplicationUrl();
-        return applicationUrl.endsWith("/") ? applicationUrl : applicationUrl + "/";
+        return ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath("/").build().toString();
     }
 
     private String getTranslation(String key, Object... args) {
-
         return messageSource.getMessage(key, args, LOCALE);
     }
-
 }
