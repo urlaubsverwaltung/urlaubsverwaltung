@@ -26,7 +26,7 @@ module.exports = {
     sick_note_convert: './src/main/webapp/bundles/sick-note-convert.js',
     sick_notes: './src/main/webapp/bundles/sick-notes.js',
     person_view: './src/main/webapp/bundles/person-view.js',
-    vacation_overview: './src/main/webapp/bundles/vacation-overview.js',
+    absences_overview: './src/main/webapp/bundles/absences-overview.js',
     department_form: './src/main/webapp/bundles/department-form.js',
     department_list: './src/main/webapp/bundles/department-list.js',
     overtime_overview: './src/main/webapp/bundles/overtime-overview.js',

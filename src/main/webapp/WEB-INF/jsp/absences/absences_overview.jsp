@@ -32,10 +32,10 @@
     <title>
         <spring:message code="absences.overview.header.title"/>
     </title>
-    <link rel="stylesheet" href="<asset:url value='vacation_overview.css' />" />
+    <link rel="stylesheet" href="<asset:url value='absences_overview.css' />" />
     <uv:custom-head/>
     <script defer src="<asset:url value='npm.tablesorter.js' />"></script>
-    <script defer src="<asset:url value='vacation_overview.js' />"></script>
+    <script defer src="<asset:url value='absences_overview.js' />"></script>
 </head>
 
 <body>

@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import 'tablesorter'
-import '../css/vacation-overview.css'
+import '../css/absences-overview.css'
 
 $(function () {
 
