@@ -7,11 +7,13 @@ import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.property.Attendee;
+import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 
@@ -29,6 +31,14 @@ import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 
 @Service
 class ICalService {
+
+    private final CalendarProperties calendarProperties;
+
+    @Autowired
+    ICalService(CalendarProperties calendarProperties) {
+        this.calendarProperties = calendarProperties;
+    }
+
 
     String generateCalendar(String title, List<Absence> absences) {
 
@@ -78,6 +88,7 @@ class ICalService {
 
         event.getProperties().add(new Uid(generateUid(absence)));
         event.getProperties().add(generateAttendee(absence));
+        event.getProperties().add(new Organizer(URI.create("mailto:" + calendarProperties.getOrganizer())));
 
         return event;
     }

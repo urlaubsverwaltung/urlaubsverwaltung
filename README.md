@@ -119,6 +119,9 @@ uv.account.update.cron=0 0 5 1 1 *
 uv.application.reminder-notification.cron=0 0 7 * * *
 
 # development
+uv.calendar.organizer
+
+# development
 uv.development.demodata.create
 
 # mail
