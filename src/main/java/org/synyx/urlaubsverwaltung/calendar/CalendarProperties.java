@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
+import java.util.Optional;
 
 @Component
 @ConfigurationProperties("uv.calendar")
@@ -19,8 +20,8 @@ public class CalendarProperties {
     @Email
     private String organizer;
 
-    public String getOrganizer() {
-        return organizer;
+    public Optional<String> getOrganizer() {
+        return Optional.ofNullable(organizer);
     }
 
     public void setOrganizer(String organizer) {

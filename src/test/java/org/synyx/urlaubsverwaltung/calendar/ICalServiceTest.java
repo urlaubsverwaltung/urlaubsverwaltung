@@ -130,6 +130,17 @@ class ICalServiceTest {
             .contains("ORGANIZER:mailto:no-reply@example.org");
     }
 
+    @Test
+    void getCalendarNoOrganizerIfNotProvided() {
+
+        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final ICalService sut = new ICalService(new CalendarProperties());
+        final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        assertThat(calendar)
+            .doesNotContain("ORGANIZER:mailto:");
+    }
+
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());

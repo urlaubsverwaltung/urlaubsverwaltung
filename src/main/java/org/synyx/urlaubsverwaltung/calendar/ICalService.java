@@ -88,7 +88,8 @@ class ICalService {
 
         event.getProperties().add(new Uid(generateUid(absence)));
         event.getProperties().add(generateAttendee(absence));
-        event.getProperties().add(new Organizer(URI.create("mailto:" + calendarProperties.getOrganizer())));
+        calendarProperties.getOrganizer()
+            .ifPresent(organizer -> event.getProperties().add(new Organizer(URI.create("mailto:" + organizer))));
 
         return event;
     }
