@@ -29,7 +29,7 @@ class SickNoteStatisticsViewControllerTest {
     @Mock
     private SickNoteService sickNoteService;
     @Mock
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
@@ -40,7 +40,7 @@ class SickNoteStatisticsViewControllerTest {
     void sickNoteStatistics() throws Exception {
 
         final int year = 2017;
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, sickNoteService, calendarService);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, sickNoteService, workDaysCountService);
         when(statisticsService.createStatistics(year)).thenReturn(sickNoteStatistics);
 
         final ResultActions resultActions = perform(get("/web/sicknote/statistics")

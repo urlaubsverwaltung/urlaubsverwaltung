@@ -25,12 +25,12 @@ import static org.mockito.Mockito.when;
 
 class SickDaysOverviewTest {
 
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
 
-        calendarService = mock(WorkDaysCountService.class);
+        workDaysCountService = mock(WorkDaysCountService.class);
     }
 
 
@@ -89,11 +89,11 @@ class SickDaysOverviewTest {
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
 
         // just return 1 day for each sick note
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
-        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);
+        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
 
         SickDays sickDays = sickDaysOverview.getSickDays();
         Assert.assertNotNull("Should not be null", sickDays.getDays());

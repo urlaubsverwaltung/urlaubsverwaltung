@@ -73,7 +73,7 @@ class OverviewViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock
@@ -84,7 +84,7 @@ class OverviewViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService);
+            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService);
     }
 
     @Test
@@ -214,7 +214,7 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(calendarService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
         final Application revokedApplication = new Application();
         revokedApplication.setStatus(REVOKED);

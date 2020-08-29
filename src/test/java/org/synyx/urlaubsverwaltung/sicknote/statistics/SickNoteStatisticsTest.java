@@ -35,7 +35,7 @@ class SickNoteStatisticsTest {
     private SickNoteStatistics sut;
 
     @Mock
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private SickNoteService sickNoteDAO;
 
@@ -62,15 +62,15 @@ class SickNoteStatisticsTest {
         when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
         when(sickNoteDAO.getAllActiveByYear(2013)).thenReturn(sickNotes);
 
-        when(calendarService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
+        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
             LocalDate.of(2013, OCTOBER, 11), person))
             .thenReturn(new BigDecimal("5"));
 
-        when(calendarService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
+        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
             LocalDate.of(2013, DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 
-        sut = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        sut = new SickNoteStatistics(2013, sickNoteDAO, workDaysCountService);
     }
 
     @Test
@@ -88,7 +88,7 @@ class SickNoteStatisticsTest {
 
         // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
         // 14 workdays / 7 persons = 2 workdays per person
-        sut = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        sut = new SickNoteStatistics(2013, sickNoteDAO, workDaysCountService);
 
         final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
         assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(BigDecimal.valueOf(2));
@@ -99,7 +99,7 @@ class SickNoteStatisticsTest {
 
         when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
 
-        sut = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        sut = new SickNoteStatistics(2013, sickNoteDAO, workDaysCountService);
 
         final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
         assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(BigDecimal.ZERO);
@@ -109,6 +109,6 @@ class SickNoteStatisticsTest {
     void testGetTotalNumberOfSickDaysInvalidDateRange() {
 
         when(sickNoteDAO.getAllActiveByYear(2015)).thenReturn(sickNotes);
-        assertThatIllegalArgumentException().isThrownBy(() -> new SickNoteStatistics(2015, sickNoteDAO, calendarService));
+        assertThatIllegalArgumentException().isThrownBy(() -> new SickNoteStatistics(2015, sickNoteDAO, workDaysCountService));
     }
 }

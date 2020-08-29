@@ -48,7 +48,7 @@ class ApplicationForLeaveViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private DepartmentService departmentService;
     @Mock
@@ -56,7 +56,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveViewController(applicationService, calendarService, departmentService, personService);
+        sut = new ApplicationForLeaveViewController(applicationService, workDaysCountService, departmentService, personService);
     }
 
     @Test

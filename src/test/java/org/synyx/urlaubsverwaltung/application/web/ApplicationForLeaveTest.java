@@ -21,12 +21,12 @@ import static org.mockito.Mockito.when;
 
 class ApplicationForLeaveTest {
 
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
 
-        calendarService = mock(WorkDaysCountService.class);
+        workDaysCountService = mock(WorkDaysCountService.class);
     }
 
 
@@ -38,13 +38,13 @@ class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.FULL);
 
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
-        ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);
+        ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
 
-        verify(calendarService)
+        verify(workDaysCountService)
             .getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
 
         Assert.assertNotNull("Should not be null", applicationForLeave.getStartDate());
@@ -68,11 +68,11 @@ class ApplicationForLeaveTest {
         Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 
-        ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);
+        ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
 
         Assert.assertNotNull("Missing day of week for start date", applicationForLeave.getWeekDayOfStartDate());
         Assert.assertEquals("Wrong day of week for start date", WeekDay.TUESDAY,

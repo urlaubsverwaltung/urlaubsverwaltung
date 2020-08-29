@@ -46,7 +46,7 @@ class ApplicationForLeaveFormValidatorTest {
     private ApplicationForLeaveFormValidator validator;
 
     private WorkingTimeService workingTimeService;
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
     private OverlapService overlapService;
     private CalculationService calculationService;
     private SettingsService settingsService;
@@ -65,13 +65,13 @@ class ApplicationForLeaveFormValidatorTest {
         settings.getWorkingTimeSettings().setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        calendarService = mock(WorkDaysCountService.class);
+        workDaysCountService = mock(WorkDaysCountService.class);
         overlapService = mock(OverlapService.class);
         calculationService = mock(CalculationService.class);
         workingTimeService = mock(WorkingTimeService.class);
         overtimeService = mock(OvertimeService.class);
 
-        validator = new ApplicationForLeaveFormValidator(workingTimeService, calendarService, overlapService, calculationService,
+        validator = new ApplicationForLeaveFormValidator(workingTimeService, workDaysCountService, overlapService, calculationService,
             settingsService, overtimeService);
         errors = mock(Errors.class);
 
@@ -88,7 +88,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
@@ -419,7 +419,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         validator.validate(appForm, errors);
@@ -441,7 +441,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
@@ -464,7 +464,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDaysCount(eq(appForm.getDayLength()), eq(appForm.getStartDate()),
+        when(workDaysCountService.getWorkDaysCount(eq(appForm.getDayLength()), eq(appForm.getStartDate()),
             eq(appForm.getEndDate()), eq(appForm.getPerson())))
             .thenReturn(BigDecimal.ONE);
 
@@ -485,7 +485,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
@@ -615,7 +615,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(workingTimeService)
             .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDate());
-        verifyNoInteractions(calendarService);
+        verifyNoInteractions(workDaysCountService);
         verifyNoInteractions(overlapService);
         verifyNoInteractions(calculationService);
     }
@@ -644,7 +644,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(workingTimeService)
             .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDate());
-        verifyNoInteractions(calendarService);
+        verifyNoInteractions(workDaysCountService);
         verifyNoInteractions(overlapService);
         verifyNoInteractions(calculationService);
     }

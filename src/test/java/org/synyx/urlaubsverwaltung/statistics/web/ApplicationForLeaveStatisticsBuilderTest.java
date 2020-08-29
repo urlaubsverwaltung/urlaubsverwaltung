@@ -50,7 +50,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysCountService calendarService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private VacationDaysService vacationDaysService;
     @Mock
@@ -61,7 +61,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
+        sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workDaysCountService,
             vacationDaysService, overtimeService, vacationTypeService);
     }
 
@@ -152,7 +152,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .thenReturn(applications);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), eq(person)))
             .thenReturn(BigDecimal.ONE);
 
@@ -201,10 +201,10 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
             .thenReturn(applications);
 
-        when(calendarService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2015, 1, 1),
+        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2015, 1, 1),
             LocalDate.of(2015, 1, 9), person))
             .thenReturn(new BigDecimal("5"));
-        when(calendarService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2015, 12, 21),
+        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2015, 12, 21),
             LocalDate.of(2015, 12, 31), person))
             .thenReturn(new BigDecimal("7"));
 

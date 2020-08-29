@@ -72,7 +72,7 @@ class CalculationServiceTest {
 
         final HolidayManager holidayManager = getHolidayManager();
         final PublicHolidaysService publicHolidaysService = new PublicHolidaysService(settingsService, holidayManager);
-        final WorkDaysCountService calendarService = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
+        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
 
         // create working time object (MON-FRI)
         final WorkingTime workingTime = new WorkingTime();
@@ -81,7 +81,7 @@ class CalculationServiceTest {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
-        sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, calendarService, new OverlapService(null, null));
+        sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService, new OverlapService(null, null));
     }
 
 

@@ -67,7 +67,7 @@ class SickNoteViewControllerTest {
     @Mock
     private PersonService personServiceMock;
     @Mock
-    private WorkDaysCountService calendarServiceMock;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private SickNoteValidator validatorMock;
     @Mock
@@ -78,7 +78,7 @@ class SickNoteViewControllerTest {
 
         sut = new SickNoteViewController(sickNoteServiceMock,
             sickNoteInteractionServiceMock, sickNoteCommentServiceMock, sickNoteTypeServiceMock,
-            vacationTypeServiceMock, personServiceMock, calendarServiceMock, validatorMock,
+            vacationTypeServiceMock, personServiceMock, workDaysCountService, validatorMock,
             sickNoteConvertFormValidatorMock);
     }
 

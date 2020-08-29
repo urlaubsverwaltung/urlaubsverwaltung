@@ -94,10 +94,10 @@ class VacationDaysServiceTest {
         ManagerParameter managerParameter = ManagerParameters.create(url);
         HolidayManager holidayManager = HolidayManager.getInstance(managerParameter);
 
-        WorkDaysCountService calendarService = new WorkDaysCountService(new PublicHolidaysService(settingsService, holidayManager),
+        WorkDaysCountService workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService, holidayManager),
             workingTimeService, settingsService);
 
-        vacationDaysService = new VacationDaysService(calendarService, nowService, applicationService);
+        vacationDaysService = new VacationDaysService(workDaysCountService, nowService, applicationService);
     }
 
 
