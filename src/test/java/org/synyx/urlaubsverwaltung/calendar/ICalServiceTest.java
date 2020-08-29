@@ -29,7 +29,9 @@ class ICalServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ICalService();
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        sut = new ICalService(calendarProperties);
     }
 
     @Test
@@ -56,7 +58,10 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190326");
+            .contains("DTSTART;VALUE=DATE:20190326")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
     }
 
     @Test
@@ -75,7 +80,10 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("DTSTART:20190426T080000Z")
-            .contains("DTEND:20190426T120000Z");
+            .contains("DTEND:20190426T120000Z")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
     }
 
     @Test
@@ -95,7 +103,10 @@ class ICalServiceTest {
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
             .contains("DTSTART;VALUE=DATE:20190326")
-            .contains("DTEND;VALUE=DATE:20190402");
+            .contains("DTEND;VALUE=DATE:20190402")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
     }
 
     @Test
@@ -113,7 +124,21 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z");
+            .contains("DTEND:20190526T160000Z")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
+    }
+
+    @Test
+    void getCalendarNoOrganizerIfNotProvided() {
+
+        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final ICalService sut = new ICalService(new CalendarProperties());
+        final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        assertThat(calendar)
+            .doesNotContain("ORGANIZER:mailto:");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
