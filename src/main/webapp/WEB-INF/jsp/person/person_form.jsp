@@ -241,13 +241,11 @@
                                             <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
                                         </strong>
                                         <label class="mb-2">
-                                            <form:checkbox path="permissions"
-                                                           value="SECOND_STAGE_AUTHORITY"/><spring:message
-                                            code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
+                                            <form:checkbox path="permissions" value="SECOND_STAGE_AUTHORITY"/>
+                                            <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
                                         </label>
                                         <label class="ml-5 pb-2">
-                                            <form:checkbox path="notifications"
-                                                           value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
+                                            <form:checkbox path="notifications" value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
                                             <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
                                         </label>
                                         <label class="${!empty secondStageDepartments ? 'info' : ''}">
@@ -284,6 +282,10 @@
                                         <label>
                                             <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_DEPARTMENTS"/>
                                             <spring:message code="person.form.notifications.BOSS.departments"/>
+                                        </label>
+                                        <label>
+                                            <form:radiobutton path="notifications" value=""/>
+                                            <spring:message code="person.form.notifications.BOSS.none"/>
                                         </label>
                                     </div>
 
