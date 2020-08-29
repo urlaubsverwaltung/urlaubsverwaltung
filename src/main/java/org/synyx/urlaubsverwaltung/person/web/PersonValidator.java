@@ -14,6 +14,16 @@ import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_DEPARTMENTS;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+
 
 /**
  * This class validate if master data of a {@link Person} is filled correctly.
@@ -57,23 +67,18 @@ class PersonValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
 
-        Person person = (Person) target;
+        final Person person = (Person) target;
 
         if (person.getId() == null) {
             validateUsername(person.getUsername(), errors);
         }
 
         validateName(person.getFirstName(), ATTRIBUTE_FIRST_NAME, errors);
-
         validateName(person.getLastName(), ATTRIBUTE_LAST_NAME, errors);
-
         validateEmail(person.getEmail(), errors);
-
         validatePermissions(person, errors);
-
         validateNotifications(person, errors);
     }
-
 
     void validateUsername(String username, Errors errors) {
 
@@ -89,9 +94,7 @@ class PersonValidator implements Validator {
         }
     }
 
-
     void validateName(String name, String field, Errors errors) {
-
         if (StringUtils.hasText(name)) {
             if (!validateStringLength(name)) {
                 errors.rejectValue(field, ERROR_LENGTH);
@@ -101,9 +104,7 @@ class PersonValidator implements Validator {
         }
     }
 
-
     void validateEmail(String email, Errors errors) {
-
         if (StringUtils.hasText(email)) {
             if (!validateStringLength(email)) {
                 errors.rejectValue(ATTRIBUTE_EMAIL, ERROR_LENGTH);
@@ -117,12 +118,9 @@ class PersonValidator implements Validator {
         }
     }
 
-
     private boolean validateStringLength(String string) {
-
         return string.length() <= MAX_CHARS;
     }
-
 
     void validatePermissions(Person person, Errors errors) {
 
@@ -151,20 +149,18 @@ class PersonValidator implements Validator {
         validateCombinationOfRoles(roles, errors);
     }
 
-
     private void validateCombinationOfRoles(Collection<Role> roles, Errors errors) {
 
-        if (roles.contains(Role.DEPARTMENT_HEAD) && (roles.contains(Role.BOSS) || roles.contains(Role.OFFICE))) {
+        if (roles.contains(DEPARTMENT_HEAD) && (roles.contains(BOSS) || roles.contains(OFFICE))) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, ERROR_PERMISSIONS_COMBINATION);
 
             return;
         }
 
-        if (roles.contains(Role.SECOND_STAGE_AUTHORITY) && (roles.contains(Role.BOSS) || roles.contains(Role.OFFICE))) {
+        if (roles.contains(SECOND_STAGE_AUTHORITY) && (roles.contains(BOSS) || roles.contains(OFFICE))) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, ERROR_PERMISSIONS_COMBINATION);
         }
     }
-
 
     void validateNotifications(Person person, Errors errors) {
 
@@ -172,27 +168,15 @@ class PersonValidator implements Validator {
         Collection<MailNotification> notifications = person.getNotifications();
 
         if (roles != null) {
-            validateCombinationOfNotificationAndRole(roles, notifications, Role.DEPARTMENT_HEAD,
-                MailNotification.NOTIFICATION_DEPARTMENT_HEAD, errors);
-
-            validateCombinationOfNotificationAndRole(roles, notifications, Role.SECOND_STAGE_AUTHORITY,
-                MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY, errors);
-
-            validateCombinationOfNotificationAndRole(roles, notifications, Role.BOSS,
-                MailNotification.NOTIFICATION_BOSS_ALL, errors);
-
-            validateCombinationOfNotificationAndRole(roles, notifications, Role.BOSS,
-                MailNotification.NOTIFICATION_BOSS_DEPARTMENTS, errors);
-
-            validateCombinationOfNotificationAndRole(roles, notifications, Role.OFFICE,
-                MailNotification.NOTIFICATION_OFFICE, errors);
+            validateCombinationOfNotificationAndRole(roles, notifications, DEPARTMENT_HEAD, NOTIFICATION_DEPARTMENT_HEAD, errors);
+            validateCombinationOfNotificationAndRole(roles, notifications, SECOND_STAGE_AUTHORITY, NOTIFICATION_SECOND_STAGE_AUTHORITY, errors);
+            validateCombinationOfNotificationAndRole(roles, notifications, BOSS, NOTIFICATION_BOSS_ALL, errors);
+            validateCombinationOfNotificationAndRole(roles, notifications, BOSS, NOTIFICATION_BOSS_DEPARTMENTS, errors);
+            validateCombinationOfNotificationAndRole(roles, notifications, OFFICE, NOTIFICATION_OFFICE, errors);
         }
     }
 
-
-    private void validateCombinationOfNotificationAndRole(Collection<Role> roles,
-                                                          Collection<MailNotification> notifications, Role role, MailNotification notification, Errors errors) {
-
+    private void validateCombinationOfNotificationAndRole(Collection<Role> roles, Collection<MailNotification> notifications, Role role, MailNotification notification, Errors errors) {
         if (notifications.contains(notification) && !roles.contains(role)) {
             errors.rejectValue("notifications", ERROR_NOTIFICATIONS_COMBINATION);
         }
