@@ -28,7 +28,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -54,7 +54,7 @@ public class SickNoteViewController {
     private final SickNoteTypeService sickNoteTypeService;
     private final VacationTypeService vacationTypeService;
     private final PersonService personService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
 
@@ -62,7 +62,7 @@ public class SickNoteViewController {
     public SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                                   SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                                   VacationTypeService vacationTypeService, PersonService personService,
-                                  WorkDaysService calendarService, SickNoteValidator sickNoteValidator,
+                                  WorkDaysCountService calendarService, SickNoteValidator sickNoteValidator,
                                   SickNoteConvertFormValidator sickNoteConvertFormValidator) {
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;

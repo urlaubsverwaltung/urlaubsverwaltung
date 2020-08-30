@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -55,11 +55,11 @@ class SickDaysOverviewViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personService, calendarService);
+        sut = new SickDaysOverviewViewController(sickNoteService, personService, workDaysCountService);
     }
 
     @Test
@@ -90,9 +90,9 @@ class SickDaysOverviewViewControllerTest {
         childSickNote.setPerson(person);
         childSickNote.setAubStartDate(parse("10.02.2019", ofPattern("dd.MM.yyyy")));
         childSickNote.setAubEndDate(parse("15.02.2019", ofPattern("dd.MM.yyyy")));
-        when(calendarService.getWorkDays(childSickNote.getDayLength(), childSickNote.getStartDate(), childSickNote.getEndDate(), person))
+        when(workDaysCountService.getWorkDaysCount(childSickNote.getDayLength(), childSickNote.getStartDate(), childSickNote.getEndDate(), person))
             .thenReturn(ONE);
-        when(calendarService.getWorkDays(childSickNote.getDayLength(), childSickNote.getAubStartDate(), childSickNote.getAubEndDate(), person))
+        when(workDaysCountService.getWorkDaysCount(childSickNote.getDayLength(), childSickNote.getAubStartDate(), childSickNote.getAubEndDate(), person))
             .thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
@@ -106,9 +106,9 @@ class SickDaysOverviewViewControllerTest {
         sickNote.setPerson(person);
         sickNote.setAubStartDate(parse("10.04.2019", ofPattern("dd.MM.yyyy")));
         sickNote.setAubEndDate(parse("20.04.2019", ofPattern("dd.MM.yyyy")));
-        when(calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person))
+        when(workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person))
             .thenReturn(TEN);
-        when(calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getAubStartDate(), sickNote.getAubEndDate(), person))
+        when(workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getAubStartDate(), sickNote.getAubEndDate(), person))
             .thenReturn(BigDecimal.valueOf(15L));
 
         final String requestStartDateString = "05.01.2019";

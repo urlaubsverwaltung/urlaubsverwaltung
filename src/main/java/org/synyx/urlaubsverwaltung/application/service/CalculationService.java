@@ -11,11 +11,11 @@ import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.OverlapService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,12 +40,12 @@ public class CalculationService {
     private final VacationDaysService vacationDaysService;
     private final AccountInteractionService accountInteractionService;
     private final AccountService accountService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final OverlapService overlapService;
 
     @Autowired
     public CalculationService(VacationDaysService vacationDaysService, AccountService accountService,
-                              AccountInteractionService accountInteractionService, WorkDaysService calendarService,
+                              AccountInteractionService accountInteractionService, WorkDaysCountService calendarService,
                               OverlapService overlapService) {
 
         this.vacationDaysService = vacationDaysService;
@@ -75,16 +75,16 @@ public class CalculationService {
         int yearOfEndDate = endDate.getYear();
 
         if (yearOfStartDate == yearOfEndDate) {
-            BigDecimal workDays = calendarService.getWorkDays(dayLength, startDate, endDate, person);
+            BigDecimal workDays = calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
 
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays, application);
         } else {
             // ensure that applying for leave for the period in the old year is possible
-            BigDecimal workDaysInOldYear = calendarService.getWorkDays(dayLength, startDate,
+            BigDecimal workDaysInOldYear = calendarService.getWorkDaysCount(dayLength, startDate,
                 DateUtil.getLastDayOfYear(yearOfStartDate), person);
 
             // ensure that applying for leave for the period in the new year is possible
-            BigDecimal workDaysInNewYear = calendarService.getWorkDays(dayLength,
+            BigDecimal workDaysInNewYear = calendarService.getWorkDaysCount(dayLength,
                 DateUtil.getFirstDayOfYear(yearOfEndDate), endDate, person);
 
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYear, application)
@@ -93,8 +93,7 @@ public class CalculationService {
     }
 
 
-    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays,
-                                                     Application application) {
+    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays, Application application) {
 
         Optional<Account> account = getHolidaysAccount(year, person);
 
@@ -128,7 +127,7 @@ public class CalculationService {
 
         if (leftUntilApril.signum() < 0 || leftAfterApril.signum() < 0) {
             if (alreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by {} for {} days in because remaining days " +
+                LOG.info("Rejecting application by {} for {} days in {} because {} remaining days " +
                     "have already been used in {}", person, workDays, year, alreadyUsedNextYear, year + 1);
             }
             return false;
@@ -151,7 +150,7 @@ public class CalculationService {
     private BigDecimal calculateWorkDaysBeforeApril(Application application, List<Interval> beforeApril) {
         DateTime start = beforeApril.get(0).getStart();
         DateTime end = beforeApril.get(0).getEnd();
-        return calendarService.getWorkDays(
+        return calendarService.getWorkDaysCount(
             application.getDayLength(),
             LocalDate.of(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth()),
             LocalDate.of(end.getYear(), end.getMonthOfYear(), end.getDayOfMonth()),

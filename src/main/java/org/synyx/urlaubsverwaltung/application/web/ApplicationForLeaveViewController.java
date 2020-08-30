@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,12 +41,12 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 public class ApplicationForLeaveViewController {
 
     private final ApplicationService applicationService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final DepartmentService departmentService;
     private final PersonService personService;
 
     @Autowired
-    public ApplicationForLeaveViewController(ApplicationService applicationService, WorkDaysService calendarService,
+    public ApplicationForLeaveViewController(ApplicationService applicationService, WorkDaysCountService calendarService,
                                              DepartmentService departmentService, PersonService personService) {
         this.applicationService = applicationService;
         this.calendarService = calendarService;

@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 @Configuration
@@ -45,8 +45,8 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    DurationChecker durationChecker(WorkDaysService workDaysService) {
-        return new DurationChecker(workDaysService);
+    DurationChecker durationChecker(WorkDaysCountService workDaysCountService) {
+        return new DurationChecker(workDaysCountService);
     }
 
     @Bean

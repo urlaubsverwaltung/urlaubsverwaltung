@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,12 +21,12 @@ import static org.mockito.Mockito.when;
 
 class ExtendedSickNoteTest {
 
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
 
-        calendarService = mock(WorkDaysService.class);
+        workDaysCountService = mock(WorkDaysCountService.class);
     }
 
 
@@ -38,14 +38,14 @@ class ExtendedSickNoteTest {
         SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2015, 3, 3),
             LocalDate.of(2015, 3, 6), DayLength.MORNING);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.TEN);
 
-        ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);
+        ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, workDaysCountService);
 
-        verify(calendarService)
-            .getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person);
+        verify(workDaysCountService)
+            .getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person);
 
         Assert.assertNotNull("Should not be null", extendedSickNote.getDayLength());
         Assert.assertNotNull("Should not be null", extendedSickNote.getStartDate());
@@ -70,11 +70,11 @@ class ExtendedSickNoteTest {
         SickNote sickNote = TestDataCreator.createSickNote(person, LocalDate.of(2016, 3, 1),
             LocalDate.of(2016, 3, 4), DayLength.FULL);
 
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 
-        ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);
+        ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, workDaysCountService);
 
         Assert.assertNotNull("Missing day of week for start date", extendedSickNote.getWeekDayOfStartDate());
         Assert.assertEquals("Wrong day of week for start date", WeekDay.TUESDAY,

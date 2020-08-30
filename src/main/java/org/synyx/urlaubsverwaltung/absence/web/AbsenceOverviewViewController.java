@@ -73,8 +73,7 @@ public class AbsenceOverviewViewController {
         @RequestParam(required = false) Integer year,
         @RequestParam(required = false) String month,
         @RequestParam(required = false) String department,
-        Model model, Locale locale)
-    {
+        Model model, Locale locale) {
         final Person signedInUser = personService.getSignedInUser();
         final List<Department> departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
         model.addAttribute("departments", departments);

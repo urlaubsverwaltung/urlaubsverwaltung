@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ public class SickNoteStatistics {
     private final BigDecimal totalNumberOfSickDays;
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
-    public SickNoteStatistics(int year, SickNoteService sickNoteService, WorkDaysService calendarService) {
+    public SickNoteStatistics(int year, SickNoteService sickNoteService, WorkDaysCountService calendarService) {
 
         this.year = year;
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteService.getNumberOfPersonsWithMinimumOneSickNote(year);
@@ -49,7 +49,7 @@ public class SickNoteStatistics {
     }
 
 
-    private BigDecimal calculateTotalNumberOfSickDays(WorkDaysService calendarService, List<SickNote> sickNotes) {
+    private BigDecimal calculateTotalNumberOfSickDays(WorkDaysCountService calendarService, List<SickNote> sickNotes) {
 
         BigDecimal numberOfSickDays = BigDecimal.ZERO;
 
@@ -75,7 +75,7 @@ public class SickNoteStatistics {
                 endDate = sickNoteStartDate.with(lastDayOfYear());
             }
 
-            BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), startDate, endDate,
+            BigDecimal workDays = calendarService.getWorkDaysCount(sickNote.getDayLength(), startDate, endDate,
                 sickNote.getPerson());
 
             numberOfSickDays = numberOfSickDays.add(workDays);

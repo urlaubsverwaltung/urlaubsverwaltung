@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,14 +31,14 @@ public class ApplicationForLeaveStatisticsBuilder {
 
     private final AccountService accountService;
     private final ApplicationService applicationService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final VacationDaysService vacationDaysService;
     private final OvertimeService overtimeService;
     private final VacationTypeService vacationTypeService;
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-                                                WorkDaysService calendarService, VacationDaysService vacationDaysService, OvertimeService overtimeService,
+                                                WorkDaysCountService calendarService, VacationDaysService vacationDaysService, OvertimeService overtimeService,
                                                 VacationTypeService vacationTypeService) {
 
         this.accountService = accountService;
@@ -97,10 +97,10 @@ public class ApplicationForLeaveStatisticsBuilder {
             LocalDate startDate = getStartDateForCalculation(application, relevantYear);
             LocalDate endDate = getEndDateForCalculation(application, relevantYear);
 
-            return calendarService.getWorkDays(dayLength, startDate, endDate, person);
+            return calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
         }
 
-        return calendarService.getWorkDays(dayLength, application.getStartDate(), application.getEndDate(), person);
+        return calendarService.getWorkDaysCount(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
 

@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.NowService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 @Service
 public class VacationDaysService {
 
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final NowService nowService;
     private final ApplicationService applicationService;
 
     @Autowired
-    public VacationDaysService(WorkDaysService calendarService, NowService nowService,
+    public VacationDaysService(WorkDaysCountService calendarService, NowService nowService,
                                ApplicationService applicationService) {
 
         this.calendarService = calendarService;
@@ -165,7 +165,7 @@ public class VacationDaysService {
                 endDate = lastMilestone;
             }
 
-            usedDays = usedDays.add(calendarService.getWorkDays(applicationForLeave.getDayLength(), startDate, endDate,
+            usedDays = usedDays.add(calendarService.getWorkDaysCount(applicationForLeave.getDayLength(), startDate, endDate,
                 person));
         }
 

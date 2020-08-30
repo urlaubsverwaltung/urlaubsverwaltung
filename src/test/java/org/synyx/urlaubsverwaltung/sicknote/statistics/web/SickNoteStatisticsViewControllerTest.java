@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,7 +29,7 @@ class SickNoteStatisticsViewControllerTest {
     @Mock
     private SickNoteService sickNoteService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
@@ -40,7 +40,7 @@ class SickNoteStatisticsViewControllerTest {
     void sickNoteStatistics() throws Exception {
 
         final int year = 2017;
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, sickNoteService, calendarService);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, sickNoteService, workDaysCountService);
         when(statisticsService.createStatistics(year)).thenReturn(sickNoteStatistics);
 
         final ResultActions resultActions = perform(get("/web/sicknote/statistics")

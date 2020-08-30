@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,12 +25,12 @@ import static org.mockito.Mockito.when;
 
 class SickDaysOverviewTest {
 
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
 
-        calendarService = mock(WorkDaysService.class);
+        workDaysCountService = mock(WorkDaysCountService.class);
     }
 
 
@@ -89,11 +89,11 @@ class SickDaysOverviewTest {
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
 
         // just return 1 day for each sick note
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
-        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);
+        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
 
         SickDays sickDays = sickDaysOverview.getSickDays();
         Assert.assertNotNull("Should not be null", sickDays.getDays());

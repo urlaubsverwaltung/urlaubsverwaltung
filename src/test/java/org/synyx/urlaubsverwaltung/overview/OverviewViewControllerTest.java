@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -73,7 +73,7 @@ class OverviewViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock
@@ -84,7 +84,7 @@ class OverviewViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService);
+            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService);
     }
 
     @Test
@@ -214,7 +214,7 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(calendarService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(ONE);
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
         final Application revokedApplication = new Application();
         revokedApplication.setStatus(REVOKED);

@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,7 +33,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 class UsedDaysOverviewTest {
 
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
     @Test
     void ensureThrowsIfOneOfTheGivenApplicationsDoesNotMatchTheGivenYear() {
@@ -45,7 +45,7 @@ class UsedDaysOverviewTest {
         application.setStatus(ApplicationStatus.WAITING);
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new UsedDaysOverview(singletonList(application), 2015, calendarService));
+            .isThrownBy(() -> new UsedDaysOverview(singletonList(application), 2015, workDaysCountService));
     }
 
 
@@ -104,11 +104,11 @@ class UsedDaysOverviewTest {
             unpaidLeave, unpaidLeaveAllowed, overtimeLeave, overtimeLeaveAllowed);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(ONE);
 
-        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
+        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, workDaysCountService);
 
         final UsedDays holidayDays = usedDaysOverview.getHolidayDays();
         assertThat(holidayDays.getDays())
@@ -131,10 +131,10 @@ class UsedDaysOverviewTest {
         // 3 days in 2013, 2 days in 2014
         Application holiday = createApplication(person, createVacationType(HOLIDAY), startDate, endDate, DayLength.FULL);
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
+        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
 
-        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(singletonList(holiday), 2014, calendarService);
+        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(singletonList(holiday), 2014, workDaysCountService);
 
         final UsedDays holidayDays = usedDaysOverview.getHolidayDays();
         assertThat(holidayDays.getDays())
@@ -171,10 +171,10 @@ class UsedDaysOverviewTest {
         List<Application> applications = Arrays.asList(holiday, holidayTemporaryAllowed, holidayAllowed);
 
         // just return 1 day for each application for leave
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
-        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
+        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, workDaysCountService);
         assertThat(usedDaysOverview.getHolidayDays().getDays())
             .containsEntry("WAITING", ONE)
             .containsEntry("TEMPORARY_ALLOWED", ONE)
