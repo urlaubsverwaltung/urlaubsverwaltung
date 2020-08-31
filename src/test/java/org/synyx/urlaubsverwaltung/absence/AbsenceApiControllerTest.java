@@ -25,8 +25,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -53,26 +51,6 @@ class AbsenceApiControllerTest {
     }
 
     @Test
-    void ensureReturnsAbsencesOfPerson() throws Exception {
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-
-        perform(get("/api/absences")
-            .param("from", "2016-01-01")
-            .param("year", "2016")
-            .param("person", "23"))
-            .andExpect(status().isOk());
-
-        verify(sickNoteService)
-            .getByPersonAndPeriod(any(Person.class), eq(LocalDate.of(2016, 1, 1)),
-                eq(LocalDate.of(2016, 12, 31)));
-        verify(applicationService)
-            .getApplicationsForACertainPeriodAndPerson(eq(LocalDate.of(2016, 1, 1)),
-                eq(LocalDate.of(2016, 12, 31)), any(Person.class));
-        verify(personService).getPersonByID(23);
-    }
-
-    @Test
     void ensureCorrectConversionOfVacationAndSickNotes() throws Exception {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
@@ -91,7 +69,10 @@ class AbsenceApiControllerTest {
             any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences").param("year", "2016").param("person", "23"))
+        perform(get("/api/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
+            .param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.absences").exists())
@@ -115,7 +96,11 @@ class AbsenceApiControllerTest {
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "VACATION"))
+        perform(get("/api/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
+            .param("person", "23")
+            .param("type", "VACATION"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.absences").exists())
@@ -125,7 +110,7 @@ class AbsenceApiControllerTest {
     }
 
     @Test
-    void ensureMonthFilterIsWorking() throws Exception {
+    void ensureFromToFilterIsWorking() throws Exception {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application vacation = createApplication(person, LocalDate.of(2016, 5, 30),
             LocalDate.of(2016, 6, 1), DayLength.FULL);
@@ -136,7 +121,10 @@ class AbsenceApiControllerTest {
         when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(singletonList(sickNote));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences").param("year", "2016").param("month", "6").param("person", "23"))
+        perform(get("/api/absences")
+            .param("from", "2016-06-01")
+            .param("to", "2016-06-30")
+            .param("person", "23"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.absences").exists())
@@ -148,58 +136,55 @@ class AbsenceApiControllerTest {
     }
 
     @Test
-    void ensureBadRequestForMissingYearParameter() throws Exception {
+    void ensureBadRequestForInvalidFromParameter() throws Exception {
         perform(get("/api/absences")
+            .param("from", "2016-01")
+            .param("to", "2016-01-31")
             .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    void ensureBadRequestForInvalidYearParameter() throws Exception {
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-
+    void ensureBadRequestForInvalidToParameter() throws Exception {
         perform(get("/api/absences")
-            .param("year", "foo")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01")
             .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    void ensureBadRequestForInvalidMonthParameter() throws Exception {
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-
+    void ensureBadRequestForInvalidPersonParameter() throws Exception {
         perform(get("/api/absences")
-            .param("year", "2016")
-            .param("month", "foo")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31")
+            .param("person", "foo"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void ensureBadRequestForMissingFromParameter() throws Exception {
+        perform(get("/api/absences")
+            .param("to", "2016-01-31")
             .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    void ensureBadRequestForOtherInvalidMonthParameter() throws Exception {
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+    void ensureBadRequestForMissingToParameter() throws Exception {
 
         perform(get("/api/absences")
-            .param("year", "2016")
-            .param("month", "30")
+            .param("from", "2016-01-31")
             .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void ensureBadRequestForMissingPersonParameter() throws Exception {
-        perform(get("/api/absences").param("year", "2016")).andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void ensureBadRequestForInvalidPersonParameter() throws Exception {
         perform(get("/api/absences")
-            .param("year", "2016")
-            .param("person", "foo"))
-            .andExpect(status().isBadRequest());
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31")
+        ).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -207,7 +192,8 @@ class AbsenceApiControllerTest {
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         perform(get("/api/absences")
-            .param("year", "2016")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31")
             .param("person", "23"))
             .andExpect(status().isBadRequest());
     }
@@ -218,7 +204,8 @@ class AbsenceApiControllerTest {
             .thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
 
         perform(get("/api/absences")
-            .param("year", "2016")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31")
             .param("person", "23")
             .param("type", "FOO"))
             .andExpect(status().isBadRequest());

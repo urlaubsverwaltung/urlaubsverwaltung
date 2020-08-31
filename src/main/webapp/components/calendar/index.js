@@ -16,6 +16,8 @@ import {
   parseISO,
   startOfMonth,
   subMonths,
+  startOfYear,
+  endOfYear, formatISO, parse
 } from 'date-fns';
 import format from '../../lib/date-fns/format'
 import startOfWeek from '../../lib/date-fns/start-of-week'
@@ -388,13 +390,6 @@ $(function() {
                 return fetch('/holidays', {year: year, person: personId}).then( cachePublicHoliday(year) );
             },
 
-            /**
-             *
-             * @param {number} personId
-             * @param {number} year
-             * @param {number} [month]
-             * @returns {Promise}
-             */
             fetchPersonal: function(year) {
 
                 _CACHE['holiday'] = _CACHE['holiday'] || {};
@@ -403,7 +398,10 @@ $(function() {
                     return Promise.resolve(_CACHE[year]);
                 }
 
-                return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).then( cacheAbsences('holiday', year) );
+                const firstDayOfYear = formatISO(startOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
+                const lastDayOfYear = formatISO(endOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
+
+                return fetch('/absences', {person: personId, from: firstDayOfYear, to: lastDayOfYear, type: 'VACATION'}).then( cacheAbsences('holiday', year) );
             },
 
             fetchSickDays: function(year) {
@@ -414,7 +412,10 @@ $(function() {
                     return Promise.resolve(_CACHE[year]);
                 }
 
-                return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).then( cacheAbsences('sick', year) );
+                const firstDayOfYear = formatISO(startOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
+                const lastDayOfYear = formatISO(endOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
+
+                return fetch('/absences', {person: personId, from: firstDayOfYear, to: lastDayOfYear, type: 'SICK_NOTE'}).then( cacheAbsences('sick', year) );
             }
         };
 

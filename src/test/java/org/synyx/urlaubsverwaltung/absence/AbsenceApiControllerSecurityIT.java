@@ -59,7 +59,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser
     void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -81,7 +82,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -113,7 +115,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isOk());
     }
@@ -122,7 +125,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -131,7 +135,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "ADMIN")
     void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -140,7 +145,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "INACTIVE")
     void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -179,7 +185,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isOk());
     }
@@ -193,7 +200,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isForbidden());
     }
@@ -214,7 +222,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
             .thenReturn(singletonList(vacation));
 
         perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
             .param("person", "1"))
             .andExpect(status().isOk());
     }
