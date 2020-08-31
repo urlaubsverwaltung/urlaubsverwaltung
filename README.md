@@ -167,9 +167,6 @@ uv.security.oidc.client-secret
 uv.security.oidc.issuer-uri
 uv.security.oidc.logout-uri
 
-# person
-uv.person.can-be-manipulated=false
-
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 

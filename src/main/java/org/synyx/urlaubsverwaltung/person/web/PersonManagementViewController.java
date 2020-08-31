@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
@@ -27,7 +26,6 @@ import java.util.Locale;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
-
 @Controller
 @RequestMapping("/web")
 public class PersonManagementViewController {
@@ -38,59 +36,19 @@ public class PersonManagementViewController {
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final PersonValidator validator;
-    private final PersonConfigurationProperties personConfigurationProperties;
 
     @Autowired
-    public PersonManagementViewController(PersonService personService, DepartmentService departmentService, PersonValidator validator,
-                                          PersonConfigurationProperties personConfigurationProperties) {
+    public PersonManagementViewController(PersonService personService, DepartmentService departmentService, PersonValidator validator) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.validator = validator;
-        this.personConfigurationProperties = personConfigurationProperties;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
-
-
-    @PreAuthorize(IS_OFFICE)
-    @GetMapping("/person/new")
-    public String newPersonForm(Model model) {
-
-        model.addAttribute(PERSON_ATTRIBUTE, new Person());
-        model.addAttribute("userCanBeManipulated", personConfigurationProperties.isCanBeManipulated());
-
-        return PERSON_FORM_JSP;
-    }
-
-
-    @PreAuthorize(IS_OFFICE)
-    @PostMapping("/person")
-    public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE) Person person, Errors errors,
-                            RedirectAttributes redirectAttributes) {
-
-        if (personConfigurationProperties.isCanBeManipulated()) {
-
-            validator.validate(person, errors);
-
-            if (errors.hasErrors()) {
-                return PERSON_FORM_JSP;
-            }
-
-            Person createdPerson = personService.create(person);
-
-            redirectAttributes.addFlashAttribute("createSuccess", true);
-
-            return "redirect:/web/person/" + createdPerson.getId();
-        }
-
-        return "redirect:/web/person";
-    }
-
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/edit")
@@ -101,11 +59,9 @@ public class PersonManagementViewController {
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
-        model.addAttribute("userCanBeManipulated", personConfigurationProperties.isCanBeManipulated());
 
         return PERSON_FORM_JSP;
     }
-
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/edit")
