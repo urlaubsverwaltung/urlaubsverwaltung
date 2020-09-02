@@ -52,10 +52,10 @@ jobs:
           ./mvnw --batch-mode
           docker:build
           docker:push
-          -Ddocker.name=synyx/urlaubsverwaltung/urlaubsverwaltung
-          -Ddocker.push.registry=docker.pkg.github.com
+          -Ddocker.name=synyx/urlaubsverwaltung
+          -Ddocker.push.registry=ghcr.io
           -Ddocker.push.username=${{ github.actor }}
-          -Ddocker.push.password=${{ secrets.GITHUB_TOKEN }}
+          -Ddocker.push.password=${{ secrets.CR_PAT }}
           -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
           -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}
 
