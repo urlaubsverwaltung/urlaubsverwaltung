@@ -658,8 +658,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(clock).minusDays(3));
-        sickNote.setEndDate(LocalDate.now(clock).minusDays(3));
+        sickNote.setStartDate(LocalDate.now(clock));
+        sickNote.setEndDate(LocalDate.now(clock));
         sickNote.setDayLength(dayLength);
         sickNote.setPerson(person);
 
@@ -706,8 +706,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var application = new Application();
-        application.setStartDate(now.minusDays(3));
-        application.setEndDate(now.minusDays(3));
+        application.setStartDate(now);
+        application.setEndDate(now);
         application.setPerson(person);
         application.setDayLength(dayLength);
         application.setStatus(applicationStatus);
