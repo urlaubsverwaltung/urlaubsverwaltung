@@ -1,6 +1,8 @@
 name: Urlaubsverwaltung CI
 
 on:
+  schedule:
+    - cron: "2 4 * * *"
   push:
     branches:
       - master
