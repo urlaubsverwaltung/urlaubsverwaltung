@@ -53,7 +53,7 @@
     "imports-loader": "1.1.0",
     "jest": "26.4.2",
     "less": "3.12.2",
-    "less-loader": "6.2.0",
+    "less-loader": "7.0.0",
     "merge": "1.2.1",
     "mini-css-extract-plugin": "0.10.0",
     "node-fetch": "2.6.0",
