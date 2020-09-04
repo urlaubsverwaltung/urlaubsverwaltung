@@ -69,10 +69,9 @@ class AbsenceApiControllerTest {
             any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
+        perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
-            .param("to", "2016-12-31")
-            .param("person", "23"))
+            .param("to", "2016-12-31"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.absences").exists())
@@ -96,10 +95,9 @@ class AbsenceApiControllerTest {
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
+        perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
             .param("to", "2016-12-31")
-            .param("person", "23")
             .param("type", "VACATION"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -121,10 +119,9 @@ class AbsenceApiControllerTest {
         when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(singletonList(sickNote));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
+        perform(get("/api/persons/23/absences")
             .param("from", "2016-06-01")
-            .param("to", "2016-06-30")
-            .param("person", "23"))
+            .param("to", "2016-06-30"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.absences").exists())
@@ -137,64 +134,58 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureBadRequestForInvalidFromParameter() throws Exception {
-        perform(get("/api/absences")
+        perform(get("/api/persons/23/absences")
             .param("from", "2016-01")
-            .param("to", "2016-01-31")
-            .param("person", "23"))
+            .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void ensureBadRequestForInvalidToParameter() throws Exception {
-        perform(get("/api/absences")
+        perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
-            .param("to", "2016-01")
-            .param("person", "23"))
+            .param("to", "2016-01"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void ensureBadRequestForInvalidPersonParameter() throws Exception {
-        perform(get("/api/absences")
+        perform(get("/api/persons/foo/absences")
             .param("from", "2016-01-01")
-            .param("to", "2016-01-31")
-            .param("person", "foo"))
+            .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void ensureBadRequestForMissingFromParameter() throws Exception {
-        perform(get("/api/absences")
-            .param("to", "2016-01-31")
-            .param("person", "23"))
+        perform(get("/api/persons/23/absences")
+            .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void ensureBadRequestForMissingToParameter() throws Exception {
 
-        perform(get("/api/absences")
-            .param("from", "2016-01-31")
-            .param("person", "23"))
+        perform(get("/api/persons/23/absences")
+            .param("from", "2016-01-31"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void ensureBadRequestForMissingPersonParameter() throws Exception {
-        perform(get("/api/absences")
+        perform(get("/api/persons//absences")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
-        ).andExpect(status().isBadRequest());
+        ).andExpect(status().isNotFound());
     }
 
     @Test
     void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
-        perform(get("/api/absences")
+        perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
-            .param("to", "2016-01-31")
-            .param("person", "23"))
+            .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
     }
 
@@ -203,10 +194,9 @@ class AbsenceApiControllerTest {
         when(personService.getPersonByID(anyInt()))
             .thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
 
-        perform(get("/api/absences")
+        perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
-            .param("person", "23")
             .param("type", "FOO"))
             .andExpect(status().isBadRequest());
     }

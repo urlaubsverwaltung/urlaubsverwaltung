@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.synyx.urlaubsverwaltung.absence.AbsenceApiController;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController;
 import org.synyx.urlaubsverwaltung.overview.calendar.VacationApiController;
@@ -22,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
 import static org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController.AVAILABILITIES;
 import static org.synyx.urlaubsverwaltung.overview.calendar.VacationApiController.VACATIONS;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -39,7 +41,6 @@ public class PersonApiController {
 
     @Autowired
     PersonApiController(PersonService personService) {
-
         this.personService = personService;
     }
 
@@ -70,6 +71,7 @@ public class PersonApiController {
     private PersonDto createPersonResponse(Person person) {
         final PersonDto personDto = PersonMapper.mapToDto(person);
         personDto.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
+        personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, null)).withRel(ABSENCES));
         personDto.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null)).withRel(AVAILABILITIES));
         personDto.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));
         return personDto;

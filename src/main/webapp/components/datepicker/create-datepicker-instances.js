@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import {findWhere} from 'underscore';
 import datepicker from './datepicker';
-import {endOfMonth, isToday, isWeekend, parse, startOfMonth, formatISO } from 'date-fns';
+import {endOfMonth, formatISO, isToday, isWeekend, parse, startOfMonth} from 'date-fns';
 
 import '../calendar/calendar.css';
 
@@ -42,8 +42,8 @@ export default async function createDatepickerInstances(selectors, regional, url
       const date = $(input).datepicker("getDate") || new Date();
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
-      const firstDayOfMonth = formatISO(startOfMonth(date), { representation: 'date' });
-      const lastDayOfMonth = formatISO(endOfMonth(date), { representation: 'date' });
+      const firstDayOfMonth = formatISO(startOfMonth(date), {representation: 'date'});
+      const lastDayOfMonth = formatISO(endOfMonth(date), {representation: 'date'});
 
       const personId = getPerson();
 
@@ -55,7 +55,7 @@ export default async function createDatepickerInstances(selectors, regional, url
         highlighted = getPublicHolidays(data);
       });
 
-      getHighlighted(urlPrefix + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth + "&person=" + personId, function (data) {
+      getHighlighted(urlPrefix + "/persons/" + personId + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
         highlightedAbsences = getAbsences(data);
       });
 
@@ -67,13 +67,13 @@ export default async function createDatepickerInstances(selectors, regional, url
         return;
       }
 
-      const firstDayOfMonth = formatISO(startOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), { representation: 'date' });
-      const lastDayOfMonth = formatISO(endOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), { representation: 'date' });
+      const firstDayOfMonth = formatISO(startOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), {representation: 'date'});
+      const lastDayOfMonth = formatISO(endOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), {representation: 'date'});
 
       getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month + "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
       });
-      getHighlighted(urlPrefix + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth + "&person=" + personId, function (data) {
+      getHighlighted(urlPrefix + "/persons/" + personId + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
         highlightedAbsences = getAbsences(data);
       });
 

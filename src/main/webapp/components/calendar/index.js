@@ -401,7 +401,11 @@ $(function() {
                 const firstDayOfYear = formatISO(startOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
                 const lastDayOfYear = formatISO(endOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
 
-                return fetch('/absences', {person: personId, from: firstDayOfYear, to: lastDayOfYear, type: 'VACATION'}).then( cacheAbsences('holiday', year) );
+              return fetch('/persons/' + personId + '/absences', {
+                from: firstDayOfYear,
+                to: lastDayOfYear,
+                type: 'VACATION'
+              }).then(cacheAbsences('holiday', year));
             },
 
             fetchSickDays: function(year) {
@@ -415,7 +419,11 @@ $(function() {
                 const firstDayOfYear = formatISO(startOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
                 const lastDayOfYear = formatISO(endOfYear(parse(year, 'yyyy', new Date())), { representation: 'date' });
 
-                return fetch('/absences', {person: personId, from: firstDayOfYear, to: lastDayOfYear, type: 'SICK_NOTE'}).then( cacheAbsences('sick', year) );
+              return fetch('/persons/' + personId + '/absences', {
+                from: firstDayOfYear,
+                to: lastDayOfYear,
+                type: 'SICK_NOTE'
+              }).then(cacheAbsences('sick', year));
             }
         };
 

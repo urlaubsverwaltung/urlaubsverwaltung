@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,8 +40,10 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 @RestControllerAdviceMarker
 @Api("Absences: Get all absences for a certain period")
 @RestController("restApiAbsenceController")
-@RequestMapping("/api")
+@RequestMapping("/api/persons/{personId}")
 public class AbsenceApiController {
+
+    public static final String ABSENCES = "absences";
 
     private final PersonService personService;
     private final ApplicationService applicationService;
@@ -57,13 +60,13 @@ public class AbsenceApiController {
         value = "Get all absences for a certain period and person",
         notes = "Get all absences for a certain period and person"
     )
-    @GetMapping("/absences")
+    @GetMapping(ABSENCES)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
-    public DayAbsencesDto personsVacations(
+    public DayAbsencesDto personsAbsences(
         @ApiParam(value = "ID of the person")
-        @RequestParam("person")
+        @PathVariable("personId")
             Integer personId,
         @ApiParam(value = "start of interval to get absences from (inclusive)", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam("from")
@@ -107,7 +110,7 @@ public class AbsenceApiController {
 
         List<DayAbsenceDto> absences = new ArrayList<>();
 
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end,person).stream()
+        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(start, end, person).stream()
             .filter(application ->
                 application.hasStatus(WAITING)
                     || application.hasStatus(TEMPORARY_ALLOWED)
