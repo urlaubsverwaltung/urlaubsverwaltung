@@ -31,6 +31,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
 
+// TODO unify api
 @RestControllerAdviceMarker
 @Api("Public Holidays: Get information about public holidays")
 @RestController("restApiCalendarController")

@@ -44,11 +44,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
     void getWorkdaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isForbidden());
     }
 
@@ -57,11 +56,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
     void getWorkdaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isForbidden());
     }
 
@@ -70,11 +68,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
     void getWorkdaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isForbidden());
     }
 
@@ -83,11 +80,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
     void getWorkdaysAsBossUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isForbidden());
     }
 
@@ -96,11 +92,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
     void getWorkdaysAsAdminUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isForbidden());
     }
 
@@ -109,11 +104,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
     void getWorkdaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isForbidden());
     }
 
@@ -124,11 +118,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isOk());
     }
 
@@ -141,11 +134,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isOk());
     }
 
@@ -157,11 +149,10 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final ResultActions resultActions = perform(get("/api/workdays")
+        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
             .param("to", "2016-01-04")
-            .param("length", "FULL")
-            .param("person", "1"));
+            .param("length", "FULL"));
         resultActions.andExpect(status().isForbidden());
     }
 

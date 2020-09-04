@@ -28,6 +28,7 @@ import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
+// TODO unify api
 @RestControllerAdviceMarker
 @Api("Sick Notes: Get all sick notes for a certain period")
 @RestController("restApiSickNoteController")
