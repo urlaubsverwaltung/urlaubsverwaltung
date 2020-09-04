@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
