@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,30 +29,30 @@ import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
-// TODO unify api
 @RestControllerAdviceMarker
 @Api("Sick Notes: Get all sick notes for a certain period")
 @RestController("restApiSickNoteController")
 @RequestMapping("/api")
 public class SickNoteApiController {
 
-    private final SickNoteService sickNoteService;
+    public static final String SICKNOTES = "sicknotes";
+
     private final PersonService personService;
+    private final SickNoteService sickNoteService;
 
     @Autowired
     SickNoteApiController(SickNoteService sickNoteService, PersonService personService) {
-        this.sickNoteService = sickNoteService;
         this.personService = personService;
+        this.sickNoteService = sickNoteService;
     }
 
     @ApiOperation(
         value = "Get all sick notes for a certain period", notes = "Get all sick notes for a certain period. "
-        + "If a person is specified, only the sick notes of this person are fetched. "
         + "Information only reachable for users with role office."
     )
     @GetMapping("/sicknotes")
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public SickNotesDto sickNotes(
+    @PreAuthorize(IS_OFFICE)
+    public SickNotesDto getSickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
@@ -59,25 +60,50 @@ public class SickNoteApiController {
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate,
-        @ApiParam(value = "ID of the person")
-        @RequestParam(value = "person", required = false)
-            Integer personId) {
+            LocalDate endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        final Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
+        final List<SickNoteDto> sickNoteResponse = sickNoteService.getByPeriod(startDate, endDate).stream()
+            .filter(SickNote::isActive)
+            .map(SickNoteDto::new)
+            .collect(toList());
 
-        final List<SickNote> sickNotes;
-        if (optionalPerson.isPresent()) {
-            sickNotes = sickNoteService.getByPersonAndPeriod(optionalPerson.get(), startDate, endDate);
-        } else {
-            sickNotes = sickNoteService.getByPeriod(startDate, endDate);
+        return new SickNotesDto(sickNoteResponse);
+    }
+
+    @ApiOperation(
+        value = "Get all sick notes for a certain period and person", notes = "Get all sick notes for a certain period and person. "
+        + "Information only reachable for users with role office and for own sicknotes."
+    )
+    @GetMapping("/persons/{personId}/" + SICKNOTES)
+    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public SickNotesDto personsSickNotes(
+        @ApiParam(value = "ID of the person")
+        @PathVariable("personId")
+            Integer personId,
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @RequestParam("from")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate startDate,
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @RequestParam("to")
+        @DateTimeFormat(iso = ISO.DATE)
+            LocalDate endDate) {
+
+        if (startDate.isAfter(endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        final List<SickNoteDto> sickNoteResponse = sickNotes.stream()
+        final Optional<Person> optionalPerson = personService.getPersonByID(personId);
+        if (optionalPerson.isEmpty()) {
+            throw new ResponseStatusException(BAD_REQUEST, "No person found for ID=" + personId);
+        }
+
+        final Person person = optionalPerson.get();
+        final List<SickNoteDto> sickNoteResponse = sickNoteService.getByPersonAndPeriod(person, startDate, endDate).stream()
             .filter(SickNote::isActive)
             .map(SickNoteDto::new)
             .collect(toList());
