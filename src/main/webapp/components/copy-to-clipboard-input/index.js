@@ -3,10 +3,10 @@ import tooltip from '../tooltip'
 class CopyToClipboardInputElement extends HTMLDivElement {
   connectedCallback() {
     const icon = document.createElement('i');
-    icon.classList.add('fa', 'fa-copy', 'text-xl');
+    icon.classList.add('fa', 'fa-copy', 'tw-text-xl');
 
     const button = document.createElement('button');
-    button.classList.add('btn', 'btn-default', 'm-0', 'border-0', 'outline-none');
+    button.classList.add('btn', 'btn-default', 'tw-m-0', 'tw-border-0', 'tw-outline-none');
     button.dataset.title = this.dataset.messageButtonTitle;
     button.dataset.placement = "bottom";
     button.append(icon);

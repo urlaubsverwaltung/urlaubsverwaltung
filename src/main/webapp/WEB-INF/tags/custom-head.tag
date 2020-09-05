@@ -31,8 +31,8 @@
 
 <link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
+<link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
-<link rel="stylesheet" type="text/css" href="<spring:url value='/css/utility.css' />"/>
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
 <script defer src="<asset:url value='npm.core-js.js' />"></script>
