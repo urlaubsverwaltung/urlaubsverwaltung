@@ -2,6 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -38,6 +39,7 @@
 
     <link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
     <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
     <link rel="stylesheet" type="text/css" href="<asset:url value='login.css' />"/>
 </head>
@@ -83,7 +85,10 @@
 
                     <div class="form-group">
                         <button class="btn btn-primary btn-block" type="submit">
-                            <i class="fa fa-sign-in" aria-hidden="true"></i> <spring:message code="login.form.submit"/>
+                            <span class="tw-flex tw-items-center tw-justify-center">
+                                <uv:icon-login className="tw-w-5 tw-h-5" />
+                                &nbsp;<spring:message code="login.form.submit"/>
+                            </span>
                         </button>
                     </div>
 

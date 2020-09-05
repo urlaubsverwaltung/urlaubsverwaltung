@@ -81,7 +81,7 @@ describe('send-get-department-vacations-request', () => {
     expect(dateParseISOSpy).toHaveBeenCalledWith('2020-08-21');
     expect(dateFormatSpy).toHaveBeenCalledWith(new Date(2020, 7, 19), 'dd.MM.yyyy');
     expect(dateFormatSpy).toHaveBeenCalledWith(new Date(2020, 7, 21), 'dd.MM.yyyy');
-    expect(div.innerHTML).toBe('i18n:application.applier.applicationsOfColleagues<br>Bruce Wayne: 19.08.2020 - 21.08.2020&nbsp;<i class="fa fa-check positive" aria-hidden="true"></i>');
+    expect(div.innerHTML).toBe('i18n:application.applier.applicationsOfColleagues<ul class="tw-m-0 tw-p-0"><li class="tw-flex tw-items-center">Bruce Wayne: 19.08.2020 - 21.08.2020&nbsp;<span class="tw-text-green-500"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="tw-w-4 tw-h-4 tw-stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg></span></li></ul>');
   });
 
   it('renders empty response', async () => {
@@ -102,6 +102,6 @@ describe('send-get-department-vacations-request', () => {
     await sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, elementSelector);
 
     expect(dateParseISOSpy).not.toHaveBeenCalled();
-    expect(div.innerHTML).toBe('i18n:application.applier.applicationsOfColleagues<br>i18n:application.applier.none');
+    expect(div.innerHTML).toBe('i18n:application.applier.applicationsOfColleaguesi18n:application.applier.none');
   });
 });

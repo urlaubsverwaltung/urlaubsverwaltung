@@ -36,10 +36,14 @@
 
             <div class="col-xs-12">
 
-                <legend class="is-sticky">
-                    <spring:message code="applications.statistics"/>
-                    <uv:print/>
-                    <uv:export/>
+                <legend class="is-sticky tw-flex tw-items-center">
+                    <div class="tw-flex-1">
+                        <spring:message code="applications.statistics"/>
+                    </div>
+                    <div>
+                        <uv:export />
+                        <uv:print />
+                    </div>
                 </legend>
 
                 <p class="is-inline-block">
@@ -96,11 +100,22 @@
                                         <c:out value="${statistic.person.niceName}"/>
                                     </td>
                                     <td class="visible-xs hidden-print">
-                                        <i class="fa fa-fw fa-check" aria-hidden="true"></i>
-                                        <uv:number number="${statistic.totalAllowedVacationDays}"/>
-                                        <br/>
-                                        <i class="fa fa-fw fa-question hidden-print" aria-hidden="true"></i>
-                                        <uv:number number="${statistic.totalWaitingVacationDays}"/>
+                                        <div class="tw-flex tw-items-center">
+                                            <span class="tw-w-6">
+                                                <uv:icon-check className="tw-w-5 tw-h-5" />
+                                            </span>
+                                            <span>
+                                                <uv:number number="${statistic.totalAllowedVacationDays}"/>
+                                            </span>
+                                        </div>
+                                        <div class="tw-flex tw-items-center">
+                                            <span class="tw-w-6">
+                                                <uv:icon-question-mark-circle className="tw-w-4 tw-h-4" />
+                                            </span>
+                                            <span>
+                                                <uv:number number="${statistic.totalWaitingVacationDays}"/>
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="hidden-xs hidden-sm">
                                         <spring:message code="applications.statistics.total"/>:

@@ -9,11 +9,11 @@
 **************************************************************************/
 
 tr.active {
-    /* OK */
+  /* OK */
 }
 
 tr.inactive td > * {
-    opacity: 0.4;
+  opacity: 0.4;
 }
 
 /**************************************************************************
@@ -21,15 +21,15 @@ tr.inactive td > * {
 **************************************************************************/
 
 .list-table {
-    width: 100%;
-    font-size: 13px;
-    margin-bottom: 27px;
+  width: 100%;
+  font-size: 13px;
+  margin-bottom: 27px;
 }
 
 .list-table td {
-    vertical-align: middle !important;
-    padding: 12px;
-    border-top: 1px solid #DDDDDD;
+  vertical-align: middle !important;
+  padding: 12px;
+  border-top: 1px solid #DDDDDD;
 }
 
 .list-table td.number {
@@ -37,14 +37,15 @@ tr.inactive td > * {
 }
 
 .list-table tr:last-child td {
-    border-bottom: 1px solid #DDDDDD;
+  border-bottom: 1px solid #DDDDDD;
 }
+
 .list-table th {
-    padding: 8px;
+  padding: 8px;
 }
 
 .list-table--second-row {
-    margin: 10px 0 0 0;
+  margin: 10px 0 0 0;
 }
 
 /**************************************************************************
@@ -52,7 +53,7 @@ tr.inactive td > * {
 **************************************************************************/
 
 .striped-table tr:nth-child(even) td {
-    background-color: #FAFAFA;
+  background-color: #FAFAFA;
 }
 
 /**************************************************************************
@@ -60,12 +61,12 @@ tr.inactive td > * {
 **************************************************************************/
 
 .bordered-table tbody {
-    border-left: 1px solid #DDDDDD;
-    border-right: 1px solid #DDDDDD;
+  border-left: 1px solid #DDDDDD;
+  border-right: 1px solid #DDDDDD;
 }
 
 .bordered-table td {
-    background-color: #FFFFFF;
+  background-color: #FFFFFF;
 }
 
 /**************************************************************************
@@ -73,8 +74,8 @@ tr.inactive td > * {
 **************************************************************************/
 
 .selectable-table tr:hover td {
-    cursor: pointer;
-    background-color: #FAFAFA;
+  cursor: pointer;
+  background-color: #FAFAFA;
 }
 
 /**************************************************************************
@@ -82,42 +83,49 @@ tr.inactive td > * {
 **************************************************************************/
 
 .tablesorter-header {
-    color: #2A6496;
-    font-weight: normal;
+  color: #2A6496;
+  font-weight: normal;
 }
 
 .tablesorter-header:hover {
-    cursor: pointer;
-    color: #1896db;
+  cursor: pointer;
+  color: #1896db;
+}
+
+.tablesorter-header-inner {
+  display: flex;
+  align-items: center;
 }
 
 th.sortable-field .tablesorter-header-inner:after {
-    font-family: FontAwesome;
-    content: " \f0dc";
+  content: "";
+  margin-left: 0.5rem;
+  background-size: cover;
+  width: 16px;
+  height: 16px;
 }
 
-th.tablesorter-headerDesc .tablesorter-header-inner:after,
-th.tablesorter-headerAsc .tablesorter-header-inner:after {
-    font-family: FontAwesome;
+th.sortable-field .tablesorter-header-inner:after {
+  background-image: url("../icons/selector.svg");
 }
 
 th.tablesorter-headerDesc .tablesorter-header-inner:after {
-    content: " \f0dd";
+  background-image: url("../icons/chevron-down.svg");
 }
 
 th.tablesorter-headerAsc .tablesorter-header-inner:after {
-    content: " \f0de";
+  background-image: url("../icons/chevron-up.svg");
 }
 
 /**************************************************************************
   TABLE OVERFLOW HANDLING
 **************************************************************************/
 .overflow {
-    white-space: nowrap;
-    max-width: 15em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
+  white-space: nowrap;
+  max-width: 15em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
 }
 
 /**************************************************************************
@@ -125,5 +133,5 @@ th.tablesorter-headerAsc .tablesorter-header-inner:after {
 **************************************************************************/
 
 td.halves h4 {
-    margin-top: 5px;
+  margin-top: 5px;
 }

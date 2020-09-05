@@ -13,8 +13,8 @@
     "js": "NODE_ENV=production webpack --mode production",
     "js:dev": "NODE_ENV=development webpack --mode development",
     "js:watch": "NODE_ENV=development webpack --mode development --watch",
-    "css": "NODE_ENV=production postcss src/main/css/**/*.css --base src/main/css --dir target/classes/static/css",
-    "css:dev": "NODE_ENV=development postcss src/main/css/**/*.css --base src/main/css --dir target/classes/static/css",
+    "css": "NODE_ENV=production postcss src/main/css/style.css -o target/classes/static/css/style.css",
+    "css:dev": "NODE_ENV=development postcss src/main/css/style.css -o target/classes/static/css/style.css",
     "css:watch": "onchange -i src/main/css -- npm run css:dev"
   },
   "repository": {
@@ -69,6 +69,8 @@
     "onchange": "7.0.2",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "postcss-cli": "7.1.2",
+    "postcss-import": "12.0.1",
+    "postcss-url": "8.0.0",
     "tailwindcss": "1.8.2",
     "terser-webpack-plugin": "4.1.0",
     "url-loader": "4.1.0",

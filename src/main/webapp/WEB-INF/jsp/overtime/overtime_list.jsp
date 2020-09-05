@@ -28,15 +28,17 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <legend>
-                    <spring:message code="overtime.title"/>
-                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
-
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="overtime.title"/>
+                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
+                    </div>
                     <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
-                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right"
-                           data-title="<spring:message code="action.overtime.new"/>">
-                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                    <div>
+                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.overtime.new"/>">
+                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
                         </a>
+                    </div>
                     </c:if>
                 </legend>
             </div>
@@ -65,8 +67,9 @@
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
-                                        <span class="hidden-print"><i class="fa fa-history"
-                                                                      aria-hidden="true"></i></span>
+                                        <span class="hidden-print">
+                                            <uv:icon-briefcase className="tw-w-4 tw-h-4" />
+                                        </span>
                                     </td>
                                     <td>
                                         <h4 class="visible-print">
@@ -83,9 +86,11 @@
                                         <spring:message code="duration.hours"/>
                                     </td>
                                     <td class="hidden-print is-centered hidden-xs">
-                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                        <spring:message code="overtime.progress.lastEdited"/>
-                                        <uv:date date="${record.lastModificationDate}"/>
+                                        <div class="tw-flex tw-items-center">
+                                            <uv:icon-clock className="tw-w-4 tw-h-4" />
+                                            &nbsp;<spring:message code="overtime.progress.lastEdited"/>
+                                            <uv:date date="${record.lastModificationDate}"/>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>

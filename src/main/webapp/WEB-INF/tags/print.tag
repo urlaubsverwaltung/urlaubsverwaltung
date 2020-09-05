@@ -1,6 +1,11 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<a href="#" class="fa-action pull-right hidden-xs hidden-sm" data-title="<spring:message code='action.print' />" media="print"
-   onclick="window.print(); return false;">
-  <i class="fa fa-print" aria-hidden="true"></i>
+<a
+    href="#"
+    class="icon-link tw-px-1 tw-hidden sm:tw-inline-block"
+    data-title="<spring:message code='action.print' />"
+    onclick="window.print(); return false;"
+>
+    <uv:icon-printer className="tw-w-5 tw-h-5" />
 </a>

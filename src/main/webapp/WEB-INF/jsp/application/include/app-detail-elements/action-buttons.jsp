@@ -39,38 +39,12 @@
 
 <%-- DISPLAYING DEPENDS ON VARIABLES --%>
 
-<%-- PRINT ACTION --%>
-<c:if test="${IS_USER}">
-    <uv:print/>
-</c:if>
-
-<%-- CANCEL ACTION --%>
-<c:if
-    test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED'}">
-    <c:if test="${(IS_USER && IS_OWN) || IS_OFFICE}">
-        <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
-           onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
-            <i class="fa fa-trash" aria-hidden="true"></i>
-        </a>
-    </c:if>
-</c:if>
-
-<%-- REMIND ACTION --%>
+<%-- ALLOW ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-    <c:if test="${IS_USER && IS_OWN && !CAN_ALLOW}">
-        <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.remind'/>"
-           onclick="$('form#remind').submit();">
-            <i class="fa fa-bullhorn" aria-hidden="true"></i>
-        </a>
-    </c:if>
-</c:if>
-
-<%-- REJECT ACTION --%>
-<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-    <c:if test="${CAN_ALLOW && (!IS_OWN || IS_BOSS)}">
-        <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
-           onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
-            <i class="fa fa-ban" aria-hidden="true"></i>
+    <c:if test="${CAN_ALLOW &&(!IS_OWN || IS_BOSS) && !(IS_SECOND_STAGE_AUTHORITY_APPLICATION && IS_DEPARTMENT_HEAD)}">
+        <a href="#" class="icon-link tw-px-1 hover:tw-text-green-500" data-title="<spring:message code='action.allow'/>"
+           onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
+            <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
         </a>
     </c:if>
 </c:if>
@@ -78,19 +52,44 @@
 <%-- REFER ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
     <c:if test="${CAN_ALLOW && (!IS_OWN || IS_BOSS)}">
-        <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.refer'/>"
+        <a href="#" class="icon-link tw-px-1" data-title="<spring:message code='action.refer'/>"
            onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
-            <i class="fa fa-share-alt" aria-hidden="true"></i>
+            <uv:icon-share className="tw-w-5 tw-h-5" />
         </a>
     </c:if>
 </c:if>
 
-<%-- ALLOW ACTION --%>
+<%-- REJECT ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-    <c:if test="${CAN_ALLOW &&(!IS_OWN || IS_BOSS) && !(IS_SECOND_STAGE_AUTHORITY_APPLICATION && IS_DEPARTMENT_HEAD)}">
-        <a href="#" class="fa-action positive pull-right" data-title="<spring:message code='action.allow'/>"
-           onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
-            <i class="fa fa-check" aria-hidden="true"></i>
+    <c:if test="${CAN_ALLOW && (!IS_OWN || IS_BOSS)}">
+        <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.reject'/>"
+           onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
+            <uv:icon-ban className="tw-w-5 tw-h-5" solid="true" />
         </a>
     </c:if>
+</c:if>
+
+<%-- REMIND ACTION --%>
+<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
+    <c:if test="${IS_USER && IS_OWN && !CAN_ALLOW}">
+        <a href="#" class="icon-link tw-px-1" data-title="<spring:message code='action.remind'/>" onclick="$('form#remind').submit();">
+            <uv:icon-speakerphone className="tw-w-5 tw-h-5" />
+        </a>
+    </c:if>
+</c:if>
+
+<%-- CANCEL ACTION --%>
+<c:if
+    test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED'}">
+    <c:if test="${(IS_USER && IS_OWN) || IS_OFFICE}">
+        <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.delete'/>"
+           onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
+            <uv:icon-trash className="tw-w-5 tw-h-5" />
+        </a>
+    </c:if>
+</c:if>
+
+<%-- PRINT ACTION --%>
+<c:if test="${IS_USER}">
+    <uv:print/>
 </c:if>

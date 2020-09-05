@@ -2,15 +2,16 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <div class="box">
-    <span class="box-icon bg-yellow hidden-print">
+    <span class="box-icon tw-w-16 tw-h-16 tw-bg-yellow-500">
         <c:choose>
             <c:when test="${application.vacationType.category == 'HOLIDAY'}">
-                <i class="fa fa-sun-o" aria-hidden="true"></i>
+                <uv:icon-sun className="tw-w-8 tw-h-8" />
             </c:when>
             <c:otherwise>
-                <i class="fa fa-flag-o" aria-hidden="true"></i>
+                <uv:icon-flag className="tw-w-8 tw-h-8" />
             </c:otherwise>
         </c:choose>
     </span>
@@ -23,19 +24,19 @@
                   title="<spring:message code='${application.status}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
-                    <i class="fa fa-question" aria-hidden="true"></i>
+                    <uv:icon-question-mark-circle className="tw-w-5 tw-h-5" />
                 </c:when>
                 <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
-                    <i class="fa fa-check" aria-hidden="true"></i>
+                    <uv:icon-check className="tw-w-5 tw-h-5" />
                 </c:when>
                 <c:when test="${application.status == 'ALLOWED'}">
-                    <i class="fa fa-check" aria-hidden="true"></i>
+                    <uv:icon-check className="tw-w-5 tw-h-5" />
                 </c:when>
                 <c:when test="${application.status == 'REJECTED'}">
-                    <i class="fa fa-ban" aria-hidden="true"></i>
+                    <uv:icon-ban className="tw-w-5 tw-h-5" />
                 </c:when>
                 <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <uv:icon-trash className="tw-w-5 tw-h-5" />
                 </c:when>
                 <c:otherwise>
                     &nbsp;
@@ -182,16 +183,18 @@
             <spring:message code='application.data.teamInformed'/>
         </td>
         <td>
+            <div class="tw-flex tw-items-center">
             <c:choose>
                 <c:when test="${application.teamInformed == true}">
-                    <i class="fa fa-check positive hidden-print" aria-hidden="true"></i>
-                    <spring:message code='application.data.teamInformed.true'/>
+                    <uv:icon-emoji-happy className="tw-w-4 tw-h-4" />
+                    &nbsp;<spring:message code='application.data.teamInformed.true'/>
                 </c:when>
                 <c:otherwise>
-                    <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
-                    <spring:message code='application.data.teamInformed.false'/>
+                    <uv:icon-emoji-sad className="tw-w-4 tw-h-4" />
+                    &nbsp;<spring:message code='application.data.teamInformed.false'/>
                 </c:otherwise>
             </c:choose>
+            </div>
         </td>
     </tr>
     <tr>

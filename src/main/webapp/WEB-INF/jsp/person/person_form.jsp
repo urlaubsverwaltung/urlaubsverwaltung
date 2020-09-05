@@ -40,7 +40,7 @@
 
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="person.form.data.description"/>
                         </span>
                     </div>
@@ -118,7 +118,7 @@
 
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="person.form.permissions.description"/>
                         </span>
                     </div>
@@ -167,7 +167,7 @@
                                         <spring:message code="person.form.notifications.DEPARTMENT_HEAD"/>
                                     </label>
                                     <label class="${!empty departments ? 'info' : ''}">
-                                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                                        <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                                         <c:choose>
                                             <c:when test="${empty departments}">
                                                 <spring:message
@@ -199,7 +199,7 @@
                                         <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
                                     </label>
                                     <label class="${!empty secondStageDepartments ? 'info' : ''}">
-                                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                                        <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                                         <c:choose>
                                             <c:when test="${empty secondStageDepartments}">
                                                 <spring:message

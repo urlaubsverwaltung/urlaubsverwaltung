@@ -38,19 +38,22 @@
 
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <legend>
-                    <spring:message code="person.details.masterData.title"/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="person.details.masterData.title"/>
+                    </div>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/person/${person.id}/edit" class="fa-action pull-right" aria-hidden="true"
-                           data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <div>
+                        <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <uv:icon-pencil className="tw-w-5 tw-h-5" />
                         </a>
+                    </div>
                     </sec:authorize>
                 </legend>
                 <uv:person person="${person}"/>
                 <div class="box">
-                    <span class="box-icon bg-blue">
-                        <i class="fa fa-key" aria-hidden="true"></i>
+                    <span class="tw-mr-6 tw-bg-blue-500 tw-text-white tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
+                        <uv:icon-key className="tw-w-8 tw-h-8" />
                     </span>
                     <span class="box-text">
                         <ul>
@@ -65,8 +68,8 @@
 
                 <legend><spring:message code="person.details.departments.title"/></legend>
                 <div class="box">
-                    <span class="box-icon bg-blue">
-                        <i class="fa fa-group" aria-hidden="true"></i>
+                    <span class="box-icon tw-w-16 tw-h-16 tw-bg-blue-500">
+                        <uv:icon-user-group className="tw-w-8 tw-h-8" />
                     </span>
                     <span class="box-text">
                         <c:choose>
@@ -86,32 +89,36 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <legend>
-                    <spring:message code="person.details.annualVacation.title"/>
-                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="person.details.annualVacation.title"/>
+                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
+                    </div>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/person/${person.id}/account?year=${param.year}"
-                           class="fa-action pull-right" aria-hidden="true"
-                           data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <div>
+                        <a href="${URL_PREFIX}/person/${person.id}/account?year=${param.year}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <uv:icon-pencil className="tw-w-5 tw-h-5" />
                         </a>
+                    </div>
                     </sec:authorize>
                 </legend>
                 <uv:account-entitlement account="${account}"/>
 
-                <legend>
-                    <spring:message code="person.details.workingTime.title"/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="person.details.workingTime.title"/>
+                    </div>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/person/${person.id}/workingtime"
-                           class="fa-action pull-right" aria-hidden="true"
-                           data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <div>
+                        <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <uv:icon-pencil className="tw-w-5 tw-h-5" />
                         </a>
+                    </div>
                     </sec:authorize>
                 </legend>
                 <div class="box">
-                    <span class="box-icon bg-green">
-                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                    <span class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
+                        <uv:icon-clock className="tw-w-8 tw-h-8" />
                     </span>
                     <span class="box-text">
                             <c:choose>
@@ -163,8 +170,8 @@
                     </span>
                 </div>
                 <div class="box">
-                    <span class="box-icon bg-green">
-                        <i class="fa fa-map" aria-hidden="true"></i>
+                    <span class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
+                        <uv:icon-map className="tw-w-8 tw-h-8" />
                     </span>
                     <span class="box-text">
                         <spring:message code="person.details.workingTime.federalState"/>

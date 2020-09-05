@@ -54,9 +54,13 @@
 
             <div class="row print:tw-mb-4">
                 <div class="col-xs-12">
-                    <legend id="vacation">
-                        <spring:message code="absences.overview.title"/>
-                        <uv:print/>
+                    <legend id="absence" class="tw-flex">
+                        <div class="tw-flex-1">
+                            <spring:message code="absences.overview.title"/>
+                        </div>
+                        <div>
+                            <uv:print/>
+                        </div>
                     </legend>
                 </div>
             </div>

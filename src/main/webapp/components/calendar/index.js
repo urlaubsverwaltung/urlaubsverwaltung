@@ -87,6 +87,11 @@ $(function () {
     selectable: 'datepickerSelectable'
   };
 
+  const icons = {
+    chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
+    chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
+  };
+
   function getDateFromElement(element) {
     return parseISO($(element).data(DATA.date));
   }
@@ -492,8 +497,8 @@ $(function () {
 
       return render(TMPL.container, {
 
-        previousButton: renderButton(CSS.previous, '<i class="fa fa-chevron-left" aria-hidden="true"></i>'),
-        nextButton: renderButton(CSS.next, '<i class="fa fa-chevron-right" aria-hidden="true"></i>'),
+        previousButton: renderButton(CSS.previous, `<span>${icons.chevronLeft}</span>`),
+        nextButton: renderButton(CSS.next, `<span>${icons.chevronRight}</span>`),
 
         months: function () {
           var html = '';

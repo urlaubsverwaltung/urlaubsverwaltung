@@ -92,7 +92,7 @@
 
                     <div class="col-md-4 col-md-push-8">
                 <span class="help-block">
-                    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                     <spring:message code="sicknote.data.description"/>
                 </span>
                     </div>
@@ -218,7 +218,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                 <span class="help-block">
-                    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                     <spring:message code="sicknote.data.person"/>
                 </span>
                     </div>
@@ -258,7 +258,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="sicknote.data.furtherInformation.description"/>
                         </span>
                     </div>

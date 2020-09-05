@@ -1,6 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+
+@import "tailwindcss/components";
+@import "./components/box";
+@import "./components/icon-link";
+@import "./components/table";
+
+@import "tailwindcss/utilities";
 
 /**
  * 1. Prevent padding and border from affecting element width.

@@ -16,7 +16,9 @@
             <div class="input-group search-field">
                 <%-- NOTE: class 'search' is needed for list.js --%>
                 <input type="text" class="search form-control" placeholder="<spring:message code='action.search'/>"/>
-                <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                <span class="input-group-addon">
+                    <uv:icon-search className="tw-w-4 tw-h-4" />
+                </span>
             </div>
         </div>
     </form>
@@ -113,9 +115,8 @@
                     </c:choose>
                 </td>
                 <td class="hidden-print hidden-xs">
-                    <a class="fa-action pull-right" href="${URL_PREFIX}/person/${person.id}"
-                       data-title="<spring:message code="action.details" />">
-                        <i class="fa fa-fw fa-list-alt" aria-hidden="true"></i>
+                    <a class="icon-link tw-px-1" href="${URL_PREFIX}/person/${person.id}" data-title="<spring:message code="action.details" />">
+                        <uv:icon-document-text className="tw-w-5 tw-h-5" />
                     </a>
                 </td>
             </tr>

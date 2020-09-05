@@ -27,10 +27,14 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <legend>
-                    <spring:message code="sicknotes.statistics.title"/>
-                    <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
-                    <uv:print/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="sicknotes.statistics.title"/>
+                        <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
+                    </div>
+                    <div>
+                        <uv:print/>
+                    </div>
                 </legend>
             </div>
 
