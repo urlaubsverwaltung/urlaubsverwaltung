@@ -12,9 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
@@ -65,19 +63,11 @@ public class PublicHolidaysService {
         return workingTime.getInverse();
     }
 
-    public Set<Holiday> getHolidays(int year, FederalState federalState) {
-        return manager.getHolidays(year, federalState.getCodes());
-    }
-
-    public Set<Holiday> getHolidays(int year, final int month, FederalState federalState) {
-        return getHolidays(year, federalState).stream().filter(byMonth(month)).collect(Collectors.toSet());
+    public List<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
+        return List.copyOf(manager.getHolidays(from, to, federalState.getCodes()));
     }
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
         return manager.isHoliday(date, federalState.getCodes());
-    }
-
-    private Predicate<Holiday> byMonth(int month) {
-        return holiday -> holiday.getDate().getMonthValue() == month;
     }
 }

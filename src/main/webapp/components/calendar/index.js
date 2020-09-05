@@ -392,7 +392,13 @@ $(function () {
           return Promise.resolve(_CACHE[year])
         }
 
-        return fetch('/holidays', {year: year, person: personId}).then(cachePublicHoliday(year));
+        const firstDayOfYear = formatISO(startOfYear(parse(year, 'yyyy', new Date())), {representation: 'date'});
+        const lastDayOfYear = formatISO(endOfYear(parse(year, 'yyyy', new Date())), {representation: 'date'});
+
+        return fetch('/persons/' + personId + '/holidays', {
+          from: firstDayOfYear,
+          to: lastDayOfYear,
+        }).then(cachePublicHoliday(year));
       },
 
       fetchPersonal: function (year) {

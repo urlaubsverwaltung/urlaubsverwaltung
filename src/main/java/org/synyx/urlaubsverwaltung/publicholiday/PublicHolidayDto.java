@@ -5,7 +5,7 @@ import de.jollyday.Holiday;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-class PublicHolidayDto {
+final class PublicHolidayDto {
 
     private String date;
     private String description;

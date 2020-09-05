@@ -40,8 +40,6 @@ export default async function createDatepickerInstances(selectors, regional, url
       }, 10);
 
       const date = $(input).datepicker("getDate") || new Date();
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
       const firstDayOfMonth = formatISO(startOfMonth(date), {representation: 'date'});
       const lastDayOfMonth = formatISO(endOfMonth(date), {representation: 'date'});
 
@@ -51,7 +49,7 @@ export default async function createDatepickerInstances(selectors, regional, url
         return;
       }
 
-      getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month + "&person=" + personId, function (data) {
+      getHighlighted(urlPrefix + "/persons/" + personId + "/holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
         highlighted = getPublicHolidays(data);
       });
 
@@ -70,7 +68,7 @@ export default async function createDatepickerInstances(selectors, regional, url
       const firstDayOfMonth = formatISO(startOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), {representation: 'date'});
       const lastDayOfMonth = formatISO(endOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), {representation: 'date'});
 
-      getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month + "&person=" + personId, function (data) {
+      getHighlighted(urlPrefix + "/persons/" + personId + "/holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
         highlighted = getPublicHolidays(data);
       });
       getHighlighted(urlPrefix + "/persons/" + personId + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
