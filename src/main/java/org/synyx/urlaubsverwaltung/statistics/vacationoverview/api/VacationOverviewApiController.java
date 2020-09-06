@@ -18,7 +18,7 @@ import java.util.List;
  */
 @RestControllerAdviceMarker
 @Api("VacationOverview: Get Vacation-Overview Metadata")
-@RestController("restApiVacationOverview")
+@RestController
 @RequestMapping("/api")
 @Deprecated(since = "4.0.0", forRemoval = true)
 public class VacationOverviewApiController {

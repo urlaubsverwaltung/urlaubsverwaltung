@@ -1,7 +1,6 @@
 // disabling date-fns#format is ok since we're formatting dates for api requests
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import { isAfter, format, getYear } from 'date-fns'
-import buildUrl from './build-url';
 import formatNumber from './format-number';
 import sendGetDaysRequestForTurnOfTheYear from './send-get-days-request-for-turn-of-the-year';
 import { getJSON } from '../js/fetch'
@@ -19,11 +18,9 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
     return;
   }
 
-  const requestUrl = urlPrefix + "/workdays";
-
   const startDateString = format(startDate, "yyyy-MM-dd");
   const toDateString = format(toDate, "yyyy-MM-dd");
-  const url = buildUrl(requestUrl, startDateString, toDateString, dayLength, personId);
+  const url = urlPrefix + "/persons/" + personId + "/workdays?from=" + startDateString + "&to=" + toDateString + "&length=" + dayLength;
 
   const data = await getJSON(url);
   const workDays = data.workDays;

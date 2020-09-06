@@ -33,7 +33,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Vacations: Get all vacations for a certain period")
-@RestController("restApiVacationController")
+@RestController
 @RequestMapping("/api/persons/{id}/vacations")
 public class VacationApiController {
 

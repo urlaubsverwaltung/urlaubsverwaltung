@@ -22,7 +22,6 @@ public class SickNoteDto {
     private String status;
 
     public SickNoteDto(SickNote sickNote) {
-
         this.from = sickNote.getStartDate().format(formatter);
         this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);
         this.dayLength = sickNote.getDayLength().getDuration();
@@ -35,72 +34,50 @@ public class SickNoteDto {
     }
 
     public String getFrom() {
-
         return from;
     }
 
-
     public void setFrom(String from) {
-
         this.from = from;
     }
 
-
     public String getTo() {
-
         return to;
     }
 
-
     public void setTo(String to) {
-
         this.to = to;
     }
 
-
     public BigDecimal getDayLength() {
-
         return dayLength;
     }
 
-
     public void setDayLength(BigDecimal dayLength) {
-
         this.dayLength = dayLength;
     }
 
-
     public PersonDto getPerson() {
-
         return person;
     }
 
-
     public void setPerson(PersonDto person) {
-
         this.person = person;
     }
 
-
     public String getType() {
-
         return type;
     }
 
-
     public void setType(String type) {
-
         this.type = type;
     }
 
     public String getStatus() {
-
         return status;
     }
 
-
     public void setStatus(String status) {
-
         this.status = status;
     }
 }

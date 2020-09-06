@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.publicholiday;
 import java.util.ArrayList;
 import java.util.List;
 
-class PublicHolidaysDto {
+final class PublicHolidaysDto {
 
     private List<PublicHolidayDto> publicHolidays;
 

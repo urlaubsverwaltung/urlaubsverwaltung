@@ -37,7 +37,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     @MockBean
     private SickNoteService sickNoteService;
 
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     void getSickNotesWithoutBasicAuthIsUnauthorized() throws Exception {
@@ -128,8 +128,102 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
+    void personsSickNotesWithoutBasicAuthIsUnauthorized() throws Exception {
+        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes"));
+        resultActions.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(authorities = "OFFICE")
+    void personsSickNotesWithOfficeUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void personsSickNotesWithNotPrivilegedUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    void personsSickNotesWithBossUserIsForbidden() throws Exception {
+        final LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    void personsSickNotesWithDepartmentHeadUserIsForbidden() throws Exception {
+
+        final LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    void personsSickNotesWithSecondStageUserIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    void personsSickNotesWithUserIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "INACTIVE")
+    void personsSickNotesWithInactiveIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    void personsSickNotesWithAdminIsForbidden() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
     @WithMockUser(username = "user")
-    void getSickNotesWithSameUserIsOk() throws Exception {
+    void personsSickNotesWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -138,10 +232,9 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/sicknotes")
+        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5)))
-            .param("person", "1")
         );
 
         resultActions.andExpect(status().isOk());
@@ -149,17 +242,16 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     @WithMockUser(username = "differentUser")
-    void getSickNotesWithDifferentUserIsForbidden() throws Exception {
+    void personsSickNotesWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/sicknotes")
+        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5)))
-            .param("person", "1")
         );
 
         resultActions.andExpect(status().isForbidden());

@@ -39,7 +39,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 
 @RestControllerAdviceMarker
 @Api("Absences: Get all absences for a certain period")
-@RestController("restApiAbsenceController")
+@RestController
 @RequestMapping("/api/persons/{personId}")
 public class AbsenceApiController {
 

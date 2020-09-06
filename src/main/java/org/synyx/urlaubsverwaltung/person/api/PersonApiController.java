@@ -15,6 +15,8 @@ import org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController;
 import org.synyx.urlaubsverwaltung.overview.calendar.VacationApiController;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.api.SickNoteApiController;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController;
 
 import java.util.List;
 
@@ -27,10 +29,12 @@ import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
 import static org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController.AVAILABILITIES;
 import static org.synyx.urlaubsverwaltung.overview.calendar.VacationApiController.VACATIONS;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.sicknote.api.SickNoteApiController.SICKNOTES;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
 
 @RestControllerAdviceMarker
 @Api("Persons: Get information about the persons of the application")
-@RestController("restApiPersonController")
+@RestController
 @RequestMapping(PersonApiController.ROOT_URL)
 public class PersonApiController {
 
@@ -73,7 +77,9 @@ public class PersonApiController {
         personDto.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
         personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, null)).withRel(ABSENCES));
         personDto.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null)).withRel(AVAILABILITIES));
+        personDto.add(linkTo(methodOn(SickNoteApiController.class).personsSickNotes(person.getId(), null, null)).withRel(SICKNOTES));
         personDto.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));
+        personDto.add(linkTo(methodOn(WorkDaysCountApiController.class).personsWorkDays(person.getId(), null, null, null)).withRel(WORKDAYS));
         return personDto;
     }
 }

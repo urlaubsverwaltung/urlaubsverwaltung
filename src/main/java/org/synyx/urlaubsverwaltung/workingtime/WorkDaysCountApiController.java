@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,6 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,19 +25,21 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Work Days: Get information about work day in a certain period")
-@RestController("restApiWorkDayController")
-@RequestMapping("/api")
+@RestController
+@RequestMapping("/api/persons/{personId}")
 public class WorkDaysCountApiController {
+
+    public static final String WORKDAYS = "workdays";
 
     private final PersonService personService;
     private final WorkDaysCountService workDaysCountService;
 
     @Autowired
     WorkDaysCountApiController(PersonService personService, WorkDaysCountService workDaysCountService) {
-
         this.personService = personService;
         this.workDaysCountService = workDaysCountService;
     }
@@ -55,9 +57,12 @@ public class WorkDaysCountApiController {
         value = "Calculate the work days for a certain period and person",
         notes = "The calculation depends on the working time of the person."
     )
-    @GetMapping("/workdays")
-    @PreAuthorize(SecurityRules.IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public WorkDaysCountDto workDays(
+    @GetMapping(WORKDAYS)
+    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public WorkDaysCountDto personsWorkDays(
+        @ApiParam(value = "ID of the person")
+        @PathVariable("personId")
+            Integer personId,
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-01")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
@@ -68,10 +73,7 @@ public class WorkDaysCountApiController {
             LocalDate endDate,
         @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")
         @RequestParam("length")
-            String length,
-        @ApiParam(value = "ID of the person")
-        @RequestParam("person")
-            Integer personId) {
+            String length) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");

@@ -28,17 +28,17 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Availabilities: Get all availabilities for a certain person and period")
-@RestController("restApiAvailabilityController")
+@RestController
 @RequestMapping("/api/persons/{personId}")
 public class AvailabilityApiController {
 
     public static final String AVAILABILITIES = "availabilities";
+
     private final PersonService personService;
     private final AvailabilityService availabilityService;
 
     @Autowired
     AvailabilityApiController(AvailabilityService availabilityService, PersonService personService) {
-
         this.availabilityService = availabilityService;
         this.personService = personService;
     }
