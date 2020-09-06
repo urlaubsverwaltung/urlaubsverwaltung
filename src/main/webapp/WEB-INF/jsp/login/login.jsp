@@ -37,7 +37,6 @@
     <meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png' />"/>
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
     <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
