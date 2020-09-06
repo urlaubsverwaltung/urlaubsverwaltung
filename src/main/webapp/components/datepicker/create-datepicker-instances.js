@@ -49,7 +49,7 @@ export default async function createDatepickerInstances(selectors, regional, url
         return;
       }
 
-      getHighlighted(urlPrefix + "/persons/" + personId + "/holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
+      getHighlighted(urlPrefix + "/persons/" + personId + "/public-holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
         highlighted = getPublicHolidays(data);
       });
 
@@ -68,7 +68,7 @@ export default async function createDatepickerInstances(selectors, regional, url
       const firstDayOfMonth = formatISO(startOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), {representation: 'date'});
       const lastDayOfMonth = formatISO(endOfMonth(parse(year + '-' + month, 'yyyy-MM', new Date())), {representation: 'date'});
 
-      getHighlighted(urlPrefix + "/persons/" + personId + "/holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
+      getHighlighted(urlPrefix + "/persons/" + personId + "/public-holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {
         highlighted = getPublicHolidays(data);
       });
       getHighlighted(urlPrefix + "/persons/" + personId + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth, function (data) {

@@ -73,7 +73,7 @@ class PublicHolidayApiControllerTest {
         when(publicHolidayService.getWorkingDurationOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(TEN);
         when(publicHolidayService.getAbsenceTypeOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(DayLength.NOON);
 
-        perform(get("/api/holidays")
+        perform(get("/api/public-holidays")
             .param("from", "2016-05-19")
             .param("to", "2016-05-20"))
             .andExpect(status().isOk())
@@ -90,7 +90,7 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void getPublicHolidaysForInvalidPeriod() throws Exception {
-        perform(get("/api/holidays")
+        perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest());
@@ -98,7 +98,7 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void getPublicHolidaysForInvalidFrom() throws Exception {
-        perform(get("/api/holidays")
+        perform(get("/api/public-holidays")
             .param("from", "invalid")
             .param("to", "2016-01-01"))
             .andExpect(status().isBadRequest());
@@ -106,7 +106,7 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void getPublicHolidaysForInvalidTo() throws Exception {
-        perform(get("/api/holidays")
+        perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "invalid"))
             .andExpect(status().isBadRequest());
@@ -114,14 +114,14 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void getPublicHolidaysForMissingFrom() throws Exception {
-        perform(get("/api/holidays")
+        perform(get("/api/public-holidays")
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void getPublicHolidaysForMissingTo() throws Exception {
-        perform(get("/api/holidays")
+        perform(get("/api/public-holidays")
             .param("from", "2016-01-01"))
             .andExpect(status().isBadRequest());
     }
@@ -146,7 +146,7 @@ class PublicHolidayApiControllerTest {
         when(publicHolidayService.getWorkingDurationOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(TEN);
         when(publicHolidayService.getAbsenceTypeOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(DayLength.NOON);
 
-        perform(get("/api/persons/1/holidays")
+        perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-05-19")
             .param("to", "2016-05-20"))
             .andExpect(status().isOk())
@@ -165,7 +165,7 @@ class PublicHolidayApiControllerTest {
     void personsSickNotesForEmptyPerson() throws Exception {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
-        perform(get("/api/persons/1/holidays")
+        perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
@@ -173,7 +173,7 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void personsPublicHolidaysForInvalidPeriod() throws Exception {
-        perform(get("/api/persons/1/holidays")
+        perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest());
@@ -181,7 +181,7 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void personsPublicHolidaysForInvalidFrom() throws Exception {
-        perform(get("/api/persons/1/holidays")
+        perform(get("/api/persons/1/public-holidays")
             .param("from", "invalid")
             .param("to", "2016-01-01"))
             .andExpect(status().isBadRequest());
@@ -189,7 +189,7 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void personsPublicHolidaysForInvalidTo() throws Exception {
-        perform(get("/api/persons/1/holidays")
+        perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "invalid"))
             .andExpect(status().isBadRequest());
@@ -197,14 +197,14 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void personsPublicHolidaysForMissingFrom() throws Exception {
-        perform(get("/api/persons/1/holidays")
+        perform(get("/api/persons/1/public-holidays")
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void personsPublicHolidaysForMissingTo() throws Exception {
-        perform(get("/api/persons/1/holidays")
+        perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01"))
             .andExpect(status().isBadRequest());
     }

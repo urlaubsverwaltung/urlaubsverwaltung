@@ -37,14 +37,14 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void getHolidaysWithoutAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays"));
+        final ResultActions resultActions = perform(get("/api/public-holidays"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
     void getHolidaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays")
+        final ResultActions resultActions = perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -53,7 +53,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void getHolidaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays")
+        final ResultActions resultActions = perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -62,7 +62,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void getHolidaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays")
+        final ResultActions resultActions = perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -71,7 +71,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "BOSS")
     void getHolidaysAsBossUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays")
+        final ResultActions resultActions = perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -80,7 +80,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "ADMIN")
     void getHolidaysAsAdminUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays")
+        final ResultActions resultActions = perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -89,7 +89,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "INACTIVE")
     void getHolidaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/holidays")
+        final ResultActions resultActions = perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -101,7 +101,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
 
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/holidays")
+        final ResultActions resultActions = perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isOk());
@@ -109,14 +109,14 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void personsPublicHolidaysWithoutAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays"));
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
     void personsPublicHolidaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -125,7 +125,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void personsPublicHolidaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -134,7 +134,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void personsPublicHolidaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -143,7 +143,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "BOSS")
     void personsPublicHolidaysAsBossUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -152,7 +152,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "ADMIN")
     void personsPublicHolidaysAsAdminUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -161,7 +161,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser(authorities = "INACTIVE")
     void personsPublicHolidaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());
@@ -174,7 +174,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isOk());
@@ -189,7 +189,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isOk());
@@ -203,7 +203,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final ResultActions resultActions = perform(get("/api/persons/1/holidays")
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"));
         resultActions.andExpect(status().isForbidden());

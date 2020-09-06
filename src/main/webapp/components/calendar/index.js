@@ -395,7 +395,7 @@ $(function () {
         const firstDayOfYear = formatISO(startOfYear(parse(year, 'yyyy', new Date())), {representation: 'date'});
         const lastDayOfYear = formatISO(endOfYear(parse(year, 'yyyy', new Date())), {representation: 'date'});
 
-        return fetch('/persons/' + personId + '/holidays', {
+        return fetch('/persons/' + personId + '/public-holidays', {
           from: firstDayOfYear,
           to: lastDayOfYear,
         }).then(cachePublicHoliday(year));
