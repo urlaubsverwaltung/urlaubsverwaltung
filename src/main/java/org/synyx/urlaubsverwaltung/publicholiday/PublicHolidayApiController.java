@@ -35,7 +35,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Public Holidays: Get information about public holidays")
-@RestController("restApiCalendarController")
+@RestController
 @RequestMapping("/api")
 public class PublicHolidayApiController {
 

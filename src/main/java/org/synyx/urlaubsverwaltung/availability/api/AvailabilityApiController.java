@@ -28,7 +28,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Availabilities: Get all availabilities for a certain person and period")
-@RestController("restApiAvailabilityController")
+@RestController
 @RequestMapping("/api/persons/{personId}")
 public class AvailabilityApiController {
 

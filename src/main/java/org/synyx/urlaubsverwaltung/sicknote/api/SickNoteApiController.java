@@ -31,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Sick Notes: Get all sick notes for a certain period")
-@RestController("restApiSickNoteController")
+@RestController
 @RequestMapping("/api")
 public class SickNoteApiController {
 

@@ -29,7 +29,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Work Days: Get information about work day in a certain period")
-@RestController("restApiWorkDayController")
+@RestController
 @RequestMapping("/api/persons/{personId}")
 public class WorkDaysCountApiController {
 

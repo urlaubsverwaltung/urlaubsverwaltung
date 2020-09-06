@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController
 
 @RestControllerAdviceMarker
 @Api("Persons: Get information about the persons of the application")
-@RestController("restApiPersonController")
+@RestController
 @RequestMapping(PersonApiController.ROOT_URL)
 public class PersonApiController {
 

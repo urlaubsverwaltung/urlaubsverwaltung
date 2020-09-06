@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toList;
 
 @RestControllerAdviceMarker
 @Api("Departments: Get information about the departments of the application")
-@RestController("restApiDepartmentController")
+@RestController
 @RequestMapping("/api")
 public class DepartmentApiController {
 
