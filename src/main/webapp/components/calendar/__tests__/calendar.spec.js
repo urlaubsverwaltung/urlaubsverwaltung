@@ -56,7 +56,7 @@ describe ('calendar', () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
+        fetchMock.mock('/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION', {
             "absences": [
               {
                 date: "2017-11-01",
@@ -89,7 +89,7 @@ describe ('calendar', () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
+        fetchMock.mock('/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION', {
             "absences": [
               {
                 date: "2017-12-05",
@@ -122,7 +122,7 @@ describe ('calendar', () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock('/absences?person=42&year=2017&type=VACATION', {
+        fetchMock.mock('/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION', {
             "absences": [
               {
                 date: "2017-12-01",

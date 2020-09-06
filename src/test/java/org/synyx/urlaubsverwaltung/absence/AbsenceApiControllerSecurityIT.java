@@ -58,9 +58,9 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @Test
     @WithMockUser
     void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
@@ -80,9 +80,9 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         final List<Department> departments = List.of(department);
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
@@ -112,36 +112,36 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
     void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
     void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
@@ -178,9 +178,9 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isOk());
     }
 
@@ -192,9 +192,9 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
@@ -213,9 +213,9 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isOk());
     }
 
