@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Api("Departments: Get information about the departments of the application")
@@ -30,7 +30,7 @@ public class DepartmentApiController {
 
     @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
     @GetMapping("/departments")
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     public DepartmentsDto departments() {
 
         final List<DepartmentDto> departments = departmentService.getAllDepartments()

@@ -50,7 +50,7 @@ public class SickNoteApiController {
         value = "Get all sick notes for a certain period", notes = "Get all sick notes for a certain period. "
         + "Information only reachable for users with role office."
     )
-    @GetMapping("/sicknotes")
+    @GetMapping(SICKNOTES)
     @PreAuthorize(IS_OFFICE)
     public SickNotesDto getSickNotes(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
