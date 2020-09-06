@@ -1,5 +1,44 @@
 # Changelog
 
+## [urlaubsverwaltung-4.0.0.M4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M4) (2020-09-06)
+
+**Closed issues:**
+
+- Unify APIs [\#1309](https://github.com/synyx/urlaubsverwaltung/issues/1309)
+- Datumsformatierung verdreht [\#1308](https://github.com/synyx/urlaubsverwaltung/issues/1308)
+- Boss rights cannot be removed [\#1293](https://github.com/synyx/urlaubsverwaltung/issues/1293)
+- Acess the absences API with `from` and `to` instead of year/month [\#1286](https://github.com/synyx/urlaubsverwaltung/issues/1286)
+- Urlaubsübersicht umbenennen [\#1272](https://github.com/synyx/urlaubsverwaltung/issues/1272)
+- Remove internal Person Management [\#1215](https://github.com/synyx/urlaubsverwaltung/issues/1215)
+- iCal: In meinen Abwesenheitsterminen möchte ich als Organisator aufgelistet werden [\#1203](https://github.com/synyx/urlaubsverwaltung/issues/1203)
+
+## [urlaubsverwaltung-4.0.0.M3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M3) (2020-08-26)
+
+**Closed issues:**
+
+- Add greenmail with junit5 support [\#1266](https://github.com/synyx/urlaubsverwaltung/issues/1266)
+- Monats-/Jahresübersicht für eine Abteilung drucken [\#1263](https://github.com/synyx/urlaubsverwaltung/issues/1263)
+- Jahresübersicht für eine Abteilung [\#1262](https://github.com/synyx/urlaubsverwaltung/issues/1262)
+- Add esLint result to SonarCloud [\#1246](https://github.com/synyx/urlaubsverwaltung/issues/1246)
+- API nicht nutzbar wenn OIDC für Authentifizierung verwendet wird [\#1152](https://github.com/synyx/urlaubsverwaltung/issues/1152)
+- OIDC Logout with Microsoft Azure AD not working [\#952](https://github.com/synyx/urlaubsverwaltung/issues/952)
+
+## [urlaubsverwaltung-4.0.0.M2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M2) (2020-08-23)
+
+**Closed issues:**
+
+- Duplicate Entries in Company Calendar Share [\#1253](https://github.com/synyx/urlaubsverwaltung/issues/1253)
+- Disable default file logging [\#1238](https://github.com/synyx/urlaubsverwaltung/issues/1238)
+- Remove ErrorResponse [\#1213](https://github.com/synyx/urlaubsverwaltung/issues/1213)
+- Remove ResponseWrapper in favor of basic spring features [\#1212](https://github.com/synyx/urlaubsverwaltung/issues/1212)
+- SMTP-Verbindung zu Office365 schlägt fehl [\#1191](https://github.com/synyx/urlaubsverwaltung/issues/1191)
+- Upgrade to Spring Boot 2.3.x [\#1175](https://github.com/synyx/urlaubsverwaltung/issues/1175)
+- Entferne sensitive Daten aus der 'availability api' [\#1150](https://github.com/synyx/urlaubsverwaltung/issues/1150)
+- Anzeige "Anträge von Kollegen" – Datum falsch formatiert [\#1135](https://github.com/synyx/urlaubsverwaltung/issues/1135)
+- Berechnung der Urlaubs- und Krankheitstage [\#1134](https://github.com/synyx/urlaubsverwaltung/issues/1134)
+- Mitarbeiter in Teilzeit [\#1064](https://github.com/synyx/urlaubsverwaltung/issues/1064)
+- Anzeige "Anträge von Kollegen" - Datenschutz [\#1005](https://github.com/synyx/urlaubsverwaltung/issues/1005)
+
 ## [urlaubsverwaltung-4.0.0.M1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M1) (2020-07-24)
 
 **Closed issues:**
@@ -170,7 +209,6 @@
 - Abteilung Übersicht Mitarbeiter Link führt zu 404 [\#835](https://github.com/synyx/urlaubsverwaltung/issues/835)
 - Upgrade bootstrap to 4 [\#833](https://github.com/synyx/urlaubsverwaltung/issues/833)
 - Unified naming of username [\#827](https://github.com/synyx/urlaubsverwaltung/issues/827)
-- Remove all deprecations before 3.0 release [\#826](https://github.com/synyx/urlaubsverwaltung/issues/826)
 - Api Zugriff zu stark / User sollte eigene Daten abrufen können [\#824](https://github.com/synyx/urlaubsverwaltung/issues/824)
 - Availabilities api gibt nur Morgens statt Morgens und Mittags aus [\#818](https://github.com/synyx/urlaubsverwaltung/issues/818)
 - Anmeldung ans AD, wenn der Post-W2000-Anmeldenamen hinter dem '@' nicht den Domänennamen erhält [\#817](https://github.com/synyx/urlaubsverwaltung/issues/817)
@@ -263,7 +301,6 @@
 
 **Closed issues:**
 
-- SQL Fehler Unknown column 'diff' in 'where clause' in cron Job [\#686](https://github.com/synyx/urlaubsverwaltung/issues/686)
 - Resync Exchange calendar? [\#475](https://github.com/synyx/urlaubsverwaltung/issues/475)
 
 ## [urlaubsverwaltung-2.42.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.42.3) (2019-05-24)
