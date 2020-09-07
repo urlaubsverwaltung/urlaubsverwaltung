@@ -39,10 +39,10 @@ public class AccountViewController {
     private final PersonService personService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
-    private final AccountValidator validator;
+    private final AccountFormValidator validator;
 
     @Autowired
-    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountValidator validator) {
+    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountFormValidator validator) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
