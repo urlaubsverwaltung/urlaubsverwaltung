@@ -13,7 +13,6 @@ public class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfi
 
     @Autowired
     public TurnOfTheYearAccountUpdaterConfiguration(AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService) {
-
         this.accountProperties = accountProperties;
         this.turnOfTheYearAccountUpdaterService = turnOfTheYearAccountUpdaterService;
     }
