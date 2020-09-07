@@ -45,6 +45,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -85,6 +86,13 @@ class OverviewViewControllerTest {
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService);
+    }
+
+    @Test
+    void indexRedirectsToOverview() throws Exception {
+        perform(get("/"))
+            .andExpect(status().isFound())
+            .andExpect(header().string("Location", "/web/overview"));
     }
 
     @Test
