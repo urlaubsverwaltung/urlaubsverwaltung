@@ -277,7 +277,7 @@ class OverviewViewControllerTest {
             .forUsedDaysAfterApril(BigDecimal.ZERO)
             .withVacationDaysUsedNextYear(BigDecimal.ZERO)
             .notExpiring(BigDecimal.ZERO)
-            .get();
+            .build();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
