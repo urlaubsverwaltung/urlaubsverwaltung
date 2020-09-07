@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overview.calendar;
+package org.synyx.urlaubsverwaltung.vacations;
 
 import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
