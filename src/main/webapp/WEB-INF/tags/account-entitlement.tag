@@ -3,8 +3,9 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
+<%@attribute name="className" type="java.lang.String" required="false" %>
 
-<div class="box">
+<div class="box ${className}">
     <span class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
         <uv:icon-calendar className="tw-w-8 tw-h-8" />
     </span>

@@ -56,17 +56,23 @@
         </div>
 
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:person person="${person}" nameIsNoLink="${true}"/>
+            <div class="col-xs-12">
+                <div class="tw-flex tw-flex-wrap">
+                <div class="tw-w-full lg:tw-w-1/3">
+                    <uv:person person="${person}" nameIsNoLink="${true}" cssClass="tw-border-none tw-p-0" />
+                </div>
+                <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                    <uv:account-entitlement account="${account}" className="tw-border-none tw-p-0" />
+                </div>
+                <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                    <uv:account-left
+                        account="${account}"
+                        vacationDaysLeft="${vacationDaysLeft}"
+                        beforeApril="${beforeApril}"
+                        className="tw-border-none tw-p-0"
+                    />
+                </div>
             </div>
-
-            <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:account-entitlement account="${account}"/>
-            </div>
-
-            <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
-                                 beforeApril="${beforeApril}"/>
             </div>
         </div>
 
@@ -90,11 +96,19 @@
                         </div>
                     </legend>
                 </div>
-                <div class="col-xs-12 col-md-6">
-                    <uv:overtime-total hours="${overtimeTotal}"/>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="tw-flex tw-flex-wrap">
+                    <div class="tw-w-full lg:tw-w-1/3">
+                    </div>
+                    <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                        <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-border-none tw-p-0" />
+                    </div>
+                    <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                        <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-border-none tw-p-0" />
+                    </div>
                 </div>
-                <div class="col-xs-12 col-md-6">
-                    <uv:overtime-left hours="${overtimeLeft}"/>
                 </div>
             </div>
         </c:if>
@@ -153,12 +167,14 @@
                    value="${usedDaysOverview.otherDays.days['WAITING'] + usedDaysOverview.otherDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
             <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
 
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="box">
+            <div class="col-xs-12">
+                <div class="tw-flex tw-flex-wrap sm:tw-justify-around">
+                <div class="tw-w-full sm:tw-w-1/2">
+                    <div class="box tw-border-none tw-p-0">
                     <span class="box-icon tw-w-16 tw-h-16 tw-bg-yellow-500">
                         <uv:icon-sun className="tw-w-8 tw-h-8" />
                     </span>
-                    <span class="box-text">
+                        <span class="box-text">
                         <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}"/>
                         <span class="tw-flex tw-items-center">
                             <span class="tw-text-green-500 tw-flex tw-items-center">
@@ -167,15 +183,14 @@
                             &nbsp;<spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
                         </span>
                     </span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="box">
+                <div class="tw-w-full sm:tw-w-1/2">
+                    <div class="box tw-border-none tw-p-0">
                     <span class="box-icon tw-w-16 tw-h-16 tw-bg-yellow-500">
                         <uv:icon-flag className="tw-w-8 tw-h-8" />
                     </span>
-                    <span class="box-text">
+                        <span class="box-text">
                         <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}"/>
                         <span class="tw-flex tw-items-center">
                             <span class="tw-text-green-500 tw-flex tw-items-center">
@@ -184,17 +199,16 @@
                             &nbsp;<spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}"/>
                         </span>
                     </span>
+                    </div>
                 </div>
             </div>
-
+            </div>
         </div>
 
         <div class="row">
-
             <div class="col-xs-12">
                 <%@include file="include/overview_app_list.jsp" %>
             </div>
-
         </div>
 
         <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
@@ -217,37 +231,41 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6">
-                    <div class="box">
-                        <span class="box-icon tw-w-16 tw-h-16 tw-bg-red-600">
-                            <uv:icon-medkit className="tw-w-8 tw-h-8" />
-                        </span>
-                        <span class="box-text">
-                            <spring:message code="overview.sicknotes.sickdays" arguments="${sickDaysOverview.sickDays.days['TOTAL']}"/>
-                            <span class="tw-flex tw-items-center">
-                                <span class="tw-text-green-500 tw-flex tw-items-center">
-                                    <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
-                                </span>
-                                &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
+                <div class="col-xs-12">
+                    <div class="tw-flex tw-flex-wrap sm:tw-justify-around">
+                    <div class="tw-w-full sm:tw-w-1/2">
+                        <div class="box tw-border-none tw-p-0">
+                            <span class="box-icon tw-w-16 tw-h-16 tw-bg-red-600">
+                                <uv:icon-medkit className="tw-w-8 tw-h-8" />
                             </span>
-                        </span>
+                                <span class="box-text">
+                                <spring:message code="overview.sicknotes.sickdays" arguments="${sickDaysOverview.sickDays.days['TOTAL']}"/>
+                                <span class="tw-flex tw-items-center">
+                                    <span class="tw-text-green-500 tw-flex tw-items-center">
+                                        <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                    </span>
+                                    &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="tw-w-full sm:tw-w-1/2">
+                        <div class="box tw-border-none tw-p-0">
+                            <span class="box-icon tw-w-16 tw-h-16 tw-bg-red-600">
+                                <uv:icon-child className="tw-w-8 tw-h-8" />
+                            </span>
+                                <span class="box-text">
+                                <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickDaysOverview.childSickDays.days['TOTAL']}"/>
+                                <span class="tw-flex tw-items-center">
+                                    <span class="tw-text-green-500 tw-flex tw-items-center">
+                                        <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                    </span>
+                                    &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
+                                </span>
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-6">
-                    <div class="box">
-                        <span class="box-icon tw-w-16 tw-h-16 tw-bg-red-600">
-                            <uv:icon-child className="tw-w-8 tw-h-8" />
-                        </span>
-                        <span class="box-text">
-                            <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickDaysOverview.childSickDays.days['TOTAL']}"/>
-                            <span class="tw-flex tw-items-center">
-                                <span class="tw-text-green-500 tw-flex tw-items-center">
-                                    <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
-                                </span>
-                                &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
-                            </span>
-                        </span>
-                    </div>
                 </div>
             </div>
 

@@ -3,11 +3,11 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
-<%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.VacationDaysLeft"
-             required="true" %>
+<%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.VacationDaysLeft" required="true" %>
 <%@attribute name="beforeApril" type="java.lang.Boolean" required="true" %>
+<%@attribute name="className" type="java.lang.String" required="false" %>
 
-<div class="box">
+<div class="box ${className}">
     <span class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
         <uv:icon-presentation-chart-bar className="tw-w-8 tw-h-8" strokeWidth="2" />
     </span>
