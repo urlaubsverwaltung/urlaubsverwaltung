@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
@@ -28,6 +27,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 /**
  * Controller to manage {@link Account}s of {@link org.synyx.urlaubsverwaltung.person.Person}s.
@@ -56,7 +56,7 @@ public class AccountViewController {
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
 
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/account")
     public String editAccount(@PathVariable("personId") Integer personId,
                               @RequestParam(value = "year", required = false) Integer year, Model model)
@@ -77,7 +77,7 @@ public class AccountViewController {
         return "account/account_form";
     }
 
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Integer personId,
                                 @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
