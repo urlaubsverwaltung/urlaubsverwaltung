@@ -1,12 +1,10 @@
-package org.synyx.urlaubsverwaltung.account.service;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.account.dao.AccountRepository;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Optional;
@@ -20,7 +18,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.account.service.AccountServiceImpl}.
+ * Unit test for {@link AccountServiceImpl}.
  */
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {

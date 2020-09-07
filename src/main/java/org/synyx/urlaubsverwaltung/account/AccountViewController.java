@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.account.web;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,13 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
@@ -31,9 +27,10 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 /**
- * Controller to manage {@link org.synyx.urlaubsverwaltung.account.domain.Account}s of {@link org.synyx.urlaubsverwaltung.person.Person}s.
+ * Controller to manage {@link Account}s of {@link org.synyx.urlaubsverwaltung.person.Person}s.
  */
 @Controller
 @RequestMapping("/web")
@@ -42,10 +39,11 @@ public class AccountViewController {
     private final PersonService personService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
-    private final AccountValidator validator;
+    private final AccountFormValidator validator;
 
     @Autowired
-    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountValidator validator) {
+    public AccountViewController(PersonService personService, AccountService accountService,
+                                 AccountInteractionService accountInteractionService, AccountFormValidator validator) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
@@ -54,22 +52,24 @@ public class AccountViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
 
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/account")
     public String editAccount(@PathVariable("personId") Integer personId,
                               @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person person = personService.getPersonByID(personId)
+            .orElseThrow(() -> new UnknownPersonException(personId));
 
-        int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
-        AccountForm accountForm = new AccountForm(yearOfHolidaysAccount, accountService.getHolidaysAccount(
-            yearOfHolidaysAccount, person));
+        final int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
+
+        final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
+            .orElseGet(() -> new AccountForm(yearOfHolidaysAccount));
 
         model.addAttribute("person", person);
         model.addAttribute("account", accountForm);
@@ -78,13 +78,14 @@ public class AccountViewController {
         return "account/account_form";
     }
 
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Integer personId,
                                 @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
                                 RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person person = personService.getPersonByID(personId)
+            .orElseThrow(() -> new UnknownPersonException(personId));
 
         validator.validate(accountForm, errors);
 
@@ -95,17 +96,16 @@ public class AccountViewController {
             return "account/account_form";
         }
 
-        LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
-        LocalDate validTo = accountForm.getHolidaysAccountValidTo();
-
-        BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
-        BigDecimal actualVacationDays = accountForm.getActualVacationDays();
-        BigDecimal remainingVacationDays = accountForm.getRemainingVacationDays();
-        BigDecimal remainingVacationDaysNotExpiring = accountForm.getRemainingVacationDaysNotExpiring();
-        String comment = accountForm.getComment();
+        final LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
+        final LocalDate validTo = accountForm.getHolidaysAccountValidTo();
+        final BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
+        final BigDecimal actualVacationDays = accountForm.getActualVacationDays();
+        final BigDecimal remainingVacationDays = accountForm.getRemainingVacationDays();
+        final BigDecimal remainingVacationDaysNotExpiring = accountForm.getRemainingVacationDaysNotExpiring();
+        final String comment = accountForm.getComment();
 
         // check if there is an existing account
-        Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
+        final Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
 
         if (account.isPresent()) {
             accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,

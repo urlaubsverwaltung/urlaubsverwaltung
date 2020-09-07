@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.account.config;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

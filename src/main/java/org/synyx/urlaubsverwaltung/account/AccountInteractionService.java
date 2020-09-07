@@ -1,18 +1,17 @@
-package org.synyx.urlaubsverwaltung.account.service;
+package org.synyx.urlaubsverwaltung.account;
 
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Provides interactions with {@link org.synyx.urlaubsverwaltung.account.domain.Account}s like creating or editing.
+ * Provides interactions with {@link Account}s like creating or editing.
  */
 public interface AccountInteractionService {
 
     /**
-     * Creates a default {@link org.synyx.urlaubsverwaltung.account.domain.Account} for given person
+     * Creates a default {@link Account} for given person
      * <p>
      * Assuming 20 days of holiday (based on http://www.gesetze-im-internet.de/burlg/__3.html with five days work per week).
      * Calculates the number of remaining days based on account creation day.
@@ -22,7 +21,7 @@ public interface AccountInteractionService {
     void createDefaultAccount(Person person);
 
     /**
-     * Creates a {@link org.synyx.urlaubsverwaltung.account.domain.Account} with the given parameters.
+     * Creates a {@link Account} with the given parameters.
      *
      * @param person                   defines the owner of the holidays account
      * @param validFrom                defines the start of the validity period, e.g. 1.1.2012

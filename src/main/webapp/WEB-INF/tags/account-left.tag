@@ -1,8 +1,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.domain.Account" required="true" %>
-<%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft"
+<%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
+<%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.VacationDaysLeft"
              required="true" %>
 <%@attribute name="beforeApril" type="java.lang.Boolean" required="true" %>
 

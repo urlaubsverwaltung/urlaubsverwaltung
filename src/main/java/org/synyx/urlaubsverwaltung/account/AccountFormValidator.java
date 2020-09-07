@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.account.web;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
  * Validates {@link AccountForm}.
  */
 @Component
-class AccountValidator implements Validator {
+class AccountFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_ENTRY = "error.entry.invalid";
@@ -31,7 +31,7 @@ class AccountValidator implements Validator {
     private final SettingsService settingsService;
 
     @Autowired
-    AccountValidator(SettingsService settingsService) {
+    AccountFormValidator(SettingsService settingsService) {
 
         this.settingsService = settingsService;
     }

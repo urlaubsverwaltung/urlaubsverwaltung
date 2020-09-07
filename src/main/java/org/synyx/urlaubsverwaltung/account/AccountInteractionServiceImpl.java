@@ -1,11 +1,9 @@
-package org.synyx.urlaubsverwaltung.account.service;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
@@ -58,13 +56,6 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             noRemainingVacationDaysForLastYear, // for initial user creation there is no remaining vacation from last year
             noRemainingVacationDaysForLastYear,
             "");
-    }
-
-    // calculate remaining vacation days starting from todays month, round to ceiling
-    private BigDecimal getRemainingVacationDaysForThisYear(LocalDate today, Integer defaultVacationDays) {
-        double vacationDaysPerMonth = ((double) defaultVacationDays) / 12;
-        int remainingMonthForThisYear = 12 - today.getMonthValue();
-        return new BigDecimal((int) Math.ceil(vacationDaysPerMonth * remainingMonthForThisYear));
     }
 
     @Override
@@ -149,25 +140,6 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         }
     }
 
-    /**
-     * Updates the remaining vacation days of the given new account by using data of the given last account.
-     *
-     * @param newAccount  to calculate and update remaining vacation days for
-     * @param lastAccount as reference to be used for calculation of remaining vacation days
-     */
-    private void updateRemainingVacationDays(Account newAccount, Account lastAccount) {
-
-        final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(lastAccount);
-        newAccount.setRemainingVacationDays(leftVacationDays);
-
-        // number of not expiring remaining vacation days is greater than remaining vacation days
-        if (newAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) > 0) {
-            newAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
-        }
-
-        accountService.save(newAccount);
-    }
-
     @Override
     public Account autoCreateOrUpdateNextYearsHolidaysAccount(Account referenceAccount) {
 
@@ -190,5 +162,33 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         return updateOrCreateHolidaysAccount(referenceAccount.getPerson(), DateUtil.getFirstDayOfYear(nextYear),
             DateUtil.getLastDayOfYear(nextYear), referenceAccount.getAnnualVacationDays(),
             referenceAccount.getAnnualVacationDays(), leftVacationDays, BigDecimal.ZERO, referenceAccount.getComment());
+    }
+
+    /**
+     * calculate remaining vacation days starting from today's month, round to ceiling
+     */
+    private BigDecimal getRemainingVacationDaysForThisYear(LocalDate today, Integer defaultVacationDays) {
+        double vacationDaysPerMonth = ((double) defaultVacationDays) / 12;
+        int remainingMonthForThisYear = 12 - today.getMonthValue();
+        return new BigDecimal((int) Math.ceil(vacationDaysPerMonth * remainingMonthForThisYear));
+    }
+
+    /**
+     * Updates the remaining vacation days of the given new account by using data of the given last account.
+     *
+     * @param newAccount  to calculate and update remaining vacation days for
+     * @param lastAccount as reference to be used for calculation of remaining vacation days
+     */
+    private void updateRemainingVacationDays(Account newAccount, Account lastAccount) {
+
+        final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(lastAccount);
+        newAccount.setRemainingVacationDays(leftVacationDays);
+
+        // number of not expiring remaining vacation days is greater than remaining vacation days
+        if (newAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) > 0) {
+            newAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
+        }
+
+        accountService.save(newAccount);
     }
 }

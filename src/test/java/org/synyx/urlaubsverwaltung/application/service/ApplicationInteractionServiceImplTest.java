@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.account.service;
+package org.synyx.urlaubsverwaltung.account;
 
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
@@ -6,8 +6,9 @@ import de.jollyday.ManagerParameters;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.account.VacationDaysService;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -59,7 +60,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.account.service.VacationDaysService}.
+ * Unit test for {@link VacationDaysService}.
  */
 class VacationDaysServiceTest {
 
