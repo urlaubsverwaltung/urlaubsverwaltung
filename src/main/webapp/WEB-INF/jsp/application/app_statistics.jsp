@@ -40,7 +40,7 @@
                     <div class="tw-flex-1">
                         <spring:message code="applications.statistics"/>
                     </div>
-                    <div>
+                    <div class="print:tw-hidden">
                         <uv:export />
                         <uv:print />
                     </div>

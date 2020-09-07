@@ -18,7 +18,7 @@
         <spring:message code="overview.title"/>
         <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/person/${person.id}/overview?year="/>
     </div>
-    <div>
+    <div class="print:tw-hidden">
         <a href="${URL_PREFIX}/person/${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.details"/>">
             <uv:icon-document-text className="tw-w-5 tw-h-5" />
         </a>

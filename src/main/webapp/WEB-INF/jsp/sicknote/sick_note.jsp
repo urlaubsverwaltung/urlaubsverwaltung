@@ -44,7 +44,7 @@
                     </div>
                     <sec:authorize access="hasAuthority('OFFICE')">
                         <c:if test="${sickNote.active}">
-                        <div>
+                        <div class="print:tw-hidden">
                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
                                 <uv:icon-pencil className="tw-w-5 tw-h-5" />
                             </a>
@@ -180,7 +180,7 @@
                         <spring:message code="sicknote.progress.title"/>
                     </div>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <div>
+                        <div class="print:tw-hidden">
                             <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
                                 <uv:icon-annotation className="tw-w-5 tw-h-5" />
                             </a>

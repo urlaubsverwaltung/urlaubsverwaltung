@@ -39,7 +39,7 @@
                     <div class="tw-flex-1">
                         <spring:message code="departments.title"/>
                     </div>
-                    <div>
+                    <div class="print:tw-hidden">
                         <sec:authorize access="hasAuthority('OFFICE')">
                         <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
                             <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
@@ -152,7 +152,7 @@
                                                 </div>
                                             </form:form>
 
-                                            <div class="tw-flex tw-justify-end">
+                                            <div class="tw-flex tw-justify-end print:tw-hidden">
                                                 <a class="icon-link tw-p-1 tw-mr-4" href="${URL_PREFIX}/department/${department.id}/edit" data-title="<spring:message code="action.edit" />">
                                                     <uv:icon-pencil className="tw-w-5 tw-h-5" />
                                                 </a>

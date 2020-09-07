@@ -3,7 +3,7 @@
 
 <a
     href="#"
-    class="icon-link tw-px-1 tw-hidden sm:tw-inline-block"
+    class="icon-link tw-px-1 tw-hidden sm:tw-inline-block print:tw-hidden"
     data-title="<spring:message code='action.print' />"
     onclick="window.print(); return false;"
 >

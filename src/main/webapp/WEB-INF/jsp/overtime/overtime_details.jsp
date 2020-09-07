@@ -40,7 +40,7 @@
                         <spring:message code="overtime.title"/>
                     </div>
                     <c:if test="${record.person.id == signedInUser.id || IS_OFFICE}">
-                    <div>
+                    <div class="print:tw-hidden">
                         <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="icon-link tw-p-1 tw-text-gray-700" data-title="<spring:message code="action.edit"/>">
                             <uv:icon-pencil className="tw-w-5 tw-h-5" />
                         </a>

@@ -48,7 +48,7 @@
                     <div class="tw-flex-1">
                         <spring:message code="sicknotes.title"/>
                     </div>
-                    <div>
+                    <div class="print:tw-hidden">
                         <a href="${URL_PREFIX}/sicknote/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.sicknote"/>">
                             <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
                         </a>

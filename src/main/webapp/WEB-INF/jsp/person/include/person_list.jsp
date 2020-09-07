@@ -115,9 +115,11 @@
                     </c:choose>
                 </td>
                 <td class="hidden-print hidden-xs">
-                    <a class="icon-link tw-px-1" href="${URL_PREFIX}/person/${person.id}" data-title="<spring:message code="action.details" />">
-                        <uv:icon-document-text className="tw-w-5 tw-h-5" />
-                    </a>
+                    <div class="print:tw-hidden">
+                        <a class="icon-link tw-px-1" href="${URL_PREFIX}/person/${person.id}" data-title="<spring:message code="action.details" />">
+                            <uv:icon-document-text className="tw-w-5 tw-h-5" />
+                        </a>
+                    </div>
                 </td>
             </tr>
         </c:forEach>
