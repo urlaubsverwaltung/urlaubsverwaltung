@@ -1,0 +1,25 @@
+body {
+  font-family: Verdana, sans-serif;
+  font-size: 12px;
+  margin: 0;
+  color: #444444;
+}
+
+hr {
+  border-color: #d5d5d5;
+}
+
+footer {
+  color: #aaa;
+  font-size: 11px;
+  text-align: center;
+}
+
+a {
+  color: #2a6496;
+}
+
+a:hover,
+a:focus {
+  color: #1896db;
+}

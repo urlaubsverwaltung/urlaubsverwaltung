@@ -1,11 +1,21 @@
 @import "tailwindcss/base";
+@import "./base.css";
 
 @import "tailwindcss/components";
-@import "./components/box";
-@import "./components/icon-link";
-@import "./components/table";
+@import "./components/button.css";
+@import "./components/box.css";
+@import "./components/error.css";
+@import "./components/form.css";
+@import "./components/gravatar.css";
+@import "./components/icon-link.css";
+@import "./components/legend.css";
+@import "./components/table.css";
+@import "./components/tabs.css";
+@import "./components/states.css";
+@import "./components/print.css";
 
 @import "tailwindcss/utilities";
+@import "./utility.css";
 
 /**
  * 1. Prevent padding and border from affecting element width.
