@@ -19,25 +19,24 @@
             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
         />
     </div>
-    <span class="box-text">
-        <h4>
+    <div class="box-text">
+        <div class="tw-text-lg tw-mb-1">
             <c:choose>
                 <c:when test="${nameIsNoLink}">
-                    <span class="hidden-print"><c:out value="${person.niceName}"/></span>
+                    <c:out value="${person.niceName}"/>
                 </c:when>
                 <c:otherwise>
-                    <a class="hidden-print" href="${URL_PREFIX}/person/${person.id}/overview">
+                    <a href="${URL_PREFIX}/person/${person.id}/overview">
                         <c:out value="${person.niceName}"/>
                     </a>
                 </c:otherwise>
             </c:choose>
-            <span class="visible-print">
-                <c:out value="${person.niceName}"/>
+        </div>
+        <a href="mailto:<c:out value='${person.email}'/>" class="tw-inline-block tw-text-sm print:no-link">
+            <span class="tw-flex tw-items-center">
+                <uv:icon-mail className="tw-w-4 tw-h-4" />
+                &nbsp;<c:out value="${person.email}"/>
             </span>
-        </h4>
-        <a href="mailto:<c:out value='${person.email}'/>" class="tw-flex tw-items-center">
-            <uv:icon-mail className="tw-w-4 tw-h-4" />
-            &nbsp;<c:out value="${person.email}"/>
         </a>
-    </span>
+    </div>
 </div>

@@ -13,9 +13,11 @@
 </c:otherwise>
 </c:choose>
 
-<legend class="tw-flex">
-    <div class="tw-flex-1">
-        <spring:message code="overview.title"/>
+<div class="tw-flex tw-items-end tw-border-b-2 tw-py-2">
+    <div class="tw-flex-1 tw-text-2xl tw-font-normal tw-flex">
+        <h1 class="tw-text-2xl tw-font-normal tw-m-0">
+            <spring:message code="overview.title"/>
+        </h1>
         <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/person/${person.id}/overview?year="/>
     </div>
     <div class="print:tw-hidden">
@@ -24,4 +26,4 @@
         </a>
         <uv:print />
     </div>
-</legend>
+</div>

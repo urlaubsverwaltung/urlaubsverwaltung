@@ -49,14 +49,14 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
+                <div class="tw-flex tw-items-end tw-border-b-2 tw-py-2 tw-mb-8">
+                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="application.data.title"/>
-                    </div>
+                    </h1>
                     <div class="print:tw-hidden">
                         <jsp:include page="include/app-detail-elements/action-buttons.jsp"/>
                     </div>
-                </legend>
+                </div>
 
                 <div class="feedback">
                     <c:choose>
@@ -119,10 +119,12 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
-                <legend>
-                    <spring:message code="person.account.vacation.title"/>
+                <div class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2 tw-flex">
+                    <h2 class="tw-text-2xl tw-font-normal tw-m-0">
+                        <spring:message code="person.account.vacation.title"/>
+                    </h2>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
-                </legend>
+                </div>
 
                 <uv:person person="${application.person}"/>
                 <uv:account-entitlement account="${account}"/>
@@ -140,10 +142,10 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
-                <legend>
+                <h2 class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2">
                     <spring:message code="application.department.title"/>
-                </legend>
-                <table class="list-table striped-table bordered-table">
+                </h2>
+                <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <c:choose>
                         <c:when test="${empty departmentApplications}">

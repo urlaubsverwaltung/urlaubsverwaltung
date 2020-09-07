@@ -28,10 +28,6 @@
     color: black !important;
   }
 
-  .list-table {
-    font-size: 12px;
-  }
-
   /* Do not show sort icons in tables */
   th.sortable-field .tablesorter-header-inner:after {
     content: "";

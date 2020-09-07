@@ -27,13 +27,11 @@
            action="${ACTION_URL}" modelAttribute="comment">
 
     <div class="form-group">
-        <div class="control-label">
-            <strong><spring:message code='action.reject.confirm'/></strong>
-        </div>
+        <strong class="tw-font-medium"><spring:message code='action.reject.confirm'/></strong>
     </div>
 
     <div class="form-group">
-        <div class="control-label">
+        <div class="tw-text-sm">
             <spring:message code="action.comment.mandatory"/>: (<span
             id="text-reject"></span><spring:message code="action.comment.maxChars"/>)
         </div>

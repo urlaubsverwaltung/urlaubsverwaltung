@@ -81,19 +81,21 @@
                     </div>
                 </c:if>
 
-                <div class="row">
 
-                    <div class="form-section">
-                        <div class="col-xs-12">
-                            <legend><spring:message code="application.data.title"/></legend>
+                <div class="form-section tw-mb-8">
+                    <div class="row">
+                        <div class="col-xs-12 tw-mb-8">
+                            <h1 class="tw-text-2xl tw-m-0 tw-py-2 tw-border-b-2">
+                                <spring:message code="application.data.title"/>
+                            </h1>
                         </div>
 
                         <div class="col-md-4 col-md-push-8">
-                            <span class="help-block">
+                            <span class="help-block tw-text-sm">
                                 <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                                 <spring:message code="application.data.description"/>
                             </span>
-                            <span id="departmentVacations" class="help-block info"></span>
+                            <span id="departmentVacations" class="help-block info tw-text-sm"></span>
                         </div>
 
                         <div class="col-md-8 col-md-pull-4">
@@ -255,9 +257,10 @@
                                 </div>
                             </div>
                         </div>
+
                         <c:if test="${overtimeActive}">
                             <div class="col-md-4 col-md-push-8">
-                                <span class="help-block">
+                                <span class="help-block tw-text-sm">
                                     <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="application.data.hours.description"/>
                                 </span>
@@ -277,17 +280,21 @@
                                 </div>
                             </div>
                         </c:if>
-
                     </div>
-                    <div class="form-section">
-                        <div class="col-xs-12">
-                            <legend><spring:message code="application.data.furtherInformation.title"/></legend>
+                </div>
+
+                <div class="form-section tw-mb-16">
+                    <div class="row">
+                        <div class="col-xs-12 tw-mb-8">
+                            <h2 class="tw-text-2xl tw-m-0 tw-py-2 tw-border-b-2">
+                                <spring:message code="application.data.furtherInformation.title"/>
+                            </h2>
                         </div>
                         <div class="col-md-4 col-md-push-8">
-                    <span class="help-block">
-                        <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                        <spring:message code="application.data.furtherInformation.description"/>
-                    </span>
+                            <span class="help-block tw-text-sm">
+                                <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                <spring:message code="application.data.furtherInformation.description"/>
+                            </span>
                         </div>
                         <div class="col-md-8 col-md-pull-4">
                             <c:set var="REASON_IS_REQUIRED"
@@ -298,7 +305,9 @@
                                     <spring:message code="application.data.reason"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>
+                                    <small>
+                                        <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
                                     <form:textarea id="reason" rows="1" path="reason" class="form-control"
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-reason');"
@@ -311,7 +320,9 @@
                                     <spring:message code="application.data.furtherInformation.address"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
+                                    <small>
+                                        <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
                                     <form:textarea id="address" rows="1" path="address" class="form-control"
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-address');"
@@ -324,7 +335,9 @@
                                     <spring:message code="application.data.furtherInformation.comment"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                    <small>
+                                        <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
                                     <form:textarea id="comment" rows="1" path="comment" class="form-control"
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-comment');"
@@ -334,10 +347,11 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-section">
+                <div class="form-section">
+                    <div class="row">
                         <div class="col-xs-12">
-                            <hr/>
                             <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
                                 <spring:message code="action.apply.vacation"/>
                             </button>

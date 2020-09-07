@@ -3,7 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<table class="list-table selectable-table">
+<table class="list-table selectable-table tw-text-sm">
     <tbody>
     <c:forEach items="${sickNotes}" var="sickNote" varStatus="loopStatus">
     <c:choose>
@@ -25,18 +25,11 @@
                 </c:otherwise>
             </c:choose>
         </td>
-        <td>
-            <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="hidden-print">
-                <h4>
-                    <spring:message code="${sickNote.sickNoteType.messageKey}"/>
-                </h4>
-            </a>
-
-            <h4 class="visible-print">
+        <td class="tw-py-6">
+            <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="tw-block tw-mb-1 tw-text-lg print:no-link">
                 <spring:message code="${sickNote.sickNoteType.messageKey}"/>
-            </h4>
-
-            <p class="tw-flex tw-flex-col lg:tw-flex-row">
+            </a>
+            <div class="tw-flex tw-flex-col lg:tw-flex-row">
                 <c:choose>
                     <c:when test="${sickNote.startDate == sickNote.endDate}">
                         <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
@@ -56,7 +49,7 @@
                         &nbsp;<spring:message code="sicknote.data.aub.short"/>)
                     </span>
                 </c:if>
-            </p>
+            </div>
         </td>
         <td class="is-centered hidden-xs">
             <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days"/></span>

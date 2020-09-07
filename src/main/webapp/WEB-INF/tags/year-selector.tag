@@ -6,9 +6,9 @@
 
 <jsp:useBean id="date" class="java.util.Date" />
 
-<div id="year-selection" class="legend-dropdown dropdown">
-    <a id="dropdownLabel" href="#" data-toggle="dropdown"
-       aria-haspopup="true" role="button" aria-expanded="false">
+<span id="year-selection" class="tw-leading-6 dropdown legend-dropdown">
+    &nbsp;
+    <a id="dropdownLabel" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false" class="">
         <c:out value="${year}" /><span class="caret"></span>
     </a>
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel">
@@ -17,4 +17,4 @@
             <li><a href="${hrefPrefix.concat(y)}"><c:out value="${y}" /></a></li>
         </c:forEach>
     </ul>
-</div>
+</span>

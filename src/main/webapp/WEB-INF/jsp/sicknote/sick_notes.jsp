@@ -44,10 +44,10 @@
 
             <div class="col-xs-12">
 
-                <legend class="is-sticky tw-flex">
-                    <div class="tw-flex-1">
+                <div class="tw-flex tw-items-end tw-border-b-2 tw-py-2 tw-mb-2">
+                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="sicknotes.title"/>
-                    </div>
+                    </h1>
                     <div class="print:tw-hidden">
                         <a href="${URL_PREFIX}/sicknote/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.sicknote"/>">
                             <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
@@ -60,20 +60,22 @@
                         </a>
                         <uv:print/>
                     </div>
-                </legend>
+                </div>
+
+                <div class="tw-mb-8">
+                    <p class="tw-text-sm">
+                        <a href="#filterModal" data-toggle="modal">
+                            <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                        </a>
+                    </p>
+                    <p class="pull-right visible-print">
+                        <spring:message code="filter.validity"/> <uv:date date="${today}"/>
+                    </p>
+                </div>
 
                 <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/sicknote/filter"/>
 
-                <p class="is-inline-block">
-                    <a href="#filterModal" data-toggle="modal">
-                        <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
-                    </a>
-                </p>
-                <p class="pull-right visible-print">
-                    <spring:message code="filter.validity"/> <uv:date date="${today}"/>
-                </p>
-
-                <table class="list-table selectable-table sortable tablesorter">
+                <table class="list-table selectable-table sortable tablesorter tw-text-sm">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
                         <th scope="col" class="hidden-print"></th>

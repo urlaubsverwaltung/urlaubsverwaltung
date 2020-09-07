@@ -35,10 +35,10 @@
 
             <div class="col-xs-12">
 
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
+                <div class="tw-flex tw-py-2 tw-border-b-2 tw-mb-8">
+                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="departments.title"/>
-                    </div>
+                    </h1>
                     <div class="print:tw-hidden">
                         <sec:authorize access="hasAuthority('OFFICE')">
                         <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
@@ -47,7 +47,7 @@
                         </sec:authorize>
                         <uv:print/>
                     </div>
-                </legend>
+                </div>
 
                 <div class="feedback">
                     <c:choose>
@@ -77,7 +77,7 @@
                         <spring:message code="departments.none"/>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table sortable tablesorter">
+                        <table class="list-table sortable tablesorter tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>

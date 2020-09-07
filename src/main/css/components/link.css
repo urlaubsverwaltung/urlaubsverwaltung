@@ -1,0 +1,14 @@
+a {
+  color: #2a6496;
+}
+
+a:hover,
+a:focus {
+  color: #1896db;
+}
+
+@media print {
+  a[href].print\:no-link:after {
+    content: '' !important;
+  }
+}

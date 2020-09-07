@@ -23,7 +23,7 @@
         </div>
     </form>
 
-    <table class="list-table selectable-table sortable tablesorter">
+    <table class="list-table selectable-table sortable tablesorter tw-text-sm">
         <thead class="hidden-xs hidden-sm">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>

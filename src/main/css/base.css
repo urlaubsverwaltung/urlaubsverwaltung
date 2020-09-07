@@ -1,6 +1,6 @@
 body {
-  font-family: Verdana, sans-serif;
-  font-size: 12px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 100%;
   margin: 0;
   color: #444444;
 }
@@ -11,15 +11,45 @@ hr {
 
 footer {
   color: #aaa;
-  font-size: 11px;
+  /*font-size: 11px;*/
   text-align: center;
 }
 
-a {
-  color: #2a6496;
-}
+@layer base {
+  h1 {
+    @apply text-2xl;
+    @apply font-normal;
+    @apply leading-6;
+  }
+  h2 {
+    @apply text-xl;
+    @apply font-normal;
+    @apply leading-6;
+  }
+  h3 {
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
+  }
+  h4 {
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
+  }
+  h5 {
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
+  }
+  h6 {
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
+  }
 
-a:hover,
-a:focus {
-  color: #1896db;
+  label {
+    @apply font-semibold;
+    @apply text-sm;
+    @apply leading-6;
+  }
 }

@@ -8,34 +8,38 @@
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
 <div class="box ${className}">
-    <span class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
-        <uv:icon-presentation-chart-bar className="tw-w-8 tw-h-8" strokeWidth="2" />
-    </span>
-    <span class="box-text">
+    <div class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
+        <uv:icon-presentation-chart-bar className="tw-w-8 tw-h-8" />
+    </div>
+    <div class="box-text tw-text-sm">
         <c:choose>
             <c:when test="${account != null}">
-                <spring:message code="person.account.vacation.left" arguments="${vacationDaysLeft.vacationDays}"/>
                 <c:choose>
                     <c:when test="${beforeApril}">
-                        <spring:message code="person.account.vacation.left.remaining"
-                                        arguments="${vacationDaysLeft.remainingVacationDays}"/>
+                        <c:set var="remainingVacatioDays" value="${vacationDaysLeft.remainingVacationDays}" />
                     </c:when>
                     <c:otherwise>
-                        <spring:message code="person.account.vacation.left.remaining"
-                                        arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}"/>
+                        <c:set var="remainingVacatioDays" value="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
                     </c:otherwise>
                 </c:choose>
-                <c:choose>
-                    <c:when test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
-                        <br/>
-                        <spring:message code="person.account.vacation.left.alreadyUsedNextYear"
-                                           arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" />
-                    </c:when>
-                </c:choose>
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                    <spring:message code="person.account.vacation.left.1" />
+                </span>
+                <span class="tw-block tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                    <spring:message code="person.account.vacation.left.2" arguments="${remainingVacatioDays}" />
+                </span>
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                    <spring:message code="person.account.vacation.left.remaining" arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" />
+                </span>
+                <c:if test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                    <spring:message code="person.account.vacation.left.alreadyUsedNextYear" arguments="${vacationDaysLeft.vacationDaysUsedNextYear}" />
+                </span>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <spring:message code='person.account.vacation.noInformation'/>
             </c:otherwise>
         </c:choose>
-    </span>
+    </div>
 </div>

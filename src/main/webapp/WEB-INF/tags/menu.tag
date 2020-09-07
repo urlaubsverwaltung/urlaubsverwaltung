@@ -22,7 +22,7 @@
       <ul class="nav navbar-nav">
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="${URL_PREFIX}/overview">
+            <a href="${URL_PREFIX}/overview" class="tw-flex tw-items-center">
               <img
                 src="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"
                 alt=""

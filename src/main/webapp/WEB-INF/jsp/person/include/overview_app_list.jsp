@@ -5,7 +5,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<table class="list-table selectable-table">
+<table class="list-table selectable-table tw-text-sm">
     <tbody>
     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
         <c:choose>
@@ -23,41 +23,30 @@
                 </span>
             </td>
             <td class="is-centered state ${app.status} hidden-print">
-                <span>
-                     <c:choose>
-                         <c:when test="${app.status == 'WAITING'}">
-                             <uv:icon-question-mark-circle className="tw-w-6 tw-h-6" />
-                         </c:when>
-                         <c:when test="${app.status == 'ALLOWED'}">
-                             <uv:icon-check-circle className="tw-w-6 tw-h-6" />
-                         </c:when>
-                         <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
-                             <uv:icon-check-circle className="tw-w-6 tw-h-6" />
-                         </c:when>
-                         <c:when test="${app.status == 'REJECTED'}">
-                             <uv:icon-ban className="tw-w-6 tw-h-6" />
-                         </c:when>
-                         <c:when test="${app.status == 'CANCELLED'}">
-                             <uv:icon-trash className="tw-w-6 tw-h-6" />
-                         </c:when>
-                         <c:otherwise>
-                             &nbsp;
-                         </c:otherwise>
-                     </c:choose>
-                </span>
+                <c:choose>
+                    <c:when test="${app.status == 'WAITING'}">
+                        <uv:icon-question-mark-circle className="tw-w-6 tw-h-6" />
+                    </c:when>
+                    <c:when test="${app.status == 'ALLOWED'}">
+                        <uv:icon-check-circle className="tw-w-6 tw-h-6" />
+                    </c:when>
+                    <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
+                        <uv:icon-check-circle className="tw-w-6 tw-h-6" />
+                    </c:when>
+                    <c:when test="${app.status == 'REJECTED'}">
+                        <uv:icon-ban className="tw-w-6 tw-h-6" />
+                    </c:when>
+                    <c:when test="${app.status == 'CANCELLED'}">
+                        <uv:icon-trash className="tw-w-6 tw-h-6" />
+                    </c:when>
+                    <c:otherwise>&nbsp;</c:otherwise>
+                </c:choose>
             </td>
-            <td>
-                <h4 class="visible-print">
+            <td class="tw-py-6">
+                <a href="${URL_PREFIX}/application/${app.id}" class="tw-block tw-mb-1 tw-text-lg print:no-link ${app.vacationType.category}">
                     <spring:message code="${app.vacationType.messageKey}"/>
-                </h4>
-                <a class="hidden-print vacation ${app.vacationType.category}"
-                   href="${URL_PREFIX}/application/${app.id}">
-                    <h4>
-                        <spring:message code="${app.vacationType.messageKey}"/>
-                    </h4>
                 </a>
-
-                <p>
+                <div>
                     <c:choose>
                         <c:when test="${app.startDate == app.endDate}">
                             <spring:message code="${app.weekDayOfStartDate}.short"/>,
@@ -85,7 +74,7 @@
                             <spring:message code="${app.weekDayOfEndDate}.short"/>, <uv:date date="${app.endDate}"/>
                         </c:otherwise>
                     </c:choose>
-                </p>
+                </div>
             </td>
             <td class="is-centered hidden-xs">
             <span>

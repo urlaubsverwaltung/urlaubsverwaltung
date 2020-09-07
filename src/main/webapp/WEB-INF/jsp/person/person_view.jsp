@@ -33,14 +33,13 @@
     <h4><spring:message code="print.info.landscape"/></h4>
 </div>
 
+<h1 class="tw-sr-only"><spring:message code="nav.person.title"/></h1>
+
 <div class="content print--only-landscape">
     <div class="container">
-
         <div class="row">
-
             <div class="col-xs-12">
-
-                <legend class="tw-flex">
+                <div class="tw-flex tw-border-b-2 tw-y-2 tw-mb-8 tw-text-2xl">
                     <div class="tw-flex-1">
                         <div class="legend-dropdown dropdown">
                             <a id="active-state" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
@@ -95,20 +94,15 @@
                     <div>
                         <uv:print/>
                     </div>
-                </legend>
-
+                </div>
                 <c:choose>
-
                     <c:when test="${empty persons}">
-                        <spring:message code="persons.none"/>
+                        <p><spring:message code="persons.none"/></p>
                     </c:when>
-
                     <c:otherwise>
                         <%@include file="include/person_list.jsp" %>
                     </c:otherwise>
-
                 </c:choose>
-
             </div>
         </div>
     </div>

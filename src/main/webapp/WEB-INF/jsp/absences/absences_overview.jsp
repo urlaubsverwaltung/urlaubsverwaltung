@@ -52,16 +52,16 @@
 
         <c:if test="${IS_ALLOWED}">
 
-            <div class="row print:tw-mb-4">
+            <div class="row tw-mb-8 print:tw-mb-4">
                 <div class="col-xs-12">
-                    <legend id="absence" class="tw-flex">
-                        <div class="tw-flex-1">
+                    <div id="absence" class="tw-flex tw-items-end tw-border-b-2 tw-py-2">
+                        <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                             <spring:message code="absences.overview.title"/>
-                        </div>
+                        </h1>
                         <div>
                             <uv:print/>
                         </div>
-                    </legend>
+                    </div>
                 </div>
             </div>
 
@@ -141,26 +141,24 @@
                     <hr class="print:tw-hidden"/>
 
                     <c:forEach items="${absenceOverview.months}" var="month">
-                        <div class="print:tw-no-break-inside"
-                             style="page-break-inside: avoid;">
-                            <p id="absence-table-${month.nameOfMonth}"
-                               class="tw-text-xl tw-mb-4 print:tw-mb-1 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}">
+                        <div class="tw-mb-10 print:tw-no-break-inside">
+                            <h2 id="absence-table-${month.nameOfMonth}"
+                               class="tw-text-2xl tw-m-0 tw-mb-5 print:tw-mb-1 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}">
                                 <c:out value="${month.nameOfMonth}"/>
                                 <span class="hidden print:tw-inline"> <c:out value="${selectedYear}"/></span>
-                            </p>
-                            <table class="sortable vacationOverview-table tw-mb-8" role="grid"
-                                   aria-describedby="absence-table-${month.nameOfMonth}">
+                            </h2>
+                            <table class="sortable vacationOverview-table tw-text-sm" role="grid" aria-describedby="absence-table-${month.nameOfMonth}">
                                 <thead>
-                                <tr>
-                                    <th scope="col" class="sortable-field">&nbsp;</th>
-                                    <th scope="col" class="sortable-field">&nbsp;</th>
-                                    <c:forEach items="${month.days}" var="day">
-                                        <th scope="col"
-                                            class="non-sortable text-gray-700 ${day.weekend ? 'vacationOverview-day-weekend' : ''}">
-                                            <c:out value="${day.dayOfMonth}"/>
-                                        </th>
-                                    </c:forEach>
-                                </tr>
+                                    <tr>
+                                        <th scope="col" class="sortable-field">&nbsp;</th>
+                                        <th scope="col" class="sortable-field">&nbsp;</th>
+                                        <c:forEach items="${month.days}" var="day">
+                                            <th scope="col"
+                                                class="non-sortable text-gray-700 ${day.weekend ? 'vacationOverview-day-weekend' : ''}">
+                                                <c:out value="${day.dayOfMonth}"/>
+                                            </th>
+                                        </c:forEach>
+                                    </tr>
                                 </thead>
                                 <tbody class="vacationOverview-tbody">
                                 <c:forEach var="person" items="${month.persons}">
@@ -220,7 +218,7 @@
 
             <div id="vacationOverviewLegend" class="row tw-mb-8 print:tw-no-break-inside">
                 <div class="col-md-10">
-                    <table aria-hidden="true" class="vacationOverview-table-legend print:tw-font-mono">
+                    <table aria-hidden="true" class="vacationOverview-table-legend tw-text-sm print:tw-font-mono">
                         <caption>
                             <spring:message code="absences.overview.legendTitle"/>
                         </caption>

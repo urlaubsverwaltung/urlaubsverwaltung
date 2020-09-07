@@ -27,15 +27,17 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="sicknotes.statistics.title"/>
+                <div class="tw-flex tw-py-2 tw-border-b-2 tw-mb-8">
+                    <div class="tw-flex-1 tw-text-2xl tw-font-normal tw-flex">
+                        <h1 class="tw-text-2xl tw-font-normal tw-m-0">
+                            <spring:message code="sicknotes.statistics.title"/>
+                        </h1>
                         <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
                     </div>
                     <div>
                         <uv:print/>
                     </div>
-                </legend>
+                </div>
             </div>
 
         </div>
@@ -44,13 +46,13 @@
 
             <div class="col-xs-12">
 
-                <table class="list-table">
+                <table class="list-table tw-text-sm">
 
                     <thead>
-                    <tr>
-                        <th scope="col" colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
-                            date="${statistics.created}"/></th>
-                    </tr>
+                        <tr>
+                            <th scope="col" colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
+                                date="${statistics.created}"/></th>
+                        </tr>
                     </thead>
 
                     <tbody>

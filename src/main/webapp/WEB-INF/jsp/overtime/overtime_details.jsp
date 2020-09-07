@@ -35,18 +35,18 @@
                 </div>
             </div>
             <div class="col-xs-12 col-md-6">
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
+                <div class="tw-flex tw-items-end tw-border-b-2 tw-py-2 tw-mb-8">
+                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="overtime.title"/>
-                    </div>
+                    </h1>
                     <c:if test="${record.person.id == signedInUser.id || IS_OFFICE}">
                     <div class="print:tw-hidden">
-                        <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="icon-link tw-p-1 tw-text-gray-700" data-title="<spring:message code="action.edit"/>">
+                        <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
                             <uv:icon-pencil className="tw-w-5 tw-h-5" />
                         </a>
                     </div>
                     </c:if>
-                </legend>
+                </div>
                 <div class="box tw-flex">
                     <span class="tw-bg-green-500 tw-text-white tw-mr-6 tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
                         <uv:icon-briefcase className="tw-w-8 tw-h-8" />
@@ -64,9 +64,11 @@
                                         argumentSeparator=";"/>
                     </span>
                 </div>
-                <legend>
-                    <spring:message code="overtime.progress.title"/>
-                </legend>
+                <div class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2 tw-flex">
+                    <h2 class="tw-text-2xl tw-font-normal tw-m-0">
+                        <spring:message code="overtime.progress.title"/>
+                    </h2>
+                </div>
                 <table class="list-table striped-table bordered-table">
                     <tbody>
                     <c:forEach items="${comments}" var="comment">
@@ -99,12 +101,14 @@
                 </table>
             </div>
             <div class="col-xs-12 col-md-6">
-                <legend class="hidden-print">
-                    <spring:message code="overtime.data.person"/>
-                </legend>
-                <uv:person person="${record.person}" cssClass="hidden-print"/>
-                <uv:overtime-total hours="${overtimeTotal}"/>
-                <uv:overtime-left hours="${overtimeLeft}"/>
+                <div class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2 tw-flex">
+                    <h2 class="tw-text-2xl tw-font-normal tw-m-0">
+                        <spring:message code="overtime.data.person"/>
+                    </h2>
+                </div>
+                <uv:person person="${record.person}" cssClass="hidden-print tw-h-32"/>
+                <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32" />
+                <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32" />
             </div>
         </div>
         <%-- End of row --%>

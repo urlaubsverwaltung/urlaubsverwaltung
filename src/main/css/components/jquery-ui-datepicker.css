@@ -1,0 +1,10 @@
+.ui-widget {
+  @apply font-sans !important;
+  @apply text-base !important;
+  @apply text-sm !important;
+}
+
+.ui-datepicker .ui-datepicker-header {
+  @apply py-1 !important;
+  @apply px-0 !important;
+}
