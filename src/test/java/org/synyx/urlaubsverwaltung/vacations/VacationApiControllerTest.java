@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overview.calendar;
+package org.synyx.urlaubsverwaltung.vacations;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.vacations.VacationApiController;
 
 import java.time.LocalDate;
 import java.util.List;

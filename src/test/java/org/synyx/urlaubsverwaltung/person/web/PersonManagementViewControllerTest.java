@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -136,7 +137,7 @@ class PersonManagementViewControllerTest {
 
         perform(post("/web/person/" + PERSON_ID + "/edit"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/person/" + PERSON_ID));
+            .andExpect(redirectedUrl("/web/person/" + PERSON_ID));
     }
 
     private static Person personWithId(int personId) {

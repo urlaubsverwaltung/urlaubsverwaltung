@@ -1,10 +1,10 @@
-package org.synyx.urlaubsverwaltung.overview.calendar;
+package org.synyx.urlaubsverwaltung.vacations;
 
 import java.util.List;
 
 class VacationsDto {
 
-    private List<VacationDto> vacations;
+    private final List<VacationDto> vacations;
 
     VacationsDto(List<VacationDto> vacations) {
         this.vacations = vacations;
@@ -14,7 +14,4 @@ class VacationsDto {
         return vacations;
     }
 
-    public void setVacations(List<VacationDto> vacations) {
-        this.vacations = vacations;
-    }
 }

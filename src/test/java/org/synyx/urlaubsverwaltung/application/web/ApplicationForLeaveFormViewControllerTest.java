@@ -45,6 +45,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -256,7 +257,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("vacationType.category", "HOLIDAY"))
             .andExpect(flash().attribute("applySuccess", true))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + applicationId));
+            .andExpect(redirectedUrl("/web/application/" + applicationId));
     }
 
     private Person somePerson() {

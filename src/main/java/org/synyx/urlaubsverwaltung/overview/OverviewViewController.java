@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toList;
  * overtime, applications for leave and sick notes.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("/")
 public class OverviewViewController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
@@ -76,7 +76,13 @@ public class OverviewViewController {
         this.departmentService = departmentService;
     }
 
-    @GetMapping("/overview")
+    @GetMapping
+    public String index() {
+
+        return "redirect:/web/overview";
+    }
+
+    @GetMapping("/web/overview")
     public String showOverview(@RequestParam(value = "year", required = false) String year) {
 
         Person user = personService.getSignedInUser();
@@ -88,7 +94,7 @@ public class OverviewViewController {
         return "redirect:/web/person/" + user.getId() + "/overview";
     }
 
-    @GetMapping("/person/{personId}/overview")
+    @GetMapping("/web/person/{personId}/overview")
     public String showOverview(@PathVariable("personId") Integer personId,
                                @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
@@ -104,7 +110,7 @@ public class OverviewViewController {
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        Integer yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
+        int yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);

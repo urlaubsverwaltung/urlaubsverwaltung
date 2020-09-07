@@ -43,6 +43,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -249,7 +250,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(post("/web/application/" + APPLICATION_ID + "/allow"))
             .andExpect(flash().attribute(ERRORS_ATTRIBUTE, instanceOf(Errors.class)))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID + "?action=allow"));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID + "?action=allow"));
     }
 
     @Test
@@ -298,7 +299,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(post("/web/application/" + APPLICATION_ID + "/allow")
             .param("redirect", "/some/url"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/some/url"));
+            .andExpect(redirectedUrl("/some/url"));
     }
 
     @Test
@@ -310,7 +311,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/allow"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
     }
 
     @Test
@@ -362,7 +363,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
         verify(applicationInteractionService).refer(eq(application), eq(recipientPerson), eq(signedInPerson));
     }
@@ -382,7 +383,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
         verify(applicationInteractionService).refer(eq(application), eq(recipientPerson), eq(signedInPerson));
     }
@@ -470,7 +471,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID + "?action=reject"));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID + "?action=reject"));
 
         verify(applicationInteractionService, never()).reject(any(), any(), any());
     }
@@ -498,7 +499,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(post("/web/application/" + APPLICATION_ID + "/reject")
             .param("redirect", "/some/url"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/some/url"));
+            .andExpect(redirectedUrl("/some/url"));
     }
 
     @Test
@@ -509,7 +510,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
     }
 
     @Test
@@ -623,7 +624,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID + "?action=cancel"));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID + "?action=cancel"));
 
         verify(applicationInteractionService, never()).cancel(any(), any(), any());
     }
@@ -637,7 +638,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
     }
 
     @Test
@@ -686,7 +687,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/remind"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
     }
 
     private static Person somePerson() {
