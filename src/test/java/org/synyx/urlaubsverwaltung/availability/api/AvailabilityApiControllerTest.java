@@ -80,14 +80,6 @@ class AvailabilityApiControllerTest {
     }
 
     @Test
-    void ensureRequestsAreOnlyAllowedForADateRangeOfMaxOneMonth() throws Exception {
-        perform(get("/api/persons/" + PERSON_ID + "/availabilities")
-            .param("from", "2016-01-01")
-            .param("to", "2016-02-01"))
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void ensureBadRequestForMissingPersonParameter() throws Exception {
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("to", "2016-12-31")
