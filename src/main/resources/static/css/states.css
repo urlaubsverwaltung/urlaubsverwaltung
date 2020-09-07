@@ -3,11 +3,11 @@
 **************************************************************************/
 
 .fa.positive {
-    color: #43C83C !important;
+  color: #43c83c !important;
 }
 
 .fa.negative {
-    color: #E94B3B !important;
+  color: #e94b3b !important;
 }
 
 /**************************************************************************
@@ -15,14 +15,14 @@
 **************************************************************************/
 
 .HOLIDAY {
-    /* OK */
+  /* OK */
 }
 
 .SPECIALLEAVE,
 .UNPAIDLEAVE,
 .OVERTIME,
 .OTHER {
-    color: #DF771B;
+  color: #df771b;
 }
 
 /**************************************************************************
@@ -30,8 +30,8 @@
 **************************************************************************/
 
 .state {
-    font-size: 25px;
-    color: #6F6F6F;
+  font-size: 25px;
+  color: #6f6f6f;
 }
 
 .state.pull-right {
@@ -39,21 +39,21 @@
 }
 
 .state.WAITING {
-    color: #6F6F6F !important;
+  color: #6f6f6f !important;
 }
 
 .state.ALLOWED {
-    color: #43C83C !important;
+  color: #43c83c !important;
 }
 
 .state.TEMPORARY_ALLOWED {
-    color: #6F6F6F !important;
+  color: #6f6f6f !important;
 }
 
 .state.REJECTED {
-    color: #FA3031 !important;
+  color: #fa3031 !important;
 }
 
 .state.CANCELLED {
-    color: #3B3B3B !important;
+  color: #3b3b3b !important;
 }

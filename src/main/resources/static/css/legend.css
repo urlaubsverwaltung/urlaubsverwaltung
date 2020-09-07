@@ -5,8 +5,8 @@
 **************************************************************************/
 
 legend {
-    border-color: #D5D5D5;
-    margin-bottom: 21px;
+  border-color: #d5d5d5;
+  margin-bottom: 21px;
 }
 
 .legend-dropdown {
@@ -14,35 +14,35 @@ legend {
 }
 
 .legend-dropdown > a {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .legend-dropdown .caret {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
 legend,
 .legend-dropdown > a {
-    font-family: Verdana,sans-serif;
-    font-size: 26px;
-    color: #444444;
+  font-family: Verdana, sans-serif;
+  font-size: 26px;
+  color: #444444;
 }
 
 .legend-dropdown > ul {
-    font-family: Verdana,sans-serif;
+  font-family: Verdana, sans-serif;
 }
 
 legend {
-    line-height: 42px;
+  line-height: 42px;
 }
 
 /* STYLING FOR XS SCREENS */
 @media (max-width: 767px) {
-    legend,
-    .legend-dropdown > a {
-        font-size: 25px;
-    }
-    h4 {
-        font-size: 16px;
-    }
+  legend,
+  .legend-dropdown > a {
+    font-size: 25px;
+  }
+  h4 {
+    font-size: 16px;
+  }
 }

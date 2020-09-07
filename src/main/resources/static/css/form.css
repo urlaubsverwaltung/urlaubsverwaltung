@@ -15,15 +15,15 @@
 **************************************************************************/
 
 .form-horizontal .control-label {
-    text-align: left;
+  text-align: left;
 }
 
 .form-horizontal .halves {
-    width: 45%
+  width: 45%;
 }
 
 .form-horizontal .thirds {
-    width: 30%;
+  width: 30%;
 }
 
 /**************************************************************************
@@ -32,18 +32,17 @@
 
 **************************************************************************/
 
-
 .error {
-    color:#B94A48;
+  color: #b94a48;
 }
 
 input.error,
 textarea.error {
-    border-color: #B94A48;
+  border-color: #b94a48;
 }
 
 .info {
-    color: #3A87AD;
+  color: #3a87ad;
 }
 
 /**************************************************************************
@@ -53,8 +52,8 @@ textarea.error {
 **************************************************************************/
 
 .action-form {
-    /* will be displayed when needed by javascript */
-    display: none;
+  /* will be displayed when needed by javascript */
+  display: none;
 }
 
 /**************************************************************************
@@ -82,7 +81,7 @@ textarea.error {
 **************************************************************************/
 
 .department--members {
-  border: 1px solid #DDD;
+  border: 1px solid #ddd;
   border-radius: 4px;
   overflow: auto;
   max-height: 400px;
@@ -90,13 +89,13 @@ textarea.error {
 }
 
 .department--member {
-  border-bottom: 1px solid #DDD;
+  border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
 }
 
 .department--member.is-assigned {
-  background-color: #E8EFD1;
+  background-color: #e8efd1;
 }
 
 .department--member:last-child {

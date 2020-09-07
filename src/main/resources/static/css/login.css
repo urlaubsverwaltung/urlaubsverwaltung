@@ -13,9 +13,8 @@
 }
 
 @media (min-width: 768px) {
-
   body {
-    background-color: #FAFAFA;
+    background-color: #fafafa;
   }
 
   .login--form {
@@ -25,5 +24,4 @@
     background-color: #fff;
     border: 1px solid #e5e5e5;
   }
-
 }

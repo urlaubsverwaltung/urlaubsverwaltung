@@ -5,27 +5,27 @@
 **************************************************************************/
 
 .btn {
-    margin-right: 6px;
-    margin-bottom: 6px;
-    border-radius: 0;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  border-radius: 0;
 }
 
 .btn-default {
-    background-color: #F8F8F8;
+  background-color: #f8f8f8;
 }
 
 *[class*="col-"].btn.pull-right {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 *[class*="col-"].btn.pull-left {
-    margin-left: 0;
+  margin-left: 0;
 }
 
 /* STYLING FOR SM SCREENS */
 @media (max-width: 991px) {
-    .btn.pull-right,
-    .btn.pull-left {
-      float: none;
-    }
+  .btn.pull-right,
+  .btn.pull-left {
+    float: none;
+  }
 }

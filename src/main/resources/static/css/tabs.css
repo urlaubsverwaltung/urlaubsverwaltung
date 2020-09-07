@@ -5,13 +5,13 @@
 **************************************************************************/
 
 .tab-content .tab-pane {
-    padding-top: 24px;
+  padding-top: 24px;
 }
 
 .nav-tabs > li.error > a {
-    color: #B94A48;
+  color: #b94a48;
 }
 
 .nav-tabs > li.error > a:after {
-    content: " *";
+  content: " *";
 }

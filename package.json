@@ -16,7 +16,9 @@
     "css": "NODE_ENV=production postcss src/main/css/style.css -o target/classes/static/css/style.css",
     "css:dev": "NODE_ENV=development postcss src/main/css/style.css -o target/classes/static/css/style.css",
     "css:watch": "onchange -i src/main/css -- npm run css:dev",
-    "format": "prettier --write src/main/javascript"
+    "format": "concurrently 'npm:format:*'",
+    "format:js": "prettier --write src/main/javascript",
+    "format:css": "prettier --write src/main/css src/main/resources/static/css"
   },
   "repository": {
     "type": "git",
