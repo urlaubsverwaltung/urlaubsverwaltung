@@ -70,6 +70,7 @@
                         <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
                             <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
                         </a>
+                        <uv:print />
                     </div>
                 </legend>
 
