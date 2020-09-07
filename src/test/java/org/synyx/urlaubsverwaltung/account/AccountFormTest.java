@@ -1,8 +1,7 @@
-package org.synyx.urlaubsverwaltung.account.web;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

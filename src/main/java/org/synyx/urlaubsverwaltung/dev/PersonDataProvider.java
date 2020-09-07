@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;

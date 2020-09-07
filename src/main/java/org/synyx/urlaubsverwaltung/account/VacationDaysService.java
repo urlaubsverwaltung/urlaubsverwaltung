@@ -1,9 +1,7 @@
-package org.synyx.urlaubsverwaltung.account.service;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
@@ -47,7 +45,7 @@ public class VacationDaysService {
      * relevant for calculation and if it's after April, only the not expiring remaining vacation days are relevant for
      * calculation.</p>
      *
-     * @param account {@link org.synyx.urlaubsverwaltung.account.domain.Account}
+     * @param account {@link Account}
      * @return total number of left vacation days
      */
     public BigDecimal calculateTotalLeftVacationDays(Account account) {

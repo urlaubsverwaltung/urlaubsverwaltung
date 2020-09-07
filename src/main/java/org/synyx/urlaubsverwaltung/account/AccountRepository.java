@@ -1,13 +1,12 @@
-package org.synyx.urlaubsverwaltung.account.dao;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 
 /**
- * Repository for {@link org.synyx.urlaubsverwaltung.account.domain.Account} entities.
+ * Repository for {@link Account} entities.
  */
 public interface AccountRepository extends CrudRepository<Account, Integer> {
 

@@ -3,13 +3,13 @@ package org.synyx.urlaubsverwaltung.application.domain;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 
 import java.math.BigDecimal;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft}.
+ * Unit test for {@link VacationDaysLeft}.
  */
 class VacationDaysLeftTest {
 
