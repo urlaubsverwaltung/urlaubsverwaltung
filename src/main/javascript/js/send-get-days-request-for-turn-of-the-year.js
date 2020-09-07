@@ -1,11 +1,17 @@
 // disabling date-fns#format is ok since we're formatting dates for api requests
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
-import { isAfter, getYear, format, endOfYear, startOfYear } from 'date-fns'
-import formatNumber from './format-number';
-import { getJSON } from "../js/fetch"
+import { isAfter, getYear, format, endOfYear, startOfYear } from "date-fns";
+import formatNumber from "./format-number";
+import { getJSON } from "../js/fetch";
 
-export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, elementSelector) {
-
+export default async function sendGetDaysRequestForTurnOfTheYear(
+  urlPrefix,
+  startDate,
+  toDate,
+  dayLength,
+  personId,
+  elementSelector,
+) {
   const element = document.querySelector(elementSelector);
   element.innerHTML = "";
 
@@ -33,7 +39,7 @@ export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, star
 
   const [workDaysBefore, workDaysAfter] = await Promise.all([
     getWorkdaysForDateRange(urlPrefix, dayLength, personId, before, endOfYear(before)),
-    getWorkdaysForDateRange(urlPrefix, dayLength, personId, startOfYear(after), after)
+    getWorkdaysForDateRange(urlPrefix, dayLength, personId, startOfYear(after), after),
   ]);
 
   const daysBefore = formatNumber(workDaysBefore);
@@ -45,7 +51,8 @@ export default async function sendGetDaysRequestForTurnOfTheYear(urlPrefix, star
 async function getWorkdaysForDateRange(urlPrefix, dayLength, personId, fromDate, toDate) {
   const startDate = format(fromDate, "yyyy-MM-dd");
   const endDate = format(toDate, "yyyy-MM-dd");
-  const url = urlPrefix + "/persons/" + personId + "/workdays?from=" + startDate + "&to=" + endDate + "&length=" + dayLength;
+  const url =
+    urlPrefix + "/persons/" + personId + "/workdays?from=" + startDate + "&to=" + endDate + "&length=" + dayLength;
 
   const json = await getJSON(url);
 

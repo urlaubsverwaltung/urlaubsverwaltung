@@ -1,1 +1,1 @@
-import '../js/absences-overview'
+import "../js/absences-overview";

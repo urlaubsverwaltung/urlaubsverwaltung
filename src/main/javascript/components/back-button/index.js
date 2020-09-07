@@ -1,6 +1,6 @@
-const backButton = document.querySelector('.btn.back');
+const backButton = document.querySelector(".btn.back");
 if (backButton) {
-  backButton.addEventListener('click', () => {
+  backButton.addEventListener("click", () => {
     parent.history.back();
   });
 }

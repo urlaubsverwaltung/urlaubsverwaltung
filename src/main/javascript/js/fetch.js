@@ -4,8 +4,8 @@ import { defaults } from "underscore";
 export async function getJSON(url) {
   const response = await doGet(url, {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) {
     throw new FetchError(response);
@@ -14,9 +14,12 @@ export async function getJSON(url) {
 }
 
 function doGet(url, options) {
-  return fetch(url, defaults(options, {
-    method: "GET",
-  }));
+  return fetch(
+    url,
+    defaults(options, {
+      method: "GET",
+    }),
+  );
 }
 
 class FetchError extends Error {

@@ -1,5 +1,5 @@
-import dateFnsFormat from 'date-fns/format'
-import resolveDateFnsLocale from './locale-resolver'
+import dateFnsFormat from "date-fns/format";
+import resolveDateFnsLocale from "./locale-resolver";
 
 export default function format(date, formatString, options = {}) {
   options.locale = resolveDateFnsLocale();

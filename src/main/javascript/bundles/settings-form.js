@@ -1,2 +1,2 @@
-import '../components/tabs'
-import '../js/settings/settings-form'
+import "../components/tabs";
+import "../js/settings/settings-form";

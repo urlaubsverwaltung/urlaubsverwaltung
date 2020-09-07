@@ -1,1 +1,1 @@
-import '../js/application/app-statistics'
+import "../js/application/app-statistics";

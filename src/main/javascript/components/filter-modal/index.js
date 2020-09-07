@@ -1,24 +1,22 @@
-import $ from 'jquery';
+import $ from "jquery";
 import datepicker from "jquery-ui/ui/widgets/datepicker";
 
 $(document).ready(async function () {
-
   const locale = window.navigator.language;
-  if (locale === 'de') {
-    const { default: de } = await import('jquery-ui/ui/i18n/datepicker-de');
+  if (locale === "de") {
+    const { default: de } = await import("jquery-ui/ui/i18n/datepicker-de");
     datepicker.setDefaults({
       ...de,
-      weekHeader: 'Wo'
+      weekHeader: "Wo",
     });
-  }
-  else {
-    const { default: en } = await import('jquery-ui/ui/i18n/datepicker-en-GB');
+  } else {
+    const { default: en } = await import("jquery-ui/ui/i18n/datepicker-en-GB");
     datepicker.setDefaults({
       ...en,
-      dateFormat: 'dd.mm.yy'
+      dateFormat: "dd.mm.yy",
     });
   }
 
-  $('#startDate').datepicker();
-  $('#endDate').datepicker();
+  $("#startDate").datepicker();
+  $("#endDate").datepicker();
 });

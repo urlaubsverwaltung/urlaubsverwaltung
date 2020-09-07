@@ -1,1 +1,1 @@
-import '../js/navigate'
+import "../js/navigate";

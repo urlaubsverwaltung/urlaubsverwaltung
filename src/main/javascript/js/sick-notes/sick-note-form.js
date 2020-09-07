@@ -1,8 +1,7 @@
-import $ from 'jquery';
-import { createDatepickerInstances } from '../../components/datepicker';
+import $ from "jquery";
+import { createDatepickerInstances } from "../../components/datepicker";
 
 $(document).ready(async function () {
-
   var person = window.uv.params.person;
   $("#employee").val(person);
 
@@ -35,5 +34,4 @@ $(document).ready(async function () {
 
   await createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
   await createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
-
 });

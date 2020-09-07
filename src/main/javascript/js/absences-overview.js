@@ -1,22 +1,20 @@
-import $ from 'jquery'
-import 'tablesorter'
-import './absences-overview.css'
+import $ from "jquery";
+import "tablesorter";
+import "./absences-overview.css";
 
 $(function () {
-
   $("table.sortable").tablesorter({
     sortList: [[0, 0]],
     headers: {
-      '.non-sortable': {
-        sorter: false
-      }
-    }
+      ".non-sortable": {
+        sorter: false,
+      },
+    },
   });
 
-  const form = document.querySelector('#absenceOverviewForm');
+  const form = document.querySelector("#absenceOverviewForm");
 
-  form.addEventListener('change', () => {
+  form.addEventListener("change", () => {
     form.submit();
   });
-
 });

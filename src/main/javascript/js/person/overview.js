@@ -1,17 +1,15 @@
-import $ from 'jquery';
-import { getYear, setYear, startOfYear, subMonths, addMonths } from 'date-fns';
+import $ from "jquery";
+import { getYear, setYear, startOfYear, subMonths, addMonths } from "date-fns";
 
-import getUrlParameter from '../get-url-parameter';
-import '../../components/calendar';
+import getUrlParameter from "../get-url-parameter";
+import "../../components/calendar";
 
 $(document).ready(function () {
-
   var personId = window.uv.personId;
   var webPrefix = window.uv.webPrefix;
   var apiPrefix = window.uv.apiPrefix;
 
   function initCalendar() {
-
     var year = getUrlParameter("year");
     var date = new Date();
 
@@ -35,7 +33,7 @@ $(document).ready(function () {
 
       holidayService.fetchPublic(yearOfEndDate),
       holidayService.fetchPersonal(yearOfEndDate),
-      holidayService.fetchSickDays(yearOfEndDate)
+      holidayService.fetchSickDays(yearOfEndDate),
     ).always(function () {
       Urlaubsverwaltung.Calendar.init(holidayService, date);
     });
@@ -45,8 +43,7 @@ $(document).ready(function () {
 
   var resizeTimer;
 
-  $(window).on('resize', function () {
-
+  $(window).on("resize", function () {
     if (resizeTimer) {
       clearTimeout(resizeTimer);
     }
@@ -54,8 +51,6 @@ $(document).ready(function () {
     resizeTimer = setTimeout(function () {
       Urlaubsverwaltung.Calendar.reRender();
       resizeTimer = false;
-    }, 30)
-
+    }, 30);
   });
-
 });

@@ -6,21 +6,21 @@
 
 /* HEADER */
 .ui-datepicker-header {
-  background-color: #7B7B7B !important;
-  border-color: #7B7B7B !important;
-  color: #FAFAFA;
+  background-color: #7b7b7b !important;
+  border-color: #7b7b7b !important;
+  color: #fafafa;
   font-weight: normal;
 }
 
 /* CONTENT */
 .ui-widget-content {
-  background: #E5E5E5;
+  background: #e5e5e5;
 }
 
 .ui-datepicker-header .ui-state-hover,
 .ui-datepicker-header .ui-state-focus {
   background: none;
-  background-color: #FAFAFA !important;
+  background-color: #fafafa !important;
   border: none !important;
 }
 
@@ -53,7 +53,7 @@
 
 /* TODAY */
 .ui-datepicker-calendar td.ui-datepicker-today a.ui-state-highlight {
-  --background-color-left: #CFCFCF;
-  --background-color-right: #CFCFCF;
-  --font-color: #5F5F5F;
+  --background-color-left: #cfcfcf;
+  --background-color-right: #cfcfcf;
+  --font-color: #5f5f5f;
 }

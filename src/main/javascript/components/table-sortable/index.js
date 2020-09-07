@@ -1,10 +1,9 @@
-import $ from 'jquery';
-import 'tablesorter';
+import $ from "jquery";
+import "tablesorter";
 
 $(document).ready(function () {
-
   $.tablesorter.addParser({
-    id: 'germanDate',
+    id: "germanDate",
     is: function () {
       return false;
     },
@@ -18,37 +17,34 @@ $(document).ready(function () {
         return -1;
       }
 
-      var a = d.split('.');
+      var a = d.split(".");
       a[1] = a[1].replace(/^0+/g, "");
       return new Date(a.reverse().join("/")).getTime();
     },
-    type: 'numeric'
+    type: "numeric",
   });
 
   $.tablesorter.addParser({
-    id: 'commaNumber',
+    id: "commaNumber",
     is: function () {
       return false;
     },
     format: function (s) {
-
-      var reg = new RegExp('\\d+');
+      var reg = new RegExp("\\d+");
 
       if (reg.test(s)) {
-        s = s.replace(/[,.]/g, '.');
+        s = s.replace(/[,.]/g, ".");
 
         // possible that string is sth like that: 30 + 2
         return eval(s);
       } else {
         return -1;
       }
-
     },
-    type: 'numeric'
+    type: "numeric",
   });
 
   $("table.sortable").tablesorter({
-    sortList: [[1, 0]]
+    sortList: [[1, 0]],
   });
-
 });

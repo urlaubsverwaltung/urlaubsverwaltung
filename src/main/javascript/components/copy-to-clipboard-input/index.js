@@ -1,1 +1,1 @@
-import './copy-to-clipboard-input';
+import "./copy-to-clipboard-input";

@@ -1,9 +1,8 @@
-import $ from 'jquery'
-import 'chosen-js';
-import 'chosen-js/chosen.css';
+import $ from "jquery";
+import "chosen-js";
+import "chosen-js/chosen.css";
 
-(function() {
-
+(function () {
   /**
    * updates config section 'calendar sync'
    * shows dependent on Kalenderanbindung
@@ -11,26 +10,26 @@ import 'chosen-js/chosen.css';
    *   * Anbindung an Microsoft Exchange Kalender
    */
   function updateVisibilityCalendar() {
-    const calenderSettingsProvider = document.querySelector('#calendarSettingsProvider');
-    const value = calenderSettingsProvider ? calenderSettingsProvider.value : '';
+    const calenderSettingsProvider = document.querySelector("#calendarSettingsProvider");
+    const value = calenderSettingsProvider ? calenderSettingsProvider.value : "";
 
-    const googleCalendar = document.querySelector('#google-calendar');
+    const googleCalendar = document.querySelector("#google-calendar");
     if (googleCalendar) {
-      googleCalendar.hidden = value !== 'GoogleCalendarSyncProvider';
+      googleCalendar.hidden = value !== "GoogleCalendarSyncProvider";
     }
 
-    const exchangeCalendar = document.querySelector('#exchange-calendar');
+    const exchangeCalendar = document.querySelector("#exchange-calendar");
     if (exchangeCalendar) {
-      exchangeCalendar.hidden = value !== 'ExchangeCalendarProvider';
+      exchangeCalendar.hidden = value !== "ExchangeCalendarProvider";
     }
 
-    if (value === 'ExchangeCalendarProvider') {
+    if (value === "ExchangeCalendarProvider") {
       // problem if div is not displayed
       // https://github.com/harvesthq/chosen/issues/92
-      $(".chosenCombo").chosen({width: "100%"});
+      $(".chosenCombo").chosen({ width: "100%" });
     } else {
       // if not visible deactivate
-      $(".chosenCombo").chosen('destroy');
+      $(".chosenCombo").chosen("destroy");
     }
   }
 
@@ -38,12 +37,11 @@ import 'chosen-js/chosen.css';
     // initial run to update view
     updateVisibilityCalendar();
 
-    const calendarSettingsProvider = document.querySelector('#calendarSettingsProvider');
+    const calendarSettingsProvider = document.querySelector("#calendarSettingsProvider");
     if (calendarSettingsProvider) {
-      calendarSettingsProvider.addEventListener('change', () => {
+      calendarSettingsProvider.addEventListener("change", () => {
         updateVisibilityCalendar();
-      })
+      });
     }
   });
-
 })();

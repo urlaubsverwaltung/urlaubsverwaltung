@@ -1,9 +1,9 @@
-import $ from 'jquery';
-import parseQueryString from '../parse-query-string';
-import { createDatepickerInstances } from '../../components/datepicker';
-import '../../components/timepicker';
-import sendGetDaysRequest from '../send-get-days-request';
-import sendGetDepartmentVacationsRequest from '../send-get-department-vacations-request';
+import $ from "jquery";
+import parseQueryString from "../parse-query-string";
+import { createDatepickerInstances } from "../../components/datepicker";
+import "../../components/timepicker";
+import sendGetDaysRequest from "../send-get-days-request";
+import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
 function valueToDate(dateString) {
   var match = dateString.match(/\d+/g);
@@ -16,7 +16,6 @@ function valueToDate(dateString) {
 }
 
 $(document).ready(async function () {
-
   var datepickerLocale = window.navigator.language;
   var urlPrefix = window.uv.apiPrefix;
   var personId = window.uv.personId;
@@ -26,7 +25,6 @@ $(document).ready(async function () {
   };
 
   var onSelect = function (selectedDate) {
-
     var $from = $("#from");
     var $to = $("#to");
 
@@ -34,13 +32,12 @@ $(document).ready(async function () {
       $to.datepicker("setDate", selectedDate);
     }
 
-    var dayLength = $('input:radio[name=dayLength]:checked').val();
+    var dayLength = $("input:radio[name=dayLength]:checked").val();
     var startDate = $from.datepicker("getDate");
     var toDate = $to.datepicker("getDate");
 
     sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
     sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
-
   };
 
   var selectors = ["#from", "#to", "#at"];
@@ -56,31 +53,33 @@ $(document).ready(async function () {
     var startDate = valueToDate(from);
     var endDate = valueToDate(to || from);
 
-    $('#from').datepicker('setDate', startDate);
-    $('#to').datepicker('setDate', endDate);
+    $("#from").datepicker("setDate", startDate);
+    $("#to").datepicker("setDate", endDate);
 
-    sendGetDaysRequest(urlPrefix,
+    sendGetDaysRequest(
+      urlPrefix,
       startDate,
       endDate,
-      $('input:radio[name=dayLength]:checked').val(),
-      personId, ".days");
+      $("input:radio[name=dayLength]:checked").val(),
+      personId,
+      ".days",
+    );
 
     sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
   }
 
   // Timepicker for optional startTime and endTime
 
-  $('#startTime').timepicker({
-    'step': 15,
-    'timeFormat': 'H:i',
-    'forceRoundTime': true,
-    'scrollDefault': 'now'
+  $("#startTime").timepicker({
+    step: 15,
+    timeFormat: "H:i",
+    forceRoundTime: true,
+    scrollDefault: "now",
   });
-  $('#endTime').timepicker({
-    'step': 15,
-    'timeFormat': 'H:i',
-    'forceRoundTime': true,
-    'scrollDefault': 'now'
+  $("#endTime").timepicker({
+    step: 15,
+    timeFormat: "H:i",
+    forceRoundTime: true,
+    scrollDefault: "now",
   });
-
 });
