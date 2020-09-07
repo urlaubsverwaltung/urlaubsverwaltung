@@ -42,7 +42,8 @@ public class AccountViewController {
     private final AccountFormValidator validator;
 
     @Autowired
-    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, AccountFormValidator validator) {
+    public AccountViewController(PersonService personService, AccountService accountService,
+                                 AccountInteractionService accountInteractionService, AccountFormValidator validator) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
@@ -51,7 +52,6 @@ public class AccountViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
@@ -62,11 +62,12 @@ public class AccountViewController {
                               @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person person = personService.getPersonByID(personId)
+            .orElseThrow(() -> new UnknownPersonException(personId));
 
-        int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
+        final int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
 
-        Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
         final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
             .orElseGet(() -> new AccountForm(yearOfHolidaysAccount));
 
@@ -83,7 +84,8 @@ public class AccountViewController {
                                 @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
                                 RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person person = personService.getPersonByID(personId)
+            .orElseThrow(() -> new UnknownPersonException(personId));
 
         validator.validate(accountForm, errors);
 
@@ -94,17 +96,16 @@ public class AccountViewController {
             return "account/account_form";
         }
 
-        LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
-        LocalDate validTo = accountForm.getHolidaysAccountValidTo();
-
-        BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
-        BigDecimal actualVacationDays = accountForm.getActualVacationDays();
-        BigDecimal remainingVacationDays = accountForm.getRemainingVacationDays();
-        BigDecimal remainingVacationDaysNotExpiring = accountForm.getRemainingVacationDaysNotExpiring();
-        String comment = accountForm.getComment();
+        final LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
+        final LocalDate validTo = accountForm.getHolidaysAccountValidTo();
+        final BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
+        final BigDecimal actualVacationDays = accountForm.getActualVacationDays();
+        final BigDecimal remainingVacationDays = accountForm.getRemainingVacationDays();
+        final BigDecimal remainingVacationDaysNotExpiring = accountForm.getRemainingVacationDaysNotExpiring();
+        final String comment = accountForm.getComment();
 
         // check if there is an existing account
-        Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
+        final Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
 
         if (account.isPresent()) {
             accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,
