@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.vacations;
 
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.api.PersonDto;
@@ -9,15 +8,19 @@ import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
+
 class VacationDto {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-    private String from;
-    private String to;
-    private BigDecimal dayLength;
-    private PersonDto person;
-    private String type;
-    private String status;
+    private static final DateTimeFormatter formatter = ofPattern(DATE_PATTERN);
+
+    private final String from;
+    private final String to;
+    private final BigDecimal dayLength;
+    private final PersonDto person;
+    private final String type;
+    private final String status;
 
     VacationDto(Application application) {
 
@@ -35,47 +38,23 @@ class VacationDto {
         return from;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
     public String getTo() {
         return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
     }
 
     public BigDecimal getDayLength() {
         return dayLength;
     }
 
-    public void setDayLength(BigDecimal dayLength) {
-        this.dayLength = dayLength;
-    }
-
     public PersonDto getPerson() {
         return person;
-    }
-
-    public void setPerson(PersonDto person) {
-        this.person = person;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
