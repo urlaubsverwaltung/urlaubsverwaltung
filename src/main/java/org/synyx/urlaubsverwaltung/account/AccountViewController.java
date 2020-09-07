@@ -65,8 +65,10 @@ public class AccountViewController {
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
-        AccountForm accountForm = new AccountForm(yearOfHolidaysAccount, accountService.getHolidaysAccount(
-            yearOfHolidaysAccount, person));
+
+        Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
+            .orElseGet(() -> new AccountForm(yearOfHolidaysAccount));
 
         model.addAttribute("person", person);
         model.addAttribute("account", accountForm);

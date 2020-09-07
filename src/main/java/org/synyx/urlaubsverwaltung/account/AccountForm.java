@@ -5,7 +5,6 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -30,24 +29,15 @@ public class AccountForm {
         this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
     }
 
-    AccountForm(int year, Optional<Account> holidaysAccountOptional) {
-
-        if (holidaysAccountOptional.isPresent()) {
-            Account holidaysAccount = holidaysAccountOptional.get();
-
-            this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
-            this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
-            this.holidaysAccountValidTo = holidaysAccount.getValidTo();
-            this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
-            this.actualVacationDays = holidaysAccount.getVacationDays();
-            this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
-            this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
-            this.comment = holidaysAccount.getComment();
-        } else {
-            this.holidaysAccountYear = year;
-            this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
-            this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
-        }
+    AccountForm(Account holidaysAccount) {
+        this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
+        this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
+        this.holidaysAccountValidTo = holidaysAccount.getValidTo();
+        this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
+        this.actualVacationDays = holidaysAccount.getVacationDays();
+        this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
+        this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
+        this.comment = holidaysAccount.getComment();
     }
 
     public int getHolidaysAccountYear() {
