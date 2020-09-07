@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row lg:tw-mb-4">
             <div class="col-xs-12">
                 <div class="tw-flex tw-flex-wrap">
                 <div class="tw-w-full lg:tw-w-1/3">
@@ -97,7 +97,7 @@
                     </legend>
                 </div>
             </div>
-            <div class="row">
+            <div class="row lg:tw-mb-4">
                 <div class="col-xs-12">
                     <div class="tw-flex tw-flex-wrap">
                     <div class="tw-w-full lg:tw-w-1/3">
@@ -114,7 +114,7 @@
         </c:if>
 
         <!-- Calendar -->
-        <div class="row">
+        <div class="row lg:tw-mb-4">
             <div class="col-xs-12">
                 <legend id="calendar" class="tw-flex">
                     <div class="tw-flex-1">
@@ -205,7 +205,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row lg:tw-mb-4">
             <div class="col-xs-12">
                 <%@include file="include/overview_app_list.jsp" %>
             </div>
