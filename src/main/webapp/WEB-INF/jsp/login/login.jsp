@@ -40,7 +40,7 @@
     <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='login.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />"/>
 </head>
 
 <body>

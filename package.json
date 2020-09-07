@@ -5,8 +5,8 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src/main/webapp",
-    "lint:report": "eslint src/main/webapp -f json -o target/js-eslint/report.json",
+    "lint": "eslint src/main/javascript",
+    "lint:report": "eslint src/main/javascript -f json -o target/js-eslint/report.json",
     "build": "concurrently 'npm:js' 'npm:css'",
     "build:dev": "concurrently 'npm:js:dev' 'npm:css:dev'",
     "build:watch": "concurrently 'npm:js:watch' 'npm:css:watch'",

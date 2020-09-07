@@ -26,7 +26,7 @@
       }
     },
     {
-      "files": "src/main/webapp/lib/date-fns/**",
+      "files": "src/main/javascript/lib/date-fns/**",
       "rules": {
         "@urlaubsverwaltung/no-date-fns": "off"
       }
