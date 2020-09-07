@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.account.web;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,9 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-class AccountValidatorTest {
+class AccountFormValidatorTest {
 
-    private AccountValidator sut;
+    private AccountFormValidator sut;
 
     @Mock
     private SettingsService settingsService;
@@ -31,7 +31,7 @@ class AccountValidatorTest {
 
     @BeforeEach
     void setUp() {
-        sut = new AccountValidator(settingsService);
+        sut = new AccountFormValidator(settingsService);
     }
 
     @Test

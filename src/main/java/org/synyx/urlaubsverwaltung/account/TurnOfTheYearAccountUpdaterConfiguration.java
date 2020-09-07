@@ -1,10 +1,9 @@
-package org.synyx.urlaubsverwaltung.account.service;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
 
 @Configuration
 public class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
@@ -14,7 +13,6 @@ public class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfi
 
     @Autowired
     public TurnOfTheYearAccountUpdaterConfiguration(AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService) {
-
         this.accountProperties = accountProperties;
         this.turnOfTheYearAccountUpdaterService = turnOfTheYearAccountUpdaterService;
     }

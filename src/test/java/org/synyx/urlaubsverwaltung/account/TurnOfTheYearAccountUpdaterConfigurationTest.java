@@ -1,9 +1,11 @@
-package org.synyx.urlaubsverwaltung.account.service;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.synyx.urlaubsverwaltung.account.config.AccountProperties;
+import org.synyx.urlaubsverwaltung.account.TurnOfTheYearAccountUpdaterConfiguration;
+import org.synyx.urlaubsverwaltung.account.TurnOfTheYearAccountUpdaterService;
+import org.synyx.urlaubsverwaltung.account.AccountProperties;
 
 import java.util.List;
 

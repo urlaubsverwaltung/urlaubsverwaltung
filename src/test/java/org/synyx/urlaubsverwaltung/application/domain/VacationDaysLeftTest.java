@@ -3,13 +3,13 @@ package org.synyx.urlaubsverwaltung.application.domain;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 
 import java.math.BigDecimal;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft}.
+ * Unit test for {@link VacationDaysLeft}.
  */
 class VacationDaysLeftTest {
 
@@ -29,7 +29,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(new BigDecimal("10"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft);
     }
@@ -40,7 +40,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(new BigDecimal("10"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -60,7 +60,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(BigDecimal.ZERO)
             .forUsedDaysAfterApril(new BigDecimal("10"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -80,7 +80,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("10"))
             .forUsedDaysAfterApril(new BigDecimal("5"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -100,7 +100,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("2"))
             .forUsedDaysAfterApril(new BigDecimal("2"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -120,7 +120,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("3"))
             .forUsedDaysAfterApril(BigDecimal.ZERO)
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -140,7 +140,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
             .forUsedDaysAfterApril(BigDecimal.ZERO)
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -160,7 +160,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
             .forUsedDaysAfterApril(new BigDecimal("2"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -180,7 +180,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(new BigDecimal("2"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -200,7 +200,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
             .forUsedDaysAfterApril(BigDecimal.ZERO)
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -220,7 +220,7 @@ class VacationDaysLeftTest {
 
         VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
             .forUsedDaysAfterApril(new BigDecimal("1"))
-            .get();
+            .build();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());

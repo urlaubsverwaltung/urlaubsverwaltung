@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.account.domain;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;

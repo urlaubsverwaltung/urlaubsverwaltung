@@ -1,12 +1,9 @@
-package org.synyx.urlaubsverwaltung.account.web;
+package org.synyx.urlaubsverwaltung.account;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,24 +11,16 @@ class AccountFormTest {
 
     @Test
     void ensureHasDefaultValuesForHolidaysAccountPeriod() {
-
-        AccountForm accountForm = new AccountForm(2014);
-
-        Assert.assertNotNull("Valid from date for holidays account must not be null",
-            accountForm.getHolidaysAccountValidFrom());
-        Assert.assertNotNull("Valid to date for holidays account must not be null",
-            accountForm.getHolidaysAccountValidTo());
-
-        Assert.assertEquals("Wrong valid from date for holidays account", LocalDate.of(2014, 1, 1),
-            accountForm.getHolidaysAccountValidFrom());
-        Assert.assertEquals("Wrong valid to date for holidays account", LocalDate.of(2014, 12, 31),
-            accountForm.getHolidaysAccountValidTo());
+        final AccountForm accountForm = new AccountForm(2014);
+        assertThat(accountForm.getHolidaysAccountYear()).isEqualTo(2014);
+        assertThat(accountForm.getHolidaysAccountValidFrom()).isEqualTo(LocalDate.of(2014, 1, 1));
+        assertThat(accountForm.getHolidaysAccountValidTo()).isEqualTo(LocalDate.of(2014, 12, 31));
     }
 
     @Test
     void ensureUsesValuesOfGivenHolidaysAccount() {
 
-        Account account = new Account();
+        final Account account = new Account();
 
         final LocalDate localDateFrom = LocalDate.now().minusDays(20);
         account.setValidFrom(localDateFrom);
@@ -44,8 +33,7 @@ class AccountFormTest {
         account.setRemainingVacationDays(BigDecimal.ONE);
         account.setRemainingVacationDaysNotExpiring(BigDecimal.ZERO);
 
-        final AccountForm form = new AccountForm(1987, Optional.of(account));
-
+        final AccountForm form = new AccountForm(account);
         assertThat(form.getHolidaysAccountYear()).isEqualTo(localDateFrom.getYear());
         assertThat(form.getHolidaysAccountValidFrom()).isEqualTo(localDateFrom);
         assertThat(form.getHolidaysAccountValidTo()).isEqualTo(localDateTo);
