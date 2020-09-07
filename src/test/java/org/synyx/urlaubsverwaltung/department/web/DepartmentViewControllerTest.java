@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -125,7 +126,7 @@ class DepartmentViewControllerTest {
         perform(post("/web/department"))
             .andExpect(flash().attribute("createdDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/department/"));
+            .andExpect(redirectedUrl("/web/department/"));
     }
 
     @Test
@@ -204,7 +205,7 @@ class DepartmentViewControllerTest {
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
             .andExpect(flash().attribute("updatedDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/department/"));
+            .andExpect(redirectedUrl("/web/department/"));
     }
 
     @Test
@@ -239,7 +240,7 @@ class DepartmentViewControllerTest {
 
         perform(delete("/web/department/" + SOME_DEPARTMENT_ID))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/department/"));
+            .andExpect(redirectedUrl("/web/department/"));
     }
 
     private Department someDepartment() {

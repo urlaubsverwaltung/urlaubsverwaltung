@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -227,7 +228,7 @@ class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote/"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
@@ -260,7 +261,7 @@ class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
@@ -287,7 +288,7 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(flash().attribute(ERRORS_ATTRIBUTE, instanceOf(Errors.class)))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
@@ -310,7 +311,7 @@ class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
@@ -396,7 +397,7 @@ class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
@@ -428,7 +429,7 @@ class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     private SickNote sickNoteOfPerson(Person somePerson) {
