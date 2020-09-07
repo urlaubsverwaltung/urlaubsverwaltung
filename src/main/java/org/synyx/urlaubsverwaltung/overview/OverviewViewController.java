@@ -110,7 +110,7 @@ public class OverviewViewController {
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        Integer yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
+        int yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
