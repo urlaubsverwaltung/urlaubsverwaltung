@@ -35,7 +35,7 @@ class AvailabilityApiControllerSecurityIT extends TestContainersBase {
     @MockBean
     private AvailabilityService availabilityService;
 
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     void getAvailabilitiesIsUnauthorized() throws Exception {

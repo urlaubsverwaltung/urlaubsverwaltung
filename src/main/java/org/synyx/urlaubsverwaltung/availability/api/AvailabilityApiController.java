@@ -71,11 +71,6 @@ public class AvailabilityApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId);
         }
 
-        boolean requestedDateRangeIsMoreThanOneMonth = startDate.minusDays(1).isBefore(endDate.minusMonths(1));
-        if (requestedDateRangeIsMoreThanOneMonth) {
-            throw new ResponseStatusException(BAD_REQUEST, "Requested date range to large. Maximum allowed range is one month");
-        }
-
         try {
             return availabilityService.getPersonsAvailabilities(startDate, endDate, optionalPerson.get());
         } catch (FreeTimeAbsenceException e) {
