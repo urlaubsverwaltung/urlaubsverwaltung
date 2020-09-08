@@ -99,7 +99,7 @@
                                     <td class="visible-xs hidden-print">
                                         <c:out value="${statistic.person.niceName}"/>
                                     </td>
-                                    <td class="visible-xs hidden-print">
+                                    <td class="visible-xs">
                                         <div class="tw-flex tw-items-center">
                                             <span class="tw-w-6">
                                                 <uv:icon-check className="tw-w-5 tw-h-5" />
