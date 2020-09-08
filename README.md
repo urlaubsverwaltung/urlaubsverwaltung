@@ -355,7 +355,7 @@ git clone git@github.com:synyx/urlaubsverwaltung.git
 ### git hooks (optional)
 
 Zum automatisieren verschiedener Dinge bietet dir das Projekt bietet [git hooks](https://git-scm.com/book/uz/v2/Customizing-Git-Git-Hooks)
-an. DIese kannst du mit folgendem Befehl installieren:
+an. Diese kannst du mit folgendem Befehl installieren:
 
 ```bash
 ./scripts/install-git-hooks.sh
