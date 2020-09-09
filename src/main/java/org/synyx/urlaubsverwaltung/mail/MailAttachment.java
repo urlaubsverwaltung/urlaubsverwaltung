@@ -3,12 +3,12 @@ package org.synyx.urlaubsverwaltung.mail;
 import java.io.File;
 import java.util.Objects;
 
-public final class Attachment {
+public final class MailAttachment {
 
     private final String name;
     private final File file;
 
-    public Attachment(String name, File file) {
+    public MailAttachment(String name, File file) {
         this.file = file;
         this.name = name;
     }
@@ -29,7 +29,7 @@ public final class Attachment {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Attachment that = (Attachment) o;
+        MailAttachment that = (MailAttachment) o;
         return Objects.equals(name, that.name) && Objects.equals(file, that.file);
     }
 

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 
 import java.util.HashMap;
@@ -23,9 +24,12 @@ class OvertimeMailService {
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
 
-        final String subjectMessageKey = "subject.overtime.created";
-        final String templateName = "overtime_office";
+        final Mail toOffice = Mail.builder()
+            .withRecipient(OVERTIME_NOTIFICATION_OFFICE)
+            .withSubject("subject.overtime.created")
+            .withTemplate("overtime_office", model)
+            .build();
 
-        mailService.sendMailTo(OVERTIME_NOTIFICATION_OFFICE, subjectMessageKey, templateName, model);
+        mailService.send(toOffice);
     }
 }

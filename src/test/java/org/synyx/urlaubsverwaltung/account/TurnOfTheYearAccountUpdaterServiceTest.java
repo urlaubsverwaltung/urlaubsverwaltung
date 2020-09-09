@@ -3,22 +3,23 @@ package org.synyx.urlaubsverwaltung.account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.account.AccountService;
-import org.synyx.urlaubsverwaltung.account.TurnOfTheYearAccountUpdaterService;
-import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -88,7 +89,14 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
 
-        verify(mailService).sendMailTo(eq(NOTIFICATION_OFFICE), eq("subject.account.updatedRemainingDays"), eq("updated_accounts"), any());
-        verify(mailService).sendTechnicalMail(eq("subject.account.updatedRemainingDays"), eq("updated_accounts"), any());
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailNotificationRecipients()).isEqualTo(NOTIFICATION_OFFICE);
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("updated_accounts");
+        assertThat(mails.get(1).isSendToTechnicalMail()).isTrue();
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("updated_accounts");
     }
 }

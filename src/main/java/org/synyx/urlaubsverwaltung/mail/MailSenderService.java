@@ -59,9 +59,9 @@ class MailSenderService {
      * @param recipients  mail addresses where the mail should be sent to
      * @param subject     mail subject
      * @param text        mail body
-     * @param attachments List of attachments to add to the mail
+     * @param mailAttachments List of attachments to add to the mail
      */
-    void sendEmail(String from, List<String> recipients, String subject, String text, List<Attachment> attachments) {
+    void sendEmail(String from, List<String> recipients, String subject, String text, List<MailAttachment> mailAttachments) {
 
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
@@ -71,8 +71,8 @@ class MailSenderService {
             helper.setSubject(subject);
             helper.setText(text);
 
-            for (Attachment attachment : attachments) {
-                helper.addAttachment(attachment.getName(), attachment.getFile());
+            for (MailAttachment mailAttachment : mailAttachments) {
+                helper.addAttachment(mailAttachment.getName(), mailAttachment.getFile());
             }
         } catch (MessagingException e) {
             LOG.error("Sending email to {} failed", recipients, e);

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 
 import java.util.HashMap;
@@ -34,7 +35,12 @@ public class CalendarMailService {
         model.put("absence", absence);
         model.put(EXCEPTION, exception);
 
-        mailService.sendTechnicalMail("subject.error.calendar.sync", "error_calendar_sync", model);
+        final Mail toTechnical = Mail.builder()
+            .withRecipient(true)
+            .withSubject("subject.error.calendar.sync")
+            .withTemplate("error_calendar_sync", model)
+            .build();
+        mailService.send(toTechnical);
     }
 
     /**
@@ -54,7 +60,12 @@ public class CalendarMailService {
         model.put("eventId", eventId);
         model.put(EXCEPTION, exception);
 
-        mailService.sendTechnicalMail("subject.error.calendar.update", "error_calendar_update", model);
+        final Mail toTechnical = Mail.builder()
+            .withRecipient(true)
+            .withSubject("subject.error.calendar.update")
+            .withTemplate("error_calendar_update", model)
+            .build();
+        mailService.send(toTechnical);
     }
 
     /**
@@ -71,6 +82,11 @@ public class CalendarMailService {
         model.put("eventId", eventId);
         model.put(EXCEPTION, exception);
 
-        mailService.sendTechnicalMail("subject.error.calendar.delete", "error_calendar_delete", model);
+        final Mail toTechnical = Mail.builder()
+            .withRecipient(true)
+            .withSubject("subject.error.calendar.delete")
+            .withTemplate("error_calendar_delete", model)
+            .build();
+        mailService.send(toTechnical);
     }
 }

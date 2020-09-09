@@ -5,15 +5,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
-
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Implementation of interface {@link MailService}.
@@ -28,92 +29,83 @@ class MailServiceImpl implements MailService {
     private final MailBuilder mailBuilder;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
-    private final RecipientService recipientService;
+    private final PersonService personService;
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSenderService mailSenderService,
-                    MailProperties mailProperties, RecipientService recipientService) {
+                    MailProperties mailProperties, PersonService personService) {
 
         this.messageSource = messageSource;
         this.mailBuilder = mailBuilder;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
-        this.recipientService = recipientService;
+        this.personService = personService;
     }
 
     @Override
-    public void sendMailTo(MailNotification mailNotification, String subjectMessageKey, String templateName, Map<String, Object> model) {
+    public void send(Mail mail) {
 
-        final List<Person> persons = recipientService.getRecipientsWithNotificationType(mailNotification);
-        sendMailToPersons(persons, subjectMessageKey, templateName, model);
-    }
-
-    @Override
-    public void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {
-
-        final List<Person> persons = singletonList(person);
-        sendMailToPersons(persons, subjectMessageKey, templateName, model);
-    }
-
-    @Override
-    public void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model, List<Attachment> attachments) {
-
-        final List<Person> persons = singletonList(person);
-        sendMailToPersons(persons, subjectMessageKey, templateName, model, attachments);
-    }
-
-    @Override
-    public void sendMailToEach(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {
-
-        persons.forEach(person -> {
-            model.put("recipient", person);
-            final List<String> mailAddress = recipientService.getMailAddresses(person);
-            sendMailToRecipients(mailAddress, subjectMessageKey, templateName, model, args);
-        });
-    }
-
-    @Override
-    public void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model) {
-        sendMailToRecipients(singletonList(mailProperties.getAdministrator()), subjectMessageKey, templateName, model);
-    }
-
-    private void sendMailToPersons(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
-
-        final List<String> recipients = recipientService.getMailAddresses(persons);
-        sendMailToRecipients(recipients, subjectMessageKey, templateName, model);
-    }
-
-    private void sendMailToPersons(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model, List<Attachment> attachments) {
-
-        final List<String> recipients = recipientService.getMailAddresses(persons);
-        sendMailToRecipientsWithAttachments(recipients, subjectMessageKey, templateName, model, attachments);
-    }
-
-    private void sendMailToRecipientsWithAttachments(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model, List<Attachment> attachments) {
-
+        final Map<String, Object> model = mail.getTemplateModel();
         model.put("baseLinkURL", getApplicationUrl());
 
-        final String subject = getTranslation(subjectMessageKey);
-        final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
+        final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
+        final String sender = mailProperties.getSender();
 
-        mailSenderService.sendEmail(mailProperties.getSender(), recipients, subject, text, attachments);
+        if (mail.isSendToTechnicalMail()) {
+            final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+            mailSenderService.sendEmail(sender, List.of(mailProperties.getAdministrator()), subject, body);
+        } else {
+            final List<Person> recipients = getRecipients(mail);
+            if (mail.getMailAttachments().isEmpty()) {
+                if (mail.isSendToEachIndividually()) {
+                    recipients.forEach(recipient -> {
+                        model.put("recipient", recipient);
+                        final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                        mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body);
+                    });
+                } else {
+                    final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                    mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body);
+                }
+            } else {
+                if (mail.isSendToEachIndividually()) {
+                    recipients.forEach(recipient -> {
+                        model.put("recipient", recipient);
+                        final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                        mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mail.getMailAttachments());
+                    });
+                } else {
+                    final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                    mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body, mail.getMailAttachments());
+                }
+            }
+        }
     }
 
-    private void sendMailToRecipients(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {
+    private List<Person> getRecipients(Mail mail) {
 
-        model.put("baseLinkURL", getApplicationUrl());
+        final List<Person> recipients = new ArrayList<>();
+        if (mail.getMailNotificationRecipients() != null) {
+            recipients.addAll(personService.getPersonsWithNotificationType(mail.getMailNotificationRecipients()));
+        } else if (!mail.getMailAddressRecipients().isEmpty()) {
+            recipients.addAll(mail.getMailAddressRecipients());
+        }
 
-        final String subject = getTranslation(subjectMessageKey, args);
-        final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
-
-        mailSenderService.sendEmail(mailProperties.getSender(), recipients, subject, text);
+        return recipients;
     }
 
-    private String getApplicationUrl() {
-        return ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath("/").build().toString();
+    private List<String> getMailAddresses(List<Person> persons) {
+        return persons.stream()
+            .filter(person -> hasText(person.getEmail()))
+            .map(Person::getEmail)
+            .collect(toList());
     }
 
     private String getTranslation(String key, Object... args) {
         return messageSource.getMessage(key, args, LOCALE);
+    }
+
+    private String getApplicationUrl() {
+        return ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath("/").build().toString();
     }
 }
