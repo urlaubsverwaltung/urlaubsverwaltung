@@ -55,7 +55,7 @@ jobs:
           -Ddocker.push.registry=registry.hub.docker.com
           -Ddocker.push.username=${{ secrets.DOCKER_USERNAME }}
           -Ddocker.push.password=${{ secrets.DOCKER_PASSWORD }}
-      - name: Publish docker image to GitHub Packages
+      - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw --batch-mode
           docker:build
