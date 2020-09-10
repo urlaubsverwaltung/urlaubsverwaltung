@@ -54,25 +54,24 @@
 
             <div class="col-xs-12">
 
-                <legend>
-
-                    <spring:message code="applications.waiting"/>
-
-                    <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
-                       data-title="<spring:message code="action.applications.statistics"/>">
-                        <i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>
-                    </a>
-                    <a href="${URL_PREFIX}/absences" class="fa-action pull-right"
-                       data-title="<spring:message code="action.applications.absences_overview"/>">
-                        <i class="fa fa-fw fa-calendar" aria-hidden="true"></i>
-                    </a>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/application/new" class="fa-action pull-right"
-                           data-title="<spring:message code="action.apply.vacation"/>">
-                            <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="applications.waiting"/>
+                    </div>
+                    <div class="print:tw-hidden">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.vacation"/>">
+                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
                         </a>
-                    </sec:authorize>
-
+                        </sec:authorize>
+                        <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
+                            <uv:icon-calendar className="tw-w-5 tw-h-5" />
+                        </a>
+                        <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
+                            <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
+                        </a>
+                        <uv:print />
+                    </div>
                 </legend>
 
                 <div class="feedback">
@@ -187,22 +186,20 @@
                                         </p>
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right">
+                                        <div class="print:tw-hidden">
                                         <c:if
                                             test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="fa-action positive"
-                                               href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                               data-title="<spring:message code='action.allow'/>">
-                                                <i class="fa fa-check" aria-hidden="true"></i>
+                                            <a class="icon-link tw-p-1 hover:tw-text-green-500" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true" data-title="<spring:message code='action.allow'/>">
+                                                <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
                                             </a>
                                         </c:if>
                                         <c:if
                                             test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="fa-action negative"
-                                               href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
-                                               data-title="<spring:message code='action.reject'/>">
-                                                <i class="fa fa-ban" aria-hidden="true"></i>
+                                            <a class="icon-link tw-p-1 hover:tw-text-red-500" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true" data-title="<spring:message code='action.reject'/>">
+                                                <uv:icon-ban className="tw-w-5 tw-h-5" solid="true" />
                                             </a>
                                         </c:if>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>

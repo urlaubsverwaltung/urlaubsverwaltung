@@ -1,0 +1,9 @@
+.icon-link {
+  @apply inline-block !important;
+  @apply text-gray-700 !important;
+  @apply no-underline !important;
+}
+
+.icon-link:hover {
+  @apply text-black !important;
+}

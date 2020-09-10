@@ -35,20 +35,23 @@
                 </div>
             </div>
             <div class="col-xs-12 col-md-6">
-                <legend>
-                    <spring:message code="overtime.title"/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="overtime.title"/>
+                    </div>
                     <c:if test="${record.person.id == signedInUser.id || IS_OFFICE}">
-                        <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="fa-action pull-right"
-                           data-title="<spring:message code="action.edit"/>">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <div class="print:tw-hidden">
+                        <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="icon-link tw-p-1 tw-text-gray-700" data-title="<spring:message code="action.edit"/>">
+                            <uv:icon-pencil className="tw-w-5 tw-h-5" />
                         </a>
+                    </div>
                     </c:if>
                 </legend>
-                <div class="box">
-                    <span class="box-icon bg-green">
-                        <i class="fa fa-history" aria-hidden="true"></i>
+                <div class="box tw-flex">
+                    <span class="tw-bg-green-500 tw-text-white tw-mr-6 tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
+                        <uv:icon-briefcase className="tw-w-8 tw-h-8" />
                     </span>
-                    <span class="box-text">
+                    <span class="tw-flex-1 box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${record.person.niceName}"/></h5>
                         <spring:message code="overtime.details.hours" arguments="${record.hours}"/>
                         <c:set var="START_DATE">

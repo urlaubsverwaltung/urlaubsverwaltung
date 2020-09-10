@@ -35,15 +35,18 @@
 
             <div class="col-xs-12">
 
-                <legend>
-                    <spring:message code="departments.title"/>
-                    <uv:print/>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
-                           data-title="<spring:message code="action.department.create"/>">
-                            <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="departments.title"/>
+                    </div>
+                    <div class="print:tw-hidden">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
+                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
                         </a>
-                    </sec:authorize>
+                        </sec:authorize>
+                        <uv:print/>
+                    </div>
                 </legend>
 
                 <div class="feedback">
@@ -99,8 +102,7 @@
                                                      title="<spring:message code='department.data.info'/>"
                                                      data-content="${department.description}">
                                                     <c:out value="${department.name}"/>
-                                                    <i class="fa fa-fw fa-info-circle hidden-print"
-                                                       aria-hidden="true"></i>
+                                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
@@ -126,9 +128,8 @@
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal"
-                                                                        aria-hidden="true"><i class="fa fa-remove"
-                                                                                              aria-hidden="true"></i>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                                                    <uv:icon-x-circle className="tw-w-8 tw-h-8" solid="true" />
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
                                                                     <spring:message
@@ -151,18 +152,15 @@
                                                 </div>
                                             </form:form>
 
-                                            <a class="fa-action negative pull-right hidden-xs"
-                                               href="#modal-cancel-${department.id}"
-                                               data-toggle="modal"
-                                               data-title="<spring:message code='action.department.delete' />">
-                                                <i class="fa fa-fw fa-trash" aria-hidden="true"></i>
-                                            </a>
+                                            <div class="tw-flex tw-justify-end print:tw-hidden">
+                                                <a class="icon-link tw-p-1 tw-mr-4" href="${URL_PREFIX}/department/${department.id}/edit" data-title="<spring:message code="action.edit" />">
+                                                    <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                                </a>
+                                                <a class="icon-link tw-p-1 hover:tw-text-red-500 hidden-xs" href="#modal-cancel-${department.id}" data-toggle="modal" data-title="<spring:message code='action.department.delete' />">
+                                                    <uv:icon-trash className="tw-w-5 tw-h-5" />
+                                                </a>
+                                            </div>
 
-                                            <a class="fa-action pull-right"
-                                               href="${URL_PREFIX}/department/${department.id}/edit"
-                                               data-title="<spring:message code="action.edit" />">
-                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
-                                            </a>
                                         </td>
                                     </sec:authorize>
                                 </tr>

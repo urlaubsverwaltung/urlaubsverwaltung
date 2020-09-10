@@ -32,13 +32,8 @@ legend,
     font-family: Verdana,sans-serif;
 }
 
-legend,
-legend .fa-action .fa {
+legend {
     line-height: 42px;
-}
-
-legend .fa-action {
-    vertical-align: middle;
 }
 
 /* STYLING FOR XS SCREENS */

@@ -49,9 +49,13 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend>
-                    <spring:message code="application.data.title"/>
-                    <jsp:include page="include/app-detail-elements/action-buttons.jsp"/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="application.data.title"/>
+                    </div>
+                    <div class="print:tw-hidden">
+                        <jsp:include page="include/app-detail-elements/action-buttons.jsp"/>
+                    </div>
                 </legend>
 
                 <div class="feedback">
@@ -156,6 +160,7 @@
                                         <c:out value="${application.person.niceName}"/>
                                     </td>
                                     <td>
+                                        <span class="tw-flex tw-items-center">
                                         <c:choose>
                                             <c:when test="${application.startDate == application.endDate}">
                                                 <c:set var="APPLICATION_DATE">
@@ -181,8 +186,11 @@
                                             </c:otherwise>
                                         </c:choose>
                                         <c:if test="${application.status == 'ALLOWED'}">
-                                            <i class="fa fa-check positive" aria-hidden="true"></i>
+                                            <span class="tw-text-green-500">
+                                                <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                            </span>
                                         </c:if>
+                                        </span>
                                     </td>
                                 </tr>
                             </c:forEach>

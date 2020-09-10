@@ -1,0 +1,41 @@
+.box {
+  @apply flex;
+  @apply items-center;
+  min-height: 120px;
+  padding: 20px;
+  border: 1px solid #D5D5D5;
+  font-size: 12px;
+  background-color: #FFFFFF;
+  margin-bottom: 27px;
+}
+
+.box-icon {
+  @apply rounded-full;
+  @apply mr-6;
+  @apply p-1;
+  @apply flex;
+  @apply text-white;
+  @apply items-center;
+  @apply justify-center;
+}
+
+.box-text {
+  @apply flex-1;
+}
+
+.box-text {
+  /* Fallback for browsers not supporting flex */
+  display: table-cell;
+  vertical-align: middle;
+  flex-grow: 1;
+}
+
+.box-text ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.box-text ul > li:last-child > p {
+  margin-bottom: 0;
+}

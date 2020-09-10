@@ -29,7 +29,7 @@
                             <c:out value="${statusCode}"/>
                         </c:when>
                         <c:otherwise>
-                            <i class="fa fa-frown-o" aria-hidden="true"></i>
+                            <uv:icon-emoji-sad className="tw-w-40 tw-h-40" />
                         </c:otherwise>
                     </c:choose>
                 </h1>

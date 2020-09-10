@@ -4,26 +4,24 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<legend>
+<c:choose>
+<c:when test="${!empty param.year}">
+    <c:set var="displayYear" value="${param.year}"/>
+</c:when>
+<c:otherwise>
+    <c:set var="displayYear" value="${year}"/>
+</c:otherwise>
+</c:choose>
 
-    <spring:message code="overview.title"/>
-
-    <c:choose>
-        <c:when test="${!empty param.year}">
-            <c:set var="displayYear" value="${param.year}"/>
-        </c:when>
-        <c:otherwise>
-            <c:set var="displayYear" value="${year}"/>
-        </c:otherwise>
-    </c:choose>
-
-    <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/person/${person.id}/overview?year="/>
-
-    <uv:print/>
-
-    <a href="${URL_PREFIX}/person/${person.id}" class="fa-action pull-right" style="margin-top: 1px"
-       data-title="<spring:message code="action.details"/>">
-        <i class="fa fa-list-alt" aria-hidden="true"></i>
-    </a>
-
+<legend class="tw-flex">
+    <div class="tw-flex-1">
+        <spring:message code="overview.title"/>
+        <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/person/${person.id}/overview?year="/>
+    </div>
+    <div class="print:tw-hidden">
+        <a href="${URL_PREFIX}/person/${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.details"/>">
+            <uv:icon-document-text className="tw-w-5 tw-h-5" />
+        </a>
+        <uv:print />
+    </div>
 </legend>

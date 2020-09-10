@@ -107,13 +107,13 @@
                     </legend>
 
                     <div class="box">
-                    <span class="box-icon bg-red">
+                    <span class="box-icon tw-w-16 tw-h-16 tw-bg-red-600 tw-text-white tw-flex tw-items-center tw-justify-center">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
-                                <i class="fa fa-child" aria-hidden="true"></i>
+                                <uv:icon-child className="tw-w-8 tw-h-8" />
                             </c:when>
                             <c:otherwise>
-                                <i class="fa fa-medkit" aria-hidden="true"></i>
+                                <uv:icon-medkit className="tw-w-8 tw-h-8" />
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -175,17 +175,18 @@
                         <tr>
                             <td><spring:message code="sicknote.data.aub.short"/></td>
                             <td>
+                                <div class="tw-flex tw-items-center">
                                 <c:choose>
                                     <c:when test="${sickNote.aubPresent}">
-                                        <i class="fa fa-check hidden-print" aria-hidden="true"></i>
-                                        <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
-                                        date="${sickNote.aubEndDate}"/>
+                                        <uv:icon-check className="tw-w-4 tw-h-4" />
+                                        &nbsp;<uv:date date="${sickNote.aubStartDate}"/> - <uv:date date="${sickNote.aubEndDate}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
-                                        <spring:message code="sicknote.data.aub.notPresent"/>
+                                        <uv:icon-x className="tw-w-4 tw-h-4" />
+                                        &nbsp;<spring:message code="sicknote.data.aub.notPresent"/>
                                     </c:otherwise>
                                 </c:choose>
+                                </div>
                             </td>
                         </tr>
                         </tbody>

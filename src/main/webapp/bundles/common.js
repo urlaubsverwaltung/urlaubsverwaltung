@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import '../lib/bootstrap';
-import 'font-awesome/css/font-awesome.css';
 import '../components/menu';
 import '../components/table-selectable';
 import '../components/textarea';

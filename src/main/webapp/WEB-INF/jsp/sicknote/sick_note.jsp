@@ -38,23 +38,24 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend>
-                    <spring:message code="sicknote.title"/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="sicknote.title"/>
+                    </div>
                     <sec:authorize access="hasAuthority('OFFICE')">
                         <c:if test="${sickNote.active}">
+                        <div class="print:tw-hidden">
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
+                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
+                                <uv:icon-refresh className="tw-w-5 tw-h-5" />
+                            </a>
+                            <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
+                                <uv:icon-trash className="tw-w-5 tw-h-5" />
+                            </a>
                             <uv:print/>
-                            <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
-                               data-title="<spring:message code="action.delete"/>">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </a>
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
-                               data-title="<spring:message code="action.convert"/>">
-                                <i class="fa fa-retweet" aria-hidden="true"></i>
-                            </a>
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
-                               data-title="<spring:message code="action.edit"/>">
-                                <i class="fa fa-pencil" aria-hidden="true"></i>
-                            </a>
+                        </div>
                         </c:if>
                     </sec:authorize>
                 </legend>
@@ -65,8 +66,9 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i
-                                        class="fa fa-remove" aria-hidden="true"></i></button>
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        <uv:icon-x-circle className="tw-w-8 tw-h-8" solid="true" />
+                                    </button>
                                     <h4 id="myModalLabel" class="modal-title"><spring:message
                                         code="action.delete"/>?</h4>
                                 </div>
@@ -85,13 +87,13 @@
                 </form:form>
 
                 <div class="box">
-                    <span class="box-icon bg-red hidden-print">
+                    <span class="box-icon tw-w-16 tw-h-16 hidden-print tw-bg-red-600 tw-text-white tw-flex tw-items-center tw-justify-center">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                                <i class="fa fa-child" aria-hidden="true"></i>
+                                <uv:icon-child className="tw-w-8 tw-h-8" />
                             </c:when>
                             <c:otherwise>
-                                <i class="fa fa-medkit" aria-hidden="true"></i>
+                                <uv:icon-medkit className="tw-w-8 tw-h-8" />
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -151,17 +153,18 @@
                     <tr>
                         <td><spring:message code="sicknote.data.aub.short"/></td>
                         <td>
+                            <div class="tw-flex tw-items-center">
                             <c:choose>
                                 <c:when test="${sickNote.aubPresent}">
-                                    <i class="fa fa-check hidden-print" aria-hidden="true"></i>
-                                    <uv:date date="${sickNote.aubStartDate}"/> - <uv:date
-                                    date="${sickNote.aubEndDate}"/>
+                                    <uv:icon-check className="tw-w-4 tw-h-4" />
+                                    &nbsp;<uv:date date="${sickNote.aubStartDate}"/> - <uv:date date="${sickNote.aubEndDate}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
-                                    <spring:message code="sicknote.data.aub.notPresent"/>
+                                    <uv:icon-x className="tw-w-4 tw-h-4" />
+                                    &nbsp;<spring:message code="sicknote.data.aub.notPresent"/>
                                 </c:otherwise>
                             </c:choose>
+                            </div>
                         </td>
                     </tr>
                     </tbody>
@@ -172,13 +175,16 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend>
-                    <spring:message code="sicknote.progress.title"/>
+                <legend class="tw-flex">
+                    <div class="tw-flex-1">
+                        <spring:message code="sicknote.progress.title"/>
+                    </div>
                     <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
-                           data-title="<spring:message code="action.comment.new" />">
-                            <i class="fa fa-comments" aria-hidden="true"></i>
-                        </a>
+                        <div class="print:tw-hidden">
+                            <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
+                                <uv:icon-annotation className="tw-w-5 tw-h-5" />
+                            </a>
+                        </div>
                     </sec:authorize>
                 </legend>
 

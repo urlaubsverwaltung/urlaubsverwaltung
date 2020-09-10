@@ -1,6 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -30,59 +31,63 @@
       <ul class="nav navbar-nav navbar-right">
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="${URL_PREFIX}/application/new" id="application-new-link">
-              <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i> <spring:message code="nav.apply.title"/>
+            <a href="${URL_PREFIX}/application/new" id="application-new-link" class="tw-flex tw-items-center">
+                <uv:icon-plus-circle className="tw-w-4 tw-h-4" solid="true" />
+                &nbsp;<spring:message code="nav.apply.title"/>
             </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
-            <a href="${URL_PREFIX}/application">
-              <i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <spring:message code="nav.vacation.title"/>
+            <a href="${URL_PREFIX}/application" class="tw-flex tw-items-center">
+                <uv:icon-calendar className="tw-w-4 tw-h-4" solid="true" />
+                &nbsp;<spring:message code="nav.vacation.title"/>
             </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasAuthority('OFFICE')">
           <li>
-            <a href="${URL_PREFIX}/sicknote/">
-              <i class="fa fa-fw fa-medkit" aria-hidden="true"></i> <spring:message code="nav.sicknote.title"/>
+            <a href="${URL_PREFIX}/sicknote/" class="tw-flex tw-items-center">
+                <uv:icon-medkit className="tw-w-4 tw-h-4" />
+                &nbsp;<spring:message code="nav.sicknote.title"/>
             </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
-            <a href="${URL_PREFIX}/person?active=true">
-              <i class="fa fa-fw fa-user" aria-hidden="true"></i>
-              <spring:message code="nav.person.title"/>
+            <a href="${URL_PREFIX}/person?active=true" class="tw-flex tw-items-center">
+                <uv:icon-user className="tw-w-4 tw-h-4" solid="true" />
+                &nbsp;<spring:message code="nav.person.title"/>
             </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasAnyAuthority('BOSS', 'OFFICE')">
           <li>
-            <a href="${URL_PREFIX}/department">
-              <i class="fa fa-fw fa-group" aria-hidden="true"></i>
-              <spring:message code="nav.department.title"/>
+            <a href="${URL_PREFIX}/department" class="tw-flex tw-items-center">
+                <uv:icon-user-group className="tw-w-4 tw-h-4" solid="true" />
+                &nbsp;<spring:message code="nav.department.title"/>
             </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasAuthority('OFFICE')">
           <li>
-            <a href="${URL_PREFIX}/settings">
-              <i class="fa fa-fw fa-cog" aria-hidden="true"></i>
-              <spring:message code="nav.settings.title"/>
+            <a href="${URL_PREFIX}/settings" class="tw-flex tw-items-center">
+                <uv:icon-cog className="tw-w-4 tw-h-4" solid="true" />
+                &nbsp;<spring:message code="nav.settings.title"/>
             </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="<spring:url value='/logout' />">
-              <i class="fa fa-fw fa-sign-out"></i> <spring:message code="nav.signout.title"/>
+            <a href="<spring:url value='/logout' />" class="tw-flex tw-items-center">
+                <uv:icon-logout className="tw-w-4 tw-h-4" solid="true" />
+                &nbsp;<spring:message code="nav.signout.title"/>
             </a>
           </li>
         </sec:authorize>

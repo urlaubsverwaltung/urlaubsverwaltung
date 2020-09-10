@@ -47,7 +47,7 @@
 
                 <div class="col-md-4 col-md-push-8">
                     <span class="help-block">
-                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                         <spring:message code="department.data.description"/>
                     </span>
                 </div>
@@ -78,7 +78,7 @@
 
                 <div class="col-md-4 col-md-push-8">
                     <span class="help-block">
-                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                         <spring:message code="department.data.twoStageApproval.help"/>
                     </span>
                 </div>
@@ -124,11 +124,11 @@
 
                 <div class="col-md-4 col-md-push-8">
                     <span class="help-block">
-                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                         <spring:message code="department.members.description"/>
                     </span>
                     <span class="help-block">
-                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                         <spring:message code="department.members.secondStageAuthority.description"/>
                     </span>
                 </div>
