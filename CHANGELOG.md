@@ -1,6 +1,17 @@
 # Changelog
 
-## [urlaubsverwaltung-4.0.0.M4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M4) (2020-09-06)
+## [urlaubsverwaltung-4.0.0.M5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-4.0.0.M5) (2020-09-10)
+
+**Closed issues:**
+
+- erstinstallation: läut einfach nicht. [\#1330](https://github.com/synyx/urlaubsverwaltung/issues/1330)
+- Keine zeitliche Einschränkung bei der /api/availablilites [\#1324](https://github.com/synyx/urlaubsverwaltung/issues/1324)
+- moderne Icons einbauen [\#1316](https://github.com/synyx/urlaubsverwaltung/issues/1316)
+- Add `PUBLIC\_HOLIDAY` to the `/api/absences` [\#1287](https://github.com/synyx/urlaubsverwaltung/issues/1287)
+- Jahresübersicht über alle Abteilungen drucken [\#1264](https://github.com/synyx/urlaubsverwaltung/issues/1264)
+- Urlaub kann nur maximal 12 Monate im Voraus beantragt werden [\#1163](https://github.com/synyx/urlaubsverwaltung/issues/1163)
+
+## [urlaubsverwaltung-4.0.0.M4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-4.0.0.M4) (2020-09-06)
 
 **Closed issues:**
 
@@ -12,7 +23,7 @@
 - Remove internal Person Management [\#1215](https://github.com/synyx/urlaubsverwaltung/issues/1215)
 - iCal: In meinen Abwesenheitsterminen möchte ich als Organisator aufgelistet werden [\#1203](https://github.com/synyx/urlaubsverwaltung/issues/1203)
 
-## [urlaubsverwaltung-4.0.0.M3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M3) (2020-08-26)
+## [urlaubsverwaltung-4.0.0.M3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-4.0.0.M3) (2020-08-26)
 
 **Closed issues:**
 
@@ -23,7 +34,7 @@
 - API nicht nutzbar wenn OIDC für Authentifizierung verwendet wird [\#1152](https://github.com/synyx/urlaubsverwaltung/issues/1152)
 - OIDC Logout with Microsoft Azure AD not working [\#952](https://github.com/synyx/urlaubsverwaltung/issues/952)
 
-## [urlaubsverwaltung-4.0.0.M2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M2) (2020-08-23)
+## [urlaubsverwaltung-4.0.0.M2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-4.0.0.M2) (2020-08-23)
 
 **Closed issues:**
 
@@ -39,7 +50,7 @@
 - Mitarbeiter in Teilzeit [\#1064](https://github.com/synyx/urlaubsverwaltung/issues/1064)
 - Anzeige "Anträge von Kollegen" - Datenschutz [\#1005](https://github.com/synyx/urlaubsverwaltung/issues/1005)
 
-## [urlaubsverwaltung-4.0.0.M1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-4.0.0.M1) (2020-07-24)
+## [urlaubsverwaltung-4.0.0.M1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-4.0.0.M1) (2020-07-24)
 
 **Closed issues:**
 
@@ -49,19 +60,19 @@
 - Kalenderfreigabe mit Outlook 2013 bringt zahlreiche Fehler [\#969](https://github.com/synyx/urlaubsverwaltung/issues/969)
 - Change testdata profile name to demodata [\#961](https://github.com/synyx/urlaubsverwaltung/issues/961)
 
-## [urlaubsverwaltung-3.4.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.4.4) (2020-06-26)
+## [urlaubsverwaltung-3.4.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.4) (2020-06-26)
 
 **Closed issues:**
 
 - Sichtbarkeit von deaktivierten Usern [\#1062](https://github.com/synyx/urlaubsverwaltung/issues/1062)
 
-## [urlaubsverwaltung-3.4.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.4.3) (2020-06-19)
+## [urlaubsverwaltung-3.4.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.3) (2020-06-19)
 
 **Closed issues:**
 
 - NullpointerException when creating a application for leave/sicknote [\#1164](https://github.com/synyx/urlaubsverwaltung/issues/1164)
 
-## [urlaubsverwaltung-3.4.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.4.2) (2020-06-19)
+## [urlaubsverwaltung-3.4.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.2) (2020-06-19)
 
 **Closed issues:**
 
@@ -75,7 +86,7 @@
 - application.properties um wichtige Settings-Beispiele erweitern [\#1093](https://github.com/synyx/urlaubsverwaltung/issues/1093)
 - Neuer Urlaub wird ggf nicht übertragen [\#888](https://github.com/synyx/urlaubsverwaltung/issues/888)
 
-## [urlaubsverwaltung-3.4.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.4.1) (2020-05-11)
+## [urlaubsverwaltung-3.4.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.1) (2020-05-11)
 
 **Closed issues:**
 
@@ -84,7 +95,7 @@
 - Verlauf: Anzeige falsches Datum bei Stornierung eigenen Urlaubs [\#1088](https://github.com/synyx/urlaubsverwaltung/issues/1088)
 - Log login attempts/errors for oidc provider [\#1076](https://github.com/synyx/urlaubsverwaltung/issues/1076)
 
-## [urlaubsverwaltung-3.4.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.4.0) (2020-04-23)
+## [urlaubsverwaltung-3.4.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.0) (2020-04-23)
 
 **Closed issues:**
 
@@ -92,7 +103,7 @@
 - Neue Option: Neue Anträge nur noch x Monate zurück möglich [\#947](https://github.com/synyx/urlaubsverwaltung/issues/947)
 - Anzeige von Weiterleitungen im Verlauf eines Urlaubsantrages [\#337](https://github.com/synyx/urlaubsverwaltung/issues/337)
 
-## [urlaubsverwaltung-3.3.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.3.0) (2020-04-07)
+## [urlaubsverwaltung-3.3.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.3.0) (2020-04-07)
 
 **Closed issues:**
 
@@ -102,13 +113,13 @@
 - vergangener Urlaub über Kalender nicht anklickbar [\#991](https://github.com/synyx/urlaubsverwaltung/issues/991)
 - Chrome: Kalender wird auf Englisch angezeigt [\#960](https://github.com/synyx/urlaubsverwaltung/issues/960)
 
-## [urlaubsverwaltung-3.2.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.2.1) (2020-03-23)
+## [urlaubsverwaltung-3.2.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.1) (2020-03-23)
 
 **Closed issues:**
 
 - Click on overtime overview item does not open the overtime item [\#1008](https://github.com/synyx/urlaubsverwaltung/issues/1008)
 
-## [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.2.0) (2020-03-12)
+## [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0) (2020-03-12)
 
 **Closed issues:**
 
@@ -116,7 +127,7 @@
 - UV bekommt SIGTERM von Docker nicht mit [\#979](https://github.com/synyx/urlaubsverwaltung/issues/979)
 - Integrate sick days into shared calendar \(absences\) [\#972](https://github.com/synyx/urlaubsverwaltung/issues/972)
 
-## [urlaubsverwaltung-3.1.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.1.2) (2020-03-06)
+## [urlaubsverwaltung-3.1.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.2) (2020-03-06)
 
 **Closed issues:**
 
@@ -130,7 +141,7 @@
 - Krankmeldung: AU-Bescheinigung liegt nicht im Zeitraum der Krankmeldung [\#672](https://github.com/synyx/urlaubsverwaltung/issues/672)
 - Krankmeldung während Urlaub beeinflusst Urlaubstage nicht [\#70](https://github.com/synyx/urlaubsverwaltung/issues/70)
 
-## [urlaubsverwaltung-3.1.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.1.1) (2020-02-28)
+## [urlaubsverwaltung-3.1.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.1) (2020-02-28)
 
 **Closed issues:**
 
@@ -141,7 +152,7 @@
 - iCal für Firmenakalender funktioniert nicht [\#963](https://github.com/synyx/urlaubsverwaltung/issues/963)
 - comment from sick note conversion to vacation is missing [\#689](https://github.com/synyx/urlaubsverwaltung/issues/689)
 
-## [urlaubsverwaltung-3.1.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.1.0) (2020-02-21)
+## [urlaubsverwaltung-3.1.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.0) (2020-02-21)
 
 **Closed issues:**
 
@@ -169,21 +180,21 @@
 - iCal Unterstützung [\#283](https://github.com/synyx/urlaubsverwaltung/issues/283)
 - Kalender pro Abteilung [\#96](https://github.com/synyx/urlaubsverwaltung/issues/96)
 
-## [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.1) (2019-12-18)
+## [urlaubsverwaltung-3.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.1) (2019-12-18)
 
 **Closed issues:**
 
 - REST-API: Wie kommt man am besten an Personen-IDs? [\#898](https://github.com/synyx/urlaubsverwaltung/issues/898)
 - Fontawesome Symbole werden nicht angezeigt in lokaler Installation [\#885](https://github.com/synyx/urlaubsverwaltung/issues/885)
 
-## [urlaubsverwaltung-3.0.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0) (2019-12-08)
+## [urlaubsverwaltung-3.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0) (2019-12-08)
 
 **Closed issues:**
 
 - Catch `FreeTimeAbsenceException` on availability api if working time not set [\#862](https://github.com/synyx/urlaubsverwaltung/issues/862)
 - Deployments auf 3.0 anpassen [\#851](https://github.com/synyx/urlaubsverwaltung/issues/851)
 
-## [urlaubsverwaltung-0.0.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-0.0.0) (2019-11-29)
+## [urlaubsverwaltung-0.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-0.0.0) (2019-11-29)
 
 **Closed issues:**
 
@@ -196,7 +207,7 @@
 - Enable basic auth [\#815](https://github.com/synyx/urlaubsverwaltung/issues/815)
 - E-Mail Notification Einrichtung [\#786](https://github.com/synyx/urlaubsverwaltung/issues/786)
 
-## [urlaubsverwaltung-3.0.0.RC8](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC8) (2019-11-15)
+## [urlaubsverwaltung-3.0.0.RC8](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC8) (2019-11-15)
 
 **Closed issues:**
 
@@ -216,15 +227,15 @@
 - Docker Image is too\(?\) big [\#747](https://github.com/synyx/urlaubsverwaltung/issues/747)
 - Default Arbeitszeiten / Urlaub bei Ersteinrichtung [\#365](https://github.com/synyx/urlaubsverwaltung/issues/365)
 
-## [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC7) (2019-09-12)
+## [urlaubsverwaltung-3.0.0.RC7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC7) (2019-09-12)
 
-## [urlaubsverwaltung-3.0.0.RC6](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC6) (2019-09-11)
+## [urlaubsverwaltung-3.0.0.RC6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC6) (2019-09-11)
 
 **Closed issues:**
 
 - Redesign Mail Versand [\#507](https://github.com/synyx/urlaubsverwaltung/issues/507)
 
-## [urlaubsverwaltung-3.0.0.RC5](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC5) (2019-09-11)
+## [urlaubsverwaltung-3.0.0.RC5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC5) (2019-09-11)
 
 **Closed issues:**
 
@@ -240,7 +251,7 @@
 - Urlaubstage-Kalkulation berücksichtigt nicht Überstundenabbau [\#362](https://github.com/synyx/urlaubsverwaltung/issues/362)
 - Secure Api Access [\#266](https://github.com/synyx/urlaubsverwaltung/issues/266)
 
-## [urlaubsverwaltung-2.44.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.44.2) (2019-07-26)
+## [urlaubsverwaltung-2.44.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.2) (2019-07-26)
 
 **Closed issues:**
 
@@ -252,9 +263,9 @@
 - Highlight current day in "Vacation request" [\#699](https://github.com/synyx/urlaubsverwaltung/issues/699)
 -  The server time zone value 'CEST' is unrecognized  [\#678](https://github.com/synyx/urlaubsverwaltung/issues/678)
 
-## [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC4) (2019-07-15)
+## [urlaubsverwaltung-3.0.0.RC4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC4) (2019-07-15)
 
-## [urlaubsverwaltung-3.0.0.RC3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC3) (2019-07-15)
+## [urlaubsverwaltung-3.0.0.RC3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC3) (2019-07-15)
 
 **Closed issues:**
 
@@ -262,21 +273,21 @@
 - Feiertage bei überlappendem Urlaub nicht mehr kenntlich im Zeitstrahl [\#338](https://github.com/synyx/urlaubsverwaltung/issues/338)
 - CSV-Export für Krankheitstage [\#329](https://github.com/synyx/urlaubsverwaltung/issues/329)
 
-## [urlaubsverwaltung-3.0.0.RC2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC2) (2019-07-12)
+## [urlaubsverwaltung-3.0.0.RC2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC2) (2019-07-12)
 
 **Closed issues:**
 
 - OAuth/OpenIdConnect zur Authentifizierung an der Urlaubsverwaltung [\#473](https://github.com/synyx/urlaubsverwaltung/issues/473)
 
-## [urlaubsverwaltung-3.0.0.RC1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-3.0.0.RC1) (2019-07-11)
+## [urlaubsverwaltung-3.0.0.RC1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.0.0.RC1) (2019-07-11)
 
-## [urlaubsverwaltung-2.44.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.44.1) (2019-07-11)
+## [urlaubsverwaltung-2.44.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.1) (2019-07-11)
 
 **Closed issues:**
 
 - Availability-API: 500er bei nicht gepflegten Arbeitszeiten [\#728](https://github.com/synyx/urlaubsverwaltung/issues/728)
 
-## [urlaubsverwaltung-2.44.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.44.0) (2019-07-08)
+## [urlaubsverwaltung-2.44.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.44.0) (2019-07-08)
 
 **Closed issues:**
 
@@ -286,9 +297,9 @@
 - Anzeige der Mitarbeiter der einzelnen Abteilungen [\#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
 - Rollenberechtigung und E-Mail-Versand-Einstellungen verknüpfen [\#140](https://github.com/synyx/urlaubsverwaltung/issues/140)
 
-## [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.43.2) (2019-06-15)
+## [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2) (2019-06-15)
 
-## [urlaubsverwaltung-2.43.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.43.1) (2019-06-15)
+## [urlaubsverwaltung-2.43.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.1) (2019-06-15)
 
 **Closed issues:**
 
@@ -297,19 +308,19 @@
 - Bitte ein LDAP-Konfig Beispiel [\#574](https://github.com/synyx/urlaubsverwaltung/issues/574)
 - Darstellung der Abwesenheiten im Outlook-Kalender [\#198](https://github.com/synyx/urlaubsverwaltung/issues/198)
 
-## [urlaubsverwaltung-2.43.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.43.0) (2019-06-09)
+## [urlaubsverwaltung-2.43.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.0) (2019-06-09)
 
 **Closed issues:**
 
 - Resync Exchange calendar? [\#475](https://github.com/synyx/urlaubsverwaltung/issues/475)
 
-## [urlaubsverwaltung-2.42.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.42.3) (2019-05-24)
+## [urlaubsverwaltung-2.42.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.3) (2019-05-24)
 
 **Closed issues:**
 
 - Anwendung startet nicht mit LDAP Konfiguration wegen fehlenden Properties [\#698](https://github.com/synyx/urlaubsverwaltung/issues/698)
 
-## [urlaubsverwaltung-2.42.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.42.2) (2019-05-24)
+## [urlaubsverwaltung-2.42.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.2) (2019-05-24)
 
 **Closed issues:**
 
@@ -318,24 +329,24 @@
 - Berechtigung Auflistung [\#682](https://github.com/synyx/urlaubsverwaltung/issues/682)
 - Arbeitszeiten für Teilzeitkräfte definieren [\#677](https://github.com/synyx/urlaubsverwaltung/issues/677)
 
-## [urlaubsverwaltung-2.42.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.42.1) (2019-05-03)
+## [urlaubsverwaltung-2.42.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.1) (2019-05-03)
 
-## [urlaubsverwaltung-2.42.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.42.0) (2019-05-03)
+## [urlaubsverwaltung-2.42.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.42.0) (2019-05-03)
 
-## [urlaubsverwaltung-2.41.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.41.0) (2019-04-26)
+## [urlaubsverwaltung-2.41.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.41.0) (2019-04-26)
 
 **Closed issues:**
 
 - \[Urlaubsanspruch\] Halbe Tage definieren für die Anpruchsfelder [\#664](https://github.com/synyx/urlaubsverwaltung/issues/664)
 - Fehlerhafte Anzeige im Kalender in der Übersicht bei zwei Halbtagsberulabungen [\#624](https://github.com/synyx/urlaubsverwaltung/issues/624)
 
-## [urlaubsverwaltung-2.40.6](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.40.6) (2019-04-26)
+## [urlaubsverwaltung-2.40.6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.6) (2019-04-26)
 
 **Closed issues:**
 
 - Benutzer löschen? [\#659](https://github.com/synyx/urlaubsverwaltung/issues/659)
 
-## [urlaubsverwaltung-2.40.5](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.40.5) (2019-04-26)
+## [urlaubsverwaltung-2.40.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.5) (2019-04-26)
 
 **Closed issues:**
 
@@ -345,21 +356,21 @@
 - Vorläufig bewilligte Urlaubsanträge können neu gebucht werden [\#325](https://github.com/synyx/urlaubsverwaltung/issues/325)
 - Vorläufig genehmigte Urlaubsanträge erscheinen nicht in Urlaubsübersicht [\#246](https://github.com/synyx/urlaubsverwaltung/issues/246)
 
-## [urlaubsverwaltung-2.40.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.40.4) (2019-04-18)
+## [urlaubsverwaltung-2.40.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.4) (2019-04-18)
 
 **Closed issues:**
 
 - \[Chrome\] Buchung 1/2 Tag nicht möglich [\#649](https://github.com/synyx/urlaubsverwaltung/issues/649)
 - Text nicht variabel bei E-Mail über Ende der Lohnfortzahlung [\#579](https://github.com/synyx/urlaubsverwaltung/issues/579)
 
-## [urlaubsverwaltung-2.40.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.40.3) (2019-04-16)
+## [urlaubsverwaltung-2.40.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.3) (2019-04-16)
 
 **Closed issues:**
 
 - Textboxen zählen nicht mehr wie viele Zeichen schon geschrieben wurden [\#647](https://github.com/synyx/urlaubsverwaltung/issues/647)
 - Fehlender Kalender\(DatePicker\) bei Krankmeldungen/Überstunden [\#640](https://github.com/synyx/urlaubsverwaltung/issues/640)
 
-## [urlaubsverwaltung-2.40.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.40.2) (2019-04-15)
+## [urlaubsverwaltung-2.40.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.2) (2019-04-15)
 
 **Closed issues:**
 
@@ -377,13 +388,13 @@
 - Probleme bei der Exchange-Anbindung [\#219](https://github.com/synyx/urlaubsverwaltung/issues/219)
 - Kalender Zeitstrahl Heute \(usability\) [\#97](https://github.com/synyx/urlaubsverwaltung/issues/97)
 
-## [urlaubsverwaltung-2.40.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.40.1) (2019-04-13)
+## [urlaubsverwaltung-2.40.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.1) (2019-04-13)
 
 **Closed issues:**
 
 - Unausgefüllte Felder in E-Mails nicht ausgeblendet [\#585](https://github.com/synyx/urlaubsverwaltung/issues/585)
 
-## [urlaubsverwaltung-2.40.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.40.0) (2019-04-09)
+## [urlaubsverwaltung-2.40.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.40.0) (2019-04-09)
 
 **Closed issues:**
 
@@ -420,7 +431,7 @@
 - Benutzer: Passwort vergessen [\#72](https://github.com/synyx/urlaubsverwaltung/issues/72)
 - Benutzer: Passwort ändern [\#71](https://github.com/synyx/urlaubsverwaltung/issues/71)
 
-## [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.39.0) (2019-03-27)
+## [urlaubsverwaltung-2.39.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.39.0) (2019-03-27)
 
 **Closed issues:**
 
@@ -441,7 +452,7 @@
 - In Memory Datenbank als Standard [\#47](https://github.com/synyx/urlaubsverwaltung/issues/47)
 - Urlaubsanträge als PDF [\#9](https://github.com/synyx/urlaubsverwaltung/issues/9)
 
-## [urlaubsverwaltung-2.38.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.38.3) (2019-03-15)
+## [urlaubsverwaltung-2.38.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.3) (2019-03-15)
 
 **Closed issues:**
 
@@ -450,9 +461,9 @@
 - Urlaubstyp nicht als Variable im Programm [\#419](https://github.com/synyx/urlaubsverwaltung/issues/419)
 - Login-Button verliert contextPath Einstellungen [\#307](https://github.com/synyx/urlaubsverwaltung/issues/307)
 
-## [urlaubsverwaltung-2.38.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.38.2) (2019-03-15)
+## [urlaubsverwaltung-2.38.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.2) (2019-03-15)
 
-## [urlaubsverwaltung-2.38.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.38.1) (2019-03-13)
+## [urlaubsverwaltung-2.38.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.1) (2019-03-13)
 
 **Closed issues:**
 
@@ -460,40 +471,40 @@
 - h2-console bleibt leer [\#455](https://github.com/synyx/urlaubsverwaltung/issues/455)
 - Exchange Timezone konfigurierbar machen [\#421](https://github.com/synyx/urlaubsverwaltung/issues/421)
 
-## [urlaubsverwaltung-2.38.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.38.0) (2019-03-12)
+## [urlaubsverwaltung-2.38.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.38.0) (2019-03-12)
 
-## [urlaubsverwaltung-2.37.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.37.1) (2019-03-12)
+## [urlaubsverwaltung-2.37.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.1) (2019-03-12)
 
 **Closed issues:**
 
 - RestAPI ist nicht via BasicAuth zugreifbar [\#542](https://github.com/synyx/urlaubsverwaltung/issues/542)
 
-## [urlaubsverwaltung-2.37.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.37.0) (2019-03-12)
+## [urlaubsverwaltung-2.37.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.37.0) (2019-03-12)
 
-## [urlaubsverwaltung-2.36.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.36.2) (2019-03-11)
+## [urlaubsverwaltung-2.36.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.2) (2019-03-11)
 
-## [urlaubsverwaltung-2.36.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.36.1) (2019-03-11)
+## [urlaubsverwaltung-2.36.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.1) (2019-03-11)
 
-## [urlaubsverwaltung-2.36.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.36.0) (2019-03-11)
+## [urlaubsverwaltung-2.36.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.36.0) (2019-03-11)
 
 **Closed issues:**
 
 - JSPs in jar mit Spring Boot 1.4.3 und höher [\#303](https://github.com/synyx/urlaubsverwaltung/issues/303)
 - Einstellungen: UX verbessern [\#217](https://github.com/synyx/urlaubsverwaltung/issues/217)
 
-## [urlaubsverwaltung-2.35.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.35.0) (2019-03-08)
+## [urlaubsverwaltung-2.35.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.35.0) (2019-03-08)
 
-## [urlaubsverwaltung-2.34.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.34.0) (2019-03-08)
+## [urlaubsverwaltung-2.34.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.34.0) (2019-03-08)
 
-## [urlaubsverwaltung-2.33.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.33.0) (2019-03-04)
+## [urlaubsverwaltung-2.33.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.33.0) (2019-03-04)
 
-## [urlaubsverwaltung-2.32.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.32.0) (2019-02-22)
+## [urlaubsverwaltung-2.32.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.32.0) (2019-02-22)
 
-## [urlaubsverwaltung-2.31.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.31.0) (2019-02-22)
+## [urlaubsverwaltung-2.31.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.31.0) (2019-02-22)
 
-## [urlaubsverwaltung-2.30.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.30.0) (2019-02-19)
+## [urlaubsverwaltung-2.30.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.30.0) (2019-02-19)
 
-## [urlaubsverwaltung-2.29.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.29.0) (2019-02-19)
+## [urlaubsverwaltung-2.29.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.29.0) (2019-02-19)
 
 **Closed issues:**
 
@@ -521,9 +532,9 @@
 - Krankmeldungen durch Vorgesetzte erfassen [\#196](https://github.com/synyx/urlaubsverwaltung/issues/196)
 - Erinnerungsemail: verfallende Resturlaubstage [\#13](https://github.com/synyx/urlaubsverwaltung/issues/13)
 
-## [urlaubsverwaltung-2.28.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.28.0) (2018-10-11)
+## [urlaubsverwaltung-2.28.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.28.0) (2018-10-11)
 
-## [urlaubsverwaltung-2.27.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.27.0) (2018-10-10)
+## [urlaubsverwaltung-2.27.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.27.0) (2018-10-10)
 
 **Closed issues:**
 
@@ -531,11 +542,11 @@
 - Durch Abteilungsnamen mit Sonderzeichen Fehler in JS  [\#424](https://github.com/synyx/urlaubsverwaltung/issues/424)
 - JavaScript-Probleme in der Urlaubsübersicht [\#369](https://github.com/synyx/urlaubsverwaltung/issues/369)
 
-## [urlaubsverwaltung-2.26.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.26.2) (2018-02-20)
+## [urlaubsverwaltung-2.26.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.2) (2018-02-20)
 
-## [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.26.1) (2018-01-12)
+## [urlaubsverwaltung-2.26.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.1) (2018-01-12)
 
-## [urlaubsverwaltung-2.26.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.26.0) (2017-12-29)
+## [urlaubsverwaltung-2.26.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.26.0) (2017-12-29)
 
 **Closed issues:**
 
@@ -545,9 +556,9 @@
 - Zeitliche Übersicht über Urlaub [\#27](https://github.com/synyx/urlaubsverwaltung/issues/27)
 - Anbindung an Google Kalendar [\#8](https://github.com/synyx/urlaubsverwaltung/issues/8)
 
-## [urlaubsverwaltung-2.25.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.25.0) (2017-08-25)
+## [urlaubsverwaltung-2.25.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.25.0) (2017-08-25)
 
-## [urlaubsverwaltung-2.24.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.24.1) (2017-07-07)
+## [urlaubsverwaltung-2.24.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.1) (2017-07-07)
 
 **Closed issues:**
 
@@ -558,7 +569,7 @@
 - Erstinstallation Hilfe! [\#288](https://github.com/synyx/urlaubsverwaltung/issues/288)
 - Exchange Kalender Sync [\#274](https://github.com/synyx/urlaubsverwaltung/issues/274)
 
-## [urlaubsverwaltung-2.24.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.24.0) (2017-03-24)
+## [urlaubsverwaltung-2.24.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.24.0) (2017-03-24)
 
 **Closed issues:**
 
@@ -568,7 +579,7 @@
 - Kommentar zu Urlaubsanspruch in Urlaubsverwaltung pflegen [\#238](https://github.com/synyx/urlaubsverwaltung/issues/238)
 - API für An- & Abwesenheit einzelner bzw. aller Benutzer [\#208](https://github.com/synyx/urlaubsverwaltung/issues/208)
 
-## [urlaubsverwaltung-2.23.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.23.0) (2017-01-27)
+## [urlaubsverwaltung-2.23.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.23.0) (2017-01-27)
 
 **Closed issues:**
 
@@ -578,15 +589,15 @@
 - Erstinstallation  [\#284](https://github.com/synyx/urlaubsverwaltung/issues/284)
 - Benutzer-Liste wird nicht vollständig angezeigt [\#256](https://github.com/synyx/urlaubsverwaltung/issues/256)
 
-## [urlaubsverwaltung-2.22.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.22.2) (2016-12-07)
+## [urlaubsverwaltung-2.22.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.2) (2016-12-07)
 
 **Closed issues:**
 
 - Korrekte Suche nach Krankmeldungen basierend auf Zeitraum [\#279](https://github.com/synyx/urlaubsverwaltung/issues/279)
 
-## [urlaubsverwaltung-2.22.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.22.1) (2016-12-06)
+## [urlaubsverwaltung-2.22.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.1) (2016-12-06)
 
-## [urlaubsverwaltung-2.22.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.22.0) (2016-12-02)
+## [urlaubsverwaltung-2.22.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.22.0) (2016-12-02)
 
 **Closed issues:**
 
@@ -604,7 +615,7 @@
 - AD Login Ignoring PartialResultException AUTHENTICATION\_FAILURE [\#173](https://github.com/synyx/urlaubsverwaltung/issues/173)
 - Timeline auf Übersichtsseite [\#98](https://github.com/synyx/urlaubsverwaltung/issues/98)
 
-## [urlaubsverwaltung-2.21.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.21.1) (2016-08-18)
+## [urlaubsverwaltung-2.21.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.21.1) (2016-08-18)
 
 **Closed issues:**
 
@@ -616,7 +627,7 @@
 - Fehler beim Anpassen der Benutzerberichtigungen [\#226](https://github.com/synyx/urlaubsverwaltung/issues/226)
 - Rolle DEPARTMENT\_HEAD darf Urlaub nicht stornieren [\#224](https://github.com/synyx/urlaubsverwaltung/issues/224)
 
-## [urlaubsverwaltung-2.21.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.21.0) (2016-08-02)
+## [urlaubsverwaltung-2.21.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.21.0) (2016-08-02)
 
 **Closed issues:**
 
@@ -625,18 +636,18 @@
 - Bundeslandanzeige bezieht sich auf den Arbeitsort nicht Wohnort [\#222](https://github.com/synyx/urlaubsverwaltung/issues/222)
 - Probleme beim Start der Urlaubsverwaltung [\#214](https://github.com/synyx/urlaubsverwaltung/issues/214)
 
-## [urlaubsverwaltung-2.20.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.20.1) (2016-07-20)
+## [urlaubsverwaltung-2.20.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.20.1) (2016-07-20)
 
-## [urlaubsverwaltung-2.20.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.20.0) (2016-07-20)
+## [urlaubsverwaltung-2.20.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.20.0) (2016-07-20)
 
 **Closed issues:**
 
 - Benutzerformular: UX verbessern [\#216](https://github.com/synyx/urlaubsverwaltung/issues/216)
 - LdapBind, Active Directory Problem mit UPN, Samaccountname - Update Spring LDAP Core [\#215](https://github.com/synyx/urlaubsverwaltung/issues/215)
 
-## [urlaubsverwaltung-2.19.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.19.0) (2016-06-24)
+## [urlaubsverwaltung-2.19.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.19.0) (2016-06-24)
 
-## [urlaubsverwaltung-2.18.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.18.2) (2016-06-17)
+## [urlaubsverwaltung-2.18.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.18.2) (2016-06-17)
 
 **Closed issues:**
 
@@ -649,7 +660,7 @@
 - LDAP-anbindung OS X Server / Open Directory [\#203](https://github.com/synyx/urlaubsverwaltung/issues/203)
 - Noch nicht genehmigten Urlaub im Kalendar farblich hervorheben [\#200](https://github.com/synyx/urlaubsverwaltung/issues/200)
 
-## [urlaubsverwaltung-2.18.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.18.1) (2016-05-20)
+## [urlaubsverwaltung-2.18.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.18.1) (2016-05-20)
 
 **Closed issues:**
 
@@ -657,7 +668,7 @@
 - No working time found for user ... [\#199](https://github.com/synyx/urlaubsverwaltung/issues/199)
 - In der Vergangenheit liegende Urlaubsanträge können storniert werden [\#195](https://github.com/synyx/urlaubsverwaltung/issues/195)
 
-## [urlaubsverwaltung-2.18.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.18.0) (2016-05-13)
+## [urlaubsverwaltung-2.18.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.18.0) (2016-05-13)
 
 **Closed issues:**
 
@@ -665,7 +676,7 @@
 - deaktivierter User loggt sich ein - Problem im Browser [\#190](https://github.com/synyx/urlaubsverwaltung/issues/190)
 - Bundeslandauswahl pro User ermöglichen [\#178](https://github.com/synyx/urlaubsverwaltung/issues/178)
 
-## [urlaubsverwaltung-2.17.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.17.3) (2016-05-04)
+## [urlaubsverwaltung-2.17.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.3) (2016-05-04)
 
 **Closed issues:**
 
@@ -674,7 +685,7 @@
 - Email-Texte konfigurierbar machen [\#185](https://github.com/synyx/urlaubsverwaltung/issues/185)
 - Benutzerliste filterbar nach Abteilung [\#136](https://github.com/synyx/urlaubsverwaltung/issues/136)
 
-## [urlaubsverwaltung-2.17.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.17.2) (2016-04-29)
+## [urlaubsverwaltung-2.17.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.2) (2016-04-29)
 
 **Closed issues:**
 
@@ -688,9 +699,9 @@
 - Exchange 2010 Kalender-Anbindung [\#153](https://github.com/synyx/urlaubsverwaltung/issues/153)
 - Zeitraum für Urlaubsantrag zu ungenau [\#82](https://github.com/synyx/urlaubsverwaltung/issues/82)
 
-## [urlaubsverwaltung-2.17.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.17.1) (2016-03-04)
+## [urlaubsverwaltung-2.17.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.1) (2016-03-04)
 
-## [urlaubsverwaltung-2.17.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.17.0) (2016-03-04)
+## [urlaubsverwaltung-2.17.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.17.0) (2016-03-04)
 
 **Closed issues:**
 
@@ -703,14 +714,14 @@
 - Benutzerpflege: Validierung bei Vergabe von Berechtigungen verbessern [\#163](https://github.com/synyx/urlaubsverwaltung/issues/163)
 - Urlaubsantrag: Überstundenanzahl optional bei deaktivierter Überstundenfunktion [\#161](https://github.com/synyx/urlaubsverwaltung/issues/161)
 
-## [urlaubsverwaltung-2.16.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.16.0) (2016-02-12)
+## [urlaubsverwaltung-2.16.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.16.0) (2016-02-12)
 
 **Closed issues:**
 
 - Extrem langsam über VPN Tunnel [\#157](https://github.com/synyx/urlaubsverwaltung/issues/157)
 - Einstellungen E-Mail-Versand erweitern um URL der Anwendung [\#151](https://github.com/synyx/urlaubsverwaltung/issues/151)
 
-## [urlaubsverwaltung-2.15.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.15.0) (2016-02-05)
+## [urlaubsverwaltung-2.15.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.15.0) (2016-02-05)
 
 **Closed issues:**
 
@@ -722,13 +733,13 @@
 - Urlaubsarten pflegbar machen \(Datenbank only\) [\#144](https://github.com/synyx/urlaubsverwaltung/issues/144)
 - Krankmeldungsarten pflegbar machen \(Datenbank only\) [\#143](https://github.com/synyx/urlaubsverwaltung/issues/143)
 
-## [urlaubsverwaltung-2.14.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.14.1) (2016-01-19)
+## [urlaubsverwaltung-2.14.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.14.1) (2016-01-19)
 
 **Closed issues:**
 
 - Bug: Es ist nicht möglich, halbtägigen Urlaub zu beantragen [\#156](https://github.com/synyx/urlaubsverwaltung/issues/156)
 
-## [urlaubsverwaltung-2.14.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.14.0) (2016-01-18)
+## [urlaubsverwaltung-2.14.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.14.0) (2016-01-18)
 
 **Closed issues:**
 
@@ -742,18 +753,18 @@
 - Urlaub beantragen: Im Übersichtskalender sollen die Tage, zu denen keine Arbeitszeitkonfiguration besteht, nicht anklickbar sein [\#19](https://github.com/synyx/urlaubsverwaltung/issues/19)
 - Als Mitarbeiter nicht genommenen genehmigten Urlaub stornieren können [\#11](https://github.com/synyx/urlaubsverwaltung/issues/11)
 
-## [urlaubsverwaltung-2.13.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.13.2) (2016-01-12)
+## [urlaubsverwaltung-2.13.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.13.2) (2016-01-12)
 
 **Closed issues:**
 
 - Bug: \(Teilweise\) Doppelte Urlaubskontos nach Cronjob zum Jahresanfang [\#137](https://github.com/synyx/urlaubsverwaltung/issues/137)
 - Bug: Krankheitsübersicht nicht möglich, wenn ein Mitarbeiter keine Arbeitszeiten konfiguriert hat [\#129](https://github.com/synyx/urlaubsverwaltung/issues/129)
 
-## [urlaubsverwaltung-2.11.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.11.4) (2016-01-04)
+## [urlaubsverwaltung-2.11.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.4) (2016-01-04)
 
-## [urlaubsverwaltung-2.10.5](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.10.5) (2016-01-04)
+## [urlaubsverwaltung-2.10.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.5) (2016-01-04)
 
-## [urlaubsverwaltung-2.13.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.13.1) (2016-01-04)
+## [urlaubsverwaltung-2.13.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.13.1) (2016-01-04)
 
 **Closed issues:**
 
@@ -762,7 +773,7 @@
 - Einstellungen für maximale Überstunden [\#133](https://github.com/synyx/urlaubsverwaltung/issues/133)
 - Funktionen teilweise deaktivieren [\#131](https://github.com/synyx/urlaubsverwaltung/issues/131)
 
-## [urlaubsverwaltung-2.13.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.13.0) (2015-12-15)
+## [urlaubsverwaltung-2.13.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.13.0) (2015-12-15)
 
 **Closed issues:**
 
@@ -770,43 +781,43 @@
 - Urlaubsstatistik: Datumsgenauer Zeitraum Filter [\#124](https://github.com/synyx/urlaubsverwaltung/issues/124)
 - Exchange 2013 Kalender Anbindung [\#117](https://github.com/synyx/urlaubsverwaltung/issues/117)
 
-## [urlaubsverwaltung-2.12.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.12.2) (2015-12-10)
+## [urlaubsverwaltung-2.12.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.2) (2015-12-10)
 
 **Closed issues:**
 
 - Update Version 12.10.4 auf 12.11.0 Datenbankübernahme [\#132](https://github.com/synyx/urlaubsverwaltung/issues/132)
 - AD Auth findet keine Benutzer [\#130](https://github.com/synyx/urlaubsverwaltung/issues/130)
 
-## [urlaubsverwaltung-2.10.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.10.4) (2015-12-03)
+## [urlaubsverwaltung-2.10.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.4) (2015-12-03)
 
-## [urlaubsverwaltung-2.10.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.10.3) (2015-11-27)
+## [urlaubsverwaltung-2.10.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.3) (2015-11-27)
 
 **Closed issues:**
 
 - Auslesen der beantragten und genehmigten Urlaubstage [\#128](https://github.com/synyx/urlaubsverwaltung/issues/128)
 - Übersichtskalender: Urlaub aller Mitarbeiter [\#122](https://github.com/synyx/urlaubsverwaltung/issues/122)
 
-## [urlaubsverwaltung-2.12.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.12.1) (2015-11-20)
+## [urlaubsverwaltung-2.12.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.1) (2015-11-20)
 
-## [urlaubsverwaltung-2.11.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.11.3) (2015-11-20)
+## [urlaubsverwaltung-2.11.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.3) (2015-11-20)
 
-## [urlaubsverwaltung-2.10.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.10.2) (2015-11-20)
+## [urlaubsverwaltung-2.10.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.2) (2015-11-20)
 
-## [urlaubsverwaltung-2.12.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.12.0) (2015-11-20)
+## [urlaubsverwaltung-2.12.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.12.0) (2015-11-20)
 
 **Closed issues:**
 
 - Bug: Überstundenanzahl in Urlaubsstatistik und Überstundenliste wird auf eine Kommastelle aufgerundet [\#125](https://github.com/synyx/urlaubsverwaltung/issues/125)
 
-## [urlaubsverwaltung-2.11.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.11.2) (2015-11-05)
+## [urlaubsverwaltung-2.11.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.2) (2015-11-05)
 
-## [urlaubsverwaltung-2.11.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.11.1) (2015-10-26)
+## [urlaubsverwaltung-2.11.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.1) (2015-10-26)
 
 **Closed issues:**
 
 - Bug: Überstundeneintrag wird aufgerundet [\#121](https://github.com/synyx/urlaubsverwaltung/issues/121)
 
-## [urlaubsverwaltung-2.11.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.11.0) (2015-10-26)
+## [urlaubsverwaltung-2.11.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.11.0) (2015-10-26)
 
 **Closed issues:**
 
@@ -818,7 +829,7 @@
 - Urlaub beantragen zum Überstundenabbau [\#110](https://github.com/synyx/urlaubsverwaltung/issues/110)
 - Pflege von Überstunden [\#109](https://github.com/synyx/urlaubsverwaltung/issues/109)
 
-## [urlaubsverwaltung-2.10.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.10.1) (2015-10-14)
+## [urlaubsverwaltung-2.10.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.1) (2015-10-14)
 
 **Closed issues:**
 
@@ -826,7 +837,7 @@
 - ${catalina.base} in log4j-prod.properties nicht verfügbar [\#95](https://github.com/synyx/urlaubsverwaltung/issues/95)
 - Authentifizierung über Datenbank \(aktuell nur für Testbenutzer\) [\#41](https://github.com/synyx/urlaubsverwaltung/issues/41)
 
-## [urlaubsverwaltung-2.10.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.10.0) (2015-09-25)
+## [urlaubsverwaltung-2.10.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.10.0) (2015-09-25)
 
 **Closed issues:**
 
@@ -834,13 +845,13 @@
 - Farbschema für Übersichtskalender optimieren [\#99](https://github.com/synyx/urlaubsverwaltung/issues/99)
 - Krankmeldungen: Eintragen von halben Krankheitstagen [\#87](https://github.com/synyx/urlaubsverwaltung/issues/87)
 
-## [urlaubsverwaltung-2.9.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.9.3) (2015-09-16)
+## [urlaubsverwaltung-2.9.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.9.3) (2015-09-16)
 
 **Closed issues:**
 
 - Nullpointer in Krankmeldungsübersicht [\#94](https://github.com/synyx/urlaubsverwaltung/issues/94)
 
-## [urlaubsverwaltung-2.9.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.9.2) (2015-09-04)
+## [urlaubsverwaltung-2.9.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.9.2) (2015-09-04)
 
 **Closed issues:**
 
@@ -849,7 +860,7 @@
 - Kalenderanbindung über Oberfläche konfigurieren [\#79](https://github.com/synyx/urlaubsverwaltung/issues/79)
 - Bessere Userverwaltung mit Active Directory [\#73](https://github.com/synyx/urlaubsverwaltung/issues/73)
 
-## [urlaubsverwaltung-2.9.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.9.1) (2015-08-28)
+## [urlaubsverwaltung-2.9.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.9.1) (2015-08-28)
 
 **Closed issues:**
 
@@ -860,7 +871,7 @@
 - Übersichtskalender: Krankmeldungen anzeigen [\#16](https://github.com/synyx/urlaubsverwaltung/issues/16)
 - Übersichtskalender: Urlaubsanträge mit Status wartend in einer anderen Farbe anzeigen [\#15](https://github.com/synyx/urlaubsverwaltung/issues/15)
 
-## [urlaubsverwaltung-2.9.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.9.0) (2015-08-21)
+## [urlaubsverwaltung-2.9.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.9.0) (2015-08-21)
 
 **Closed issues:**
 
@@ -874,7 +885,7 @@
 - Benutzer: Meine Daten sehen [\#43](https://github.com/synyx/urlaubsverwaltung/issues/43)
 - Formulare: Pflichtfelder markieren [\#36](https://github.com/synyx/urlaubsverwaltung/issues/36)
 
-## [urlaubsverwaltung-2.8.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.8.1) (2015-08-07)
+## [urlaubsverwaltung-2.8.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.8.1) (2015-08-07)
 
 **Closed issues:**
 
@@ -882,7 +893,7 @@
 - Benutzer: Meine Daten editieren [\#42](https://github.com/synyx/urlaubsverwaltung/issues/42)
 - Urlaubsverwaltung benutzt unsichere Ressourcen [\#20](https://github.com/synyx/urlaubsverwaltung/issues/20)
 
-## [urlaubsverwaltung-2.8.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.8.0) (2015-05-15)
+## [urlaubsverwaltung-2.8.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.8.0) (2015-05-15)
 
 **Closed issues:**
 
@@ -891,27 +902,27 @@
 - Bug: Falsches Aussehen Menüpunkt "Einstellungen" auf kleinen Geräten [\#65](https://github.com/synyx/urlaubsverwaltung/issues/65)
 - Vereinfachen des Urlaube genehmigen/ablehnen Prozesses \(Shortcut?\) [\#23](https://github.com/synyx/urlaubsverwaltung/issues/23)
 
-## [urlaubsverwaltung-2.7.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.7.1) (2015-04-24)
+## [urlaubsverwaltung-2.7.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.7.1) (2015-04-24)
 
 **Closed issues:**
 
 - Konfigurationsmöglichkeit für Business-Logik [\#29](https://github.com/synyx/urlaubsverwaltung/issues/29)
 
-## [urlaubsverwaltung-2.7.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.7.0) (2015-04-24)
+## [urlaubsverwaltung-2.7.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.7.0) (2015-04-24)
 
 **Closed issues:**
 
 - Internationale Domainnamen bei E-Mail-Adresse [\#17](https://github.com/synyx/urlaubsverwaltung/issues/17)
 
-## [urlaubsverwaltung-2.6.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.6.4) (2015-04-14)
+## [urlaubsverwaltung-2.6.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.6.4) (2015-04-14)
 
-## [urlaubsverwaltung-2.6.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.6.3) (2015-04-14)
+## [urlaubsverwaltung-2.6.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.6.3) (2015-04-14)
 
 **Closed issues:**
 
 - Bug: Zwei halbtägige Urlaubsanträge an einem Tag nicht möglich [\#63](https://github.com/synyx/urlaubsverwaltung/issues/63)
 
-## [urlaubsverwaltung-2.6.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.6.2) (2015-03-27)
+## [urlaubsverwaltung-2.6.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.6.2) (2015-03-27)
 
 **Closed issues:**
 
@@ -919,22 +930,21 @@
 - Bug: Dauer halber Urlaubstag wird als "0 Tage" angezeigt [\#61](https://github.com/synyx/urlaubsverwaltung/issues/61)
 - Bug: Kein Feedback bei "Chef erinnern"-Aktion [\#60](https://github.com/synyx/urlaubsverwaltung/issues/60)
 
-## [urlaubsverwaltung-2.6.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.6.1) (2015-03-20)
+## [urlaubsverwaltung-2.6.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.6.1) (2015-03-20)
 
 **Closed issues:**
 
 - Bug: Aktionen \(Krankmeldung erstellen, Benutzer anlegen\) dürfen für Benutzer mit Boss Rolle nicht sichtbar sein [\#59](https://github.com/synyx/urlaubsverwaltung/issues/59)
 - Bug: Personen im Krankmeldung Formular nicht sortiert [\#58](https://github.com/synyx/urlaubsverwaltung/issues/58)
 
-## [urlaubsverwaltung-2.6.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.6.0) (2015-03-20)
+## [urlaubsverwaltung-2.6.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.6.0) (2015-03-20)
 
 **Closed issues:**
 
 - Positives Feedback bei beantragtem Urlaub [\#56](https://github.com/synyx/urlaubsverwaltung/issues/56)
-- Bug: Fehlende Namensauflösung bei Vertretungsmails [\#54](https://github.com/synyx/urlaubsverwaltung/issues/54)
 - Navigation: Erweiterung [\#40](https://github.com/synyx/urlaubsverwaltung/issues/40)
 
-## [urlaubsverwaltung-2.5.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.5.3) (2015-03-17)
+## [urlaubsverwaltung-2.5.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.5.3) (2015-03-17)
 
 **Closed issues:**
 
@@ -944,32 +954,33 @@
 - Stornieren von Urlaubsanträgen im alten Jahr wirkt sich auf den Resturlaub des aktuellen Jahres aus [\#25](https://github.com/synyx/urlaubsverwaltung/issues/25)
 - Geschätzten Resturlaub für das nächste Jahr anzeigen [\#24](https://github.com/synyx/urlaubsverwaltung/issues/24)
 
-## [urlaubsverwaltung-2.5.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.5.2) (2015-03-13)
+## [urlaubsverwaltung-2.5.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.5.2) (2015-03-13)
 
 **Closed issues:**
 
 - Urlaubs- und Krankheitstage on the fly berechnen [\#46](https://github.com/synyx/urlaubsverwaltung/issues/46)
 - Build Failure wenn nicht UTF-8 Locale [\#37](https://github.com/synyx/urlaubsverwaltung/issues/37)
 
-## [urlaubsverwaltung-2.5.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.5.1) (2015-03-12)
+## [urlaubsverwaltung-2.5.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.5.1) (2015-03-12)
 
 **Closed issues:**
 
+- Bug: Fehlende Namensauflösung bei Vertretungsmails [\#54](https://github.com/synyx/urlaubsverwaltung/issues/54)
 - Urlaubsantrag, Vertreter: Sortierung [\#50](https://github.com/synyx/urlaubsverwaltung/issues/50)
 - Bug: Urlaub für einen halben Tag beantragen nicht möglich [\#49](https://github.com/synyx/urlaubsverwaltung/issues/49)
 - Pflichtfeld bei Überstundenabbau [\#48](https://github.com/synyx/urlaubsverwaltung/issues/48)
 - Anzahl verfallender Resturlaubstage bestimmen können [\#10](https://github.com/synyx/urlaubsverwaltung/issues/10)
 
-## [urlaubsverwaltung-2.5.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.5.0) (2015-03-06)
+## [urlaubsverwaltung-2.5.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.5.0) (2015-03-06)
 
-## [urlaubsverwaltung-2.4.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.4.2) (2015-02-26)
+## [urlaubsverwaltung-2.4.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.4.2) (2015-02-26)
 
 **Closed issues:**
 
 - Urlaub beantragen: Validierung von Datum bei Beantragung von halbtägigem Urlaub  [\#39](https://github.com/synyx/urlaubsverwaltung/issues/39)
 - Einloggen als normaler Benutzer nicht mehr möglich [\#38](https://github.com/synyx/urlaubsverwaltung/issues/38)
 
-## [urlaubsverwaltung-2.4.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.4.1) (2015-02-20)
+## [urlaubsverwaltung-2.4.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.4.1) (2015-02-20)
 
 **Closed issues:**
 
@@ -979,104 +990,104 @@
 - Übersichtskalender: Bei Wechsel des Jahres wird trotzdem immer der Übersichtskalender für das aktuelle Jahr angezeigt [\#21](https://github.com/synyx/urlaubsverwaltung/issues/21)
 - Urlaub beantragen für Mitarbeiter: Urlaubsformular via Übersichtskalender für Office [\#18](https://github.com/synyx/urlaubsverwaltung/issues/18)
 
-## [urlaubsverwaltung-2.4.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.4.0) (2015-02-13)
+## [urlaubsverwaltung-2.4.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.4.0) (2015-02-13)
 
 **Closed issues:**
 
 - Font Familiy nicht auf Mobile Geräten benutzt [\#33](https://github.com/synyx/urlaubsverwaltung/issues/33)
 - Gesamtübersicht Urlaube für einen bestimmten Zeitraum zur Ressourcenplanung [\#28](https://github.com/synyx/urlaubsverwaltung/issues/28)
 
-## [urlaubsverwaltung-2.3.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.3.1) (2015-02-06)
+## [urlaubsverwaltung-2.3.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.3.1) (2015-02-06)
 
 **Closed issues:**
 
 - Genehmigter Urlaubsantrag: Ausführen Dropdown ist leer [\#26](https://github.com/synyx/urlaubsverwaltung/issues/26)
 - Genehmigte Antwort an das Office druckt den Author des Kommentar nicht aus [\#14](https://github.com/synyx/urlaubsverwaltung/issues/14)
 
-## [urlaubsverwaltung-2.3.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.3.0) (2015-01-23)
+## [urlaubsverwaltung-2.3.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.3.0) (2015-01-23)
 
 **Closed issues:**
 
 - Addiert teilweise die  Krankheitstage falsch [\#7](https://github.com/synyx/urlaubsverwaltung/issues/7)
 - Neuen Antrag in einen schonmal stornierten Zeitraum geht nicht [\#6](https://github.com/synyx/urlaubsverwaltung/issues/6)
 
-## [urlaubsverwaltung-2.2.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.2.1) (2015-01-08)
+## [urlaubsverwaltung-2.2.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.2.1) (2015-01-08)
 
-## [urlaubsverwaltung-2.2.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.2.0) (2014-11-28)
+## [urlaubsverwaltung-2.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.2.0) (2014-11-28)
 
-## [urlaubsverwaltung-2.1.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.1.0) (2014-10-31)
+## [urlaubsverwaltung-2.1.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.1.0) (2014-10-31)
 
-## [urlaubsverwaltung-2.0.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.0.4) (2014-10-24)
+## [urlaubsverwaltung-2.0.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.0.4) (2014-10-24)
 
-## [urlaubsverwaltung-2.0.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.0.3) (2014-10-17)
+## [urlaubsverwaltung-2.0.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.0.3) (2014-10-17)
 
-## [urlaubsverwaltung-2.0.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.0.2) (2014-10-06)
+## [urlaubsverwaltung-2.0.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.0.2) (2014-10-06)
 
-## [urlaubsverwaltung-2.0.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.0.1) (2014-10-06)
+## [urlaubsverwaltung-2.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.0.1) (2014-10-06)
 
-## [urlaubsverwaltung-2.0.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-2.0.0) (2014-10-05)
+## [urlaubsverwaltung-2.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.0.0) (2014-10-05)
 
-## [urlaubsverwaltung-1.5.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.5.3) (2014-08-15)
+## [urlaubsverwaltung-1.5.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.5.3) (2014-08-15)
 
-## [urlaubsverwaltung-1.5.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.5.2) (2014-06-27)
+## [urlaubsverwaltung-1.5.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.5.2) (2014-06-27)
 
-## [urlaubsverwaltung-1.5.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.5.1) (2014-06-27)
+## [urlaubsverwaltung-1.5.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.5.1) (2014-06-27)
 
-## [urlaubsverwaltung-1.5.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.5.0) (2014-06-20)
+## [urlaubsverwaltung-1.5.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.5.0) (2014-06-20)
 
-## [urlaubsverwaltung-1.4.7](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4.7) (2014-04-17)
+## [urlaubsverwaltung-1.4.7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4.7) (2014-04-17)
 
-## [urlaubsverwaltung-1.4.6](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4.6) (2014-03-28)
+## [urlaubsverwaltung-1.4.6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4.6) (2014-03-28)
 
-## [urlaubsverwaltung-1.4.5](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4.5) (2014-03-07)
+## [urlaubsverwaltung-1.4.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4.5) (2014-03-07)
 
-## [urlaubsverwaltung-1.4.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4.4) (2014-01-27)
+## [urlaubsverwaltung-1.4.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4.4) (2014-01-27)
 
-## [urlaubsverwaltung-1.4.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4.3) (2014-01-08)
+## [urlaubsverwaltung-1.4.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4.3) (2014-01-08)
 
-## [urlaubsverwaltung-1.4.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4.2) (2013-12-03)
+## [urlaubsverwaltung-1.4.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4.2) (2013-12-03)
 
-## [urlaubsverwaltung-1.4.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4.1) (2013-12-03)
+## [urlaubsverwaltung-1.4.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4.1) (2013-12-03)
 
-## [urlaubsverwaltung-1.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.4) (2013-12-03)
+## [urlaubsverwaltung-1.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.4) (2013-12-03)
 
-## [urlaubsverwaltung-1.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.3) (2013-10-02)
+## [urlaubsverwaltung-1.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.3) (2013-10-02)
 
-## [urlaubsverwaltung-1.2.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.2.3) (2013-04-10)
+## [urlaubsverwaltung-1.2.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.2.3) (2013-04-10)
 
-## [urlaubsverwaltung-1.2.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.2.2) (2013-04-09)
+## [urlaubsverwaltung-1.2.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.2.2) (2013-04-09)
 
-## [urlaubsverwaltung-1.2.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.2.0) (2013-03-30)
+## [urlaubsverwaltung-1.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.2.0) (2013-03-30)
 
-## [urlaubsverwaltung-1.1.9](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.9) (2013-03-27)
+## [urlaubsverwaltung-1.1.9](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.9) (2013-03-27)
 
-## [urlaubsverwaltung-1.1.8](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.8) (2013-02-06)
+## [urlaubsverwaltung-1.1.8](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.8) (2013-02-06)
 
-## [urlaubsverwaltung-1.1.7](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.7) (2012-12-18)
+## [urlaubsverwaltung-1.1.7](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.7) (2012-12-18)
 
-## [urlaubsverwaltung-1.1.6](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.6) (2012-09-12)
+## [urlaubsverwaltung-1.1.6](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.6) (2012-09-12)
 
-## [urlaubsverwaltung-1.1.5](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.5) (2012-09-12)
+## [urlaubsverwaltung-1.1.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.5) (2012-09-12)
 
-## [urlaubsverwaltung-1.1.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.4) (2012-07-04)
+## [urlaubsverwaltung-1.1.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.4) (2012-07-04)
 
-## [urlaubsverwaltung-1.1.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.3) (2012-05-31)
+## [urlaubsverwaltung-1.1.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.3) (2012-05-31)
 
-## [urlaubsverwaltung-1.1.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.2) (2012-04-16)
+## [urlaubsverwaltung-1.1.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.2) (2012-04-16)
 
-## [urlaubsverwaltung-1.1.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.1) (2012-04-16)
+## [urlaubsverwaltung-1.1.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.1) (2012-04-16)
 
-## [urlaubsverwaltung-1.1.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.1.0) (2012-04-16)
+## [urlaubsverwaltung-1.1.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.1.0) (2012-04-16)
 
-## [urlaubsverwaltung-1.0.4](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.0.4) (2012-04-12)
+## [urlaubsverwaltung-1.0.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.0.4) (2012-04-12)
 
-## [urlaubsverwaltung-1.0.3](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.0.3) (2012-03-05)
+## [urlaubsverwaltung-1.0.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.0.3) (2012-03-05)
 
-## [urlaubsverwaltung-1.0.2](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.0.2) (2012-02-29)
+## [urlaubsverwaltung-1.0.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.0.2) (2012-02-29)
 
-## [urlaubsverwaltung-1.0.1](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.0.1) (2012-02-29)
+## [urlaubsverwaltung-1.0.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.0.1) (2012-02-29)
 
-## [urlaubsverwaltung-1.0.0](https://github.com/synyx/urlaubsverwaltung/tree/urlaubsverwaltung-1.0.0) (2012-02-14)
+## [urlaubsverwaltung-1.0.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-1.0.0) (2012-02-14)
 
 
 
