@@ -21,6 +21,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           releaseUrl: https://github.com/synyx/urlaubsverwaltung/releases/tag/%s
           stripGeneratorNotice: true
+          bugLabels: 'type: bug'
 
       - name: Update Changelog
         run: |
