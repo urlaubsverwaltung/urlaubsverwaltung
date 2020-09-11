@@ -22,6 +22,9 @@ jobs:
           releaseUrl: https://github.com/synyx/urlaubsverwaltung/releases/tag/%s
           stripGeneratorNotice: true
           bugLabels: 'type: bug'
+          securityLabels: 'topic: security'
+          enhancementLabels: 'type: enhancement'
+          breakingLabels: 'type: breaking'
 
       - name: Update Changelog
         run: |
