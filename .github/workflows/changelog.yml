@@ -19,6 +19,8 @@ jobs:
         uses: heinrichreimer/github-changelog-generator-action@v2.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          releaseUrl: https://github.com/synyx/urlaubsverwaltung/releases/tag/%s
+          stripGeneratorNotice: true
 
       - name: Update Changelog
         run: |
