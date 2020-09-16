@@ -1,0 +1,45 @@
+/**************************************************************************
+
+  ERROR PAGE
+
+**************************************************************************/
+
+.error-container {
+  padding: 0;
+}
+
+.error-code,
+.error-description,
+.error-link {
+  text-align: center;
+}
+
+.error-code {
+  font-size: 200px;
+  background-color: #b2c900;
+}
+
+.error-description {
+  font-size: 30px;
+}
+
+.error-link {
+  margin-top: 48px;
+  font-size: 20px;
+}
+
+@media (max-width: 767px) {
+  .error-code {
+    font-size: 100px;
+  }
+
+  .error-description {
+    font-size: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .error-link {
+    font-size: 15px;
+  }
+}

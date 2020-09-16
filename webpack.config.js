@@ -7,35 +7,38 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+const paths = {
+  src: `./src/main/javascript`,
+};
+
 module.exports = {
   devtool: false,
 
   entry: {
     polyfill: '@babel/polyfill',
-    'date-fns-localized': './src/main/webapp/bundles/date-fns-localized.js',
-    login: './src/main/webapp/bundles/login.js',
-    app_detail: './src/main/webapp/bundles/app-detail.js',
-    app_form: './src/main/webapp/bundles/app-form.js',
-    app_list: './src/main/webapp/bundles/app-list.js',
-    app_statistics: './src/main/webapp/bundles/app-statistics.js',
-    common: './src/main/webapp/bundles/common.js',
-    person_overview: './src/main/webapp/bundles/person-overview.js',
-    person_form: './src/main/webapp/bundles/person-form.js',
-    sick_note_form: './src/main/webapp/bundles/sick-note-form.js',
-    sick_note: './src/main/webapp/bundles/sick-note.js',
-    sick_note_convert: './src/main/webapp/bundles/sick-note-convert.js',
-    sick_notes: './src/main/webapp/bundles/sick-notes.js',
-    person_view: './src/main/webapp/bundles/person-view.js',
-    absences_overview: './src/main/webapp/bundles/absences-overview.js',
-    department_form: './src/main/webapp/bundles/department-form.js',
-    department_list: './src/main/webapp/bundles/department-list.js',
-    overtime_overview: './src/main/webapp/bundles/overtime-overview.js',
-    overtime_form: './src/main/webapp/bundles/overtime-form.js',
-    settings_form: './src/main/webapp/bundles/settings-form.js',
-    account_form: './src/main/webapp/bundles/account-form.js',
-    workingtime_form: './src/main/webapp/bundles/workingtime-form.js',
-    copy_to_clipboard_input: './src/main/webapp/components/copy-to-clipboard-input/index.js',
-    tabs: './src/main/webapp/components/tabs/index.js',
+    'date-fns-localized': `${paths.src}/bundles/date-fns-localized.js`,
+    app_detail: `${paths.src}/bundles/app-detail.js`,
+    app_form: `${paths.src}/bundles/app-form.js`,
+    app_list: `${paths.src}/bundles/app-list.js`,
+    app_statistics: `${paths.src}/bundles/app-statistics.js`,
+    common: `${paths.src}/bundles/common.js`,
+    person_overview: `${paths.src}/bundles/person-overview.js`,
+    person_form: `${paths.src}/bundles/person-form.js`,
+    sick_note_form: `${paths.src}/bundles/sick-note-form.js`,
+    sick_note: `${paths.src}/bundles/sick-note.js`,
+    sick_note_convert: `${paths.src}/bundles/sick-note-convert.js`,
+    sick_notes: `${paths.src}/bundles/sick-notes.js`,
+    person_view: `${paths.src}/bundles/person-view.js`,
+    absences_overview: `${paths.src}/bundles/absences-overview.js`,
+    department_form: `${paths.src}/bundles/department-form.js`,
+    department_list: `${paths.src}/bundles/department-list.js`,
+    overtime_overview: `${paths.src}/bundles/overtime-overview.js`,
+    overtime_form: `${paths.src}/bundles/overtime-form.js`,
+    settings_form: `${paths.src}/bundles/settings-form.js`,
+    account_form: `${paths.src}/bundles/account-form.js`,
+    workingtime_form: `${paths.src}/bundles/workingtime-form.js`,
+    copy_to_clipboard_input: `${paths.src}/components/copy-to-clipboard-input/index.js`,
+    tabs: `${paths.src}/components/tabs/index.js`,
   },
 
   output: {

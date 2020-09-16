@@ -3,7 +3,7 @@
 
 module.exports = {
   roots: [
-    "<rootDir>/src/main/webapp"
+    "<rootDir>/src/main/javascript"
   ],
   collectCoverage: false,
   collectCoverageFrom: [

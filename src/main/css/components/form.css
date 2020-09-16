@@ -1,0 +1,138 @@
+/**************************************************************************
+
+  REQUIRED FORM FIELDS
+
+**************************************************************************/
+
+.form-group.is-required > label:after {
+  content: "*";
+}
+
+/**************************************************************************
+
+  HORIZONTAL FORM
+
+**************************************************************************/
+
+.form-horizontal .control-label {
+  text-align: left;
+}
+
+.form-horizontal .halves {
+  width: 45%;
+}
+
+.form-horizontal .thirds {
+  width: 30%;
+}
+
+/**************************************************************************
+
+  FORM VALIDATION ERRORS
+
+**************************************************************************/
+
+.error {
+  color: #b94a48;
+}
+
+input.error,
+textarea.error {
+  border-color: #b94a48;
+}
+
+.info {
+  color: #3a87ad;
+}
+
+/**************************************************************************
+
+  APPLICATION FOR LEAVE DETAILS FORM
+
+**************************************************************************/
+
+.action-form {
+  /* will be displayed when needed by javascript */
+  display: none;
+}
+
+/**************************************************************************
+
+  SINGLE COLUMN FORM
+
+**************************************************************************/
+
+.form-section:not(:first-of-type) legend {
+  margin-top: 21px;
+}
+
+.form-section .btn:last-child {
+  margin-bottom: 21px;
+}
+
+.form-section .help-block {
+  margin-top: 0;
+}
+
+/**************************************************************************
+
+  DEPARTMENT FORM
+
+**************************************************************************/
+
+.department--members {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 400px;
+  width: 100%;
+}
+
+.department--member {
+  border-bottom: 1px solid #ddd;
+  display: table;
+  width: 100%;
+}
+
+.department--member.is-assigned {
+  background-color: #e8efd1;
+}
+
+.department--member:last-child {
+  border-bottom: none;
+}
+
+.department--member-image,
+.department--member-assignment {
+  padding: 12px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.department--member-image {
+  width: 1px;
+  padding-left: 24px;
+}
+
+.department--member-info {
+  font-size: 120%;
+  margin: 0;
+}
+
+.department--member-assignment > .checkbox > label {
+  display: block;
+}
+
+.department--member-assignment > .checkbox > label > input[type="checkbox"] {
+  margin-top: 2px;
+}
+
+/**************************************************************************
+
+  SEARCH FIELD
+
+**************************************************************************/
+
+.search-field {
+  margin-bottom: 21px;
+}

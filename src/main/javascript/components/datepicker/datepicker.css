@@ -1,0 +1,59 @@
+/**************************************************************************
+
+  JQUERY UI DATEPICKER
+
+**************************************************************************/
+
+/* HEADER */
+.ui-datepicker-header {
+  background-color: #7b7b7b !important;
+  border-color: #7b7b7b !important;
+  color: #fafafa;
+  font-weight: normal;
+}
+
+/* CONTENT */
+.ui-widget-content {
+  background: #e5e5e5;
+}
+
+.ui-datepicker-header .ui-state-hover,
+.ui-datepicker-header .ui-state-focus {
+  background: none;
+  background-color: #fafafa !important;
+  border: none !important;
+}
+
+.ui-datepicker table {
+  border-collapse: separate !important;
+  border-spacing: 1px !important;
+}
+
+.ui-datepicker-calendar thead th {
+  font-weight: normal;
+}
+
+.ui-datepicker-calendar td span,
+.ui-datepicker-calendar td a {
+  padding: 6px !important;
+}
+
+.ui-datepicker-calendar td a.ui-state-default,
+.ui-datepicker-calendar td span {
+  color: var(--font-color) !important;
+  font-weight: normal !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.datepicker-day {
+  --background-color-left: #f6f6f6;
+  --background-color-right: #f6f6f6;
+}
+
+/* TODAY */
+.ui-datepicker-calendar td.ui-datepicker-today a.ui-state-highlight {
+  --background-color-left: #cfcfcf;
+  --background-color-right: #cfcfcf;
+  --font-color: #5f5f5f;
+}

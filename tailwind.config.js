@@ -6,7 +6,7 @@ module.exports = {
     purgeLayersByDefault: true,
   },
   purge: {
-    content: ['./src/main/webapp/**/*.jsp', './src/main/webapp/**/*.tag', './src/main/webapp/**/*.js'],
+    content: ['./src/main/webapp/**/*.jsp', './src/main/webapp/**/*.tag', './src/main/javascript/**/*.js'],
   },
   // use a prefix to not conflict with bootstrap
   prefix: 'tw-',
