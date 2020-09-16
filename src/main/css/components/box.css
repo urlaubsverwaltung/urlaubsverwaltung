@@ -1,7 +1,6 @@
 .box {
   @apply flex;
   @apply items-center;
-  min-height: 120px;
   padding: 20px;
   border: 1px solid #d5d5d5;
   /*font-size: 12px;*/

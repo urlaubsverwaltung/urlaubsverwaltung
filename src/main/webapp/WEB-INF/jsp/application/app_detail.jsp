@@ -126,7 +126,7 @@
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
                 </div>
 
-                <uv:person person="${application.person}"/>
+                <uv:person person="${application.person}" cssClass="tw-h-32" />
                 <uv:account-entitlement account="${account}"/>
                 <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
                                  beforeApril="${beforeApril}"/>

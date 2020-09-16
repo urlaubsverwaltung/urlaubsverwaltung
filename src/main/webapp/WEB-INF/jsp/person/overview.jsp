@@ -78,7 +78,7 @@
 
         <!-- Overtime -->
         <c:if test="${settings.workingTimeSettings.overtimeActive}">
-            <div class="row">
+            <div class="row tw-mb-4">
                 <div class="col-xs-12">
                     <div id="overtime" class="tw-flex tw-items-end tw-py-2 tw-border-b-2">
                         <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">

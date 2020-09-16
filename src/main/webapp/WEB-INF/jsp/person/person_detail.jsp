@@ -50,7 +50,7 @@
                     </div>
                     </sec:authorize>
                 </div>
-                <uv:person person="${person}" cssClass="tw-mb-4" />
+                <uv:person person="${person}" cssClass="tw-mb-4 tw-h-32" />
                 <div class="box tw-mb-8">
                     <span class="tw-mr-6 tw-bg-blue-500 tw-text-white tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
                         <uv:icon-key className="tw-w-8 tw-h-8" />
@@ -106,7 +106,7 @@
                     </div>
                     </sec:authorize>
                 </div>
-                <uv:account-entitlement account="${account}"/>
+                <uv:account-entitlement account="${account}" className="tw-h-32" />
 
                 <div class="tw-flex tw-py-2 tw-border-b-2 tw-mb-4">
                     <h2 class="tw-flex-1 tw-text-2xl tw-m-0">

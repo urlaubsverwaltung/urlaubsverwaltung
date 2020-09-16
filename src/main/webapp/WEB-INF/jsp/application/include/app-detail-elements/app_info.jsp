@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<div class="box">
+<div class="box tw-h-32">
     <span class="box-icon tw-w-16 tw-h-16 tw-bg-yellow-500">
         <c:choose>
             <c:when test="${application.vacationType.category == 'HOLIDAY'}">
