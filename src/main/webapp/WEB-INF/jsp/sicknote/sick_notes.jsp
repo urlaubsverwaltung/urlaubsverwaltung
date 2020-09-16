@@ -90,8 +90,14 @@
                     <c:forEach items="${persons}" var="person">
                     <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered hidden-print">
-                            <div class="gravatar img-circle hidden-print"
-                                 data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
+                            <img
+                                src="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"
+                                alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+                                class="gravatar tw-rounded-full"
+                                width="40px"
+                                height="40px"
+                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                            />
                         </td>
                         <td class="hidden-xs">
                             <c:out value="${person.firstName}"/>

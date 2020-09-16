@@ -146,8 +146,14 @@
 
                                     <div class="department--member ${MEMBER_CSS_CLASS}">
                                         <div class="department--member-image">
-                                            <div class="gravatar gravatar--medium img-circle"
-                                                 data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"></div>
+                                            <img
+                                                src="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"
+                                                alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+                                                class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+                                                width="40px"
+                                                height="40px"
+                                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                            />
                                         </div>
                                         <div class="department--member-assignment">
                                             <p class="department--member-info">

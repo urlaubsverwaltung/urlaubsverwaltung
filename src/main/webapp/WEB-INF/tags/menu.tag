@@ -23,7 +23,15 @@
         <sec:authorize access="hasAuthority('USER')">
           <li>
             <a href="${URL_PREFIX}/overview">
-              <span class="img-circle gravatar gravatar--small hidden-print" data-gravatar="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"></span> <spring:message code="nav.home.title"/>
+              <img
+                src="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"
+                alt=""
+                class="gravatar gravatar--small tw-rounded-full print:tw-hidden"
+                width="20px"
+                height="20px"
+                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+              />
+              <spring:message code="nav.home.title"/>
             </a>
           </li>
         </sec:authorize>
