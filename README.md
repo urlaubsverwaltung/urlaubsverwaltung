@@ -352,6 +352,20 @@ vom Typ "Question" erstellen.
 git clone git@github.com:synyx/urlaubsverwaltung.git
 ```
 
+### git hooks (optional)
+
+Zum Automatisieren verschiedener Dinge bietet dir das Projekt [git hooks](https://git-scm.com/book/uz/v2/Customizing-Git-Git-Hooks)
+an. Diese kannst du mit folgendem Befehl installieren:
+
+```bash
+./scripts/install-git-hooks.sh
+```
+
+Folgende git hooks werden installiert:
+
+* **post-merge**
+  * schaut nach einen `pull` ob sich die `package.lock` geändert hat und installiert ggfs. npm dependencies
+
 ### Anwendung starten
 
 Da die Urlaubsverwaltung abhängig von einer MariaDB-Datenbank ist, kann diese über
