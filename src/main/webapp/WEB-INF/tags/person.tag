@@ -9,7 +9,16 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <div class="box ${cssClass}">
-    <div class="box-icon gravatar" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
+    <div class="box-icon">
+        <img
+            src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
+            alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+            class="gravatar tw-rounded-full"
+            width="60px"
+            height="60px"
+            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+        />
+    </div>
     <span class="box-text">
         <h4>
             <c:choose>

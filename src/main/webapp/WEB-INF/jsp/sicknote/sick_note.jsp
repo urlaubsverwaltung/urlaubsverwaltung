@@ -193,8 +193,14 @@
                     <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                         <tr>
                             <td class="hidden-print">
-                                <div class="gravatar gravatar--medium img-circle center-block"
-                                     data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
+                                <img
+                                    src="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"
+                                    alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
+                                    class="gravatar gravatar--medium tw-rounded-full"
+                                    width="40px"
+                                    height="40px"
+                                    onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                />
                             </td>
                             <td>
                                 <c:out value="${comment.person.niceName}"/>

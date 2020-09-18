@@ -91,8 +91,14 @@
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
                                     <td class="hidden-print is-centered">
-                                        <div class="gravatar img-circle hidden-print"
-                                             data-gravatar="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"></div>
+                                        <img
+                                            src="<c:out value='${statistics.person.gravatarURL}?d=mm&s=60'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${statistics.person.niceName}"/>"
+                                            class="gravatar tw-rounded-full"
+                                            width="60px"
+                                            height="60px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
                                     </td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.lastName}"/></td>

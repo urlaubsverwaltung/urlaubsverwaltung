@@ -47,8 +47,14 @@
         <c:forEach items="${persons}" var="person" varStatus="loopStatus">
             <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview');">
                 <td class="is-centered">
-                    <div class="gravatar img-circle hidden-print"
-                         data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
+                    <img
+                        src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
+                        alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+                        class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+                        width="60px"
+                        height="60px"
+                        onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                    />
                 </td>
                 <td class="firstname">
                     <c:out value="${person.firstName}"/>
