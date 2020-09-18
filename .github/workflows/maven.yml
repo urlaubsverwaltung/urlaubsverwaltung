@@ -3,8 +3,7 @@ name: Urlaubsverwaltung CI
 on:
   push:
     branches:
-      - master
-  pull_request:
+      - v3.x
 
 jobs:
   compile:
