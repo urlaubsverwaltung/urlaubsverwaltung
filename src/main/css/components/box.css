@@ -3,7 +3,6 @@
   @apply items-start;
   padding: 20px;
   border: 1px solid #d5d5d5;
-  /*font-size: 12px;*/
   background-color: #ffffff;
   margin-bottom: 27px;
 }
@@ -30,7 +29,6 @@
   /* Fallback for browsers not supporting flex */
   display: table-cell;
   vertical-align: middle;
-  flex-grow: 1;
 }
 
 .box-text ul {
