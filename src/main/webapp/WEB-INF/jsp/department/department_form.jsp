@@ -39,9 +39,9 @@
             <form:hidden path="id"/>
 
             <div class="form-section">
-                <div class="row tw-mb-8">
+                <div class="row tw-mb-4 lg:tw-mb-6">
                     <div class="col-xs-12">
-                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2">
+                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 separator-bottom">
                             <spring:message code="department.data"/>
                         </h1>
                     </div>
@@ -107,9 +107,9 @@
             </div>
 
             <div class="form-section">
-                <div class="row tw-mb-8">
+                <div class="row tw-mb-4 lg:tw-mb-6">
                     <div class="col-xs-12">
-                        <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2">
+                        <h2 class="tw-text-2xl tw-font-normal tw-m-0 separator-bottom">
                             <spring:message code="department.members"/>
                         </h2>
                     </div>

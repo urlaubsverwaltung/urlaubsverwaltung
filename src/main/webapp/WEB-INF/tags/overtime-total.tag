@@ -14,7 +14,7 @@
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
             <spring:message code="overtime.person.total.1" />
         </span>
-        <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+        <span class="tw-my-1 tw-text-lg tw-font-medium">
             <spring:message code="overtime.person.total.2" arguments="${hours}"/>
         </span>
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">

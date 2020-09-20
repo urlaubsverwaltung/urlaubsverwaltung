@@ -40,9 +40,9 @@
 
             <div class="form-section">
 
-                <div class="row tw-mb-8">
+                <div class="row tw-mb-4 lg:tw-mb-6">
                     <div class="col-md-12">
-                        <div class="tw-text-2xl tw-font-normal tw-flex tw-py-2 tw-border-b-2">
+                        <div class="tw-text-2xl tw-font-normal tw-flex separator-bottom">
                             <h1 class="tw-text-2xl tw-font-normal tw-m-0">
                                 <spring:message code="person.form.annualVacation.title" arguments="${person.niceName}"/>
                             </h1>

@@ -31,7 +31,7 @@
             <div class="form-section tw-mb-8">
                 <div class="row">
                     <div class="col-xs-12">
-                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-8">
+                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                             <spring:message code="person.form.data.title"/>
                         </h1>
                     </div>
@@ -91,7 +91,7 @@
             <div class="form-section tw-mb-16">
                 <div class="row">
                     <div class="col-xs-12">
-                        <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-8">
+                        <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                             <spring:message code="person.form.permissions.title"/>
                         </h2>
                     </div>

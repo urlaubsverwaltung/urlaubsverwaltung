@@ -29,9 +29,9 @@
                    class="form-horizontal">
 
             <div class="form-section">
-                <div class="row tw-mb-8">
+                <div class="row tw-mb-4 lg:tw-mb-6">
                     <div class="col-xs-12">
-                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2">
+                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 separator-bottom">
                             <spring:message code="person.form.workingTime.title" arguments="${person.niceName}"/>
                         </h1>
                     </div>

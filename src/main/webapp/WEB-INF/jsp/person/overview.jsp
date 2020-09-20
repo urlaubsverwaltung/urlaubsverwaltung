@@ -49,15 +49,15 @@
 
     <div class="container">
 
-        <div class="row tw-mb-4">
+        <div class="row tw-mb-4 lg:tw-mb-6">
             <div class="col-xs-12">
                 <%@include file="include/overview_header.jsp" %>
             </div>
         </div>
 
-        <div class="row lg:tw-mb-4">
+        <div class="row tw-mb-12">
             <div class="col-xs-12">
-                <div class="tw-flex tw-flex-wrap">
+                <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
                     <div class="tw-w-full lg:tw-w-1/3">
                         <uv:person person="${person}" nameIsNoLink="${true}" cssClass="tw-border-none tw-p-0" />
                     </div>
@@ -78,9 +78,9 @@
 
         <!-- Overtime -->
         <c:if test="${settings.workingTimeSettings.overtimeActive}">
-            <div class="row tw-mb-4">
+            <div class="row tw-mb-4 lg:tw-mb-6">
                 <div class="col-xs-12">
-                    <div id="overtime" class="tw-flex tw-items-end tw-py-2 tw-border-b-2">
+                    <div id="overtime" class="tw-flex tw-items-end separator-bottom">
                         <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                             <spring:message code="overtime.title"/>
                         </h2>
@@ -97,7 +97,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row lg:tw-mb-4">
+            <div class="row tw-mb-12">
                 <div class="col-xs-12">
                     <div class="tw-flex tw-flex-wrap">
                         <div class="tw-w-full lg:tw-w-1/3">
@@ -105,7 +105,7 @@
                         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
                             <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-border-none tw-p-0" />
                         </div>
-                        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3 tw-mt-8 lg:tw-mt-0">
                             <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-border-none tw-p-0" />
                         </div>
                     </div>
@@ -114,9 +114,9 @@
         </c:if>
 
         <!-- Calendar -->
-        <div class="row lg:tw-mb-4">
+        <div class="row tw-mb-4 lg:tw-mb-12">
             <div class="col-xs-12">
-                <div id="calendar" class="tw-flex tw-items-end tw-py-2 tw-border-b-2 tw-mb-6">
+                <div id="calendar" class="tw-flex tw-items-end tw-mb-6 separator-bottom">
                     <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="overview.calendar.title"/>
                     </h2>
@@ -132,9 +132,9 @@
         </div>
 
         <!-- Vacation -->
-        <div class="row">
+        <div class="row tw-mb-4 lg:tw-mb-6">
             <div class="col-xs-12">
-                <div id="vacation" class="tw-flex tw-items-end tw-py-2 tw-border-b-2 tw-mb-6">
+                <div id="vacation" class="tw-flex tw-items-end separator-bottom">
                     <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="applications.title"/>
                     </h2>
@@ -158,7 +158,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row tw-mb-4 lg:tw-mb-6">
 
             <c:set var="holidayLeave"
                    value="${usedDaysOverview.holidayDays.days['WAITING'] + usedDaysOverview.holidayDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.holidayDays.days['ALLOWED'] + 0}"/>
@@ -168,7 +168,7 @@
             <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
 
             <div class="col-xs-12">
-                <div class="tw-flex tw-flex-wrap sm:tw-justify-around">
+                <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
                 <div class="tw-w-full sm:tw-w-1/2">
                     <div class="box tw-border-none tw-p-0">
                         <span class="box-icon-container">
@@ -180,7 +180,7 @@
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <spring:message code="overview.vacations.holidayLeave.1" />
                             </span>
-                            <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                            <span class="tw-my-1 tw-text-lg tw-font-medium">
                                 <spring:message code="overview.vacations.holidayLeave.2" arguments="${holidayLeave}"/>
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -205,7 +205,7 @@
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <spring:message code="overview.vacations.otherLeave.1" />
                             </span>
-                            <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                            <span class="tw-my-1 tw-text-lg tw-font-medium">
                                 <spring:message code="overview.vacations.otherLeave.2" arguments="${otherLeave}"/>
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -223,7 +223,7 @@
             </div>
         </div>
 
-        <div class="row lg:tw-mb-4">
+        <div class="row tw-mb-4 lg:tw-mb-12">
             <div class="col-xs-12">
                 <%@include file="include/overview_app_list.jsp" %>
             </div>
@@ -231,9 +231,9 @@
 
         <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
 
-            <div class="row">
+            <div class="row tw-mb-4 lg:tw-mb-6">
                 <div class="col-xs-12">
-                    <div id="anchorSickNotes" class="tw-flex tw-items-end tw-py-2 tw-border-b-2 tw-mb-6">
+                    <div id="anchorSickNotes" class="tw-flex tw-items-end separator-bottom">
                         <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                             <spring:message code="sicknotes.title"/>
                         </h2>
@@ -248,9 +248,9 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row tw-mb-4 lg:tw-mb-6">
                 <div class="col-xs-12">
-                    <div class="tw-flex tw-flex-wrap sm:tw-justify-around">
+                    <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
                     <div class="tw-w-full sm:tw-w-1/2">
                         <div class="box tw-border-none tw-p-0">
                             <span class="box-icon-container">
@@ -262,7 +262,7 @@
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <spring:message code="overview.sicknotes.sickdays.1" />
                                 </span>
-                                <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                                <span class="tw-my-1 tw-text-lg tw-font-medium">
                                     <spring:message code="overview.sicknotes.sickdays.2" arguments="${sickDaysOverview.sickDays.days['TOTAL']}" />
                                 </span>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -287,7 +287,7 @@
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <spring:message code="overview.sicknotes.sickdays.child.1" />
                                 </span>
-                                <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                                <span class="tw-my-1 tw-text-lg tw-font-medium">
                                     <spring:message code="overview.sicknotes.sickdays.child.2" arguments="${sickDaysOverview.childSickDays.days['TOTAL']} "/>
                                 </span>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">

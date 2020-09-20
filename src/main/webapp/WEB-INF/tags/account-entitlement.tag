@@ -17,7 +17,7 @@
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                     <spring:message code="person.account.vacation.entitlement.1" />
                 </span>
-                <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                <span class="tw-my-1 tw-text-lg tw-font-medium">
                     <spring:message code="person.account.vacation.entitlement.2" arguments="${account.vacationDays}" />
                 </span>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">

@@ -72,10 +72,10 @@
                 </div>
             </c:if>
 
-            <div class="form-section tw-mb-8">
+            <div class="form-section tw-mb-4 lg:tw-mb-6">
                 <div class="row">
                     <div class="col-xs-12 tw-mb-8">
-                        <h1 class="tw-text-2xl tw-m-0 tw-py-2 tw-border-b-2">
+                        <h1 class="tw-text-2xl tw-m-0 separator-bottom">
                             <c:choose>
                                 <c:when test="${sickNote.id == null}">
                                     <spring:message code="sicknote.create.title"/>
@@ -205,10 +205,10 @@
                 </div>
             </div>
 
-            <div class="form-section tw-mb-8">
+            <div class="form-section tw-mb-4 lg:tw-mb-6">
                 <div class="row">
                     <div class="col-xs-12 tw-mb-8">
-                        <h2 class="tw-text-2xl tw-m-0 tw-py-2 tw-border-b-2">
+                        <h2 class="tw-text-2xl tw-m-0 separator-bottom">
                             <spring:message code="sicknote.data.aub.short"/>
                         </h2>
                     </div>
@@ -249,8 +249,8 @@
 
             <div class="form-section tw-mb-16">
                 <div class="row">
-                    <div class="col-xs-12 tw-mb-8">
-                        <h2 class="tw-text-2xl tw-m-0 tw-py-2 tw-border-b-2">
+                    <div class="col-xs-12 tw-mb-4 lg:tw-mb-6">
+                        <h2 class="tw-text-2xl tw-m-0 separator-bottom">
                             <spring:message code="sicknote.data.furtherInformation.title"/>
                         </h2>
                     </div>

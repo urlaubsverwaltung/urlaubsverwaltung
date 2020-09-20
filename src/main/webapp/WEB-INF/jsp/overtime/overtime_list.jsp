@@ -26,7 +26,7 @@
 
 <div class="content">
     <div class="container">
-        <div class="row">
+        <div class="row tw-mb-4 lg:tw-mb-6">
             <div class="col-xs-12">
                 <legend class="tw-flex">
                     <div class="tw-flex-1">
@@ -43,16 +43,20 @@
                 </legend>
             </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:person person="${person}"/>
+            <div class="tw-space-y-4 lg:tw-space-y-0">
+                <div class="col-xs-12 col-sm-12 col-md-4">
+                    <uv:person person="${person}" cssClass="tw-h-32" />
+                </div>
+                <div class="col-xs-12 col-md-4">
+                    <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-items-center" />
+                </div>
+                <div class="col-xs-12 col-md-4">
+                    <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-items-center" />
+                </div>
             </div>
-            <div class="col-xs-12 col-md-4">
-                <uv:overtime-total hours="${overtimeTotal}"/>
-            </div>
-            <div class="col-xs-12 col-md-4">
-                <uv:overtime-left hours="${overtimeLeft}"/>
-            </div>
+        </div>
 
+        <div class="row">
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.list"/>

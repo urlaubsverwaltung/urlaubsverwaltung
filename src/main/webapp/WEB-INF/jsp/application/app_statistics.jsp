@@ -36,7 +36,7 @@
 
             <div class="col-xs-12">
 
-                <div class="tw-flex tw-items-end tw-border-b-2 tw-py-2 tw-mb-2">
+                <div class="tw-flex tw-items-end tw-mb-2 separator-bottom">
                     <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="applications.statistics"/>
                     </h1>

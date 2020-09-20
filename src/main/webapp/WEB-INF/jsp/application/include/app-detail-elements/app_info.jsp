@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<div class="box tw-h-32">
+<div class="box tw-h-32 tw-mb-4">
     <span class="box-icon-container">
         <span class="box-icon tw-bg-yellow-500 tw-text-white">
         <c:choose>

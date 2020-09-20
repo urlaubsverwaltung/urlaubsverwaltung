@@ -38,7 +38,7 @@
 
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="tw-flex tw-py-2 tw-border-b-2 tw-mb-4">
+                <div class="tw-flex tw-mb-4 lg:tw-mb-6 separator-bottom">
                     <h1 class="tw-flex-1 tw-text-2xl tw-m-0">
                         <spring:message code="person.details.masterData.title"/>
                     </h1>
@@ -66,10 +66,10 @@
                     </div>
                 </div>
 
-                <h2 class="tw-text-2xl tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                <h2 class="tw-text-2xl tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                     <spring:message code="person.details.departments.title"/>
                 </h2>
-                <div class="box">
+                <div class="box tw-mb-8">
                     <span class="box-icon-container">
                         <span class="box-icon tw-bg-blue-500 tw-text-white">
                             <uv:icon-user-group className="tw-w-8 tw-h-8" />
@@ -93,7 +93,7 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="tw-flex tw-items-end tw-border-b-2 tw-py-2 tw-mb-4">
+                <div class="tw-flex tw-items-end tw-mb-4 separator-bottom">
                     <div class="tw-flex-1 tw-text-2xl tw-font-normal tw-flex">
                         <h2 class="tw-text-2xl tw-font-normal tw-m-0">
                             <spring:message code="person.details.annualVacation.title"/>
@@ -108,9 +108,9 @@
                     </div>
                     </sec:authorize>
                 </div>
-                <uv:account-entitlement account="${account}" className="tw-h-32" />
+                <uv:account-entitlement account="${account}" className="tw-h-32 tw-mb-8" />
 
-                <div class="tw-flex tw-py-2 tw-border-b-2 tw-mb-4">
+                <div class="tw-flex separator-bottom separator-bottom">
                     <h2 class="tw-flex-1 tw-text-2xl tw-m-0">
                         <spring:message code="person.details.workingTime.title"/>
                     </h2>
@@ -179,7 +179,7 @@
                         </c:choose>
                     </span>
                 </div>
-                <div class="box">
+                <div class="box tw-mb-8">
                     <span class="box-icon-container">
                         <span class="box-icon tw-bg-green-500 tw-text-white">
                             <uv:icon-map className="tw-w-8 tw-h-8" />

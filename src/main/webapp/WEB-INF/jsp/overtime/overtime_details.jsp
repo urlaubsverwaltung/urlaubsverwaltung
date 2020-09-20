@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="col-xs-12 col-md-6">
-                <div class="tw-flex tw-items-end tw-border-b-2 tw-py-2 tw-mb-8">
+                <div class="tw-flex tw-items-end tw-mb-4 lg:tw-mb-6 separator-bottom">
                     <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="overtime.title"/>
                     </h1>
@@ -47,7 +47,7 @@
                     </div>
                     </c:if>
                 </div>
-                <div class="box tw-flex tw-h-32">
+                <div class="box tw-flex tw-h-32 tw-mb-8">
                     <span class="tw-bg-green-500 tw-text-white tw-mr-6 tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
                         <uv:icon-briefcase className="tw-w-8 tw-h-8" />
                     </span>
@@ -64,12 +64,12 @@
                                         argumentSeparator=";"/>
                     </span>
                 </div>
-                <div class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2 tw-flex">
+                <div class="tw-text-2xl tw-font-normal tw-mb-4 lg:tw-mb-6 separator-bottom tw-flex">
                     <h2 class="tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="overtime.progress.title"/>
                     </h2>
                 </div>
-                <table class="list-table striped-table bordered-table">
+                <table class="list-table striped-table bordered-table tw-mb-8">
                     <tbody>
                     <c:forEach items="${comments}" var="comment">
                         <tr>
@@ -101,14 +101,14 @@
                 </table>
             </div>
             <div class="col-xs-12 col-md-6">
-                <div class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2 tw-flex">
+                <div class="tw-text-2xl tw-font-normal tw-mb-4 lg:tw-mb-6 separator-bottom tw-flex">
                     <h2 class="tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="overtime.data.person"/>
                     </h2>
                 </div>
-                <uv:person person="${record.person}" cssClass="hidden-print tw-h-32"/>
-                <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32" />
-                <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32" />
+                <uv:person person="${record.person}" cssClass="hidden-print tw-h-32 tw-mb-5"/>
+                <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-mb-4" />
             </div>
         </div>
         <%-- End of row --%>

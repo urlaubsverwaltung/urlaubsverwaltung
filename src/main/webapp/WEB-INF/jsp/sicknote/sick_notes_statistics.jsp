@@ -27,7 +27,7 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <div class="tw-flex tw-py-2 tw-border-b-2 tw-mb-8">
+                <div class="tw-flex tw-mb-4 lg:tw-mb-6 separator-bottom">
                     <div class="tw-flex-1 tw-text-2xl tw-font-normal tw-flex">
                         <h1 class="tw-text-2xl tw-font-normal tw-m-0">
                             <spring:message code="sicknotes.statistics.title"/>

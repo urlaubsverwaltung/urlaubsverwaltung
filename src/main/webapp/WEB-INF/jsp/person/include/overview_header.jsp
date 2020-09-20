@@ -13,7 +13,7 @@
 </c:otherwise>
 </c:choose>
 
-<div class="tw-flex tw-items-end tw-border-b-2 tw-py-2">
+<div class="tw-flex tw-items-end separator-bottom">
     <div class="tw-flex-1 tw-text-2xl tw-font-normal tw-flex">
         <h1 class="tw-text-2xl tw-font-normal tw-m-0">
             <spring:message code="overview.title"/>

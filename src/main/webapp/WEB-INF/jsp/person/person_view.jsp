@@ -39,7 +39,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <div class="tw-flex tw-border-b-2 tw-y-2 tw-mb-8 tw-text-2xl">
+                <div class="tw-flex tw-mb-4 lg:tw-mb-6 separator-bottom tw-text-2xl">
                     <div class="tw-flex-1">
                         <div class="legend-dropdown dropdown">
                             <a id="active-state" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">

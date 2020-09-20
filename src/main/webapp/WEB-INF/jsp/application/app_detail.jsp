@@ -49,7 +49,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <div class="tw-flex tw-items-end tw-border-b-2 tw-py-2 tw-mb-8">
+                <div class="tw-flex tw-items-end tw-mb-4 lg:tw-mb-6 separator-bottom">
                     <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="application.data.title"/>
                     </h1>
@@ -119,15 +119,15 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
-                <div class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2 tw-flex">
+                <div class="tw-text-2xl tw-font-normal tw-mb-4 lg:tw-mb-6 separator-bottom tw-flex">
                     <h2 class="tw-text-2xl tw-font-normal tw-m-0">
                         <spring:message code="person.account.vacation.title"/>
                     </h2>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
                 </div>
 
-                <uv:person person="${application.person}" cssClass="tw-h-32" />
-                <uv:account-entitlement account="${account}"/>
+                <uv:person person="${application.person}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:account-entitlement account="${account}" className="tw-mb-4" />
                 <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
                                  beforeApril="${beforeApril}"/>
 
@@ -142,7 +142,7 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
-                <h2 class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2">
+                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                     <spring:message code="application.department.title"/>
                 </h2>
                 <table class="list-table striped-table bordered-table tw-text-sm">

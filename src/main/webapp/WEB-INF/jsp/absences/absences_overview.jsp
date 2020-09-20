@@ -52,9 +52,9 @@
 
         <c:if test="${IS_ALLOWED}">
 
-            <div class="row tw-mb-8 print:tw-mb-4">
+            <div class="row tw-mb-4 lg:tw-mb-6">
                 <div class="col-xs-12">
-                    <div id="absence" class="tw-flex tw-items-end tw-border-b-2 tw-py-2">
+                    <div id="absence" class="tw-flex tw-items-end separator-bottom">
                         <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                             <spring:message code="absences.overview.title"/>
                         </h1>

@@ -5,7 +5,7 @@
 
 <c:if test="${not empty comments}">
 
-    <h2 class="tw-text-2xl tw-font-normal tw-py-2 tw-mb-8 tw-border-b-2">
+    <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
         <spring:message code="application.progress.title"/>
     </h2>
 

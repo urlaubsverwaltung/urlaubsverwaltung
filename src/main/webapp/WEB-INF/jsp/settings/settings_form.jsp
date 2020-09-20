@@ -97,7 +97,7 @@
                     <div class="form-section tw-mb-8">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                                     <spring:message code="settings.vacation.title"/>
                                 </h2>
                             </div>
@@ -147,7 +147,7 @@
                     <div class="form-section tw-mb-8">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                                     <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
                                 </h2>
                             </div>
@@ -207,7 +207,7 @@
                     <div class="form-section">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                                     <spring:message code="settings.sickDays.title"/>
                                 </h2>
                             </div>
@@ -257,7 +257,7 @@
                     <div class="form-section">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                                     <spring:message code="settings.publicHolidays.title"/>
                                 </h2>
                             </div>
@@ -326,7 +326,7 @@
                     <div class="form-section">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                                     <spring:message code="settings.overtime.title"/>
                                 </h2>
                             </div>
@@ -399,7 +399,7 @@
                     <div class="form-section">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                                     <spring:message code="settings.calendar.title"/>
                                 </h2>
                             </div>
@@ -461,7 +461,7 @@
                     <div class="form-section" id="exchange-calendar">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-py-2 tw-border-b-2 tw-mb-4">
+                                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
                                     <spring:message code="settings.calendar.ews.title"/>
                                 </h2>
                             </div>

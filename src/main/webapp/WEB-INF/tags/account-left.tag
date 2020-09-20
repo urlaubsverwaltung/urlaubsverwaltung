@@ -27,7 +27,7 @@
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                     <spring:message code="person.account.vacation.left.1" />
                 </span>
-                <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                <span class="tw-my-1 tw-text-lg tw-font-medium">
                     <spring:message code="person.account.vacation.left.2" arguments="${remainingVacatioDays}" />
                 </span>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
