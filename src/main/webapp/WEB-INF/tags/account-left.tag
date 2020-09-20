@@ -8,8 +8,10 @@
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
 <div class="box ${className}">
-    <div class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
-        <uv:icon-presentation-chart-bar className="tw-w-8 tw-h-8" />
+    <div class="box-icon-container">
+        <div class="box-icon tw-bg-green-500 tw-text-white">
+            <uv:icon-presentation-chart-bar className="tw-w-8 tw-h-8" />
+        </div>
     </div>
     <div class="box-text tw-text-sm">
         <c:choose>

@@ -171,8 +171,10 @@
                 <div class="tw-flex tw-flex-wrap sm:tw-justify-around">
                 <div class="tw-w-full sm:tw-w-1/2">
                     <div class="box tw-border-none tw-p-0">
-                        <span class="box-icon tw-w-16 tw-h-16 tw-bg-yellow-500">
-                            <uv:icon-sun className="tw-w-8 tw-h-8" />
+                        <span class="box-icon-container">
+                            <span class="box-icon tw-bg-yellow-500 tw-text-white">
+                                <uv:icon-sun className="tw-w-8 tw-h-8" />
+                            </span>
                         </span>
                         <div class="box-text tw-flex-1">
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -194,8 +196,10 @@
                 </div>
                 <div class="tw-w-full sm:tw-w-1/2">
                     <div class="box tw-border-none tw-p-0">
-                        <div class="box-icon tw-w-16 tw-h-16 tw-bg-yellow-500">
-                            <uv:icon-flag className="tw-w-8 tw-h-8" />
+                        <div class="box-icon-container">
+                            <div class="box-icon tw-bg-yellow-500 tw-text-white">
+                                <uv:icon-flag className="tw-w-8 tw-h-8" />
+                            </div>
                         </div>
                         <div class="box-text">
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -249,8 +253,10 @@
                     <div class="tw-flex tw-flex-wrap sm:tw-justify-around">
                     <div class="tw-w-full sm:tw-w-1/2">
                         <div class="box tw-border-none tw-p-0">
-                            <span class="box-icon tw-w-16 tw-h-16 tw-bg-red-600">
-                                <uv:icon-medkit className="tw-w-8 tw-h-8" />
+                            <span class="box-icon-container">
+                                <span class="box-icon tw-bg-red-600 tw-text-white">
+                                    <uv:icon-medkit className="tw-w-8 tw-h-8" />
+                                </span>
                             </span>
                             <span class="box-text">
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -272,8 +278,10 @@
                     </div>
                     <div class="tw-w-full sm:tw-w-1/2">
                         <div class="box tw-border-none tw-p-0">
-                            <span class="box-icon tw-w-16 tw-h-16 tw-bg-red-600">
-                                <uv:icon-child className="tw-w-8 tw-h-8" />
+                            <span class="box-icon-container">
+                                <span class="box-icon tw-bg-red-600 tw-text-white">
+                                    <uv:icon-child className="tw-w-8 tw-h-8" />
+                                </span>
                             </span>
                             <span class="box-text">
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">

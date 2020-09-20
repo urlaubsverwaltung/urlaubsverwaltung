@@ -1,6 +1,6 @@
 .box {
   @apply flex;
-  @apply items-center;
+  @apply items-start;
   padding: 20px;
   border: 1px solid #d5d5d5;
   /*font-size: 12px;*/
@@ -8,14 +8,18 @@
   margin-bottom: 27px;
 }
 
-.box-icon {
-  @apply rounded-full;
+.box-icon-container {
   @apply mr-6;
   @apply p-1;
-  @apply flex;
-  @apply text-white;
-  @apply items-center;
-  @apply justify-center;
+}
+
+.box-icon {
+  @apply tw-rounded-full;
+  @apply tw-flex;
+  @apply tw-items-center;
+  @apply tw-justify-center;
+  @apply tw-w-16;
+  @apply tw-h-16;
 }
 
 .box-text {

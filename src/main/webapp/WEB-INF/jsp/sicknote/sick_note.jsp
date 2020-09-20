@@ -87,7 +87,8 @@
                 </form:form>
 
                 <div class="box">
-                    <span class="box-icon tw-w-16 tw-h-16 hidden-print tw-bg-red-600 tw-text-white tw-flex tw-items-center tw-justify-center">
+                    <span class="box-icon-container hidden-print">
+                        <span class="box-icon tw-bg-red-600 tw-text-white">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
                                 <uv:icon-child className="tw-w-8 tw-h-8" />
@@ -96,6 +97,7 @@
                                 <uv:icon-medkit className="tw-w-8 tw-h-8" />
                             </c:otherwise>
                         </c:choose>
+                        </span>
                     </span>
                     <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>

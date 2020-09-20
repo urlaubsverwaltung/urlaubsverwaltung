@@ -70,8 +70,10 @@
                     <spring:message code="person.details.departments.title"/>
                 </h2>
                 <div class="box">
-                    <span class="box-icon tw-w-16 tw-h-16 tw-bg-blue-500">
-                        <uv:icon-user-group className="tw-w-8 tw-h-8" />
+                    <span class="box-icon-container">
+                        <span class="box-icon tw-bg-blue-500 tw-text-white">
+                            <uv:icon-user-group className="tw-w-8 tw-h-8" />
+                        </span>
                     </span>
                     <span class="box-text">
                         <c:choose>
@@ -121,8 +123,10 @@
                     </sec:authorize>
                 </div>
                 <div class="box tw-mb-4">
-                    <span class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
-                        <uv:icon-clock className="tw-w-8 tw-h-8" />
+                    <span class="box-icon-container">
+                        <span class="box-icon tw-bg-green-500 tw-text-white">
+                            <uv:icon-clock className="tw-w-8 tw-h-8" />
+                        </span>
                     </span>
                     <span class="box-text tw-text-sm">
                         <c:choose>
@@ -176,8 +180,10 @@
                     </span>
                 </div>
                 <div class="box">
-                    <span class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
-                        <uv:icon-map className="tw-w-8 tw-h-8" />
+                    <span class="box-icon-container">
+                        <span class="box-icon tw-bg-green-500 tw-text-white">
+                            <uv:icon-map className="tw-w-8 tw-h-8" />
+                        </span>
                     </span>
                     <span class="box-text tw-text-sm">
                         <span class="tw-block tw-mb-2"><spring:message code="person.details.workingTime.federalState"/></span>

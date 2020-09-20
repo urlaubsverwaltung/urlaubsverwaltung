@@ -9,7 +9,7 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <div class="box ${cssClass}">
-    <div class="box-icon">
+    <div class="box-icon-container">
         <img
             src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
             alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"

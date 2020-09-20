@@ -5,8 +5,10 @@
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 
 <div class="box tw-flex ${cssClass}">
-    <div class="tw-mr-6 tw-bg-green-500 tw-text-white tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center hidden-print">
-        <uv:icon-briefcase className="tw-w-8 tw-h-8" />
+    <div class="box-icon-container hidden-print">
+        <div class="box-icon tw-bg-green-500 tw-text-white">
+            <uv:icon-briefcase className="tw-w-8 tw-h-8" />
+        </div>
     </div>
     <div class="box-text tw-flex-1">
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">

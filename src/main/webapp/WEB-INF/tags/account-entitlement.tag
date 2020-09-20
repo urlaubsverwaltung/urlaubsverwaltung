@@ -6,10 +6,12 @@
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
 <div class="box ${className}">
-    <div class="box-icon tw-w-16 tw-h-16 tw-bg-green-500">
-        <uv:icon-calendar className="tw-w-8 tw-h-8" />
+    <div class="box-icon-container">
+        <div class="box-icon tw-bg-green-500 tw-text-white">
+            <uv:icon-calendar className="tw-w-8 tw-h-8" />
+        </div>
     </div>
-    <div class="box-text tw-text-sm">
+    <div class="box-text tw-text-sm tw-flex tw-flex-col">
         <c:choose>
             <c:when test="${account != null}">
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">

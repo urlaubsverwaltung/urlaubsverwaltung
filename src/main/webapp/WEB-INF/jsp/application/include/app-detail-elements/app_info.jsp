@@ -5,7 +5,8 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <div class="box tw-h-32">
-    <span class="box-icon tw-w-16 tw-h-16 tw-bg-yellow-500">
+    <span class="box-icon-container">
+        <span class="box-icon tw-bg-yellow-500 tw-text-white">
         <c:choose>
             <c:when test="${application.vacationType.category == 'HOLIDAY'}">
                 <uv:icon-sun className="tw-w-8 tw-h-8" />
@@ -14,6 +15,7 @@
                 <uv:icon-flag className="tw-w-8 tw-h-8" />
             </c:otherwise>
         </c:choose>
+        </span>
     </span>
     <span class="box-text">
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
