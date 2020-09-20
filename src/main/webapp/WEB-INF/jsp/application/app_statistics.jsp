@@ -92,8 +92,8 @@
                                 <tr>
                                     <td class="hidden-print is-centered">
                                         <img
-                                            src="<c:out value='${statistics.person.gravatarURL}?d=mm&s=60'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${statistics.person.niceName}"/>"
+                                            src="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${statistic.person.niceName}"/>"
                                             class="gravatar tw-rounded-full"
                                             width="60px"
                                             height="60px"
