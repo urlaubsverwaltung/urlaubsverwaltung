@@ -128,10 +128,10 @@
                             <uv:icon-clock className="tw-w-8 tw-h-8" />
                         </span>
                     </span>
-                    <span class="box-text tw-text-sm">
+                    <span class="box-text tw-flex tw-flex-col tw-text-sm">
                         <c:choose>
                             <c:when test="${workingTime != null}">
-                                <span class="tw-block tw-mb-2">
+                                <span class="tw-mb-2">
                                     <spring:message code="person.details.workingTime.validity"/>
                                     <span class="is-inline-block"><uv:date date="${workingTime.validFrom}"/></span>:
                                 </span>
@@ -185,8 +185,8 @@
                             <uv:icon-map className="tw-w-8 tw-h-8" />
                         </span>
                     </span>
-                    <span class="box-text tw-text-sm">
-                        <span class="tw-block tw-mb-2"><spring:message code="person.details.workingTime.federalState"/></span>
+                    <span class="box-text tw-flex tw-flex-col tw-text-sm">
+                        <span class="tw-mb-2"><spring:message code="person.details.workingTime.federalState"/></span>
                         <spring:message code="federalState.${federalState}"/>
                     </span>
                 </div>

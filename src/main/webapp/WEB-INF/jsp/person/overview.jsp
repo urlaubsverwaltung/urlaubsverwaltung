@@ -176,11 +176,11 @@
                                 <uv:icon-sun className="tw-w-8 tw-h-8" />
                             </span>
                         </span>
-                        <div class="box-text tw-flex-1">
+                        <div class="box-text tw-flex tw-flex-col">
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <spring:message code="overview.vacations.holidayLeave.1" />
                             </span>
-                            <span class="tw-block tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                            <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
                                 <spring:message code="overview.vacations.holidayLeave.2" arguments="${holidayLeave}"/>
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -201,11 +201,11 @@
                                 <uv:icon-flag className="tw-w-8 tw-h-8" />
                             </div>
                         </div>
-                        <div class="box-text">
+                        <div class="box-text tw-flex tw-flex-col">
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <spring:message code="overview.vacations.otherLeave.1" />
                             </span>
-                            <span class="tw-block tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                            <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
                                 <spring:message code="overview.vacations.otherLeave.2" arguments="${otherLeave}"/>
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -258,11 +258,11 @@
                                     <uv:icon-medkit className="tw-w-8 tw-h-8" />
                                 </span>
                             </span>
-                            <span class="box-text">
+                            <span class="box-text tw-flex tw-flex-col">
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <spring:message code="overview.sicknotes.sickdays.1" />
                                 </span>
-                                <span class="tw-block tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                                <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
                                     <spring:message code="overview.sicknotes.sickdays.2" arguments="${sickDaysOverview.sickDays.days['TOTAL']}" />
                                 </span>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -283,11 +283,11 @@
                                     <uv:icon-child className="tw-w-8 tw-h-8" />
                                 </span>
                             </span>
-                            <span class="box-text">
+                            <span class="box-text tw-flex tw-flex-col">
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <spring:message code="overview.sicknotes.sickdays.child.1" />
                                 </span>
-                                <span class="tw-block tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                                <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
                                     <spring:message code="overview.sicknotes.sickdays.child.2" arguments="${sickDaysOverview.childSickDays.days['TOTAL']} "/>
                                 </span>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">

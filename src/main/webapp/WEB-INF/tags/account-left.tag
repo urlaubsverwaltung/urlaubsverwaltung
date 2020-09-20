@@ -13,7 +13,7 @@
             <uv:icon-presentation-chart-bar className="tw-w-8 tw-h-8" />
         </div>
     </div>
-    <div class="box-text tw-text-sm">
+    <div class="box-text tw-flex tw-flex-col tw-text-sm">
         <c:choose>
             <c:when test="${account != null}">
                 <c:choose>
@@ -27,7 +27,7 @@
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                     <spring:message code="person.account.vacation.left.1" />
                 </span>
-                <span class="tw-block tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+                <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
                     <spring:message code="person.account.vacation.left.2" arguments="${remainingVacatioDays}" />
                 </span>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">

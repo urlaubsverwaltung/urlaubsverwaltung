@@ -17,11 +17,11 @@
         </c:choose>
         </span>
     </span>
-    <span class="box-text">
+    <span class="box-text tw-flex tw-flex-col">
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
             <c:out value="${application.person.niceName}"/> <spring:message code="application.applier.applied"/>
         </span>
-        <span class="tw-block tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
+        <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
             <spring:message code="${application.vacationType.messageKey}"/>
             <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
             <c:choose>

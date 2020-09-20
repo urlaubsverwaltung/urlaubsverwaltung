@@ -51,7 +51,7 @@
                     <span class="tw-bg-green-500 tw-text-white tw-mr-6 tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
                         <uv:icon-briefcase className="tw-w-8 tw-h-8" />
                     </span>
-                    <span class="tw-flex-1 box-text">
+                    <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${record.person.niceName}"/></h5>
                         <spring:message code="overtime.details.hours" arguments="${record.hours}"/>
                         <c:set var="START_DATE">
