@@ -37,7 +37,7 @@
                 <c:choose>
                     <c:when test="${empty privateCalendarShare.calendarUrl}">
                         <div class="tw-max-w-3xl">
-                            <p class="tw-tw-mb-8 tw-text-base">
+                            <p class="tw-mb-8 tw-text-base">
                                 <spring:message code="calendar.share.me.paragraph.status"/>
                             </p>
                             <p class="tw-mb-2 tw-text-base">
@@ -102,7 +102,8 @@
                         </c:forEach>
                     </ul>
                     </c:if>
-                    <div class="tab-content">
+                    <c:set var="tabContentCssClass" value="${departmentCalendars.size() > 1 ? 'tab-content' : ''}" />
+                    <div class="${tabContentCssClass}">
                         <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
                             <div role="tabpanel" class="tab-pane${departmentCal.active ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
                                 <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/departments/${departmentCal.departmentId}" id="department-calendar-form-${loop.index}">
