@@ -26,9 +26,9 @@
               <img
                 src="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"
                 alt=""
-                class="gravatar gravatar--small tw-rounded-full print:tw-hidden"
-                width="20px"
-                height="20px"
+                class="gravatar gravatar--small tw-rounded-full tw-mr-2 print:tw-hidden"
+                width="24px"
+                height="24px"
                 onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
               />
               <spring:message code="nav.home.title"/>
