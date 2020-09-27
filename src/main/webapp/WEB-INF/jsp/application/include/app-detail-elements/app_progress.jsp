@@ -5,9 +5,11 @@
 
 <c:if test="${not empty comments}">
 
-    <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
-        <spring:message code="application.progress.title"/>
-    </h2>
+    <uv:section-heading>
+        <h2>
+            <spring:message code="application.progress.title"/>
+        </h2>
+    </uv:section-heading>
 
     <table class="list-table striped-table bordered-table tw-text-sm">
         <tbody>

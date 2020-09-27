@@ -24,23 +24,17 @@
 <div class="content">
     <div class="container">
 
-        <div class="row">
-
-            <div class="col-xs-12">
-                <div class="tw-flex tw-mb-4 lg:tw-mb-6 separator-bottom">
-                    <div class="tw-flex-1 tw-text-2xl tw-font-normal tw-flex">
-                        <h1 class="tw-text-2xl tw-font-normal tw-m-0">
-                            <spring:message code="sicknotes.statistics.title"/>
-                        </h1>
-                        <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
-                    </div>
-                    <div>
-                        <uv:print/>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <uv:print/>
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
+                    <spring:message code="sicknotes.statistics.title"/>
+                </h1>
+                <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
+            </jsp:body>
+        </uv:section-heading>
 
         <div class="row">
 

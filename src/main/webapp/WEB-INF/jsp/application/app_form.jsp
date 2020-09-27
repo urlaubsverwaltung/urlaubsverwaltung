@@ -83,13 +83,12 @@
 
 
                 <div class="form-section tw-mb-8">
+                    <uv:section-heading>
+                        <h1>
+                            <spring:message code="application.data.title"/>
+                        </h1>
+                    </uv:section-heading>
                     <div class="row">
-                        <div class="col-xs-12 tw-mb-4 lg:tw-mb-6">
-                            <h1 class="tw-text-2xl tw-m-0 separator-bottom">
-                                <spring:message code="application.data.title"/>
-                            </h1>
-                        </div>
-
                         <div class="col-md-4 col-md-push-8">
                             <span class="help-block tw-text-sm">
                                 <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
@@ -284,12 +283,12 @@
                 </div>
 
                 <div class="form-section tw-mb-16">
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code="application.data.furtherInformation.title"/>
+                        </h2>
+                    </uv:section-heading>
                     <div class="row">
-                        <div class="col-xs-12 tw-mb-4 lg:tw-mb-6">
-                            <h2 class="tw-text-2xl tw-m-0 separator-bottom">
-                                <spring:message code="application.data.furtherInformation.title"/>
-                            </h2>
-                        </div>
                         <div class="col-md-4 col-md-push-8">
                             <span class="help-block tw-text-sm">
                                 <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />

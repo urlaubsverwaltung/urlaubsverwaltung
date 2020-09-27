@@ -50,31 +50,30 @@
 
     <div class="container">
 
-        <div class="col-xs-12">
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <sec:authorize access="hasAuthority('OFFICE')">
+                <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.vacation"/>">
+                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                </a>
+                </sec:authorize>
+                <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
+                    <uv:icon-calendar className="tw-w-5 tw-h-5" />
+                </a>
+                <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
+                    <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
+                </a>
+                <uv:print />
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
+                    <spring:message code="applications.waiting"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
 
-            <div class="row tw-mb-4 lg:tw-mb-6">
-                <div class="tw-flex tw-items-end separator-bottom">
-                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                        <spring:message code="applications.waiting"/>
-                    </h1>
-                    <div class="print:tw-hidden">
-                        <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.vacation"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                        </a>
-                        </sec:authorize>
-                        <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
-                            <uv:icon-calendar className="tw-w-5 tw-h-5" />
-                        </a>
-                        <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
-                            <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
-                        </a>
-                        <uv:print />
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
+        <div class="row">
+            <div class="col-xs-12">
                 <div class="feedback">
                     <c:choose>
                         <c:when test="${allowSuccess}">
@@ -95,8 +94,10 @@
                     </c:choose>
                 </div>
             </div>
+        </div>
 
-            <div class="row">
+        <div class="row">
+            <div class="col-xs-12">
                 <c:choose>
                     <c:when test="${empty applications}">
                         <p>
@@ -215,8 +216,8 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-
         </div>
+
     </div>
 </div>
 

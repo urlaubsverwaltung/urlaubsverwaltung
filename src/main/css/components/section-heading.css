@@ -1,0 +1,14 @@
+.section-heading h1,
+.section-heading h2,
+.section-heading h3,
+.section-heading h4,
+.section-heading h5,
+.section-heading h6 {
+  @apply text-2xl;
+  @apply font-normal;
+  @apply m-0;
+}
+
+.section-heading-actions a:not(:last-of-type) {
+  @apply mr-2;
+}

@@ -78,25 +78,25 @@
 
         <!-- Overtime -->
         <c:if test="${settings.workingTimeSettings.overtimeActive}">
-            <div class="row tw-mb-4 lg:tw-mb-6">
-                <div class="col-xs-12">
-                    <div id="overtime" class="tw-flex tw-items-end separator-bottom">
-                        <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                            <spring:message code="overtime.title"/>
-                        </h2>
-                        <div class="print:tw-hidden">
-                            <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
-                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.new"/>">
-                                <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                            </a>
-                            </c:if>
-                            <a href="${URL_PREFIX}/overtime?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
-                                <uv:icon-view-grid className="tw-w-5 tw-h-5" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            <uv:section-heading>
+                <jsp:attribute name="actions">
+                    <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
+                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.new"/>">
+                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                        </a>
+                    </c:if>
+                    <a href="${URL_PREFIX}/overtime?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
+                        <uv:icon-view-grid className="tw-w-5 tw-h-5" />
+                    </a>
+                </jsp:attribute>
+                <jsp:body>
+                    <h2 id="overtime">
+                        <spring:message code="overtime.title"/>
+                    </h2>
+                </jsp:body>
+            </uv:section-heading>
+
             <div class="row tw-mb-12">
                 <div class="col-xs-12">
                     <div class="tw-flex tw-flex-wrap">
@@ -114,49 +114,49 @@
         </c:if>
 
         <!-- Calendar -->
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
+                    <uv:icon-calendar className="tw-w-5 tw-h-5" />
+                    &nbsp;<spring:message code="overview.calendar.share.link.text" />
+                </a>
+            </jsp:attribute>
+            <jsp:body>
+                <h2 id="calendar">
+                    <spring:message code="overview.calendar.title"/>
+                </h2>
+            </jsp:body>
+        </uv:section-heading>
         <div class="row tw-mb-4 lg:tw-mb-12">
             <div class="col-xs-12">
-                <div id="calendar" class="tw-flex tw-items-end tw-mb-6 separator-bottom">
-                    <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                        <spring:message code="overview.calendar.title"/>
-                    </h2>
-                    <div class="print:tw-hidden">
-                        <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
-                            <uv:icon-calendar className="tw-w-5 tw-h-5" />
-                            &nbsp;<spring:message code="overview.calendar.share.link.text" />
-                        </a>
-                    </div>
-                </div>
                 <div id="datepicker"></div>
             </div>
         </div>
 
         <!-- Vacation -->
-        <div class="row tw-mb-4 lg:tw-mb-6">
-            <div class="col-xs-12">
-                <div id="vacation" class="tw-flex tw-items-end separator-bottom">
-                    <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                        <spring:message code="applications.title"/>
-                    </h2>
-                    <div class="print:tw-hidden">
-                    <c:choose>
-                        <c:when test="${person.id == signedInUser.id}">
-                            <a class="icon-link tw-px-1" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <c:choose>
+                    <c:when test="${person.id == signedInUser.id}">
+                        <a class="icon-link tw-px-1" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <c:if test="${IS_OFFICE}">
+                            <a class="icon-link  tw-px-1" href="${URL_PREFIX}/application/new?person=${person.id}" data-title="<spring:message code="action.apply.vacation"/>">
                                 <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
                             </a>
-                        </c:when>
-                        <c:otherwise>
-                            <c:if test="${IS_OFFICE}">
-                                <a class="icon-link  tw-px-1" href="${URL_PREFIX}/application/new?person=${person.id}" data-title="<spring:message code="action.apply.vacation"/>">
-                                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                                </a>
-                            </c:if>
-                        </c:otherwise>
-                    </c:choose>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
+            </jsp:attribute>
+            <jsp:body>
+                <h2 id="vacation">
+                    <spring:message code="applications.title"/>
+                </h2>
+            </jsp:body>
+        </uv:section-heading>
 
         <div class="row tw-mb-4 lg:tw-mb-6">
 
@@ -231,22 +231,20 @@
 
         <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
 
-            <div class="row tw-mb-4 lg:tw-mb-6">
-                <div class="col-xs-12">
-                    <div id="anchorSickNotes" class="tw-flex tw-items-end separator-bottom">
-                        <h2 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                            <spring:message code="sicknotes.title"/>
-                        </h2>
-                        <c:if test="${IS_OFFICE}">
-                        <div class="print:tw-hidden">
-                            <a class="icon-link tw-px-1" href="${URL_PREFIX}/sicknote/new?person=${person.id}" data-title="<spring:message code="action.apply.sicknote" />">
-                                <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                            </a>
-                        </div>
-                        </c:if>
-                    </div>
-                </div>
-            </div>
+            <uv:section-heading>
+                <jsp:attribute name="actions">
+                    <c:if test="${IS_OFFICE}">
+                        <a class="icon-link tw-px-1" href="${URL_PREFIX}/sicknote/new?person=${person.id}" data-title="<spring:message code="action.apply.sicknote" />">
+                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                        </a>
+                    </c:if>
+                </jsp:attribute>
+                <jsp:body>
+                    <h2 id="anchorSickNotes">
+                        <spring:message code="sicknotes.title"/>
+                    </h2>
+                </jsp:body>
+            </uv:section-heading>
 
             <div class="row tw-mb-4 lg:tw-mb-6">
                 <div class="col-xs-12">

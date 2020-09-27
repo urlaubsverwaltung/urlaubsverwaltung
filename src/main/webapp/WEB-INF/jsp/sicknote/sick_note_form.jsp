@@ -74,8 +74,8 @@
 
             <div class="form-section tw-mb-4 lg:tw-mb-6">
                 <div class="row">
-                    <div class="col-xs-12 tw-mb-8">
-                        <h1 class="tw-text-2xl tw-m-0 separator-bottom">
+                    <uv:section-heading>
+                        <h1>
                             <c:choose>
                                 <c:when test="${sickNote.id == null}">
                                     <spring:message code="sicknote.create.title"/>
@@ -85,7 +85,7 @@
                                 </c:otherwise>
                             </c:choose>
                         </h1>
-                    </div>
+                    </uv:section-heading>
 
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
@@ -207,11 +207,11 @@
 
             <div class="form-section tw-mb-4 lg:tw-mb-6">
                 <div class="row">
-                    <div class="col-xs-12 tw-mb-8">
-                        <h2 class="tw-text-2xl tw-m-0 separator-bottom">
+                    <uv:section-heading>
+                        <h2>
                             <spring:message code="sicknote.data.aub.short"/>
                         </h2>
-                    </div>
+                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
                             <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
@@ -249,11 +249,11 @@
 
             <div class="form-section tw-mb-16">
                 <div class="row">
-                    <div class="col-xs-12 tw-mb-4 lg:tw-mb-6">
-                        <h2 class="tw-text-2xl tw-m-0 separator-bottom">
+                    <uv:section-heading>
+                        <h2>
                             <spring:message code="sicknote.data.furtherInformation.title"/>
                         </h2>
-                    </div>
+                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
                             <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />

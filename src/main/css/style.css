@@ -15,6 +15,7 @@
 @import "./components/separator.css";
 @import "./components/states.css";
 @import "./components/print.css";
+@import "./components/section-heading.css";
 
 @import "tailwindcss/utilities";
 @import "./utility.css";

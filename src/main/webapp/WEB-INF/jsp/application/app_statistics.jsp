@@ -32,19 +32,21 @@
 
     <div class="container">
 
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <uv:export />
+                <uv:print />
+            </jsp:attribute>
+            <jsp:body>
+                <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
+                    <spring:message code="applications.statistics"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
         <div class="row">
 
             <div class="col-xs-12">
-
-                <div class="tw-flex tw-items-end tw-mb-2 separator-bottom">
-                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                        <spring:message code="applications.statistics"/>
-                    </h1>
-                    <div class="print:tw-hidden">
-                        <uv:export />
-                        <uv:print />
-                    </div>
-                </div>
 
                 <p class="tw-text-sm tw-mb-8">
                     <c:choose>

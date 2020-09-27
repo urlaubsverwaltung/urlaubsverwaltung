@@ -40,41 +40,39 @@
 <div class="content print--only-landscape">
     <div class="container">
 
-        <div class="row">
-
-            <div class="col-xs-12">
-
-                <div class="tw-flex tw-items-end tw-mb-2 separator-bottom">
-                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                        <spring:message code="sicknotes.title"/>
-                    </h1>
-                    <div class="print:tw-hidden">
-                        <a href="${URL_PREFIX}/sicknote/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.sicknote"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                        </a>
-                        <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
-                            <uv:icon-calendar className="tw-w-5 tw-h-5" />
-                        </a>
-                        <a href="${URL_PREFIX}/sicknote/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.sicknotes.statistics"/>">
-                            <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
-                        </a>
-                        <uv:print/>
-                    </div>
-                </div>
-
-                <div class="tw-mb-8">
-                    <p class="tw-text-sm">
-                        <a href="#filterModal" data-toggle="modal">
-                            <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
-                        </a>
-                    </p>
-                    <p class="pull-right visible-print">
-                        <spring:message code="filter.validity"/> <uv:date date="${today}"/>
-                    </p>
-                </div>
-
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <a href="${URL_PREFIX}/sicknote/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.sicknote"/>">
+                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                </a>
+                <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
+                    <uv:icon-calendar className="tw-w-5 tw-h-5" />
+                </a>
+                <a href="${URL_PREFIX}/sicknote/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.sicknotes.statistics"/>">
+                    <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
+                </a>
+                <uv:print/>
+            </jsp:attribute>
+            <jsp:attribute name="below">
+                <p class="tw-text-sm">
+                    <a href="#filterModal" data-toggle="modal">
+                        <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                    </a>
+                </p>
+                <p class="pull-right visible-print">
+                    <spring:message code="filter.validity"/> <uv:date date="${today}"/>
+                </p>
                 <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/sicknote/filter"/>
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
+                    <spring:message code="sicknotes.title"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
 
+        <div class="row">
+            <div class="col-xs-12">
                 <table class="list-table selectable-table sortable tablesorter tw-text-sm">
                     <thead class="hidden-xs hidden-sm">
                     <tr>

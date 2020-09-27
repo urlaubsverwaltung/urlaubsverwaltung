@@ -7,7 +7,6 @@
 <jsp:useBean id="date" class="java.util.Date" />
 
 <span id="year-selection" class="tw-leading-6 dropdown legend-dropdown">
-    &nbsp;
     <a id="dropdownLabel" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false" class="">
         <c:out value="${year}" /><span class="caret"></span>
     </a>

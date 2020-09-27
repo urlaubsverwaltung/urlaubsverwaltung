@@ -38,19 +38,23 @@
 
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="tw-flex tw-mb-4 lg:tw-mb-6 separator-bottom">
-                    <h1 class="tw-flex-1 tw-text-2xl tw-m-0">
-                        <spring:message code="person.details.masterData.title"/>
-                    </h1>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                    <div class="print:tw-hidden">
-                        <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                            <uv:icon-pencil className="tw-w-5 tw-h-5" />
-                        </a>
-                    </div>
-                    </sec:authorize>
-                </div>
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h1>
+                            <spring:message code="person.details.masterData.title"/>
+                        </h1>
+                    </jsp:body>
+                </uv:section-heading>
+
                 <uv:person person="${person}" cssClass="tw-mb-4 tw-h-32" />
+
                 <div class="box tw-mb-8">
                     <span class="tw-mr-6 tw-bg-blue-500 tw-text-white tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
                         <uv:icon-key className="tw-w-8 tw-h-8" />
@@ -66,9 +70,11 @@
                     </div>
                 </div>
 
-                <h2 class="tw-text-2xl tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
-                    <spring:message code="person.details.departments.title"/>
-                </h2>
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="person.details.departments.title"/>
+                    </h2>
+                </uv:section-heading>
                 <div class="box tw-mb-8">
                     <span class="box-icon-container">
                         <span class="box-icon tw-bg-blue-500 tw-text-white">
@@ -93,35 +99,39 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="tw-flex tw-items-end tw-mb-4 separator-bottom">
-                    <div class="tw-flex-1 tw-text-2xl tw-font-normal tw-flex">
-                        <h2 class="tw-text-2xl tw-font-normal tw-m-0">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/person/${person.id}/account?year=${param.year}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
                             <spring:message code="person.details.annualVacation.title"/>
                         </h2>
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
-                    </div>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                    <div class="print:tw-hidden">
-                        <a href="${URL_PREFIX}/person/${person.id}/account?year=${param.year}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                            <uv:icon-pencil className="tw-w-5 tw-h-5" />
-                        </a>
-                    </div>
-                    </sec:authorize>
-                </div>
+                    </jsp:body>
+                </uv:section-heading>
+
                 <uv:account-entitlement account="${account}" className="tw-h-32 tw-mb-8" />
 
-                <div class="tw-flex separator-bottom separator-bottom">
-                    <h2 class="tw-flex-1 tw-text-2xl tw-m-0">
-                        <spring:message code="person.details.workingTime.title"/>
-                    </h2>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                    <div class="print:tw-hidden">
-                        <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                            <uv:icon-pencil className="tw-w-5 tw-h-5" />
-                        </a>
-                    </div>
-                    </sec:authorize>
-                </div>
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="person.details.workingTime.title"/>
+                        </h2>
+                    </jsp:body>
+                </uv:section-heading>
+
                 <div class="box tw-mb-4">
                     <span class="box-icon-container">
                         <span class="box-icon tw-bg-green-500 tw-text-white">

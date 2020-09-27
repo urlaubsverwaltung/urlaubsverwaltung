@@ -29,13 +29,11 @@
             <form:hidden path="password"/>
 
             <div class="form-section tw-mb-8">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
-                            <spring:message code="person.form.data.title"/>
-                        </h1>
-                    </div>
-                </div>
+                <uv:section-heading>
+                    <h1>
+                        <spring:message code="person.form.data.title"/>
+                    </h1>
+                </uv:section-heading>
 
                 <div class="row">
                     <div class="col-md-4 col-md-push-8">
@@ -88,14 +86,15 @@
                 </div>
             </div>
 
-            <div class="form-section tw-mb-16">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
-                            <spring:message code="person.form.permissions.title"/>
-                        </h2>
-                    </div>
 
+            <div class="form-section tw-mb-16">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="person.form.permissions.title"/>
+                    </h2>
+                </uv:section-heading>
+
+                <div class="row">
                     <c:set var="permissionsError">
                         <form:errors path="permissions" cssClass="error"/>
                     </c:set>

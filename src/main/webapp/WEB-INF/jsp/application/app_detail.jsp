@@ -49,14 +49,16 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <div class="tw-flex tw-items-end tw-mb-4 lg:tw-mb-6 separator-bottom">
-                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                        <spring:message code="application.data.title"/>
-                    </h1>
-                    <div class="print:tw-hidden">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
                         <jsp:include page="include/app-detail-elements/action-buttons.jsp"/>
-                    </div>
-                </div>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h1>
+                            <spring:message code="application.data.title"/>
+                        </h1>
+                    </jsp:body>
+                </uv:section-heading>
 
                 <div class="feedback">
                     <c:choose>
@@ -119,12 +121,12 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
-                <div class="tw-text-2xl tw-font-normal tw-mb-4 lg:tw-mb-6 separator-bottom tw-flex">
-                    <h2 class="tw-text-2xl tw-font-normal tw-m-0">
+                <uv:section-heading>
+                    <h2>
                         <spring:message code="person.account.vacation.title"/>
                     </h2>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
-                </div>
+                </uv:section-heading>
 
                 <uv:person person="${application.person}" cssClass="tw-h-32 tw-mb-4" />
                 <uv:account-entitlement account="${account}" className="tw-mb-4" />
@@ -142,9 +144,11 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
-                <h2 class="tw-text-2xl tw-font-normal tw-m-0 tw-mb-4 lg:tw-mb-6 separator-bottom">
-                    <spring:message code="application.department.title"/>
-                </h2>
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="application.department.title"/>
+                    </h2>
+                </uv:section-heading>
                 <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <c:choose>

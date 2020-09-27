@@ -31,24 +31,24 @@
 <div class="content print--only-landscape">
     <div class="container">
 
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <sec:authorize access="hasAuthority('OFFICE')">
+                <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
+                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                </a>
+                </sec:authorize>
+                <uv:print/>
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
+                    <spring:message code="departments.title"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
         <div class="row">
-
             <div class="col-xs-12">
-
-                <div class="tw-flex tw-mb-4 lg:tw-mb-6 separator-bottom">
-                    <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                        <spring:message code="departments.title"/>
-                    </h1>
-                    <div class="print:tw-hidden">
-                        <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                        </a>
-                        </sec:authorize>
-                        <uv:print/>
-                    </div>
-                </div>
-
                 <div class="feedback">
                     <c:choose>
                         <c:when test="${not empty createdDepartment}">

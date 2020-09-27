@@ -29,13 +29,11 @@
                    class="form-horizontal">
 
             <div class="form-section">
-                <div class="row tw-mb-4 lg:tw-mb-6">
-                    <div class="col-xs-12">
-                        <h1 class="tw-text-2xl tw-font-normal tw-m-0 separator-bottom">
-                            <spring:message code="person.form.workingTime.title" arguments="${person.niceName}"/>
-                        </h1>
-                    </div>
-                </div>
+                <uv:section-heading>
+                    <h1>
+                        <spring:message code="person.form.workingTime.title" arguments="${person.niceName}"/>
+                    </h1>
+                </uv:section-heading>
 
                 <c:set var="workingTimeError">
                     <form:errors path="workingDays" cssClass="error"/>

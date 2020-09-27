@@ -37,64 +37,64 @@
 
 <div class="content print--only-landscape">
     <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="tw-flex tw-mb-4 lg:tw-mb-6 separator-bottom tw-text-2xl">
-                    <div class="tw-flex-1">
-                        <div class="legend-dropdown dropdown">
-                            <a id="active-state" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <uv:print/>
+            </jsp:attribute>
+            <jsp:body>
+                <div class="legend-dropdown dropdown">
+                    <a id="active-state" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+                        <c:choose>
+                            <c:when test="${param.active}">
                                 <c:choose>
-                                    <c:when test="${param.active}">
-                                        <c:choose>
-                                            <c:when test="${department != null}">
-                                                <c:out value="${department.name}"/><span class="caret"></span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <spring:message code="persons.active"/><span class="caret"></span>
-                                            </c:otherwise>
-                                        </c:choose>
+                                    <c:when test="${department != null}">
+                                        <c:out value="${department.name}"/><span class="caret"></span>
                                     </c:when>
                                     <c:otherwise>
-                                        <spring:message code="persons.inactive"/><span class="caret"></span>
+                                        <spring:message code="persons.active"/><span class="caret"></span>
                                     </c:otherwise>
                                 </c:choose>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="persons.inactive"/><span class="caret"></span>
+                            </c:otherwise>
+                        </c:choose>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
+                        <li>
+                            <a href="${URL_PREFIX}/person?active=true&year=${year}" class="tw-flex tw-items-center">
+                                    <span class="tw-w-5 tw-flex tw-items-center">
+                                        <uv:icon-eye className="tw-w-4 tw-h-4" solid="true" />
+                                    </span>
+                                &nbsp;<spring:message code="persons.active"/>
                             </a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
+                        </li>
+                        <c:if test="${departments.size() > 1}">
+                            <c:forEach items="${departments}" var="department">
                                 <li>
-                                    <a href="${URL_PREFIX}/person?active=true&year=${year}" class="tw-flex tw-items-center">
-                                        <span class="tw-w-5 tw-flex tw-items-center">
-                                            <uv:icon-eye className="tw-w-4 tw-h-4" solid="true" />
-                                        </span>
-                                        &nbsp;<spring:message code="persons.active"/>
+                                    <a href='${URL_PREFIX}/person?active=true&year=${year}&department=${department.id}'>
+                                        <span class="tw-w-5 tw-inline-block"></span>
+                                        <c:out value="${department.name}"/>
                                     </a>
                                 </li>
-                                <c:if test="${departments.size() > 1}">
-                                    <c:forEach items="${departments}" var="department">
-                                        <li>
-                                            <a href='${URL_PREFIX}/person?active=true&year=${year}&department=${department.id}'>
-                                                <span class="tw-w-5 tw-inline-block"></span>
-                                                <c:out value="${department.name}"/>
-                                            </a>
-                                        </li>
-                                    </c:forEach>
-                                    <li role="separator" class="divider"></li>
-                                </c:if>
-                                <li>
-                                    <a href="${URL_PREFIX}/person?active=false&year=${year}" class="tw-flex tw-items-center">
-                                        <span class="tw-w-5 tw-flex tw-items-center">
-                                            <uv:icon-eye-off className="tw-w-4 tw-h-4" solid="true" />
-                                        </span>
-                                        &nbsp;<spring:message code="persons.inactive"/>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person?active=${param.active}&department=${department.id}&year="/>
-                    </div>
-                    <div>
-                        <uv:print/>
-                    </div>
+                            </c:forEach>
+                            <li role="separator" class="divider"></li>
+                        </c:if>
+                        <li>
+                            <a href="${URL_PREFIX}/person?active=false&year=${year}" class="tw-flex tw-items-center">
+                                    <span class="tw-w-5 tw-flex tw-items-center">
+                                        <uv:icon-eye-off className="tw-w-4 tw-h-4" solid="true" />
+                                    </span>
+                                &nbsp;<spring:message code="persons.inactive"/>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+                <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person?active=${param.active}&department=${department.id}&year="/>
+            </jsp:body>
+        </uv:section-heading>
+        <div class="row">
+            <div class="col-xs-12">
                 <c:choose>
                     <c:when test="${empty persons}">
                         <p><spring:message code="persons.none"/></p>

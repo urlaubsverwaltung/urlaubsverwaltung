@@ -52,18 +52,16 @@
 
         <c:if test="${IS_ALLOWED}">
 
-            <div class="row tw-mb-4 lg:tw-mb-6">
-                <div class="col-xs-12">
-                    <div id="absence" class="tw-flex tw-items-end separator-bottom">
-                        <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
-                            <spring:message code="absences.overview.title"/>
-                        </h1>
-                        <div>
-                            <uv:print/>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <uv:section-heading>
+                <jsp:attribute name="actions">
+                    <uv:print/>
+                </jsp:attribute>
+                <jsp:body>
+                    <h1 id="absence">
+                        <spring:message code="absences.overview.title"/>
+                    </h1>
+                </jsp:body>
+            </uv:section-heading>
 
             <form method="GET" action="${URL_PREFIX}/absences" id="absenceOverviewForm" class="print:tw-hidden">
                 <div class="col-md-8">

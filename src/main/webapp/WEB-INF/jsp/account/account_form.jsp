@@ -40,17 +40,12 @@
 
             <div class="form-section">
 
-                <div class="row tw-mb-4 lg:tw-mb-6">
-                    <div class="col-md-12">
-                        <div class="tw-text-2xl tw-font-normal tw-flex separator-bottom">
-                            <h1 class="tw-text-2xl tw-font-normal tw-m-0">
-                                <spring:message code="person.form.annualVacation.title" arguments="${person.niceName}"/>
-                            </h1>
-                            <uv:year-selector year="${year}"
-                                              hrefPrefix="${URL_PREFIX}/person/${person.id}/account?year="/>
-                        </div>
-                    </div>
-                </div>
+                <uv:section-heading>
+                    <h1>
+                        <spring:message code="person.form.annualVacation.title" arguments="${person.niceName}"/>
+                    </h1>
+                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}/account?year="/>
+                </uv:section-heading>
 
                 <c:if test="${not empty errors}">
                 <div class="row tw-mb-8">
