@@ -38,27 +38,29 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="sicknote.title"/>
-                    </div>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <c:if test="${sickNote.active}">
-                        <div class="print:tw-hidden">
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
-                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
-                            </a>
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
-                                <uv:icon-refresh className="tw-w-5 tw-h-5" />
-                            </a>
-                            <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
-                                <uv:icon-trash className="tw-w-5 tw-h-5" />
-                            </a>
-                            <uv:print/>
-                        </div>
-                        </c:if>
-                    </sec:authorize>
-                </legend>
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <c:if test="${sickNote.active}">
+                                <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
+                                    <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                </a>
+                                <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
+                                    <uv:icon-refresh className="tw-w-5 tw-h-5" />
+                                </a>
+                                <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
+                                    <uv:icon-trash className="tw-w-5 tw-h-5" />
+                                </a>
+                                <uv:print/>
+                            </c:if>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h1>
+                            <spring:message code="sicknote.title"/>
+                        </h1>
+                    </jsp:body>
+                </uv:section-heading>
 
                 <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/cancel">
                     <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -184,18 +186,20 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="sicknote.progress.title"/>
-                    </div>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <div class="print:tw-hidden">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
                             <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
                                 <uv:icon-annotation className="tw-w-5 tw-h-5" />
                             </a>
-                        </div>
-                    </sec:authorize>
-                </legend>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="sicknote.progress.title"/>
+                        </h2>
+                    </jsp:body>
+                </uv:section-heading>
 
                 <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
@@ -280,11 +284,14 @@
 
                 </sec:authorize>
 
-                <legend class="hidden-print">
-                    <spring:message code="sicknote.data.person"/>
-                </legend>
-
-                <uv:person person="${sickNote.person}" cssClass="hidden-print"/>
+                <div class="print:hidden">
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code="sicknote.data.person"/>
+                        </h2>
+                    </uv:section-heading>
+                    <uv:person person="${sickNote.person}" />
+                </div>
             </div>
             <%-- End of second column --%>
 

@@ -32,9 +32,12 @@
             <div class="row">
 
                 <div class="col-xs-12 col-sm-12 col-md-6">
-                    <legend>
-                        <spring:message code="sicknote.convert.title"/>
-                    </legend>
+
+                    <uv:section-heading>
+                        <h1>
+                            <spring:message code="sicknote.convert.title"/>
+                        </h1>
+                    </uv:section-heading>
 
                     <div class="form-group">
                         <form:hidden path="person" value="${sickNoteConvertForm.person.id}"/>
@@ -105,9 +108,11 @@
 
                 <div class="col-xs-12 col-sm-12 col-md-6">
 
-                    <legend>
-                        <spring:message code="sicknote.title"/>
-                    </legend>
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code="sicknote.title"/>
+                        </h2>
+                    </uv:section-heading>
 
                     <uv:box className="tw-mb-8">
                         <jsp:attribute name="icon">
